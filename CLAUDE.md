@@ -20,7 +20,12 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 ## Formats de données
 
 - **Questions** (`data/qcm/<matière>*.js`, poussées dans `window.QCM_BANK`) :
-  `{ id:'elec-…', s:'elec', topic, lvl, type:'single'|'multi'|'tf'|'num', q, o, a, unit, tol, x, ref, src, fig, keep }`.
+  `{ id:'elec-…', s:'elec', topic, lvl, type:'single'|'multi'|'tf'|'num', q, o, a, unit, tol, x, ref, src, fig, keep,
+  same, also }`. Toujours lire la banque avec `REV.quiz.bank()` : elle retire les doublons (même énoncé, mêmes options
+  dans n’importe quel ordre, même réponse, même figure) en gardant partiel > TD > cours > hebdo ; les ids écartés vont
+  dans `q.alt`. Une reformulation se déclare avec `same:'<id gardé>'` ; une question de cours tombée à un partiel sans
+  fiche à elle porte `also:['elec-p2017-q3', …]`. `REV.quiz.ids(q)` rend tous ces ids (filtres par provenance et par
+  partiel). Les doublons de la banque hebdo se déclarent dans `SAME` (`tools/gen_hebdo.py`).
   Les noms lisibles des notions vont dans `window.QCM_TOPICS`. Préfixes d’id utilisés par le filtre « provenance » :
   `elec-cN-` (cours), `elec-pAAAA-` (partiel de l’année AAAA), `elec-mcq…` (QCM hebdo), `elec-td…` (TD).
 - **Exercices** (`data/elec/ex-*.js`, poussés dans `window.ELEC_EX`) : voir l’en-tête de `elec/entrainement.html`
@@ -46,7 +51,10 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 - Contenu du site : français, ton neutre et clair, tutoiement, phrases courtes, pas d’emoji.
 - Toute affirmation « ce qui tombe au partiel » doit être vérifiée dans les sujets (dates : partiel nov. 2017 =
   promo 2022, …, oct. 2024 = promo 2029).
-- Décimales à la française (2,5 V), espace avant l’unité, signe moins « − ».
+- Décimales à la française (2,5 V), espace avant l’unité, signe moins « − ». L’espace entre un nombre et son unité
+  devient insécable à l’affichage (`REV.util.tidy`, appliqué à tout le texte, même ajouté par script) : une espace
+  simple suffit dans les sources.
+- Lire le sens des flèches sur la figure d’origine avant tout calcul (TD 1 Ex 9 : I₁ monte, U = 35 V, pas −5 V).
 
 ## Vérifier
 
