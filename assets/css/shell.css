@@ -1,0 +1,60 @@
+/* Révisions S1 — barre de navigation partagée et réglages communs.
+   Chaque page garde son propre système de couleurs ; la barre a ses jetons à elle (--sh-*). */
+:root{
+  --sh-bg:#FFFFFF; --sh-fg:#141A2E; --sh-muted:#5A6278; --sh-line:#DCE1EA;
+  --sh-accent:#2340B8; --sh-accent-soft:#E6EBFB; --sh-mark-bg:#141A2E; --sh-mark-fg:#FFFFFF;
+  --sh-h:52px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sh-bg:#121726; --sh-fg:#E6E9F2; --sh-muted:#9AA3BA; --sh-line:#262D42;
+    --sh-accent:#93A6FF; --sh-accent-soft:#1D2550; --sh-mark-bg:#E6E9F2; --sh-mark-fg:#121726;
+  }
+}
+:root[data-theme="dark"]{
+  --sh-bg:#121726; --sh-fg:#E6E9F2; --sh-muted:#9AA3BA; --sh-line:#262D42;
+  --sh-accent:#93A6FF; --sh-accent-soft:#1D2550; --sh-mark-bg:#E6E9F2; --sh-mark-fg:#121726;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0}
+img,svg{max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--sh-accent);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto!important} *,*::before,*::after{transition:none!important;animation:none!important}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* bande au-dessus de la barre collante (encoche des téléphones) */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--sh-bg)}
+
+#shell{min-height:var(--sh-h)}
+.shell{position:sticky;top:env(safe-area-inset-top,0px);z-index:55;background:var(--sh-bg);color:var(--sh-fg);border-bottom:1px solid var(--sh-line);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.2}
+.shell-in{max-width:1180px;margin:0 auto;height:var(--sh-h);display:flex;align-items:center;gap:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.shell-brand{display:flex;align-items:center;gap:9px;color:inherit;text-decoration:none;font-weight:700;letter-spacing:.01em;flex:none}
+.shell-mark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:7px;background:var(--sh-mark-bg);color:var(--sh-mark-fg);
+  font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.shell-nav{display:flex;align-items:center;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.shell-nav::-webkit-scrollbar{display:none}
+.shell-nav a{color:var(--sh-muted);text-decoration:none;padding:.45rem .7rem;border-radius:7px;white-space:nowrap;font-weight:500}
+.shell-nav a:hover{color:var(--sh-fg);background:var(--sh-accent-soft)}
+.shell-nav a[aria-current="page"]{color:var(--sh-accent);background:var(--sh-accent-soft);font-weight:700}
+.shell-tools{display:flex;align-items:center;gap:4px;flex:none;margin-left:auto}
+.shell-btn{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--sh-muted);cursor:pointer;padding:0}
+.shell-btn:hover{color:var(--sh-fg);border-color:var(--sh-line)}
+.shell-btn svg{width:20px;height:20px}
+.shell-menu{display:none}
+@media (max-width:640px){
+  .shell-menu{display:inline-grid}
+  .shell-nav{position:absolute;top:var(--sh-h);left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--sh-bg);border-bottom:1px solid var(--sh-line);
+    padding:6px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:none;box-shadow:0 12px 24px rgba(10,14,30,.12)}
+  .shell-nav.open{display:flex}
+  .shell-nav a{padding:.75rem .6rem}
+}
+
+@media print{
+  #shell,.shell,.no-print{display:none!important}
+  body::before{display:none}
+}

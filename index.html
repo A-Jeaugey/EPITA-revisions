@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Révisions S1</title>
+<meta name="description" content="Révisions des partiels de mi-semestre EPITA S1 : cours expliqués pas à pas, annales corrigées, entraînements ciblés et QCM à répétition espacée.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/css/shell.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/core.js"></script>
+<style>
+/* accueil : un bureau de révision. En-tête façon copie d'examen, puis une colonne « aujourd'hui », puis les matières. */
+.hero{padding-block:44px 30px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:stretch}
+@media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.copie{padding:22px 24px 26px 64px;display:grid;gap:14px;align-content:start}
+@media (max-width:560px){.copie{padding:18px 16px 22px 34px}}
+.copie-fields{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--font-mono);font-size:.8rem;color:var(--muted);letter-spacing:.02em}
+.copie-fields b{font-weight:600;color:var(--ink)}
+.copie-fields .hand{font-size:1.35rem;line-height:1;margin-left:4px;letter-spacing:0}
+.copie h1 span{color:var(--accent)}
+.copie .rules{font-family:var(--font-mono);font-size:.82rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:4px}
+
+.count{padding:22px 22px;display:grid;gap:14px;align-content:start;background:var(--ink);color:var(--bg);border-radius:var(--radius)}
+.count .eyebrow{color:inherit;opacity:.7}
+.count-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.count-num{font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:4.2rem;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.count-txt{font-size:1.02rem;line-height:1.35;max-width:16em}
+.count form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.count label{font-size:.9rem;opacity:.85}
+.count input[type=date]{font:inherit;font-family:var(--font-mono);font-size:.9rem;padding:.45rem .6rem;border-radius:8px;border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);background:transparent;color:inherit;color-scheme:dark}
+:root[data-theme="dark"] .count input[type=date]{color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .count input[type=date]{color-scheme:light}}
+.count .btn{background:var(--bg);color:var(--ink);border-color:var(--bg);min-height:38px}
+.count-list{display:grid;gap:6px;font-size:.9rem}
+.count-list div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid color-mix(in srgb,var(--bg) 18%,transparent);padding-top:6px}
+.count-list .mono{font-variant-numeric:tabular-nums}
+.linkish{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;opacity:.85}
+
+main{display:grid;gap:56px;padding-bottom:24px}
+.today{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.today{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;min-width:0}
+a.step:hover{border-color:var(--accent)}
+.step .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.step .t{font-weight:700;font-size:1.08rem;line-height:1.3}
+.step .d{color:var(--muted);font-size:.93rem;line-height:1.45}
+.step .go{color:var(--accent);font-weight:700;font-size:.93rem;margin-top:2px}
+
+.subjects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.subjects{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.subjects{grid-template-columns:minmax(0,1fr)}}
+.subj{--c:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:12px;align-content:start;min-width:0;position:relative}
+.subj.ready{grid-column:span 2;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:22px;border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+@media (max-width:620px){.subj.ready{grid-column:auto;grid-template-columns:minmax(0,1fr)}}
+.subj-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.subj h3{font-size:1.45rem}
+.subj .code{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.subj .tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:.15rem .55rem;border:1px solid currentColor;color:var(--c);white-space:nowrap}
+.subj p{color:var(--muted);font-size:.94rem;line-height:1.5}
+.subj .meters{display:grid;gap:10px;align-content:start}
+.meter{display:grid;gap:5px}
+.meter .row{display:flex;justify-content:space-between;font-size:.86rem;gap:10px}
+.meter .row span:last-child{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.meter .bar>i{background:var(--c)}
+.subj .links{display:flex;flex-wrap:wrap;gap:8px}
+.subj .links .btn{min-height:38px;padding:.4rem .8rem;font-size:.9rem}
+.subj.ready .btn.primary{background:var(--c);border-color:var(--c);color:var(--surface)}
+.subj.soon{background:transparent;border-style:dashed}
+.subj.soon h3{color:var(--muted)}
+.subj-elec{--c:var(--s-elec)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)}
+.chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
+.chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
+.chapters a:hover{border-color:var(--c)}
+.chapters .mono{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tool{padding:18px 20px 20px 58px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit}
+@media (max-width:560px){.tool{padding-left:34px}}
+a.tool:hover{border-color:var(--accent)}
+.tool .big{font-family:var(--font-display);font-stretch:120%;font-size:2.1rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tool .t{font-weight:700;font-size:1.1rem}
+.tool .d{color:var(--muted);font-size:.93rem;line-height:1.45}
+
+.method{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;counter-reset:m;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+@media (max-width:900px){.method{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.method{grid-template-columns:minmax(0,1fr)}}
+.method li{list-style:none;counter-increment:m;padding:18px 18px 20px;display:grid;gap:6px;align-content:start;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin-right:-1px;margin-bottom:-1px}
+.method li::before{content:counter(m);font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:1.7rem;color:var(--accent);line-height:1}
+.method b{font-size:1.02rem}
+.method span{color:var(--muted);font-size:.93rem;line-height:1.5}
+</style>
+</head>
+<body data-resume="Accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="sheet margin copie">
+      <div class="copie-fields" aria-hidden="true"><span>NOM : ……………………</span><span>Prénom : ……………………</span><span>Groupe : <b>Promo 2031</b></span></div>
+      <h1>Partiels <span>S1</span></h1>
+      <p class="lead">Le cours repris pas à pas, ce qui tombe vraiment au partiel, des exercices d’annales corrigés et un QCM qui te repose les questions ratées au bon moment.</p>
+      <div class="rules"><span>Les calculatrices et les documents ne sont pas autorisés.</span><span>Le barème est donné à titre indicatif. Justifiez vos réponses.</span></div>
+    </div>
+    <aside class="count" id="count" aria-live="polite"></aside>
+  </div>
+</header>
+
+<main class="wrap">
+  <section aria-labelledby="t-today">
+    <div class="sec-title"><div><span class="eyebrow">Aujourd’hui</span><h2 id="t-today">Ta prochaine étape</h2></div></div>
+    <div class="today" id="today"></div>
+  </section>
+
+  <section aria-labelledby="t-subj">
+    <div class="sec-title"><div><span class="eyebrow">Matières</span><h2 id="t-subj">Où tu en es</h2></div><p class="muted" style="max-width:34em">Les autres matières arrivent au fur et à mesure que les cours sont ajoutés. Leurs annales sont déjà disponibles.</p></div>
+    <div class="subjects" id="subjects"></div>
+  </section>
+
+  <section aria-labelledby="t-tools">
+    <div class="sec-title"><div><span class="eyebrow">Outils</span><h2 id="t-tools">Pour toutes les matières</h2></div></div>
+    <div class="tools">
+      <a class="sheet margin tool" href="qcm/"><span class="big" id="n-qcm">0</span><span class="t">QCM</span><span class="d">Questions de cours et questions de vrais QCM, avec explication. Celles que tu rates reviennent le lendemain, puis de plus en plus tard.</span></a>
+      <a class="sheet margin tool" href="annales/"><span class="big" id="n-ann">0</span><span class="t">Annales</span><span class="d">Tous les sujets de partiels de mi-semestre S1 retrouvés, par matière et par année, avec les corrigés quand ils existent.</span></a>
+      <a class="sheet margin tool" href="fiches/"><span class="big" id="n-fiche">1</span><span class="t">Fiches</span><span class="d">Une page par matière avec toutes les formules et les réflexes à relire juste avant l’épreuve.</span></a>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-method">
+    <div class="sec-title"><div><span class="eyebrow">Mode d’emploi</span><h2 id="t-method">Réviser une matière en quatre temps</h2></div></div>
+    <ol class="method" style="margin:0;padding:0">
+      <li><b>Comprendre</b><span>Lis le cours dans l’ordre. Chaque partie finit par 3 ou 4 questions : réponds avant de passer à la suite.</span></li>
+      <li><b>Savoir faire</b><span>Apprends les méthodes pas à pas. Ce sont elles qu’on te demande d’appliquer le jour J.</span></li>
+      <li><b>S’entraîner</b><span>Fais les exercices tirés des annales, avec les indices si tu bloques, puis compare avec le corrigé.</span></li>
+      <li><b>Se tester</b><span>Un sujet complet chronométré, puis le QCM tous les jours pour que rien ne s’oublie.</span></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="page-foot"><div class="wrap"><span>Révisions S1 · EPITA promo 2031 · bimestre 1</span><span>Ta progression reste dans ce navigateur.</span></div></footer>
+
+<script src="assets/js/circuit.js"></script>
+<script src="assets/js/qcm-engine.js"></script>
+<script src="data/qcm/elec.js"></script>
+<script src="data/annales.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$;
+  var BANK = window.QCM_BANK || [];
+
+  /* ---- compte à rebours ---- */
+  function renderCount() {
+    var box = $('#count'), ready = R.subjects.filter(function (s) { return s.status === 'ready'; });
+    var dated = ready.map(function (s) { return { s: s, iso: R.exams.get(s.id), d: R.exams.daysLeft(R.exams.get(s.id)) }; })
+      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d; });
+    var html = '<span class="eyebrow">Compte à rebours</span>';
+    if (dated.length) {
+      var n = dated[0];
+      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'C’est aujourd’hui : partiel d’' : 'avant le partiel d’') + n.s.name.toLowerCase() + '</span></div>';
+      html += '<div class="count-list">' + dated.map(function (x) {
+        var p = x.iso.split('-');
+        return '<div><span>' + x.s.name + '</span><span class="mono">' + p[2] + '/' + p[1] + '/' + p[0] + '</span></div>';
+      }).join('') + '</div>';
+      html += '<button type="button" class="linkish" id="editDates">Modifier les dates</button>';
+    } else {
+      html += '<div class="count-main"><span class="count-num">J−?</span><span class="count-txt">Ajoute la date de ton partiel pour lancer le décompte.</span></div>';
+    }
+    html += '<form id="dateForm"' + (dated.length ? ' hidden' : '') + '>' + ready.map(function (s) {
+      return '<label for="d-' + s.id + '">' + s.name + '</label><input type="date" id="d-' + s.id + '" value="' + R.exams.get(s.id) + '">';
+    }).join('') + '<button class="btn" type="submit">Enregistrer</button></form>';
+    box.innerHTML = html;
+    var f = $('#dateForm');
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ready.forEach(function (s) { R.exams.set(s.id, $('#d-' + s.id).value); });
+      renderCount();
+    });
+    var ed = $('#editDates'); if (ed) ed.addEventListener('click', function () { f.hidden = !f.hidden; });
+  }
+
+  /* ---- prochaine étape ---- */
+  function nextSection(s) {
+    for (var i = 0; i < s.chapters.length; i++) {
+      var c = s.chapters[i], done = R.progress.chapterDone(s.id, c.id);
+      if (done < c.sections) return { c: c, i: i, done: done };
+    }
+    return null;
+  }
+  function renderToday() {
+    var steps = [], elec = R.subject('elec'), d = R.store.load();
+    var ns = nextSection(elec);
+    if (d.last && d.last.href && d.last.href !== 'index.html' && d.last.href !== '') {
+      steps.push({ k: 'Reprendre', t: d.last.title, d: 'La dernière page que tu as ouverte.', href: d.last.href, go: 'Continuer' });
+    }
+    if (ns) steps.push({ k: 'Cours d’élec · chapitre ' + (ns.i + 1), t: ns.c.title, d: ns.done ? ns.done + ' partie' + (ns.done > 1 ? 's' : '') + ' sur ' + ns.c.sections + ' marquée' + (ns.done > 1 ? 's' : '') + ' comme comprise' + (ns.done > 1 ? 's' : '') + '.' : 'Pas encore commencé. Compte environ 30 minutes.', href: ns.c.path, go: ns.done ? 'Continuer le chapitre' : 'Commencer' });
+    var st = R.qcm.stats('elec', BANK.filter(function (q) { return q.s === 'elec'; }));
+    if (st.due > 0) steps.push({ k: 'Répétition espacée', t: st.due + ' question' + (st.due > 1 ? 's' : '') + ' à revoir', d: 'Des questions ratées ou vues il y a quelques jours. C’est le moment de les reprendre.', href: 'qcm/#revision', go: 'Réviser maintenant' });
+    else steps.push({ k: 'QCM', t: 'Sprint de 10 questions', d: st.seen ? st.seen + ' questions déjà vues sur ' + st.total + ', dont ' + st.mastered + ' bien ancrées.' : st.total + ' questions d’élec t’attendent : cours, pièges et vrais QCM.', href: 'qcm/#sprint', go: 'Lancer' });
+    steps.push({ k: 'Annales', t: 'Un exercice de partiel', d: 'Exercices des sujets 2017 à 2024, classés par notion, avec indices et corrigé détaillé.', href: 'elec/entrainement.html', go: 'S’entraîner' });
+    $('#today').innerHTML = steps.slice(0, 3).map(function (s) {
+      return '<a class="step" href="' + R.url(s.href) + '"><span class="k">' + U.esc(s.k) + '</span><span class="t">' + U.esc(s.t) + '</span><span class="d">' + U.esc(s.d) + '</span><span class="go">' + U.esc(s.go) + ' →</span></a>';
+    }).join('');
+  }
+
+  /* ---- matières ---- */
+  function meter(label, frac, txt) {
+    return '<div class="meter"><div class="row"><span>' + label + '</span><span>' + txt + '</span></div><div class="bar"><i style="width:' + Math.round(frac * 100) + '%"></i></div></div>';
+  }
+  function renderSubjects() {
+    var A = window.ANNALES || { midterms: [] };
+    $('#subjects').innerHTML = R.subjects.map(function (s) {
+      var nAnn = A.midterms.filter(function (m) { return m.subject === s.id; }).length;
+      if (s.status !== 'ready') {
+        return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">bientôt</span></div>' +
+          '<p>Le cours et les entraînements arriveront avec tes supports. En attendant : ' + nAnn + ' sujet' + (nAnn > 1 ? 's' : '') + ' de partiel.</p>' +
+          '<div class="links"><a class="btn ghost" href="annales/#' + s.id + '">Voir les annales</a></div></article>';
+      }
+      var p = R.progress.subject(s.id), bank = BANK.filter(function (q) { return q.s === s.id; }), q = R.qcm.stats(s.id, bank);
+      var chapters = s.chapters.map(function (c, i) {
+        var done = Math.min(c.sections, R.progress.chapterDone(s.id, c.id));
+        return '<li><a href="' + R.url(c.path) + '"><span>' + (i + 1) + '. ' + c.title + '</span><span class="mono">' + done + '/' + c.sections + '</span></a></li>';
+      }).join('');
+      return '<article class="subj ready subj-' + s.id + '">' +
+        '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
+        '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">prêt</span></div>' +
+        '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
+        '<p>' + s.exam + '. Trois chapitres, des méthodes, ' + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés, corrigés.</p>' +
+        '<ul class="chapters">' + chapters + '</ul>' +
+        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">Ouvrir l’élec</a><a class="btn" href="' + R.url('elec/entrainement.html') + '">Entraînement</a><a class="btn" href="' + R.url('elec/fiche.html') + '">Fiche</a></div>' +
+        '</div><div class="meters">' +
+        meter('Cours compris', p.pctRead, p.read + ' / ' + p.sections) +
+        meter('QCM bien ancrés', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
+        meter('QCM déjà vus', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
+        meter('Exercices réussis', p.ex.ok / 30, p.ex.ok + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) +
+        '</div></article>';
+    }).join('');
+  }
+
+  function renderTools() {
+    var A = window.ANNALES || { midterms: [] };
+    $('#n-qcm').textContent = BANK.length;
+    $('#n-ann').textContent = A.midterms.length;
+  }
+
+  function all() { renderCount(); renderToday(); renderSubjects(); renderTools(); }
+  all();
+  R.store.on(function () { renderToday(); renderSubjects(); });
+})();
+</script>
+</body>
+</html>

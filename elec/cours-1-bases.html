@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les bases · Élec</title>
+<meta name="description" content="Électronique S1, chapitre 1 : grandeurs, schémas, flèches et conventions, loi d’Ohm, interrupteurs et appareils de mesure, générateurs idéaux et réels.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Élec · chapitre 1 : les bases">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="ah-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-v"/></marker>
+    <marker id="ah-i" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-i"/></marker>
+    <marker id="ah-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-p"/></marker>
+    <marker id="ah-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-k"/></marker>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="./">Élec</a> · Chapitre 1 sur 3</div>
+      <h1>L’électricité, c’est de l’<span class="w">eau</span> dans des tuyaux.</h1>
+      <p class="lead">Quatre grandeurs, deux sortes de flèches, une loi et quelques composants. Ce chapitre pose tout le vocabulaire du cours. Lis dans l’ordre et touche aux schémas : ils réagissent.</p>
+      <div class="chips"><span class="chip">≈ 35 min</span><span class="chip">8 parties</span><span class="chip">cours « Définitions » · TD 0 · TD 1</span><span class="chip ex">QCM de cours au partiel</span></div>
+    </div>
+    <div class="bench" aria-label="Simulateur : une pile et une résistance">
+      <div class="bench-head"><span>Essaie : la pompe et le tuyau</span><span>courant continu</span></div>
+      <div class="fig">
+        <svg class="c" viewBox="0 0 360 230" role="img" aria-label="Boucle avec une pile E et une résistance R, des points rouges montrent le courant">
+          <path class="w" d="M60 40H300V190H60Z"/>
+          <g id="sim-dots"></g>
+          <path class="ai" d="M150 40H196" marker-end="url(#ah-i)"/>
+          <text class="lbl li" x="168" y="28">I</text>
+          <circle class="src" cx="60" cy="115" r="24"/>
+          <path class="w" d="M60 91V139"/>
+          <text class="tiny" x="74" y="92">+</text>
+          <text class="lbl lv" x="18" y="121">E</text>
+          <rect class="res" x="288" y="76" width="24" height="78" rx="9"/>
+          <rect id="b1" x="288" y="88" width="24" height="7"/>
+          <rect id="b2" x="288" y="100" width="24" height="7"/>
+          <rect id="b3" x="288" y="112" width="24" height="7"/>
+          <rect x="288" y="134" width="24" height="7" fill="#C9A227"/>
+          <text class="lbl" x="324" y="121">R</text>
+        </svg>
+      </div>
+      <div class="ctrls">
+        <div class="grid2">
+          <div class="slider"><label for="simE">Poussée de la pile <var class="u">E</var></label><output id="simEv">12 V</output><input id="simE" type="range" min="0" max="24" step="1" value="12"></div>
+          <div class="slider"><label for="simR">Résistance <var>R</var></label><output id="simRv">6 Ω</output><input id="simR" type="range" min="1" max="24" step="1" value="6"></div>
+        </div>
+        <div class="readout" aria-live="polite"><var class="i">I</var> = <var class="u">E</var> ÷ <var>R</var> = <span id="simCalc">12 ÷ 6</span> = <span class="big" id="simI">2 A</span><br><span style="color:var(--muted);font-size:.88rem">Puissance dissipée : <span id="simP" class="mono">24 W</span> · code couleur : <span id="simCode" class="mono">bleu · noir · or · or</span></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 1 · Les bases</div>
+    <ol>
+      <li><a href="#s1"><span class="code" data-n="1"></span><span>Les 4 grandeurs</span></a></li>
+      <li><a href="#s2"><span class="code" data-n="2"></span><span>Lire un schéma</span></a></li>
+      <li><a href="#s3"><span class="code" data-n="3"></span><span>Les flèches</span></a></li>
+      <li><a href="#s4"><span class="code" data-n="4"></span><span>Dipôles et conventions</span></a></li>
+      <li><a href="#s5"><span class="code" data-n="5"></span><span>Loi d’Ohm et puissance</span></a></li>
+      <li><a href="#s6"><span class="code" data-n="6"></span><span>Fil ou trou</span></a></li>
+      <li><a href="#s7"><span class="code" data-n="7"></span><span>Les générateurs</span></a></li>
+      <li><a href="#s8"><span class="code" data-n="8"></span><span>Calculer sans calculatrice</span></a></li>
+    </ol>
+    <p class="toc-note">Numéros écrits avec le code couleur des résistances : noir 0, marron 1, rouge 2, orange 3, jaune 4, vert 5, bleu 6, violet 7, gris 8, blanc 9.</p>
+    <div class="toc-nav"><a href="./">← Accueil élec</a><a href="cours-2-lois.html">Chapitre 2 : lois fondamentales →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Sommaire (8 parties)</summary>
+      <ol>
+        <li><a href="#s1">Les 4 grandeurs</a></li><li><a href="#s2">Lire un schéma</a></li><li><a href="#s3">Les flèches</a></li><li><a href="#s4">Dipôles et conventions</a></li>
+        <li><a href="#s5">Loi d’Ohm et puissance</a></li><li><a href="#s6">Fil ou trou</a></li><li><a href="#s7">Les générateurs</a></li><li><a href="#s8">Calculer sans calculatrice</a></li>
+      </ol>
+    </details>
+
+    <!-- 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Partie 1</span></div><h2>Les 4 grandeurs</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un <b>circuit électrique</b> est un ensemble de composants reliés par des fils conducteurs (du cuivre, en général). Le courant ne circule que si la boucle est <b>fermée</b> : la pile pousse l’eau, l’eau fait le tour et revient à la pile. Pour décrire ce qui se passe, quatre grandeurs suffisent.</p></div>
+        <div class="grid2">
+          <div class="qty"><div class="qty-top"><span class="qty-sym" style="color:var(--amp)">I</span><span class="qty-unit">ampère (A)<br><span class="en">current</span></span></div><h3>Le courant</h3><p>Le <b>débit</b> de charges : combien de coulombs traversent le fil chaque seconde. <span class="f-inline"><var class="i">i</var> = d<var>q</var>/d<var>t</var></span>, et 1 A = 1 C/s. Il <b>traverse</b> les composants. Flèche <b>sur</b> le fil.</p><p class="ex">Chargeur de téléphone : environ 2 A.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym" style="color:var(--volt)">U</span><span class="qty-unit">volt (V)<br><span class="en">voltage</span></span></div><h3>La tension</h3><p>La <b>différence de hauteur</b> entre deux points, ou <b>différence de potentiel</b> (ddp). C’est elle qui fait couler l’eau. Elle se mesure <b>entre</b> deux points. Flèche <b>à côté</b> du composant. 1 V = 1 J/C.</p><p class="ex">Pile AA : 1,5 V. Batterie de voiture : 12 V.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym">R</span><span class="qty-unit">ohm (Ω)<br><span class="en">resistance · resistor</span></span></div><h3>La résistance</h3><p>Un <b>rétrécissement</b> du tuyau : il freine le courant. Plus <var>R</var> est grand, moins le courant passe pour une même tension.</p><p class="ex">1 kΩ = 1 000 Ω.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym">P</span><span class="qty-unit">watt (W)<br><span class="en">power</span></span></div><h3>La puissance</h3><p>L’énergie échangée <b>chaque seconde</b> : <span class="f-inline"><var>P</var> = <var class="u">U</var>·<var class="i">I</var></span>. Une résistance la transforme en chaleur (effet Joule).</p><p class="ex">12 V × 2 A = 24 W.</p></div>
+        </div>
+        <h3>Le potentiel : l’étage d’un point</h3>
+        <div class="prose">
+          <p>Chaque point du circuit est à un <b>étage</b> : son potentiel <var class="v">V</var>, en volts <span class="en">potential</span>. On choisit un point de référence à 0 V, le rez-de-chaussée : c’est la <b>masse</b> <span class="en">ground</span>. La tension entre deux points, c’est la différence de leurs étages.</p>
+        </div>
+        <div class="formula"><div><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub></div><small>la tension entre A et B = l’étage de A moins l’étage de B</small></div>
+        <div class="note trap"><span class="tag">Piège de vocabulaire</span><p>Le cours insiste : <b>masse ≠ terre</b>. La terre est <i>le</i> point de potentiel nul (le sol). La masse est le point que <i>tu choisis</i> comme référence dans ton circuit. Et le sens conventionnel du courant est l’inverse du sens réel des électrons (chargés négativement) : c’est historique, on garde la convention.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Le courant <b>traverse</b> un composant. La tension se mesure <b>entre</b> deux points.</li><li>Une tension, c’est une <b>différence de potentiels</b>. Un point tout seul n’a pas de tension, il a un potentiel.</li><li>Unités : A = C/s, V = J/C, W = V·A, Ω = V/A.</li></ul></div>
+        <div data-check="elec-c1-01,elec-c1-02,elec-c1-03"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s1"></button></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Partie 2</span></div><h2>Lire un schéma</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un schéma est un plan de tuyauterie. Un composant à deux bornes s’appelle un <b>dipôle</b> <span class="en">two-terminal component</span> : résistance, pile, interrupteur… Un dipôle quelconque se dessine par un simple rectangle. Voici tous les symboles du cours, avec ce qu’ils deviennent dans un calcul.</p></div>
+        <div class="grid2">
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M6 22H74"/></svg><div><h4>Fil <span class="en">wire</span></h4><p>Un tuyau parfait, il ne freine rien. Deux points reliés par un simple fil sont <b>le même point</b>, au même potentiel.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M6 18H74M40 18V40"/><circle class="dot" cx="40" cy="18" r="4"/></svg><div><h4>Nœud <span class="en">node</span></h4><p>Un point où <b>au moins 3 fils</b> se rejoignent : un carrefour.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H22M58 22H76"/><rect class="r" x="22" y="14" width="36" height="16"/></svg><div><h4>Résistance <span class="en">resistor</span></h4><p>Freine le courant. Sa tension vaut <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H76"/><circle class="src" cx="40" cy="22" r="14" style="fill:none"/></svg><div><h4>Source de tension <span class="en">voltage source</span></h4><p>Le trait <b>suit</b> le fil. Elle impose une tension <var class="u">E</var>, quel que soit le courant. Exemple : une pile.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H26M54 22H76M40 8V36"/><circle class="src" cx="40" cy="22" r="14" style="fill:none"/></svg><div><h4>Source de courant <span class="en">current source</span></h4><p>Le trait <b>coupe</b> le fil. Elle impose un courant <var class="i">I</var>. Sa tension s’adapte au reste du circuit.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H76"/><circle class="dot" cx="28" cy="22" r="3"/><circle class="dot" cx="52" cy="22" r="3"/></svg><div><h4>Interrupteur fermé <span class="en">closed switch · K</span></h4><p>Se remplace par <b>un fil</b>. Tension nulle à ses bornes.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H28L49 9M52 22H76"/><circle class="dot" cx="28" cy="22" r="3"/><circle class="dot" cx="52" cy="22" r="3"/></svg><div><h4>Interrupteur ouvert <span class="en">open switch</span></h4><p>Se remplace par <b>un trou</b>. Aucun courant, mais une tension peut apparaître à ses bornes.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H27M53 22H76"/><circle class="src" cx="40" cy="22" r="13"/><text x="40" y="27" text-anchor="middle" class="lbl" style="font-style:normal;font-family:var(--font-mono);font-size:14px;font-weight:600">V</text></svg><div><h4>Voltmètre <span class="en">voltmeter</span></h4><p>Se branche <b>en parallèle</b>, entre deux points. Dans un calcul : <b>un trou</b> (résistance infinie).</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H27M53 22H76"/><circle class="src" cx="40" cy="22" r="13"/><text x="40" y="27" text-anchor="middle" class="lbl" style="font-style:normal;font-family:var(--font-mono);font-size:14px;font-weight:600">A</text></svg><div><h4>Ampèremètre <span class="en">ammeter</span></h4><p>Se branche <b>en série</b>, dans le fil. Dans un calcul : <b>un fil</b> (résistance nulle).</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M40 4V20M26 20H54"/><path d="M28 30L33 20M37 30L42 20M46 30L51 20" stroke="currentColor" style="stroke:var(--ink)" stroke-width="1.6"/></svg><div><h4>Masse <span class="en">ground</span></h4><p>Le point que tu choisis comme référence : 0 V. Tous les symboles de masse d’un schéma sont reliés entre eux.</p></div></div>
+        </div>
+        <div class="note trap"><span class="tag">Piège</span><p><b>Source de tension ou source de courant ?</b> Efface le rond dans ta tête. S’il reste un fil continu (le trait suit le fil), c’est une source de <b>tension</b>. S’il reste un trou (le trait coupe le fil), c’est une source de <b>courant</b>. Ton cours utilise exactement cette idée pour « éteindre » une source au chapitre 3.</p></div>
+        <div data-check="elec-c1-04,elec-c1-05"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s2"></button></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Partie 3</span></div><h2>Les flèches, là où tout se joue</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La plupart des erreurs viennent des flèches. Il y en a deux sortes, et elles ne veulent pas dire la même chose.</p></div>
+        <h3>La flèche de tension pointe vers le point écrit en premier</h3>
+        <div class="prose"><p><span class="f-inline"><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub></span> : la pointe de la flèche est sur <b>A</b> (« pointe moins arrière », dit le cours). Si le résultat est positif, A est plus haut que B. S’il est négatif, A est plus bas. Ce n’est pas une erreur : la flèche montre juste quel calcul on fait.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>L’immeuble des potentiels</span><span>déplace A et B</span></div>
+          <div class="fig">
+            <svg class="c" id="floors" viewBox="0 0 330 250" role="img" aria-label="Deux points A et B placés à des étages, et la flèche de tension qui pointe vers A">
+              <g id="floor-lines"></g>
+              <line id="fArrow" class="ap" x1="238" y1="132" x2="162" y2="72" marker-end="url(#ah-p)"/>
+              <text id="fArrowLbl" class="lbl lp" x="200" y="96">U<tspan class="s" dy="4">AB</tspan></text>
+              <g id="mA" transform="translate(150 72)"><circle r="14" style="fill:var(--pot)"/><text y="5" text-anchor="middle" class="bt" style="fill:var(--surface);font-size:13px">A</text></g>
+              <g id="mB" transform="translate(250 132)"><circle r="14" style="fill:var(--ink)"/><text y="5" text-anchor="middle" class="bt" style="fill:var(--surface);font-size:13px">B</text></g>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="grid2">
+              <div class="slider"><label for="fA">Étage de A : <var class="v">V</var><sub>A</sub></label><output id="fAv">10 V</output><input id="fA" type="range" min="0" max="12" step="1" value="10"></div>
+              <div class="slider"><label for="fB">Étage de B : <var class="v">V</var><sub>B</sub></label><output id="fBv">6 V</output><input id="fB" type="range" min="0" max="12" step="1" value="6"></div>
+            </div>
+            <div class="readout" id="fRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>Les tensions s’enchaînent comme des étages</h3>
+        <div class="prose"><p>Pour aller de A à C, tu peux passer par B : <span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span>. C’est la « relation de Chasles » des tensions, et c’est la base de la loi des mailles du chapitre 2. Et retourner la flèche change le signe : <span class="f-inline"><var class="u">U</var><sub>BA</sub> = −<var class="u">U</var><sub>AB</sub></span>.</p></div>
+        <h3>La flèche de courant est un pari</h3>
+        <div class="prose"><p>Tu choisis le sens de la flèche <var class="i">I</var> au hasard, puis tu calcules. Résultat positif : le courant va dans le sens de ta flèche. Résultat négatif : il va dans l’autre sens. Dans une résistance, le vrai courant <b>descend toujours</b> de l’étage haut vers l’étage bas, comme l’eau.</p></div>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Les sujets 2017 et 2021 donnaient des tensions comme <span class="f-inline"><var class="u">U</var><sub>4</sub> = <var class="v">V</var><sub>C</sub> − <var class="v">V</var><sub>D</sub> = −110 V</span> et demandaient de <b>placer les points</b> sur la figure, puis de calculer les autres tensions par enchaînement. Le sujet 2022 imposait des flèches et demandait de commenter le signe des courants trouvés. <a class="td x" href="entrainement.html#potentiels">S’entraîner</a></p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Pointe de la flèche <var class="u">U</var> = le point écrit en premier.</li><li><span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span> et <span class="f-inline"><var class="u">U</var><sub>BA</sub> = −<var class="u">U</var><sub>AB</sub></span>.</li><li>Un résultat négatif veut juste dire « dans l’autre sens ».</li></ul></div>
+        <div data-check="elec-c1-06,elec-c1-07,elec-c1-08"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s3"></button></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Partie 4</span></div><h2>Dipôles et conventions de signe</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un dipôle a deux bornes. Le courant qui entre par une borne <b>ressort intégralement</b> par l’autre : un dipôle ne garde pas de courant, même un générateur. Le cours classe les dipôles selon trois critères.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Critère</th><th>Définition du cours</th><th>Exemples</th></tr></thead>
+          <tbody>
+            <tr><td><b>Linéaire</b> / non linéaire</td><td>Linéaire si la relation entre <var class="u">U</var> et <var class="i">I</var> ne dépend pas du courant (impédance constante).</td><td>Résistance, condensateur, bobine : linéaires. Diode, transistor : non.</td></tr>
+            <tr><td><b>Passif</b> / actif</td><td>Passif si sa caractéristique passe par l’origine : <var class="u">U</var> = 0 ⇔ <var class="i">I</var> = 0. Il ne fait que consommer (effet Joule).</td><td>Résistance : passive. Pile, batterie, moteur : actifs.</td></tr>
+            <tr><td><b>Récepteur</b> / générateur</td><td>Générateur s’il fournit de l’énergie électrique, récepteur s’il en consomme.</td><td>Une batterie est générateur quand elle alimente ton téléphone, récepteur quand tu la recharges.</td></tr>
+          </tbody></table></div>
+        <h3>Les deux conventions</h3>
+        <div class="prose"><p>Sur un même dipôle, on compare le sens de la flèche <var class="u">U</var> et celui de la flèche <var class="i">I</var>. Une convention est un <b>choix de fléchage</b>, pas une propriété du dipôle.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Convention récepteur <span class="en">receiver convention</span></h3><p>Flèches en <b>sens opposés</b>. C’est le réglage normal d’une résistance : <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>.</p><p class="ex"><var>P</var> = <var class="u">U</var>·<var class="i">I</var> est alors la puissance <b>reçue</b>. Si <var class="u">U</var> et <var class="i">I</var> sont de même signe, le dipôle est bien récepteur.</p></div>
+          <div class="qty"><h3>Convention générateur <span class="en">source convention</span></h3><p>Flèches dans le <b>même sens</b>. Normal pour une pile, qui pousse le courant vers son +. Sur une résistance, il faut alors écrire <span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>.</p><p class="ex"><var>P</var> = <var class="u">U</var>·<var class="i">I</var> est alors la puissance <b>fournie</b>. Même signe : le dipôle est bien générateur.</p></div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>Ohm et le sens des flèches</span><span>retourne la flèche I</span></div>
+          <div class="fig">
+            <svg class="c" viewBox="0 0 330 120" role="img" aria-label="Une résistance entre A et B avec une flèche de tension et une flèche de courant">
+              <path class="w" d="M20 74H110M220 74H310"/>
+              <rect class="r" x="110" y="62" width="110" height="24"/>
+              <text class="lbl" x="158" y="108">R</text>
+              <path class="av" d="M220 34H112" marker-end="url(#ah-v)"/>
+              <text class="lbl lv" x="138" y="24">U = V<tspan class="s" dy="4">A</tspan><tspan dy="-4"> − V</tspan><tspan class="s" dy="4">B</tspan></text>
+              <path id="convI" class="ai" d="M36 74H92" marker-end="url(#ah-i)"/>
+              <text class="lbl li" x="58" y="64">I</text>
+              <circle class="dot" cx="20" cy="74" r="4"/><circle class="dot" cx="310" cy="74" r="4"/>
+              <text class="lbl" x="14" y="104">A</text><text class="lbl" x="304" y="104">B</text>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row"><button class="btn primary" id="convBtn" type="button">Retourner la flèche I</button></div>
+            <div class="readout" id="convRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note why"><span class="tag">Le conseil du cours</span><p>Dans un circuit avec <b>un seul générateur</b>, flèche-le en convention générateur et toutes les résistances en convention récepteur : tous tes résultats sortiront positifs. Avec deux générateurs qui se poussent l’un contre l’autre, impossible de satisfaire tout le monde : choisis un sens au hasard et lis le signe à la fin.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Récepteur : flèches opposées, <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>, <var>P</var> = <var class="u">U</var><var class="i">I</var> reçue.</li><li>Générateur : flèches dans le même sens, <var>P</var> = <var class="u">U</var><var class="i">I</var> fournie ; sur une résistance, <span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>.</li><li>Le courant qui entre dans un dipôle ressort en entier, générateur compris.</li></ul></div>
+        <div data-check="elec-c1-09,elec-c1-10,elec-c1-11"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s4"></button></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Partie 5</span></div><h2>La loi d’Ohm et la puissance</h2></div>
+      <div class="stack">
+        <div class="formula"><div><var class="u">U</var> = <var>R</var> · <var class="i">I</var></div><small>loi d’Ohm <span class="en">Ohm’s law</span> · en convention récepteur · volts = ohms × ampères</small></div>
+        <div class="prose"><p>Tous les matériaux ne conduisent pas aussi bien : c’est l’<b>effet résistif</b>. Une résistance est un dipôle <b>passif</b> dont le courant est proportionnel à la tension. Sa caractéristique <span class="f-inline"><var class="i">I</var> = <var>f</var>(<var class="u">U</var>)</span> est une droite qui passe par l’origine. Tu en tires les trois versions en isolant la lettre cherchée :</p></div>
+        <div class="grid3">
+          <div class="card"><span class="t">je cherche la tension</span><span class="f"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span><span class="d">4 Ω traversée par 3 A → 12 V</span></div>
+          <div class="card"><span class="t">je cherche le courant</span><span class="f"><var class="i">I</var> = <var class="u">U</var> / <var>R</var></span><span class="d">12 V sur 4 Ω → 3 A</span></div>
+          <div class="card"><span class="t">je cherche la résistance</span><span class="f"><var>R</var> = <var class="u">U</var> / <var class="i">I</var></span><span class="d">12 V et 3 A → 4 Ω</span></div>
+        </div>
+        <h3>Les préfixes, et une astuce</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Préfixe</th><th>Veut dire</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td><b>µ</b> micro</td><td>× 10⁻⁶</td><td>5 µA = 0,000 005 A</td></tr>
+            <tr><td><b>m</b> milli</td><td>× 10⁻³</td><td>2 mA = 0,002 A</td></tr>
+            <tr><td><b>k</b> kilo</td><td>× 10³</td><td>4,7 kΩ = 4 700 Ω</td></tr>
+            <tr><td><b>M</b> méga</td><td>× 10⁶</td><td>1 MΩ = 1 000 000 Ω</td></tr>
+          </tbody></table></div>
+        <div class="prose"><p><b>Astuce :</b> kΩ × mA donne directement des volts, car le kilo et le milli s’annulent : 1 kΩ × 2 mA = 2 V. De même V / kΩ donne des mA : 12 V / 4 kΩ = 3 mA. Les sujets de partiel sont presque toujours en kΩ et en mA <span class="td x">Midterm 2022 · Ex 3</span>.</p></div>
+        <h3>Puissance et effet Joule</h3>
+        <div class="prose"><p><span class="f-inline"><var>P</var> = <var class="u">U</var>·<var class="i">I</var></span>. Avec la loi d’Ohm, pour une résistance : <span class="f-inline"><var>P</var> = <var>R</var>·<var class="i">I</var>²</span> = <span class="f-inline"><var class="u">U</var>²/<var>R</var></span>. Une résistance transforme toute cette puissance en chaleur. L’inverse de la résistance est la <b>conductance</b> <span class="f-inline"><var>G</var> = 1/<var>R</var></span>, en siemens (S) : « à quel point ça laisse passer ».</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Au QCM, les distracteurs jouent sur les unités et les puissances de 10 : « 100 V / 0,1 A » donne <b>1 kΩ</b> (diviser par 0,1, c’est multiplier par 10), pas 10 Ω. Et une option avec le bon nombre mais la mauvaise unité (« 1 000 A » pour une tension) est fausse <span class="td x">Midterm 2021 · Ex 1</span>.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li><span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span> en convention récepteur, avec un signe moins sinon.</li><li><span class="f-inline"><var>P</var> = <var class="u">U</var><var class="i">I</var> = <var>R</var><var class="i">I</var>² = <var class="u">U</var>²/<var>R</var></span> et <span class="f-inline"><var>G</var> = 1/<var>R</var></span>.</li><li>kΩ × mA = V, V / kΩ = mA.</li></ul></div>
+        <div data-check="elec-c1-12,elec-c1-13,elec-c1-14"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s5"></button></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Partie 6</span></div><h2>Fil ou trou : interrupteurs et appareils de mesure</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Avant de calculer, remplace chaque élément « spécial » par ce qu’il devient vraiment, puis redessine le circuit.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tu vois</th><th>Remplace par</th><th>Ce que ça donne</th></tr></thead>
+          <tbody>
+            <tr><td>Interrupteur fermé</td><td>un fil</td><td><var class="u">U</var><sub>K</sub> = 0, <var class="i">I</var><sub>K</sub> quelconque</td></tr>
+            <tr><td>Interrupteur ouvert</td><td>un trou (résistance infinie)</td><td><var class="i">I</var><sub>K</sub> = 0, <var class="u">U</var><sub>K</sub> quelconque</td></tr>
+            <tr><td>Voltmètre (branché en parallèle)</td><td>un trou</td><td>il lit la tension sans rien changer <span class="td">TD1 · Ex 6</span></td></tr>
+            <tr><td>Ampèremètre (branché en série)</td><td>un fil</td><td>il court-circuite ce qui est en parallèle avec lui <span class="td">TD1 · Ex 6</span></td></tr>
+            <tr><td>Fil posé aux bornes d’une résistance</td><td>la résistance disparaît</td><td>0 V à ses bornes donc 0 A dedans : c’est un <b>court-circuit</b> <span class="en">short circuit</span></td></tr>
+          </tbody></table></div>
+        <div class="bench">
+          <div class="bench-head"><span>Les 4 cas des interrupteurs, avec E = 12 V</span><span class="td">TD1 · Ex 7</span></div>
+          <div class="fig">
+            <svg class="c" id="sw" viewBox="0 0 370 230" role="img" aria-label="Circuit avec une pile, une résistance en parallèle avec l’interrupteur K1, puis l’interrupteur K2 en série avec une résistance">
+              <polyline id="swPath" class="path-hl" points="40,200 40,50 300,50 300,200 40,200"/>
+              <path class="w" d="M40 102V50H120M120 20V50M220 20V50M220 50H300V62M300 102V120M300 164V200H40V138"/>
+              <path class="w" d="M120 20H150M190 20H220M120 50H140M200 50H220"/>
+              <circle class="src" cx="40" cy="120" r="18"/><path class="w" d="M40 102V138"/>
+              <path class="av" d="M12 140V100" marker-end="url(#ah-v)"/><text class="lbl lv" x="0" y="96">E</text>
+              <rect class="r" x="150" y="12" width="40" height="16"/><text class="lbl" x="164" y="10" style="font-size:14px">R</text>
+              <rect class="r" x="292" y="120" width="16" height="44"/><text class="lbl" x="270" y="148" style="font-size:14px">R</text>
+              <line id="k1" class="w" x1="140" y1="50" x2="196" y2="30" style="cursor:pointer"/>
+              <circle class="dot" cx="140" cy="50" r="3.5"/><circle class="dot" cx="200" cy="50" r="3.5"/>
+              <text class="tiny" x="162" y="72">K1</text>
+              <line id="k2" class="w" x1="300" y1="62" x2="318" y2="98" style="cursor:pointer"/>
+              <circle class="dot" cx="300" cy="62" r="3.5"/><circle class="dot" cx="300" cy="102" r="3.5"/>
+              <text class="tiny" x="270" y="86">K2</text>
+              <path class="av" d="M338 196V58" marker-end="url(#ah-v)"/><text class="lbl lv" x="346" y="132">U</text>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row"><button class="btn" type="button" id="k1btn" aria-pressed="false">K1 : ouvert</button><button class="btn" type="button" id="k2btn" aria-pressed="false">K2 : ouvert</button></div>
+            <div class="readout" id="swRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Les questions « l’ampèremètre se branche en série / le voltmètre en parallèle » reviennent dans presque tous les QCM de cours (2017, 2021, 2022). Et le TD1 Ex 6 (boîte noire avec voltmètre puis ampèremètre) est un classique : mesure à vide puis en court-circuit, c’est déjà l’idée de Thévenin et Norton. <a class="td x" href="entrainement.html#appareils">S’entraîner</a></p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Fermé, ampèremètre = <b>fil</b>. Ouvert, voltmètre = <b>trou</b>.</li><li>Aucun courant dans une résistance ⇒ aucune tension à ses bornes (<span class="f-inline"><var>R</var>·0 = 0</span>). C’est pour ça qu’un interrupteur ouvert « récupère » toute la tension.</li></ul></div>
+        <div data-check="elec-c1-15,elec-c1-16,elec-c1-17"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s6"></button></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Partie 7</span></div><h2>Les générateurs, idéaux et réels</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un générateur peut envoyer du courant dans un circuit. Un générateur <b>idéal</b> le fait sans aucune perte. Il en existe deux types, et chacun impose une seule grandeur.</p></div>
+        <div class="grid2">
+          <div class="bench"><div class="bench-head"><span>Source de tension idéale</span><span><var class="u">u</var> = <var class="u">E</var> pour tout <var class="i">i</var></span></div>
+            <div class="fig sm" id="fig-ideal-e"></div>
+            <p class="fig-cap">La tension ne dépend pas du courant débité : caractéristique horizontale. Pile, batterie, secteur.</p></div>
+          <div class="bench"><div class="bench-head"><span>Source de courant idéale</span><span><var class="i">i</var> = <var class="i">I</var> pour tout <var class="u">u</var></span></div>
+            <div class="fig sm" id="fig-ideal-i"></div>
+            <p class="fig-cap">Le courant ne dépend pas de la tension : caractéristique verticale. Exemple du cours : un chargeur de batterie.</p></div>
+        </div>
+        <h3>Éteindre une source : enlève le rond</h3>
+        <div class="prose"><p>Pour les théorèmes du chapitre 3, on aura besoin d’<b>annuler</b> (éteindre, passiver) des sources. Les symboles sont faits pour ça : enlève le rond et regarde ce qui reste.</p>
+          <ul><li>Source de <b>tension</b> éteinte : <var class="u">E</var> = 0, ses deux bornes sont au même potentiel. Il reste <b>un fil</b> : on la court-circuite.</li>
+          <li>Source de <b>courant</b> éteinte : <var class="i">I</var> = 0, plus rien ne passe dans sa branche. Il reste <b>un trou</b> : on enlève toute la branche.</li></ul></div>
+        <h3>Les générateurs réels</h3>
+        <div class="prose"><p>Une vraie pile chauffe un peu : il y a des pertes par effet Joule dans les fils. On les modélise par une <b>résistance interne</b> <var>r</var>.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Générateur de tension réel</h3><p><var class="u">E</var> en <b>série</b> avec <var>r</var>. La tension de sortie baisse quand on tire du courant :</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="u">u</var> = <var class="u">E</var> − <var>r</var>·<var class="i">i</var></div></div><p class="ex">Meilleur quand <var>r</var> est <b>faible</b>. Si la charge <var>R</var> ≫ <var>r</var>, on peut le considérer idéal.</p></div>
+          <div class="qty"><h3>Générateur de courant réel</h3><p><var class="i">I</var> en <b>parallèle</b> avec <var>r</var>. Une partie du courant fuit dans <var>r</var> :</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="i">i</var> = <var class="i">I</var> − <var class="u">u</var>/<var>r</var></div></div><p class="ex">Meilleur quand <var>r</var> est <b>forte</b>. Si la charge <var>R</var> ≪ <var>r</var>, on peut le considérer idéal.</p></div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>Un générateur réel qui débite dans une charge R</span><span id="rgMode">générateur de tension</span></div>
+          <div class="grid2" style="gap:0">
+            <div class="fig" id="fig-real"></div>
+            <div class="fig" id="fig-real-plot"></div>
+          </div>
+          <div class="ctrls">
+            <div class="row" role="group" aria-label="Type de générateur"><button class="btn" type="button" data-rg="v" aria-pressed="true">Tension (E, r série)</button><button class="btn" type="button" data-rg="i" aria-pressed="false">Courant (I, r parallèle)</button></div>
+            <div class="grid2">
+              <div class="slider"><label for="rgR">Charge <var>R</var></label><output id="rgRv">10 Ω</output><input id="rgR" type="range" min="1" max="60" step="1" value="10"></div>
+              <div class="slider"><label for="rgr">Résistance interne <var>r</var></label><output id="rgrv">2 Ω</output><input id="rgr" type="range" min="1" max="40" step="1" value="2"></div>
+            </div>
+            <div class="readout" id="rgRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Le TD1 Ex 5 est l’exercice type : « le générateur (<var class="u">E</var>, <var>R</var>) impose <var class="u">U</var> = 2 V si <var>R</var><sub>C</sub> = 10 Ω et le double si <var>R</var><sub>C</sub> = 25 Ω ». Deux situations, deux équations de diviseur de tension, deux inconnues : <var class="u">E</var> = 12 V et <var>R</var> = 50 Ω. <a class="td x" href="entrainement.html#generateurs">S’entraîner</a></p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Source de tension : impose <var class="u">U</var> ; son courant dépend du circuit. Source de courant : impose <var class="i">I</var> ; sa tension dépend du circuit.</li><li>Éteindre : tension → <b>fil</b>, courant → <b>trou</b>.</li><li>Réel : tension = <var class="u">E</var> + <var>r</var> en série ; courant = <var class="i">I</var> + <var>r</var> en parallèle.</li></ul></div>
+        <div data-check="elec-c1-18,elec-c1-19,elec-c1-20,elec-c1-21"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s7"></button></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Partie 8</span></div><h2>Calculer sans calculatrice</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le partiel se fait <b>sans calculatrice</b>, et presque tout est littéral (« en fonction de <var class="u">E</var> et <var>R</var> »). Le TD 0 entraîne les gestes de calcul dont tu as besoin. Les voici avec des exemples tirés des TD et des sujets.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Fractions</h3><p>Même dénominateur d’abord : <span class="f-inline"><var>a</var>/<var>b</var> + <var>c</var>/<var>d</var> = (<var>ad</var> + <var>cb</var>)/(<var>bd</var>)</span>. Diviser par une fraction, c’est multiplier par son inverse.</p><p class="f-block">1/<var>R</var> + 1/(2<var>R</var>) = 2/(2<var>R</var>) + 1/(2<var>R</var>) = 3/(2<var>R</var>)<br>donc la résistance vaut 2<var>R</var>/3</p></div>
+          <div class="qty"><h3>Isoler une inconnue</h3><p>Ce que tu fais d’un côté du « = », tu le fais de l’autre. Produit en croix pour se débarrasser des fractions.</p><p class="f-block">3,3·(<var>R</var>₁ + <var>R</var>₂) = 12·<var>R</var>₂<br>3,3·<var>R</var>₁ = 8,7·<var>R</var>₂<br><var>R</var>₂/<var>R</var>₁ = 3,3/8,7 ≈ 0,38</p></div>
+          <div class="qty"><h3>Système de deux équations</h3><p><b>Substitution</b> : isole une inconnue dans une équation, remplace-la dans l’autre. Ou <b>combinaison</b> : additionne les équations pour en éliminer une.</p><p class="f-block">2<var>R</var> + 20 = 10<var class="u">E</var> et 4<var>R</var> + 100 = 25<var class="u">E</var><br>(1) donne <var>R</var> = 5<var class="u">E</var> − 10, dans (2) :<br>20<var class="u">E</var> − 40 + 100 = 25<var class="u">E</var> ⇒ <var class="u">E</var> = 12 V, <var>R</var> = 50 Ω</p></div>
+          <div class="qty"><h3>Vérifier l’homogénéité <span class="en">dimensional consistency</span></h3><p>Les deux côtés du « = » ont la même unité, et on n’additionne que des choses de même unité. Briques : <b>V = Ω × A</b> et <b>W = V × A</b>.</p><p class="f-block">✓ <var class="u">U</var> = <var>R</var><var class="i">I</var> + <var class="u">E</var> : V + V<br>✓ <var>P</var> = <var class="u">U</var>²/<var>R</var> : V²/Ω = V·A = W<br>✗ <var class="i">I</var> = <var class="u">E</var>/<var>R</var> + <var class="u">E</var> : A + V, impossible</p></div>
+        </div>
+        <h3>Les réflexes qui font gagner du temps</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Calcul</th><th>Réflexe</th></tr></thead>
+          <tbody>
+            <tr><td>Deux résistances égales en parallèle</td><td><var>R</var> // <var>R</var> = <var>R</var>/2, et <var>n</var> égales : <var>R</var>/<var>n</var></td></tr>
+            <tr><td><var>R</var> // 2<var>R</var></td><td>2<var>R</var>²/3<var>R</var> = 2<var>R</var>/3</td></tr>
+            <tr><td>3<var>R</var> // 6<var>R</var></td><td>18<var>R</var>²/9<var>R</var> = 2<var>R</var></td></tr>
+            <tr><td>Fraction à étages</td><td>multiplie en haut et en bas par le même nombre : (7<var>R</var>/2)·3<var>R</var> / (7<var>R</var>/2 + 3<var>R</var>) = 21<var>R</var>/13 en multipliant tout par 2</td></tr>
+            <tr><td>Diviser par 0,1 ou 0,5</td><td>multiplier par 10 ou par 2</td></tr>
+            <tr><td>Résultat littéral</td><td>vérifie l’unité, puis un cas limite (<var>R</var> → 0, <var>R</var> → ∞) qui doit avoir du sens</td></tr>
+          </tbody></table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Deux inconnues demandent deux équations : en électronique, elles viennent souvent de deux situations (deux mesures, deux réglages).</li><li>Avant de rendre une formule, vérifie les unités : c’est le contrôle le plus rapide qui existe.</li></ul></div>
+        <div data-check="elec-c1-22,elec-c1-23,elec-c1-24"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="elec:bases:s8"></button></div>
+      </div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Chapitres">
+      <a href="./"><span>Retour</span><b>Accueil élec</b></a>
+      <a class="next" href="cours-2-lois.html"><span>Chapitre 2</span><b>Lois fondamentales →</b></a>
+    </nav>
+    <footer class="foot">Fait à partir du cours « Concepts de base de l’électronique » (promo 2031), du TD 0 et du TD 1, et des sujets de partiel 2017 à 2024.</footer>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, nf = U.nf, E = R.elec;
+  var reduce = U.reduceMotion();
+
+  /* ---- simulateur de l'en-tête ---- */
+  var simE = $('#simE'), simR = $('#simR'), dotsG = $('#sim-dots');
+  var L = 780, N = 20, NS = 'http://www.w3.org/2000/svg', dots = [];
+  for (var k = 0; k < N; k++) { var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '4'); c.setAttribute('class', 'flow'); dotsG.appendChild(c); dots.push(c); }
+  function pt(s) { s = ((s % L) + L) % L; if (s < 240) return [60 + s, 40]; s -= 240; if (s < 150) return [300, 40 + s]; s -= 150; if (s < 240) return [300 - s, 190]; s -= 240; return [60, 190 - s]; }
+  var off = 0, last = null, speed = 80;
+  function place() { dots.forEach(function (c, k) { var p = pt(off + k * L / N); c.setAttribute('cx', p[0]); c.setAttribute('cy', p[1]); }); }
+  function bandsFor(r) { return r < 10 ? [r, 0, 'gold'] : [Math.floor(r / 10), r % 10, 0]; }
+  function updSim() {
+    var e = +simE.value, r = +simR.value, i = e / r;
+    $('#simEv').textContent = e + ' V'; $('#simRv').textContent = r + ' Ω';
+    $('#simCalc').textContent = e + ' ÷ ' + r; $('#simI').textContent = nf(i) + ' A'; $('#simP').textContent = nf(e * i, 1) + ' W';
+    var b = bandsFor(r);
+    ['b1', 'b2', 'b3'].forEach(function (id, k) { var v = b[k]; $('#' + id).setAttribute('fill', v === 'gold' ? '#C9A227' : E.CC[v]); });
+    $('#simCode').textContent = b.map(function (v) { return v === 'gold' ? 'or' : E.CN[v]; }).join(' · ') + ' · or';
+    speed = Math.min(36 * i, 300);
+    if (reduce) place();
+  }
+  function frame(t) { if (last !== null) off += speed * (t - last) / 1000; last = t; place(); requestAnimationFrame(frame); }
+  simE.addEventListener('input', updSim); simR.addEventListener('input', updSim);
+  updSim(); place(); if (!reduce) requestAnimationFrame(frame);
+
+  /* ---- immeuble des potentiels ---- */
+  function yv(v) { return 226 - v * 15; }
+  (function drawFloors() {
+    var s = '';
+    for (var v = 0; v <= 12; v++) { var y = yv(v); s += '<line class="floor" x1="70" x2="290" y1="' + y + '" y2="' + y + '"/><text class="floor-lbl" x="60" y="' + (y + 3.5) + '" text-anchor="end">' + v + ' V</text>' + (v === 0 ? '<text class="floor-lbl" x="294" y="' + (y + 3.5) + '">masse</text>' : ''); }
+    $('#floor-lines').innerHTML = s;
+  })();
+  function updFloors() {
+    var a = +$('#fA').value, b = +$('#fB').value, ya = yv(a), yb = yv(b);
+    $('#fAv').textContent = a + ' V'; $('#fBv').textContent = b + ' V';
+    $('#mA').setAttribute('transform', 'translate(150 ' + ya + ')'); $('#mB').setAttribute('transform', 'translate(250 ' + yb + ')');
+    var ar = $('#fArrow'), lb = $('#fArrowLbl'), dx = 150 - 250, dy = ya - yb, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
+    ar.setAttribute('x1', 250 + ux * 16); ar.setAttribute('y1', yb + uy * 16); ar.setAttribute('x2', 150 - ux * 18); ar.setAttribute('y2', ya - uy * 18);
+    lb.setAttribute('x', 204); lb.setAttribute('y', (ya + yb) / 2 - 8);
+    ar.style.opacity = a === b ? 0 : 1; lb.style.opacity = a === b ? 0 : 1;
+    var u = a - b, msg;
+    if (u > 0) msg = 'Positif : A est <b>plus haut</b> que B.';
+    else if (u < 0) msg = 'Négatif : A est <b>plus bas</b> que B. Le calcul n’est pas faux : la flèche pointe toujours vers A, c’est la définition.';
+    else msg = 'Même étage : aucune tension entre A et B.';
+    $('#fRead').innerHTML = '<span class="f-inline"><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub> = ' + a + ' − ' + b + ' = </span><span class="big">' + u + ' V</span><br>' + msg;
+  }
+  $('#fA').addEventListener('input', updFloors); $('#fB').addEventListener('input', updFloors); updFloors();
+
+  /* ---- conventions ---- */
+  var same = false;
+  function updConv() {
+    $('#convI').setAttribute('d', same ? 'M92 74H36' : 'M36 74H92');
+    var uri = '<span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>', umri = '<span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>';
+    $('#convRead').innerHTML = same ? '<b>Même sens</b> que la flèche <var class="u">U</var> : convention générateur. Sur une résistance, il faut écrire ' + umri + '. Le produit <var class="u">U</var><var class="i">I</var> est la puissance fournie, il sortira négatif : une résistance ne fournit rien.'
+      : '<b>Sens opposés</b> : convention récepteur. C’est le cas normal pour une résistance : ' + uri + ', et <var class="u">U</var><var class="i">I</var> = <var>R</var><var class="i">I</var>² est la puissance reçue, toujours positive.';
+  }
+  $('#convBtn').addEventListener('click', function () { same = !same; updConv(); }); updConv();
+
+  /* ---- interrupteurs ---- */
+  var k1 = false, k2 = false;
+  function updSw() {
+    var s1 = $('#k1'), s2 = $('#k2');
+    if (k1) { s1.setAttribute('x2', '200'); s1.setAttribute('y2', '50'); } else { s1.setAttribute('x2', '196'); s1.setAttribute('y2', '30'); }
+    if (k2) { s2.setAttribute('x2', '300'); s2.setAttribute('y2', '102'); } else { s2.setAttribute('x2', '318'); s2.setAttribute('y2', '98'); }
+    var path = $('#swPath');
+    path.style.opacity = k2 ? 1 : 0;
+    path.setAttribute('points', k1 ? '40,200 40,50 300,50 300,200 40,200' : '40,200 40,50 120,50 120,20 220,20 220,50 300,50 300,200 40,200');
+    $('#k1btn').textContent = 'K1 : ' + (k1 ? 'fermé' : 'ouvert'); $('#k1btn').setAttribute('aria-pressed', String(k1));
+    $('#k2btn').textContent = 'K2 : ' + (k2 ? 'fermé' : 'ouvert'); $('#k2btn').setAttribute('aria-pressed', String(k2));
+    var html;
+    if (!k2) html = '<span class="big">U = E = 12 V</span><br>K2 ouvert : la boucle est coupée, <b>aucun courant</b> ne passe. La résistance du haut ne fait perdre aucun étage (R × 0 = 0), donc toute la tension de la pile se retrouve aux bornes du trou. K1 ne change rien ici.';
+    else if (!k1) html = '<span class="big">U = E/2 = 6 V</span><br>K2 fermé, K1 ouvert : le courant traverse les deux résistances <var>R</var> en série. Diviseur de tension : la résistance du bas prend la moitié.';
+    else html = '<span class="big">U = E = 12 V</span><br>K1 fermé court-circuite la résistance du haut : le courant passe par le fil. Il ne reste que la résistance du bas, qui prend toute la tension.';
+    $('#swRead').innerHTML = html;
+  }
+  $('#k1btn').addEventListener('click', function () { k1 = !k1; updSw(); }); $('#k2btn').addEventListener('click', function () { k2 = !k2; updSw(); });
+  $('#k1').addEventListener('click', function () { k1 = !k1; updSw(); }); $('#k2').addEventListener('click', function () { k2 = !k2; updSw(); });
+  updSw();
+
+  /* ---- caractéristiques des sources idéales ---- */
+  function axes(xl, yl) {
+    return '<path class="cz-w" d="M40 150H290M40 150V20"/><path class="cz-uh" d="M290 150l-9 -4.5v9z" style="fill:var(--ink)"/><path d="M40 20l-4.5 9h9z" style="fill:var(--ink)"/>' +
+      '<text x="292" y="168" class="cz-l" text-anchor="end">' + xl + '</text><text x="30" y="24" class="cz-l" text-anchor="end">' + yl + '</text>';
+  }
+  $('#fig-ideal-e').innerHTML = '<svg class="cz" viewBox="0 0 310 180" role="img" aria-label="Caractéristique u en fonction de i : une droite horizontale à la hauteur E">' + axes('i', 'u') +
+    '<path d="M40 70H280" style="stroke:var(--volt);stroke-width:3;fill:none"/><text x="30" y="75" class="cz-l cz-lu" text-anchor="end">E</text></svg>';
+  $('#fig-ideal-i').innerHTML = '<svg class="cz" viewBox="0 0 310 180" role="img" aria-label="Caractéristique u en fonction de i : une droite verticale à l’abscisse I">' + axes('i', 'u') +
+    '<path d="M190 150V28" style="stroke:var(--amp);stroke-width:3;fill:none"/><text x="190" y="170" class="cz-l cz-li" text-anchor="middle">I</text></svg>';
+
+  /* ---- générateur réel ---- */
+  var rg = 'v';
+  function updRG() {
+    var Rl = +$('#rgR').value, r = +$('#rgr').value, Ev = 12, Iv = 2, u, i, cap;
+    $('#rgRv').textContent = Rl + ' Ω'; $('#rgrv').textContent = r + ' Ω';
+    if (rg === 'v') {
+      i = Ev / (r + Rl); u = Ev * Rl / (r + Rl);
+      R.circuit.mount('#fig-real', { w: 320, h: 200, aria: 'Source E en série avec r, alimentant une charge R',
+        wires: ['M60 40H260V160H60Z'],
+        parts: [{ t: 'E', x: 60, y: 100, d: 'v', p: 'n', l: 'E = 12 V' }, { t: 'R', x: 150, y: 40, d: 'h', l: 'r' }, { t: 'R', x: 260, y: 100, d: 'v', l: 'R', lp: 'w' },
+          { t: 'I', x: 210, y: 40, d: 'e', l: 'i' }, { t: 'U', a: [292, 150], b: [292, 50], l: 'u' }, { t: 'dot', x: 260, y: 40, r: 3 }] });
+      cap = '<span class="big">u = ' + nf(u) + ' V</span> · i = ' + nf(i) + ' A<br>Diviseur de tension : <span class="f-inline"><var class="u">u</var> = <var class="u">E</var>·<var>R</var>/(<var>R</var> + <var>r</var>) = 12 × ' + Rl + '/' + (Rl + r) + '</span>. La perte dans <var>r</var> vaut <var>r</var>·<var class="i">i</var> = ' + nf(r * i) + ' V. ' + (Rl >= 10 * r ? 'Ici <var>R</var> ≫ <var>r</var> : le générateur se comporte presque comme une source idéale.' : 'La charge est trop faible devant <var>r</var> : la tension s’effondre.');
+    } else {
+      u = Iv * r * Rl / (r + Rl); i = Iv * r / (r + Rl);
+      R.circuit.mount('#fig-real', { w: 320, h: 200, aria: 'Source de courant I en parallèle avec r, alimentant une charge R',
+        wires: ['M60 40H260V160H60Z', 'M150 40V160'],
+        parts: [{ t: 'J', x: 60, y: 100, d: 'v', to: 'n', l: 'I = 2 A', as: 'w' }, { t: 'R', x: 150, y: 100, d: 'v', l: 'r' }, { t: 'R', x: 260, y: 100, d: 'v', l: 'R', lp: 'w' },
+          { t: 'I', x: 210, y: 40, d: 'e', l: 'i' }, { t: 'U', a: [292, 150], b: [292, 50], l: 'u' }, { t: 'dot', x: 150, y: 40 }, { t: 'dot', x: 150, y: 160 }] });
+      cap = '<span class="big">i = ' + nf(i) + ' A</span> · u = ' + nf(u) + ' V<br>Diviseur de courant : <span class="f-inline"><var class="i">i</var> = <var class="i">I</var>·<var>r</var>/(<var>r</var> + <var>R</var>) = 2 × ' + r + '/' + (r + Rl) + '</span>. ' + (Rl * 10 <= r ? 'Ici <var>R</var> ≪ <var>r</var> : presque tout le courant va dans la charge.' : 'La charge est trop forte devant <var>r</var> : une bonne partie du courant fuit dans <var>r</var>.');
+    }
+    /* caractéristique u(i) et point de fonctionnement */
+    var W = 320, H = 200, x0 = 46, y0 = 166, xm = 300, ym = 22;
+    var imax = rg === 'v' ? Ev / r : Iv, umax = rg === 'v' ? Ev : Iv * r;
+    function X(v) { return x0 + (xm - x0) * v / imax; } function Y(v) { return y0 - (y0 - ym) * v / umax; }
+    var s = '<svg class="cz" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Caractéristique du générateur et point de fonctionnement">';
+    s += '<path class="cz-w" d="M' + x0 + ' ' + y0 + 'H' + (xm + 8) + 'M' + x0 + ' ' + y0 + 'V' + (ym - 8) + '"/>';
+    s += '<text x="' + (xm + 8) + '" y="' + (y0 + 18) + '" class="cz-l" text-anchor="end">i</text><text x="' + (x0 - 10) + '" y="' + (ym) + '" class="cz-l" text-anchor="end">u</text>';
+    s += '<path d="M' + X(0) + ' ' + Y(umax) + 'L' + X(imax) + ' ' + Y(0) + '" style="stroke:var(--volt);stroke-width:2.5;fill:none"/>';
+    s += '<text x="' + (x0 - 6) + '" y="' + (Y(umax) + 5) + '" class="cz-tiny" text-anchor="end">' + nf(umax, 1) + ' V</text>';
+    s += '<text x="' + X(imax) + '" y="' + (y0 + 16) + '" class="cz-tiny" text-anchor="middle">' + nf(imax, 1) + ' A</text>';
+    s += '<path d="M' + X(i) + ' ' + y0 + 'V' + Y(u) + 'H' + x0 + '" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;fill:none"/>';
+    s += '<circle cx="' + X(i) + '" cy="' + Y(u) + '" r="6" style="fill:var(--amp)"/>';
+    s += '<text x="' + (xm) + '" y="' + (ym + 6) + '" class="cz-tiny" text-anchor="end">' + (rg === 'v' ? 'u = E − r·i' : 'i = I − u/r') + '</text></svg>';
+    $('#fig-real-plot').innerHTML = s;
+    $('#rgRead').innerHTML = cap;
+    $('#rgMode').textContent = rg === 'v' ? 'générateur de tension' : 'générateur de courant';
+  }
+  $$('[data-rg]').forEach(function (b) { b.addEventListener('click', function () { rg = b.dataset.rg; $$('[data-rg]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); updRG(); }); });
+  $('#rgR').addEventListener('input', updRG); $('#rgr').addEventListener('input', updRG); updRG();
+})();
+</script>
+</body>
+</html>

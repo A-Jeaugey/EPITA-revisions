@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QCM · Révisions S1</title>
+<meta name="description" content="QCM de révision des partiels S1 : entraînement, examen blanc chronométré et répétition espacée des questions ratées.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.top{padding-block:36px 26px}
+.top .sheet{padding:22px 24px 24px 64px;display:grid;gap:10px}
+@media (max-width:560px){.top .sheet{padding:18px 16px 20px 34px}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:18px;min-width:0}
+.field{display:grid;gap:8px}
+.field>.lbl{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:720px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mode{display:grid;gap:3px;text-align:left;font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:.65rem .75rem;cursor:pointer;min-width:0}
+.mode b{font-size:.98rem}
+.mode span{font-size:.82rem;color:var(--muted);line-height:1.35}
+.mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.mode:disabled{opacity:.45;cursor:not-allowed}
+.startrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.startrow .note{font-size:.88rem;color:var(--muted)}
+
+.run{display:grid;gap:14px}
+.runbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:.85rem;color:var(--muted)}
+.runbar .bar{flex:1;min-width:120px}
+.runbar b{color:var(--ink);font-variant-numeric:tabular-nums}
+.runctl{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.kbd{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.kbd kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;background:var(--surface)}
+
+.result{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px 28px;align-items:center;padding:22px 24px 22px 64px}
+@media (max-width:640px){.result{grid-template-columns:minmax(0,1fr);padding:18px 16px 20px 34px}}
+.grade{position:relative;display:grid;place-items:center;width:150px;height:116px}
+.grade svg{position:absolute;inset:0;width:100%;height:100%}
+.grade svg path{fill:none;stroke:var(--red);stroke-width:3;stroke-linecap:round}
+.grade .g{font-family:var(--font-hand);color:var(--red);font-size:3.4rem;line-height:1;font-weight:600}
+.grade .g small{font-size:.55em}
+.result h2{margin-bottom:6px}
+.topics{display:grid;gap:9px}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:.9rem}
+.trow .bar{grid-column:1/-1;height:6px}
+.trow .v{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow .bar>i.good{background:var(--ok)} .trow .bar>i.mid{background:var(--warn)} .trow .bar>i.low{background:var(--bad)}
+.review{display:grid;gap:12px}
+
+.side{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 68px)}
+@media (max-width:980px){.side{position:static}}
+.side h2{font-size:1.25rem}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:.55rem .6rem;display:grid;gap:2px;background:var(--bg)}
+.kpi b{font-family:var(--font-display);font-stretch:118%;font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.76rem;color:var(--muted);line-height:1.25}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.empty{color:var(--muted);font-size:.95rem;padding:.4rem 0}
+</style>
+</head>
+<body data-resume="QCM">
+<div id="shell"></div>
+<header class="top wrap">
+  <div class="sheet margin">
+    <span class="eyebrow">QCM · toutes matières</span>
+    <h1>Entraîne-toi</h1>
+    <p class="lead">Choisis une matière, des notions et un mode. Les questions ratées reviennent le lendemain, puis tous les 2, 4, 8 et 16 jours jusqu’à ce qu’elles soient acquises.</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+  <div style="display:grid;gap:20px;min-width:0">
+    <section class="panel" id="setup" aria-label="Réglages">
+      <div class="field"><span class="lbl">Matière</span><div class="chips" id="subjChips"></div></div>
+      <div class="field"><span class="lbl">Notions <button type="button" class="linkish" id="allTopics" style="font:inherit;font-size:.72rem;letter-spacing:.06em;text-transform:none;background:none;border:0;color:var(--accent);cursor:pointer;padding:0 0 0 8px">tout cocher / décocher</button></span><div class="chips" id="topicChips"></div></div>
+      <div class="field"><span class="lbl">Mode</span>
+        <div class="modes" role="group" aria-label="Mode">
+          <button type="button" class="mode" data-mode="train" aria-pressed="true"><b>Entraînement</b><span>correction après chaque question</span></button>
+          <button type="button" class="mode" data-mode="exam" aria-pressed="false"><b>Examen blanc</b><span>chronométré, correction à la fin</span></button>
+          <button type="button" class="mode" data-mode="due" aria-pressed="false"><b>À revoir</b><span id="dueLbl">questions ratées ou à rafraîchir</span></button>
+          <button type="button" class="mode" data-mode="new" aria-pressed="false"><b>Jamais vues</b><span id="newLbl">celles que tu n’as pas encore faites</span></button>
+        </div>
+      </div>
+      <div class="field"><span class="lbl">Nombre de questions</span>
+        <div class="chips" id="countChips" role="group" aria-label="Nombre de questions">
+          <button type="button" class="chip" data-n="10" aria-pressed="true">10</button>
+          <button type="button" class="chip" data-n="20" aria-pressed="false">20</button>
+          <button type="button" class="chip" data-n="40" aria-pressed="false">40</button>
+          <button type="button" class="chip" data-n="0" aria-pressed="false">toutes</button>
+        </div>
+      </div>
+      <div class="startrow"><button type="button" class="btn primary" id="start">Commencer</button><span class="note" id="startNote"></span></div>
+    </section>
+
+    <section class="run" id="run" hidden aria-label="Questions">
+      <div class="runbar"><span><b id="rk">1</b> / <span id="rn">10</span></span><div class="bar" aria-hidden="true"><i id="rbar"></i></div><span id="rscore"></span><span id="rtime" hidden></span></div>
+      <div id="card"></div>
+      <div class="runctl">
+        <span class="kbd"><kbd>1</kbd>–<kbd>4</kbd> pour répondre · <kbd>Entrée</kbd> pour continuer</span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ghost" id="quit">Arrêter</button><button type="button" class="btn primary" id="next">Question suivante</button></span>
+      </div>
+    </section>
+
+    <section id="done" hidden aria-label="Résultat" style="display:grid;gap:18px"></section>
+  </div>
+
+  <aside class="side" aria-label="Ta progression">
+    <section class="panel">
+      <h2 id="sideTitle">Ta progression</h2>
+      <div class="kpis" id="kpis"></div>
+      <div class="topics" id="sideTopics"></div>
+      <div class="confirm" id="resetBox"><button type="button" class="btn ghost" id="reset" style="min-height:34px;font-size:.85rem">Remettre à zéro</button></div>
+    </section>
+  </aside>
+</main>
+
+<footer class="page-foot"><div class="wrap"><span>Sources : cours et TD de la promo 2031, sujets de partiels 2017–2024, QCM hebdomadaires des promos précédentes.</span><span>Ta progression reste dans ce navigateur.</span></div></footer>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
+  var BANK = window.QCM_BANK || [];
+  var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
+  var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10 };
+
+  function inSubj() { return BANK.filter(function (q) { return q.s === st.subj; }); }
+  function topicsOf(list) {
+    var seen = [], m = {};
+    list.forEach(function (q) { if (!m[q.topic]) { m[q.topic] = 0; seen.push(q.topic); } m[q.topic]++; });
+    return seen.map(function (t) { return { id: t, n: m[t] }; });
+  }
+
+  /* ---------- réglages ---------- */
+  function paintSubjects() {
+    $('#subjChips').innerHTML = subjects.map(function (s) {
+      var n = BANK.filter(function (q) { return q.s === s.id; }).length;
+      return '<button type="button" class="chip" data-s="' + s.id + '" aria-pressed="' + (s.id === st.subj) + '">' + s.name + ' <span class="n">' + n + '</span></button>';
+    }).join('') || '<span class="empty">Aucune question pour l’instant.</span>';
+    $$('#subjChips [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.subj = b.dataset.s; st.topics = null; paintAll(); }); });
+  }
+  function paintTopics() {
+    var ts = topicsOf(inSubj());
+    if (!st.topics) st.topics = ts.map(function (t) { return t.id; });
+    $('#topicChips').innerHTML = ts.map(function (t) {
+      return '<button type="button" class="chip" data-t="' + t.id + '" aria-pressed="' + (st.topics.indexOf(t.id) >= 0) + '">' + U.esc(R.quiz.topicName(t.id)) + ' <span class="n">' + t.n + '</span></button>';
+    }).join('');
+    $$('#topicChips [data-t]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.dataset.t, k = st.topics.indexOf(t);
+        if (k >= 0) st.topics.splice(k, 1); else st.topics.push(t);
+        paintTopics(); paintStart();
+      });
+    });
+  }
+  function pool() {
+    var now = Date.now();
+    var list = inSubj().filter(function (q) { return st.topics.indexOf(q.topic) >= 0; });
+    if (st.mode === 'due') list = list.filter(function (q) { var s = R.qcm.get(q.id); return s && (R.qcm.isDue(q.id, now) || !s.lastOk); });
+    if (st.mode === 'new') list = list.filter(function (q) { return !R.qcm.get(q.id); });
+    return list;
+  }
+  function paintStart() {
+    var p = pool(), n = st.n ? Math.min(st.n, p.length) : p.length;
+    var all = inSubj(), now = Date.now();
+    var due = all.filter(function (q) { var s = R.qcm.get(q.id); return s && (R.qcm.isDue(q.id, now) || !s.lastOk); }).length;
+    var fresh = all.filter(function (q) { return !R.qcm.get(q.id); }).length;
+    $('#dueLbl').textContent = due ? due + ' question' + (due > 1 ? 's' : '') + ' ratée' + (due > 1 ? 's' : '') + ' ou à rafraîchir' : 'rien à revoir pour l’instant';
+    $('#newLbl').textContent = fresh ? fresh + ' pas encore faite' + (fresh > 1 ? 's' : '') : 'tu les as toutes vues';
+    $('#start').disabled = !n;
+    $('#start').textContent = n ? 'Commencer · ' + n + ' question' + (n > 1 ? 's' : '') : 'Commencer';
+    var note = '';
+    if (!n) note = st.mode === 'due' ? 'Rien à revoir dans ces notions : fais un entraînement.' : (st.mode === 'new' ? 'Tu as déjà vu toutes ces questions.' : 'Coche au moins une notion.');
+    else if (st.mode === 'exam') note = 'Temps conseillé : ' + Math.ceil(n * 1.2) + ' min. Pas de points négatifs.';
+    $('#startNote').textContent = note;
+  }
+  function paintModes() { $$('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)); }); }
+  function paintCounts() { $$('#countChips [data-n]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.n === st.n)); }); }
+  $$('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { st.mode = b.dataset.mode; paintModes(); paintStart(); }); });
+  $$('#countChips [data-n]').forEach(function (b) { b.addEventListener('click', function () { st.n = +b.dataset.n; paintCounts(); paintStart(); }); });
+  $('#allTopics').addEventListener('click', function () {
+    var ts = topicsOf(inSubj()).map(function (t) { return t.id; });
+    st.topics = st.topics.length === ts.length ? [] : ts; paintTopics(); paintStart();
+  });
+
+  /* ---------- progression (colonne de droite) ---------- */
+  function paintSide() {
+    var s = R.subject(st.subj), list = inSubj(), stats = R.qcm.stats(st.subj, list);
+    $('#sideTitle').textContent = s ? 'Ta progression · ' + s.short : 'Ta progression';
+    $('#kpis').innerHTML = '<div class="kpi"><b>' + stats.seen + '</b><span>vues sur ' + list.length + '</span></div>' +
+      '<div class="kpi"><b>' + stats.mastered + '</b><span>bien ancrées</span></div>' +
+      '<div class="kpi"><b>' + stats.due + '</b><span>à revoir</span></div>';
+    $('#sideTopics').innerHTML = topicsOf(list).map(function (t) {
+      var qs = list.filter(function (q) { return q.topic === t.id; }), sum = 0, seen = 0;
+      qs.forEach(function (q) { var x = R.qcm.get(q.id); if (x) { seen++; sum += Math.min(x.box, 5) / 5; } });
+      var m = qs.length ? sum / qs.length : 0, cls = m >= .7 ? 'good' : (m >= .35 ? 'mid' : 'low');
+      return '<div class="trow"><span>' + U.esc(R.quiz.topicName(t.id)) + '</span><span class="v">' + seen + '/' + qs.length + '</span><div class="bar"><i class="' + cls + '" style="width:' + Math.round(m * 100) + '%"></i></div></div>';
+    }).join('');
+  }
+  function restoreReset() {
+    $('#resetBox').innerHTML = '<button type="button" class="btn ghost" id="reset" style="min-height:34px;font-size:.85rem">Remettre à zéro</button>';
+    wireReset();
+  }
+  function wireReset() {
+    $('#reset').onclick = function () {
+      var box = $('#resetBox');
+      box.innerHTML = '<span>Effacer ta progression en ' + (R.subject(st.subj) || {}).short + ' ?</span><button type="button" class="btn" id="rsYes" style="min-height:34px;font-size:.85rem;color:var(--bad)">Oui, effacer</button><button type="button" class="btn ghost" id="rsNo" style="min-height:34px;font-size:.85rem">Annuler</button>';
+      $('#rsYes').onclick = function () { R.qcm.reset(st.subj + '-'); restoreReset(); paintAll(); };
+      $('#rsNo').onclick = restoreReset;
+    };
+  }
+
+  /* ---------- session ---------- */
+  var run = null;
+  function start() {
+    var p = U.shuffle(pool());
+    if (st.mode === 'due') p.sort(function (a, b) { return ((R.qcm.get(a.id) || {}).box || 0) - ((R.qcm.get(b.id) || {}).box || 0); });
+    var n = st.n ? Math.min(st.n, p.length) : p.length;
+    if (!n) return;
+    run = { qs: p.slice(0, n), i: 0, ok: 0, answers: [], exam: st.mode === 'exam', t0: Date.now(), timer: null, cards: [] };
+    $('#setup').hidden = true; $('#done').hidden = true; $('#run').hidden = false;
+    $('#rn').textContent = n;
+    $('#rtime').hidden = !run.exam;
+    if (run.exam) { run.timer = setInterval(tick, 1000); tick(); }
+    show();
+    window.scrollTo({ top: $('#run').getBoundingClientRect().top + window.scrollY - 80, behavior: U.reduceMotion() ? 'auto' : 'smooth' });
+  }
+  function tick() {
+    var s = Math.floor((Date.now() - run.t0) / 1000);
+    $('#rtime').textContent = '⏱ ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+  function show() {
+    var q = run.qs[run.i];
+    var card = R.quiz.Card(q, {
+      index: run.i, total: run.qs.length, mode: run.exam ? 'exam' : 'train', shuffle: true,
+      onAnswer: function (ok) { if (ok) run.ok++; run.answers[run.i] = ok; paintRun(); if (!run.exam) $('#next').focus(); },
+      onPick: paintRun, onEnter: next
+    });
+    run.cards[run.i] = card;
+    var host = $('#card'); host.innerHTML = ''; host.appendChild(card);
+    paintRun();
+  }
+  function paintRun() {
+    var card = run.cards[run.i], last = run.i === run.qs.length - 1;
+    $('#rk').textContent = run.i + 1;
+    $('#rbar').style.width = (100 * (run.i + (card && card.answered() ? 1 : 0)) / run.qs.length) + '%';
+    $('#rscore').textContent = run.exam ? '' : run.ok + ' juste' + (run.ok > 1 ? 's' : '');
+    var nb = $('#next');
+    if (run.exam) { nb.disabled = false; nb.textContent = last ? 'Rendre la copie' : (card.hasPick() ? 'Question suivante' : 'Passer'); }
+    else { nb.disabled = !card.answered(); nb.textContent = last ? 'Voir le résultat' : 'Question suivante'; }
+  }
+  function next() {
+    var card = run.cards[run.i];
+    if (run.exam && !card.answered()) card.submit();
+    if (!card.answered()) return;
+    if (run.i < run.qs.length - 1) { run.i++; show(); } else finish();
+  }
+  $('#next').addEventListener('click', next);
+  $('#quit').addEventListener('click', function () {
+    if (!run) return;
+    var c = run.cards[run.i];
+    if (run.exam && c && !c.answered() && c.hasPick()) c.submit();
+    finish(true);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!run || $('#run').hidden || e.target.tagName === 'INPUT' || e.altKey || e.ctrlKey || e.metaKey) return;
+    var card = run.cards[run.i];
+    if (e.key === 'Enter') { if ((card.answered() || run.exam) && !card.key('Enter')) { e.preventDefault(); next(); } return; }
+    if (card.key(e.key)) e.preventDefault();
+  });
+
+  function grade(ok, n) { return Math.round(ok / n * 40) / 2; }
+  function finish(early) {
+    if (run.timer) clearInterval(run.timer);
+    var done = run.cards.filter(function (c) { return c && c.answered(); });
+    var n = (early && !run.exam) ? done.length : run.qs.length, ok = done.filter(function (c) { return c.state.ok; }).length;
+    $('#run').hidden = true;
+    var box = $('#done'); box.hidden = false;
+    if (!n) { box.innerHTML = ''; backToSetup(); return; }
+    var g = grade(ok, n), secs = Math.round((Date.now() - run.t0) / 1000);
+    var msg = g >= 16 ? 'Solide. Passe à une autre notion ou à un examen blanc.' : g >= 12 ? 'Pas mal. Relis les explications des questions ratées : elles reviendront demain.' : g >= 8 ? 'Il reste des trous. Reprends les parties du cours indiquées sous chaque question ratée.' : 'Commence par relire le cours de ces notions, puis refais ce QCM.';
+    var byT = {};
+    done.forEach(function (c) { var t = c.q.topic; byT[t] = byT[t] || { ok: 0, n: 0 }; byT[t].n++; if (c.state.ok) byT[t].ok++; });
+    var topics = Object.keys(byT).map(function (t) {
+      var r = byT[t], f = r.ok / r.n, cls = f >= .7 ? 'good' : (f >= .4 ? 'mid' : 'low');
+      return '<div class="trow"><span>' + U.esc(R.quiz.topicName(t)) + '</span><span class="v">' + r.ok + '/' + r.n + '</span><div class="bar"><i class="' + cls + '" style="width:' + Math.round(f * 100) + '%"></i></div></div>';
+    }).join('');
+    box.innerHTML = '<div class="sheet margin result"><div class="grade" aria-label="Note : ' + U.nf(g, 1) + ' sur 20"><svg viewBox="0 0 150 116" aria-hidden="true"><path d="M78 8C40 6 8 26 9 58c1 30 34 50 70 48 36-2 64-24 62-52C139 24 108 6 70 10"/></svg><span class="g">' + U.nf(g, 1) + '<small>/20</small></span></div>' +
+      '<div style="display:grid;gap:8px;min-width:0"><h2>' + ok + ' bonne' + (ok > 1 ? 's' : '') + ' réponse' + (ok > 1 ? 's' : '') + ' sur ' + n + '</h2><p>' + msg + '</p><p class="muted mono" style="font-size:.85rem">' + (run.exam ? 'Temps : ' + Math.floor(secs / 60) + ' min ' + String(secs % 60).padStart(2, '0') + ' s · ' : '') + 'pas de points négatifs</p>' +
+      '<div class="startrow"><button type="button" class="btn primary" id="again">Nouveau QCM</button>' + (ok < n ? '<button type="button" class="btn" id="redo">Refaire les ratées</button>' : '') + '</div></div></div>' +
+      '<section class="panel"><h2 style="font-size:1.2rem">Par notion</h2><div class="topics">' + topics + '</div></section>' +
+      '<section style="display:grid;gap:12px"><h2 style="font-size:1.2rem">' + (run.exam ? 'Correction' : 'Les questions ratées') + '</h2><div class="review" id="review"></div></section>';
+    var rv = $('#review'), missed = 0;
+    done.forEach(function (c) {
+      if (run.exam) { c.reveal(); rv.appendChild(c); }
+      else if (!c.state.ok) { rv.appendChild(c); missed++; }
+    });
+    if (!run.exam && !missed) rv.innerHTML = '<p class="empty">Aucune. Tout est juste.</p>';
+    $('#again').addEventListener('click', backToSetup);
+    var rd = $('#redo');
+    if (rd) rd.addEventListener('click', function () {
+      var ids = done.filter(function (c) { return !c.state.ok; }).map(function (c) { return c.q; });
+      run = { qs: U.shuffle(ids), i: 0, ok: 0, answers: [], exam: false, t0: Date.now(), cards: [] };
+      $('#done').hidden = true; $('#run').hidden = false; $('#rn').textContent = run.qs.length; $('#rtime').hidden = true; show();
+    });
+    paintSide();
+    window.scrollTo({ top: box.getBoundingClientRect().top + window.scrollY - 80, behavior: U.reduceMotion() ? 'auto' : 'smooth' });
+  }
+  function backToSetup() { run = null; $('#done').hidden = true; $('#run').hidden = true; $('#setup').hidden = false; paintAll(); }
+  $('#start').addEventListener('click', start);
+
+  function paintAll() { paintSubjects(); paintTopics(); paintModes(); paintCounts(); paintStart(); paintSide(); }
+
+  /* liens directs : #sprint, #revision, #examen, #elec, #t-<notion> */
+  var h = (location.hash || '').slice(1);
+  subjects.forEach(function (s) { if (h === s.id) st.subj = s.id; });
+  paintAll(); wireReset();
+  if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) { st.topics = [t]; paintTopics(); paintStart(); } }
+  if (h === 'sprint') { st.mode = 'train'; st.n = 10; paintModes(); paintCounts(); paintStart(); start(); }
+  if (h === 'revision') { st.mode = 'due'; paintModes(); paintStart(); if (pool().length) start(); }
+  if (h === 'examen') { st.mode = 'exam'; st.n = 20; paintModes(); paintCounts(); paintStart(); }
+})();
+</script>
+</body>
+</html>
