@@ -13,7 +13,7 @@
   var SUBJECTS = [
     {
       id: 'elec', name: 'Électronique', short: 'Élec', code: 'SI-S1-ELEC-1-OAC',
-      course: 'Outils d’analyse de circuits', path: 'elec/', status: 'ready',
+      course: 'Outils d’analyse de circuits', path: 'elec/index.html', dir: 'elec/', status: 'ready',
       exam: 'Écrit · sans calculatrice ni document',
       chapters: [
         { id: 'bases', title: 'Les bases', path: 'elec/cours-1-bases.html', sections: 8 },
@@ -155,10 +155,10 @@
 
   function navItems() {
     var items = [{ href: 'index.html', label: 'Accueil', match: /^(index\.html)?$/ }];
-    SUBJECTS.forEach(function (s) { if (s.status === 'ready') items.push({ href: s.path, label: s.short, match: new RegExp('^' + s.path) }); });
-    items.push({ href: 'qcm/', label: 'QCM', match: /^qcm\// });
-    items.push({ href: 'annales/', label: 'Annales', match: /^annales\// });
-    items.push({ href: 'fiches/', label: 'Fiches', match: /^fiches\// });
+    SUBJECTS.forEach(function (s) { if (s.status === 'ready') items.push({ href: s.path, label: s.short, match: new RegExp('^' + (s.dir || s.path)) }); });
+    items.push({ href: 'qcm/index.html', label: 'QCM', match: /^qcm\// });
+    items.push({ href: 'annales/index.html', label: 'Annales', match: /^annales\// });
+    items.push({ href: 'fiches/index.html', label: 'Fiches', match: /^fiches\// });
     return items;
   }
   function here() {

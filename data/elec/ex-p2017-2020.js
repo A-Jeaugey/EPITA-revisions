@@ -20,7 +20,8 @@
       }).join('') + '</tbody></table></div>';
   }
   var K1 = v('K', 1), K2 = v('K', 2);
-  function arrow(x, y) { return { t: 'txt', x: x, y: y, s: '→', c: 'cz-l' }; }
+  /* flèche « étape suivante » entre deux schémas d’une même figure */
+  function arrow(x, y) { return { t: 'raw', svg: '<path class="cz-w" d="M' + (x - 16) + ' ' + y + 'H' + (x + 8) + '"/><path class="cz-dot" d="M' + (x + 17) + ' ' + y + 'L' + (x + 6) + ' ' + (y - 6) + 'L' + (x + 6) + ' ' + (y + 6) + 'Z"/>' }; }
 
   /* =====================================================================
      Partiel nov. 2017 (promo 2022)
@@ -67,7 +68,8 @@
             { t: 'R', x: 210, y: 115, d: 'v', l: 'R_{éq} = 2RR′/(2R + R′)' }] },
           cap: 'Deuxième étape : la source de courant débite dans ' + v('R', 'éq') }] },
       { t: 'Question 1 : calculer R′',
-        html: '<p>La source impose le courant ' + I + ' dans ' + v('R', 'éq') + '. Loi d’Ohm, en convention récepteur : ' + U + ' = ' + v('R', 'éq') + '·' + I + ' = ' + fr('2' + R + '·' + R + '′', '2' + R + ' + ' + R + '′') + '·' + I + '.</p>' +
+        html: '<p>La source impose le courant ' + I + ' dans ' + v('R', 'éq') + '. Loi d’Ohm, en convention récepteur :</p>' +
+          '<p class="f-block">' + U + ' = ' + v('R', 'éq') + '·' + I + ' = ' + fr('2' + R + '·' + R + '′·' + I, '2' + R + ' + ' + R + '′') + '</p>' +
           '<p>On veut ' + U + ' = ' + R + '·' + I + '/4. On simplifie par ' + I + ' :</p>' +
           '<p class="f-block">' + fr('2' + R + '·' + R + '′', '2' + R + ' + ' + R + '′') + ' = ' + fr(R, '4') + ' ⇔ 8' + R + '·' + R + '′ = ' + R + '(2' + R + ' + ' + R + '′) ⇔ 8' + R + '′ = 2' + R + ' + ' + R + '′ ⇔ 7' + R + '′ = 2' + R + '</p>' +
           '<p>D’où <b>' + R + '′ = 2' + R + '/7</b>.</p>' +

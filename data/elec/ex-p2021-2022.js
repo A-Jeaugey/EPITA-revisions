@@ -390,7 +390,7 @@
         '<p>' + rk('1') + ' et ' + rk('3') + ' sont en convention récepteur (flèches de tension et de courant opposées) : ' + cur('1') + ' = ' + u('1') + '/' + rk('1') + ' = 5/500 = 10 mA et ' + cur('3') + ' = ' + u('3') + '/' + rk('3') + ' = 5/1000 = 5 mA.</p>' +
         '<p class="f-block"><b>' + cur('5') + ' = ' + fr(u('3'), rk('3')) + ' − ' + fr(u('1'), rk('1')) + '</b> = 5 − 10 = <b>−5 mA</b></p>' +
         '<p>Le signe moins dit que le vrai courant dans ' + rk('5') + ' circule de B vers C.</p>' },
-      { t: 'Question 4 : R5', html: '<p>' + u('5') + ' pointe vers la droite et ' + cur('5') + ' vers la gauche : flèches opposées, convention récepteur, donc ' + u('5') + ' = ' + rk('5') + '·' + cur('5') + '.</p>' +
+      { t: 'Question 4 : R5', html: '<p>' + u('5') + ' pointe vers la droite et ' + cur('5') + ' vers la gauche : flèches opposées, convention récepteur, donc ' + u('5') + '&nbsp;=&nbsp;' + rk('5') + '·' + cur('5') + '.</p>' +
         '<p class="f-block">' + rk('5') + ' = ' + fr(u('5'), cur('5')) + ' = ' + fr('−2,5', '−5·10<sup>−3</sup>') + ' = <b>500 Ω</b></p>' +
         '<p>Les deux signes moins se compensent. Une résistance est toujours positive : c’est un bon contrôle.</p>' },
       { t: 'Question 5 : courant dans R2', html: '<p>' + rk('2') + ' est branchée entre A et G, comme la source : elle est en parallèle avec elle et sa tension vaut ' + E + '. Flèche le courant ' + cur('2') + ' dans ' + rk('2') + ' de A vers G (vers le bas) : il est opposé à la flèche de tension ' + E + ', c’est la convention récepteur.</p>' +
