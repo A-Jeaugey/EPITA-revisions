@@ -105,7 +105,7 @@ main.ann>section{min-width:0}
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, nf = U.nf;
-  var EXAMS = window.ELEC_EXAMS || [], EX = window.ELEC_EX || [], TOP = window.ELEC_TOPICS || {}, BANK = window.QCM_BANK || [];
+  var EXAMS = window.ELEC_EXAMS || [], EX = window.ELEC_EX || [], TOP = window.ELEC_TOPICS || {}, BANK = R.quiz.bank();
   var CATS = [{ id: 'qcm', t: 'Questions de cours' }, { id: 'req', t: 'Résistances équivalentes' }, { id: 'lois', t: 'Lois fondamentales' }, { id: 'thev', t: 'Thévenin et Norton' }];
   function catOf(p) { return p.cat === 'qcm' || p.cat === 'req' || p.cat === 'thev' ? p.cat : 'lois'; }
   $('#legend').innerHTML = CATS.map(function (c, i) { return '<span><i style="background:var(--series-' + (i + 1) + ')"></i>' + c.t + '</span>'; }).join('');
@@ -133,7 +133,7 @@ main.ann>section{min-width:0}
     e.parts.forEach(function (p) { sum[catOf(p)] = (sum[catOf(p)] || 0) + p.pts; });
     var bar = '<div class="track" role="img" aria-label="Répartition des points">' + CATS.map(function (c) { return sum[c.id] ? '<div class="seg" data-c="' + c.id + '" style="width:calc(' + (100 * sum[c.id] / tot) + '% - 2px)" title="' + c.t + ' : ' + nf(sum[c.id], 1) + ' pts">' + nf(sum[c.id], 1) + '</div>' : ''; }).join('') + '</div>';
     var files = e.files.map(function (f) { return '<a class="btn" href="' + f.u + '" target="_blank" rel="noopener">' + f.k + (f.l ? ' (' + f.l.toUpperCase() + ')' : '') + ' ↗</a>'; }).join('');
-    var nq = BANK.filter(function (q) { return q.id.indexOf('elec-' + e.key + '-') === 0; }).length;
+    var nq = BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('elec-' + e.key + '-') === 0; }); }).length;
     var parts = e.parts.map(function (p) {
       var links;
       if (p.cat === 'qcm') {

@@ -40,7 +40,7 @@
     { id: 'elec-p2022-q5', topic: 'serie-parallele', lvl: 1, type: 'single', keep: true, src: 'Partiel 2022 · Ex 1 · Q5',
       q: 'Si deux dipôles sont parcourus par le même courant, on dit qu’ils sont :',
       o: ['En parallèle', 'En série'], a: 1,
-      x: 'Réponse attendue : en série. Des dipôles en série sont dans la même branche et ont le même courant ; en parallèle, c’est la tension qui est commune. La réciproque n’est pas tout à fait vraie (deux résistances égales en parallèle ont aussi le même courant), mais c’est la réponse du corrigé.', ref: C2 + '#s4' },
+      x: 'Des dipôles en série sont dans la même branche et ont le même courant ; en parallèle, c’est la tension qui est commune. La réciproque n’est pas tout à fait vraie (deux résistances égales en parallèle ont aussi le même courant), mais c’est la réponse attendue au partiel.', ref: C2 + '#s4' },
     { id: 'elec-p2022-q6', topic: 'ohm', lvl: 1, type: 'single', keep: true, src: 'Partiel 2022 · Ex 1 · Q6',
       q: 'Si l’on applique la loi d’Ohm avec <var>U</var> en V et <var>I</var> en mA, on obtient directement <var>R</var> en :',
       o: ['MΩ', 'kΩ', 'mΩ', 'Ω'], a: 1,

@@ -180,5 +180,47 @@
 
   function byId(id) { var B = window.QCM_BANK || []; for (var i = 0; i < B.length; i++) if (B[i].id === id) return B[i]; return null; }
 
-  R.quiz = { Card: Card, mountCheck: mountCheck, byId: byId, bank: function () { return window.QCM_BANK || []; }, correctSet: correctSet, fmtAnswer: fmtAnswer, optsOf: optsOf, topicName: topicName, parseNum: parseNum };
+  /* Banque dédoublonnée. Une même question peut venir de plusieurs sources (un QCM hebdo repris au partiel,
+     une question reposée d'une promo à l'autre) : on n'en garde qu'un exemplaire, le plus parlant
+     (partiel > TD > cours > QCM hebdo), et les autres identifiants vont dans q.alt pour les filtres.
+     Deux questions sont identiques si énoncé, options (dans n'importe quel ordre), bonne réponse et figure
+     sont les mêmes ; « Vrai / Faux » et une question à choix « VRAI / FAUX » se confondent. */
+  function nkey(t) {
+    var s = String(t == null ? '' : t).replace(/<[^>]+>/g, '');
+    if (s.normalize) s = s.normalize('NFKC');
+    return s.toLowerCase().replace(/[’‘`´]/g, '\'').replace(/[−–—]/g, '-').replace(/\s+/g, '');
+  }
+  function figKey(q) {
+    if (!q.fig) return '';
+    if (typeof q.fig !== 'string') return JSON.stringify(q.fig);
+    var m = /src="([^"]+)"/.exec(q.fig);
+    return m ? m[1] : nkey(q.fig);
+  }
+  function dupKey(q) {
+    var o = optsOf(q).map(nkey);
+    var good = q.type === 'num' ? [String(q.a)] : correctSet(q).map(function (i) { return o[i]; });
+    return [q.s, nkey(q.q), o.slice().sort().join('|'), good.sort().join('|'), figKey(q)].join('#');
+  }
+  function rank(id) { return /^[a-z]+-p20\d\d-/.test(id) ? 0 : /^[a-z]+-td/.test(id) ? 1 : /^[a-z]+-mcq/.test(id) ? 3 : 2; }
+  var cache = { n: -1, list: [] };
+  function bank() {
+    var all = window.QCM_BANK || [];
+    if (cache.n === all.length) return cache.list;
+    var seen = {}, list = [];
+    all.forEach(function (q) { delete q.alt; });
+    all.forEach(function (q) {
+      var k = dupKey(q), prev = seen[k];
+      if (!prev) { seen[k] = q; list.push(q); return; }
+      if (rank(q.id) < rank(prev.id)) {
+        q.alt = [prev.id].concat(prev.alt || []); delete prev.alt;
+        list[list.indexOf(prev)] = q; seen[k] = q;
+      } else (prev.alt = prev.alt || []).push(q.id);
+    });
+    cache = { n: all.length, list: list };
+    return list;
+  }
+  /* tous les identifiants d'une question (le sien et ceux de ses doublons) */
+  function ids(q) { return q.alt ? [q.id].concat(q.alt) : [q.id]; }
+
+  R.quiz = { Card: Card, mountCheck: mountCheck, byId: byId, bank: bank, ids: ids, correctSet: correctSet, fmtAnswer: fmtAnswer, optsOf: optsOf, topicName: topicName, parseNum: parseNum };
 })();
