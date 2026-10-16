@@ -35,6 +35,8 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `window.ELEC_TOPICS`, `window.ELEC_CATS`.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
+- **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
+  `tools/src/elec_mcq_bank*.json` (promos 2021 à 2030) ; corriger une question dans le JSON puis regénérer.
 
 ## Ajouter une matière
 
@@ -64,3 +66,9 @@ NODE_PATH=$(npm root -g) node tools/check.js http://127.0.0.1:8765/ "index.html,
 NODE_PATH=$(npm root -g) node tools/elshot.js "http://127.0.0.1:8765/elec/entrainement.html" "#p2024-ex3a" ./shots/x "#p2024-ex3a [data-act=sol]:1"
 ```
 `check.js` signale les erreurs console et tout débordement horizontal (1280 px et 375 px, clair et sombre).
+
+## Aperçu claude.ai
+
+Aperçu privé du site : https://claude.ai/artifact/4ERsrJDktPHYY92et9KQmH. Pour le mettre à jour,
+`python3 tools/artifact_entry.py <dossier>` produit la page d’entrée et `files.json`, puis publier cette page avec
+ces fichiers en passant l’URL ci-dessus (`url`) pour garder le même lien.
