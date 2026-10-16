@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · Élec</title>
+<meta name="description" content="Électronique S1 : une méthode pas à pas pour chaque type de question du partiel, les réflexes de calcul sans calculatrice et les pièges relevés dans les corrigés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.recipe{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:14px;align-items:start}
+@media (max-width:820px){.recipe{grid-template-columns:minmax(0,1fr)}}
+.express{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem;display:grid;gap:.5rem;min-width:0}
+.express .t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.express .fig{padding:6px;border:1px solid var(--line);border-radius:8px}
+.express .fig svg{max-width:360px}
+.decide{display:grid;gap:8px}
+.decide a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:.65rem .85rem;background:var(--surface);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink)}
+.decide a:hover{border-color:var(--accent)}
+.decide a span:last-child{font-family:var(--font-mono);font-size:.78rem;color:var(--accent);white-space:nowrap}
+.traplist{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:t}
+.traplist li{counter-increment:t;display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.6rem .8rem}
+.traplist li::before{content:counter(t);font-family:var(--font-mono);font-weight:600;color:var(--warn)}
+.traplist li>div{min-width:0}
+.traplist b{display:block}
+.traplist span{color:var(--muted);font-size:.93rem}
+</style>
+</head>
+<body data-resume="Élec · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="./">Élec</a> · Méthodes</div>
+      <h1>Une question, <span class="w">une recette</span>.</h1>
+      <p class="lead">Les sujets posent toujours les mêmes types de questions. Pour chacune, voici l’ordre des gestes à faire sur ta copie, un exemple express, et les erreurs que les corrigés sanctionnent.</p>
+      <div class="chips"><span class="chip">11 méthodes</span><span class="chip">réflexes de calcul</span><span class="chip">15 pièges</span><span class="chip ex">ce que le correcteur attend</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li><a href="#choisir"><span class="code" data-n="0"></span><span>Quelle méthode ?</span></a></li>
+      <li><a href="#compter"><span class="code" data-n="1"></span><span>Compter</span></a></li>
+      <li><a href="#flecher"><span class="code" data-n="2"></span><span>Flécher, enchaîner</span></a></li>
+      <li><a href="#numerique"><span class="code" data-n="3"></span><span>Lois fondamentales chiffrées</span></a></li>
+      <li><a href="#req"><span class="code" data-n="4"></span><span>Réduire un réseau</span></a></li>
+      <li><a href="#diviseurs"><span class="code" data-n="5"></span><span>Diviseurs</span></a></li>
+      <li><a href="#interrupteurs"><span class="code" data-n="6"></span><span>Tableau d’interrupteurs</span></a></li>
+      <li><a href="#thevenin"><span class="code" data-n="7"></span><span>Thévenin direct</span></a></li>
+      <li><a href="#transfo"><span class="code" data-n="8"></span><span>Transformations en chaîne</span></a></li>
+      <li><a href="#millman"><span class="code" data-n="9"></span><span>Millman</span></a></li>
+      <li><a href="#verifier"><span class="code" data-n="10"></span><span>Vérifier</span></a></li>
+      <li><a href="#calcul"><span class="code" data-n="11"></span><span>Réflexes de calcul</span></a></li>
+      <li><a href="#pieges"><span class="code" data-n="12"></span><span>Les 15 pièges</span></a></li>
+      <li><a href="#copie"><span class="code" data-n="13"></span><span>Rédiger sa copie</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="./">← Accueil élec</a><a href="entrainement.html">Exercices →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Sommaire des méthodes</summary>
+      <ol>
+        <li><a href="#choisir">Quelle méthode ?</a></li><li><a href="#compter">Compter</a></li><li><a href="#flecher">Flécher, enchaîner</a></li><li><a href="#numerique">Lois fondamentales chiffrées</a></li>
+        <li><a href="#req">Réduire un réseau</a></li><li><a href="#diviseurs">Diviseurs</a></li><li><a href="#interrupteurs">Tableau d’interrupteurs</a></li><li><a href="#thevenin">Thévenin direct</a></li>
+        <li><a href="#transfo">Transformations en chaîne</a></li><li><a href="#millman">Millman</a></li><li><a href="#verifier">Vérifier</a></li><li><a href="#calcul">Réflexes de calcul</a></li><li><a href="#pieges">Les 15 pièges</a></li><li><a href="#copie">Rédiger sa copie</a></li>
+      </ol>
+    </details>
+
+    <section class="sec" id="choisir">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="0"></span><span>Point de départ</span></div><h2>Quelle méthode pour quelle question ?</h2></div>
+      <div class="decide">
+        <a href="#compter"><span>« Combien y a-t-il de nœuds, de branches, de mailles ? »</span><span>Méthode 1</span></a>
+        <a href="#flecher"><span>« Flécher les tensions en respectant les conventions », « placer les points », « calculer <var class="u">U</var><sub>2</sub>, <var class="u">U</var><sub>3</sub>… »</span><span>Méthode 2</span></a>
+        <a href="#numerique"><span>Un circuit chiffré (kΩ, mA) : « calculer <var>R</var>₃, le courant dans <var>R</var>₂, la tension <var class="u">U</var>₄ »</span><span>Méthode 3</span></a>
+        <a href="#req"><span>« Résistance équivalente vue depuis A et B / vue par le générateur », « que doit valoir <var>R</var>′ »</span><span>Méthode 4</span></a>
+        <a href="#diviseurs"><span>Tension sur une résistance en série, courant dans une branche en parallèle</span><span>Méthode 5</span></a>
+        <a href="#interrupteurs"><span>« Donner l’expression de <var class="u">U</var> dans les 4 cas possibles »</span><span>Méthode 6</span></a>
+        <a href="#thevenin"><span>Tension aux bornes d’une seule résistance, circuit simple à une source</span><span>Méthode 7</span></a>
+        <a href="#transfo"><span>« Déterminer <var class="u">E</var><sub>th</sub> et <var>R</var><sub>th</sub> pour que les 2 circuits soient équivalents », « vous pourrez utiliser les équivalences Thévenin/Norton »</span><span>Méthode 8</span></a>
+        <a href="#millman"><span>Potentiel d’un nœud où arrivent plusieurs branches avec des sources</span><span>Méthode 9</span></a>
+      </div>
+    </section>
+
+    <section class="sec" id="compter">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Méthode 1</span></div><h2>Compter nœuds, branches et mailles</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Colorie</b> chaque morceau de fil d’une couleur : tout ce qui est relié par du fil seul est un même point, même s’il fait le tour du dessin.</div></li>
+          <li><div><b>Nœuds</b> : les couleurs qui touchent au moins 3 éléments. Un point noir à 2 fils n’en est pas un.</div></li>
+          <li><div><b>Branches</b> : les chemins d’un nœud au suivant. Des dipôles à la suite sans nœud entre eux font une seule branche.</div></li>
+          <li><div><b>Mailles</b> : <var>b</var> − <var>n</var> + 1 mailles indépendantes, mais les corrigés comptent <b>toutes</b> les boucles. Liste-les en les nommant par leurs dipôles.</div></li>
+        </ol>
+        <div class="express"><span class="t">Exemple express · partiel nov. 2023</span><p>4 branches en parallèle entre A et B (source <var class="i">I</var>, <var class="u">E</var> + 2<var>R</var>, 2<var>R</var>, <var>R</var> + <var class="u">E</var> + <var>R</var>) : <b>2 nœuds, 4 branches, 6 mailles</b> (toutes les paires de branches, dont 3 indépendantes).</p><p class="muted" style="font-size:.9rem">Écris les deux nombres si tu doutes : « 3 mailles indépendantes, 6 en tout ».</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="flecher">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Méthode 2</span></div><h2>Flécher, puis enchaîner les tensions</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Résistances en convention récepteur</b> : flèche de tension opposée à la flèche de courant. Alors <span class="f-inline"><var class="u">U</var> = <var>R</var><var class="i">I</var></span>.</div></li>
+          <li><div><b>Générateur en convention générateur</b> : flèches dans le même sens.</div></li>
+          <li><div><b>Une tension inconnue</b> se calcule par n’importe quel chemin dont tu connais les tensions : <span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span>, et retourner une flèche change le signe.</div></li>
+          <li><div><b>Placer des points</b> donnés par <var class="u">U</var> = <var class="v">V</var><sub>X</sub> − <var class="v">V</var><sub>Y</sub> : X est à la pointe de la flèche, Y à l’arrière.</div></li>
+        </ol>
+        <div class="express"><span class="t">Exemple express · TD 1 Ex 2 et partiel 2020</span><p><var class="u">E</var> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub> = 240 V et <var class="u">U</var>₁ = <var class="v">V</var><sub>F</sub> − <var class="v">V</var><sub>B</sub> = 184 V. Alors <span class="f-inline"><var class="u">U</var>₂ = <var class="v">V</var><sub>F</sub> − <var class="v">V</var><sub>A</sub> = 184 − 240 = −56 V</span>. Le signe négatif est la bonne réponse, pas une erreur.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="numerique">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Méthode 3</span></div><h2>L’exercice « lois fondamentales » chiffré</h2></div>
+      <div class="prose"><p>Format de 2023 et 2024 : quelques courants en mA, une tension en V, des résistances en kΩ, et des questions en chaîne. Chaque réponse sert la suivante.</p></div>
+      <ol class="steps">
+        <li><div><b>Recopie les données sur le schéma</b> : écris chaque valeur à côté du composant correspondant.</div></li>
+        <li><div><b>Cherche le maillon direct</b> : une résistance dont tu connais deux grandeurs sur trois (<var>R</var>, <var class="u">U</var>, <var class="i">I</var>) → loi d’Ohm.</div></li>
+        <li><div><b>Courant inconnu</b> → loi des nœuds au nœud où tous les autres courants sont connus.</div></li>
+        <li><div><b>Tension inconnue</b> → loi des mailles sur la maille où toutes les autres tensions sont connues.</div></li>
+        <li><div><b>Résistance inconnue</b> → <var>R</var> = <var class="u">U</var>/<var class="i">I</var> avec les deux valeurs trouvées (V/mA = kΩ).</div></li>
+        <li><div><b>Garde les signes</b> : un courant de −5 mA veut dire 5 mA dans l’autre sens ; ne retourne pas la flèche, écris le signe.</div></li>
+      </ol>
+      <div class="note exam"><span class="tag">Au partiel 2024</span><p>Résultats attendus : <var>R</var>₃ = 2 kΩ, <var class="i">I</var>₂ = −5 mA, <var class="u">U</var>₂ = −10 V, <var class="u">U</var>₄ = 2 V. Le courant négatif est fait exprès. <a class="td x" href="entrainement.html#p2024-ex2">L’exercice corrigé</a></p></div>
+    </section>
+
+    <section class="sec" id="req">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Méthode 4</span></div><h2>Réduire un réseau de résistances</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Nomme les nœuds</b> (A, B, puis N1, N2…) et redessine le réseau si les fils se croisent : chaque résistance relie deux nœuds.</div></li>
+          <li><div><b>Repère les paires évidentes</b> : deux résistances entre les deux mêmes nœuds (parallèle) ou à la suite sans nœud entre elles (série).</div></li>
+          <li><div><b>Fusionne depuis le bout le plus loin</b> de A et B, une paire à la fois, et <b>redessine</b> après chaque fusion.</div></li>
+          <li><div><b>Recommence</b> jusqu’à une seule résistance entre A et B.</div></li>
+          <li><div><b>Question inverse</b> (« que doit valoir <var>R</var>′ ? ») : exprime <var>R</var><sub>eq</sub> en fonction de <var>R</var>′, pose l’égalité demandée, produit en croix.</div></li>
+        </ol>
+        <div class="express"><span class="t">Exemple express · partiel 2021</span><p>Deux 2<var>R</var> entre A et N1 : <var>R</var>. Deux 4<var>R</var> entre N2 et B : 2<var>R</var>. Puis (<var>R</var> + 2<var>R</var>) // 3<var>R</var> = 3<var>R</var>/2, + 2<var>R</var> = 7<var>R</var>/2, et enfin // 3<var>R</var> (branche du haut) :</p><p class="f-block">(7<var>R</var>/2 · 3<var>R</var>)/(7<var>R</var>/2 + 3<var>R</var>) = 21<var>R</var>/13 <span class="muted" style="font-family:var(--font-body);font-size:.85rem">(on multiplie haut et bas par 2)</span></p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="diviseurs">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Méthode 5</span></div><h2>Appliquer un diviseur sans se tromper</h2></div>
+      <div class="grid2">
+        <div class="qty"><h3>Diviseur de tension</h3><p><b>Condition</b> : résistances en série, rien ne s’échappe entre elles (un voltmètre ne compte pas, une charge si).</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="u">U</var><sub>k</sub> = <var class="u">E</var>·<var>R</var><sub>k</sub>/Σ<var>R</var></div></div><p class="ex">La même résistance en haut. Si une charge est branchée au milieu, mets-la d’abord en parallèle avec la résistance du bas.</p></div>
+        <div class="qty"><h3>Diviseur de courant</h3><p><b>Condition</b> : deux branches en parallèle alimentées par un courant connu.</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="i">I</var><sub>1</sub> = <var class="i">I</var>·<var>R</var><sub>2</sub>/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</div></div><p class="ex">L’<b>autre</b> résistance en haut. Avec plus de deux branches, passe en conductances : <var class="i">I</var><sub>k</sub> = <var class="i">I</var>·<var>G</var><sub>k</sub>/Σ<var>G</var>.</p></div>
+      </div>
+      <div class="note trap" style="margin-top:14px"><span class="tag">Contrôle d’intuition</span><p>La plus grosse résistance prend la plus grosse tension et le plus petit courant. Si ton résultat dit le contraire, tu as mis la mauvaise résistance en haut.</p></div>
+    </section>
+
+    <section class="sec" id="interrupteurs">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Méthode 6</span></div><h2>Le tableau des 4 cas d’interrupteurs</h2></div>
+      <ol class="steps">
+        <li><div><b>Fais un tableau</b> K₁ × K₂ (ouvert / fermé) : 4 cases, 4 schémas.</div></li>
+        <li><div><b>Pour chaque case, redessine</b> : fermé = fil (il court-circuite ce qui est en parallèle avec lui), ouvert = trou (sa branche disparaît).</div></li>
+        <li><div><b>Calcule</b> sur le circuit simplifié : souvent un seul diviseur de tension ou de courant.</div></li>
+        <li><div><b>Cas « boucle ouverte »</b> : aucun courant, donc aucune tension aux bornes des résistances ; l’interrupteur ouvert récupère toute la tension (<var class="u">U</var> = <var class="u">E</var>). Avec une source de courant, ouvrir sa seule boucle n’est pas possible : regarde où le courant peut encore passer.</div></li>
+      </ol>
+      <div class="note exam"><span class="tag">Au partiel</span><p>Tombé en 2017 (source de tension, réponses en <var class="u">E</var>) et en 2018 (source de courant, réponses en <var class="i">I</var>), pour 4,5 à 6 points. Même principe que le TD 1 Ex 7. <a class="td x" href="entrainement.html#interrupteurs">S’entraîner</a></p></div>
+    </section>
+
+    <section class="sec" id="thevenin">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Méthode 7</span></div><h2>Thévenin direct</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Débranche la charge</b> et repère A et B.</div></li>
+          <li><div><b><var class="u">E</var><sub>th</sub> = tension à vide</b> entre A et B : diviseur de tension, loi des mailles ou Millman. Aucun courant ne sort par A.</div></li>
+          <li><div><b><var>R</var><sub>th</sub></b> : éteins les sources (tension → fil, courant → trou), puis résistance vue de A et B.</div></li>
+          <li><div><b>Rebranche la charge</b> : <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·<var>R</var><sub>L</sub>/(<var>R</var><sub>th</sub> + <var>R</var><sub>L</sub>)</span>.</div></li>
+        </ol>
+        <div class="express"><span class="t">Exemple express</span><div class="fig" id="exThev"></div><p><var class="u">E</var><sub>th</sub> = 12 × 6/(3 + 6) = 8 V ; <var>R</var><sub>th</sub> = 3 // 6 = 2 kΩ ; avec <var>R</var><sub>L</sub> = 2 kΩ : <var class="u">U</var> = 8 × 2/4 = 4 V.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="transfo">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Méthode 8</span></div><h2>Transformations Thévenin ⇄ Norton en chaîne</h2></div>
+      <div class="prose"><p>La méthode des exercices à 11 points. Le correcteur attend <b>un schéma intermédiaire par transformation</b>.</p></div>
+      <ol class="steps">
+        <li><div><b>Débranche la charge 2<var>R</var></b>. Tout ce qui reste est le « générateur » à simplifier.</div></li>
+        <li><div><b>Branches en parallèle entre deux mêmes nœuds</b> : passe chaque (<var class="u">E</var>, <var>R</var>) série en Norton (<var class="u">E</var>/<var>R</var> // <var>R</var>, flèche vers le +), puis additionne les sources de courant (algébriquement) et combine les résistances en parallèle.</div></li>
+        <li><div><b>Éléments à la suite sur un chemin</b> : passe chaque (<var class="i">I</var> // <var>R</var>) en Thévenin (<var>R</var><var class="i">I</var> en série avec <var>R</var>, fém dans le sens de <var class="i">I</var>), puis additionne les fém (algébriquement, de B vers A) et les résistances.</div></li>
+        <li><div><b>Bloc « (<var class="u">E</var>, <var>R</var>) chargé par une résistance »</b> : Thévenin intermédiaire, <var class="u">E</var>·<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂) en série avec <var>R</var>₁ // <var>R</var>₂ (2024 Q2 : <var class="u">E</var>/2 et 2<var>R</var>).</div></li>
+        <li><div><b>Une seule source et une seule résistance</b> : c’est (<var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>). Rebranche 2<var>R</var>, diviseur de tension.</div></li>
+        <li><div><b>Contrôle</b> <var>R</var><sub>th</sub> sur le circuit de départ, sources éteintes, et l’homogénéité de <var class="u">E</var><sub>th</sub> (des V partout, <var>R</var><var class="i">I</var> est en V).</div></li>
+      </ol>
+      <div class="tbl" style="margin-top:14px"><table>
+        <thead><tr><th>Partiel</th><th><var class="u">E</var><sub>th</sub></th><th><var>R</var><sub>th</sub></th><th><var class="u">U</var> aux bornes de 2<var>R</var></th></tr></thead>
+        <tbody>
+          <tr><td>Nov. 2023 · Q1</td><td><var>R</var><var class="i">I</var> + <var class="u">E</var></td><td><var>R</var></td><td>2(<var>R</var><var class="i">I</var> + <var class="u">E</var>)/3</td></tr>
+          <tr><td>Nov. 2023 · Q2</td><td><var class="u">E</var> + 4<var>R</var><var class="i">I</var></td><td>4<var>R</var></td><td>(<var class="u">E</var> + 4<var>R</var><var class="i">I</var>)/3</td></tr>
+          <tr><td>Oct. 2024 · Q1</td><td>2(<var>R</var><var class="i">I</var> − <var class="u">E</var>)</td><td>5<var>R</var></td><td>4(<var>R</var><var class="i">I</var> − <var class="u">E</var>)/7</td></tr>
+          <tr><td>Oct. 2024 · Q2</td><td><var class="u">E</var>/2 − 4<var>R</var><var class="i">I</var></td><td>4<var>R</var></td><td>(<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6</td></tr>
+        </tbody></table></div>
+      <div class="note keep" style="margin-top:14px"><span class="tag">La règle des flèches</span><p>Norton : la flèche du courant pointe vers la borne + de la source de tension qu’il remplace. Thévenin : la flèche de la fém pointe dans le sens de la flèche du courant qu’elle remplace. Une source de courant qui <b>sort</b> du nœud A compte en moins.</p></div>
+    </section>
+
+    <section class="sec" id="millman">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="9"></span><span>Méthode 9</span></div><h2>Millman en trois étapes</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Masse</b> au point commun des sources (souvent le fil du bas). Nomme le nœud A cherché.</div></li>
+          <li><div><b>Numérateur</b> : pour chaque branche arrivant en A, (potentiel de l’autre bout ± fém)/<var>R</var>, + si la fém pointe vers A ; plus les courants des sources de courant (+ entrant, − sortant).</div></li>
+          <li><div><b>Dénominateur</b> : somme des 1/<var>R</var> des branches à résistance (pas des branches à source de courant en série). Multiplie haut et bas pour n’avoir qu’une barre de fraction.</div></li>
+        </ol>
+        <div class="express"><span class="t">Exemple express</span><p>Branches (12 V, 2 Ω) et (6 V, 2 Ω) vers A, et 4 Ω de A à la masse :</p><p class="f-block"><var class="v">V</var><sub>A</sub> = (12/2 + 6/2)/(1/2 + 1/2 + 1/4) = 9/(5/4) = 7,2 V</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="10"></span><span>Méthode 10</span></div><h2>Vérifier sans calculatrice</h2></div>
+      <div class="grid2">
+        <div class="qty"><h3>Unités</h3><p>Chaque terme d’une somme a la même unité : <var>R</var><var class="i">I</var> et <var class="u">E</var> sont des volts, <var class="u">E</var>/<var>R</var> et <var class="i">I</var> des ampères. Un résultat <var class="u">U</var> = <var class="u">E</var> + <var class="i">I</var> est faux à coup sûr.</p></div>
+        <div class="qty"><h3>Cas limites</h3><p>Pose <var class="i">I</var> = 0 ou <var class="u">E</var> = 0 et vérifie que le résultat colle au circuit simplifié. Une résistance qui tend vers 0 (fil) ou vers l’infini (trou) doit donner un résultat sensé.</p></div>
+        <div class="qty"><h3><var>R</var><sub>th</sub> deux fois</h3><p>Une fois par les transformations, une fois en éteignant les sources sur le schéma de départ. Si les deux diffèrent, une flèche ou un regroupement est faux.</p></div>
+        <div class="qty"><h3>Une autre méthode</h3><p>Superposition (une source à la fois) ou Millman au nœud A : en 2024 Q2, les deux redonnent (<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6 en quelques lignes.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="calcul">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="11"></span><span>Réflexes</span></div><h2>Calcul sans calculatrice</h2></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Association</th><th class="num">Résultat</th><th>Association</th><th class="num">Résultat</th></tr></thead>
+        <tbody>
+          <tr><td><var>R</var> // <var>R</var></td><td class="num"><var>R</var>/2</td><td>3<var>R</var> // 6<var>R</var></td><td class="num">2<var>R</var></td></tr>
+          <tr><td><var>R</var> // 2<var>R</var></td><td class="num">2<var>R</var>/3</td><td>2<var>R</var> // 4<var>R</var></td><td class="num">4<var>R</var>/3</td></tr>
+          <tr><td><var>R</var> // 3<var>R</var></td><td class="num">3<var>R</var>/4</td><td>4<var>R</var> // 4<var>R</var></td><td class="num">2<var>R</var></td></tr>
+          <tr><td><var>R</var> // <var>R</var> // <var>R</var></td><td class="num"><var>R</var>/3</td><td>6<var>R</var> // 3<var>R</var> // 2<var>R</var></td><td class="num"><var>R</var></td></tr>
+          <tr><td>2<var>R</var> // 3<var>R</var></td><td class="num">6<var>R</var>/5</td><td>3<var>R</var> // 7<var>R</var>/2</td><td class="num">21<var>R</var>/13</td></tr>
+        </tbody></table></div>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card"><span class="t">unités</span><span class="f">kΩ × mA = V</span><span class="d">et V / kΩ = mA, V / mA = kΩ</span></div>
+        <div class="card"><span class="t">fraction à étages</span><span class="f">(<var>a</var>/2)·<var>b</var> / (<var>a</var>/2 + <var>b</var>)</span><span class="d">multiplie haut et bas par 2 : <var>ab</var>/(<var>a</var> + 2<var>b</var>)</span></div>
+        <div class="card"><span class="t">une seule barre</span><span class="f">(<var>x</var>/<var>a</var> + <var>y</var>/<var>b</var>)/(1/<var>a</var> + 1/<var>b</var>)</span><span class="d">= (<var>bx</var> + <var>ay</var>)/(<var>a</var> + <var>b</var>) en multipliant par <var>ab</var></span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="12"></span><span>À éviter</span></div><h2>Les 15 pièges relevés dans les sujets</h2></div>
+      <ol class="traplist">
+        <li><div><b>Compter 4 mailles au lieu de 10</b><span>Les corrigés 2022 et 2023 comptent toutes les boucles, pas seulement les indépendantes.</span></div></li>
+        <li><div><b>Prendre un coude pour un nœud</b><span>Un point à deux fils n’est pas un nœud ; des dipôles séparés par un coude sont en série.</span></div></li>
+        <li><div><b>Mal lire un réseau de résistances</b><span>En 2018, le réseau de 2017 revient avec une seule connexion déplacée : 27<var>R</var>/13 au lieu de 2<var>R</var>. Nomme chaque nœud avant de réduire.</span></div></li>
+        <li><div><b>Ranger d’office deux résistances en série ou en parallèle</b><span>Le cours insiste : elles peuvent n’être ni l’un ni l’autre. Applique la définition.</span></div></li>
+        <li><div><b>Oublier le signe d’un résultat</b><span>−56 V, −5 mA, −1,84 A sont les bonnes réponses quand la flèche est dans l’autre sens.</span></div></li>
+        <li><div><b>Écrire <var class="u">U</var> = <var>R</var><var class="i">I</var> en convention générateur</b><span>Flèches dans le même sens sur une résistance : <var class="u">U</var> = −<var>R</var><var class="i">I</var>.</span></div></li>
+        <li><div><b>Croire qu’un générateur « ajoute » du courant</b><span>Le courant qui entre dans un dipôle en ressort, générateur compris. Question piège en 2017, 2021 et 2022.</span></div></li>
+        <li><div><b>Brancher l’ampèremètre en parallèle</b><span>Ampèremètre en série (un fil), voltmètre en parallèle (un trou).</span></div></li>
+        <li><div><b>Mettre la mauvaise résistance en haut du diviseur</b><span>Tension : la même. Courant : l’autre.</span></div></li>
+        <li><div><b>Garder la charge 2<var>R</var> dans <var class="u">E</var><sub>th</sub> ou <var>R</var><sub>th</sub></b><span>On la débranche d’abord, on la rebranche à la fin.</span></div></li>
+        <li><div><b>Court-circuiter une source de courant pour <var>R</var><sub>th</sub></b><span>Source de courant éteinte = trou.</span></div></li>
+        <li><div><b>Lire une flèche de source à l’envers</b><span>2024 : la 2<var>E</var> pointe vers le bas, d’où 2(<var>R</var><var class="i">I</var> − <var class="u">E</var>) et non 2(<var>R</var><var class="i">I</var> + <var class="u">E</var>).</span></div></li>
+        <li><div><b>Oublier qu’une source de courant prélève</b><span>2024 Q2 : <var class="i">I</var> sort de A, elle se retranche : <var class="u">E</var>/(8<var>R</var>) − <var class="i">I</var>.</span></div></li>
+        <li><div><b>Oublier une résistance du fil du bas</b><span>2024 Q2 : <var>R</var><sub>th</sub> = 2<var>R</var> + <var>R</var> + <var>R</var> = 4<var>R</var>.</span></div></li>
+        <li><div><b>Additionner des résistances en parallèle</b><span>6<var>R</var> // 6<var>R</var> = 3<var>R</var>, pas 12<var>R</var> (2023 Q2).</span></div></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="13"></span><span>Le jour J</span></div><h2>Rédiger sa copie</h2></div>
+      <div class="prose"><p>Les sujets disent « Justifiez vos réponses » et répondent sur la feuille même. Ce qui rapporte des points :</p>
+        <ul><li><b>Un schéma par étape</b> pour les équivalences, avec les flèches et les valeurs.</li>
+        <li><b>La loi utilisée, nommée</b> : « loi des mailles sur la maille … », « diviseur de tension », « Norton → Thévenin ».</li>
+        <li><b>L’expression littérale d’abord</b>, puis la valeur numérique avec son unité.</li>
+        <li><b>Le résultat encadré</b>, simplifié (une seule barre de fraction).</li>
+        <li><b>Le QCM sans points négatifs</b> : réponds à tout.</li>
+        <li><b>Le temps</b> : le sujet n’indique pas de durée ; vise environ 5 minutes pour le QCM, 15 pour les lois fondamentales et le reste pour Thévenin/Norton.</li></ul></div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Suite">
+      <a href="./"><span>Retour</span><b>← Accueil élec</b></a>
+      <a class="next" href="entrainement.html"><span>Mettre en pratique</span><b>Les exercices →</b></a>
+    </nav>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+REV.circuit.mount('#exThev', { w: 340, h: 190, aria: 'Source de 12 V, 3 kΩ en série, 6 kΩ entre A et B',
+  wires: ['M50 40H280M50 160H280M50 40V160M190 40V160'],
+  parts: [{ t: 'E', x: 50, y: 100, d: 'v', p: 'n', l: '12 V' }, { t: 'R', x: 120, y: 40, l: '3 kΩ' }, { t: 'R', x: 190, y: 100, d: 'v', l: '6 kΩ' },
+    { t: 'dot', x: 190, y: 40 }, { t: 'dot', x: 190, y: 160 }, { t: 'term', x: 280, y: 40, l: 'A' }, { t: 'term', x: 280, y: 160, l: 'B' }] });
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Électronique · Révisions S1</title>
+<meta name="description" content="Réviser le partiel d’électronique S1 (Outils d’analyse de circuits) : ce qui tombe, cours en trois chapitres, méthodes, exercices d’annales corrigés, QCM et fiche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.home{display:grid;gap:60px;padding-block:44px 80px}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.blk-head p{color:var(--muted);max-width:40em}
+/* graphique : répartition des points par sujet */
+.viz-root{--series-1:#2a78d6;--series-2:#eb6834;--series-3:#1baf7a;--series-4:#eda100}
+@media (prefers-color-scheme: dark){:root:where(:not([data-theme="light"])) .viz-root{--series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500}}
+:root[data-theme="dark"] .viz-root{--series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500}
+.viz{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:14px;position:relative}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.88rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.bars{display:grid;gap:10px}
+.brow{display:grid;grid-template-columns:118px minmax(0,1fr) 52px;gap:12px;align-items:center}
+@media (max-width:560px){.brow{grid-template-columns:76px minmax(0,1fr) 40px;gap:8px}}
+.brow .y{font-family:var(--font-mono);font-size:.82rem;color:var(--ink);white-space:nowrap}
+.brow .y small{display:block;color:var(--muted);font-size:.72rem}
+.brow .tot{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.track{display:flex;gap:2px;height:26px;min-width:0}
+.seg{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.74rem;font-weight:600;color:#0b0b0b;cursor:default;min-width:0;overflow:hidden;white-space:nowrap;outline-offset:2px}
+.seg.thev{color:#1a1200}
+.seg[data-c="qcm"]{background:var(--series-1)} .seg[data-c="req"]{background:var(--series-2)} .seg[data-c="lois"]{background:var(--series-3)} .seg[data-c="thev"]{background:var(--series-4)}
+.axis{display:grid;grid-template-columns:118px minmax(0,1fr) 52px;gap:12px;font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
+@media (max-width:560px){.axis{grid-template-columns:76px minmax(0,1fr) 40px;gap:8px}}
+.axis .ticks{display:flex;justify-content:space-between}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.82rem;line-height:1.35;padding:.45rem .6rem;border-radius:6px;max-width:260px;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.viz details summary{cursor:pointer;color:var(--accent);font-size:.9rem}
+.viz table{margin-top:8px}
+.takeaways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.takeaways{grid-template-columns:minmax(0,1fr)}}
+.take{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.take b.k{font-family:var(--font-display);font-size:1.9rem;line-height:1;color:var(--accent)}
+.take p{color:var(--muted);font-size:.93rem}
+/* parcours */
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.path{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;align-content:start;text-decoration:none;color:inherit;min-width:0}
+a.stop:hover{border-color:var(--accent)}
+.stop .kicker{gap:8px}
+.stop h3{font-size:1.25rem;margin:0}
+.stop p{color:var(--muted);font-size:.93rem;line-height:1.5}
+.stop .meter{display:grid;gap:4px}
+.stop .meter .r{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
+.mbar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.mbar i{display:block;height:100%;background:var(--accent);border-radius:inherit;width:0}
+.go{color:var(--accent);font-weight:600;font-size:.92rem}
+/* incontournables */
+.must{display:grid;gap:10px;counter-reset:m;margin:0;padding:0;list-style:none}
+.must li{counter-increment:m;display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem .9rem}
+.must li::before{content:counter(m);font-family:var(--font-display);font-weight:700;font-size:1.4rem;color:var(--exam);line-height:1.1}
+.must li>div{min-width:0}
+.must b{display:block;margin-bottom:2px}
+.must span.d{color:var(--muted);font-size:.93rem}
+.must a{white-space:nowrap;font-size:.88rem;font-weight:600}
+@media (max-width:560px){.must li{grid-template-columns:30px minmax(0,1fr)}.must li>a{grid-column:2}}
+/* plan */
+.plan{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:980px){.plan{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.plan{grid-template-columns:minmax(0,1fr)}}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:6px;align-content:start}
+.day .j{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.day b{font-size:1.02rem}
+.day ul{margin:0;padding-left:1.1rem;display:grid;gap:.2rem;font-size:.9rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Élec · accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow">SI-S1-ELEC-1-OAC · promo 2031</div>
+      <h1>Électronique : <span class="w">outils d’analyse de circuits</span></h1>
+      <p class="lead">Définitions, lois de Kirchhoff, associations de résistances, Thévenin, Norton et Millman, en régime continu. Le partiel de mi-semestre compte pour 45 % de la note, il se fait sans calculatrice ni document, et ses sujets se ressemblent beaucoup d’une année sur l’autre.</p>
+      <div class="chips"><span class="chip">écrit · 20 points</span><span class="chip">sans calculatrice</span><span class="chip">sans document</span><span class="chip">réponses sur le sujet</span><span class="chip ex">mi-semestre 45 % · final 45 % · CC 10 %</span></div>
+    </div>
+    <div class="bench" aria-label="Aperçu : un générateur de Thévenin chargé par 2R">
+      <div class="bench-head"><span>La question qui rapporte le plus</span><span class="td x">11 pts en 2023 et 2024</span></div>
+      <div class="fig" id="heroFig"></div>
+      <div class="ctrls"><p class="readout" style="min-height:0">« Déterminer <var class="u">E</var><sub>th</sub> et <var>R</var><sub>th</sub> pour que les deux circuits soient équivalents, puis la tension <var class="u">U</var> aux bornes de 2<var>R</var>. » <a href="cours-3-theoremes.html#s6">Apprendre la méthode →</a></p></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-tombe">
+    <div class="blk-head"><div><div class="eyebrow">Ce qui tombe</div><h2 id="t-tombe">Les points des sept derniers sujets</h2></div><p>Chaque barre est un partiel sur 20, découpé par type d’exercice. Depuis 2023, Thévenin et Norton pèsent plus de la moitié de la note.</p></div>
+    <div class="viz viz-root" id="viz">
+      <div class="legend" id="legend"></div>
+      <div class="bars" id="bars" role="img" aria-label="Répartition des points par type d’exercice pour les partiels de 2017 à 2024"></div>
+      <div class="axis" aria-hidden="true"><span></span><div class="ticks"><span>0</span><span>5</span><span>10</span><span>15</span><span>20 pts</span></div><span></span></div>
+      <details><summary>Voir en tableau</summary><div class="tbl" id="vizTable"></div></details>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="takeaways" style="margin-top:14px">
+      <div class="take"><b class="k">7 sur 7</b><strong>QCM de cours</strong><p>Toujours en exercice 1, sans points négatifs. Les mêmes questions reviennent presque mot pour mot : définition de la tension et du courant, branche, ampèremètre en série, courant conservé dans un dipôle.</p></div>
+      <div class="take"><b class="k">7 sur 7</b><strong>Lois fondamentales</strong><p>Loi des mailles, loi des nœuds et loi d’Ohm sur un circuit chiffré en kΩ et mA, souvent avec un courant négatif et la question « combien de nœuds, branches, mailles ».</p></div>
+      <div class="take"><b class="k">11 / 20</b><strong>Thévenin et Norton</strong><p>Depuis 2023 : deux circuits à réduire par transformations successives jusqu’à la tension aux bornes d’une charge 2<var>R</var>, réponses littérales en <var class="u">E</var>, <var class="i">I</var>, <var>R</var>.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-parcours">
+    <div class="blk-head"><div><div class="eyebrow">Ton parcours</div><h2 id="t-parcours">Dans cet ordre</h2></div><p>Ta progression est enregistrée dans ce navigateur. Les compteurs se remplissent quand tu marques une partie comme comprise, réponds au QCM ou notes un exercice.</p></div>
+    <div class="path" id="path"></div>
+  </section>
+
+  <section aria-labelledby="t-must">
+    <div class="blk-head"><div><div class="eyebrow">Les incontournables</div><h2 id="t-must">Sept savoir-faire à maîtriser le jour J</h2></div></div>
+    <ol class="must">
+      <li><div><b>Réciter les définitions du QCM</b><span class="d">Tension = différence de potentiels, courant = déplacement ordonné de charges, branche = entre deux nœuds consécutifs, série = même courant, parallèle = même tension.</span></div><a href="../qcm/#elec">QCM →</a></li>
+      <li><div><b>Compter nœuds, branches et mailles</b><span class="d">Colorie les fils, compte les nœuds (3 fils ou plus), les branches, puis toutes les boucles : les corrigés comptent toutes les mailles.</span></div><a href="cours-2-lois.html#s1">Cours →</a></li>
+      <li><div><b>Flécher et enchaîner les tensions</b><span class="d">Convention récepteur sur les résistances, <var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub>, loi des mailles avec + et −, résultats négatifs assumés.</span></div><a href="entrainement.html#kirchhoff">Exercices →</a></li>
+      <li><div><b>Réduire un réseau de résistances</b><span class="d">Depuis le bout le plus loin, en redessinant ; réflexes 4<var>R</var> // 4<var>R</var> = 2<var>R</var>, 3<var>R</var> // 6<var>R</var> = 2<var>R</var>, fractions sans calculatrice.</span></div><a href="entrainement.html#req">Exercices →</a></li>
+      <li><div><b>Appliquer les diviseurs</b><span class="d">Tension : la même résistance en haut. Courant : l’autre résistance en haut. Ils finissent tous les exercices de Thévenin.</span></div><a href="cours-2-lois.html#s6">Cours →</a></li>
+      <li><div><b>Transformer Thévenin ⇄ Norton en chaîne</b><span class="d">Parallèle → Norton pour additionner les courants, série → Thévenin pour additionner les tensions, un schéma par étape, flèches vers le +.</span></div><a href="cours-3-theoremes.html#s6">Méthode →</a></li>
+      <li><div><b>Vérifier sans calculatrice</b><span class="d"><var>R</var><sub>th</sub> en éteignant les sources (tension → fil, courant → trou), unités, un cas limite, ou Millman en une ligne.</span></div><a href="methodes.html#verifier">Méthode →</a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="t-plan">
+    <div class="blk-head"><div><div class="eyebrow">Plan de révision</div><h2 id="t-plan">Cinq séances avant le partiel</h2></div><p id="planNote">Environ 1 h 30 chacune. Si tu as moins de temps, garde les séances 3 et 4 : c’est là que sont les points.</p></div>
+    <div class="plan">
+      <div class="day"><span class="j">Séance 1</span><b>Les bases</b><ul><li>Chapitre 1 et ses vérifications</li><li>QCM : notions du chapitre 1</li><li>TD 1 Ex 5, 6 et 7</li></ul></div>
+      <div class="day"><span class="j">Séance 2</span><b>Lois fondamentales</b><ul><li>Chapitre 2</li><li>TD 1 Ex 1 à 4 et 8 à 10</li><li>Un exercice « lois fondamentales » de partiel</li></ul></div>
+      <div class="day"><span class="j">Séance 3</span><b>Thévenin et Norton</b><ul><li>Chapitre 3, parties 1 à 6</li><li>Les transformations en chaîne, pas à pas</li><li>Partiel 2023 Ex 3 Q1</li></ul></div>
+      <div class="day"><span class="j">Séance 4</span><b>Sujets en conditions</b><ul><li>Partiel 2024 complet, sans aide</li><li>Correction et pièges</li><li>Partiel 2023 Ex 3 Q2</li></ul></div>
+      <div class="day"><span class="j">Séance 5</span><b>Consolidation</b><ul><li>QCM « à revoir »</li><li>Exercices marqués à revoir</li><li>Fiche d’une page, à relire la veille</li></ul></div>
+    </div>
+  </section>
+</main>
+
+<footer class="page-foot" style="color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-block:20px 40px"><div class="wrapx">Sources : cours « Concepts de base de l’électronique », TD 0 et TD 1 (Moodle, promo 2031) ; sujets de partiel 2017 à 2024 (Epidocs, HyperAnnales), corrigés et revérifiés par calcul.</div></footer>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../data/elec/exams.js"></script>
+<script src="../data/elec/ex-p2023-2024.js"></script>
+<script src="../data/elec/ex-p2021-2022.js"></script>
+<script src="../data/elec/ex-p2017-2020.js"></script>
+<script src="../data/elec/ex-td1.js"></script>
+<script src="../data/elec/ex-hyperion.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/qcm/elec-td0.js"></script>
+<script src="../data/qcm/elec-p2023-2024.js"></script>
+<script src="../data/qcm/elec-p2021-2022.js"></script>
+<script src="../data/qcm/elec-p2017-2020.js"></script>
+<script src="../data/qcm/elec-hebdo.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, nf = U.nf;
+  var EXAMS = window.ELEC_EXAMS || [], EX = window.ELEC_EX || [], BANK = (window.QCM_BANK || []).filter(function (q) { return q.s === 'elec'; });
+
+  R.circuit.mount('#heroFig', { w: 340, h: 215, aria: 'Générateur de Thévenin chargé par une résistance 2R',
+    wires: ['M50 40H240V180H50Z'],
+    parts: [{ t: 'E', x: 50, y: 110, d: 'v', p: 'n', l: 'E_th' }, { t: 'R', x: 140, y: 40, l: 'R_th' }, { t: 'R', x: 240, y: 110, d: 'v', l: '2R', lp: 'w', c: 'cz-hl' },
+      { t: 'U', a: [276, 165], b: [276, 55], l: 'U' }, { t: 'dot', x: 240, y: 40 }, { t: 'dot', x: 240, y: 180 }, { t: 'txt', x: 242, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 242, y: 204, s: 'B', c: 'cz-n' }] });
+
+  /* ---- graphique : 4 catégories, ordre fixe ---- */
+  var CATS = [{ id: 'qcm', t: 'Questions de cours' }, { id: 'req', t: 'Résistances équivalentes' }, { id: 'lois', t: 'Lois fondamentales (Kirchhoff, diviseurs, interrupteurs…)' }, { id: 'thev', t: 'Thévenin et Norton' }];
+  function catOf(p) { return p.cat === 'qcm' || p.cat === 'req' || p.cat === 'thev' ? p.cat : 'lois'; }
+  $('#legend').innerHTML = CATS.map(function (c, i) { return '<span><i style="background:var(--series-' + (i + 1) + ')"></i>' + c.t + '</span>'; }).join('');
+  var rows = EXAMS.slice().reverse(), max = 21;
+  $('#bars').innerHTML = rows.map(function (e) {
+    var tot = e.parts.reduce(function (s, p) { return s + p.pts; }, 0), segs = '';
+    var sum = {}; e.parts.forEach(function (p) { var c = catOf(p); (sum[c] = sum[c] || { pts: 0, ex: [] }).pts += p.pts; sum[c].ex.push('Ex ' + p.ex + ' · ' + p.t + ' (' + nf(p.pts, 1) + ' pts)'); });
+    CATS.forEach(function (c) {
+      var s = sum[c.id]; if (!s) return;
+      var label = c.id === 'thev' ? nf(s.pts, 1) + ' pts' : '';
+      segs += '<div class="seg' + (c.id === 'thev' ? ' thev' : '') + '" data-c="' + c.id + '" tabindex="0" style="width:calc(' + (100 * s.pts / max) + '% - 2px)" data-tip="<b>' + e.label + '</b><br>' + c.t + ' : ' + nf(s.pts, 1) + ' pts<br>' + s.ex.join('<br>') + '" aria-label="' + e.label + ', ' + c.t + ' : ' + nf(s.pts, 1) + ' points">' + label + '</div>';
+    });
+    return '<div class="brow"><span class="y">' + e.date.replace('Octobre', 'oct.').replace('Novembre', 'nov.') + '<small>promo ' + e.promo + '</small></span><div class="track">' + segs + '</div><span class="tot">' + nf(tot, 1) + '</span></div>';
+  }).join('');
+  $('#vizTable').innerHTML = '<table><thead><tr><th>Sujet</th>' + CATS.map(function (c) { return '<th class="num">' + c.t.split(' (')[0] + '</th>'; }).join('') + '<th class="num">Total</th></tr></thead><tbody>' +
+    rows.map(function (e) {
+      var sum = {}; e.parts.forEach(function (p) { sum[catOf(p)] = (sum[catOf(p)] || 0) + p.pts; });
+      return '<tr><td>' + e.label + '</td>' + CATS.map(function (c) { return '<td class="num">' + (sum[c.id] ? nf(sum[c.id], 1) : '–') + '</td>'; }).join('') + '<td class="num">' + nf(e.parts.reduce(function (s, p) { return s + p.pts; }, 0), 1) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+  var tip = $('#tip'), viz = $('#viz');
+  function showTip(el) {
+    tip.innerHTML = el.getAttribute('data-tip'); tip.hidden = false;
+    var r = el.getBoundingClientRect(), v = viz.getBoundingClientRect();
+    var x = Math.min(Math.max(r.left - v.left + r.width / 2 - 130, 8), v.width - 268);
+    tip.style.left = x + 'px'; tip.style.top = (r.bottom - v.top + 8) + 'px';
+  }
+  U.$$('.seg').forEach(function (el) {
+    el.addEventListener('mouseenter', function () { showTip(el); }); el.addEventListener('focus', function () { showTip(el); });
+    el.addEventListener('mouseleave', function () { tip.hidden = true; }); el.addEventListener('blur', function () { tip.hidden = true; });
+  });
+
+  /* ---- parcours ---- */
+  function meter(label, done, total) { var f = total ? Math.min(1, done / total) : 0; return '<div class="meter"><div class="r"><span>' + label + '</span><span>' + done + ' / ' + total + '</span></div><div class="mbar"><i style="width:' + Math.round(f * 100) + '%"></i></div></div>'; }
+  function paintPath() {
+    var s = R.subject('elec'), html = '';
+    s.chapters.forEach(function (c, i) {
+      var d = Math.min(c.sections, R.progress.chapterDone('elec', c.id));
+      html += '<a class="stop" href="' + c.path.replace('elec/', '') + '"><div class="kicker"><span class="code" data-n="' + (i + 1) + '"></span><span>Chapitre ' + (i + 1) + '</span></div><h3>' + c.title + '</h3><p>' +
+        ['Grandeurs, schémas, flèches, conventions, loi d’Ohm, appareils, générateurs, calcul sans calculatrice.', 'Nœuds, branches, mailles, Kirchhoff, série et parallèle, résistance équivalente, diviseurs, méthode.', 'Éteindre les sources, Thévenin, Norton, transformations en chaîne, Millman, superposition.'][i] +
+        '</p>' + meter('parties comprises', d, c.sections) + '<span class="go">' + (d ? (d >= c.sections ? 'Relire' : 'Continuer') : 'Commencer') + ' →</span></a>';
+    });
+    var ok = EX.filter(function (e) { var x = R.exo.get('elec-' + e.id); return x && x.s === 'ok'; }).length;
+    var st = R.qcm.stats('elec', BANK);
+    html += '<a class="stop" href="methodes.html"><div class="kicker"><span class="code" data-n="4"></span><span>Méthodes</span></div><h3>Les recettes pas à pas</h3><p>Une méthode par type de question, avec les réflexes de calcul et les pièges relevés dans les corrigés.</p><span class="go">Ouvrir →</span></a>';
+    html += '<a class="stop" href="entrainement.html"><div class="kicker"><span class="code" data-n="5"></span><span>Entraînement</span></div><h3>Exercices d’annales</h3><p>Les exercices des partiels 2017 à 2024 et du TD 1, avec indices et corrections détaillées, plus des exercices générés à l’infini.</p>' + meter('exercices réussis', ok, EX.length) + '<span class="go">S’entraîner →</span></a>';
+    html += '<a class="stop" href="../qcm/#elec"><div class="kicker"><span class="code" data-n="6"></span><span>QCM</span></div><h3>Questions de cours</h3><p>Les vraies questions des partiels et des QCM hebdo, avec répétition espacée des erreurs.</p>' + meter('questions bien ancrées', st.mastered, BANK.length) + '<span class="go">Lancer →</span></a>';
+    html += '<a class="stop" href="annales.html"><div class="kicker"><span class="code" data-n="7"></span><span>Annales</span></div><h3>Les sujets complets</h3><p>Sept sujets avec leur structure, leurs pièges et les liens vers chaque exercice corrigé. À faire en conditions réelles.</p><span class="go">Voir les sujets →</span></a>';
+    html += '<a class="stop" href="fiche.html"><div class="kicker"><span class="code" data-n="8"></span><span>Fiche</span></div><h3>La fiche d’une page</h3><p>Toutes les formules, les méthodes et les pièges sur une page, à relire juste avant l’épreuve.</p><span class="go">Ouvrir →</span></a>';
+    $('#path').innerHTML = html;
+    U.$$('#path .code[data-n]').forEach(function (el) { el.innerHTML = R.elec.codeSVG(+el.dataset.n); });
+  }
+  paintPath();
+  var d = R.exams.daysLeft(R.exams.get('elec'));
+  if (d !== null && d >= 0) $('#planNote').textContent = (d === 0 ? 'C’est aujourd’hui. ' : 'Il te reste ' + d + ' jour' + (d > 1 ? 's' : '') + '. ') + 'Environ 1 h 30 par séance. Si tu as moins de temps, garde les séances 3 et 4 : c’est là que sont les points.';
+})();
+</script>
+</body>
+</html>
