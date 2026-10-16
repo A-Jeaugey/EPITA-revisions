@@ -136,7 +136,9 @@
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
-  var BANK = window.QCM_BANK || [];
+  /* une même question peut venir de plusieurs sources (cours, partiel, QCM hebdo) : on garde la première chargée */
+  function norm(t) { return String(t || '').replace(/<[^>]+>/g, '').toLowerCase().replace(/[^a-z0-9àâäéèêëîïôöùûüç]+/g, ' ').trim(); }
+  var BANK = (function (all) { var seen = {}; return all.filter(function (q) { var k = q.s + '|' + norm(q.q) + '|' + (q.o || []).map(norm).join('/'); if (seen[k]) return false; seen[k] = 1; return true; }); })(window.QCM_BANK || []);
   var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
   var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10, srcs: null, exam: null };
   var SRC = [{ id: 'cours', t: 'Cours', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Partiels', test: /^[a-z]+-p20\d\d-/ }, { id: 'hebdo', t: 'QCM hebdo', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
