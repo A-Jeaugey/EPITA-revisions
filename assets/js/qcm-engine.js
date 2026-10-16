@@ -184,7 +184,9 @@
      une question reposée d'une promo à l'autre) : on n'en garde qu'un exemplaire, le plus parlant
      (partiel > TD > cours > QCM hebdo), et les autres identifiants vont dans q.alt pour les filtres.
      Deux questions sont identiques si énoncé, options (dans n'importe quel ordre), bonne réponse et figure
-     sont les mêmes ; « Vrai / Faux » et une question à choix « VRAI / FAUX » se confondent. */
+     sont les mêmes ; « Vrai / Faux » et une question à choix « VRAI / FAUX » se confondent.
+     Une question reformulée se déclare à la main : same:'<id de l'autre exemplaire>'.
+     Une question tombée ailleurs sans y avoir sa propre fiche le dit avec also:['elec-p2017-q3', …]. */
   function nkey(t) {
     var s = String(t == null ? '' : t).replace(/<[^>]+>/g, '');
     if (s.normalize) s = s.normalize('NFKC');
@@ -206,9 +208,10 @@
   function bank() {
     var all = window.QCM_BANK || [];
     if (cache.n === all.length) return cache.list;
-    var seen = {}, list = [];
-    all.forEach(function (q) { delete q.alt; });
+    var seen = {}, list = [], byKey = {}, later = [];
+    all.forEach(function (q) { delete q.alt; byKey[q.id] = q; });
     all.forEach(function (q) {
+      if (q.same && q.same !== q.id && byKey[q.same]) { later.push(q); return; }
       var k = dupKey(q), prev = seen[k];
       if (!prev) { seen[k] = q; list.push(q); return; }
       if (rank(q.id) < rank(prev.id)) {
@@ -216,11 +219,18 @@
         list[list.indexOf(prev)] = q; seen[k] = q;
       } else (prev.alt = prev.alt || []).push(q.id);
     });
+    /* doublons déclarés : rattachés à l'exemplaire gardé de la question visée */
+    later.forEach(function (q) {
+      var m = byKey[q.same], hops = 0;
+      while (m.same && byKey[m.same] && m.same !== m.id && hops++ < 5) m = byKey[m.same];
+      var rep = seen[dupKey(m)];
+      if (rep) (rep.alt = rep.alt || []).push(q.id); else list.push(q);
+    });
     cache = { n: all.length, list: list };
     return list;
   }
   /* tous les identifiants d'une question (le sien et ceux de ses doublons) */
-  function ids(q) { return q.alt ? [q.id].concat(q.alt) : [q.id]; }
+  function ids(q) { return q.alt || q.also ? [q.id].concat(q.alt || [], q.also || []) : [q.id]; }
 
   R.quiz = { Card: Card, mountCheck: mountCheck, byId: byId, bank: bank, ids: ids, correctSet: correctSet, fmtAnswer: fmtAnswer, optsOf: optsOf, topicName: topicName, parseNum: parseNum };
 })();

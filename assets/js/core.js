@@ -141,8 +141,34 @@
     esc: function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); },
     shuffle: function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; },
     reduceMotion: function () { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); },
-    inFrame: function () { try { return window.self !== window.top; } catch (e) { return true; } }
+    inFrame: function () { try { return window.self !== window.top; } catch (e) { return true; } },
+    tidy: tidy
   };
+
+  /* ---------- typographie : « 15 V », « 6 pts » ne se coupent pas en fin de ligne ----------
+     Espace insécable entre un nombre et son unité, dans tout le texte affiché, y compris celui
+     ajouté plus tard par les scripts (QCM, exercices, générateurs) grâce à un MutationObserver. */
+  var UNIT = /(\d) (?=(?:[kmµM]?(?:V|A|W|Ω|Ω)|ms|s|min|h|pts?|%|°C)(?![A-Za-zÀ-ÿ0-9_]))/g;
+  var SKIP = /^(SCRIPT|STYLE|TEXTAREA|CODE|PRE)$/;
+  function tidyText(n) {
+    if (n.data.indexOf(' ') < 0 || (n.parentNode && SKIP.test(n.parentNode.nodeName))) return;
+    var t = n.data.replace(UNIT, '$1\u00a0');
+    if (t !== n.data) n.data = t;
+  }
+  function tidy(root) {
+    if (!root) return;
+    if (root.nodeType === 3) { tidyText(root); return; }
+    if (root.nodeType !== 1 || SKIP.test(root.nodeName) || !document.createTreeWalker) return;
+    var w = document.createTreeWalker(root, 4 /* NodeFilter.SHOW_TEXT */, null), n;
+    while ((n = w.nextNode())) tidyText(n);
+  }
+  function watchTypography() {
+    tidy(document.body);
+    if (!window.MutationObserver) return;
+    new MutationObserver(function (list) {
+      for (var i = 0; i < list.length; i++) for (var j = 0; j < list[i].addedNodes.length; j++) tidy(list[i].addedNodes[j]);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 
   /* ---------- barre de navigation partagée ---------- */
   var ICONS = {
@@ -216,7 +242,7 @@
     save();
   }
 
-  document.addEventListener('DOMContentLoaded', function () { buildShell(); wireDoneButtons(); rememberVisit(); });
+  document.addEventListener('DOMContentLoaded', function () { buildShell(); wireDoneButtons(); rememberVisit(); watchTypography(); });
 
   window.REV = {
     root: ROOT,

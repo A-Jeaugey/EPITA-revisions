@@ -10,6 +10,10 @@ TOPIC = {'loi-noeuds': 'kirchhoff', 'loi-mailles': 'kirchhoff', 'vocabulaire': '
 REF = {'kirchhoff': 'C2#s2', 'vocabulaire': 'C2#s1', 'grandeurs': 'C1#s1', 'serie-parallele': 'C2#s4', 'req': 'C2#s5', 'conventions': 'C1#s4',
        'ohm': 'C1#s5', 'diviseurs': 'C2#s6', 'norton': 'C3#s5', 'thevenin': 'C3#s3', 'fleches': 'C1#s3', 'appareils': 'C1#s6',
        'generateurs': 'C1#s7', 'millman': 'C3#s7', 'calcul': 'C1#s8'}
+# Questions reprises ailleurs avec un autre énoncé (le dédoublonnage automatique ne les voit pas) :
+# id hebdo -> id de l'exemplaire à garder (voir R.quiz.bank dans assets/js/qcm-engine.js).
+SAME = {'mcq2029-01-q21': 'elec-p2023-q1', 'mcq2029-01-q23': 'elec-p2023-q3', 'mcq2029-03-q23': 'elec-p2024-q5',
+        'mcq2027-04-q50': 'elec-p2017-q4', 'mcq2027-02-q48': 'elec-c2-05', 'mcq2030-02-q21': 'elec-p2024-q4'}
 def esc(s): return html.escape(str(s), quote=False)
 banks = [f for f in ['elec_mcq_bank.json', 'elec_mcq_bank_2.json'] if os.path.exists(os.path.join(AN, f))]
 out, seen = [], set()
@@ -24,6 +28,7 @@ for f in banks:
         src = 'QCM hebdo promo %s · n°%s' % (m.group(1), m.group(2)) if m else 'QCM hebdo'
         item = {'id': qid, 'topic': topic, 'lvl': int(q.get('difficulty') or 1), 'keep': True, 'src': src,
                 'q': esc(q['question']), 'o': [esc(o) for o in q['options']], 'x': esc(q.get('explanation', '')), 'ref': REF[topic]}
+        if q['id'] in SAME: item['same'] = SAME[q['id']]
         ans = q['answer']
         if q.get('multi') or (isinstance(ans, list) and len(ans) > 1):
             item['type'] = 'multi'; item['a'] = sorted(ans)
@@ -46,7 +51,7 @@ for it in out:
     js += '}'
     lines.append('    ' + js)
 src = '''/* Questions d’électronique des QCM hebdomadaires des promos précédentes (2026 à 2030), extraites et corrigées.
-   Réponses résolues et vérifiées par calcul (pas de corrigé officiel publié pour ces QCM). Généré par scripts/gen_hebdo.py. */
+   Réponses résolues et vérifiées par calcul (pas de corrigé officiel publié pour ces QCM). Généré par tools/gen_hebdo.py. */
 (function () {
   var B = window.QCM_BANK = window.QCM_BANK || [];
   var C1 = 'elec/cours-1-bases.html', C2 = 'elec/cours-2-lois.html', C3 = 'elec/cours-3-theoremes.html';
