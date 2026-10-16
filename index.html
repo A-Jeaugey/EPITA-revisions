@@ -153,10 +153,15 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/qcm/elec-p2017-2020.js"></script>
 <script src="data/qcm/elec-hebdo.js"></script>
 <script src="data/annales.js"></script>
+<script src="data/elec/ex-p2023-2024.js"></script>
+<script src="data/elec/ex-p2021-2022.js"></script>
+<script src="data/elec/ex-p2017-2020.js"></script>
+<script src="data/elec/ex-td1.js"></script>
+<script src="data/elec/ex-hyperion.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
-  var BANK = window.QCM_BANK || [];
+  var BANK = window.QCM_BANK || [], NEX = (window.ELEC_EX || []).length;
 
   /* ---- compte à rebours ---- */
   function renderCount() {
@@ -234,14 +239,14 @@ a.tool:hover{border-color:var(--accent)}
         '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
         '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">prêt</span></div>' +
         '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
-        '<p>' + s.exam + '. Trois chapitres, des méthodes, ' + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés, corrigés.</p>' +
+        '<p>' + s.exam + '. Trois chapitres, des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés.</p>' +
         '<ul class="chapters">' + chapters + '</ul>' +
         '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">Ouvrir l’élec</a><a class="btn" href="' + R.url('elec/entrainement.html') + '">Entraînement</a><a class="btn" href="' + R.url('elec/fiche.html') + '">Fiche</a></div>' +
         '</div><div class="meters">' +
         meter('Cours compris', p.pctRead, p.read + ' / ' + p.sections) +
         meter('QCM bien ancrés', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
         meter('QCM déjà vus', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
-        meter('Exercices réussis', p.ex.ok / 30, p.ex.ok + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) +
+        meter('Exercices réussis', NEX ? p.ex.ok / NEX : 0, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) +
         '</div></article>';
     }).join('');
   }

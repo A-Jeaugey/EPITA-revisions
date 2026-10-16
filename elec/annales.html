@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annales d’élec · Révisions S1</title>
+<meta name="description" content="Les sept sujets de partiel d’électronique S1 de 2017 à 2024 : structure, notions, pièges, liens vers les sujets et les corrigés pas à pas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.ann{display:grid;gap:56px;padding-block:40px 80px}
+main.ann>section{min-width:0}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.blk-head p{color:var(--muted);max-width:42em}
+.viz-root{--series-1:#2a78d6;--series-2:#eb6834;--series-3:#1baf7a;--series-4:#eda100}
+@media (prefers-color-scheme: dark){:root:where(:not([data-theme="light"])) .viz-root{--series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500}}
+:root[data-theme="dark"] .viz-root{--series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500}
+.matrix td,.matrix th{text-align:center;white-space:nowrap}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.matrix td.c{font-family:var(--font-mono);font-size:.8rem;font-variant-numeric:tabular-nums}
+.matrix td.l1{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.matrix td.l2{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.matrix td.l3{background:color-mix(in srgb,var(--accent) 52%,transparent);font-weight:600}
+.matrix .yr{font-family:var(--font-mono);font-size:.72rem}
+.exams{display:grid;gap:18px}
+.exam{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;scroll-margin-top:72px}
+.exam-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:start;padding:16px 18px;border-bottom:1px solid var(--line)}
+@media (max-width:640px){.exam-head{grid-template-columns:minmax(0,1fr)}}
+.exam-head h3{font-size:1.5rem;margin:0}
+.exam-head .sub{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);margin-top:4px}
+.badge{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:.15rem .6rem;border:1px solid currentColor;white-space:nowrap}
+.badge.off{color:var(--ok)} .badge.ours{color:var(--exam)}
+.files{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.files a{font-size:.88rem}
+.exam-body{display:grid;gap:14px;padding:14px 18px 18px}
+.track{display:flex;gap:2px;height:22px}
+.seg{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.7rem;font-weight:600;color:#0b0b0b;min-width:0;overflow:hidden;white-space:nowrap}
+.seg[data-c="qcm"]{background:var(--series-1)} .seg[data-c="req"]{background:var(--series-2)} .seg[data-c="lois"]{background:var(--series-3)} .seg[data-c="thev"]{background:var(--series-4)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.84rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.part{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:start;border:1px solid var(--line);border-radius:9px;padding:.6rem .75rem;background:var(--bg)}
+@media (max-width:560px){.part{grid-template-columns:minmax(0,1fr)}}
+.part .num{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.part .num b{display:block;font-family:var(--font-display);font-size:1.2rem;color:var(--ink)}
+.part .t{font-weight:600}
+.part .ex-links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;font-size:.88rem}
+.part .pending{color:var(--muted);font-size:.86rem}
+.exam-note{color:var(--muted);font-size:.93rem}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.how{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-resume="Élec · annales">
+<div id="shell"></div>
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="./">Élec</a> · Annales</div>
+      <h1>Sept sujets, <span class="w">décortiqués</span>.</h1>
+      <p class="lead">Les partiels de mi-semestre d’électronique de 2017 à 2024, avec leur structure, les notions qu’ils testent et un corrigé pas à pas pour chaque exercice, y compris pour les sujets sans corrigé officiel.</p>
+      <div class="chips"><span class="chip">7 sujets</span><span class="chip">tous corrigés et revérifiés par calcul</span><span class="chip ex">format actuel depuis 2023</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx ann">
+  <section aria-labelledby="t-how">
+    <div class="blk-head"><div><div class="eyebrow">Mode d’emploi</div><h2 id="t-how">Comment t’en servir</h2></div></div>
+    <div class="how">
+      <div class="qty"><h3>1. En conditions</h3><p>Imprime ou ouvre le sujet, sans calculatrice ni cours. Les sujets n’indiquent pas de durée : chronomètre-toi et note ton temps.</p></div>
+      <div class="qty"><h3>2. Corrige-toi</h3><p>Ouvre le corrigé pas à pas de chaque exercice. Compare la méthode, pas seulement le résultat : les schémas intermédiaires comptent.</p></div>
+      <div class="qty"><h3>3. Note tes erreurs</h3><p>Marque l’exercice « à revoir » s’il a coincé. Le QCM du sujet entre dans ta répétition espacée dès que tu y réponds.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-mx">
+    <div class="blk-head"><div><div class="eyebrow">Vue d’ensemble</div><h2 id="t-mx">Quelles notions, quelles années</h2></div><p>● notion principale d’un exercice, avec ses points ; ○ notion utilisée en chemin (par exemple un diviseur de tension à la fin d’un Thévenin).</p></div>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+
+  <section aria-labelledby="t-ex">
+    <div class="blk-head"><div><div class="eyebrow">Les sujets</div><h2 id="t-ex">Du plus récent au plus ancien</h2></div>
+      <div class="legend viz-root" id="legend"></div></div>
+    <div class="exams viz-root" id="exams"></div>
+  </section>
+</main>
+
+<script src="../data/elec/exams.js"></script>
+<script src="../data/elec/ex-p2023-2024.js"></script>
+<script src="../data/elec/ex-p2021-2022.js"></script>
+<script src="../data/elec/ex-p2017-2020.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/qcm/elec-p2023-2024.js"></script>
+<script src="../data/qcm/elec-p2021-2022.js"></script>
+<script src="../data/qcm/elec-p2017-2020.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, nf = U.nf;
+  var EXAMS = window.ELEC_EXAMS || [], EX = window.ELEC_EX || [], TOP = window.ELEC_TOPICS || {}, BANK = window.QCM_BANK || [];
+  var CATS = [{ id: 'qcm', t: 'Questions de cours' }, { id: 'req', t: 'Résistances équivalentes' }, { id: 'lois', t: 'Lois fondamentales' }, { id: 'thev', t: 'Thévenin et Norton' }];
+  function catOf(p) { return p.cat === 'qcm' || p.cat === 'req' || p.cat === 'thev' ? p.cat : 'lois'; }
+  $('#legend').innerHTML = CATS.map(function (c, i) { return '<span><i style="background:var(--series-' + (i + 1) + ')"></i>' + c.t + '</span>'; }).join('');
+
+  /* matrice notions × sujets */
+  var order = ['qcm', 'vocabulaire', 'potentiels', 'kirchhoff', 'req', 'diviseurs', 'interrupteurs', 'generateurs', 'source-courant', 'superposition', 'thevenin', 'calcul'];
+  var cols = EXAMS.slice().reverse();
+  var head = '<thead><tr><th>Notion</th>' + cols.map(function (e) { return '<th class="yr">' + e.date.replace('Octobre ', 'oct. ').replace('Novembre ', 'nov. ') + '</th>'; }).join('') + '<th class="yr">sujets</th></tr></thead>';
+  var body = order.map(function (t) {
+    var n = 0;
+    var cells = cols.map(function (e) {
+      var main = e.parts.filter(function (p) { return (p.topics || [])[0] === t; }), used = e.parts.filter(function (p) { return (p.topics || []).indexOf(t) > 0; });
+      if (main.length || used.length) n++;
+      if (main.length) { var pts = main.reduce(function (s, p) { return s + p.pts; }, 0); return '<td class="c l3" title="Notion principale : ' + nf(pts, 1) + ' pts">● ' + nf(pts, 1) + '</td>'; }
+      if (used.length) return '<td class="c l1" title="Notion utilisée en chemin">○</td>';
+      return '<td class="c">·</td>';
+    }).join('');
+    return '<tr><td>' + (TOP[t] || t) + '</td>' + cells + '<td class="c">' + n + ' / ' + cols.length + '</td></tr>';
+  }).join('');
+  $('#matrix').innerHTML = head + '<tbody>' + body + '</tbody>';
+
+  /* fiches par sujet */
+  $('#exams').innerHTML = EXAMS.map(function (e) {
+    var tot = e.parts.reduce(function (s, p) { return s + p.pts; }, 0), sum = {};
+    e.parts.forEach(function (p) { sum[catOf(p)] = (sum[catOf(p)] || 0) + p.pts; });
+    var bar = '<div class="track" role="img" aria-label="Répartition des points">' + CATS.map(function (c) { return sum[c.id] ? '<div class="seg" data-c="' + c.id + '" style="width:calc(' + (100 * sum[c.id] / tot) + '% - 2px)" title="' + c.t + ' : ' + nf(sum[c.id], 1) + ' pts">' + nf(sum[c.id], 1) + '</div>' : ''; }).join('') + '</div>';
+    var files = e.files.map(function (f) { return '<a class="btn" href="' + f.u + '" target="_blank" rel="noopener">' + f.k + (f.l ? ' (' + f.l.toUpperCase() + ')' : '') + ' ↗</a>'; }).join('');
+    var nq = BANK.filter(function (q) { return q.id.indexOf('elec-' + e.key + '-') === 0; }).length;
+    var parts = e.parts.map(function (p) {
+      var links;
+      if (p.cat === 'qcm') {
+        links = nq ? '<div class="ex-links"><a href="../qcm/#' + e.key + '">Faire ces ' + nq + ' questions dans le QCM →</a></div>' : '<div class="pending">Questions en cours d’ajout au QCM.</div>';
+      } else {
+        var cards = EX.filter(function (x) { return x.exam === e.key && Math.floor(x.order || 0) === p.ex; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+        links = cards.length ? '<div class="ex-links">' + cards.map(function (x) { return '<a href="entrainement.html#' + x.id + '">' + U.esc(x.title) + ' · corrigé pas à pas →</a>'; }).join('') + '</div>' : '<div class="pending">Corrigé pas à pas en cours d’ajout.</div>';
+      }
+      var tags = (p.topics || []).filter(function (t) { return t !== 'qcm'; }).map(function (t) { return TOP[t]; }).filter(Boolean).join(' · ');
+      return '<li class="part"><span class="num"><b>Ex ' + p.ex + '</b>' + nf(p.pts, 1) + ' pts</span><div><div class="t">' + p.t + '</div>' + (tags ? '<div class="muted" style="font-size:.86rem">' + tags + '</div>' : '') + links + '</div></li>';
+    }).join('');
+    return '<article class="exam" id="' + e.key + '"><div class="exam-head"><div><h3>' + e.label + '</h3><div class="sub">promo ' + e.promo + ' · ' + nf(tot, 1) + ' points · sans calculatrice ni document</div></div>' +
+      '<span class="badge ' + (e.official ? 'off' : 'ours') + '">' + (e.official ? 'corrigé officiel' : 'corrigé rédigé ici') + '</span></div>' +
+      '<div class="exam-body">' + bar + '<p class="exam-note">' + e.note + '</p><ol class="parts">' + parts + '</ol><div class="files">' + files + '</div></div></article>';
+  }).join('');
+  var h = (location.hash || '').slice(1); if (h) { var t = document.getElementById(h); if (t) setTimeout(function () { t.scrollIntoView(); }, 50); }
+})();
+</script>
+</body>
+</html>

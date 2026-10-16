@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiches · Révisions S1</title>
+<meta name="description" content="Les fiches d’une page des partiels S1, à relire avant l’épreuve.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.top{padding-block:36px 26px}
+.top .sheet{padding:22px 24px 24px 64px;display:grid;gap:10px}
+@media (max-width:560px){.top .sheet{padding:18px 16px 20px 34px}}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding-bottom:40px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.f{padding:18px 18px 20px 58px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;min-height:190px}
+@media (max-width:560px){.f{padding-left:34px}}
+a.f:hover{border-color:var(--accent)}
+.f .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.f h2{font-size:1.4rem}
+.f p{color:var(--muted);font-size:.93rem;line-height:1.5}
+.f ul{margin:0;padding-left:1.1rem;color:var(--muted);font-size:.9rem;display:grid;gap:.15rem}
+.f .go{color:var(--accent);font-weight:700;font-size:.93rem;margin-top:auto}
+.f.soon{background:transparent;border-style:dashed}
+.f.soon h2{color:var(--muted)}
+</style>
+</head>
+<body data-resume="Fiches">
+<div id="shell"></div>
+<header class="top wrap">
+  <div class="sheet margin">
+    <span class="eyebrow">Fiches · une page par matière</span>
+    <h1>À relire la veille</h1>
+    <p class="lead">Toutes les formules, les méthodes et les pièges d’une matière sur une seule page, imprimable en A4. Elles ne remplacent pas le cours : elles servent à vérifier que tout est là avant l’épreuve.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+</main>
+<footer class="page-foot"><div class="wrap"><span>Les fiches s’impriment directement depuis ton navigateur (format A4).</span><span>Révisions S1</span></div></footer>
+<script>
+(function () {
+  var R = window.REV;
+  var FICHES = {
+    elec: { href: 'elec/fiche.html', items: ['Grandeurs, conventions, loi d’Ohm', 'Kirchhoff, série, parallèle, diviseurs', 'Thévenin, Norton, transformations, Millman', 'Réflexes de calcul et pièges'] }
+  };
+  document.getElementById('grid').innerHTML = R.subjects.map(function (s) {
+    var f = FICHES[s.id];
+    if (f) return '<a class="sheet margin f" href="' + R.url(f.href) + '"><span class="k">' + s.name + '</span><h2>La fiche d’une page</h2><ul>' + f.items.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul><span class="go">Ouvrir la fiche →</span></a>';
+    return '<div class="sheet margin f soon"><span class="k">' + s.name + '</span><h2>Bientôt</h2><p>La fiche arrivera avec le cours de cette matière.</p></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
