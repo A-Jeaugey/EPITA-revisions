@@ -170,12 +170,12 @@
 
   /* ---------- cartes d'exercice ---------- */
   function figHTML(f) {
-    var svg = f.svg || (f.spec ? C(f.spec) : '');
+    var svg = f.img ? '<img class="scan" src="' + R.url(f.img) + '" alt="' + U.esc(f.alt || f.cap || 'Schéma') + '" loading="lazy">' : (f.svg || (f.spec ? C(f.spec) : ''));
     return '<figure class="exo-fig" style="margin:0"><div class="fig">' + svg + '</div>' + (f.cap ? '<figcaption class="cap">' + f.cap + '</figcaption>' : '') + '</figure>';
   }
   function solHTML(ex) {
     var s = (ex.solution || []).map(function (p) {
-      var figs = (p.figs || []).map(function (f) { return '<div class="mini-fig">' + (f.svg || C(f.spec)) + (f.cap ? '<div class="sol-note" style="text-align:center">' + f.cap + '</div>' : '') + '</div>'; }).join('');
+      var figs = (p.figs || []).map(function (f) { return '<div class="mini-fig">' + (f.img ? '<img class="scan" src="' + R.url(f.img) + '" alt="' + U.esc(f.alt || f.cap || 'Schéma') + '" loading="lazy">' : (f.svg || C(f.spec))) + (f.cap ? '<div class="sol-note" style="text-align:center">' + f.cap + '</div>' : '') + '</div>'; }).join('');
       return '<div class="sol-step"><b>' + (p.t || 'Correction') + '</b><div class="body">' + (p.html || '') + figs + '</div></div>';
     }).join('');
     if (ex.answer) s += '<div class="answer"><b class="t">Résultats</b>' + ex.answer + '</div>';

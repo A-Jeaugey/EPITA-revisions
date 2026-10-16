@@ -81,6 +81,7 @@
     <section class="panel" id="setup" aria-label="Réglages">
       <div class="field"><span class="lbl">Matière</span><div class="chips" id="subjChips"></div></div>
       <div class="field"><span class="lbl">Notions <button type="button" class="linkish" id="allTopics" style="font:inherit;font-size:.72rem;letter-spacing:.06em;text-transform:none;background:none;border:0;color:var(--accent);cursor:pointer;padding:0 0 0 8px">tout cocher / décocher</button></span><div class="chips" id="topicChips"></div></div>
+      <div class="field" id="srcField"><span class="lbl">Provenance</span><div class="chips" id="srcChips"></div></div>
       <div class="field"><span class="lbl">Mode</span>
         <div class="modes" role="group" aria-label="Mode">
           <button type="button" class="mode" data-mode="train" aria-pressed="true"><b>Entraînement</b><span>correction après chaque question</span></button>
@@ -137,9 +138,12 @@
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
   var BANK = window.QCM_BANK || [];
   var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
-  var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10 };
+  var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10, srcs: null, exam: null };
+  var SRC = [{ id: 'cours', t: 'Cours', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Partiels', test: /^[a-z]+-p20\d\d-/ }, { id: 'hebdo', t: 'QCM hebdo', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
+  function srcOf(q) { for (var i = 0; i < SRC.length; i++) if (SRC[i].test.test(q.id)) return SRC[i].id; return 'cours'; }
 
-  function inSubj() { return BANK.filter(function (q) { return q.s === st.subj; }); }
+  function inSubj() { return BANK.filter(function (q) { return q.s === st.subj && (!st.exam || q.id.indexOf(st.subj + '-' + st.exam + '-') === 0); }); }
+  function inSrc(list) { return st.srcs ? list.filter(function (q) { return st.srcs.indexOf(srcOf(q)) >= 0; }) : list; }
   function topicsOf(list) {
     var seen = [], m = {};
     list.forEach(function (q) { if (!m[q.topic]) { m[q.topic] = 0; seen.push(q.topic); } m[q.topic]++; });
@@ -152,7 +156,7 @@
       var n = BANK.filter(function (q) { return q.s === s.id; }).length;
       return '<button type="button" class="chip" data-s="' + s.id + '" aria-pressed="' + (s.id === st.subj) + '">' + s.name + ' <span class="n">' + n + '</span></button>';
     }).join('') || '<span class="empty">Aucune question pour l’instant.</span>';
-    $$('#subjChips [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.subj = b.dataset.s; st.topics = null; paintAll(); }); });
+    $$('#subjChips [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.subj = b.dataset.s; st.topics = null; st.srcs = null; st.exam = null; paintAll(); }); });
   }
   function paintTopics() {
     var ts = topicsOf(inSubj());
@@ -170,7 +174,7 @@
   }
   function pool() {
     var now = Date.now();
-    var list = inSubj().filter(function (q) { return st.topics.indexOf(q.topic) >= 0; });
+    var list = inSrc(inSubj()).filter(function (q) { return st.topics.indexOf(q.topic) >= 0; });
     if (st.mode === 'due') list = list.filter(function (q) { var s = R.qcm.get(q.id); return s && (R.qcm.isDue(q.id, now) || !s.lastOk); });
     if (st.mode === 'new') list = list.filter(function (q) { return !R.qcm.get(q.id); });
     return list;
@@ -188,6 +192,17 @@
     if (!n) note = st.mode === 'due' ? 'Rien à revoir dans ces notions : fais un entraînement.' : (st.mode === 'new' ? 'Tu as déjà vu toutes ces questions.' : 'Coche au moins une notion.');
     else if (st.mode === 'exam') note = 'Temps conseillé : ' + Math.ceil(n * 1.2) + ' min. Pas de points négatifs.';
     $('#startNote').textContent = note;
+  }
+  function paintSrcs() {
+    var all = inSubj(), avail = SRC.filter(function (x) { return all.some(function (q) { return srcOf(q) === x.id; }); });
+    if (!st.srcs) st.srcs = avail.map(function (x) { return x.id; });
+    $('#srcField').hidden = avail.length < 2 && !st.exam;
+    $('#srcChips').innerHTML = (st.exam ? '<span class="chip" aria-pressed="true" style="cursor:default">' + st.exam.replace('p', 'Partiel ') + ' seulement</span><button type="button" class="chip" id="clearExam">Tout le QCM</button>' : '') + avail.map(function (x) {
+      var n = all.filter(function (q) { return srcOf(q) === x.id; }).length;
+      return '<button type="button" class="chip" data-src="' + x.id + '" aria-pressed="' + (st.srcs.indexOf(x.id) >= 0) + '">' + x.t + ' <span class="n">' + n + '</span></button>';
+    }).join('');
+    $$('#srcChips [data-src]').forEach(function (b) { b.addEventListener('click', function () { var k = st.srcs.indexOf(b.dataset.src); if (k >= 0) st.srcs.splice(k, 1); else st.srcs.push(b.dataset.src); paintSrcs(); paintStart(); }); });
+    var ce = $('#clearExam'); if (ce) ce.addEventListener('click', function () { st.exam = null; st.srcs = null; st.topics = null; paintAll(); });
   }
   function paintModes() { $$('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)); }); }
   function paintCounts() { $$('#countChips [data-n]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.n === st.n)); }); }
@@ -324,11 +339,12 @@
   function backToSetup() { run = null; $('#done').hidden = true; $('#run').hidden = true; $('#setup').hidden = false; paintAll(); }
   $('#start').addEventListener('click', start);
 
-  function paintAll() { paintSubjects(); paintTopics(); paintModes(); paintCounts(); paintStart(); paintSide(); }
+  function paintAll() { paintSubjects(); paintSrcs(); paintTopics(); paintModes(); paintCounts(); paintStart(); paintSide(); }
 
   /* liens directs : #sprint, #revision, #examen, #elec, #t-<notion> */
   var h = (location.hash || '').slice(1);
   subjects.forEach(function (s) { if (h === s.id) st.subj = s.id; });
+  if (/^p20\d\d$/.test(h) && BANK.some(function (q) { return q.id.indexOf(st.subj + '-' + h + '-') === 0; })) { st.exam = h; st.n = 0; }
   paintAll(); wireReset();
   if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) { st.topics = [t]; paintTopics(); paintStart(); } }
   if (h === 'sprint') { st.mode = 'train'; st.n = 10; paintModes(); paintCounts(); paintStart(); start(); }
