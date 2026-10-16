@@ -819,4 +819,200 @@
       'La flèche de ' + I(3) + ' pointe vers la gauche : la source prend son courant au nœud de droite et le donne au nœud de gauche.'],
     official: false
   });
+
+  /* =====================================================================
+     Étude dirigée n° 1 : découverte du théorème de superposition
+     ===================================================================== */
+  L.push({
+    id: 'hyp-ed1-ex1', exam: null, kind: 'archive', order: 411,
+    src: 'Ancienne étude dirigée n° 1', title: 'Découvrir le théorème de superposition',
+    topics: ['superposition', 'kirchhoff', 'source-courant'], lvl: 2, time: 25,
+    intro: '<p>Nous avons étudié ensemble en TD les lois fondamentales de l’électronique (lois de Kirchhoff ou lois des mailles et des nœuds) qui sont à la base de tout raisonnement dans l’étude des circuits électroniques. Il existe, en outre, des théorèmes dont le but est de se ramener à des schémas plus simples afin de faciliter ces études.<br>L’objectif de cette étude dirigée est de découvrir l’un de ces théorèmes par le biais d’exercices.</p>' +
+      '<p><b>I. Etude d’un circuit électronique « complexe »</b> : soit le circuit de la figure 1.<br><b>II. Découverte du Théorème</b> : étape 1, on considère le circuit de la figure 2 ; étape 2, on considère le circuit de la figure 3. <b>3. Conclusion</b> : questions Q4 à Q7.</p>',
+    figs: [img('hyp_ed1_ex1_fig1', 'Figure 1 : E fléchée vers le haut avec R1 en parallèle, R2 sur le fil du haut, source de courant I fléchée vers le haut, R3 avec U fléchée vers le haut', 'Figure 1'),
+      img('hyp_ed1_ex1_fig2', 'Figure 2 : même circuit, la source de courant est remplacée par un interrupteur ouvert', 'Figure 2'),
+      img('hyp_ed1_ex1_fig3', 'Figure 3 : même circuit que la figure 1, la source E est remplacée par un fil', 'Figure 3')],
+    questions: ['<b>Q1</b> : En utilisant les lois de Kirchhoff, déterminez l’expression de la tension ' + U() + ' en fonction de ' + E() + ', de ' + I() + ' et des résistances.',
+      '<b>Q2</b> : En utilisant les lois de Kirchhoff, déterminez l’expression de la tension ' + U() + ' en fonction de ' + E() + ' et des résistances.',
+      '<b>Q3</b> : En utilisant les lois de Kirchhoff, déterminez l’expression de la tension ' + U() + ' en fonction de ' + I() + ' et des résistances.',
+      '<b>Q4</b> : Comparez les circuits des figures 1 et 2. Par quoi a été remplacé le générateur de courant ?',
+      '<b>Q5</b> : Comparez maintenant les circuits des figures 1 et 3. Par quoi a été remplacé le générateur de tension ?',
+      '<b>Q6</b> : Comparez les 3 circuits. Que remarquez-vous ?',
+      '<b>Q7</b> : Que pouvez-vous dire de l’expression de la tension ' + U() + ' obtenue au I par rapport à celles obtenues dans la partie II ? Et, selon vous, qu’auriez-vous pu dire si on vous avait demandé de rechercher l’expression de l’intensité du courant dans ' + R(3) + ' ?',
+      'Proposez alors un énoncé de théorème visant à simplifier l’étude d’un circuit électronique complexe. Soyez le plus précis et le plus complet possible !'],
+    hints: [R(1) + ' est branchée directement aux bornes de la source idéale ' + E() + ' : elle ne change pas la tension du fil en haut à gauche.',
+      'Q1 : loi des nœuds au nœud en haut de ' + R(3) + ', avec les courants de ' + R(2) + ' et ' + R(3) + ' écrits par la loi d’Ohm.',
+      'Q4 et Q5 : regarde par quoi chaque source a été remplacée : un interrupteur ouvert ou un fil ?'],
+    solution: [
+      { t: 'Q1 (figure 1)', html: '<p>Fil du bas : 0 V. Le fil en haut à gauche est relié au + de ' + E() + ' : il est à ' + E() + ' (' + R(1) + ', en parallèle sur ' + E() + ', n’y change rien). Appelle N le nœud en haut de ' + R(3) + ' : ' + V('N') + ' = ' + U() + '.</p><p>Loi des nœuds en N : le courant qui arrive par ' + R(2) + ', (' + E() + ' − ' + U() + ')/' + R(2) + ', plus le courant ' + I() + ' de la source, ressortent par ' + R(3) + ' : ' + F(E() + ' − ' + U(), R(2)) + ' + ' + I() + ' = ' + F(U(), R(3)) + '.</p><p>' + U() + ' (' + F('1', R(2)) + ' + ' + F('1', R(3)) + ') = ' + F(E(), R(2)) + ' + ' + I() + ', donc ' + U() + ' = ' + F(R(3) + '(' + E() + ' + ' + R(2) + I() + ')', R(2) + ' + ' + R(3)) + '.</p>' },
+      { t: 'Q2 (figure 2)', html: '<p>L’interrupteur ouvert ne laisse passer aucun courant : ' + R(2) + ' et ' + R(3) + ' sont en série sous ' + E() + '. Diviseur de tension :</p><p>' + U() + ' = ' + F(E() + R(3), R(2) + ' + ' + R(3)) + '.</p>' },
+      { t: 'Q3 (figure 3)', html: '<p>' + E() + ' est remplacée par un fil : le fil en haut à gauche est à 0 V et ' + R(1) + ' est court-circuitée. Le courant ' + I() + ' arrive en N et se partage entre ' + R(3) + ' et ' + R(2) + ' (qui rejoint le 0 V). Diviseur de courant :</p><p>' + I(3) + ' = ' + I() + ' × ' + F(R(2), R(2) + ' + ' + R(3)) + ', donc ' + U() + ' = ' + R(3) + I(3) + ' = ' + F(R(2) + R(3) + I(), R(2) + ' + ' + R(3)) + '.</p><p>Le corrigé manuscrit archivé écrit « ' + U() + '(1 − ' + R(2) + '/' + R(3) + ') = ' + R(2) + I() + ' » : le bon signe est ' + U() + '(1 + ' + R(2) + '/' + R(3) + ') = ' + R(2) + I() + '. Le résultat qu’il encadre est juste.</p>' },
+      { t: 'Q4, Q5 et Q6', html: '<ul><li><b>Q4</b> : la source de courant a été remplacée par un interrupteur ouvert (un circuit ouvert) : c’est une source de courant « éteinte », qui impose 0 A.</li><li><b>Q5</b> : la source de tension a été remplacée par un fil (un court-circuit) : c’est une source de tension « éteinte », qui impose 0 V.</li><li><b>Q6</b> : les figures 2 et 3 gardent chacune une seule des deux sources, l’autre étant éteinte. Toutes les résistances sont toujours là, aux mêmes places.</li></ul>' },
+      { t: 'Q7 et énoncé du théorème', html: '<p>' + U() + ' de la figure 1 est la somme des deux autres : ' + F(E() + R(3), R(2) + ' + ' + R(3)) + ' + ' + F(R(2) + R(3) + I(), R(2) + ' + ' + R(3)) + ' = ' + F(R(3) + '(' + E() + ' + ' + R(2) + I() + ')', R(2) + ' + ' + R(3)) + '. Il en irait de même pour le courant dans ' + R(3) + ' : ' + I(3) + ' = ' + U() + '/' + R(3) + ' est la somme des courants obtenus avec chaque source seule.</p><p><b>Théorème de superposition</b> : dans un circuit linéaire qui contient plusieurs sources indépendantes, la tension entre deux points (ou le courant dans une branche) est la somme des tensions (ou des courants) que produirait chaque source agissant seule, les autres étant éteintes. Une source de tension éteinte est remplacée par un fil, une source de courant éteinte par un circuit ouvert ; les résistances restent en place.</p>' }
+    ],
+    answer: '<p>' + U() + ' = ' + R(3) + '(' + E() + ' + ' + R(2) + I() + ')/(' + R(2) + ' + ' + R(3) + ') ; figure 2 : ' + E() + R(3) + '/(' + R(2) + ' + ' + R(3) + ') ; figure 3 : ' + R(2) + R(3) + I() + '/(' + R(2) + ' + ' + R(3) + ') ; la première est la somme des deux autres : théorème de superposition.</p>',
+    traps: ['Éteindre une source de courant, c’est l’ouvrir ; la remplacer par un fil serait une erreur.',
+      'Éteindre une source de tension, c’est la remplacer par un fil : ' + R(1) + ' se retrouve alors court-circuitée.',
+      'La superposition marche pour les tensions et les courants, pas pour les puissances (elles ne sont pas proportionnelles aux sources).'],
+    official: false
+  });
+
+  /* =====================================================================
+     Partiel de janvier 2018 (fin de semestre, entièrement en continu)
+     ===================================================================== */
+  var pa1 = '<p><b>Exercice 1.</b> Questions de cours : QCM (6 points – pas de point négatif)</p><p>Entourez la ou les bonnes réponses.</p>';
+  var Rr = '<var>r</var>';
+
+  L.push({
+    id: 'hyp-partiel-ex1a', exam: null, kind: 'archive', order: 511.1,
+    src: 'Ancien partiel de fin de semestre · Ex 1 · Q1 à Q3, Q10, Q11', title: 'QCM de cours : générateurs, conventions, unités, homogénéité',
+    topics: ['qcm', 'generateurs', 'calcul'], lvl: 1, time: 8,
+    intro: pa1,
+    figs: [img('hyp_partiel_ex1_fig1', 'Dipôle entre A et B : flèche de courant IAB vers B sur le fil, et flèche de tension UAB sous le dipôle, elle aussi dirigée vers B', 'Question 2')],
+    questions: ['<b>1.</b> Le courant qui sort d’un générateur (de courant ou de tension) est nécessairement plus grand que celui qui y entre.<br>a- VRAI &nbsp;·&nbsp; b- FAUX',
+      '<b>2.</b> On considère le schéma suivant (plusieurs réponses) :<br>a- Le dipôle est un dipôle récepteur si ' + I('AB') + ' et ' + U('AB') + ' sont de signes opposés<br>b- Le dipôle est un dipôle générateur si ' + I('AB') + ' et ' + U('AB') + ' sont de même signe<br>c- Le dipôle est un dipôle récepteur si ' + I('AB') + ' et ' + U('AB') + ' sont de même signe<br>d- Le fléchage courant/tension correspond à la convention générateur.',
+      '<b>3.</b> Si on applique la loi d’Ohm avec la résistance en kΩ et le courant en mA, on obtient directement la tension en :<br>a- A &nbsp;·&nbsp; b- mA<br>b- V &nbsp;·&nbsp; c- MV',
+      '<b>10.</b> Un générateur de tension ' + E() + ' en série avec une résistance ' + R() + ' est équivalent à un générateur de courant ' + I() + ' en parallèle avec une résistance ' + Rr + ' si :<br>a- ' + R() + '.' + E() + ' = ' + F(R(), Rr) + I() + ' et ' + Rr + ' = ' + R() + ' &nbsp;·&nbsp; a- ' + E() + ' = ' + R() + '.' + I() + ' et ' + I() + ' = ' + F(E(), '(' + R() + ' + ' + Rr + ')/(' + R() + '.' + Rr + ')') + '<br>b- ' + Rr + ' = ' + R() + ' et ' + E() + ' = ' + R() + '.' + I() + ' &nbsp;·&nbsp; b- ' + R() + ' = ' + Rr + ' et ' + E() + ' = ' + F(I(), R()),
+      '<b>11.</b> Quelle est la formule fausse ? (' + E('i') + ' et ' + U() + ' en Volts, ' + I('i') + ' en Ampères, ' + R('i') + ' en Ohms)<br>a. ' + I() + ' = ' + F(R(1), R(1) + ' + ' + R(2)) + '.' + I(1) + ' &nbsp;·&nbsp; c. ' + U() + ' = ' + F(R(1) + '.' + E(1) + ' − ' + R(2) + '.' + I(2), R(1) + '.' + R(2) + ' + ' + R(1) + '.' + R(3) + ' + ' + R(2) + '.' + R(3)) + '<br>b. ' + U() + ' = ' + F(R(1) + '.' + R(2), R(1) + ' + ' + R(2)) + '.' + I(1) + ' &nbsp;·&nbsp; d. ' + U() + ' = ' + F(E(), R(1) + '/' + R(2) + ' + ' + R(3) + '/' + R(4) + ' + 1')],
+    hints: ['Q1 : pense à la loi des nœuds appliquée au générateur lui-même.',
+      'Q2 : compare le sens des deux flèches dessinées (courant et tension), quel que soit le nom donné à la tension.',
+      'Q11 : vérifie l’homogénéité de chaque formule : on n’additionne que des termes de même unité.'],
+    solution: [
+      { t: 'Question 1', html: '<p><b>b- FAUX.</b> Un générateur est un dipôle : le courant qui y entre par une borne en ressort par l’autre (loi des nœuds). Il fournit de l’énergie aux charges, pas des charges en plus.</p>' },
+      { t: 'Question 2', html: '<p><b>a, b et d.</b> Les flèches ' + I('AB') + ' et ' + U('AB') + ' pointent dans le même sens : c’est la convention générateur (d). Dans cette convention, ' + U() + I() + ' est la puissance fournie : même signe, le dipôle fournit de l’énergie, c’est un générateur (b) ; signes opposés, il en reçoit, c’est un récepteur (a). La c est donc fausse.</p><p>Remarque : la flèche nommée ' + U('AB') + ' pointe ici vers B, alors que le cours met la pointe de ' + U('AB') + ' sur A. Pour la question, seul le sens dessiné compte.</p>' },
+      { t: 'Question 3', html: '<p><b>« b- V »</b> (deuxième ligne ; le sujet imprime deux fois la lettre b). kΩ × mA = 10³ Ω × 10⁻³ A = Ω × A = V.</p>' },
+      { t: 'Question 10', html: '<p><b>b- de la colonne de gauche : ' + Rr + ' = ' + R() + ' et ' + E() + ' = ' + R() + '.' + I() + '.</b> Un générateur de Thévenin (' + E() + ', ' + R() + ') équivaut à un générateur de Norton de courant ' + I() + ' = ' + E() + '/' + R() + ' avec la même résistance en parallèle.</p><p>Les autres sont fausses : la première ligne de gauche donne ' + E() + ' = ' + I() + '/' + R() + ' une fois ' + Rr + ' = ' + R() + ' (non homogène) ; à droite, ' + E() + R() + Rr + '/(' + R() + ' + ' + Rr + ') n’est pas un courant, et ' + E() + ' = ' + I() + '/' + R() + ' n’est pas homogène.</p>' },
+      { t: 'Question 11', html: '<p><b>c.</b> Au numérateur, ' + R(1) + '.' + E(1) + ' est en Ω·V tandis que ' + R(2) + '.' + I(2) + ' est en V : on ajoute des grandeurs d’unités différentes, la formule est forcément fausse (et le tout serait en V/Ω, c’est-à-dire en A, pas en V).</p><p>Les autres sont homogènes : a donne un courant (sans dimension × A), b une tension (Ω × A), d une tension (V divisé par un nombre sans dimension).</p>' }
+    ],
+    answer: '<p>1 : b (FAUX) ; 2 : a, b, d ; 3 : V ; 10 : ' + Rr + ' = ' + R() + ' et ' + E() + ' = ' + R() + '.' + I() + ' ; 11 : c</p>',
+    traps: ['Q2 : le nom ' + U('AB') + ' ne dit rien ici, seul le sens des pointes compte.',
+      'Q3 : le k (×10³) et le m (×10⁻³) se compensent.',
+      'Q11 : une formule homogène peut être fausse, mais une formule non homogène est toujours fausse.'],
+    official: true
+  });
+
+  L.push({
+    id: 'hyp-partiel-ex1b', exam: null, kind: 'archive', order: 511.2,
+    src: 'Ancien partiel de fin de semestre · Ex 1 · Q4 à Q9', title: 'QCM sur schémas : résistances équivalentes, diviseurs, lecture des flèches',
+    topics: ['qcm', 'req', 'diviseurs', 'source-courant', 'millman'], lvl: 2, time: 15,
+    intro: pa1,
+    figs: [img('hyp_partiel_ex1_fig2', 'Question 4 : 3R entre le fil de A et le fil de B, 3R puis deux 6R en parallèle, et 6R entre A et B', 'Question 4'),
+      img('hyp_partiel_ex1_fig3', 'Question 5 : R depuis A vers un nœud, puis 3R vers le fil de B, et R suivie de deux 4R en parallèle vers le fil de B', 'Question 5'),
+      img('hyp_partiel_ex1_fig4', 'Question 6 : source 20 V, 2R en haut, R à droite, 2R en bas ; U fléchée vers le bas aux bornes de R', 'Question 6'),
+      img('hyp_partiel_ex1_fig5', 'Question 7 : source de courant I avec R en série, puis R (courant I1) et 3R en parallèle', 'Question 7'),
+      img('hyp_partiel_ex1_fig6', 'Question 8 : source de courant I0 (tension U0), R1 (U1 fléchée vers la gauche), source E2, R2 (I2 vers la gauche), source E3, R3 (U3), R4', 'Question 8'),
+      img('hyp_partiel_ex1_fig7', 'Question 9 : E, R en haut, source de courant I vers le haut, R à droite avec U', 'Question 9')],
+    questions: ['<b>4.</b> Quelle est la résistance vue entre ' + '<i>A</i> et <i>B</i> ?<br>a. 3' + R() + ' &nbsp;·&nbsp; b. ' + R() + ' &nbsp;·&nbsp; c. ' + F('3', '2') + R() + ' &nbsp;·&nbsp; d. ' + F('2', '3') + R(),
+      '<b>5.</b> Quelle est la résistance vue entre <i>A</i> et <i>B</i> ?<br>a. ' + F('15', '23') + R() + ' &nbsp;·&nbsp; b. ' + F('3', '5') + R() + ' &nbsp;·&nbsp; c. ' + F('5', '2') + R() + ' &nbsp;·&nbsp; d. ' + F('5', '3') + R(),
+      '<b>6.</b> Soit le circuit ci-contre. Que vaut ' + U() + ' ?<br>a- 20 V &nbsp;·&nbsp; b- −4 V &nbsp;·&nbsp; c- 4 V &nbsp;·&nbsp; d- −8 V',
+      '<b>7.</b> Quelle est la bonne formule ?<br>a- ' + I(1) + ' = ' + F('3', '5') + '.' + I() + ' &nbsp;·&nbsp; b- ' + I(1) + ' = ' + F(I(), '4') + ' &nbsp;·&nbsp; c- ' + I(1) + ' = ' + F('3', '4') + '.' + I() + ' &nbsp;·&nbsp; d- ' + I(1) + ' = ' + F('3' + R(), '4') + I(),
+      'Soit le circuit suivant avec ' + I(0) + ', ' + E(2) + ', ' + E(3) + ', ' + R(1) + ', ' + R(2) + ', ' + R(3) + ', ' + R(4) + ' supposés connus.<br><b>8.</b> Quelles sont les affirmations fausses ? (2 réponses)<br>a- ' + I(2) + ' ne dépend pas de ' + R(3) + ' &nbsp;·&nbsp; b- ' + I(0) + ' dépend de ' + R(1) + ' &nbsp;·&nbsp; c- ' + U(1) + ' = ' + R(1) + '.' + I(0) + ' &nbsp;·&nbsp; d- ' + U(0) + ' ne dépend pas de ' + R(1),
+      '<b>9.</b> Soit le circuit ci-contre : Quelle est l’expression de ' + U() + ' ?<br>a- ' + U() + ' = ' + R() + '.' + I() + ' &nbsp;·&nbsp; b- ' + U() + ' = ' + F(E(), '2') + ' &nbsp;·&nbsp; c- ' + U() + ' = ' + E() + ' + ' + I() + ' &nbsp;·&nbsp; d- ' + U() + ' = ' + F(E() + ' + ' + R() + '.' + I(), '2')],
+    hints: ['Q4 et Q5 : repère les fils reliés à A et à B, puis réduis pas à pas en partant du plus loin.',
+      'Q6 : une seule maille ; attention au sens de la flèche ' + U() + ' (vers le bas).',
+      'Q8 : une source de courant impose son courant quoi qu’il arrive ; une source de tension impose le potentiel de son nœud.'],
+    solution: [
+      { t: 'Question 4', html: '<p><b>c.</b> La 3' + R() + ' de gauche et la 6' + R() + ' de droite sont directement entre le fil de A et le fil de B. Au milieu : 3' + R() + ' + (6' + R() + ' // 6' + R() + ') = 3' + R() + ' + 3' + R() + ' = 6' + R() + '. Au total : 3' + R() + ' // 6' + R() + ' // 6' + R() + ' = 3' + R() + ' // 3' + R() + ' = ' + F('3' + R(), '2') + '.</p>' },
+      { t: 'Question 5', html: '<p><b>c.</b> Depuis A, ' + R() + ' mène au nœud P. Entre P et le fil de B : la 3' + R() + ', et ' + R() + ' + (4' + R() + ' // 4' + R() + ') = 3' + R() + '. Donc 3' + R() + ' // 3' + R() + ' = 3' + R() + '/2, et ' + R('AB') + ' = ' + R() + ' + ' + F('3' + R(), '2') + ' = ' + F('5' + R(), '2') + '.</p>' },
+      { t: 'Question 6', html: '<p><b>b.</b> Une seule maille : ' + I() + ' = 20/(2' + R() + ' + ' + R() + ' + 2' + R() + ') = 4/' + R() + '. Le courant descend dans ' + R() + ' : le haut de ' + R() + ' est 4 V au-dessus du bas. ' + U() + ' est fléchée vers le bas (pointe en bas) : ' + U() + ' = ' + V('bas') + ' − ' + V('haut') + ' = −4 V.</p>' },
+      { t: 'Question 7', html: '<p><b>c.</b> La source impose ' + I() + ' ; la ' + R() + ' en série avec elle ne change rien. ' + I() + ' se partage entre ' + R() + ' et 3' + R() + ' : diviseur de courant, ' + I(1) + ' = ' + I() + ' × ' + F('3' + R(), R() + ' + 3' + R()) + ' = ' + F('3', '4') + I() + '.</p>' },
+      { t: 'Question 8', html: '<p><b>b et d</b> (affirmations fausses).</p><ul><li>a est vraie : les deux bouts de ' + R(2) + ' sont reliés aux + de ' + E(2) + ' et ' + E(3) + ', donc ' + I(2) + ' = (' + E(3) + ' − ' + E(2) + ')/' + R(2) + ', sans ' + R(3) + '.</li><li>b est fausse : ' + I(0) + ' est imposé par la source de courant.</li><li>c est vraie : ' + R(1) + ' est traversée par ' + I(0) + ', et ' + U(1) + ' est fléchée en convention récepteur.</li><li>d est fausse : ' + U(0) + ' = ' + E(2) + ' + ' + R(1) + I(0) + ' dépend de ' + R(1) + '.</li></ul>' },
+      { t: 'Question 9', html: '<p><b>d.</b> Millman au nœud du haut à droite : ' + U() + ' = ' + F(E() + '/' + R() + ' + ' + I(), '1/' + R() + ' + 1/' + R()) + ' = ' + F(E() + ' + ' + R() + I(), '2') + '.</p>' }
+    ],
+    answer: '<p>4 : c (3' + R() + '/2) ; 5 : c (5' + R() + '/2) ; 6 : b (−4 V) ; 7 : c (' + I(1) + ' = 3' + I() + '/4) ; 8 : b et d ; 9 : d</p>',
+    traps: ['Q6 : la flèche ' + U() + ' pointe vers le bas : ' + U() + ' = −4 V, pas 4 V.',
+      'Q7 : la ' + R() + ' en série avec la source de courant ne change pas le courant ' + I() + '.',
+      'Q8 : on demande les affirmations fausses.'],
+    official: true
+  });
+
+  L.push({
+    id: 'hyp-partiel-ex2', exam: null, kind: 'archive', order: 521,
+    src: 'Ancien partiel de fin de semestre · Ex 2', title: 'Thévenin vu par R′ : source de courant en série et source de tension',
+    pts: 5, topics: ['thevenin', 'source-courant', 'potentiels'], lvl: 2, time: 15,
+    intro: '<p><b>Exercice 2.</b> Théorème de Thévenin (5 points)</p><p>Soit le circuit suivant, dans lequel ' + E() + ', ' + I() + ' et ' + R() + ' sont connus. Les générateurs sont indépendants.</p>',
+    figs: [img('hyp_partiel_ex2_fig1', 'B en haut à gauche, A en haut au milieu, M en bas ; à gauche, source de courant I fléchée vers le haut puis 2R jusqu’à B ; 2R entre B et A ; de A, R puis E fléchée vers le haut jusqu’à M ; R′ entre A et M ; UAM et UBM fléchées vers le haut', 'Exercice 2')],
+    questions: ['<b>1.</b> Déterminer le générateur de Thévenin vu par ' + Rp + '.', '<b>2.</b> Déterminer alors la tension ' + U('AM') + ' si ' + Rp + ' = ' + R() + '.', '<b>3.</b> En déduire la tension ' + U('BM') + '.'],
+    hints: ['Sans ' + Rp + ', la branche de gauche, la 2' + R() + ' du haut, ' + R() + ' et ' + E() + ' forment une seule maille : la source de courant y impose ' + I() + '.',
+      E('th') + ' = ' + U('AM') + ' à vide : pars de M, monte par ' + E() + ', puis par ' + R() + ' (parcourue par ' + I() + ' de A vers ' + E() + ').',
+      R('th') + ' : ' + E() + ' remplacée par un fil, la source de courant ouverte. La branche de gauche ne mène alors plus nulle part.'],
+    solution: [
+      { t: 'Tension de Thévenin (R′ débranchée)', html: '<p>Sans ' + Rp + ', il reste une seule maille : source de courant, 2' + R() + ', 2' + R() + ', ' + R() + ', ' + E() + '. La source impose ' + I() + ' partout. ' + R() + ' est traversée par ' + I() + ' de A vers ' + E() + ' : A est ' + R() + I() + ' au-dessus du + de ' + E() + '. Avec ' + V('M') + ' = 0 :</p><p>' + E('th') + ' = ' + U('AM') + ' = ' + E() + ' + ' + R() + I() + '.</p>',
+        figs: [{ spec: { w: 380, h: 240, aria: 'R′ débranchée : une seule maille où la source impose I ; E_th entre A et M', wires: ['M80 40H300', 'M80 200H300', 'M80 40V200', 'M220 40V200'],
+          parts: [{ t: 'J', x: 80, y: 155, d: 'v', to: 'n', l: 'I', as: 'e' }, { t: 'R', x: 80, y: 85, d: 'v', l: '2R', lp: 'w' }, { t: 'R', x: 150, y: 40, l: '2R' },
+            { t: 'R', x: 220, y: 85, d: 'v', l: 'R', lp: 'w' }, { t: 'E', x: 220, y: 155, d: 'v', p: 'n', l: 'E', as: 'e' }, { t: 'I', x: 195, y: 40, d: 'e', l: 'I' },
+            { t: 'txt', x: 80, y: 28, s: 'B', c: 'cz-n' }, { t: 'dot', x: 220, y: 40 }, { t: 'dot', x: 220, y: 200 },
+            { t: 'term', x: 300, y: 40, l: 'A', lp: 'n' }, { t: 'term', x: 300, y: 200, l: 'M', lp: 's' }, { t: 'U', a: [325, 185], b: [325, 55], l: 'E_th' }] },
+          cap: 'Charge débranchée : tension à vide' }] },
+      { t: 'Résistance de Thévenin (sources éteintes)', html: '<p>' + E() + ' remplacée par un fil, source de courant ouverte : la branche de gauche (source et deux 2' + R() + ') ne mène plus nulle part, aucun courant ne peut y passer. Entre A et M, il reste ' + R() + ' :</p><p>' + R('th') + ' = ' + R() + '.</p>',
+        figs: [{ spec: { w: 380, h: 240, aria: 'Sources éteintes : la branche de la source de courant est ouverte, E est remplacée par un fil ; il reste R entre A et M', wires: [{ d: 'M220 200H80V40H220', c: 'cz-ghost' }, 'M220 40H300', 'M220 200H300', 'M220 40V200'],
+          parts: [{ t: 'J', x: 80, y: 155, d: 'v', to: 'n', l: 'I', as: 'e', c: 'cz-ghost' }, { t: 'R', x: 80, y: 85, d: 'v', l: '2R', lp: 'w', c: 'cz-ghost' }, { t: 'R', x: 150, y: 40, l: '2R', c: 'cz-ghost' },
+            { t: 'R', x: 220, y: 85, d: 'v', l: 'R', lp: 'w' }, { t: 'txt', x: 232, y: 159, s: 'E → fil', a: 'start', c: 'cz-tiny' },
+            { t: 'dot', x: 220, y: 40 }, { t: 'dot', x: 220, y: 200 }, { t: 'term', x: 300, y: 40, l: 'A', lp: 'n' }, { t: 'term', x: 300, y: 200, l: 'M', lp: 's' }, { t: 'txt', x: 318, y: 125, s: 'R_th = R', a: 'start' }] },
+          cap: 'Sources éteintes : la branche de la source de courant (ouverte) est estompée' }] },
+      { t: 'Tension entre A et M pour R′ = R', html: '<p>Le circuit est équivalent au générateur (' + E('th') + ', ' + R('th') + ') chargé par ' + Rp + '. Diviseur de tension :</p><p>' + U('AM') + ' = ' + F(Rp, R() + ' + ' + Rp) + ' (' + E() + ' + ' + R() + I() + '), et pour ' + Rp + ' = ' + R() + ' : ' + U('AM') + ' = ' + F(E() + ' + ' + R() + I(), '2') + '.</p>',
+        figs: [{ spec: thevLoad('E_th', 'R_th', 'R′', { a: 'A', b: 'M', u: 'U_AM' }), cap: E('th') + ' = ' + E() + ' + ' + R() + I() + ', ' + R('th') + ' = ' + R() }] },
+      { t: 'Tension entre B et M', html: '<p>Même avec ' + Rp + ' branchée, la source de courant impose ' + I() + ' dans la branche de gauche, donc dans la 2' + R() + ' du haut, de B vers A : ' + U('BA') + ' = 2' + R() + I() + '. Loi des mailles :</p><p>' + U('BM') + ' = ' + U('BA') + ' + ' + U('AM') + ' = 2' + R() + I() + ' + ' + F(E() + ' + ' + R() + I(), '2') + ' = ' + F(E() + ' + 5' + R() + I(), '2') + '.</p>' }
+    ],
+    answer: '<p>' + E('th') + ' = ' + E() + ' + ' + R() + I() + ' ; ' + R('th') + ' = ' + R() + ' ; ' + U('AM') + ' = (' + E() + ' + ' + R() + I() + ')/2 ; ' + U('BM') + ' = (' + E() + ' + 5' + R() + I() + ')/2</p>',
+    traps: ['Les deux 2' + R() + ' en série avec la source de courant ne jouent aucun rôle dans ' + E('th') + ' ni dans ' + R('th') + '.',
+      'Pour ' + U('BM') + ', n’oublie pas la tension 2' + R() + I() + ' aux bornes de la 2' + R() + ' du haut : elle est toujours parcourue par ' + I() + '.'],
+    official: true
+  });
+
+  L.push({
+    id: 'hyp-partiel-ex3', exam: null, kind: 'archive', order: 531,
+    src: 'Ancien partiel de fin de semestre · Ex 3', title: 'Tension aux bornes de R1 : quatre sources, méthode au choix',
+    pts: 7, topics: ['thevenin', 'superposition', 'source-courant'], lvl: 3, time: 25,
+    intro: '<p><b>Exercice 3.</b> Théorèmes (7 points)</p><p>Soit le montage ci-dessous :</p>',
+    figs: [img('hyp_partiel_ex3_fig1', 'E à gauche, 2R en haut, 2R verticale, source de courant I fléchée vers le bas, source 2E sur le fil du haut fléchée vers la gauche, R, puis source de courant 2I vers la droite en parallèle avec R, et R1 à droite', 'Exercice 3')],
+    questions: ['En utilisant la méthode de votre choix, déterminer l’expression de la tension aux bornes de la résistance ' + R(1) + ' en fonction de ' + E() + ', ' + I() + ', ' + R() + ' et ' + R(1) + '.'],
+    hints: ['Méthode efficace : transformer de proche en proche (Thévenin ⇄ Norton) en partant de la gauche, jusqu’à n’avoir qu’une source et une résistance devant ' + R(1) + '.',
+      E() + ' et sa 2' + R() + ' en série donnent un Norton ' + E() + '/(2' + R() + ') avec 2' + R() + '. Avec la 2' + R() + ' verticale et la source ' + I() + ', tout est en parallèle : une source ' + E() + '/(2' + R() + ') − ' + I() + ' et ' + R() + '.',
+      'Le bloc « 2' + I() + ' en parallèle avec ' + R() + ' » est un Norton : son Thévenin vaut 2' + R() + I() + ', fléché vers la droite. Additionne les sources en série en respectant leurs sens.'],
+    solution: [
+      { t: 'Partie gauche', html: '<ol><li>' + E() + ' en série avec 2' + R() + ' → Norton : source ' + E() + '/(2' + R() + ') vers le haut, en parallèle avec 2' + R() + '.</li><li>Tout est alors en parallèle avec la 2' + R() + ' verticale et la source ' + I() + ' (fléchée vers le bas) : sources ' + E() + '/(2' + R() + ') − ' + I() + ', résistances 2' + R() + ' // 2' + R() + ' = ' + R() + '.</li><li>Retour en Thévenin : source (' + E() + '/(2' + R() + ') − ' + I() + ') × ' + R() + ' = ' + E() + '/2 − ' + R() + I() + ' (vers le haut) en série avec ' + R() + '.</li></ol>' },
+      { t: 'Partie droite', html: '<p>Le bloc « 2' + I() + ' (vers la droite) en parallèle avec ' + R() + ' » est un Norton. Son Thévenin : une source 2' + R() + I() + ' fléchée vers la droite (le + du côté où sort le courant), en série avec ' + R() + '.</p><p>Sur le fil du haut, la source 2' + E() + ' (fléchée vers la gauche) et la source 2' + R() + I() + ' (vers la droite) sont en série : une seule source 2' + R() + I() + ' − 2' + E() + ' fléchée vers la droite. Les deux ' + R() + ' du fil du haut font 2' + R() + '.</p>',
+        figs: [{ spec: { w: 470, h: 230, aria: 'Source E/2 − RI avec R, puis source 2RI − 2E fléchée vers la droite et 2R, puis R1', wires: ['M110 60H400V200H110Z'],
+          parts: [{ t: 'E', x: 110, y: 130, d: 'v', p: 'n', l: 'E/2 − RI' }, { t: 'R', x: 175, y: 60, l: 'R', lp: 's' }, { t: 'E', x: 250, y: 60, d: 'h', p: 'e', l: '2RI − 2E', as: 'n' }, { t: 'R', x: 325, y: 60, l: '2R', lp: 's' },
+            { t: 'R', x: 400, y: 130, d: 'v', l: 'R_1', lp: 'w' }, { t: 'U', a: [435, 185], b: [435, 75], l: 'U' }] },
+          cap: 'Après les transformations (comme dans le corrigé officiel)' }] },
+      { t: 'Une seule maille', html: '<p>Les deux sources sont en série : en partant du bas de ' + R(1) + ', on monte de ' + E() + '/2 − ' + R() + I() + ' puis de 2' + R() + I() + ' − 2' + E() + '. Source totale : ' + R() + I() + ' − 3' + E() + '/2 ; résistance totale : ' + R() + ' + 2' + R() + ' = 3' + R() + '.</p><p>Diviseur de tension sur ' + R(1) + ' (' + U() + ' fléchée vers le haut) :</p><p>' + U() + ' = (' + R() + I() + ' − ' + F('3' + E(), '2') + ') × ' + F(R(1), R(1) + ' + 3' + R()) + ' = ' + F(R(1), '2(' + R(1) + ' + 3' + R() + ')') + ' (2' + R() + I() + ' − 3' + E() + ').</p>',
+        figs: [{ spec: thevLoad('RI − 3E/2', '3R', 'R_1', { a: '', b: '', u: 'U', dx: 60 }), cap: 'Générateur équivalent vu par R1' }] },
+      { t: 'Contrôle par superposition (corrigé officiel)', html: '<ul><li>' + E() + ' seule : ' + U(1) + ' = ' + F(R(1), '2(3' + R() + ' + ' + R(1) + ')') + E() + ' ;</li><li>' + I() + ' seule : ' + U(2) + ' = −' + F(R() + R(1), '3' + R() + ' + ' + R(1)) + I() + ' ;</li><li>2' + E() + ' seule : ' + U(3) + ' = −' + F(R(1), '3' + R() + ' + ' + R(1)) + ' × 2' + E() + ' ;</li><li>2' + I() + ' seule : ' + U(4) + ' = ' + F('2' + R() + R(1), '3' + R() + ' + ' + R(1)) + I() + '.</li></ul><p>' + U() + ' = ' + U(1) + ' + ' + U(2) + ' + ' + U(3) + ' + ' + U(4) + ' = ' + F(R(1), '3' + R() + ' + ' + R(1)) + ' (' + E() + '/2 − ' + R() + I() + ' − 2' + E() + ' + 2' + R() + I() + ') : même résultat.</p>' }
+    ],
+    answer: '<p>' + U() + ' = ' + R(1) + '(2' + R() + I() + ' − 3' + E() + ')/(2(' + R(1) + ' + 3' + R() + ')), fléchée vers le haut aux bornes de ' + R(1) + '</p>',
+    traps: ['La source 2' + E() + ' est fléchée vers la gauche : elle s’oppose à ' + E() + '/2 dans la maille finale.',
+      'Une source de courant en parallèle avec une résistance devient une source de tension (résistance × courant) en série avec cette résistance : le + est du côté où sort le courant.',
+      'En superposition, il y a quatre états à calculer ; une source de courant éteinte est ouverte.'],
+    official: true
+  });
+
+  L.push({
+    id: 'hyp-partiel-ex4', exam: null, kind: 'archive', order: 541,
+    src: 'Ancien partiel de fin de semestre · Ex 4', title: 'Millman avec deux branches pièges',
+    pts: 2, topics: ['millman', 'source-courant'], lvl: 2, time: 10,
+    intro: '<p><b>Exercice 4.</b> Théorème de Millman (2 points)</p><p>On considère le circuit ci-contre.</p>',
+    figs: [img('hyp_partiel_ex4_fig1', 'Entre A en haut et B en bas : source de courant I1 fléchée vers le bas ; R1 puis E1 fléchée vers le haut ; R2 puis source de courant I2 fléchée vers le haut ; R3 puis E3 fléchée vers le bas, avec R4 en parallèle sur E3 ; U fléchée de B vers A', 'Exercice 4')],
+    questions: ['Déterminez ' + U() + ' en utilisant le théorème de Millman.'],
+    hints: ['Prends B comme référence : ' + U() + ' = ' + V('A') + '. Le théorème de Millman s’applique au nœud A.',
+      'Une branche « source de courant + résistance en série » n’apporte que son courant : la résistance n’apparaît pas.',
+      R(4) + ' est en parallèle sur la source idéale ' + E(3) + ' : elle ne change pas la tension du point entre ' + R(3) + ' et ' + E(3) + '.'],
+    solution: [
+      { t: 'Ce que chaque branche apporte au nœud A', html: '<ul><li>' + I(1) + ' (flèche vers le bas) retire ' + I(1) + ' au nœud A : −' + I(1) + ' au numérateur, rien au dénominateur.</li><li>' + R(1) + ' et ' + E(1) + ' (flèche vers le haut) : +' + E(1) + '/' + R(1) + ' au numérateur, 1/' + R(1) + ' au dénominateur.</li><li>' + R(2) + ' et ' + I(2) + ' (flèche vers le haut) : la branche apporte ' + I(2) + ' ; ' + R(2) + ', en série avec une source de courant, ne compte pas.</li><li>' + R(3) + ' et ' + E(3) + ' (flèche vers le bas, + en bas) : le point entre ' + R(3) + ' et ' + E(3) + ' est à −' + E(3) + ', quelle que soit ' + R(4) + ' : −' + E(3) + '/' + R(3) + ' au numérateur, 1/' + R(3) + ' au dénominateur.</li></ul>',
+        figs: [{ spec: { w: 470, h: 245, aria: 'Ce que voit Millman au nœud A : R2, en série avec I2, et R4, en parallèle sur E3, sont estompées', wires: ['M60 40H330', 'M60 210H330', 'M60 40V210', 'M150 40V210', 'M240 40V210', 'M330 40V210', { d: 'M330 125H420V210H330', c: 'cz-ghost' }],
+          parts: [{ t: 'J', x: 60, y: 125, d: 'v', to: 's', l: 'I_1', as: 'e' }, { t: 'R', x: 150, y: 80, d: 'v', l: 'R_1' }, { t: 'E', x: 150, y: 165, d: 'v', p: 'n', l: 'E_1', as: 'e' },
+            { t: 'R', x: 240, y: 80, d: 'v', l: 'R_2', c: 'cz-ghost' }, { t: 'J', x: 240, y: 165, d: 'v', to: 'n', l: 'I_2', as: 'e' },
+            { t: 'R', x: 330, y: 80, d: 'v', l: 'R_3' }, { t: 'E', x: 330, y: 165, d: 'v', p: 's', l: 'E_3', as: 'e' }, { t: 'R', x: 420, y: 168, d: 'v', l: 'R_4', c: 'cz-ghost' },
+            { t: 'U', a: [25, 195], b: [25, 55], l: 'U', lp: 'w' }, { t: 'txt', x: 60, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 60, y: 234, s: 'B', c: 'cz-n' },
+            { t: 'dot', x: 150, y: 40 }, { t: 'dot', x: 240, y: 40 }, { t: 'dot', x: 150, y: 210 }, { t: 'dot', x: 240, y: 210 }] },
+          cap: 'R2 et R4 estompées : elles n’interviennent pas' }] },
+      { t: 'Théorème de Millman', html: '<p>' + U() + ' = ' + V('A') + ' = ' + F(E(1) + '/' + R(1) + ' − ' + I(1) + ' + ' + I(2) + ' − ' + E(3) + '/' + R(3), '1/' + R(1) + ' + 1/' + R(3)) + ' = ' + F(R(3) + E(1) + ' + ' + R(1) + R(3) + '(' + I(2) + ' − ' + I(1) + ') − ' + R(1) + E(3), R(1) + ' + ' + R(3)) + '.</p>' }
+    ],
+    answer: '<p>' + U() + ' = (' + E(1) + '/' + R(1) + ' − ' + I(1) + ' + ' + I(2) + ' − ' + E(3) + '/' + R(3) + ')/(1/' + R(1) + ' + 1/' + R(3) + ') = (' + R(3) + E(1) + ' + ' + R(1) + R(3) + '(' + I(2) + ' − ' + I(1) + ') − ' + R(1) + E(3) + ')/(' + R(1) + ' + ' + R(3) + ')</p>',
+    traps: ['Pas de 1/' + R(2) + ' au dénominateur : ' + R(2) + ' est en série avec une source de courant.',
+      'Pas de ' + R(4) + ' : elle est en parallèle sur la source de tension ' + E(3) + '.',
+      E(3) + ' est fléchée vers le bas : elle compte −' + E(3) + '/' + R(3) + '.'],
+    official: true
+  });
 })();

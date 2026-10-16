@@ -23,7 +23,8 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function r1(v) { return Math.round(v * 10) / 10; }
 
-  /* « R_th » → R + indice « th » ; « U_AB = 3 V » → indice jusqu'au premier espace */
+  /* « R_th » → R + indice « th » ; l'indice s'arrête au premier caractère qui n'est ni lettre ni chiffre
+     (« R_2/2 » → R₂/2, « I_1′ » → I₁′) ; « R_{eq,1} » pour un indice plus long. */
   function label(s) {
     s = String(s);
     var out = '', i = 0;
@@ -33,7 +34,7 @@
       out += esc(s.slice(i, k));
       var end = k + 1;
       if (s[end] === '{') { var c = s.indexOf('}', end); end = c < 0 ? s.length : c; out += '<tspan class="cz-s" dy="4">' + esc(s.slice(k + 2, end)) + '</tspan><tspan dy="-4">​</tspan>'; i = end + 1; continue; }
-      while (end < s.length && /[^\s=+−\-,;)]/.test(s[end])) end++;
+      while (end < s.length && /[A-Za-z0-9]/.test(s[end])) end++;
       out += '<tspan class="cz-s" dy="4">' + esc(s.slice(k + 1, end)) + '</tspan><tspan dy="-4">​</tspan>';
       i = end;
     }

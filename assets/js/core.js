@@ -145,14 +145,14 @@
     tidy: tidy
   };
 
-  /* ---------- typographie : « 15 V », « 6 pts » ne se coupent pas en fin de ligne ----------
-     Espace insécable entre un nombre et son unité, dans tout le texte affiché, y compris celui
+  /* ---------- typographie : « 15 V », « 6 pts », « bornes ? » ne se coupent pas en fin de ligne ----------
+     Espace insécable entre un nombre et son unité et devant : ; ? ! », dans tout le texte affiché, y compris celui
      ajouté plus tard par les scripts (QCM, exercices, générateurs) grâce à un MutationObserver. */
   var UNIT = /(\d) (?=(?:[kmµM]?(?:V|A|W|Ω|Ω)|ms|s|min|h|pts?|%|°C)(?![A-Za-zÀ-ÿ0-9_]))/g;
   var SKIP = /^(SCRIPT|STYLE|TEXTAREA|CODE|PRE)$/;
   function tidyText(n) {
     if (n.data.indexOf(' ') < 0 || (n.parentNode && SKIP.test(n.parentNode.nodeName))) return;
-    var t = n.data.replace(UNIT, '$1\u00a0');
+    var t = n.data.replace(UNIT, '$1\u00a0').replace(/ ([:;?!»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');
     if (t !== n.data) n.data = t;
   }
   function tidy(root) {

@@ -7,7 +7,7 @@
     grandeurs: 'Grandeurs et unités', schema: 'Lire un schéma', fleches: 'Flèches et potentiels', conventions: 'Dipôles et conventions',
     ohm: 'Loi d’Ohm et puissance', appareils: 'Interrupteurs et appareils', generateurs: 'Générateurs', calcul: 'Calcul et homogénéité',
     vocabulaire: 'Nœuds, branches, mailles', kirchhoff: 'Lois de Kirchhoff', 'serie-parallele': 'Série ou parallèle', req: 'Résistance équivalente',
-    diviseurs: 'Diviseurs de tension et de courant', thevenin: 'Thévenin', norton: 'Norton et équivalences', millman: 'Millman'
+    diviseurs: 'Diviseurs de tension et de courant', thevenin: 'Thévenin', norton: 'Norton et équivalences', millman: 'Millman', superposition: 'Superposition'
   };
   for (var k in add) T[k] = add[k];
 
