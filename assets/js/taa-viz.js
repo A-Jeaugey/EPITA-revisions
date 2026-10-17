@@ -32,11 +32,11 @@
     'Une condition s’écrit avant ⇒ : {ex}. Tu peux taper -> pour ⇒, != pour ≠, <= pour ≤, >= pour ≥, & pour « et », et l pour λ.':
       'A condition goes before ⇒: {ex}. You can type -> for ⇒, != for ≠, <= for ≤, >= for ≥, & for “and”, and l for λ.',
     'Opérations permises : {ops}, et + − pour les entiers.': 'Allowed operations: {ops}, and + − for integers.',
-    'Le nombre d’éléments de λ (exemple 1 ci-dessus).': 'The number of elements of λ (example 1 above).',
+    'le nombre d’éléments de λ (exemple 1 ci-dessus).': 'the number of elements of λ (example 1 above).',
     'λ suivie de λ2 (partiels 2018, 2020 et 2023).': 'λ followed by λ2 (midterms 2018, 2020 and 2023).',
     'vrai si e figure dans λ (partiels 2018 et 2020).': 'true if e is in λ (midterms 2018 and 2020).',
-    'Supprime de λ tous les éléments strictement supérieurs à x (partiel 2024).': 'Deletes from λ every element strictly greater than x (2024 midterm).',
-    'Le dernier élément de λ (partiel 2017). La liste vide n’en a pas.': 'The last element of λ (2017 midterm). The empty list has none.',
+    'supprime de λ tous les éléments strictement supérieurs à x (partiel 2024).': 'deletes from λ every element strictly greater than x (2024 midterm).',
+    'le dernier élément de λ (partiel 2017). La liste vide n’en a pas.': 'the last element of λ (2017 midterm). The empty list has none.',
     'Ce brouillon contient une erreur fréquente. Clique sur Tester pour la trouver, corrige-la, puis teste à nouveau.':
       'This draft contains a common mistake. Click Test to find it, fix it, then test again.',
     'Écris tes préconditions et tes axiomes, puis clique sur Tester.': 'Write your preconditions and your axioms, then click Test.',
@@ -78,7 +78,7 @@
     'Aucun cas oublié, aucune contradiction, et chaque résultat est juste.': 'No case missing, no contradiction, and every result is right.',
     'Des essais ne prouvent rien, mais ils trouvent vite les erreurs : relis aussi le profil et la partie avec.': 'Tests prove nothing, but they find mistakes fast: also check the profile and the with part.',
     'Exemple de réécriture : {t}': 'Example of rewriting: {t}',
-    'Contre-exemple : {t}, avec {a}.': 'Counterexample: {t}, with {a}.', 'Contre-exemple : {t}.': 'Counterexample: {t}.',
+    'Contre-exemple : {a}.': 'Counterexample: {a}.',
     'Aucun axiome ne s’applique à {t}.': 'No axiom applies to {t}.',
     'axiome {i} : forme différente': 'axiom {i}: different shape', 'axiome {i} : condition fausse, {c}': 'axiom {i}: false condition, {c}',
     'Il manque le cas {nil} : écris un axiome pour lui.': 'The {nil} case is missing: write an axiom for it.',
@@ -105,7 +105,7 @@
     '{t} n’a pas de sens : la liste vide n’a pas de dernier élément. Ta précondition doit l’exclure.': '{t} makes no sense: the empty list has no last element. Your precondition must rule it out.',
     ' Tes axiomes lui donnent pourtant une valeur : {v}.': ' Yet your axioms give it a value: {v}.',
     'Écris par exemple : {p}': 'Write for example: {p}',
-    'Résultat faux pour {t} : tes axiomes donnent {g}, on attend {e}.': 'Wrong result for {t}: your axioms give {g}, the expected value is {e}.',
+    'Pour {t}, tes axiomes donnent {g}, on attend {e}.': 'For {t}, your axioms give {g}, the expected value is {e}.',
     'Suis la réécriture : elle montre où le calcul s’écarte du résultat attendu.': 'Follow the rewriting: it shows where the computation goes wrong.',
     'axiome {i}': 'axiom {i}', 'condition : {c}': 'condition: {c}', 'axiome du cours : {a}': 'course axiom: {a}',
     'calcul': 'arithmetic', 'comparaison': 'comparison', 'booléen : {a}': 'boolean: {a}',
@@ -125,8 +125,8 @@
     ' Au-dessus, {pf} est posé sur {f} : aucun axiome ne commence ainsi. Il faut d’abord réduire le sous-arbre surligné.':
       ' Above it, {pf} sits on {f}: no axiom starts that way. The highlighted subtree has to be reduced first.',
     '<b>Étape {n}, les variables.</b> {list}.': '<b>Step {n}, the variables.</b> {list}.',
-    '<b>Étape {n}, le remplacement.</b> Le côté droit de l’axiome est {r} : le sous-arbre surligné devient {v}.':
-      '<b>Step {n}, the replacement.</b> The right-hand side of the axiom is {r}: the highlighted subtree becomes {v}.',
+    '<b>Étape {n}, le remplacement.</b> Le côté droit de l’axiome est {r} : le sous-arbre {f}(…) est remplacé par {v}.':
+      '<b>Step {n}, the replacement.</b> The right-hand side of the axiom is {r}: the subtree {f}(…) is replaced by {v}.',
     ' Forme finale : {t}. Plus aucun axiome ne s’applique, en {n} étapes.': ' Final form: {t}. No axiom applies any more, after {n} steps.',
     ' Forme finale : {t}. Plus aucun axiome ne s’applique, en 1 étape.': ' Final form: {t}. No axiom applies any more, after 1 step.',
     /* file */
@@ -159,7 +159,7 @@
   /* les opérations proposées ; ref = résultat attendu (listes en tableaux JS), defined = domaine (sinon partout) */
   var OPS = [
     { id: 'longueur', params: [{ n: 'λ', s: 'L' }], res: 'N', elems: ['a', 'b'], max: 3,
-      desc: 'Le nombre d’éléments de λ (exemple 1 ci-dessus).',
+      desc: 'le nombre d’éléments de λ (exemple 1 ci-dessus).',
       ref: function (l) { return l.length; },
       draft: ['longueur(cons(e, λ)) = longueur(λ) + 1'], ex: [['a', 'b', 'c']] },
     { id: 'concaténer', params: [{ n: 'λ', s: 'L' }, { n: 'λ2', s: 'L' }], res: 'L', elems: ['a', 'b'], max: 2,
@@ -173,12 +173,12 @@
       draft: ['est-présent(e, listevide) = faux', 'e = x ⇒ est-présent(e, cons(x, λ)) = vrai', 'est-présent(e, cons(x, λ)) = est-présent(e, λ)'],
       ex: ['b', ['a', 'b']] },
     { id: 'supprime-sup', params: [{ n: 'λ', s: 'L' }, { n: 'x', s: 'E' }], res: 'L', elems: ['1', '2', '3'], max: 3, ordered: true,
-      desc: 'Supprime de λ tous les éléments strictement supérieurs à x (partiel 2024).',
+      desc: 'supprime de λ tous les éléments strictement supérieurs à x (partiel 2024).',
       ref: function (l, x) { return l.filter(function (e) { return +e <= +x; }); },
       draft: ['supprime-sup(listevide, x) = listevide', 'e > x ⇒ supprime-sup(cons(e, λ), x) = λ', 'e ≤ x ⇒ supprime-sup(cons(e, λ), x) = cons(e, supprime-sup(λ, x))'],
       ex: [['3', '1', '4'], '3'] },
     { id: 'dernier', params: [{ n: 'λ', s: 'L' }], res: 'E', elems: ['a', 'b'], max: 3,
-      desc: 'Le dernier élément de λ (partiel 2017). La liste vide n’en a pas.',
+      desc: 'le dernier élément de λ (partiel 2017). La liste vide n’en a pas.',
       ref: function (l) { return l[l.length - 1]; }, defined: function (l) { return l.length > 0; },
       draft: ['dernier(cons(e, listevide)) = e', 'dernier(cons(e, λ)) = dernier(λ)'], ex: [['a', 'b', 'c']] }
   ];
@@ -612,7 +612,7 @@
       '<div class="row" role="group" aria-label="' + esc(T('Opération à définir')) + '">' + OPS.map(function (o) {
         return '<button type="button" class="chip-btn" data-op="' + esc(o.id) + '" aria-pressed="false">' + esc(nm(o.id)) + '</button>';
       }).join('') + '</div>' +
-      '<div class="vz-prof"><code data-prof></code><span data-desc></span></div>' +
+      '<div class="vz-prof"><code data-prof></code><p data-desc></p></div>' +
       '<label class="field" for="' + id + '-pre">' + T('Préconditions') + '<input id="' + id + '-pre" class="term-in" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="' + esc(T('aucune')) + '"></label>' +
       '<label class="field" for="' + id + '-ax">' + T('Axiomes, un par ligne') + '<textarea id="' + id + '-ax" class="term-in vz-ta" rows="4" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></label>' +
       '<p class="vz-help">' + T('Une condition s’écrit avant ⇒ : {ex}. Tu peux taper -> pour ⇒, != pour ≠, <= pour ≤, >= pour ≥, & pour « et », et l pour λ.', { ex: '<code>e &gt; x ⇒ …</code>' }) +
@@ -632,7 +632,7 @@
       preIn.value = d.pre; axIn.value = d.ax;
       var sig = nm(o.id) + ' : ' + o.params.map(function (q) { return sortName(q.s); }).join(' × ') + ' → ' + sortName(o.res);
       el.querySelector('[data-prof]').textContent = sig;
-      el.querySelector('[data-desc]').innerHTML = ' ' + esc(nm(o.id) + '(' + o.params.map(function (q) { return q.n; }).join(', ') + ')') + ' : ' + esc(T(o.desc));
+      el.querySelector('[data-desc]').innerHTML = '<code>' + esc(nm(o.id) + '(' + o.params.map(function (q) { return q.n; }).join(', ') + ')') + '</code>' + (EN ? ': ' : ' : ') + esc(T(o.desc));
       el.querySelector('[data-allowed]').textContent = T('Opérations permises : {ops}, et + − pour les entiers.', { ops: [nm(o.id), 'cons', nm('listevide'), nm('premier'), nm('fin'), nm('vrai'), nm('faux')].join(', ') });
       chips.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.op === o.id)); });
       setMsg(fresh || !texts[o.id] ? T('Ce brouillon contient une erreur fréquente. Clique sur Tester pour la trouver, corrige-la, puis teste à nouveau.') : T('Clique sur Tester.'));
@@ -709,7 +709,7 @@
       };
     }
     var f = r.fail, top = f.top || f.call, kind = f.vz, title, msg = '', hint = '', tr = '';
-    var cx = '<p class="vz-cx">' + T('Contre-exemple : {t}, avec {a}.', { t: code(top), a: esc(argsNote(r.args)) }) + '</p>';
+    var cx = '<p class="vz-cx">' + T('Contre-exemple : {a}.', { a: esc(argsNote(r.args)) }) + '</p>';
     var force = {};
     if (kind === 'incomplete') {
       title = T('Incomplet.');
@@ -753,7 +753,7 @@
       msg = T('Ta précondition n’a pas de sens pour {t} : elle passe par {u}, qui n’est pas défini.', { t: code(f.call), u: code(f.u) });
     } else {
       title = T('Résultat faux.');
-      msg = T('Résultat faux pour {t} : tes axiomes donnent {g}, on attend {e}.', { t: code(f.call), g: vnote(f.got), e: vnote(f.expect) });
+      msg = T('Pour {t}, tes axiomes donnent {g}, on attend {e}.', { t: code(f.call), g: vnote(f.got), e: vnote(f.expect) });
       hint = T('Suis la réécriture : elle montre où le calcul s’écarte du résultat attendu.');
       tr = traceHTML(top, force, f.expect);
     }
@@ -844,7 +844,7 @@
         var role = set.roles[n.lbl] || 'atom';
         s += '<g class="vz-node ' + role + '"><rect x="' + (n.x - n.w / 2).toFixed(1) + '" y="' + n.d * DY + '" width="' + n.w.toFixed(1) + '" height="' + NH + '" rx="6"/><text x="' + n.x.toFixed(1) + '" y="' + (n.d * DY + 16.5) + '" text-anchor="middle">' + esc(n.lbl) + '</text></g>';
       });
-      return '<svg viewBox="0 0 ' + W.toFixed(0) + ' ' + H.toFixed(0) + '" width="' + W.toFixed(0) + '" height="' + H.toFixed(0) + '" role="img" aria-label="' + esc(T('Le terme {t}, dessiné en arbre', { t: TM.str(t) })) + '"><g transform="translate(' + dx.toFixed(1) + ',' + dy + ')">' + s + '</g></svg>';
+      return '<svg viewBox="0 0 ' + W.toFixed(0) + ' ' + H.toFixed(0) + '" width="' + (W * 1.2).toFixed(0) + '" height="' + (H * 1.2).toFixed(0) + '" role="img" aria-label="' + esc(T('Le terme {t}, dessiné en arbre', { t: TM.str(t) })) + '"><g transform="translate(' + dx.toFixed(1) + ',' + dy + ')">' + s + '</g></svg>';
     }
     /* terme écrit, avec des classes sur des sous-termes (chemins) */
     function lin(t, marks) {
@@ -885,7 +885,7 @@
           var newSub = at(t, path);
           if (vi >= 0) hl.boxes = [{ path: path, cls: cls, name: rhs.a }]; else hl.region = { path: path, cls: 'vz-red' };
           marks[pk(path)] = vi >= 0 ? 'vz-vt ' + cls : 'rx';
-          msg = T('<b>Étape {n}, le remplacement.</b> Le côté droit de l’axiome est {r} : le sous-arbre surligné devient {v}.', { n: ph.n, r: '<code>' + esc(TM.str(rhs)) + '</code>', v: '<code>' + esc(TM.str(newSub)) + '</code>' });
+          msg = T('<b>Étape {n}, le remplacement.</b> Le côté droit de l’axiome est {r} : le sous-arbre {f}(…) est remplacé par {v}.', { n: ph.n, r: '<code>' + esc(TM.str(rhs)) + '</code>', f: '<code>' + esc(red.f) + '</code>', v: '<code>' + esc(TM.str(newSub)) + '</code>' });
           if (ph.last) msg += T(ph.last > 1 ? ' Forme finale : {t}. Plus aucun axiome ne s’applique, en {n} étapes.' : ' Forme finale : {t}. Plus aucun axiome ne s’applique, en 1 étape.', { t: '<code>' + esc(TM.str(t)) + '</code>', n: ph.last });
         }
       }

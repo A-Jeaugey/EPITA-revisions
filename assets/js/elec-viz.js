@@ -53,7 +53,7 @@
     'une seule maille :': 'a single loop:',
     'diviseur de courant :': 'current divider:',
     'Bande rouge pâle : le courant qui circule vraiment, d’autant plus large qu’il est fort. Flèche fine : la flèche de l’énoncé, la même dans les trois schémas.': 'Pale red band: the current that actually flows, wider when it is stronger. Thin arrow: the arrow of the problem statement, the same in all three diagrams.',
-    'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)': 'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)',
+    'Valeurs :': 'Values:',
     'C’est bien le courant du circuit complet ✓': 'This is exactly the current of the full circuit ✓',
     'Même chose dans {r} : {a} + {b} = {c} mA.': 'Same in {r}: {a} + {b} = {c} mA.'
   });
@@ -323,16 +323,19 @@
       '<figure class="vs-panel" data-st="I"><figcaption class="vs-cap">' + t('{e} seule · {o} éteinte, fil', { e: I3s, o: E1s }) + '</figcaption><div class="vs-svg"></div><div class="vs-val"></div><div class="vs-how"></div></figure>' +
       '</div>' +
       '<p class="vs-key"><span class="vs-swatch" aria-hidden="true"></span>' + t('Bande rouge pâle : le courant qui circule vraiment, d’autant plus large qu’il est fort. Flèche fine : la flèche de l’énoncé, la même dans les trois schémas.') + '</p>' +
+      '<p class="vs-vals"></p>' +
       '<div class="viz-read readout" aria-live="polite"></div>' +
       '<div class="ctrls"><div class="grid2">' +
       '<div class="slider"><label for="vsE">' + E1s + '</label><output id="vsEv" for="vsE"></output><input id="vsE" type="range" min="0" max="18" step="3" value="' + E1 + '"></div>' +
       '<div class="slider"><label for="vsI">' + I3s + '</label><output id="vsIv" for="vsI"></output><input id="vsI" type="range" min="0" max="6" step="1" value="' + I3 + '"></div>' +
-      '</div><p class="vs-vals">' + t('R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)') + '</p></div>';
+      '</div></div>';
     var S = SR.R1 + SR.R2 + SR.R3;
     function sense(x) { x = clean(x); return x > 0 ? '<span class="vs-tag ok">' + t('dans le sens de la flèche') + '</span>' : x < 0 ? '<span class="vs-tag no">' + t('contre la flèche') + '</span>' : '<span class="vs-tag">' + t('aucun courant') + '</span>'; }
     function render() {
       E1 = +host.querySelector('#vsE').value; I3 = +host.querySelector('#vsI').value;
       host.querySelector('#vsEv').textContent = E1 + ' V'; host.querySelector('#vsIv').textContent = I3 + ' mA';
+      host.querySelector('.vs-vals').innerHTML = t('Valeurs :') + ' ' + [E1s + ' = ' + E1 + ' V', I3s + ' = ' + I3 + ' mA', sym('R_1') + ' = ' + nf(SR.R1) + ' kΩ',
+        sym('R_2') + ' = ' + nf(SR.R2) + ' kΩ', sym('R_3') + ' = ' + nf(SR.R3) + ' kΩ'].join(', ') + ' (V/kΩ = mA)';
       var full = supSolve(E1, I3, true, true), a = supSolve(E1, I3, true, false), b = supSolve(E1, I3, false, true);
       var P = {
         all: { cur: full, name: I1s, how: t('calcul direct (Millman en A) :') + ' ' + sym('V_A', 'v') + ' = ' + num(full.VA) + ' V, ' + I1s + ' = (' + E1s + ' − ' + sym('V_A', 'v') + ')/(' + sym('R_1') + ' + ' + sym('R_2') + ') = (' + E1 + ' − ' + num(full.VA) + ')/' + (SR.R1 + SR.R2) },
