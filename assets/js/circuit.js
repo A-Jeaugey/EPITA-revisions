@@ -27,6 +27,7 @@
      (« R_2/2 » → R₂/2, « I_1′ » → I₁′) ; « R_{eq,1} » pour un indice plus long. */
   function label(s) {
     s = String(s);
+    if (window.REV && window.REV.lang === 'en') s = s.replace(/(\d),(\d)/g, '$1.$2'); // page anglaise : 2,5 kΩ → 2.5 kΩ
     var out = '', i = 0;
     while (i < s.length) {
       var k = s.indexOf('_', i);

@@ -1,6 +1,16 @@
 /* Révisions S1 — noyau partagé.
    Chargé de façon bloquante dans le <head> de chaque page :
-   thème, stockage local, registre des matières, progression, barre de navigation. */
+   langue, thème, stockage local, registre des matières, progression, barre de navigation.
+
+   Langues : chaque page X.html a une jumelle anglaise X.en.html (même dossier, mêmes ids, <html lang="en">).
+   Le bouton FR | EN de la barre mène à la jumelle et retient le choix (clé rev-s1:lang) : une page ouverte
+   dans l'autre langue redirige alors vers sa jumelle. Sur une page anglaise, les liens vers les pages .html
+   du site sont réécrits vers les .en.html (y compris ceux ajoutés par les scripts) et REV.url() fait de même.
+   Textes des scripts partagés : REV.t('texte français', { n: 3 }) rend la traduction déclarée par
+   REV.i18n.add({ 'texte français': 'English text' }) quand la page est en anglais ({n} est remplacé).
+   Données : les fichiers data/en/… chargés par les pages anglaises après les fichiers français appellent
+   REV.i18n.patch(liste, { id: { champs anglais } }) (fusion champ par champ, tableaux élément par élément),
+   REV.i18n.qcm({ id: { q, o, x, … } }) pour les questions et REV.i18n.topics({ notion: 'Name' }). */
 (function () {
   'use strict';
 
@@ -8,6 +18,74 @@
   var ROOT = script ? script.src.replace(/assets\/js\/core\.js(?:[?#].*)?$/, '') : './';
   var KEY = 'rev-s1:v1';
   var DAY = 86400000;
+
+  /* ---------- langue ---------- */
+  var LANG = /\.en\.html$/i.test(location.pathname) || document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'fr';
+  var LANG_KEY = 'rev-s1:lang';
+  function langPref() { try { var l = localStorage.getItem(LANG_KEY); return l === 'fr' || l === 'en' ? l : ''; } catch (e) { return ''; } }
+  function setLangPref(l) { try { localStorage.setItem(LANG_KEY, l); } catch (e) { } }
+  /* chemin de la page depuis la racine du site ('' pour la racine elle-même) */
+  function here() {
+    var h = location.href.split('#')[0].split('?')[0];
+    return h.indexOf(ROOT) === 0 ? h.slice(ROOT.length) : '';
+  }
+  /* la même page dans la langue l */
+  function twin(l) {
+    var p = here();
+    if (!p || /\/$/.test(p)) p += 'index.html';
+    p = p.replace(/\.en\.html$/i, '.html');
+    if (l === 'en') p = p.replace(/\.html$/i, '.en.html');
+    return ROOT + p + location.search + location.hash;
+  }
+  /* sur une page anglaise : lien vers une page du site → sa version anglaise */
+  var FOREIGN = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+  function enHref(h) {
+    if (!h || h.charAt(0) === '#' || (FOREIGN.test(h) && h.indexOf(ROOT) !== 0)) return h;
+    return h.replace(/^([^?#]*?)(\.en)?\.html(?=[?#]|$)/i, function (m, base, en) { return en ? m : base + '.en.html'; });
+  }
+  var pref = langPref();
+  if (pref && pref !== LANG && !/[?&]lang=keep\b/.test(location.search)) { try { location.replace(twin(pref)); } catch (e) { } }
+
+  var DICT = {};
+  function t(fr, vars) {
+    var s = LANG === 'en' && DICT[fr] != null ? DICT[fr] : fr;
+    if (vars) s = String(s).replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return s;
+  }
+  function isObj(o) { return o && typeof o === 'object' && !Array.isArray(o); }
+  /* fusion d'une traduction dans un objet : chaînes remplacées, objets fusionnés, tableaux élément par élément
+     (null garde l'élément français ; un tableau anglais plus court ou plus long fixe la longueur) */
+  function merge(dst, src) {
+    Object.keys(src).forEach(function (k) {
+      var v = src[k], d = dst[k];
+      if (v == null) return;
+      if (Array.isArray(v) && Array.isArray(d)) {
+        v.forEach(function (x, i) { if (x == null) return; if (isObj(x) && isObj(d[i])) merge(d[i], x); else d[i] = x; });
+        d.length = v.length;
+      } else if (isObj(v) && isObj(d)) merge(d, v);
+      else dst[k] = v;
+    });
+    return dst;
+  }
+  var i18n = {
+    lang: LANG,
+    add: function (d) { if (LANG === 'en') for (var k in d) DICT[k] = d[k]; },
+    has: function (fr) { return DICT[fr] != null; },
+    merge: merge,
+    /* patch(liste, { id: {…} }, 'id') pour un tableau d'objets, patch(objet, { clé: valeur }) pour une table */
+    patch: function (target, map, key) {
+      if (LANG !== 'en' || !target || !map) return target;
+      if (Array.isArray(target)) {
+        key = key || 'id';
+        target.forEach(function (o) { var tr = o && map[o[key]]; if (tr) merge(o, tr); });
+      } else merge(target, map);
+      return target;
+    },
+    /* questions de QCM : appliquées par REV.quiz après le dédoublonnage (qui se fait sur le texte français) */
+    qcm: function (map) { if (LANG !== 'en') return; var Q = window.QCM_EN = window.QCM_EN || {}; for (var k in map) Q[k] = map[k]; },
+    topics: function (map) { if (LANG !== 'en') return; var T = window.QCM_TOPICS_EN = window.QCM_TOPICS_EN || {}; for (var k in map) T[k] = map[k]; },
+    twin: twin, enHref: enHref
+  };
 
   /* ---------- registre des matières ---------- */
   var SUBJECTS = [
@@ -38,6 +116,23 @@
     { id: 'caml', name: 'Algo · Caml', short: 'Caml', status: 'soon', annalesId: 'algo' },
     { id: 'archi', name: 'Architecture', short: 'Archi', status: 'soon', annales: 'Archi' }
   ];
+  /* textes anglais du registre */
+  var SUBJECTS_EN = {
+    elec: { name: 'Electronics', short: 'Elec', course: 'Circuit analysis tools', open: 'Open Elec',
+      exam: 'Written · no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
+    maths: { name: 'Mathematics', short: 'Maths' },
+    physique: { name: 'Physics', short: 'Physics' },
+    taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
+      exam: 'Written, on the exam paper · 1 h this year according to Moodle (30 min, out of 10, in 2024)',
+      chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
+    caml: { name: 'Algo · Caml', short: 'Caml' },
+    archi: { name: 'Architecture', short: 'Archi' }
+  };
+  if (LANG === 'en') SUBJECTS.forEach(function (s) {
+    var e = SUBJECTS_EN[s.id]; if (!e) return;
+    ['name', 'short', 'course', 'open', 'exam'].forEach(function (k) { if (e[k]) s[k] = e[k]; });
+    if (e.chapters && s.chapters) s.chapters.forEach(function (c, i) { if (e.chapters[i]) c.title = e.chapters[i]; });
+  });
   function subject(id) { for (var i = 0; i < SUBJECTS.length; i++) if (SUBJECTS[i].id === id) return SUBJECTS[i]; return null; }
 
   /* ---------- stockage (toujours protégé : navigation privée, aperçus…) ---------- */
@@ -148,7 +243,7 @@
     nf: function (x, d) {
       if (d === undefined) d = 2;
       var p = Math.pow(10, d), v = Math.round(x * p) / p;
-      return v.toLocaleString('fr-FR', { maximumFractionDigits: d });
+      return v.toLocaleString(LANG === 'en' ? 'en-GB' : 'fr-FR', { maximumFractionDigits: d });
     },
     esc: function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); },
     shuffle: function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; },
@@ -189,38 +284,57 @@
     dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
     menu: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
   };
-  var THEME_LABEL = { system: 'Thème : système', light: 'Thème : clair', dark: 'Thème : sombre' };
+  var DICT_CORE = {
+    'Thème : système': 'Theme: system', 'Thème : clair': 'Theme: light', 'Thème : sombre': 'Theme: dark',
+    'Accueil': 'Home', 'QCM': 'MCQ', 'Annales': 'Past exams', 'Fiches': 'Summaries', 'Révisions': 'Revision',
+    'Navigation principale': 'Main navigation', 'Menu': 'Menu',
+    'J’ai compris cette partie': 'I understand this part', 'Compris': 'Understood',
+    'Langue': 'Language'
+  };
+  i18n.add(DICT_CORE);
+  var THEME_LABEL = { system: t('Thème : système'), light: t('Thème : clair'), dark: t('Thème : sombre') };
 
   function navItems() {
-    var items = [{ href: 'index.html', label: 'Accueil', match: /^(index\.html)?$/ }];
+    var items = [{ href: 'index.html', label: t('Accueil'), match: /^(index\.html)?$/ }];
     SUBJECTS.forEach(function (s) { if (s.status === 'ready') items.push({ href: s.path, label: s.short, match: new RegExp('^' + (s.dir || s.path)) }); });
-    items.push({ href: 'qcm/index.html', label: 'QCM', match: /^qcm\// });
-    items.push({ href: 'annales/index.html', label: 'Annales', match: /^annales\// });
-    items.push({ href: 'fiches/index.html', label: 'Fiches', match: /^fiches\// });
+    items.push({ href: 'qcm/index.html', label: t('QCM'), match: /^qcm\// });
+    items.push({ href: 'annales/index.html', label: t('Annales'), match: /^annales\// });
+    items.push({ href: 'fiches/index.html', label: t('Fiches'), match: /^fiches\// });
     return items;
   }
-  function here() {
-    var h = location.href.split('#')[0].split('?')[0];
-    return h.indexOf(ROOT) === 0 ? h.slice(ROOT.length) : '';
-  }
+  function url(p) { var u = ROOT + p; return LANG === 'en' ? enHref(u) : u; }
   function buildShell() {
     var host = document.getElementById('shell');
     if (!host || host.dataset.built) return;
     host.dataset.built = '1';
-    var cur = here();
+    var cur = here().replace(/\.en\.html$/i, '.html');
     var links = navItems().map(function (it) {
       var on = it.match.test(cur);
-      return '<a href="' + ROOT + it.href + '"' + (on ? ' aria-current="page"' : '') + '>' + it.label + '</a>';
+      return '<a href="' + url(it.href) + '"' + (on ? ' aria-current="page"' : '') + '>' + it.label + '</a>';
+    }).join('');
+    var lang = ['fr', 'en'].map(function (l) {
+      return '<a href="' + twin(l) + '" hreflang="' + l + '" lang="' + l + '" data-lang="' + l + '"' + (l === LANG ? ' aria-current="true"' : '') +
+        ' title="' + (l === 'fr' ? 'Lire en français' : 'Read in English') + '">' + l.toUpperCase() + '</a>';
     }).join('');
     host.className = 'shell';
     host.innerHTML =
       '<div class="shell-in">' +
-      '<a class="shell-brand" href="' + ROOT + 'index.html"><span class="shell-mark" aria-hidden="true">S1</span><span class="shell-name">Révisions</span></a>' +
-      '<nav class="shell-nav" id="shell-nav" aria-label="Navigation principale">' + links + '</nav>' +
+      '<a class="shell-brand" href="' + url('index.html') + '"><span class="shell-mark" aria-hidden="true">S1</span><span class="shell-name">' + t('Révisions') + '</span></a>' +
+      '<nav class="shell-nav" id="shell-nav" aria-label="' + t('Navigation principale') + '">' + links + '</nav>' +
       '<div class="shell-tools">' +
+      '<div class="shell-lang" role="group" aria-label="Langue · Language">' + lang + '</div>' +
       '<button type="button" class="shell-btn" id="shell-theme"></button>' +
-      '<button type="button" class="shell-btn shell-menu" id="shell-menu" aria-expanded="false" aria-controls="shell-nav" aria-label="Menu">' + ICONS.menu + '</button>' +
+      '<button type="button" class="shell-btn shell-menu" id="shell-menu" aria-expanded="false" aria-controls="shell-nav" aria-label="' + t('Menu') + '">' + ICONS.menu + '</button>' +
       '</div></div>';
+    util.$$('.shell-lang a', host).forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var l = a.getAttribute('data-lang');
+        setLangPref(l);
+        if (l === LANG) { e.preventDefault(); return; }
+        a.setAttribute('href', twin(l));
+      });
+    });
+    langHint(host);
     var tb = document.getElementById('shell-theme');
     function paint() { var t = theme.get(); tb.innerHTML = ICONS[t]; tb.setAttribute('aria-label', THEME_LABEL[t]); tb.title = THEME_LABEL[t]; }
     paint();
@@ -237,7 +351,7 @@
       function paint() {
         var on = progress.isRead(key);
         b.setAttribute('aria-pressed', String(on));
-        b.innerHTML = on ? '<span aria-hidden="true">✓</span> Compris' : 'J’ai compris cette partie';
+        b.innerHTML = on ? '<span aria-hidden="true">✓</span> ' + t('Compris') : t('J’ai compris cette partie');
         util.$$('[data-toc-key="' + key + '"]').forEach(function (a) { a.classList.toggle('done', on); });
       }
       b.addEventListener('click', function () { progress.setRead(key, !progress.isRead(key)); paint(); });
@@ -248,17 +362,57 @@
   /* ---------- dernière page visitée (pour « Reprendre ») ---------- */
   function rememberVisit() {
     var b = document.body; if (!b || !b.hasAttribute('data-resume')) return;
-    var cur = here(); if (!cur) return;
+    var cur = here().replace(/\.en\.html$/i, '.html'); if (!cur) return;
     var d = load();
     d.last = { href: cur, title: b.getAttribute('data-resume') || document.title, t: Date.now() };
     save();
   }
 
-  document.addEventListener('DOMContentLoaded', function () { buildShell(); wireDoneButtons(); rememberVisit(); watchTypography(); });
+  /* ---------- page anglaise : liens internes vers les pages anglaises ---------- */
+  function localizeLinks(root) {
+    if (LANG !== 'en' || !root || root.nodeType !== 1) return;
+    var list = root.matches && root.matches('a[href]') ? [root] : [];
+    list = list.concat(util.$$('a[href]', root));
+    list.forEach(function (a) {
+      if (a.hasAttribute('hreflang')) return;
+      var h = a.getAttribute('href'), n = enHref(h);
+      if (n !== h) a.setAttribute('href', n);
+    });
+  }
+  function watchLinks() {
+    if (LANG !== 'en') return;
+    localizeLinks(document.body);
+    if (window.MutationObserver) new MutationObserver(function (list) {
+      for (var i = 0; i < list.length; i++) for (var j = 0; j < list[i].addedNodes.length; j++) localizeLinks(list[i].addedNodes[j]);
+    }).observe(document.body, { childList: true, subtree: true });
+    /* filet de sécurité : un lien dont l'adresse a été changée après coup */
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (a && !a.hasAttribute('hreflang')) { var h = a.getAttribute('href'), n = enHref(h); if (n !== h) a.setAttribute('href', n); }
+    }, true);
+  }
+
+  /* ---------- navigateur non francophone, aucun choix fait : proposer l'anglais une fois ---------- */
+  function langHint(host) {
+    if (LANG !== 'fr' || pref) return;
+    var langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']).join(',').toLowerCase();
+    if (!langs || /(^|,)fr/.test(langs)) return;
+    var bar = document.createElement('div');
+    bar.className = 'shell-hint'; bar.setAttribute('lang', 'en');
+    bar.innerHTML = '<div class="shell-hint-in"><span>This whole site is also available in English.</span>' +
+      '<a href="' + twin('en') + '" hreflang="en" data-go="en">Read in English</a>' +
+      '<button type="button" data-go="fr" lang="fr">Rester en français</button></div>';
+    host.appendChild(bar);
+    util.$$('[data-go]', bar).forEach(function (b) {
+      b.addEventListener('click', function () { setLangPref(b.getAttribute('data-go')); if (b.tagName === 'BUTTON') bar.remove(); });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () { buildShell(); wireDoneButtons(); rememberVisit(); watchTypography(); watchLinks(); });
 
   window.REV = {
-    root: ROOT,
-    url: function (p) { return ROOT + p; },
+    root: ROOT, lang: LANG, t: t, i18n: i18n,
+    url: url,
     subjects: SUBJECTS, subject: subject,
     store: { load: load, save: save, update: update, on: function (f) { listeners.push(f); } },
     progress: progress, qcm: qcm, exo: exo, exams: exams, theme: theme, util: util,

@@ -4,7 +4,8 @@
   'use strict';
   var R = window.REV, U = R.util;
   var CC = ['#1b1b1b', '#7a4a25', '#c62828', '#ef6c00', '#f2c200', '#2e7d32', '#1565c0', '#6a1b9a', '#8d8d8d', '#f4f4f4'];
-  var CN = ['noir', 'marron', 'rouge', 'orange', 'jaune', 'vert', 'bleu', 'violet', 'gris', 'blanc'];
+  var CN = R.lang === 'en' ? ['black', 'brown', 'red', 'orange', 'yellow', 'green', 'blue', 'violet', 'grey', 'white']
+    : ['noir', 'marron', 'rouge', 'orange', 'jaune', 'vert', 'bleu', 'violet', 'gris', 'blanc'];
 
   function codeSVG(n) {
     var d = String(n).split('').map(Number), xs = d.length === 1 ? [29] : [23, 35], bands = '';

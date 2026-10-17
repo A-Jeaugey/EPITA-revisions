@@ -3,12 +3,13 @@
    REV.spec(texte, options) → '<pre class="spec">…</pre>'
 
    Le texte suit la mise en page du cours : un mot-clé de section seul sur sa ligne
-   (types, sorte, utilise, opérations, préconditions, axiomes, avec), puis les lignes de la section.
+   (types, sorte, utilise, opérations, préconditions, axiomes, avec ; en anglais types, uses, operations,
+   preconditions, axioms, with), puis les lignes de la section.
    L'indentation commune est retirée, le reste de la mise en page est gardé tel quel.
    Raccourcis acceptés à la saisie : -> (→), => (⇒), != (≠), <= (≤), >= (≥) et, dans les profils,
    « x » entre deux types (×).
    Dans « opérations », le nom avant « : » est mis en valeur ; dans « préconditions » et « axiomes »,
-   « est-défini-ssi » et « ⇒ » le sont aussi.
+   « est-défini-ssi » (« is-defined-iaoi ») et « ⇒ » le sont aussi.
 
    Options :
      roles: true  colore chaque opération selon son rôle, déduit de son profil et des types définis
@@ -22,8 +23,14 @@
   'use strict';
   var R = window.REV;
   if (!R) return;
-  var SECTION = /^(types?|sortes?|utilise|op[ée]rations|pr[ée]conditions|axiomes|avec)$/i;
-  var ROLE_TITLE = { cst: 'constante : aucun argument', int: 'opération interne : résultat de type défini', obs: 'observateur : argument de type défini, résultat de type prédéfini' };
+  var SECTION = /^(types?|sortes?|sorts?|utilise|uses|op[ée]rations|pr[ée]conditions|axiomes|axioms|avec|with)$/i;
+  var T = R.t || function (s) { return s; };
+  if (R.i18n) R.i18n.add({
+    'constante : aucun argument': 'constant: no argument',
+    'opération interne : résultat de type défini': 'internal operation: result of a defined type',
+    'observateur : argument de type défini, résultat de type prédéfini': 'observer: argument of a defined type, result of a predefined type'
+  });
+  var ROLE_TITLE = { cst: T('constante : aucun argument'), int: T('opération interne : résultat de type défini'), obs: T('observateur : argument de type défini, résultat de type prédéfini') };
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function sym(s) { return s.replace(/->/g, '→').replace(/=>/g, '⇒').replace(/!=/g, '≠').replace(/<=/g, '≤').replace(/>=/g, '≥'); }
@@ -47,7 +54,7 @@
       if (l.trim()) ind = Math.min(ind, l.match(/^ */)[0].length);
       var t = l.trim();
       if (SECTION.test(t)) sec = t.toLowerCase();
-      else if (/^(types?|sortes?)$/.test(sec)) t.split(/[,;]/).forEach(function (n) { if (n.trim()) defined[norm(n)] = 1; });
+      else if (/^(types?|sortes?|sorts?)$/.test(sec)) t.split(/[,;]/).forEach(function (n) { if (n.trim()) defined[norm(n)] = 1; });
     });
     if (ind === Infinity) ind = 0;
     var hl = {};
@@ -66,7 +73,7 @@
           });
           h = h.replace(/ x /g, ' × ');
         }
-        if (/^pr|^ax/.test(sec)) h = h.replace(/est-défini-ssi/g, '<span class="sp-kw">est-défini-ssi</span>').replace(/⇒/g, '<span class="sp-kw">⇒</span>');
+        if (/^pr|^ax/.test(sec)) h = h.replace(/est-défini-ssi|is-defined-iaoi/g, function (k) { return '<span class="sp-kw">' + k + '</span>'; }).replace(/⇒/g, '<span class="sp-kw">⇒</span>');
       }
       return hl[k + 1] ? '<span class="sp-hl">' + h + '</span>' : h;
     });
