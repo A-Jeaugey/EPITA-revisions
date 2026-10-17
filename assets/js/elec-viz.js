@@ -33,7 +33,7 @@
     'Mais {u} = {val} V est négative : le + vient de la flèche, la valeur fait descendre.': 'But {u} = {val} V is negative: the + comes from the arrow, the value takes you down.',
     'Pour retomber au même étage qu’au départ ({v0} V), il faut descendre de {d} V : <b>{u} = {val} V</b>.': 'To land back on the starting floor ({v0} V), you must go down {d} V: <b>{u} = {val} V</b>.',
     'Pour retomber au même étage qu’au départ ({v0} V), il faut monter de {d} V : <b>{u} = {val} V</b>.': 'To land back on the starting floor ({v0} V), you must go up {d} V: <b>{u} = {val} V</b>.',
-    'retour en {b} : {terms} = {v0}, donc {u} = {val} V': 'back at {b}: {terms} = {v0}, so {u} = {val} V',
+    'retour en {b} : {terms} = {v0}, soit {nums} = {v0}, donc {u} = {val} V': 'back at {b}: {terms} = {v0}, that is {nums} = {v0}, so {u} = {val} V',
     'étape {k} / {n}': 'step {k} / {n}',
     /* superposition */
     'Superposition, signe compris': 'Superposition, signs included',
@@ -51,7 +51,7 @@
     'aucun courant': 'no current',
     'calcul direct (Millman en A)': 'direct calculation (Millman at A)',
     'une seule maille': 'a single loop',
-    'diviseur de courant, contre la flèche': 'current divider, against the arrow',
+    'diviseur de courant': 'current divider',
     'Bande rouge pâle : le courant qui circule vraiment, d’autant plus large qu’il est fort. Flèche fine : la flèche de l’énoncé, la même dans les trois schémas.': 'Pale red band: the current that actually flows, wider when it is stronger. Thin arrow: the arrow of the problem statement, the same in all three diagrams.',
     'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)': 'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)',
     'C’est bien le courant du circuit complet ✓': 'This is exactly the current of the full circuit ✓',
@@ -87,10 +87,10 @@
   }
   /* flèche circulaire de sens de parcours (ccw : sens inverse des aiguilles d'une montre) */
   function turnArrow(cx, cy, r, ccw, cls) {
-    var a = Math.PI / 6, s = ccw ? -1 : 1;
-    var p1 = [cx - s * r * Math.sin(a), cy - r * Math.cos(a)], p2 = [cx + s * r * Math.sin(a), cy - r * Math.cos(a)];
-    var v = ccw ? [-Math.cos(a), -Math.sin(a)] : [-Math.cos(a), Math.sin(a)];
-    if (!ccw) v = [Math.cos(a), Math.sin(a)];
+    var a = Math.PI / 6, sx = r * Math.sin(a), sy = cy - r * Math.cos(a);
+    /* arc de 300° qui laisse un jour en haut ; il finit d'un côté du sommet, tangente dans le sens de parcours */
+    var p1 = [ccw ? cx - sx : cx + sx, sy], p2 = [ccw ? cx + sx : cx - sx, sy];
+    var v = ccw ? [-Math.cos(a), -Math.sin(a)] : [Math.cos(a), -Math.sin(a)];
     return '<path class="' + cls + '" d="M' + r1(p1[0]) + ' ' + r1(p1[1]) + 'A' + r + ' ' + r + ' 0 1 ' + (ccw ? 0 : 1) + ' ' + r1(p2[0]) + ' ' + r1(p2[1]) + '"/>' +
       tri(p2[0] + v[0] * 4, p2[1] + v[1] * 4, v[0], v[1], 8, 4.2, cls + '-h');
   }
@@ -120,7 +120,7 @@
       V.push(V[i] + d);
       rows.push({ a: m.pts[i], b: b, sign: sign, val: val, d: d, unknown: unknown, el: s.el, u: s.u, tip: s.tip });
     });
-    return { V: V, rows: rows };
+    return { V: V, rows: rows, pts: m.pts };
   }
 
   var KX = { B: [40, 72], C: [167, 72], D: [293, 72], A: [420, 72] };
@@ -170,7 +170,7 @@
       s += '<path class="vk-land' + (i === k ? ' on' : '') + '" d="M' + (X[i] - H) + ' ' + yy + 'H' + (X[i] + H) + '"/>';
       s += '<text class="vk-pv" x="' + X[i] + '" y="' + r1(yy - 8) + '" text-anchor="middle">' + num(sol.V[i]) + ' V</text>';
     }
-    for (i = 0; i < sol.V.length; i++) s += '<text class="vk-st' + (i <= k ? '' : ' off') + '" x="' + X[i] + '" y="250" text-anchor="middle">' + sol.rows.concat([{ b: sol.rows[n - 1].b }])[i].a.replace(/^$/, '') + '</text>';
+    for (i = 0; i < sol.pts.length; i++) s += '<text class="vk-st' + (i <= k ? '' : ' off') + '" x="' + X[i] + '" y="250" text-anchor="middle">' + sol.pts[i] + '</text>';
     s += '<text class="vk-gnd" x="24" y="' + r1(y(sol.V[0]) + 14) + '">' + esc(t('masse')) + '</text>';
     s += '<circle class="vk-me" cx="' + X[k] + '" cy="' + r1(y(sol.V[k])) + '" r="6"/>';
     if (k === n && sol.V[n] === sol.V[0]) s += '<text class="vk-ok" x="190" y="' + r1(y(sol.V[0]) - 10) + '" text-anchor="middle">' + esc(t('même étage qu’au départ')) + ' ✓</text>';
@@ -190,9 +190,9 @@
       var terms = rows.map(function (x, i) { return term(x, i === 0); }).join('');
       var nums = rows.map(function (x, i) { return numTerm(x, i === 0); }).join('');
       if (r.unknown) {
-        eq = t('retour en {b} : {terms} = {v0}, donc {u} = {val} V', { b: r.b, terms: terms, v0: num(sol.V[0]), u: sym(r.u, 'u'), val: num(r.val) });
+        eq = t('retour en {b} : {terms} = {v0}, soit {nums} = {v0}, donc {u} = {val} V', { b: r.b, terms: terms, nums: nums, v0: num(sol.V[0]), u: sym(r.u, 'u'), val: num(r.val) });
       } else {
-        eq = V(r.b) + ' = ' + (sol.V[0] ? num(sol.V[0]) + ' + ' : '') + terms + ' = ' + nums + ' = ' + num(sol.V[k]) + ' V';
+        eq = V(r.b) + ' = ' + (sol.V[0] ? num(sol.V[0]) + ' + ' : '') + terms + (k > 1 ? ' = ' + nums : '') + ' = ' + num(sol.V[k]) + ' V';
       }
       var el = r.el === 'E' ? sym('E', 'u') : sym('R_' + r.el.slice(1));
       note = t('De {a} à {b} à travers {el}. La flèche {u} pointe vers {tip}, {sens} : tu écris <b>{term}</b>.', {
@@ -217,7 +217,7 @@
       '<button class="btn" type="button" data-k="reset">' + t('Recommencer') + '</button><span class="mono viz-count"></span></div></div>';
     var circ = host.querySelector('.vk-circ'), plot = host.querySelector('.vk-plot');
     var bPrev = host.querySelector('[data-k=prev]'), bNext = host.querySelector('[data-k=next]'), bReset = host.querySelector('[data-k=reset]');
-    function station(i) { return KX[sol.rows.concat([{ a: sol.rows[n - 1].b }])[i].a]; }
+    function station(i) { return KX[sol.pts[i]]; }
     function render(animate) {
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       circ.innerHTML = R.circuit(kvlCircuit(sol, k));
@@ -329,9 +329,9 @@
       host.querySelector('#vsEv').textContent = E1 + ' V'; host.querySelector('#vsIv').textContent = I3 + ' mA';
       var full = supSolve(E1, I3, true, true), a = supSolve(E1, I3, true, false), b = supSolve(E1, I3, false, true);
       var P = {
-        all: { cur: full, name: I1s, how: t('calcul direct (Millman en A)') },
+        all: { cur: full, name: I1s, how: t('calcul direct (Millman en A)') + ' : ' + sym('V_A', 'v') + ' = ' + num(full.VA) + ' V, ' + I1s + ' = (' + E1s + ' − ' + sym('V_A', 'v') + ')/(' + sym('R_1') + ' + ' + sym('R_2') + ') = (' + E1 + ' − ' + num(full.VA) + ')/' + (SR.R1 + SR.R2) },
         E: { cur: a, name: I1p, how: t('une seule maille') + ' : ' + E1s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = ' + E1 + '/' + S },
-        I: { cur: b, name: I1pp, how: t('diviseur de courant, contre la flèche') + ' : −' + sym('R_3') + I3s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = −' + SR.R3 + ' × ' + I3 + '/' + S }
+        I: { cur: b, name: I1pp, how: t('diviseur de courant') + ' : −' + sym('R_3') + I3s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = −' + SR.R3 + ' × ' + I3 + '/' + S }
       };
       U.$$('.vs-panel', host).forEach(function (fig) {
         var p = P[fig.getAttribute('data-st')];
