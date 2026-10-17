@@ -61,7 +61,7 @@
             '<li>three loops of four branches: (2' + E + ', ' + rr(1) + ', ' + rr(3) + ', ' + rr(4) + '), (2' + E + ', ' + rr(2) + ', ' + rr(3) + ', ' + E + '), (' + rr(1) + ', ' + E + ', ' + rr(4) + ', ' + rr(2) + ').</li></ul>' +
             '<p>Only 3 are independent (<var>b</var> − <var>n</var> + 1 = 6 − 4 + 1). The official 2023 answer key counts all the loops: answer 7, stating that 3 are independent.</p>',
           figs: [{ spec: { aria: C24NODES }, cap: 'The two nodes without a dot: N, the top-left junction, and M, the whole bottom wire. With A and B, that makes 4 nodes.' }] },
-        { t: 'Question 2', html: '<p>The two sources already have their arrows, in source (generator) convention. For each resistor, use the receiver convention: the voltage arrow is drawn opposite to the current arrow.</p><ul>' +
+        { t: 'Question 2', html: '<p>The two sources already have their arrows, in source convention. For each resistor, use the receiver convention: the voltage arrow is drawn opposite to the current arrow.</p><ul>' +
             '<li>' + uu(1) + ': ' + ii(1) + ' goes to the right, so ' + uu(1) + ' points to the left, toward N: ' + uu(1) + ' = ' + vv('N') + ' − ' + vv('A') + '.</li>' +
             '<li>' + uu(2) + ': ' + ii(2) + ' is drawn to the left, so ' + uu(2) + ' points to the right, toward B: ' + uu(2) + ' = ' + vv('B') + ' − ' + vv('N') + '.</li>' +
             '<li>' + uu(3) + ': ' + ii(3) + ' goes down, so ' + uu(3) + ' points up, toward A: ' + uu(3) + ' = ' + vv('A') + ' − ' + vv('B') + ' = ' + UAB + '.</li>' +

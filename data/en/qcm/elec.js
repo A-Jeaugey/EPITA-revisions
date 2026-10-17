@@ -31,7 +31,7 @@ REV.i18n.qcm({
   'elec-c1-08': { q: 'You know <var>U</var><sub>AB</sub> = 4 V and <var>U</var><sub>BC</sub> = −6 V. What is <var>U</var><sub>AC</sub>?',
     x: '<var>U</var><sub>AC</sub> = <var>U</var><sub>AB</sub> + <var>U</var><sub>BC</sub> = 4 + (−6) = −2 V. Voltages chain together like differences between floors.' },
   'elec-c1-09': { q: 'On a resistor, the voltage arrow and the current arrow point in the same direction. You write…',
-    x: 'Same direction = source (generator) convention. Ohm’s law <var>U</var> = <var>R</var><var>I</var> only holds in the receiver convention (opposite arrows); otherwise you need a minus sign.' },
+    x: 'Same direction = source convention. Ohm’s law <var>U</var> = <var>R</var><var>I</var> only holds in the receiver convention (opposite arrows); otherwise you need a minus sign.' },
   'elec-c1-10': { q: 'A dipole is drawn with the receiver convention. You find <var>U</var> = 6 V and <var>I</var> = −2 A. This dipole…',
     o: ['receives 12 W', 'supplies 12 W: it works as a source', 'neither receives nor supplies anything', 'is necessarily a resistor'],
     x: 'In the receiver convention, <var>P</var> = <var>U</var><var>I</var> is the power received: 6 × (−2) = −12 W. Receiving −12 W means supplying 12 W.' },
