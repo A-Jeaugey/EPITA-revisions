@@ -13,7 +13,7 @@ for l in open(os.path.join(REPO, 'index.html'), encoding='utf-8').read().split('
     elif not t.lower().startswith(DROP):
         lines.append(l)
 open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8').write('\n'.join(lines))
-files = sorted(os.path.relpath(os.path.join(d, f), REPO) for root in ['assets', 'data', 'elec', 'qcm', 'annales', 'fiches']
+files = sorted(os.path.relpath(os.path.join(d, f), REPO) for root in ['assets', 'data', 'elec', 'qcm', 'annales', 'fiches', 'taa']
                for d, _, fs in os.walk(os.path.join(REPO, root)) for f in fs)
 json.dump([{'path': f} for f in files], open(os.path.join(out_dir, 'files.json'), 'w'))
 print(len(files), 'fichiers à publier avec', os.path.join(out_dir, 'index.html'))
