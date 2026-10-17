@@ -87,13 +87,14 @@
   }
   /* flèche circulaire de sens de parcours (ccw : sens inverse des aiguilles d'une montre) */
   function turnArrow(cx, cy, r, ccw, cls) {
-    var a = Math.PI / 6, sx = r * Math.sin(a), sy = cy - r * Math.cos(a);
-    /* arc de 300° qui laisse un jour en haut ; il finit d'un côté du sommet, tangente dans le sens de parcours */
-    var p1 = [ccw ? cx - sx : cx + sx, sy], p2 = [ccw ? cx + sx : cx - sx, sy];
-    var v = ccw ? [-Math.cos(a), -Math.sin(a)] : [Math.cos(a), -Math.sin(a)];
+    /* arc de 275° ; la pointe finit juste après le sommet, dans le jour laissé en haut, tangente au sens de parcours */
+    var k = ccw ? 1 : -1, f0 = -70 * k * Math.PI / 180, f1 = 15 * k * Math.PI / 180;
+    function pt(f) { return [cx + r * Math.sin(f), cy - r * Math.cos(f)]; }
+    var p1 = pt(f0), p2 = pt(f1), v = ccw ? [-Math.cos(f1), -Math.sin(f1)] : [Math.cos(f1), Math.sin(f1)];
     return '<path class="' + cls + '" d="M' + r1(p1[0]) + ' ' + r1(p1[1]) + 'A' + r + ' ' + r + ' 0 1 ' + (ccw ? 0 : 1) + ' ' + r1(p2[0]) + ' ' + r1(p2[1]) + '"/>' +
-      tri(p2[0] + v[0] * 4, p2[1] + v[1] * 4, v[0], v[1], 8, 4.2, cls + '-h');
+      tri(p2[0] + v[0] * 8, p2[1] + v[1] * 8, v[0], v[1], 9, 3.8, cls + '-h');
   }
+
 
   /* =====================================================================================================
      1. Loi des mailles en étages — grande maille du TD1 Ex 2 (partiel nov. 2020, Ex 3)
