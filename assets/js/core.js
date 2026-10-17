@@ -104,7 +104,18 @@
       ]
     },
     { id: 'maths', name: 'Mathématiques', short: 'Maths', status: 'soon', annales: 'Maths PC' },
-    { id: 'physique', name: 'Physique', short: 'Physique', status: 'soon', annales: 'Phys' },
+    {
+      id: 'physique', name: 'Physique · Mécanique', short: 'Physique',
+      course: 'Mécanique du point', path: 'physique/index.html', dir: 'physique/', status: 'ready', annales: 'Phys',
+      train: 'physique/entrainement.html', fiche: 'physique/fiche.html', open: 'Ouvrir la physique',
+      exam: 'Écrit · sans calculatrice ni document',
+      chapters: [
+        { id: 'cinematique', title: 'Cinématique cartésienne', path: 'physique/cours-1-cinematique.html', sections: 8 },
+        { id: 'dynamique', title: 'Forces et lois de Newton', path: 'physique/cours-2-dynamique.html', sections: 8 },
+        { id: 'energie', title: 'Travail et énergie', path: 'physique/cours-3-energie.html', sections: 8 },
+        { id: 'polaires', title: 'Coordonnées polaires', path: 'physique/cours-4-polaires.html', sections: 8 }
+      ]
+    },
     {
       id: 'taa', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
       course: 'Types algébriques abstraits', path: 'taa/index.html', dir: 'taa/', status: 'ready',
@@ -124,7 +135,9 @@
     elec: { name: 'Electronics', short: 'Elec', course: 'Circuit analysis tools', open: 'Open Elec',
       exam: 'Written · no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
     maths: { name: 'Mathematics', short: 'Maths' },
-    physique: { name: 'Physics', short: 'Physics' },
+    physique: { name: 'Physics · Mechanics', short: 'Physics', course: 'Point mechanics', open: 'Open Physics',
+      exam: 'Written · no calculator, no documents',
+      chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy', 'Polar coordinates'] },
     taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
       exam: 'Written, on the exam paper · 1 h this year according to Moodle (30 min, out of 10, in 2024)',
       chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
