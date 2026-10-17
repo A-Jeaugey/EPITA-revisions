@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les listes · TAA</title>
+<meta name="description" content="TAA, chapitre 2 : liste et place, liste récursive (listevide, cons, fin, tête, premier), nouvelles opérations par cas, liste itérative (rang, accès, ième, longueur, insérer, supprimer), opération mystère.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Compléments propres à cette page : bancs « deux lectures », places, cons et opération mystère ; questions à déplier. */
+.bn-why{font-size:.9rem;line-height:1.5;color:var(--muted)}
+.bn-lbl{font-size:.85rem;color:var(--muted)}
+.bn-blk{display:grid;gap:4px;min-width:0}
+.rank.todo span{border-style:dashed;background:transparent;color:var(--muted)}
+.qa-list{display:grid;gap:8px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.6rem 1rem}
+.qa>*{min-width:0}
+.qa summary{cursor:pointer;font-weight:500}
+.qa summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.qa[open] summary{margin-bottom:.45rem}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · chapitre 2 : les listes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapitre 2 sur 3</div>
+      <h1>Une liste se lit par la <span class="w">tête</span> ou par le <span class="w">rang</span>.</h1>
+      <p class="lead">Une liste range des éléments dans des places, les uns à la suite des autres. Tu peux la décrire de deux façons : récursive, où seul le premier élément est accessible, ou itérative, où chaque élément a un rang. Ce chapitre écrit et lit les axiomes des deux, comme à l’examen.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parties</span><span class="chip">MiMos des semaines 3 et 4 · fiche « Les listes »</span><span class="chip ex">exercices de listes aux examens 2023 et 2024</span></div>
+    </div>
+    <div id="heroLists" aria-label="Atelier : la même liste lue de deux façons"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 2 · Les listes</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>Liste et place</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>La liste récursive</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Écrire, évaluer</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>Définir une opération</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>La liste itérative</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>insérer, supprimer</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Opération mystère</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Récursive ou itérative</span></a></li>
+    </ol>
+    <p class="toc-note">Le nombre d’assiettes donne le numéro de la partie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="cours-1-types.html">← Chapitre 1 : les types abstraits</a><a href="cours-3-piles-files.html">Chapitre 3 : piles, files, ensembles →</a><a href="index.html">Accueil TAA</a><a href="../qcm/index.html#taa">QCM de TAA</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Liste et place</a></li><li><a href="#s2">La liste récursive</a></li><li><a href="#s3">Écrire, évaluer</a></li><li><a href="#s4">Définir une opération</a></li>
+      <li><a href="#s5">La liste itérative</a></li><li><a href="#s6">insérer, supprimer</a></li><li><a href="#s7">Opération mystère</a></li><li><a href="#s8">Récursive ou itérative</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Partie 1</div><h2>Liste et place : contenu et succ</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La <b>liste linéaire</b> est la forme la plus simple d’organisation de données. Les éléments sont stockés les uns à la suite des autres dans des <b>places</b>, ce qui permet de les traiter un par un, dans l’ordre.</p>
+          <p>Point clé : l’ordre des éléments ne dépend pas des éléments eux-mêmes, mais de leur place dans la liste. Rien n’oblige une liste à être triée, et deux places peuvent contenir le même élément. <code>{c, a, b}</code> et <code>{a, b, c}</code> contiennent les mêmes éléments, mais ce ne sont pas les mêmes listes.</p>
+          <p>Une liste définit donc deux types à la fois : la <code>liste</code> et la <code>place</code>, la case qui contient un élément. Deux opérations travaillent sur les places :</p>
+        </div>
+<pre data-spec data-roles="1" aria-label="Les types liste et place, et les opérations de place">
+types
+    liste, place
+utilise
+    élément
+opérations
+    contenu : place → élément
+       succ : place → place
+</pre>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-obs">contenu</span> : place → élément</h4><p>Pour obtenir l’élément d’une place.</p><p class="muted"><code>contenu(p)</code> : ce qui est rangé dans la place <code>p</code>.</p></div>
+          <div class="card"><h4><span class="op-int">succ</span> : place → place</h4><p>Pour passer à la place suivante. Le résultat est une place, pas un élément.</p><p class="muted">L’élément suivant s’écrit donc <code>contenu(succ(p))</code>.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Une liste range ses éléments dans des places : l’ordre vient des places, pas des valeurs.</li>
+          <li>Deux types définis, <code>liste</code> et <code>place</code> ; <code>élément</code> est prédéfini.</li>
+          <li><code>contenu</code> lit une place, <code>succ</code> passe à la place suivante.</li>
+          <li>Une liste se décrit de deux façons, récursivement ou itérativement : cela reste la même donnée, seule la manière de s’en servir change.</li>
+        </ul></div>
+        <h3>L’erratum de la vidéo sur succ</h3>
+        <div class="prose"><p>La vidéo du MiMo sur les listes itératives contient une erreur sur l’opération <code>succ</code>. Le Moodle la corrige : <code>succ</code> prend une place et rend une place. Il montre son utilisation sur une liste <code>li</code> de quatre images : un éclair, un soleil, un nuage, une lune. On les note ici par leur nom.</p></div>
+<pre data-spec aria-label="Utilisation de succ, d’après l’erratum">
+p2 ← accès(li, 2)
+e ← contenu(succ(p2))
+</pre>
+        <ol class="steps">
+          <li><div><b><code>p2 ← accès(li, 2)</code></b> : <code>accès(li, 2)</code> donne la place du 2<sup>e</sup> élément. <code>p2</code> est donc la place qui contient le soleil. (<code>accès</code> appartient à la liste itérative, partie 5.)</div></li>
+          <li><div><b><code>succ(p2)</code></b> : la place suivante, la 3<sup>e</sup>.</div></li>
+          <li><div><b><code>e ← contenu(succ(p2))</code></b> : on lit ce que contient cette place. <code>e</code> vaut nuage, le 3<sup>e</sup> élément de <code>li</code>.</div></li>
+        </ol>
+        <div id="placeBench" aria-label="Atelier : déplacer une place avec succ et lire son contenu"></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><code>succ</code> rend une place, pas un élément. Écrire <code>succ(p2) = nuage</code> mélange les types : c’est <code>contenu(succ(p2))</code> qui vaut nuage.</li>
+          <li>La fiche présente <code>contenu</code> et <code>succ</code> comme « les opérations internes de place ». Avec la règle du chapitre 1, <code>succ</code> est bien interne (elle rend une place, type défini), mais <code>contenu</code> est un observateur (elle rend un élément, type prédéfini).</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Partie 2</div><h2>La liste récursive : listevide, cons, fin, tête, premier</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Première façon de décrire une liste : par la manière de la construire. Une liste est</p>
+          <ul><li>soit <b>vide</b> : <code>listevide</code> ;</li><li>soit constituée d’un <b>élément</b>, la tête, suivi d’une <b>liste</b> : <code>cons(e, λ)</code>.</li></ul>
+          <p>La définition est récursive : ce qui suit la tête est encore une liste. Voici le type complet donné sur le Moodle, avec les opérations de place de la partie 1.</p>
+        </div>
+        <div class="legend"><span><i style="background:var(--int)"></i>opération interne</span><span><i style="background:var(--obs)"></i>observateur</span><span><i style="background:var(--cst)"></i>constante</span></div>
+<pre data-spec data-roles="1" aria-label="Le type liste récursive">
+types
+    liste, place
+utilise
+    élément
+opérations
+    listevide : → liste
+         cons : élément x liste → liste
+          fin : liste → liste
+         tête : liste → place
+      contenu : place → élément
+      premier : liste → élément
+         succ : place → place
+préconditions
+    fin(λ) est-défini-ssi λ ≠ listevide
+    tête(λ) est-défini-ssi λ ≠ listevide
+    premier(λ) est-défini-ssi λ ≠ listevide
+axiomes
+    premier(λ) = contenu(tête(λ))
+    fin(cons(e, λ)) = λ
+    premier(cons(e, λ)) = e
+    succ(tête(λ)) = tête(fin(λ))
+avec
+    liste λ
+    élément e
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Opération</th><th>Ce qu’elle donne</th><th>Sur λ = {a, b, c}</th></tr></thead>
+          <tbody>
+            <tr><td><code class="op-cst">listevide</code></td><td>crée une liste sans éléments</td><td>la liste vide</td></tr>
+            <tr><td><code class="op-int">cons(e, λ)</code></td><td>ajoute un élément en tête de liste</td><td><code>cons(d, λ)</code> = {d, a, b, c}</td></tr>
+            <tr><td><code class="op-int">fin(λ)</code></td><td>la liste privée de l’élément de tête</td><td>{b, c}</td></tr>
+            <tr><td><code class="op-int">tête(λ)</code></td><td>la première place, celle de tête</td><td>la place qui contient a</td></tr>
+            <tr><td><code class="op-obs">premier(λ)</code></td><td>le premier élément de la liste</td><td>a</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Les quatre axiomes, dans l’ordre du Moodle. Les ateliers les numérotent A1 à A4.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>N°</th><th>Axiome</th><th>Ce qu’il dit</th></tr></thead>
+          <tbody>
+            <tr><td>A1</td><td><code>premier(λ) = contenu(tête(λ))</code></td><td>Le premier élément est le contenu de la place de tête.</td></tr>
+            <tr><td>A2</td><td><code>fin(cons(e, λ)) = λ</code></td><td>Ajouter e en tête puis retirer la tête redonne λ.</td></tr>
+            <tr><td>A3</td><td><code>premier(cons(e, λ)) = e</code></td><td>Le premier élément de <code>cons(e, λ)</code> est e.</td></tr>
+            <tr><td>A4</td><td><code>succ(tête(λ)) = tête(fin(λ))</code></td><td>La place qui suit la tête est la tête du reste de la liste.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Une liste récursive est soit <code>listevide</code>, soit <code>cons(e, λ)</code> : un élément suivi d’une liste.</li>
+          <li><b>Seul l’élément de tête est immédiatement accessible</b> : <code>premier(λ)</code>, et sa place <code>tête(λ)</code>. Pour atteindre les suivants, on retire la tête avec <code>fin</code>.</li>
+          <li><code>fin</code>, <code>tête</code> et <code>premier</code> n’ont pas de sens sur la liste vide : leur précondition est <code>λ ≠ listevide</code>.</li>
+        </ul></div>
+        <div class="prose"><p>Construis des listes et observe : <code>cons</code> ajoute toujours en tête, et seule la tête se lit.</p></div>
+        <div id="consBench" aria-label="Atelier : construire une liste avec cons"></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><code>cons</code> prend l’élément d’abord : <code>cons(e, λ)</code>, jamais <code>cons(λ, e)</code>. Son profil est élément × liste → liste.</li>
+          <li><code>fin</code> rend une liste, <code>premier</code> un élément. <code>premier(fin(λ))</code> a un sens : c’est le 2<sup>e</sup> élément. <code>fin(premier(λ))</code> n’en a pas : <code>fin</code> attend une liste.</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Partie 3</div><h2>Écrire et évaluer une liste récursive</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On note une liste entre accolades, dans l’ordre de ses éléments : <code>{e1, e2, e3}</code>. Avec les opérations du type, cette liste s’écrit <code>cons(e1, cons(e2, cons(e3, listevide)))</code>.</p>
+          <p>Le terme se lit de l’intérieur vers l’extérieur : on part de la liste vide, et chaque <code>cons</code> ajoute un élément en tête.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Étape</th><th>Terme</th><th>Liste</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>listevide</code></td><td>vide</td></tr>
+            <tr><td>2</td><td><code>cons(e3, listevide)</code></td><td>{e3}</td></tr>
+            <tr><td>3</td><td><code>cons(e2, cons(e3, listevide))</code></td><td>{e2, e3}</td></tr>
+            <tr><td>4</td><td><code>cons(e1, cons(e2, cons(e3, listevide)))</code></td><td>{e1, e2, e3}</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><code>{e1, e2, e3} = cons(e1, cons(e2, cons(e3, listevide)))</code> : un <code>cons</code> par élément, dans l’ordre de la liste, et <code>listevide</code> tout au fond.</li>
+          <li>Le dernier élément ajouté est la tête : <code>e3</code> a été ajouté en premier, <code>e1</code> en dernier.</li>
+          <li>Le k-ième élément s’obtient avec k − 1 <code>fin</code>, puis <code>premier</code> : le 3<sup>e</sup> élément de λ est <code>premier(fin(fin(λ)))</code>.</li>
+        </ul></div>
+        <h3>Évaluer un terme</h3>
+        <div class="prose">
+          <p>Pour calculer un terme, on le réécrit avec les axiomes, comme au chapitre 1. Ici, deux axiomes font tout le travail : A2, <code>fin(cons(e, λ)) = λ</code>, et A3, <code>premier(cons(e, λ)) = e</code>. Chacun s’applique à un morceau de la forme « fin d’un cons » ou « premier d’un cons ».</p>
+          <p>Si un <code>fin</code> ou un <code>premier</code> tombe sur <code>listevide</code>, la précondition est violée : le terme est indéfini.</p>
+        </div>
+        <div id="rwRec"></div>
+        <div class="prose"><p>À toi, avec λ = {b, a, c}. Réponds de tête, puis ouvre la réponse.</p></div>
+        <div class="qa-list">
+          <details class="qa"><summary>Écris λ avec <code>cons</code> et <code>listevide</code>.</summary><p><code>cons(b, cons(a, cons(c, listevide)))</code></p></details>
+          <details class="qa"><summary>Que vaut <code>premier(fin(λ))</code> ?</summary><p><code>a</code> : A2 retire b, puis A3 lit la nouvelle tête.</p></details>
+          <details class="qa"><summary>Que vaut <code>fin(fin(fin(λ)))</code> ?</summary><p><code>listevide</code> : les trois <code>fin</code> retirent les trois éléments.</p></details>
+          <details class="qa"><summary>Et <code>premier(fin(fin(fin(λ))))</code> ?</summary><p>Indéfini : c’est <code>premier(listevide)</code>, qui viole la précondition <code>λ ≠ listevide</code>.</p></details>
+        </div>
+        <div class="note why"><span class="tag">Pourquoi c’est utile</span><p>Toute liste non vide se recompose avec ses deux morceaux : <code>cons(premier(λ), fin(λ)) = λ</code>. En effet, une liste non vide s’écrit <code>cons(e, λ′)</code>, et A3 et A2 rendent <code>e</code> et <code>λ′</code>. Tu t’en serviras en partie 4.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p><code>listevide</code> n’est pas un élément, et une liste à un élément n’est pas cet élément. <code>cons(a, listevide)</code> est la liste {a} ; <code>premier(cons(a, listevide))</code> est l’élément <code>a</code>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Partie 4</div><h2>Définir une nouvelle opération sur une liste récursive</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Exercice type de l’examen : on te rappelle la liste récursive et on te demande d’ajouter une opération, avec ses préconditions s’il y en a et ses axiomes.</p>
+          <p>La méthode vient de la définition même : une liste n’a que deux formes, <code>listevide</code> ou <code>cons(e, λ)</code>. Tu écris donc un axiome pour chaque forme. Dans le cas <code>cons(e, λ)</code>, tu peux utiliser l’opération elle-même sur <code>λ</code>, qui a un élément de moins : l’axiome est récursif.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>Le profil.</b> Repère les types des arguments et du résultat. Si l’opération rend un type que la liste n’utilise pas encore (entier, booléen), ajoute-le dans <code>utilise</code>.</div></li>
+          <li><div><b>Les préconditions.</b> Demande-toi si l’opération a un sens sur la liste vide. Si oui : aucune précondition, et dis-le. Si non : <code class="nw">… est-défini-ssi λ ≠ listevide</code>.</div></li>
+          <li><div><b>Le cas <code>listevide</code>.</b> Donne directement la valeur, sauf si la précondition l’interdit.</div></li>
+          <li><div><b>Le cas <code>cons(e, λ)</code>.</b> Exprime le résultat avec <code>e</code> et avec l’opération appliquée à <code>λ</code>.</div></li>
+          <li><div><b>Vérifie sur un exemple.</b> Réécris l’opération sur une liste de deux ou trois éléments : tu dois retrouver le bon résultat.</div></li>
+        </ol>
+        <h3>Exemple 1 : longueur</h3>
+        <div class="prose"><p>La liste récursive n’a pas d’opération qui compte ses éléments. Ajoutons <code>longueur : liste → entier</code>. Le résultat est un entier : <code>entier</code> rejoint <code>utilise</code>. La liste vide a une longueur, 0 : pas de précondition.</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Cas <code>listevide</code></h4><p>Aucun élément.</p><p><code>longueur(listevide) = 0</code></p></div>
+          <div class="card"><h4>Cas <code>cons(e, λ)</code></h4><p>Un élément de plus que λ.</p><p><code>longueur(cons(e, λ)) = longueur(λ) + 1</code></p></div>
+        </div>
+<pre data-spec aria-label="L’opération longueur ajoutée à la liste récursive">
+utilise
+    élément, entier
+opérations
+    longueur : liste → entier
+préconditions
+    aucune
+axiomes
+    longueur(listevide) = 0
+    longueur(cons(e, λ)) = longueur(λ) + 1
+avec
+    liste λ
+    élément e
+</pre>
+        <h3>Exemple 2 : concaténer (examen du 30 octobre 2023)</h3>
+        <div class="prose">
+          <p>Le sujet portait sur la liste récursive sans places. Il ajoutait <code>concaténer : liste × liste → liste</code>, qui met λ2 à la suite de λ, et demandait les axiomes, avec les préconditions s’il y en a.</p>
+          <p>Deux listes en argument : on découpe la <b>première</b>. Le résultat commence par les éléments de λ, donc si λ commence par <code>e</code>, le résultat aussi. La seconde liste est seulement recopiée au bout.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4>Cas <code>listevide</code></h4><p>Rien à mettre devant : il reste λ2.</p><p><code>concaténer(listevide, λ2) = λ2</code></p></div>
+          <div class="card"><h4>Cas <code>cons(e, λ)</code></h4><p><code>e</code> reste en tête, suivi de la concaténation du reste de la liste avec λ2.</p><p><code>concaténer(cons(e, λ), λ2) = cons(e, concaténer(λ, λ2))</code></p></div>
+        </div>
+<pre data-spec aria-label="L’opération concaténer ajoutée à la liste récursive">
+opérations
+    concaténer : liste x liste → liste
+préconditions
+    aucune
+axiomes
+    concaténer(listevide, λ2) = λ2
+    concaténer(cons(e, λ), λ2) = cons(e, concaténer(λ, λ2))
+avec
+    liste λ, λ2
+    élément e
+</pre>
+        <div class="note why"><span class="tag">Pourquoi deux axiomes suffisent</span><p>Toute liste est soit <code>listevide</code>, soit <code>cons(e, λ)</code> : les deux axiomes couvrent tous les cas (complétude) et ne se contredisent pas (consistance). Chaque application de l’axiome récursif retire un élément de la première liste, donc on finit toujours par le cas <code>listevide</code>. Un axiome <code>concaténer(λ, listevide) = λ</code> n’est pas nécessaire : il se déduit des deux autres (essaie « λ2 vide » dans l’atelier).</p></div>
+        <div class="prose"><p>Dans l’atelier, les axiomes de longueur sont L1 et L2, ceux de concaténer C1 et C2 ; A2 et A3 sont ceux de la partie 2. Modifie les termes pour tester d’autres listes.</p></div>
+        <div id="rwOps"></div>
+        <div class="note keep"><span class="tag">À retenir : la méthode par cas</span><ul>
+          <li>Un axiome pour <code>listevide</code>, un axiome pour <code>cons(e, λ)</code>.</li>
+          <li>Le cas <code>cons(e, λ)</code> utilise l’opération sur <code>λ</code> : c’est la récursion.</li>
+          <li>Une précondition seulement si l’opération n’a pas de sens sur la liste vide, comme <code>premier</code> ou <code>fin</code>. Sinon, écris « aucune ».</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>N’invente pas de précondition : <code>longueur</code> et <code>concaténer</code> ont un sens sur des listes vides.</li>
+          <li>Si tu écris le cas non vide avec <code>premier</code> et <code>fin</code>, réserve-le aux listes non vides : <code>λ ≠ listevide ⇒ concaténer(λ, λ2) = cons(premier(λ), concaténer(fin(λ), λ2))</code>. Sans la condition, l’axiome s’appliquerait aussi à <code>listevide</code>, où <code>premier</code> n’est pas défini.</li>
+          <li>Ajoute <code>entier</code> ou <code>booléen</code> dans <code>utilise</code> si l’opération en a besoin.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <p>30 octobre 2023 (sur 10 points) : après des questions de cours, il fallait écrire les préconditions et les axiomes de <code>concaténer</code> pour la liste récursive sans places. Réponse acceptée : aucune précondition, puis les deux axiomes ci-dessus.</p>
+          <p>30 octobre 2024, exercice 2 (5 points) : même demande pour <code>supprime-sup : liste × élément → liste</code>, qui supprime tous les éléments strictement supérieurs à un élément donné. Même méthode par cas. Entraîne-toi sur <a href="entrainement.html#p2024-ex2">l’exercice 2 de 2024</a>.</p>
+        </div>
+        <div data-check-ref="taa/cours-2-listes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Partie 5</div><h2>La liste itérative : rang, accès, ième, longueur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Seconde façon de décrire la même donnée : par les <b>rangs</b>. Cette fois, tous les éléments sont accessibles, par leur rang. Le type <code>entier</code> sert à représenter les rangs : le premier élément est au rang 1, le dernier au rang <code>longueur(λ)</code>.</p>
+        </div>
+<pre data-spec data-roles="1" aria-label="Le type liste itérative : signature">
+types
+    liste, place
+utilise
+    entier, élément
+opérations
+    listevide : → liste
+        accès : liste x entier → place
+      contenu : place → élément
+         ième : liste x entier → élément
+     longueur : liste → entier
+    supprimer : liste x entier → liste
+      insérer : liste x entier x élément → liste
+         succ : place → place
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Opération</th><th>Ce qu’elle donne</th><th>Sur λ = {a, b, c}</th></tr></thead>
+          <tbody>
+            <tr><td><code class="op-int">accès(λ, i)</code></td><td>la place du i-ème élément de λ</td><td><code>accès(λ, 2)</code> : la place qui contient b</td></tr>
+            <tr><td><code class="op-obs">ième(λ, i)</code></td><td>le i-ème élément de λ</td><td><code>ième(λ, 2) = b</code></td></tr>
+            <tr><td><code class="op-obs">longueur(λ)</code></td><td>le nombre d’éléments</td><td><code>longueur(λ) = 3</code></td></tr>
+            <tr><td><code class="op-int">supprimer(λ, k)</code></td><td>supprime le k-ième élément de λ</td><td>partie 6</td></tr>
+            <tr><td><code class="op-int">insérer(λ, k, e)</code></td><td>insère e au rang k dans λ</td><td>partie 6</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Une liste itérative se décrit par sa longueur et par ses éléments, rang par rang. La fiche définit ainsi λ = {e1, e2, e3} :</p></div>
+<pre data-spec aria-label="La liste {e1, e2, e3} en liste itérative">
+longueur(λ) = 3
+ième(λ, 1) = e1
+ième(λ, 2) = e2
+ième(λ, 3) = e3
+</pre>
+        <div class="prose"><p>Pour l’instant, une précondition et trois axiomes, numérotés I1 à I3 dans l’atelier ci-dessous :</p></div>
+<pre data-spec aria-label="Précondition de accès et axiomes de longueur, contenu et succ">
+préconditions
+    accès(λ, k) est-défini-ssi λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)
+axiomes
+    longueur(listevide) = 0
+    contenu(accès(λ, k)) = ième(λ, k)
+    succ(accès(λ, k)) = accès(λ, k + 1)
+avec
+    liste λ
+    entier k
+</pre>
+        <div class="prose"><p>Le deuxième axiome relie les deux lectures : le contenu de la k-ième place est le k-ième élément. Le troisième dit que la place qui suit la k-ième est la (k + 1)-ième. Ensemble, ils démontrent l’erratum de la partie 1 : <code>contenu(succ(accès(li, 2)))</code> se réécrit en <code>ième(li, 3)</code>, le 3<sup>e</sup> élément.</p></div>
+        <div id="rwIter"></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Tous les éléments sont accessibles par leur rang, de 1 à <code>longueur(λ)</code>.</li>
+          <li><code>accès</code> rend une place, <code>ième</code> rend un élément : <code>contenu(accès(λ, k)) = ième(λ, k)</code>.</li>
+          <li>Une liste itérative est connue dès qu’on connaît sa longueur et <code>ième(λ, i)</code> pour chaque rang i de 1 à <code>longueur(λ)</code>. C’est ainsi qu’on décrit un résultat dans les parties 6 et 7.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Les rangs commencent à 1, pas à 0. Le dernier élément est <code>ième(λ, longueur(λ))</code>.</li>
+          <li><code>accès</code> est une opération interne (<code>place</code> est un type défini) ; <code>ième</code> et <code>longueur</code> sont des observateurs.</li>
+          <li><code>ième(λ, i)</code> n’a de sens que pour 1 ≤ i ≤ <code>longueur(λ)</code> : aucun axiome ne parle des autres rangs, même si la fiche ne lui écrit pas de précondition.</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Partie 6</div><h2>insérer et supprimer : les rangs se décalent</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Insérer ou supprimer un élément au milieu de la liste fait bouger tous ceux qui suivent. Les axiomes décrivent ce décalage rang par rang : pour chaque rang i du <b>résultat</b>, ils disent quel élément de λ s’y trouve.</p>
+          <p>D’abord, les préconditions :</p>
+        </div>
+<pre data-spec aria-label="Préconditions de supprimer et insérer">
+préconditions
+    supprimer(λ, k) est-défini-ssi λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)
+    insérer(λ, k, e) est-défini-ssi 1 ≤ k ≤ longueur(λ) + 1
+</pre>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-int">supprimer</span>(λ, k)</h4><p>On ne supprime qu’un élément qui existe : k va de 1 à <code>longueur(λ)</code>. Une liste vide n’a rien à supprimer.</p></div>
+          <div class="card"><h4><span class="op-int">insérer</span>(λ, k, e)</h4><p>k peut aller jusqu’à <code>longueur(λ) + 1</code> : insérer à ce rang, c’est ajouter e à la fin. On peut aussi insérer dans une liste vide, au rang 1.</p></div>
+        </div>
+        <div class="prose"><p>Puis les axiomes. Les deux premiers donnent la longueur du résultat ; les suivants, son i-ème élément, avec un cas par zone de rangs.</p></div>
+<pre data-spec aria-label="Axiomes de supprimer et insérer">
+axiomes
+    longueur(supprimer(λ, k)) = longueur(λ) − 1
+    longueur(insérer(λ, k, e)) = longueur(λ) + 1
+
+    1 ≤ i &lt; k ⇒ ième(supprimer(λ, k), i) = ième(λ, i)
+    k ≤ i ≤ longueur(λ) − 1 ⇒ ième(supprimer(λ, k), i) = ième(λ, i + 1)
+
+    1 ≤ i &lt; k ⇒ ième(insérer(λ, k, e), i) = ième(λ, i)
+    k = i ⇒ ième(insérer(λ, k, e), i) = e
+    k &lt; i ≤ longueur(λ) + 1 ⇒ ième(insérer(λ, k, e), i) = ième(λ, i − 1)
+avec
+    liste λ
+    entier i, k
+    élément e
+</pre>
+        <h3>Lire les décalages</h3>
+        <div class="prose"><p>Pour chaque axiome, pose-toi la même question : <b>l’élément qui est au rang i du résultat, à quel rang était-il dans λ ?</b></p></div>
+        <ol class="steps">
+          <li><div><b>Avant k</b> (<code>1 ≤ i &lt; k</code>) : rien n’a bougé. L’élément est au même rang : <code>ième(λ, i)</code>.</div></li>
+          <li><div><b>Après une suppression</b> (<code>k ≤ i</code>) : les éléments qui suivaient le rang k ont avancé d’un rang. Celui qui est maintenant au rang i était juste derrière, au rang i + 1 : <code>ième(λ, i + 1)</code>.</div></li>
+          <li><div><b>Après une insertion</b> : au rang k se trouve le nouvel élément <code>e</code>. Au-delà (<code>k &lt; i</code>), les éléments ont reculé d’un rang : celui qui est au rang i était au rang i − 1, d’où <code>ième(λ, i − 1)</code>.</div></li>
+          <li><div><b>Les bornes</b> : le dernier cas s’arrête à la longueur du résultat. Après <code>supprimer</code>, il y a un élément de moins : i va jusqu’à <code>longueur(λ) − 1</code>. Après <code>insérer</code>, un de plus : i va jusqu’à <code>longueur(λ) + 1</code>.</div></li>
+        </ol>
+        <div class="prose"><p>Sur λ = {a, b, c, d, e}, avec k = 2 :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Rang i</th><th><code>supprimer(λ, 2)</code> = {a, c, d, e}</th><th><code>insérer(λ, 2, x)</code> = {a, x, b, c, d, e}</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>ième(λ, 1) = a</code> (i &lt; k)</td><td><code>ième(λ, 1) = a</code> (i &lt; k)</td></tr>
+            <tr><td>2</td><td><code>ième(λ, 3) = c</code> (k ≤ i)</td><td><code>x</code> (i = k)</td></tr>
+            <tr><td>3</td><td><code>ième(λ, 4) = d</code></td><td><code>ième(λ, 2) = b</code> (k &lt; i)</td></tr>
+            <tr><td>4</td><td><code>ième(λ, 5) = e</code></td><td><code>ième(λ, 3) = c</code></td></tr>
+            <tr><td>5</td><td class="muted">aucun : longueur 4</td><td><code>ième(λ, 4) = d</code></td></tr>
+            <tr><td>6</td><td class="muted">aucun</td><td><code>ième(λ, 5) = e</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Choisis l’opération et le rang k : les couleurs suivent les cas des axiomes.</p></div>
+        <div id="ranksBench"></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Dans les axiomes, i est toujours un rang du <b>résultat</b>.</li>
+          <li>Avant k : même rang. Après k : <code>i + 1</code> pour supprimer (les éléments avancent), <code>i − 1</code> pour insérer (ils reculent).</li>
+          <li>La borne du dernier cas est la longueur du résultat : <code>longueur(λ) − 1</code> après supprimer, <code>longueur(λ) + 1</code> après insérer.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Les décalages semblent à l’envers : supprimer retire un élément, et pourtant l’axiome dit <code>i + 1</code>. C’est normal : on va chercher l’élément plus loin dans λ.</li>
+          <li>Pour supprimer, il n’y a pas de cas <code>i = k</code> à part : il est compris dans <code>k ≤ i</code>, car l’élément qui suivait prend la place libérée.</li>
+          <li><code>insérer(λ, longueur(λ) + 1, e)</code> est défini (ajout à la fin), <code>supprimer(λ, longueur(λ) + 1)</code> ne l’est pas.</li>
+        </ul></div>
+        <div class="prose"><p>À toi, avec λ = {a, b, c, d}.</p></div>
+        <div class="qa-list">
+          <details class="qa"><summary>Que vaut <code>ième(supprimer(λ, 3), 3)</code> ?</summary><p><code>d</code> : cas <code>k ≤ i ≤ longueur(λ) − 1</code> (3 ≤ 3 ≤ 3), donc <code>ième(λ, 4)</code>.</p></details>
+          <details class="qa"><summary>Que vaut <code>ième(insérer(λ, 1, x), 4)</code> ?</summary><p><code>c</code> : cas <code>k &lt; i ≤ longueur(λ) + 1</code> (1 &lt; 4 ≤ 5), donc <code>ième(λ, 3)</code>.</p></details>
+          <details class="qa"><summary>Que vaut <code>longueur(insérer(supprimer(λ, 1), 2, x))</code> ?</summary><p>4 : la suppression donne 4 − 1 = 3, l’insertion 3 + 1 = 4.</p></details>
+          <details class="qa"><summary><code>insérer(λ, 6, x)</code> est-il défini ?</summary><p>Non : la précondition demande <code>6 ≤ longueur(λ) + 1</code>, c’est-à-dire 6 ≤ 5, ce qui est faux.</p></details>
+        </div>
+        <div data-check-ref="taa/cours-2-listes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Partie 7</div><h2>Lire une opération mystère</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Autre exercice d’examen : une opération inconnue sur la liste itérative, donnée seulement par sa précondition et ses axiomes. Il faut calculer son résultat sur une liste concrète. Pas besoin de deviner ce qu’elle fait : les axiomes suffisent, exactement comme pour <code>insérer</code> et <code>supprimer</code>.</p>
+          <p>Voici une opération <code>mystère</code>, écrite à la manière d’un sujet :</p>
+        </div>
+<pre data-spec aria-label="L’opération mystère : précondition et axiomes">
+opérations
+    mystère : liste x entier x entier → liste
+préconditions
+    mystère(λ, x, y) est-défini-ssi 1 ≤ x ≤ y ≤ longueur(λ)
+axiomes
+    1 ≤ x ≤ y ≤ longueur(λ) ⇒ longueur(mystère(λ, x, y)) = longueur(λ) + y − x + 1
+    1 ≤ x ≤ y ≤ longueur(λ) &amp; 1 ≤ i ≤ y ⇒ ième(mystère(λ, x, y), i) = ième(λ, i)
+    1 ≤ x ≤ y ≤ longueur(λ) &amp; y &lt; i ≤ longueur(λ) + y − x + 1
+                ⇒ ième(mystère(λ, x, y), i) = ième(λ, i − y + x − 1)
+avec
+    liste λ
+    entier x, y, i
+</pre>
+        <ol class="steps">
+          <li><div><b>La précondition.</b> Remplace x, y et <code>longueur(λ)</code> par leurs valeurs. Si elle est fausse, le résultat est indéfini : c’est fini.</div></li>
+          <li><div><b>La longueur du résultat d’abord.</b> Calcule-la avec l’axiome de longueur. Elle dit combien de rangs il faut remplir.</div></li>
+          <li><div><b>Chaque rang selon son cas.</b> Pour i de 1 à cette longueur, cherche l’axiome dont la condition contient i, puis calcule le rang à lire dans λ.</div></li>
+          <li><div><b>Lis et écris.</b> Lis les éléments dans λ et écris le résultat entre accolades. Compte : il doit y avoir autant d’éléments que la longueur.</div></li>
+        </ol>
+        <h3>Exemple : mystère(λ, 2, 3) avec λ = {a, b, c, d, e}</h3>
+        <div class="prose"><p>Précondition : 1 ≤ 2 ≤ 3 ≤ 5, vraie. Longueur : 5 + 3 − 2 + 1 = 7. Il reste à remplir les sept rangs :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Rang i</th><th>Cas</th><th>Rang lu dans λ</th><th>Élément</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>1 ≤ i ≤ y</code></td><td>1</td><td>a</td></tr>
+            <tr><td>2</td><td><code>1 ≤ i ≤ y</code></td><td>2</td><td>b</td></tr>
+            <tr><td>3</td><td><code>1 ≤ i ≤ y</code></td><td>3</td><td>c</td></tr>
+            <tr><td>4</td><td><code>y &lt; i ≤ 7</code></td><td>4 − 3 + 2 − 1 = 2</td><td>b</td></tr>
+            <tr><td>5</td><td><code>y &lt; i ≤ 7</code></td><td>5 − 3 + 2 − 1 = 3</td><td>c</td></tr>
+            <tr><td>6</td><td><code>y &lt; i ≤ 7</code></td><td>6 − 3 + 2 − 1 = 4</td><td>d</td></tr>
+            <tr><td>7</td><td><code>y &lt; i ≤ 7</code></td><td>7 − 3 + 2 − 1 = 5</td><td>e</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Résultat : <code>mystère(λ, 2, 3) = {a, b, c, b, c, d, e}</code>. Le morceau de x à y, ici b et c, est recopié juste après lui-même : <code>mystère</code> duplique ce morceau. Trouver ce sens n’est pas demandé, mais c’est une bonne vérification.</p></div>
+        <div class="prose"><p>À toi : choisis d’autres arguments, écris ta réponse, puis vérifie-la ou déroule le calcul pas à pas. Un des couples ne respecte pas la précondition.</p></div>
+        <div id="mysteryBench"></div>
+        <div class="note keep"><span class="tag">À retenir : la méthode</span><ol>
+          <li>La précondition, avec les valeurs.</li>
+          <li>La longueur du résultat : le nombre de rangs à remplir.</li>
+          <li>Pour chaque rang i, le cas qui le contient, puis le rang à lire dans λ.</li>
+          <li>Le résultat entre accolades, de la bonne longueur.</li>
+        </ol></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Les cas portent sur le rang i du <b>résultat</b>, pas sur celui de λ.</li>
+          <li>Calcule les formules avec les valeurs : pour x = 2 et y = 3, <code>i − y + x − 1</code> vaut <code>i − 2</code>.</li>
+          <li>Les axiomes peuvent répéter la précondition (<code class="nw">1 ≤ x ≤ y ≤ longueur(λ) &amp; …</code>). Elle ne dépend pas de i : vérifie-la une seule fois, au début.</li>
+          <li>Avec x = y, le morceau n’a qu’un élément : les formules s’appliquent quand même.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>30 octobre 2024 (30 min, sur 10 points), exercice 1 (5 points) : une opération mystère <code>mystère : liste × entier × entier → liste</code> sur la liste itérative, définie par ses axiomes, à évaluer sur une liste donnée. C’est l’exercice de cette partie, avec une autre opération. Fais le vrai sujet : <a href="entrainement.html#p2024-ex1">exercice 1 de 2024</a>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Partie 8</div><h2>Récursive ou itérative ?</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La fiche le dit dès le début : il y a plusieurs façons de décrire une liste, mais cela reste la même donnée, seule la manière de s’en servir change. L’atelier en haut de page le montre : pour chaque élément, il donne les deux écritures.</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Liste récursive</h4><p>Une liste est vide, ou un élément suivi d’une liste. Seul l’élément de tête est immédiatement accessible.</p><p class="muted">Opérations : listevide, cons, fin, tête, premier. Une nouvelle opération se définit par cas : <code>listevide</code> et <code>cons(e, λ)</code>.</p></div>
+          <div class="card"><h4>Liste itérative</h4><p>Tous les éléments sont accessibles, par leur rang. Une liste est connue par sa longueur et ses <code>ième</code>.</p><p class="muted">Opérations : listevide, accès, ième, longueur, insérer, supprimer. Un résultat se décrit par sa longueur et un cas par zone de rangs.</p></div>
+        </div>
+        <h3>La même question, deux écritures</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Pour λ = {e1, e2, e3}</th><th>Liste récursive</th><th>Liste itérative</th></tr></thead>
+          <tbody>
+            <tr><td>La liste</td><td><code>cons(e1, cons(e2, cons(e3, listevide)))</code></td><td><code>longueur(λ) = 3</code><br><code>ième(λ, 1) = e1</code>, <code>ième(λ, 2) = e2</code>, <code>ième(λ, 3) = e3</code></td></tr>
+            <tr><td>Le 1<sup>er</sup> élément</td><td><code>premier(λ)</code></td><td><code>ième(λ, 1)</code></td></tr>
+            <tr><td>Le 3<sup>e</sup> élément</td><td><code>premier(fin(fin(λ)))</code></td><td><code>ième(λ, 3)</code></td></tr>
+            <tr><td>La première place</td><td><code>tête(λ)</code></td><td><code>accès(λ, 1)</code></td></tr>
+            <tr><td>La place suivante</td><td><code>succ(tête(λ)) = tête(fin(λ))</code></td><td><code>succ(accès(λ, k)) = accès(λ, k + 1)</code></td></tr>
+            <tr><td>Ajouter un élément</td><td><code>cons(e, λ)</code> : en tête seulement</td><td><code>insérer(λ, k, e)</code> : à tout rang de 1 à <code>longueur(λ) + 1</code></td></tr>
+            <tr><td>Retirer un élément</td><td><code>fin(λ)</code> : la tête seulement</td><td><code>supprimer(λ, k)</code> : à tout rang de 1 à <code>longueur(λ)</code></td></tr>
+            <tr><td>Le nombre d’éléments</td><td>à définir (partie 4)</td><td><code>longueur(λ)</code></td></tr>
+          </tbody>
+        </table></div>
+        <h3>Laquelle utiliser ?</h3>
+        <div class="prose"><ul>
+          <li><b>À l’examen, le sujet choisit pour toi</b> : il rappelle la signature. Si tu y vois <code>cons</code>, <code>fin</code>, <code>premier</code>, raisonne par cas <code>listevide</code> / <code>cons(e, λ)</code>. Si tu y vois <code>ième</code>, <code>longueur</code>, <code>insérer</code>, décris le résultat par sa longueur et ses <code>ième</code>.</li>
+          <li>La description récursive est naturelle pour un traitement qui parcourt la liste depuis la tête : compter, concaténer, retirer certains éléments.</li>
+          <li>La description itérative s’impose dès qu’un rang compte : lire le k-ième élément, insérer ou supprimer au milieu.</li>
+        </ul></div>
+        <h3>Toutes les opérations</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Opération</th><th>Liste</th><th>Rôle</th><th>Précondition</th></tr></thead>
+          <tbody>
+            <tr><td><code>listevide</code></td><td>les deux</td><td class="op-cst">constante</td><td>aucune</td></tr>
+            <tr><td><code>cons(e, λ)</code></td><td>récursive</td><td class="op-int">interne</td><td>aucune</td></tr>
+            <tr><td><code>fin(λ)</code></td><td>récursive</td><td class="op-int">interne</td><td><code>λ ≠ listevide</code></td></tr>
+            <tr><td><code>tête(λ)</code></td><td>récursive</td><td class="op-int">interne</td><td><code>λ ≠ listevide</code></td></tr>
+            <tr><td><code>premier(λ)</code></td><td>récursive</td><td class="op-obs">observateur</td><td><code>λ ≠ listevide</code></td></tr>
+            <tr><td><code>contenu(p)</code></td><td>les deux</td><td class="op-obs">observateur</td><td>aucune</td></tr>
+            <tr><td><code>succ(p)</code></td><td>les deux</td><td class="op-int">interne</td><td>aucune dans la fiche</td></tr>
+            <tr><td><code>accès(λ, k)</code></td><td>itérative</td><td class="op-int">interne</td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
+            <tr><td><code>ième(λ, i)</code></td><td>itérative</td><td class="op-obs">observateur</td><td>aucune dans la fiche (rangs 1 à <code>longueur(λ)</code>)</td></tr>
+            <tr><td><code>longueur(λ)</code></td><td>itérative</td><td class="op-obs">observateur</td><td>aucune</td></tr>
+            <tr><td><code>insérer(λ, k, e)</code></td><td>itérative</td><td class="op-int">interne</td><td><code>1 ≤ k ≤ longueur(λ) + 1</code></td></tr>
+            <tr><td><code>supprimer(λ, k)</code></td><td>itérative</td><td class="op-int">interne</td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Récursive et itérative décrivent la même liste ; seule la manière de s’en servir change.</li>
+          <li>Récursive : seule la tête est accessible, on raisonne par cas <code>listevide</code> / <code>cons(e, λ)</code>.</li>
+          <li>Itérative : tout est accessible par le rang, on raisonne par la longueur et par zones de rangs.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Ne mélange pas les deux jeux d’opérations dans une même réponse. Si le sujet donne la liste récursive, <code>ième</code> et <code>longueur</code> n’existent pas, sauf si tu les définis toi-même comme en partie 4.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Les examens de TAA de 2023 et de 2024 contenaient un exercice sur les listes : <code>concaténer</code> sur la liste récursive en 2023 ; en 2024, l’opération mystère sur la liste itérative (exercice 1) puis <code>supprime-sup</code> sur la liste récursive (exercice 2). Les sujets d’algo de 2017 à 2022 contenaient déjà un exercice de types abstraits sur les listes, récursives ou itératives. Entraîne-toi : <a href="entrainement.html#p2024-ex1">exercice 1 de 2024</a>, <a href="entrainement.html#p2024-ex2">exercice 2 de 2024</a>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s8" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="taa:listes:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le chapitre 3 passe aux <a href="cours-3-piles-files.html">piles, files et ensembles</a>. Tu y retrouveras la forme des axiomes de la liste récursive : <code>dépiler(empiler(p, e)) = p</code> ressemble beaucoup à <code>fin(cons(e, λ)) = λ</code>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa, U = R.util;
+  function esc(s) { return U.esc(String(s)); }
+  function rid() { return Math.random().toString(36).slice(2, 7); }
+
+  /* couleurs des rôles dans les termes affichés */
+  var ROLES = { listevide: 'cst', cons: 'int', fin: 'int', 'tête': 'int', premier: 'obs', contenu: 'obs', succ: 'int',
+    'accès': 'int', 'ième': 'obs', longueur: 'obs', 'insérer': 'int', supprimer: 'int', 'concaténer': 'int' };
+  function term(src) { return T.term.show(T.term.parse(src), { set: { roles: ROLES } }); }
+  function head(a, b) { return '<div class="bench-head"><span>' + esc(a) + '</span><span>' + esc(b) + '</span></div>'; }
+  function cell(x, b, cls) { return '<div class="rank' + (cls ? ' ' + cls : '') + '"><b>' + esc(b) + '</b><span>' + esc(x) + '</span></div>'; }
+  function ordM(k) { return k === 1 ? '1er' : k + 'e'; }
+  function ordF(k) { return k === 1 ? '1re' : k + 'e'; }
+  function rep(s, n) { var o = ''; for (var i = 0; i < n; i++) o += s; return o; }
+  function andList(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' et ' + a[a.length - 1]; }
+  function pressOnly(btns, b) { btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }
+
+  /* ---------- jeux d'axiomes : ceux de R.taa.rewrite.SETS.LISTE, écrits avec λ comme dans le cours ---------- */
+  var LISTE = T.rewrite.SETS.LISTE;
+  function lam(s) { return s.replace(/\bl2\b/g, 'λ2').replace(/\bl\b/g, 'λ'); }
+  function recSet(name, extra) {
+    return { name: name, vars: { 'λ': 1, 'λ2': 1, e: 1 }, roles: ROLES, partial: LISTE.partial,
+      axioms: LISTE.axioms.map(function (a) { return { id: a.id, l: lam(a.l), r: lam(a.r) }; }).concat(extra || []) };
+  }
+  var REC = recSet('liste récursive');
+  var RECX = recSet('liste récursive + longueur, concaténer', [
+    { id: 'L1', l: 'longueur(listevide)', r: '0' },
+    { id: 'L2', l: 'longueur(cons(e, λ))', r: 'longueur(λ) + 1' },
+    { id: 'C1', l: 'concaténer(listevide, λ2)', r: 'λ2' },
+    { id: 'C2', l: 'concaténer(cons(e, λ), λ2)', r: 'cons(e, concaténer(λ, λ2))' }
+  ]);
+  var ITER = { name: 'liste itérative (extrait)', vars: { 'λ': 1, k: 1 }, roles: ROLES, axioms: [
+    { id: 'I1', l: 'longueur(listevide)', r: '0' },
+    { id: 'I2', l: 'contenu(accès(λ, k))', r: 'ième(λ, k)' },
+    { id: 'I3', l: 'succ(accès(λ, k))', r: 'accès(λ, k + 1)' }
+  ] };
+
+  /* ---------- en-tête : la même liste lue de deux façons ---------- */
+  function twoViews(el) {
+    var L = ['a', 'b', 'c', 'd'];
+    el.classList.add('bench');
+    el.innerHTML = head('Essaie : choisis l’élément à lire', 'λ = {a, b, c, d}') +
+      '<div class="bench-body">' +
+      '<div class="row" role="group" aria-label="Élément à lire">' + L.map(function (x, i) {
+        return '<button type="button" class="chip-btn" data-k="' + (i + 1) + '" aria-pressed="false">' + ordM(i + 1) + ' : ' + x + '</button>';
+      }).join('') + '</div>' +
+      '<div class="rw-now"><span class="lbl">Liste récursive : seule la tête est accessible</span><div class="ranks" data-rc></div><div class="term" data-rt></div><p class="bn-why" data-rw></p></div>' +
+      '<div class="rw-now"><span class="lbl">Liste itérative : chaque élément a un rang</span><div class="ranks" data-ic></div><div class="term" data-it></div><p class="bn-why" data-iw></p></div>' +
+      '</div>';
+    var btns = U.$$('[data-k]', el);
+    function paint(k) {
+      var x = L[k - 1];
+      el.querySelector('[data-rc]').innerHTML = L.map(function (y, i) {
+        return i < k - 1 ? cell(y, 'fin', 'gone') : (i === k - 1 ? cell(y, 'tête', 'k') : cell(y, ' ', ''));
+      }).join('');
+      el.querySelector('[data-rt]').innerHTML = term('premier(' + rep('fin(', k - 1) + 'λ' + rep(')', k - 1) + ')') + ' = <b>' + esc(x) + '</b>';
+      el.querySelector('[data-rw]').textContent = k === 1 ? 'a est déjà en tête : premier suffit.'
+        : 'Il faut d’abord retirer ' + andList(L.slice(0, k - 1)) + ' avec ' + (k - 1) + ' fin, puis lire la nouvelle tête avec premier.';
+      el.querySelector('[data-ic]').innerHTML = L.map(function (y, i) { return cell(y, i + 1, i === k - 1 ? 'k' : ''); }).join('');
+      el.querySelector('[data-it]').innerHTML = term('ième(λ, ' + k + ')') + ' = <b>' + esc(x) + '</b>';
+      el.querySelector('[data-iw]').textContent = 'Accès direct par le rang : une seule opération, quel que soit le rang.';
+      pressOnly(btns, btns[k - 1]);
+    }
+    btns.forEach(function (b) { b.addEventListener('click', function () { paint(+b.dataset.k); }); });
+    paint(3);
+  }
+
+  /* ---------- partie 1 : une place, la suivante, son contenu (l'erratum) ---------- */
+  function placeBench(el) {
+    var L = ['éclair', 'soleil', 'nuage', 'lune'], p = 2, expr = 'accès(li, 2)', id = 'pb' + rid();
+    el.classList.add('bench');
+    el.innerHTML = head('L’erratum en action : une place, puis la suivante', 'li = {éclair, soleil, nuage, lune}') +
+      '<div class="bench-body"><div class="ranks" data-cells></div>' +
+      '<div class="bn-blk"><span class="bn-lbl">La place p, écrite comme un terme :</span><div class="term" data-p></div></div>' +
+      '<div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row"><label class="field" for="' + id + '">rang k<select id="' + id + '">' +
+      [1, 2, 3, 4].map(function (k) { return '<option value="' + k + '"' + (k === 2 ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
+      '</select></label><button type="button" class="btn" data-a="acc"><code>p ← accès(li, k)</code></button></div>' +
+      '<div class="row"><button type="button" class="btn primary" data-a="succ"><code>p ← succ(p)</code></button><button type="button" class="btn" data-a="cont"><code>contenu(p)</code> ?</button></div></div>';
+    var sel = el.querySelector('select'), out = el.querySelector('[data-out]');
+    function paint(msg) {
+      el.querySelector('[data-cells]').innerHTML = L.map(function (x, i) { return cell(x, i + 1, i + 1 === p ? 'k' : ''); }).join('');
+      el.querySelector('[data-p]').innerHTML = 'p = ' + term(expr);
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    el.querySelector('[data-a="acc"]').addEventListener('click', function () {
+      p = +sel.value; expr = 'accès(li, ' + p + ')';
+      paint('<code>accès(li, ' + p + ')</code> : p est la place du ' + ordM(p) + ' élément, celle qui contient ' + esc(L[p - 1]) + '.');
+    });
+    el.querySelector('[data-a="succ"]').addEventListener('click', function () {
+      if (p === L.length) { paint('<span class="rw-err">Pas de place après la dernière :</span> li n’a que ' + L.length + ' éléments.'); return; }
+      p++; expr = 'succ(' + expr + ')';
+      paint('<code>succ(p)</code> : la place suivante. p est maintenant la ' + ordF(p) + ' place. succ rend une place, pas un élément.');
+    });
+    el.querySelector('[data-a="cont"]').addEventListener('click', function () {
+      var hit = expr === 'succ(accès(li, 2))';
+      paint('<code>contenu(p)</code> = <b>' + esc(L[p - 1]) + '</b> : l’élément rangé dans la ' + ordF(p) + ' place.' +
+        (hit ? ' C’est l’erratum : <code>contenu(succ(p2))</code> donne le 3e élément.' : ''));
+    });
+    paint('<code>p2 ← accès(li, 2)</code> : p est la place du 2e élément, soleil. Clique sur succ, puis sur contenu.');
+  }
+
+  /* ---------- partie 2 : construire une liste avec cons ---------- */
+  function consBench(el) {
+    var items = [], pool = ['a', 'b', 'c', 'd'], cur = 'c', MAX = 6;
+    el.classList.add('bench');
+    el.innerHTML = head('Construis une liste avec cons', 'liste récursive') +
+      '<div class="bench-body">' +
+      '<p>Défi : obtiens <code>λ = {a, b, c}</code>. Par quel élément commences-tu ?</p>' +
+      '<div class="ranks" data-cells></div>' +
+      '<div class="bn-blk"><span class="bn-lbl">Le même état, écrit comme un terme :</span><div class="term" data-term></div></div>' +
+      '<div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row" role="group" aria-label="Élément e à ajouter"><span class="bn-lbl">élément e :</span>' +
+      pool.map(function (x) { return '<button type="button" class="chip-btn" data-e="' + x + '" aria-pressed="' + (x === cur) + '">' + x + '</button>'; }).join('') + '</div>' +
+      '<div class="row"><button type="button" class="btn primary" data-a="cons"></button><button type="button" class="btn" data-a="fin"><code>fin(λ)</code></button>' +
+      '<button type="button" class="btn" data-a="prem"><code>premier(λ)</code> ?</button><button type="button" class="btn" data-a="tete"><code>tête(λ)</code> ?</button>' +
+      '<button type="button" class="btn" data-a="vide"><code>listevide</code></button></div></div>';
+    var out = el.querySelector('[data-out]'), consBtn = el.querySelector('[data-a="cons"]'), chips = U.$$('[data-e]', el);
+    function src() { return items.reduceRight(function (acc, x) { return 'cons(' + x + ', ' + acc + ')'; }, 'listevide'); }
+    function goal() {
+      return items.join(',') === 'a,b,c' ? ' <span class="rw-done">Défi réussi.</span> Tu as ajouté c, puis b, puis a : le dernier ajouté est en tête.' : '';
+    }
+    function paint(msg) {
+      el.querySelector('[data-cells]').innerHTML = items.length
+        ? items.map(function (x, i) { return cell(x, i ? ' ' : 'tête', i ? '' : 'k'); }).join('')
+        : '<div class="empty-note">liste vide</div>';
+      el.querySelector('[data-term]').innerHTML = 'λ = ' + term(src());
+      consBtn.innerHTML = '<code>cons(' + cur + ', λ)</code>';
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    chips.forEach(function (b) {
+      b.addEventListener('click', function () { cur = b.dataset.e; pressOnly(chips, b); paint(); });
+    });
+    consBtn.addEventListener('click', function () {
+      if (items.length >= MAX) { paint('La démo s’arrête à ' + MAX + ' éléments. Une vraie liste n’a pas de limite.'); return; }
+      items.unshift(cur);
+      paint('<code>cons(' + cur + ', λ)</code> : ' + cur + ' est ajouté en tête. Maintenant <code>premier(λ) = ' + cur + '</code>.' + goal());
+    });
+    el.querySelector('[data-a="fin"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Impossible :</span> <code>fin(listevide)</code> viole la précondition <code>λ ≠ listevide</code>.'); return; }
+      var x = items.shift();
+      paint('<code>fin(λ)</code> retire l’élément de tête, ' + x + '. Axiome A2 : <code>fin(cons(e, λ)) = λ</code>.' + goal());
+    });
+    el.querySelector('[data-a="prem"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Indéfini :</span> <code>premier(listevide)</code> viole la précondition <code>λ ≠ listevide</code>.'); return; }
+      paint('<code>premier(λ) = ' + items[0] + '</code>. Axiome A3 : <code>premier(cons(e, λ)) = e</code>. La liste ne change pas : premier est un observateur.');
+    });
+    el.querySelector('[data-a="tete"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Indéfini :</span> <code>tête(listevide)</code> viole la précondition <code>λ ≠ listevide</code>.'); return; }
+      paint('<code>tête(λ)</code> est la place de tête. Elle contient ' + items[0] + ' : <code>contenu(tête(λ)) = premier(λ)</code>, axiome A1.');
+    });
+    el.querySelector('[data-a="vide"]').addEventListener('click', function () { items = []; paint('On repart de la constante <code>listevide</code>.'); });
+    paint('λ = listevide. Choisis un élément e, puis clique sur cons.');
+  }
+
+  /* ---------- partie 7 : évaluer une opération mystère rang par rang ---------- */
+  var MYST = {
+    name: 'mystère', list: ['a', 'b', 'c', 'd', 'e'], pairs: [[2, 3], [1, 1], [4, 5], [1, 5], [3, 6]],
+    len: function (n, x, y) { return n + y - x + 1; },
+    lenInst: function (n, x, y) { return 'longueur(λ) + y − x + 1 = ' + n + ' + ' + y + ' − ' + x + ' + 1 = ' + (n + y - x + 1); },
+    cases: [
+      { gen: '1 ≤ i ≤ y', when: function (i, n, x, y) { return i <= y; },
+        inst: function (i, n, x, y) { return '1 ≤ ' + i + ' ≤ ' + y; }, src: function (i) { return i; } },
+      { gen: 'y < i ≤ longueur(λ) + y − x + 1', when: function (i, n, x, y) { return i > y; },
+        inst: function (i, n, x, y) { return y + ' < ' + i + ' ≤ ' + (n + y - x + 1); },
+        calc: function (i, n, x, y) { return 'ième(λ, ' + i + ' − ' + y + ' + ' + x + ' − 1)'; },
+        src: function (i, n, x, y) { return i - y + x - 1; } }
+    ]
+  };
+  function mysteryBench(el, M) {
+    var L = M.list, n = L.length, id = 'my' + rid(), x, y, ok, len, full, src, st;
+    el.classList.add('bench');
+    el.innerHTML = head('Évalue ' + M.name + '(λ, x, y)', 'λ = {' + L.join(', ') + '}') +
+      '<div class="bench-body">' +
+      '<div class="row" role="group" aria-label="Arguments x et y">' + M.pairs.map(function (q, i) {
+        return '<button type="button" class="chip-btn" data-q="' + i + '" aria-pressed="false">' + esc(M.name + '(λ, ' + q[0] + ', ' + q[1] + ')') + '</button>';
+      }).join('') + '</div>' +
+      '<div class="bn-blk"><span class="bn-lbl">λ, avec le morceau de x à y en couleur</span><div class="ranks" data-src></div></div>' +
+      '<div class="bn-blk"><span class="bn-lbl" data-rl></span><div class="ranks" data-res></div></div>' +
+      '<div class="row"><label class="field" for="' + id + '">Ta réponse, avant de dérouler<input id="' + id + '" class="term-in" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="{a, b, …} ou indéfini"></label>' +
+      '<button type="button" class="btn" data-a="check">Vérifier</button></div>' +
+      '<div class="readout" data-fb aria-live="polite"></div>' +
+      '<ol class="rw-steps" data-steps></ol></div>' +
+      '<div class="ctrls"><div class="row"><button type="button" class="btn primary" data-a="step">Étape suivante</button><button type="button" class="btn" data-a="all">Tout dérouler</button><button type="button" class="btn" data-a="reset">Recommencer</button></div></div>';
+    var input = el.querySelector('input'), fb = el.querySelector('[data-fb]'), chips = U.$$('[data-q]', el);
+    function caseOf(i) { for (var c = 0; c < M.cases.length; c++) if (M.cases[c].when(i, n, x, y)) return M.cases[c]; return null; }
+    function total() { return ok ? len + 1 : 1; }
+    function load(q) {
+      x = M.pairs[q][0]; y = M.pairs[q][1];
+      ok = 1 <= x && x <= y && y <= n;
+      len = ok ? M.len(n, x, y) : 0;
+      full = []; src = [];
+      for (var i = 1; i <= len; i++) { var s = caseOf(i).src(i, n, x, y); src.push(s); full.push(L[s - 1]); }
+      st = 0; input.value = '';
+      fb.innerHTML = 'Écris ta réponse puis clique sur Vérifier, ou déroule le calcul pas à pas.';
+      pressOnly(chips, chips[q]);
+      paint();
+    }
+    function stepHTML(k) {
+      var pre = '1 ≤ ' + x + ' ≤ ' + y + ' ≤ ' + n;
+      if (k === 0) {
+        if (!ok) return '<span class="rw-err">Précondition fausse :</span> <code>' + esc(pre) + '</code> n’est pas vrai (' +
+          esc(x < 1 ? x + ' < 1' : x > y ? x + ' > ' + y : y + ' > ' + n) + '). Le résultat est indéfini.';
+        return 'Précondition : <code>' + esc(pre) + '</code>, vrai. Longueur : <code>' + esc(M.lenInst(n, x, y)) + '</code>. Le résultat a ' + len + ' rangs.';
+      }
+      var c = caseOf(k), s = src[k - 1];
+      return '<b>i = ' + k + '</b> : <code>' + esc(c.inst(k, n, x, y)) + '</code> <span class="muted">(cas ' + esc(c.gen) + ')</span>, donc ' +
+        (c.calc ? '<code>' + esc(c.calc(k, n, x, y)) + '</code> = ' : '') + '<code>ième(λ, ' + s + ')</code> = <b>' + esc(full[k - 1]) + '</b>.';
+    }
+    function paint() {
+      var last = st >= 2 ? src[st - 2] : 0, done = st >= total();
+      el.querySelector('[data-src]').innerHTML = L.map(function (v, i) {
+        var r = i + 1; return cell(v, r, r === last ? 'k' : (r >= x && r <= y ? 'lo' : ''));
+      }).join('');
+      var rl = el.querySelector('[data-rl]'), res = el.querySelector('[data-res]');
+      if (!st) { rl.textContent = 'Résultat : longueur à calculer'; res.innerHTML = '<div class="empty-note">?</div>'; }
+      else if (!ok) { rl.textContent = 'Résultat'; res.innerHTML = '<div class="empty-note">indéfini</div>'; }
+      else {
+        rl.textContent = done ? 'Résultat : ' + M.name + '(λ, ' + x + ', ' + y + ') = {' + full.join(', ') + '}' : 'Résultat : ' + len + ' rangs à remplir';
+        var h = '';
+        for (var i = 1; i <= len; i++) h += i <= st - 1 ? cell(full[i - 1], i, i === st - 1 ? 'k' : '') : cell('?', i, 'todo');
+        res.innerHTML = h;
+      }
+      var steps = '';
+      for (var k = 0; k < st; k++) steps += '<li><div>' + stepHTML(k) + '</div></li>';
+      el.querySelector('[data-steps]').innerHTML = steps;
+      el.querySelector('[data-a="step"]').disabled = done;
+      el.querySelector('[data-a="all"]').disabled = done;
+    }
+    function check() {
+      var raw = input.value.trim();
+      if (!raw) { fb.innerHTML = 'Écris d’abord ta réponse, par exemple <code>{a, b, c}</code>.'; return; }
+      var und = /ind[ée]fini/i.test(raw);
+      if (!ok || und) {
+        fb.innerHTML = !ok && und ? '<span class="rw-done">Juste.</span> La précondition est fausse : le résultat est indéfini.'
+          : !ok ? '<span class="rw-err">Pas encore.</span> Vérifie d’abord la précondition <code>1 ≤ x ≤ y ≤ longueur(λ)</code>.'
+          : '<span class="rw-err">Pas encore.</span> Ici la précondition est vraie : le résultat est une liste.';
+        return;
+      }
+      var got = raw.replace(/[{}]/g, ' ').split(/[\s,;]+/).filter(Boolean);
+      if (got.length !== len) {
+        fb.innerHTML = '<span class="rw-err">Pas encore.</span> Ta liste a ' + got.length + ' élément' + (got.length > 1 ? 's' : '') + ', le résultat en a ' + len + '. Commence par la longueur.';
+        return;
+      }
+      var bad = [];
+      for (var i = 0; i < len; i++) if (got[i].toLowerCase() !== full[i]) bad.push(i + 1);
+      fb.innerHTML = bad.length
+        ? '<span class="rw-err">Pas encore.</span> Rang' + (bad.length > 1 ? 's' : '') + ' à revoir : ' + bad.join(', ') + '. Déroule pas à pas pour voir le cas de chaque rang.'
+        : '<span class="rw-done">Juste :</span> <code>{' + esc(full.join(', ')) + '}</code>.';
+    }
+    el.querySelector('[data-a="step"]').addEventListener('click', function () { if (st < total()) { st++; paint(); } });
+    el.querySelector('[data-a="all"]').addEventListener('click', function () { st = total(); paint(); });
+    el.querySelector('[data-a="reset"]').addEventListener('click', function () { st = 0; paint(); });
+    el.querySelector('[data-a="check"]').addEventListener('click', check);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+    chips.forEach(function (b) { b.addEventListener('click', function () { load(+b.dataset.q); }); });
+    load(0);
+  }
+
+  twoViews(document.getElementById('heroLists'));
+  placeBench(document.getElementById('placeBench'));
+  consBench(document.getElementById('consBench'));
+  T.stepper(document.getElementById('rwRec'), { set: REC, label: 'Atelier : évalue un terme de liste récursive', editable: true, presets: [
+    { name: '2e élément', t: 'premier(fin(cons(a, cons(b, cons(c, listevide)))))' },
+    { name: '3e élément', t: 'premier(fin(fin(cons(a, cons(b, cons(c, listevide))))))' },
+    { name: 'fin de fin', t: 'fin(fin(cons(a, cons(b, listevide))))' },
+    { name: 'un fin de trop', t: 'premier(fin(fin(cons(a, cons(b, listevide)))))' },
+    { name: 'cons après fin', t: 'premier(cons(d, fin(cons(a, cons(b, listevide)))))' }
+  ] });
+  T.stepper(document.getElementById('rwOps'), { set: RECX, label: 'Atelier : réécris longueur et concaténer', editable: true, presets: [
+    { name: 'longueur de {a, b, c}', t: 'longueur(cons(a, cons(b, cons(c, listevide))))' },
+    { name: 'concaténer {a, b} et {c}', t: 'concaténer(cons(a, cons(b, listevide)), cons(c, listevide))' },
+    { name: 'λ2 vide', t: 'concaténer(cons(a, listevide), listevide)' },
+    { name: 'longueur d’une concaténation', t: 'longueur(concaténer(cons(a, listevide), cons(b, cons(c, listevide))))' }
+  ] });
+  T.stepper(document.getElementById('rwIter'), { set: ITER, label: 'Atelier : places et rangs', presets: [
+    { name: 'l’erratum', t: 'contenu(succ(accès(li, 2)))' },
+    { name: 'deux succ', t: 'contenu(succ(succ(accès(λ, 1))))' },
+    { name: 'place suivante', t: 'succ(accès(λ, 3))' }
+  ] });
+  T.ranksBench(document.getElementById('ranksBench'), { start: ['a', 'b', 'c', 'd', 'e'], k: 2, label: 'Insérer, supprimer : les rangs bougent' });
+  mysteryBench(document.getElementById('mysteryBench'), MYST);
+})();
+</script>
+</body>
+</html>

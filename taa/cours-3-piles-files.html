@@ -31,9 +31,23 @@
 .rv-a:focus{outline:none}
 .open>.rv{display:none}
 .open>.rv-a{display:block}
-.wrapcode code{white-space:normal}
+.wrapcode code:not(.nw){white-space:normal}
+.rvt table{table-layout:fixed}
+.rvt thead th:first-child{width:7.5em}
 .rv-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
 .rv-bar p{font-size:.92rem;color:var(--muted)}
+
+/* tableau ensemble / multi-ensemble : une ligne = un bloc sur petit écran */
+@media (max-width:600px){
+  .tbl.stacked table,.tbl.stacked tbody,.tbl.stacked tr,.tbl.stacked th,.tbl.stacked td{display:block;width:auto}
+  .tbl.stacked thead{display:none}
+  .tbl.stacked tr{border-bottom:1px solid var(--line);padding:.5rem 0}
+  .tbl.stacked tr:last-child{border-bottom:0}
+  .tbl.stacked th,.tbl.stacked td{border:0;padding:.15rem .9rem}
+  .tbl.stacked tbody th{font-family:var(--font-body);font-size:.95rem;font-weight:600;color:var(--ink);background:transparent;padding-bottom:.3rem}
+  .tbl.stacked td::before{content:attr(data-l) "\00a0: ";color:var(--muted);font-size:.86rem}
+  .tbl.stacked .open>.rv-a{display:inline}
+}
 
 /* blocs sans rôles (ajouts au type ensemble) : noms d’opérations à l’encre, pas à la couleur des constantes */
 .spec .sp-op:not(.sp-int):not(.sp-obs):not(.sp-cst){color:var(--ink)}
@@ -156,18 +170,18 @@ avec
         </div>
         <div class="stack" data-reveal style="gap:.75rem">
           <div class="rv-bar"><p>À toi : devine chaque case, puis clique pour vérifier.</p><button type="button" class="btn" data-rv-all>Tout montrer</button></div>
-          <div class="tbl wrapcode"><table>
+          <div class="tbl wrapcode stacked rvt"><table>
             <thead><tr><th></th><th><code>pilevide</code></th><th><code class="nw">empiler(p, e)</code></th></tr></thead>
             <tbody>
               <tr><th scope="row"><code>estvide</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à pilevide">?</button><span class="rv-a"><code>estvide(pilevide) = Vrai</code></span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à empiler(p, e)">?</button><span class="rv-a"><code>estvide(empiler(p, e)) = Faux</code></span></td></tr>
+                <td data-l="pilevide"><button type="button" class="rv" aria-label="Montrer : estvide appliqué à pilevide">?</button><span class="rv-a"><code>estvide(pilevide) = Vrai</code></span></td>
+                <td data-l="empiler(p, e)"><button type="button" class="rv" aria-label="Montrer : estvide appliqué à empiler(p, e)">?</button><span class="rv-a"><code>estvide(empiler(p, e)) = Faux</code></span></td></tr>
               <tr><th scope="row"><code>sommet</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : sommet appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : sommet appliqué à empiler(p, e)">?</button><span class="rv-a"><code>sommet(empiler(p, e)) = e</code></span></td></tr>
+                <td data-l="pilevide"><button type="button" class="rv" aria-label="Montrer : sommet appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td data-l="empiler(p, e)"><button type="button" class="rv" aria-label="Montrer : sommet appliqué à empiler(p, e)">?</button><span class="rv-a"><code>sommet(empiler(p, e)) = e</code></span></td></tr>
               <tr><th scope="row"><code>dépiler</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à empiler(p, e)">?</button><span class="rv-a"><code>dépiler(empiler(p, e)) = p</code></span></td></tr>
+                <td data-l="pilevide"><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td data-l="empiler(p, e)"><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à empiler(p, e)">?</button><span class="rv-a"><code>dépiler(empiler(p, e)) = p</code></span></td></tr>
             </tbody>
           </table></div>
         </div>
@@ -250,7 +264,7 @@ avec
     <section class="sec" id="s5">
       <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Partie 5</div><h2>Le type abstrait file : des axiomes conditionnels</h2></div>
       <div class="stack">
-        <div class="prose"><p>La signature de la file a exactement la forme de celle de la pile : seuls les noms changent. Les préconditions aussi : <code>défiler</code> et <code>premier</code> sont partielles, car une file vide n’a rien à retirer ni de premier.</p></div>
+        <div class="prose"><p>La signature de la file a exactement la forme de celle de la pile : seuls les noms changent. Les préconditions aussi : <code>défiler</code> et <code>premier</code> sont partielles, car une file vide n’a ni premier ni élément à retirer.</p></div>
 <pre data-spec data-roles="1" aria-label="Signature et préconditions de la file">
 types
     file
@@ -277,18 +291,18 @@ préconditions
           <p>Pour la file, ce qui sort de <code class="nw">enfiler(f, e)</code> dépend de <code>f</code>. Si <code>f</code> est vide, <code>e</code> est seul : c’est le premier, et <code>défiler</code> le retire. Sinon, le premier est quelque part au fond de <code>f</code>, et <code>e</code> n’y change rien. Deux cas, donc deux axiomes pour <code>premier</code> et deux pour <code>défiler</code>, chacun précédé de sa condition : <code class="nw">estvide(f) = Vrai ⇒ …</code> ou <code class="nw">estvide(f) = Faux ⇒ …</code>.</p></div>
         <div class="stack" data-reveal style="gap:.75rem">
           <div class="rv-bar"><p>À toi : remplis le même tableau que pour la pile, puis vérifie.</p><button type="button" class="btn" data-rv-all>Tout montrer</button></div>
-          <div class="tbl wrapcode"><table>
+          <div class="tbl wrapcode stacked rvt"><table>
             <thead><tr><th></th><th><code>filevide</code></th><th><code class="nw">enfiler(f, e)</code></th></tr></thead>
             <tbody>
               <tr><th scope="row"><code>estvide</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à filevide">?</button><span class="rv-a"><code>estvide(filevide) = Vrai</code></span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à enfiler(f, e)">?</button><span class="rv-a"><code>estvide(enfiler(f, e)) = Faux</code>, sans condition</span></td></tr>
+                <td data-l="filevide"><button type="button" class="rv" aria-label="Montrer : estvide appliqué à filevide">?</button><span class="rv-a"><code>estvide(filevide) = Vrai</code></span></td>
+                <td data-l="enfiler(f, e)"><button type="button" class="rv" aria-label="Montrer : estvide appliqué à enfiler(f, e)">?</button><span class="rv-a"><code>estvide(enfiler(f, e)) = Faux</code>, sans condition</span></td></tr>
               <tr><th scope="row"><code>premier</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : premier appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : premier appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>e</code> si <code class="nw">estvide(f) = Vrai</code> ; <code>premier(f)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
+                <td data-l="filevide"><button type="button" class="rv" aria-label="Montrer : premier appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td data-l="enfiler(f, e)"><button type="button" class="rv" aria-label="Montrer : premier appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>e</code> si <code class="nw">estvide(f) = Vrai</code> ; <code>premier(f)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
               <tr><th scope="row"><code>défiler</code></th>
-                <td><button type="button" class="rv" aria-label="Montrer : défiler appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
-                <td><button type="button" class="rv" aria-label="Montrer : défiler appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>filevide</code> si <code class="nw">estvide(f) = Vrai</code> ; <code class="nw">enfiler(défiler(f), e)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
+                <td data-l="filevide"><button type="button" class="rv" aria-label="Montrer : défiler appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td data-l="enfiler(f, e)"><button type="button" class="rv" aria-label="Montrer : défiler appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>filevide</code> si <code class="nw">estvide(f) = Vrai</code> ; <code class="nw">enfiler(défiler(f), e)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
             </tbody>
           </table></div>
         </div>
@@ -413,7 +427,7 @@ préconditions
 axiomes
     choisir(e) ∈ e = vrai
 </pre>
-        <div class="prose"><p><code class="op-obs">choisir</code> est partielle : un ensemble vide n’a rien à offrir. Son unique axiome dit seulement que l’élément choisi appartient à l’ensemble, pas lequel. C’est pourquoi l’atelier ci-dessous ne l’utilise pas : il n’y a rien à calculer.</p></div>
+        <div class="prose"><p><code class="op-obs">choisir</code> est partielle : dans un ensemble vide, il n’y a rien à choisir. Son unique axiome dit seulement que l’élément choisi appartient à l’ensemble, pas lequel. C’est pourquoi l’atelier ci-dessous ne l’utilise pas : il n’y a rien à calculer.</p></div>
         <div id="rwEns"></div>
         <div class="note keep"><span class="tag">À retenir</span><ul><li>Ensemble : un élément est présent ou absent ; l’ordre et les répétitions ne comptent pas.</li><li><code>ajouter</code> et <code>supprimer</code> n’ont pas de précondition : sans effet en cas d’erreur.</li><li><code>card</code> n’augmente que si l’élément ajouté était absent, et ne diminue que si l’élément supprimé était présent.</li><li><code>choisir</code> est partielle : définie si et seulement si <code class="nw">e ≠ ensemblevide</code>.</li></ul></div>
         <div class="note trap"><span class="tag">Piège</span><p><code class="nw">card(ajouter(x, e))</code> ne vaut pas toujours <code class="nw">card(e) + 1</code> : si <code>x</code> est déjà dans <code>e</code>, le cardinal ne bouge pas (préréglage « a ajouté deux fois »). Teste d’abord <code class="nw">x ∈ e</code>.</p></div>
@@ -464,21 +478,21 @@ axiomes
 </pre>
         <div class="note trap"><span class="tag">Coquille de la page Moodle</span><p>Le profil de <code>nboccurrences</code> y est écrit <code>élément × multiensemble → élément</code>. L’opération compte des occurrences : elle renvoie un <b>entier</b>, comme l’écrit la fiche PDF (et comme le montrent ses axiomes : <code class="nw">= 0</code>, <code class="nw">+ 1</code>).</p></div>
         <h3>Ce qui change par rapport à l’ensemble</h3>
-        <div class="tbl wrapcode"><table>
+        <div class="tbl wrapcode stacked"><table>
           <thead><tr><th></th><th>Ensemble</th><th>Multi-ensemble</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Un élément y est…</th><td>présent ou absent</td><td>présent 0, 1, 2… fois</td></tr>
-            <tr><th scope="row">Constante</th><td><code>ensemblevide</code></td><td><code>multiensemblevide</code></td></tr>
-            <tr><th scope="row">Ajouter un élément déjà présent</th><td>sans effet</td><td>une occurrence de plus</td></tr>
-            <tr><th scope="row"><code>card</code> après un <code>ajouter</code></th><td><code>card(e)</code> si <code class="nw">x ∈ e = vrai</code>, <code class="nw">card(e) + 1</code> sinon</td><td>toujours <code class="nw">card(me) + 1</code></td></tr>
-            <tr><th scope="row"><code class="nw">x ∈ supprimer(x, …)</code></th><td>toujours <code>faux</code></td><td><code>faux</code> si <code>nboccurrences(x, me) ≤ 1</code> ; sinon <code>x</code> reste présent</td></tr>
-            <tr><th scope="row"><code>card</code> après un <code>supprimer</code></th><td colspan="2">mêmes axiomes : <code class="nw">− 1</code> si <code>x</code> était présent, inchangé sinon</td></tr>
-            <tr><th scope="row">Compter les occurrences</th><td>inutile : 0 ou 1</td><td><code>nboccurrences : élément × multiensemble → entier</code></td></tr>
+            <tr><th scope="row">Un élément y est…</th><td data-l="Ensemble">présent ou absent</td><td data-l="Multi-ensemble">présent 0, 1, 2… fois</td></tr>
+            <tr><th scope="row">Constante</th><td data-l="Ensemble"><code>ensemblevide</code></td><td data-l="Multi-ensemble"><code>multiensemblevide</code></td></tr>
+            <tr><th scope="row">Ajouter un élément déjà présent</th><td data-l="Ensemble">sans effet</td><td data-l="Multi-ensemble">une occurrence de plus</td></tr>
+            <tr><th scope="row"><code>card</code> après un <code>ajouter</code></th><td data-l="Ensemble"><code>card(e)</code> si <code class="nw">x ∈ e = vrai</code>, <code class="nw">card(e) + 1</code> sinon</td><td data-l="Multi-ensemble">toujours <code class="nw">card(me) + 1</code></td></tr>
+            <tr><th scope="row"><code class="nw">x ∈ supprimer(x, …)</code></th><td data-l="Ensemble">toujours <code>faux</code></td><td data-l="Multi-ensemble"><code>faux</code> si <code>nboccurrences(x, me) ≤ 1</code> ; sinon <code>x</code> reste présent</td></tr>
+            <tr><th scope="row"><code>card</code> après un <code>supprimer</code></th><td colspan="2" data-l="Les deux">mêmes axiomes : <code class="nw">− 1</code> si <code>x</code> était présent, inchangé sinon</td></tr>
+            <tr><th scope="row">Compter les occurrences</th><td data-l="Ensemble">inutile : 0 ou 1</td><td data-l="Multi-ensemble"><code>nboccurrences : élément × multiensemble → entier</code></td></tr>
           </tbody>
         </table></div>
         <div class="prose">
-          <p>Le point clé est <code>card(ajouter(x, me)) = card(me) + 1</code> : la condition a disparu, puisque chaque ajout compte. À l’inverse, l’axiome de <code>∈</code> sur <code>supprimer</code> en gagne une : <code>x</code> ne disparaît que s’il en restait au plus une occurrence.</p>
-          <p>Les axiomes de <code>nboccurrences</code> suivent le schéma de <code>∈</code> : soit l’opération touche <code>x</code> lui-même (<code class="nw">x = y</code>, ou <code class="nw">supprimer(x, me)</code>), soit elle touche un autre élément (<code class="nw">x ≠ y</code>) et le compte de <code>x</code> ne bouge pas. Pour la suppression, deux cas de plus : aucune occurrence, il en reste aucune ; au moins une, il y en a une de moins.</p>
+          <p>Le point clé est <code>card(ajouter(x, me)) = card(me) + 1</code> : la condition a disparu, puisque chaque ajout compte. À l’inverse, l’axiome de <code>∈</code> sur <code>supprimer</code> en gagne une : après la suppression, <code>x</code> n’est absent que s’il avait au plus une occurrence avant.</p>
+          <p>Les axiomes de <code>nboccurrences</code> suivent le schéma de <code>∈</code> : soit l’opération touche <code>x</code> lui-même (<code class="nw">x = y</code>, ou <code class="nw">supprimer(x, me)</code>), soit elle touche un autre élément (<code class="nw">x ≠ y</code>) et le compte de <code>x</code> ne bouge pas. Pour la suppression de <code>x</code> lui-même, deux cas : s’il n’y en avait aucune, il n’y en a toujours aucune ; s’il y en avait au moins une, il y en a une de moins.</p>
         </div>
         <div id="rwMulti"></div>
         <div class="note why"><span class="tag">Remarque</span><p>La fiche ne donne pas d’axiome pour <code class="nw">x ∈ supprimer(x, me)</code> quand <code>x</code> a au moins deux occurrences dans <code>me</code>. Son texte règle pourtant le cas : la suppression d’un élément « n’implique pas qu’il disparaisse de l’ensemble (s’il en existe plusieurs occurrences) ». <code>x</code> est donc encore présent.</p></div>
@@ -535,6 +549,7 @@ axiomes
     }
     inBtn.addEventListener('click', function () {
       if (pile.length >= MAX) { paint('La démo s’arrête à ' + MAX + ' éléments. Retire d’abord.'); return; }
+      if (!pile.length) { seen = []; outP = []; outF = []; } /* tout était sorti : nouvelle série */
       var x = next(); k++; pile.push(x); file.push(x); seen.push(x);
       paint('<code>' + esc(x) + '</code> entre des deux côtés : il devient le <b>sommet</b> de la pile et le <b>dernier</b> de la file.');
     });
