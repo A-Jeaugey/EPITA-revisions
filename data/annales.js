@@ -13,7 +13,8 @@ window.ANNALES = {
    "name": "Physique"
   },
   "algo": {
-   "name": "Algorithmique"
+   "name": "Algorithmique",
+   "page": "taa/annales.html"
   },
   "archi": {
    "name": "Architecture"

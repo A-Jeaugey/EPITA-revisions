@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche TAA · Révisions S1</title>
+<meta name="description" content="La fiche d’une page de l’examen de types algébriques abstraits : vocabulaire, hiérarchie, préconditions, axiomes, listes, piles, files, ensembles, méthodes et pièges, imprimable en A4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Fiche : trois colonnes de cases, chaque case renvoie à une partie du cours. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:42em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;columns:3 300px;column-gap:16px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;margin:0 0 12px;display:grid;gap:.3rem;background:var(--bg);min-width:0}
+.box>*{min-width:0}
+.box h2{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.box h2 a{color:inherit;text-decoration:none}
+.box.hot{border-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.45}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box code{font-size:.82em}
+.box .spec{font-size:.74rem;line-height:1.45;padding:.45rem .55rem;background:var(--surface);white-space:pre-wrap;overflow-wrap:anywhere;overflow:visible}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell{display:none!important}
+  .top{padding:0 0 3mm}
+  .top h1{font-size:14pt}
+  .top p,.top .eyebrow{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:3mm;margin:0}
+  .box{padding:1.3mm 1.8mm;margin-bottom:1.6mm;gap:.8mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li{font-size:7.1pt;line-height:1.22}
+  .box h2{font-size:6.8pt}
+  .box code{font-size:7pt;background:none;padding:0}
+  .box .spec{font-size:6pt;line-height:1.2;padding:.8mm 1.2mm;border-color:#bbb}
+}
+</style>
+</head>
+<body data-resume="TAA · fiche d’une page">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><a href="index.html">TAA</a> · Fiche</div><h1>Tout l’examen de TAA sur une page</h1><p>À relire la veille et le matin de l’épreuve. Chaque titre de case renvoie à la partie du cours correspondante.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="methodes.html">Méthodes détaillées</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box hot"><h2>À l’examen</h2>
+      <p>Écrit sur le sujet : 30 min et 10 points en octobre 2024 ; 1 h annoncée cette année. On y retrouve des questions de cours, des axiomes à écrire pour une nouvelle opération sur une liste, une opération « mystère » à appliquer à une liste.</p>
+      <p>Réponds dans les cadres, au stylo : la présentation est notée.</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s1">Type abstrait</a></h2>
+      <p><b>Définition</b> = une <b>signature</b> (types + opérations) + un <b>système d’axiomes</b>.</p>
+      <p>Mots-clés, dans l’ordre : <code>types</code> · <code>utilise</code> · <code>opérations</code> · <code>préconditions</code> · <code>axiomes</code> · <code>avec</code>.</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s2">Signature</a></h2>
+      <p>Opération = <b>nom</b> + <b>profil</b> : types des arguments <code>×</code> … <code>→</code> type du résultat.</p>
+      <p>Infixe : <code>_^_ : entier × entier → entier</code>, s’écrit <code>4^2</code>.</p>
+      <p><b>Constante</b> : aucun argument, <code>Faux : → booléen</code>, <code>pilevide : → pile</code>.</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s3">Hiérarchie</a></h2>
+      <p>Type <b>défini</b> : nouveau, dans <code>types</code>. Type <b>prédéfini</b> : existe déjà, dans <code>utilise</code>.</p>
+      <p><b class="op-int">Opération interne</b> : résultat de type défini.</p>
+      <p><b class="op-obs">Observateur</b> : au moins un argument de type défini et résultat de type prédéfini.</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s5">Préconditions</a></h2>
+      <p>Domaine des opérations <b>partielles</b> : <code class="nw">op(x) est-défini-ssi condition</code>. Structure vide, rang hors bornes…</p>
+      <p>Opération totale : <b>aucune</b> précondition, et dis-le (ex. <code>concaténer</code>).</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s6">Axiomes</a></h2>
+      <p>On applique les <b>observateurs</b> aux <b>opérations internes</b>. Un axiome = égalité de deux termes du même type, éventuellement sous condition <code>condition ⇒ t1 = t2</code>.</p>
+      <p><b>Consistance</b> : pas d’axiomes contradictoires. <b>Complétude</b> : assez d’axiomes pour calculer tout terme défini.</p>
+      <p><code>avec</code> : le type de chaque variable.</p></section>
+
+    <section class="box"><h2><a href="cours-2-listes.html#s2">Liste récursive</a></h2>
+<pre data-spec data-roles="1">
+types
+    liste, place
+utilise
+    élément
+opérations
+    listevide : → liste
+         cons : élément x liste → liste
+          fin : liste → liste
+         tête : liste → place
+      contenu : place → élément
+      premier : liste → élément
+         succ : place → place
+préconditions
+    fin(λ), tête(λ), premier(λ) : λ ≠ listevide
+axiomes
+    premier(λ) = contenu(tête(λ))
+    fin(cons(e, λ)) = λ
+    premier(cons(e, λ)) = e
+    succ(tête(λ)) = tête(fin(λ))
+</pre>
+      <p><code>{e1, e2, e3}</code> = <code>cons(e1, cons(e2, cons(e3, listevide)))</code>.</p></section>
+
+    <section class="box"><h2><a href="cours-2-listes.html#s4">Nouvelle opération récursive</a></h2>
+      <ol><li>Un axiome pour <code>listevide</code>, un (ou plusieurs, avec conditions sur <code>e</code>) pour <code>cons(e, λ)</code>.</li><li>Le cas <code>cons</code> rappelle l’opération sur <code>λ</code> : la liste raccourcit à chaque fois.</li><li>Préconditions seulement si la liste vide n’a pas de sens.</li></ol>
+      <p><code>concaténer(listevide, λ2) = λ2</code><br><code>concaténer(cons(e, λ), λ2) = cons(e, concaténer(λ, λ2))</code></p></section>
+
+    <section class="box"><h2><a href="cours-2-listes.html#s5">Liste itérative</a></h2>
+<pre data-spec>
+opérations
+       accès : liste x entier → place
+        ième : liste x entier → élément
+    longueur : liste → entier
+   supprimer : liste x entier → liste
+     insérer : liste x entier x élément → liste
+préconditions
+    accès(λ, k), supprimer(λ, k) : λ ≠ listevide
+                         &amp; 1 ≤ k ≤ longueur(λ)
+    insérer(λ, k, e) : 1 ≤ k ≤ longueur(λ) + 1
+axiomes
+    longueur(listevide) = 0
+    longueur(supprimer(λ, k)) = longueur(λ) - 1
+    longueur(insérer(λ, k, e)) = longueur(λ) + 1
+    1 ≤ i &lt; k ⇒ ième(supprimer(λ, k), i) = ième(λ, i)
+    k ≤ i ≤ longueur(λ) - 1 ⇒ … = ième(λ, i + 1)
+    1 ≤ i &lt; k ⇒ ième(insérer(λ, k, e), i) = ième(λ, i)
+    k = i ⇒ ième(insérer(λ, k, e), i) = e
+    k &lt; i ≤ longueur(λ) + 1 ⇒ … = ième(λ, i - 1)
+    contenu(accès(λ, k)) = ième(λ, k)
+    succ(accès(λ, k)) = accès(λ, k + 1)
+</pre></section>
+
+    <section class="box"><h2><a href="cours-2-listes.html#s7">Opération mystère</a></h2>
+      <ol><li>Vérifie la précondition avec les arguments donnés (sinon : indéfini).</li><li>Calcule la <b>longueur</b> du résultat.</li><li>Pour chaque rang <code>i</code>, trouve son cas et lis le rang indiqué dans λ (<code>i + y − x + 1</code>…).</li><li>Contrôle les bords : premier rang, dernier rang, liste vide.</li></ol></section>
+
+    <section class="box"><h2><a href="cours-3-piles-files.html#s2">Pile · LIFO</a></h2>
+<pre data-spec data-roles="1">
+types
+    pile
+opérations
+    pilevide : → pile
+     empiler : pile x élément → pile
+     dépiler : pile → pile
+      sommet : pile → élément
+     estvide : pile → booléen
+préconditions
+    dépiler(p), sommet(p) : estvide(p) = Faux
+axiomes
+    dépiler(empiler(p, e)) = p
+    sommet(empiler(p, e)) = e
+    estvide(pilevide) = Vrai
+    estvide(empiler(p, e)) = Faux
+</pre></section>
+
+    <section class="box"><h2><a href="cours-3-piles-files.html#s5">File · FIFO</a></h2>
+<pre data-spec>
+préconditions
+    défiler(f), premier(f) : estvide(f) = Faux
+axiomes
+    estvide(f) = Vrai ⇒ premier(enfiler(f, e)) = e
+    estvide(f) = Faux ⇒ premier(enfiler(f, e)) = premier(f)
+    estvide(f) = Vrai ⇒ défiler(enfiler(f, e)) = filevide
+    estvide(f) = Faux ⇒
+            défiler(enfiler(f, e)) = enfiler(défiler(f), e)
+    estvide(filevide) = Vrai
+    estvide(enfiler(f, e)) = Faux
+</pre>
+      <p>Le premier entré est le plus enfoui dans le terme : il faut des conditions.</p></section>
+
+    <section class="box"><h2><a href="cours-3-piles-files.html#s7">Ensembles</a></h2>
+      <p><code>x ∈ ensemblevide = faux</code> ; <code>x = y ⇒ (x ∈ ajouter(y, e)) = vrai</code> ; <code>x ≠ y ⇒ (x ∈ ajouter(y, e)) = (x ∈ e)</code>.</p>
+      <p><code>card</code> : + 1 seulement si l’élément ajouté était absent. <code>choisir(e)</code> : défini si <code>e ≠ ensemblevide</code>.</p>
+      <p>Multi-ensemble : <code>nboccurrences : élément × multiensemble → entier</code> ; <code>card(ajouter(x, me)) = card(me) + 1</code>.</p></section>
+
+    <section class="box"><h2><a href="cours-1-types.html#s7">Réécrire un terme</a></h2>
+      <p>Cherche un morceau qui a la forme exacte du côté gauche d’un axiome, remplace-le, recommence. Vérifie les conditions <code>⇒</code> ; une opération partielle hors domaine rend le terme indéfini.</p>
+      <p><code>sommet(dépiler(empiler(empiler(pilevide, a), b)))</code> → <code>sommet(empiler(pilevide, a))</code> → <code>a</code>.</p></section>
+
+    <section class="box trapb"><h2>Pièges</h2>
+      <ul>
+        <li>Observateur ≠ « renvoie un booléen » : <code>sommet</code>, <code>longueur</code>, <code>contenu</code> sont des observateurs.</li>
+        <li>Inventer une précondition sur une opération totale, ou oublier celle d’une opération partielle.</li>
+        <li>Oublier un cas (<code>listevide</code>, ou une des zones de rangs) : axiomes incomplets.</li>
+        <li>Décalage de rang : après <code>insérer</code>, on lit <code>i − 1</code> ; après <code>supprimer</code>, <code>i + 1</code>.</li>
+        <li>Deux côtés d’un axiome de types différents.</li>
+        <li>Pile et file : LIFO contre FIFO.</li>
+      </ul></section>
+  </div>
+</div>
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

@@ -126,6 +126,7 @@
 <footer class="page-foot"><div class="wrap"><span>Sources : cours et TD de la promo 2031, sujets de partiels 2017–2024, QCM hebdomadaires des promos précédentes.</span><span>Ta progression reste dans ce navigateur.</span></div></footer>
 
 <script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/spec.js"></script>
 <script src="../assets/js/qcm-engine.js"></script>
 <script src="../data/qcm/elec.js"></script>
 <script src="../data/qcm/elec-td0.js"></script>
@@ -133,6 +134,7 @@
 <script src="../data/qcm/elec-p2021-2022.js"></script>
 <script src="../data/qcm/elec-p2017-2020.js"></script>
 <script src="../data/qcm/elec-hebdo.js"></script>
+<script src="../data/qcm/taa.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
@@ -344,12 +346,18 @@
 
   function paintAll() { paintSubjects(); paintSrcs(); paintTopics(); paintModes(); paintCounts(); paintStart(); paintSide(); }
 
-  /* liens directs : #sprint, #revision, #examen, #elec, #p2024, #t-<notion>.
+  /* liens directs : #sprint, #revision, #examen, #elec, #taa-revision, #p2024, #t-<notion>.
      Relus aussi quand seul le # change (lien vers cette page depuis cette page). */
   function applyHash() {
     var h = (location.hash || '').slice(1);
     if (!h) return;
     if (run) backToSetup();
+    /* « taa-revision », « elec-sprint »… : matière puis mode */
+    var m = /^([a-z]+)-(sprint|revision|examen)$/.exec(h);
+    if (m && subjects.some(function (s) { return s.id === m[1]; })) {
+      if (m[1] !== st.subj) { st.subj = m[1]; st.topics = null; st.srcs = null; st.exam = null; }
+      h = m[2];
+    }
     subjects.forEach(function (s) { if (h === s.id && s.id !== st.subj) { st.subj = s.id; st.topics = null; st.srcs = null; st.exam = null; } });
     if (/^p20\d\d$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
     if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) st.topics = [t]; }

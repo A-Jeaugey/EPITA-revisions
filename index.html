@@ -54,7 +54,7 @@ a.step:hover{border-color:var(--accent)}
 @media (max-width:1000px){.subjects{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:620px){.subjects{grid-template-columns:minmax(0,1fr)}}
 .subj{--c:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:12px;align-content:start;min-width:0;position:relative}
-.subj.ready{grid-column:span 2;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:22px;border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.subj.ready{grid-column:1/-1;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:22px;border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
 @media (max-width:620px){.subj.ready{grid-column:auto;grid-template-columns:minmax(0,1fr)}}
 .subj-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .subj h3{font-size:1.45rem}
@@ -72,7 +72,7 @@ a.step:hover{border-color:var(--accent)}
 .subj.soon{background:transparent;border-style:dashed}
 .subj.soon h3{color:var(--muted)}
 .subj-elec{--c:var(--s-elec)}
-.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-taa,.subj-caml{--c:var(--s-algo)}
 .chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
 .chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
 .chapters a:hover{border-color:var(--c)}
@@ -158,10 +158,29 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/elec/ex-p2017-2020.js"></script>
 <script src="data/elec/ex-td1.js"></script>
 <script src="data/elec/ex-hyperion.js"></script>
+<script src="data/qcm/taa.js"></script>
+<script src="data/taa/exams.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
-  var BANK = R.quiz.bank(), NEX = (window.ELEC_EX || []).length;
+  var BANK = R.quiz.bank();
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [] };
+  function nEx(sid) { return (EXS[sid] || []).length; }
+  /* sujets de partiel d’une matière (algo : TAA et Caml partagent les sujets d’avant 2023) */
+  function annOf(s) {
+    var A = window.ANNALES || { midterms: [] }, id = s.annales || s.id;
+    return A.midterms.filter(function (m) {
+      if (m.subject !== id) return false;
+      var v = (m.variant || '').toUpperCase();
+      return (v !== 'TAA' && v !== 'CAML') || v === String(s.short).toUpperCase();
+    });
+  }
+  /* matières prêtes, la plus urgente d’abord (date de partiel saisie), sinon dans l’ordre du registre */
+  function byUrgency() {
+    return R.subjects.filter(function (s) { return s.status === 'ready'; }).map(function (s, i) {
+      var d = R.exams.daysLeft(R.exams.get(s.id)); return { s: s, d: d === null || d < 0 ? 999 : d, i: i };
+    }).sort(function (a, b) { return a.d - b.d || a.i - b.i; }).map(function (x) { return x.s; });
+  }
 
   /* ---- compte à rebours ---- */
   function renderCount() {
@@ -202,16 +221,18 @@ a.tool:hover{border-color:var(--accent)}
     return null;
   }
   function renderToday() {
-    var steps = [], elec = R.subject('elec'), d = R.store.load();
-    var ns = nextSection(elec);
+    var steps = [], d = R.store.load(), order = byUrgency(), top = order[0];
     if (d.last && d.last.href && d.last.href !== 'index.html' && d.last.href !== '') {
       steps.push({ k: 'Reprendre', t: d.last.title, d: 'La dernière page que tu as ouverte.', href: d.last.href, go: 'Continuer' });
     }
-    if (ns) steps.push({ k: 'Cours d’élec · chapitre ' + (ns.i + 1), t: ns.c.title, d: ns.done ? ns.done + ' partie' + (ns.done > 1 ? 's' : '') + ' sur ' + ns.c.sections + ' marquée' + (ns.done > 1 ? 's' : '') + ' comme comprise' + (ns.done > 1 ? 's' : '') + '.' : 'Pas encore commencé. Compte environ 30 minutes.', href: ns.c.path, go: ns.done ? 'Continuer le chapitre' : 'Commencer' });
-    var st = R.qcm.stats('elec', BANK.filter(function (q) { return q.s === 'elec'; }));
-    if (st.due > 0) steps.push({ k: 'Répétition espacée', t: st.due + ' question' + (st.due > 1 ? 's' : '') + ' à revoir', d: 'Des questions ratées ou vues il y a quelques jours. C’est le moment de les reprendre.', href: 'qcm/index.html#revision', go: 'Réviser maintenant' });
-    else steps.push({ k: 'QCM', t: 'Sprint de 10 questions', d: st.seen ? st.seen + ' questions déjà vues sur ' + st.total + ', dont ' + st.mastered + ' bien ancrées.' : st.total + ' questions d’élec t’attendent : cours, pièges et vrais QCM.', href: 'qcm/index.html#sprint', go: 'Lancer' });
-    steps.push({ k: 'Annales', t: 'Un exercice de partiel', d: 'Exercices des sujets 2017 à 2024, classés par notion, avec indices et corrigé détaillé.', href: 'elec/entrainement.html', go: 'S’entraîner' });
+    for (var i = 0; i < order.length && steps.length < 2; i++) {
+      var s = order[i], ns = nextSection(s);
+      if (ns) steps.push({ k: s.short + ' · chapitre ' + (ns.i + 1), t: ns.c.title, d: ns.done ? ns.done + ' partie' + (ns.done > 1 ? 's' : '') + ' sur ' + ns.c.sections + ' marquée' + (ns.done > 1 ? 's' : '') + ' comme comprise' + (ns.done > 1 ? 's' : '') + '.' : 'Pas encore commencé. Compte environ 30 minutes.', href: ns.c.path + (ns.done ? '#s' + (ns.done + 1) : ''), go: ns.done ? 'Continuer' : 'Commencer' });
+    }
+    var st = R.qcm.stats(top.id, BANK.filter(function (q) { return q.s === top.id; }));
+    if (st.due > 0) steps.push({ k: 'Répétition espacée · ' + top.short, t: st.due + ' question' + (st.due > 1 ? 's' : '') + ' à revoir', d: 'Des questions ratées ou vues il y a quelques jours. C’est le moment de les reprendre.', href: 'qcm/index.html#' + top.id + '-revision', go: 'Réviser maintenant' });
+    else steps.push({ k: 'QCM · ' + top.short, t: 'Sprint de 10 questions', d: st.seen ? st.seen + ' questions déjà vues sur ' + st.total + ', dont ' + st.mastered + ' bien ancrées.' : st.total + ' questions t’attendent : cours, pièges et vrais QCM.', href: 'qcm/index.html#' + top.id + '-sprint', go: 'Lancer' });
+    if (top.train) steps.push({ k: 'Annales · ' + top.short, t: 'Un exercice d’examen', d: 'Exercices des sujets des années précédentes, avec indices et corrigé détaillé.', href: top.train, go: 'S’entraîner' });
     $('#today').innerHTML = steps.slice(0, 3).map(function (s) {
       return '<a class="step" href="' + R.url(s.href) + '"><span class="k">' + U.esc(s.k) + '</span><span class="t">' + U.esc(s.t) + '</span><span class="d">' + U.esc(s.d) + '</span><span class="go">' + U.esc(s.go) + ' →</span></a>';
     }).join('');
@@ -222,13 +243,14 @@ a.tool:hover{border-color:var(--accent)}
     return '<div class="meter"><div class="row"><span>' + label + '</span><span>' + txt + '</span></div><div class="bar"><i style="width:' + Math.round(frac * 100) + '%"></i></div></div>';
   }
   function renderSubjects() {
-    var A = window.ANNALES || { midterms: [] };
-    $('#subjects').innerHTML = R.subjects.map(function (s) {
-      var nAnn = A.midterms.filter(function (m) { return m.subject === s.id; }).length;
+    /* matières prêtes d’abord, chacune sur toute la largeur ; les autres ensuite */
+    var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
+    $('#subjects').innerHTML = list.map(function (s) {
+      var nAnn = annOf(s).length, NEX = nEx(s.id);
       if (s.status !== 'ready') {
         return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">bientôt</span></div>' +
           '<p>Le cours et les entraînements arriveront avec tes supports. En attendant : ' + nAnn + ' sujet' + (nAnn > 1 ? 's' : '') + ' de partiel.</p>' +
-          '<div class="links"><a class="btn ghost" href="annales/index.html#' + s.id + '">Voir les annales</a></div></article>';
+          '<div class="links"><a class="btn ghost" href="annales/index.html#' + (s.annales || s.id) + '">Voir les annales</a></div></article>';
       }
       var p = R.progress.subject(s.id), bank = BANK.filter(function (q) { return q.s === s.id; }), q = R.qcm.stats(s.id, bank);
       var chapters = s.chapters.map(function (c, i) {
@@ -241,7 +263,7 @@ a.tool:hover{border-color:var(--accent)}
         '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
         '<p>' + s.exam + '. Trois chapitres, des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés.</p>' +
         '<ul class="chapters">' + chapters + '</ul>' +
-        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">Ouvrir l’élec</a><a class="btn" href="' + R.url('elec/entrainement.html') + '">Entraînement</a><a class="btn" href="' + R.url('elec/fiche.html') + '">Fiche</a></div>' +
+        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Ouvrir') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Entraînement</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Fiche</a>' : '') + '</div>' +
         '</div><div class="meters">' +
         meter('Cours compris', p.pctRead, p.read + ' / ' + p.sections) +
         meter('QCM bien ancrés', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
@@ -255,6 +277,7 @@ a.tool:hover{border-color:var(--accent)}
     var A = window.ANNALES || { midterms: [] };
     $('#n-qcm').textContent = BANK.length;
     $('#n-ann').textContent = A.midterms.length;
+    $('#n-fiche').textContent = R.subjects.filter(function (s) { return s.status === 'ready' && s.fiche; }).length;
   }
 
   function all() { renderCount(); renderToday(); renderSubjects(); renderTools(); }

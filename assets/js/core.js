@@ -14,6 +14,7 @@
     {
       id: 'elec', name: 'Électronique', short: 'Élec', code: 'SI-S1-ELEC-1-OAC',
       course: 'Outils d’analyse de circuits', path: 'elec/index.html', dir: 'elec/', status: 'ready',
+      train: 'elec/entrainement.html', fiche: 'elec/fiche.html', open: 'Ouvrir l’élec',
       exam: 'Écrit · sans calculatrice ni document',
       chapters: [
         { id: 'bases', title: 'Les bases', path: 'elec/cours-1-bases.html', sections: 8 },
@@ -23,7 +24,18 @@
     },
     { id: 'maths', name: 'Mathématiques', short: 'Maths', status: 'soon', annales: 'Maths PC' },
     { id: 'physique', name: 'Physique', short: 'Physique', status: 'soon', annales: 'Phys' },
-    { id: 'algo', name: 'Algorithmique', short: 'Algo', status: 'soon', annales: 'Algo' },
+    {
+      id: 'taa', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
+      course: 'Types algébriques abstraits', path: 'taa/index.html', dir: 'taa/', status: 'ready',
+      exam: 'Écrit sur le sujet · 1 h cette année d’après le Moodle (30 min, noté sur 10, en 2024)',
+      annales: 'algo', train: 'taa/entrainement.html', fiche: 'taa/fiche.html', open: 'Ouvrir TAA',
+      chapters: [
+        { id: 'types', title: 'Les types abstraits', path: 'taa/cours-1-types.html', sections: 8 },
+        { id: 'listes', title: 'Les listes', path: 'taa/cours-2-listes.html', sections: 8 },
+        { id: 'piles', title: 'Piles, files, ensembles', path: 'taa/cours-3-piles-files.html', sections: 8 }
+      ]
+    },
+    { id: 'caml', name: 'Algo · Caml', short: 'Caml', status: 'soon', annales: 'algo' },
     { id: 'archi', name: 'Architecture', short: 'Archi', status: 'soon', annales: 'Archi' }
   ];
   function subject(id) { for (var i = 0; i < SUBJECTS.length; i++) if (SUBJECTS[i].id === id) return SUBJECTS[i]; return null; }

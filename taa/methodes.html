@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · TAA</title>
+<meta name="description" content="TAA : les méthodes pas à pas pour l’examen. Classer les opérations, trouver les préconditions, écrire les axiomes d’une opération sur une liste récursive ou itérative, appliquer une opération mystère, réduire un terme, répondre aux questions de cours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Méthodes</div>
+      <h1>Une recette par <span class="w">type de question</span>.</h1>
+      <p class="lead">À l’examen, les mêmes gestes reviennent : classer des opérations, écrire des préconditions et des axiomes, appliquer des axiomes à une liste donnée. Chaque méthode tient en quelques étapes, avec un exemple rédigé comme sur une copie.</p>
+      <div class="chips"><span class="chip">9 méthodes</span><span class="chip">exemples hors sujets d’examen</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">exercices d’examen corrigés →</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li><a href="#classer"><span class="num">1</span><span>Classer les opérations</span></a></li>
+      <li><a href="#preconditions"><span class="num">2</span><span>Trouver les préconditions</span></a></li>
+      <li><a href="#recursive"><span class="num">3</span><span>Axiomes : liste récursive</span></a></li>
+      <li><a href="#iterative"><span class="num">4</span><span>Axiomes : liste itérative</span></a></li>
+      <li><a href="#mystere"><span class="num">5</span><span>Opération mystère</span></a></li>
+      <li><a href="#reecrire"><span class="num">6</span><span>Réduire un terme</span></a></li>
+      <li><a href="#cours"><span class="num">7</span><span>Questions de cours</span></a></li>
+      <li><a href="#copie"><span class="num">8</span><span>Rédiger la copie</span></a></li>
+      <li><a href="#pieges"><span class="num">9</span><span>Les pièges</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Accueil TAA</a><a href="entrainement.html">Entraînement →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire des méthodes</summary><ol>
+      <li><a href="#classer">Classer les opérations</a></li><li><a href="#preconditions">Trouver les préconditions</a></li><li><a href="#recursive">Axiomes : liste récursive</a></li><li><a href="#iterative">Axiomes : liste itérative</a></li>
+      <li><a href="#mystere">Opération mystère</a></li><li><a href="#reecrire">Réduire un terme</a></li><li><a href="#cours">Questions de cours</a></li><li><a href="#copie">Rédiger la copie</a></li><li><a href="#pieges">Les pièges</a></li>
+    </ol></details>
+
+    <!-- ============================================================ classer -->
+    <section class="sec" id="classer">
+      <div class="sec-head"><div class="kicker"><span class="num">1</span>Méthode 1</div><h2>Classer les opérations d’une signature</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Repère les types définis</b> : ceux de <code>types</code> (ou <code>sorte</code>). Tout le reste (<code>utilise</code>) est prédéfini.</div></li>
+          <li><div><b>Aucun argument ?</b> C’est une <span class="op-cst">constante</span> (<code>listevide : → liste</code>).</div></li>
+          <li><div><b>Résultat de type défini ?</b> <span class="op-int">Opération interne</span>.</div></li>
+          <li><div><b>Résultat prédéfini et au moins un argument de type défini ?</b> <span class="op-obs">Observateur</span>.</div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Piège</span><p>Dans la liste itérative, <code>place</code> est aussi un type défini : <code>accès : liste × entier → place</code> est une opération interne, <code>contenu : place → élément</code> un observateur.</p></div>
+        <div class="note keep"><span class="tag">À l’oral comme à l’écrit</span><p>Justifie avec la règle : « <code>sommet</code> est un observateur : son argument est une pile (type défini) et son résultat un élément (type prédéfini). »</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ préconditions -->
+    <section class="sec" id="preconditions">
+      <div class="sec-head"><div class="kicker"><span class="num">2</span>Méthode 2</div><h2>Trouver les préconditions</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Essaie les cas limites</b> sur chaque argument : liste ou pile vide, rang 0, rang au-delà de la longueur, élément absent.</div></li>
+          <li><div><b>Le résultat a-t-il un sens ?</b> Si non, l’opération est partielle : écris <code class="nw">op(…) est-défini-ssi …</code> avec les opérations du type (<code>λ ≠ listevide</code>, <code>estvide(p) = Faux</code>, <code>1 ≤ k ≤ longueur(λ)</code>).</div></li>
+          <li><div><b>Sinon, écris « aucune »</b> et dis pourquoi en une ligne : le correcteur attend une réponse, même vide.</div></li>
+        </ol>
+        <div class="grid2">
+          <div class="card"><h4>Partielle</h4><p><code>dernier : liste → élément</code> : la liste vide n’a pas de dernier élément.</p><p class="muted"><code class="nw">dernier(λ) est-défini-ssi λ ≠ listevide</code></p></div>
+          <div class="card"><h4>Totale</h4><p><code>concaténer : liste × liste → liste</code> : coller une liste vide ne pose aucun problème.</p><p class="muted">préconditions : aucune</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Piège des bornes</span><p>Pour une <b>insertion</b>, le rang peut valoir <code>longueur(λ) + 1</code> (insérer à la fin) ; pour une <b>suppression</b> ou un accès, il s’arrête à <code>longueur(λ)</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ récursive -->
+    <section class="sec" id="recursive">
+      <div class="sec-head"><div class="kicker"><span class="num">3</span>Méthode 3</div><h2>Écrire les axiomes d’une opération sur une liste récursive</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une liste récursive est soit <code>listevide</code>, soit <code>cons(e, λ)</code>. Toute opération se définit donc en deux familles de cas, et le cas <code>cons</code> rappelle l’opération sur la liste plus courte <code>λ</code>.</p></div>
+        <ol class="steps">
+          <li><div><b>Écris le profil</b> et cherche les préconditions (méthode 2).</div></li>
+          <li><div><b>Cas <code>listevide</code></b> : que vaut l’opération sur la liste vide ? Un axiome.</div></li>
+          <li><div><b>Cas <code>cons(e, λ)</code></b> : que fais-tu de la tête <code>e</code>, sachant le résultat sur <code>λ</code> ? Si la réponse dépend de <code>e</code>, écris un axiome par cas, avec la condition avant <code>⇒</code>.</div></li>
+          <li><div><b>Vérifie</b> : chaque cas a un axiome, les conditions ne se chevauchent pas, les deux côtés ont le même type, l’appel récursif porte sur <code>λ</code>.</div></li>
+          <li><div><b>Termine par <code>avec</code></b> : le type de chaque variable.</div></li>
+        </ol>
+        <h3>Exemple : nombre d’occurrences</h3>
+<pre data-spec data-roles="1" aria-label="Axiomes de nbocc">
+types
+    liste
+utilise
+    élément, entier
+opérations
+    nbocc : liste x élément → entier
+préconditions
+    aucune : la liste vide contient 0 fois x
+axiomes
+    nbocc(listevide, x) = 0
+    e = x ⇒ nbocc(cons(e, λ), x) = nbocc(λ, x) + 1
+    e ≠ x ⇒ nbocc(cons(e, λ), x) = nbocc(λ, x)
+avec
+    liste λ
+    élément e, x
+</pre>
+        <h3>Exemple : ajouter en queue</h3>
+<pre data-spec aria-label="Axiomes de ajout-queue">
+opérations
+    ajout-queue : liste x élément → liste
+axiomes
+    ajout-queue(listevide, x) = cons(x, listevide)
+    ajout-queue(cons(e, λ), x) = cons(e, ajout-queue(λ, x))
+avec
+    liste λ
+    élément e, x
+</pre>
+        <div class="note keep"><span class="tag">Le gabarit</span><p>Une opération qui « garde ou jette » chaque élément selon une condition (supprimer certains éléments, filtrer) suit toujours le même gabarit : <code>condition(e) ⇒ op(cons(e, λ), …) = op(λ, …)</code> pour jeter, <code>non condition(e) ⇒ op(cons(e, λ), …) = cons(e, op(λ, …))</code> pour garder.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Octobre 2023 : <code>concaténer</code>. Octobre 2024 : <code>supprime-sup</code> (supprimer les éléments strictement supérieurs à un élément donné). Les deux suivent ce gabarit : voir les <a href="entrainement.html">corrigés</a>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ itérative -->
+    <section class="sec" id="iterative">
+      <div class="sec-head"><div class="kicker"><span class="num">4</span>Méthode 4</div><h2>Écrire les axiomes d’une opération sur une liste itérative</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une liste itérative se décrit par sa <b>longueur</b> et par son <b>i-ème élément</b> pour chaque rang. Pour définir une nouvelle opération interne, on donne donc <code>longueur</code> du résultat, puis <code>ième</code> du résultat rang par rang, en zones.</p></div>
+        <ol class="steps">
+          <li><div><b>Préconditions</b> sur les rangs (méthode 2).</div></li>
+          <li><div><b>Dessine</b> la liste avant et après, rangs au-dessus. Repère les zones : rangs inchangés, rang(s) nouveau(x), rangs décalés.</div></li>
+          <li><div><b>Longueur</b> du résultat : un axiome.</div></li>
+          <li><div><b>Un axiome par zone</b> : la condition sur <code>i</code>, puis le rang à lire dans λ (<code>i</code>, <code>i − 1</code>, <code>i + 1</code>…).</div></li>
+          <li><div><b>Teste les frontières</b> sur ton dessin : le premier et le dernier rang de chaque zone.</div></li>
+        </ol>
+        <h3>Exemple : doubler l’élément de rang k</h3>
+<pre data-spec aria-label="Axiomes de doubler">
+opérations
+    doubler : liste x entier → liste
+préconditions
+    doubler(λ, k) est-défini-ssi 1 ≤ k ≤ longueur(λ)
+axiomes
+    longueur(doubler(λ, k)) = longueur(λ) + 1
+    1 ≤ i ≤ k ⇒ ième(doubler(λ, k), i) = ième(λ, i)
+    i = k + 1 ⇒ ième(doubler(λ, k), i) = ième(λ, k)
+    k + 1 &lt; i ≤ longueur(λ) + 1 ⇒ ième(doubler(λ, k), i) = ième(λ, i - 1)
+avec
+    liste λ
+    entier i, k
+</pre>
+        <div class="note why"><span class="tag">Vérification sur un dessin</span><p>λ = {a, b, c}, k = 2 : résultat {a, b, b, c}. Rangs 1 et 2 : inchangés. Rang 3 : copie du rang 2. Rang 4 : on lit le rang 4 − 1 = 3 de λ, c’est <code>c</code>. La longueur passe de 3 à 4.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Les sujets 2017 et 2021 demandaient une opération sur la liste itérative (<code>modifier</code>) : même méthode, voir l’<a href="entrainement.html#liste-iter">entraînement</a>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ mystère -->
+    <section class="sec" id="mystere">
+      <div class="sec-head"><div class="kicker"><span class="num">5</span>Méthode 5</div><h2>Appliquer une opération mystère</h2></div>
+      <div class="stack">
+        <div class="prose"><p>On te donne une opération inconnue par ses seuls axiomes, une liste et des arguments : il faut la liste résultante. Ne devine pas ce que fait l’opération, calcule.</p></div>
+        <ol class="steps">
+          <li><div><b>Précondition</b> : les arguments la respectent-ils ? Sinon, le résultat est indéfini.</div></li>
+          <li><div><b>Longueur</b> : remplace dans l’axiome de longueur. Tu sais combien de cases remplir.</div></li>
+          <li><div><b>Rang par rang</b> : pour chaque <code>i</code>, trouve l’axiome dont la condition est vraie, et lis le rang indiqué dans λ.</div></li>
+          <li><div><b>Contrôle</b> : la longueur trouvée correspond, et le résultat a un sens (un intervalle supprimé, une sous-liste…).</div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Écris le tableau</span><p>Sur le brouillon : une ligne « rang i », une ligne « rang lu dans λ », une ligne « valeur ». Une erreur de décalage se voit tout de suite.</p></div>
+        <p><a class="btn primary" href="entrainement.html#infini">S’entraîner avec le générateur d’opérations mystère</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================================ réécrire -->
+    <section class="sec" id="reecrire">
+      <div class="sec-head"><div class="kicker"><span class="num">6</span>Méthode 6</div><h2>Réduire un terme avec les axiomes</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Lis le terme de l’intérieur vers l’extérieur</b> : la structure de départ est au centre.</div></li>
+          <li><div><b>Cherche un morceau qui a la forme exacte</b> d’un côté gauche d’axiome (<code>dépiler(empiler(…))</code>, <code>premier(cons(…))</code>…). Associe les variables, remplace.</div></li>
+          <li><div><b>Axiome conditionnel</b> (file, ensemble) : calcule d’abord la condition (<code>estvide(f)</code>, <code>x ∈ e</code>), puis choisis l’axiome.</div></li>
+          <li><div><b>Opération partielle sur une structure vide</b> : le terme est indéfini, arrête-toi.</div></li>
+        </ol>
+        <div id="rwM"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ cours -->
+    <section class="sec" id="cours">
+      <div class="sec-head"><div class="kicker"><span class="num">7</span>Méthode 7</div><h2>Répondre aux questions de cours</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Les questions de cours se corrigent mot à mot : reprends le vocabulaire exact des fiches.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>On te demande</th><th>Réponse attendue</th></tr></thead>
+          <tbody>
+            <tr><td>La définition d’un type abstrait</td><td>Une signature et un système d’axiomes qui la caractérise.</td></tr>
+            <tr><td>La signature</td><td>Les types et les opérations.</td></tr>
+            <tr><td>La définition d’une opération</td><td>Son nom et son profil (types des arguments et type du résultat).</td></tr>
+            <tr><td>Type défini, type prédéfini</td><td>Défini : nouveau, en conception, dans <code>types</code>. Prédéfini : déjà conçu, dans <code>utilise</code>.</td></tr>
+            <tr><td>Opération interne</td><td>Elle renvoie un résultat de type défini.</td></tr>
+            <tr><td>Observateur</td><td>Au moins un argument de type défini et un résultat de type prédéfini.</td></tr>
+            <tr><td>Constante</td><td>Une opération sans argument (<code>Faux : → booléen</code>).</td></tr>
+            <tr><td>Préconditions</td><td>Le domaine de définition des opérations partielles, celles qui ne sont pas définies partout.</td></tr>
+            <tr><td>Axiomes</td><td>Ils donnent les propriétés des opérations : on applique les observateurs aux opérations internes.</td></tr>
+            <tr><td>Consistance, complétude</td><td>Pas d’axiomes contradictoires ; avoir écrit suffisamment d’axiomes.</td></tr>
+            <tr><td>Partie <code>avec</code></td><td>Le type de chaque nom utilisé dans les axiomes.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="num">8</span>Méthode 8</div><h2>Rédiger la copie</h2></div>
+      <div class="stack">
+        <ul class="prose" style="padding-left:1.2rem">
+          <li>Réponds sur le sujet, dans les cadres prévus : ce qui est en dehors n’est pas corrigé (consigne d’octobre 2024).</li>
+          <li>Au stylo : une réponse au crayon de papier n’est pas corrigée. La présentation est notée.</li>
+          <li>Garde l’ordre du cours : <code>préconditions</code>, puis <code>axiomes</code>, puis <code>avec</code>. Écris les mots-clés.</li>
+          <li>Une ligne par axiome. Aligne les <code>⇒</code> si tu peux, le correcteur lit plus vite.</li>
+          <li>Utilise les noms du sujet (<code>listevide</code> ou <code>liste-vide</code>, <code>λ</code>, <code>λ2</code>) et déclare chaque variable dans <code>avec</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="num">9</span>Méthode 9</div><h2>Les pièges qui coûtent des points</h2></div>
+      <div class="stack">
+        <div class="note trap"><span class="tag">À vérifier avant de rendre</span><ul>
+          <li>Une précondition inventée sur une opération totale, ou oubliée sur une opération partielle.</li>
+          <li>Un cas manquant : <code>listevide</code>, une zone de rangs, l’égalité <code>e = x</code>.</li>
+          <li>Des conditions qui se chevauchent (deux axiomes pour le même cas) : axiomes inconsistants.</li>
+          <li>Un décalage de rang inversé : après insertion on lit <code>i − 1</code>, après suppression <code>i + 1</code>.</li>
+          <li>Les deux côtés d’un axiome de types différents (<code>sommet(…) = p</code>).</li>
+          <li>« Observateur » confondu avec « renvoie un booléen ».</li>
+          <li>Pile et file inversées : la pile rend le dernier entré, la file le premier.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  REV.taa.stepper(document.getElementById('rwM'), { set: 'FILE', label: 'Réduire un terme de file', editable: true, presets: [
+    { name: 'premier après un défiler', t: 'premier(défiler(enfiler(enfiler(filevide, a), b)))' },
+    { name: 'défiler trois éléments', t: 'défiler(enfiler(enfiler(enfiler(filevide, a), b), c))' },
+    { name: 'indéfini', t: 'premier(défiler(enfiler(filevide, a)))' }
+  ] });
+})();
+</script>
+</body>
+</html>

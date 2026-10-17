@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les types abstraits · TAA</title>
+<meta name="description" content="TAA, chapitre 1 : signature, hiérarchie des types et des opérations, préconditions, axiomes, réécriture d’un terme, consistance et complétude.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · chapitre 1 : les types abstraits">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapitre 1 sur 3</div>
+      <h1>Un type abstrait, c’est un <span class="w">contrat</span>.</h1>
+      <p class="lead">Tu décris ce qu’on peut faire avec une donnée et les règles que respectent ces opérations, sans jamais dire comment elle est codée. Ce chapitre pose tout le vocabulaire : signature, hiérarchie, préconditions, axiomes.</p>
+      <div class="chips"><span class="chip">≈ 35 min</span><span class="chip">8 parties</span><span class="chip">MiMos des semaines 1 et 2 · fiche « Types abstraits »</span><span class="chip ex">questions de cours à l’examen</span></div>
+    </div>
+    <div id="heroRw" aria-label="Atelier : réécrire un terme avec les axiomes de la pile"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 1 · Les types abstraits</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>Pourquoi un type abstrait</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>La signature</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Types définis, prédéfinis</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>Internes et observateurs</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>Préconditions</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>Les axiomes</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Réécrire un terme</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Consistance, complétude</span></a></li>
+    </ol>
+    <p class="toc-note">Le nombre d’assiettes donne le numéro de la partie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil TAA</a><a href="cours-2-listes.html">Chapitre 2 : les listes →</a><a href="../qcm/index.html#taa">QCM de TAA</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Pourquoi un type abstrait</a></li><li><a href="#s2">La signature</a></li><li><a href="#s3">Types définis, prédéfinis</a></li><li><a href="#s4">Internes et observateurs</a></li>
+      <li><a href="#s5">Préconditions</a></li><li><a href="#s6">Les axiomes</a></li><li><a href="#s7">Réécrire un terme</a></li><li><a href="#s8">Consistance, complétude</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Partie 1</div><h2>Pourquoi un type abstrait</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Il y a deux façons de concevoir un algorithme. La première : coder tout de suite avec les types du langage (tableaux, enregistrements…) et leurs fonctions. L’algorithme est alors collé à ce langage, et difficile à transcrire dans un autre.</p>
+          <p>La seconde : définir d’abord un <b>type abstrait</b>. On donne au type un nom, on liste ce qu’on peut faire avec lui et les propriétés que ces opérations respectent, sans rien dire du langage ni de la machine. Si un problème a besoin d’une pile, tu raisonnes avec « empiler » et « dépiler », sans te demander si la pile est un tableau ou une chaîne de cellules en mémoire.</p>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span><p>La définition d’un <b>type algébrique abstrait</b> (ou type abstrait de données) se compose de deux parties :</p><ul><li>une <b>signature</b> : les types et les opérations ;</li><li>un <b>système d’axiomes</b> : les propriétés de ces opérations.</li></ul></div>
+        <div class="prose">
+          <p>Toute la suite du cours suit le même plan. Voici le squelette d’une définition, avec ses six mots-clés dans l’ordre :</p>
+        </div>
+<pre data-spec aria-label="Squelette d’un type abstrait">
+types
+    les types qu’on définit
+utilise
+    les types qui existent déjà
+opérations
+    nom : types des arguments → type du résultat
+préconditions
+    le domaine des opérations partielles
+axiomes
+    les propriétés des opérations
+avec
+    le type de chaque nom utilisé dans les axiomes
+</pre>
+        <div class="note why"><span class="tag">Pourquoi c’est utile</span><p>Les axiomes suffisent pour calculer. Dans l’atelier en haut de page, le terme <code>sommet(dépiler(empiler(empiler(pilevide, a), b)))</code> se réduit à <code>a</code> rien qu’en appliquant deux axiomes, sans aucune pile en mémoire.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Partie 2</div><h2>La signature : des types et des opérations</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La <b>signature</b> d’un type abstrait est composée des <b>types</b> et des <b>opérations</b>.</p>
+          <p>Les <b>types</b> sont des noms d’ensembles de valeurs : ceux que l’on veut définir. On les liste après le mot-clé <code>types</code>, par exemple <code>pile</code>, <code>liste</code>, <code>graphe</code>.</p>
+          <p>Chaque <b>opération</b> est définie par son <b>nom</b> et son <b>profil</b> : les types de ses arguments, puis, après la flèche, le type de son résultat.</p>
+        </div>
+<pre data-spec aria-label="Exemples d’opérations de la fiche de synthèse">
+opérations
+    supprimer : liste x entier → liste
+     longueur : liste → entier
+         ieme : liste x entier → élément
+          _^_ : entier x entier → entier
+         Faux : → booléen
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Opération</th><th>Arguments</th><th>Résultat</th><th>On l’écrit</th></tr></thead>
+          <tbody>
+            <tr><td><code>supprimer</code></td><td>une liste, un entier</td><td>une liste</td><td><code>supprimer(λ, i)</code></td></tr>
+            <tr><td><code>longueur</code></td><td>une liste</td><td>un entier</td><td><code>longueur(λ)</code></td></tr>
+            <tr><td><code>_^_</code></td><td>deux entiers</td><td>un entier</td><td><code>4^2</code> : chaque <code>_</code> marque la place d’un argument (notation infixe)</td></tr>
+            <tr><td><code>Faux</code></td><td>aucun</td><td>un booléen</td><td><code>Faux</code> : c’est une <b>constante</b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>La définition d’une opération = son <b>nom</b> + son <b>profil</b>.</li><li>Le profil se lit « types des arguments → type du résultat ». Le symbole <code>×</code> sépare les arguments.</li><li>Une <b>constante</b> est une opération sans argument : rien avant la flèche (<code>Faux : → booléen</code>, <code>pilevide : → pile</code>).</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Le profil ne dit pas ce que fait l’opération. <code>empiler : pile × élément → pile</code> et <code>dépiler : pile → pile</code> renvoient toutes les deux une pile : ce sont les axiomes qui disent laquelle ajoute et laquelle retire.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Partie 3</div><h2>La hiérarchie : types définis et prédéfinis</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un type abstrait s’appuie presque toujours sur d’autres types. Une liste contient des éléments, se mesure avec des entiers, se teste avec des booléens. On distingue donc deux sortes de types :</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4>Type <span class="op-int">défini</span></h4><p>Il est <b>nouveau</b>, « en conception ». C’est celui qu’on est en train d’écrire. Il est listé dans <code>types</code>.</p><p class="muted">Ex. : <code>liste</code>, <code>place</code> dans le type liste.</p></div>
+          <div class="card"><h4>Type <span class="op-obs">prédéfini</span></h4><p>Il <b>existe déjà</b>, « déjà conçu ». On s’en sert sans le redéfinir. Il est listé dans <code>utilise</code>, avant les opérations.</p><p class="muted">Ex. : <code>entier</code>, <code>booléen</code>, <code>élément</code>.</p></div>
+        </div>
+<pre data-spec aria-label="En-tête de la liste itérative">
+types
+    liste, place
+utilise
+    entier, élément
+</pre>
+        <div class="prose"><p>Ici, la liste itérative définit deux types à la fois : la <code>liste</code> et la <code>place</code> (la case qui contient un élément). Elle utilise les entiers (pour les rangs) et les éléments (ce qu’on range), qui existent déjà.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><p>Défini = dans <code>types</code>, c’est le nouveau. Prédéfini = dans <code>utilise</code>, il existe déjà. Cette distinction sert à classer les opérations (partie suivante).</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Partie 4</div><h2>Opérations internes et observateurs</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une fois les types classés, le profil d’une opération suffit à dire son rôle.</p></div>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-int">Opération interne</span></h4><p>Elle renvoie un résultat de <b>type défini</b>. Elle fabrique ou modifie une donnée du type.</p><p class="muted"><code>empiler : pile × élément → pile</code></p></div>
+          <div class="card"><h4><span class="op-obs">Observateur</span></h4><p>Il a <b>au moins un argument de type défini</b> et renvoie un résultat de <b>type prédéfini</b>. Il interroge la donnée sans la changer.</p><p class="muted"><code>sommet : pile → élément</code></p></div>
+        </div>
+        <div class="legend"><span><i style="background:var(--int)"></i>opération interne</span><span><i style="background:var(--obs)"></i>observateur</span><span><i style="background:var(--cst)"></i>constante</span></div>
+<pre data-spec data-roles="1" aria-label="Signature de la pile, opérations colorées selon leur rôle">
+types
+    pile
+utilise
+    booléen, élément
+opérations
+    pilevide : → pile
+     empiler : pile x élément → pile
+     dépiler : pile → pile
+      sommet : pile → élément
+     estvide : pile → booléen
+</pre>
+        <div class="prose"><p>À toi : classe chaque opération. Indice : regarde d’abord le type du résultat, puis s’il y a un argument de type défini.</p></div>
+        <div id="sorter1" aria-label="Exercice : classer les opérations"></div>
+        <div class="note trap"><span class="tag">Pièges classiques</span><ul>
+          <li>« Observateur » ne veut pas dire « renvoie un booléen ». <code>sommet</code> renvoie un élément et c’est un observateur.</li>
+          <li>Un type défini peut ne pas être le type « principal ». Dans la liste itérative, <code>place</code> est défini : <code>accès : liste × entier → place</code> est donc une opération interne, alors que <code>contenu : place → élément</code> est un observateur.</li>
+          <li>Une constante comme <code>pilevide</code> n’a pas d’argument : elle ne peut pas être un observateur, qui a besoin d’un argument de type défini.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Questions de cours vues aux partiels : « Quelles sont les spécifications du profil d’un observateur ? », « La définition d’une opération est composée de ? ». Réponds avec les mots du cours : un argument de type défini <b>au moins</b>, un résultat de type prédéfini ; un nom et un profil.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Partie 5</div><h2>Opérations partielles et préconditions</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Certaines opérations n’ont pas de sens partout. Le sommet d’une pile vide n’existe pas. On ne supprime pas le 5<sup>e</sup> élément d’une liste qui en a 3. Ces opérations sont <b>partielles</b> : elles ne sont définies que sur une partie de leurs arguments.</p>
+          <p>Les <b>préconditions</b> donnent ce <b>domaine de définition</b>, avec la formule <code class="nw">est-défini-ssi</code> (« est défini si et seulement si »). On les écrit avant les axiomes.</p>
+        </div>
+<pre data-spec aria-label="Préconditions de la pile et de la liste itérative">
+préconditions
+    dépiler(p) est-défini-ssi estvide(p) = Faux
+    sommet(p) est-défini-ssi estvide(p) = Faux
+    supprimer(λ, i) est-défini-ssi estvide(λ) = Faux &amp; 1 ≤ i ≤ longueur(λ)
+</pre>
+        <div class="note keep"><span class="tag">Méthode : une opération est-elle partielle ?</span><ol><li>Cherche un argument pour lequel le résultat n’a aucun sens : structure vide, rang hors des bornes, case jamais remplie.</li><li>S’il y en a un, écris la précondition qui l’exclut, avec les opérations du type (<code>estvide</code>, <code>longueur</code>, <code>≠ listevide</code>…).</li><li>Sinon, l’opération est totale : <b>pas de précondition</b>, et dis-le.</li></ol></div>
+        <div class="note trap"><span class="tag">Piège</span><p>N’invente pas de précondition. <code>empiler</code> marche sur toute pile. Concaténer deux listes marche même si l’une est vide : au partiel 2023, la bonne réponse à « préconditions de concaténer ? » était <b>aucune</b>.</p></div>
+        <div class="prose"><p>Une précondition non respectée rend le terme <b>indéfini</b>. Essaie : l’atelier s’arrête dès qu’une opération partielle reçoit une pile vide.</p></div>
+        <div id="rwPartial"></div>
+        <div data-check-ref="taa/cours-1-types.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Partie 6</div><h2>Les axiomes : appliquer les observateurs aux opérations internes</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le profil dit ce qu’une opération prend et rend, pas ce qu’elle fait. Ce sont les <b>axiomes</b> qui donnent les propriétés. Pour savoir ce que fait une opération interne, on lui applique les observateurs : « si j’empile <code>e</code>, que vaut le sommet ? la pile est-elle vide ? ».</p>
+          <p>En pratique, on fait un tableau : chaque observateur (et chaque opération qui défait, comme <code>dépiler</code>) appliqué à chaque façon de fabriquer une pile (<code>pilevide</code>, <code>empiler(p, e)</code>). Chaque case donne un axiome, ou rien si une précondition l’interdit.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><code>pilevide</code></th><th><code>empiler(p, e)</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code class="op-obs">estvide</code></th><td><code>estvide(pilevide) = Vrai</code></td><td><code>estvide(empiler(p, e)) = Faux</code></td></tr>
+            <tr><th scope="row"><code class="op-obs">sommet</code></th><td class="muted">interdit (précondition)</td><td><code>sommet(empiler(p, e)) = e</code></td></tr>
+            <tr><th scope="row"><code class="op-int">dépiler</code></th><td class="muted">interdit (précondition)</td><td><code>dépiler(empiler(p, e)) = p</code></td></tr>
+          </tbody>
+        </table></div>
+<pre data-spec aria-label="Axiomes de la pile">
+axiomes
+    dépiler(empiler(p, e)) = p
+    sommet(empiler(p, e)) = e
+    estvide(pilevide) = Vrai
+    estvide(empiler(p, e)) = Faux
+avec
+    pile p
+    élément e
+</pre>
+        <div class="prose">
+          <p>Un axiome peut avoir une <b>condition</b>, écrite avant <code>⇒</code> : l’égalité n’est vraie que si la condition l’est. C’est indispensable quand le résultat dépend d’un cas. Pour la liste itérative, le i-ème élément après une suppression dépend de la place de i par rapport à k :</p>
+        </div>
+<pre data-spec aria-label="Axiomes conditionnels de supprimer">
+axiomes
+    1 ≤ i &lt; k ⇒ ième(supprimer(λ, k), i) = ième(λ, i)
+    k ≤ i ≤ longueur(λ) - 1 ⇒ ième(supprimer(λ, k), i) = ième(λ, i + 1)
+    longueur(supprimer(λ, k)) = longueur(λ) - 1
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Les axiomes définissent ce que font les opérations internes : on leur applique leurs observateurs.</li><li>Chaque cas possible doit donner une valeur ; les cas interdits par une précondition n’ont pas d’axiome.</li><li>La partie <code>avec</code> donne le type de chaque nom utilisé (<code>pile p</code>, <code>élément e</code>).</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Un axiome est une égalité entre deux termes du même type. <code>sommet(empiler(p, e)) = p</code> est faux deux fois : la valeur est fausse, et les types ne collent pas (un élément d’un côté, une pile de l’autre).</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Partie 7</div><h2>Lire et réécrire un terme</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>terme</b> est une suite d’opérations emboîtées : <code>empiler(empiler(pilevide, a), b)</code> est la pile où l’on a empilé <code>a</code> puis <code>b</code>. Il se lit de l’intérieur vers l’extérieur : l’opération la plus à l’intérieur a été faite en premier.</p>
+          <p>Pour calculer un terme, on le <b>réécrit</b> : on cherche un morceau qui a exactement la forme du côté gauche d’un axiome, on le remplace par le côté droit, et on recommence jusqu’à ce qu’aucun axiome ne s’applique.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>Repère le motif.</b> <code>dépiler(empiler(p, e))</code> s’applique à tout morceau de la forme « dépiler d’un empiler », quels que soient la pile <code>p</code> et l’élément <code>e</code>.</div></li>
+          <li><div><b>Associe les variables.</b> Dans <code>dépiler(empiler(empiler(pilevide, a), b))</code>, <code>p</code> vaut <code>empiler(pilevide, a)</code> et <code>e</code> vaut <code>b</code>.</div></li>
+          <li><div><b>Remplace.</b> Le côté droit est <code>p</code> : le morceau devient <code>empiler(pilevide, a)</code>.</div></li>
+          <li><div><b>Vérifie les conditions et les préconditions.</b> Un axiome avec <code>⇒</code> ne s’applique que si sa condition est vraie ; une opération partielle hors de son domaine rend le terme indéfini.</div></li>
+        </ol>
+        <div id="rwMain"></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Un axiome s’applique à un morceau qui a exactement sa forme. <code>sommet(dépiler(empiler(empiler(pilevide, a), b)))</code> n’est pas de la forme <code>sommet(empiler(…))</code> : il faut d’abord réduire le <code>dépiler</code> qui est à l’intérieur.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Partie 8</div><h2>Consistance, complétude et deux exemples complets</h2></div>
+      <div class="stack">
+        <div class="prose"><p>L’ensemble des axiomes d’un type doit respecter deux propriétés :</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Consistance</h4><p>Pas d’axiomes <b>contradictoires</b> : on ne doit jamais pouvoir prouver deux résultats différents pour le même terme.</p><p class="muted">Ajouter <code>sommet(empiler(p, e)) = premier(p)</code> à côté de <code>sommet(empiler(p, e)) = e</code> rendrait la pile inconsistante.</p></div>
+          <div class="card"><h4>Complétude</h4><p>Avoir écrit <b>assez</b> d’axiomes : tout terme bien défini doit pouvoir être calculé.</p><p class="muted">Sans <code>estvide(pilevide) = Vrai</code>, on ne saurait pas calculer <code>estvide(pilevide)</code>.</p></div>
+        </div>
+        <h3>Exemple 1 : le type Booléen</h3>
+        <div class="prose"><p>C’est l’exercice d’application du Moodle : écrire les axiomes de <code>non</code>, <code class="nw">_ et _</code> et <code class="nw">_ ou _</code>. On applique chaque opération aux deux constantes <code>vrai</code> et <code>faux</code> ; pour <code>et</code> et <code>ou</code>, il suffit de regarder le premier argument.</p></div>
+<pre data-spec data-roles="1" aria-label="Le type booléen avec ses axiomes">
+types
+    booléen
+opérations
+       vrai : → booléen
+       faux : → booléen
+        non : booléen → booléen
+    _ et _ : booléen x booléen → booléen
+    _ ou _ : booléen x booléen → booléen
+axiomes
+    non(vrai) = faux
+    non(faux) = vrai
+    vrai et b = b
+    faux et b = faux
+    vrai ou b = vrai
+    faux ou b = b
+avec
+    booléen b
+</pre>
+        <div class="prose"><p>Six axiomes, et c’est complet : tout terme booléen se réduit à <code>vrai</code> ou à <code>faux</code>. Vérifie-le dans l’atelier.</p></div>
+        <div id="rwBool"></div>
+        <h3>Exemple 2 : le type Vecteur (annexe du Moodle)</h3>
+        <div class="prose"><p>Un vecteur a des bornes et des cases qu’on remplit une à une. On y retrouve tout le chapitre : une opération partielle (<code>ième</code>) et des axiomes conditionnels qui séparent « même case » et « autre case ».</p></div>
+<pre data-spec data-roles="1" aria-label="Le type vecteur">
+types
+    vecteur
+utilise
+    entier, booléen, élément
+opérations
+             vect : entier x entier → vecteur
+        modifième : vecteur x entier x élément → vecteur
+             ième : vecteur x entier → élément
+    estinitialisé : vecteur x entier → booléen
+         bornesup : vecteur → entier
+         borneinf : vecteur → entier
+préconditions
+    ième(v, i) est-défini-ssi borneinf(v) ≤ i ≤ bornesup(v) &amp; estinitialisé(v, i) = vrai
+axiomes
+    borneinf(v) ≤ i ≤ bornesup(v) ⇒ ième(modifième(v, i, e), i) = e
+    borneinf(v) ≤ i ≤ bornesup(v) &amp; borneinf(v) ≤ j ≤ bornesup(v) &amp; i ≠ j
+                ⇒ ième(modifième(v, i, e), j) = ième(v, j)
+    estinitialisé(vect(i, j), k) = Faux
+    borneinf(v) ≤ i ≤ bornesup(v) ⇒ estinitialisé(modifième(v, i, e), i) = Vrai
+    borneinf(v) ≤ i ≤ bornesup(v) &amp; borneinf(v) ≤ j ≤ bornesup(v) &amp; i ≠ j
+                ⇒ estinitialisé(modifième(v, i, e), j) = estinitialisé(v, j)
+    borneinf(vect(i, j)) = i
+    borneinf(modifième(v, i, e)) = borneinf(v)
+    bornesup(vect(i, j)) = j
+    bornesup(modifième(v, i, e)) = bornesup(v)
+avec
+    vecteur v
+    entier i, j, k
+    élément e
+</pre>
+        <div class="note keep"><span class="tag">Le schéma « même case, autre case »</span><p>Après <code>modifième(v, i, e)</code>, la case <code>i</code> contient <code>e</code> et toutes les autres cases <code>j ≠ i</code> sont inchangées. Ce découpage en deux cas revient dans presque tous les axiomes d’accès par position.</p></div>
+        <div class="note trap"><span class="tag">Coquille de la page Moodle</span><p>L’avant-dernier axiome sur <code>estinitialisé</code> y est écrit avec <code>init(v, j)</code>, une opération qui n’existe pas. Il faut lire <code>estinitialisé(v, j)</code>, comme ci-dessus.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le chapitre 2 applique tout ceci aux <a href="cours-2-listes.html">listes récursives et itératives</a>, le cœur des exercices d’examen.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa;
+  T.stepper(document.getElementById('heroRw'), { set: 'PILE', label: 'Essaie : réécris avec les axiomes de la pile', presets: [
+    { name: 'sommet après un dépiler', t: 'sommet(dépiler(empiler(empiler(pilevide, a), b)))' },
+    { name: 'pile vide ?', t: 'estvide(dépiler(empiler(pilevide, a)))' },
+    { name: 'trois dépiler', t: 'sommet(dépiler(dépiler(empiler(empiler(empiler(pilevide, a), b), c))))' }
+  ] });
+  T.sorter(document.getElementById('sorter1'), { rows: [
+    { p: 'pilevide : → pile', r: 'cst', why: 'Aucun argument : c’est une constante. Elle renvoie une pile (type défini) : c’est la pile vide de départ.' },
+    { p: 'empiler : pile × élément → pile', r: 'int', why: 'Le résultat est une pile, le type défini : opération interne.' },
+    { p: 'dépiler : pile → pile', r: 'int', why: 'Le résultat est une pile : opération interne, même si elle retire un élément.' },
+    { p: 'sommet : pile → élément', r: 'obs', why: 'Un argument de type défini (pile) et un résultat prédéfini (élément) : observateur.' },
+    { p: 'estvide : pile → booléen', r: 'obs', why: 'Un argument pile, un résultat booléen (prédéfini) : observateur.' },
+    { p: 'accès : liste × entier → place (liste itérative, types liste et place)', r: 'int', why: 'place est un type défini de la liste : le résultat est de type défini, donc opération interne.' },
+    { p: 'contenu : place → élément', r: 'obs', why: 'Un argument de type défini (place), un résultat prédéfini (élément) : observateur.' }
+  ] });
+  T.stepper(document.getElementById('rwPartial'), { set: 'PILE', label: 'Défini ou indéfini ?', presets: [
+    { name: 'sommet d’une pile vide', t: 'sommet(dépiler(empiler(pilevide, a)))' },
+    { name: 'deux dépiler de trop', t: 'dépiler(dépiler(empiler(pilevide, a)))' },
+    { name: 'tout va bien', t: 'sommet(empiler(dépiler(empiler(pilevide, a)), b))' }
+  ] });
+  T.stepper(document.getElementById('rwMain'), { set: 'PILE', label: 'Atelier : écris ton propre terme de pile', editable: true, presets: [
+    { name: 'exemple', t: 'sommet(dépiler(empiler(empiler(pilevide, a), b)))' },
+    { name: 'estvide', t: 'estvide(dépiler(dépiler(empiler(empiler(pilevide, a), b))))' },
+    { name: 'empiler après dépiler', t: 'sommet(empiler(dépiler(empiler(pilevide, a)), c))' }
+  ] });
+  T.stepper(document.getElementById('rwBool'), { set: 'BOOL', label: 'Atelier : les axiomes du booléen', editable: true, presets: [
+    { name: 'non non', t: 'non(non(vrai))' },
+    { name: 'et / ou', t: 'non(faux et vrai) et (vrai ou faux)' },
+    { name: 'De Morgan', t: 'non(vrai ou faux)' }
+  ] });
+})();
+</script>
+</body>
+</html>

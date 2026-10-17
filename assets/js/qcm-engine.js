@@ -4,7 +4,7 @@
    Question :
    { id:'elec-xxx', s:'elec', topic:'diviseur-tension', lvl:1..3,
      type:'single'|'multi'|'tf'|'num',
-     q:'énoncé HTML', fig:{…spec circuit…} | '<svg…>',
+     q:'énoncé HTML', fig:{…spec circuit…} | { code:'spécification TAA' } | '<svg…>',
      o:['option HTML', …],              // single / multi
      a: 0 | [0,2] | true | 2.5,          // bonne(s) réponse(s) ; num : valeur attendue
      unit:'V', tol:0.01,                 // num : unité affichée, tolérance relative
@@ -17,7 +17,10 @@
 
   function fig(q) {
     if (!q.fig) return '';
-    var inner = typeof q.fig === 'string' ? q.fig : R.circuit(q.fig);
+    /* fig : HTML, { code: 'spécification' } (types abstraits, voir spec.js) ou description de schéma (circuit.js) */
+    var inner = typeof q.fig === 'string' ? q.fig
+      : q.fig.code != null ? (R.spec ? R.spec(q.fig.code) : '<pre class="spec">' + U.esc(q.fig.code) + '</pre>')
+      : R.circuit(q.fig);
     return '<div class="qz-fig">' + inner + '</div>';
   }
   function optsOf(q) { return q.type === 'tf' ? ['Vrai', 'Faux'] : (q.o || []); }

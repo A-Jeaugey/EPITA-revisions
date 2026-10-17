@@ -82,10 +82,10 @@ main{display:grid;gap:44px}
       if (!ms.length && !hy.length) return;
       var info = A.subjects[s];
       html += '<section class="subj-sec" id="' + s + '"><div class="subj-head"><h2>' + info.name + '</h2>' +
-        (info.page ? '<a class="more" href="' + R.url(info.page) + '">Corrigés détaillés et analyse des sujets →</a>' : '<span class="legend">' + ms.length + ' sujet' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
+        (info.page ? '<a class="more" href="' + R.url(info.page) + '">' + (s === 'algo' ? 'Partie TAA : corrigés et analyse →' : 'Corrigés détaillés et analyse des sujets →') + '</a>' : '<span class="legend">' + ms.length + ' sujet' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
       ms.forEach(function (m) {
         html += '<div class="ex"><div class="when"><b>Promo ' + m.promo + '</b><span>automne ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + m.files.map(fileLink).join('') +
-          (info.page && s === 'elec' ? '<a class="file ours" href="' + R.url(info.page) + '#p' + (m.promo - 5) + '">Notre corrigé</a>' : '') + '</div></div>';
+          (info.page && (s === 'elec' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#p' + (m.promo - 5) + '">' + (s === 'algo' ? 'Notre corrigé (TAA)' : 'Notre corrigé') + '</a>' : '') + '</div></div>';
       });
       hy.forEach(function (h) {
         html += '<div class="ex"><div class="when"><b>Archive</b><span>' + U.esc(h.label) + '</span></div><div class="files">' + h.files.map(fileLink).join('') + '</div></div>';
