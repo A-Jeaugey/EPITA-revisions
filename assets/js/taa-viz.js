@@ -627,9 +627,13 @@
       return { pre: T('aucune'), ax: o.draft.map(function (l) { return axLine(parseAxiom(l, o)); }).join('\n') };
     }
     function setMsg(m) { verdict.innerHTML = m; detail.innerHTML = ''; }
+    /* la zone de saisie grandit avec son contenu (les lignes longues passent à la ligne sur un téléphone) */
+    function fit() { axIn.style.height = ''; if (axIn.scrollHeight) axIn.style.height = Math.min(axIn.scrollHeight + 4, 480) + 'px'; }
+    axIn.addEventListener('input', fit);
+    window.addEventListener('resize', fit);
     function load(o, fresh) {
       var d = !fresh && texts[o.id] || draftOf(o);
-      preIn.value = d.pre; axIn.value = d.ax;
+      preIn.value = d.pre; axIn.value = d.ax; fit();
       var sig = nm(o.id) + ' : ' + o.params.map(function (q) { return sortName(q.s); }).join(' × ') + ' → ' + sortName(o.res);
       el.querySelector('[data-prof]').textContent = sig;
       el.querySelector('[data-desc]').innerHTML = '<code>' + esc(nm(o.id) + '(' + o.params.map(function (q) { return q.n; }).join(', ') + ')') + '</code>' + (EN ? ': ' : ' : ') + esc(T(o.desc));
@@ -642,7 +646,7 @@
       b.addEventListener('click', function () { save(); cur = b.dataset.op; load(op()); });
     });
     el.querySelector('[data-a="draft"]').addEventListener('click', function () { load(op(), true); save(); });
-    el.querySelector('[data-a="clear"]').addEventListener('click', function () { preIn.value = ''; axIn.value = ''; save(); setMsg(T('Écris tes préconditions et tes axiomes, puis clique sur Tester.')); axIn.focus(); });
+    el.querySelector('[data-a="clear"]').addEventListener('click', function () { preIn.value = ''; axIn.value = ''; fit(); save(); setMsg(T('Écris tes préconditions et tes axiomes, puis clique sur Tester.')); axIn.focus(); });
     el.querySelector('[data-a="test"]').addEventListener('click', test);
     axIn.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); test(); } });
     preIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); test(); } });
