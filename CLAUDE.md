@@ -24,6 +24,28 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `sorter`, et `<div data-check-ref="taa/cours-1-types.html#s2" data-n="3">` (questions de la banque qui renvoient
   à cette partie). Numéros de parties : `<span class="plates" data-n="3">`.
 
+## Deux langues
+
+- Chaque page `X.html` a une jumelle anglaise `X.en.html` (même dossier, mêmes `id`, `<html lang="en">`) pour la
+  section anglophone de la classe. **Toute modification de contenu se fait dans les deux pages** (et dans
+  `data/en/…` pour les données). Le bouton FR | EN (`core.js`) mène à la jumelle et retient le choix
+  (`rev-s1:lang`) ; une page ouverte dans l’autre langue redirige vers sa jumelle (`?lang=keep` l’empêche).
+- Sur une page anglaise, les liens internes `….html` sont réécrits en `….en.html` (aussi ceux ajoutés par script) :
+  les `href` restent écrits comme en français. `REV.url()` fait de même.
+- Textes des scripts partagés : `REV.t('texte français', { n })` + `REV.i18n.add({ 'texte français': 'English' })`
+  dans le même fichier. Les scripts en ligne des pages anglaises sont simplement traduits dans la page.
+- Données : `data/en/<même chemin>.js`, chargé par la page anglaise juste après le fichier français :
+  `REV.i18n.patch(window.TAA_EX, { id: {…} })` (fusion champ par champ, tableaux élément par élément ;
+  `'key'` en 3e argument pour `TAA_EXAMS` / `ELEC_EXAMS`), `REV.i18n.qcm({ id: { q, o, x, fig } })` (appliqué
+  après le dédoublonnage, qui reste calculé sur le français ; `src` se traduit seul), `REV.i18n.topics({…})`.
+- Vocabulaire anglais : celui du cours d’élec officiel en anglais et des sujets d’algo anglais (2018-2020) :
+  `is-defined-iaoi`, types / uses / operations / preconditions / axioms / with, emptylist, cons, tail, first, head,
+  contents, next, nth, insert, delete, length, push, pop, top, isempty, enqueue, dequeue… Sur une page anglaise,
+  `taa.js` renomme ses jeux d’axiomes (`EN_NAMES`) : les termes des bancs s’écrivent en anglais. Décimales à
+  point en anglais (`circuit.js` convertit les étiquettes des schémas).
+- `node tools/check_i18n.js [--verbose]` : jumelles, `id`, scripts `data/en`, ids inconnus, options de QCM,
+  textes restés en français.
+
 ## Formats de données
 
 - **Questions** (`data/qcm/<matière>*.js`, poussées dans `window.QCM_BANK`) :
@@ -82,6 +104,7 @@ NODE_PATH=$(npm root -g) node tools/check.js http://127.0.0.1:8765/ "index.html,
 NODE_PATH=$(npm root -g) node tools/elshot.js "http://127.0.0.1:8765/elec/entrainement.html" "#p2024-ex3a" ./shots/x "#p2024-ex3a [data-act=sol]:1"
 ```
 `check.js` signale les erreurs console et tout débordement horizontal (1280 px et 375 px, clair et sombre).
+`node tools/check_i18n.js` vérifie la version anglaise (à lancer après toute modification de contenu).
 
 ## Aperçu claude.ai
 

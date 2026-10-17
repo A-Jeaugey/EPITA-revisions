@@ -3,6 +3,9 @@
 Site de révision des partiels de mi-semestre du S1 : cours expliqués pas à pas, ce qui tombe vraiment,
 exercices d’annales corrigés, QCM à répétition espacée et fiches d’une page.
 
+Tout le site existe en français et en anglais (section anglophone) : bouton **FR | EN** dans la barre du haut.
+*The whole site is also available in English: use the **FR | EN** switch in the top bar.*
+
 ## Ce qu’il y a dedans
 
 | Page | Contenu |
@@ -25,7 +28,8 @@ sont déjà listées dans `annales/`.
   `https://<utilisateur>.github.io/<dépôt>/`.
 
 La progression (parties comprises, réponses au QCM, exercices réussis, date du partiel) est enregistrée dans le
-navigateur (`localStorage`) : elle ne suit pas d’un appareil à l’autre.
+navigateur (`localStorage`) : elle ne suit pas d’un appareil à l’autre. Elle est commune aux deux langues, et le
+choix de langue est retenu.
 
 ## Sources
 
@@ -43,7 +47,8 @@ assets/css/   shell.css (barre de navigation), site.css (accueil, QCM, annales),
 assets/js/    core.js (stockage, thème, progression, navigation), circuit.js (schémas SVG à partir d’une description),
               qcm-engine.js (moteur de questions), elec.js (comportements des pages élec),
               spec.js (mise en forme des spécifications), taa.js (réécriture de termes, bancs TAA)
-data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js (sujets et exercices)
+data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js, taa/*.js (sujets et exercices)
+data/en/      textes anglais des mêmes fichiers, posés par-dessus le français (pages *.en.html)
 tools/        scripts de génération et de vérification
 ```
 
