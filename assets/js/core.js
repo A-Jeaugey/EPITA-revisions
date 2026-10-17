@@ -246,7 +246,7 @@
     nf: function (x, d) {
       if (d === undefined) d = 2;
       var p = Math.pow(10, d), v = Math.round(x * p) / p;
-      return v.toLocaleString(LANG === 'en' ? 'en-GB' : 'fr-FR', { maximumFractionDigits: d });
+      return v.toLocaleString(LANG === 'en' ? 'en-GB' : 'fr-FR', { maximumFractionDigits: d }).replace(/^-/, '−'); // vrai signe moins
     },
     esc: function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); },
     shuffle: function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; },
