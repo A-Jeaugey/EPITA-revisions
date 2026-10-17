@@ -49,9 +49,9 @@
     'dans le sens de la flèche': 'in the direction of the arrow',
     'contre la flèche': 'against the arrow',
     'aucun courant': 'no current',
-    'calcul direct (Millman en A)': 'direct calculation (Millman at A)',
-    'une seule maille': 'a single loop',
-    'diviseur de courant': 'current divider',
+    'calcul direct (Millman en A) :': 'direct calculation (Millman at A):',
+    'une seule maille :': 'a single loop:',
+    'diviseur de courant :': 'current divider:',
     'Bande rouge pâle : le courant qui circule vraiment, d’autant plus large qu’il est fort. Flèche fine : la flèche de l’énoncé, la même dans les trois schémas.': 'Pale red band: the current that actually flows, wider when it is stronger. Thin arrow: the arrow of the problem statement, the same in all three diagrams.',
     'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)': 'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)',
     'C’est bien le courant du circuit complet ✓': 'This is exactly the current of the full circuit ✓',
@@ -335,9 +335,9 @@
       host.querySelector('#vsEv').textContent = E1 + ' V'; host.querySelector('#vsIv').textContent = I3 + ' mA';
       var full = supSolve(E1, I3, true, true), a = supSolve(E1, I3, true, false), b = supSolve(E1, I3, false, true);
       var P = {
-        all: { cur: full, name: I1s, how: t('calcul direct (Millman en A)') + ' : ' + sym('V_A', 'v') + ' = ' + num(full.VA) + ' V, ' + I1s + ' = (' + E1s + ' − ' + sym('V_A', 'v') + ')/(' + sym('R_1') + ' + ' + sym('R_2') + ') = (' + E1 + ' − ' + num(full.VA) + ')/' + (SR.R1 + SR.R2) },
-        E: { cur: a, name: I1p, how: t('une seule maille') + ' : ' + E1s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = ' + E1 + '/' + S },
-        I: { cur: b, name: I1pp, how: t('diviseur de courant') + ' : −' + sym('R_3') + I3s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = −' + SR.R3 + ' × ' + I3 + '/' + S }
+        all: { cur: full, name: I1s, how: t('calcul direct (Millman en A) :') + ' ' + sym('V_A', 'v') + ' = ' + num(full.VA) + ' V, ' + I1s + ' = (' + E1s + ' − ' + sym('V_A', 'v') + ')/(' + sym('R_1') + ' + ' + sym('R_2') + ') = (' + E1 + ' − ' + num(full.VA) + ')/' + (SR.R1 + SR.R2) },
+        E: { cur: a, name: I1p, how: t('une seule maille :') + ' ' + E1s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = ' + E1 + '/' + S },
+        I: { cur: b, name: I1pp, how: t('diviseur de courant :') + ' −' + sym('R_3') + I3s + '/(' + sym('R_1') + ' + ' + sym('R_2') + ' + ' + sym('R_3') + ') = −' + SR.R3 + ' × ' + I3 + '/' + S }
       };
       U.$$('.vs-panel', host).forEach(function (fig) {
         var p = P[fig.getAttribute('data-st')];
