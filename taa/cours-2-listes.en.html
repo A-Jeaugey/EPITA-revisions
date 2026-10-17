@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lists · TAA</title>
+<meta name="description" content="TAA, chapter 2: list and box, recursive list (emptylist, cons, tail, head, first), new operations by cases, iterative list (rank, access, nth, length, insert, delete), mystery operation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Page-specific additions: “two readings” workshops, boxes, cons and the mystery operation; collapsible questions. */
+.bn-why{font-size:.9rem;line-height:1.5;color:var(--muted)}
+.bn-lbl{font-size:.85rem;color:var(--muted)}
+.bn-blk{display:grid;gap:4px;min-width:0}
+.rank.todo span{border-style:dashed;background:transparent;color:var(--muted)}
+.qa-list{display:grid;gap:8px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.6rem 1rem}
+.qa>*{min-width:0}
+.qa summary{cursor:pointer;font-weight:500}
+.qa summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.qa[open] summary{margin-bottom:.45rem}
+.row.bn-end{align-items:flex-end}
+.tbl.wc code{white-space:normal;overflow-wrap:anywhere} /* tables with long terms: the code wraps instead of hiding a column */
+.tbl .grp th{background:var(--surface-2);color:var(--ink);font-family:var(--font-body);font-size:.86rem;letter-spacing:0;text-transform:none;border-top:1px solid var(--line)}
+@media (max-width:560px){ /* comparison table: one question per block on phones */
+  .tbl.cmp table,.tbl.cmp tbody{display:block}
+  .tbl.cmp thead{display:none}
+  .tbl.cmp tr{display:grid;gap:.3rem;padding:.6rem .75rem;border-bottom:1px solid var(--line)}
+  .tbl.cmp tr:last-child{border-bottom:0}
+  .tbl.cmp td{display:block;padding:0;border:0}
+  .tbl.cmp td:first-child{font-weight:600}
+  .tbl.cmp td[data-l]::before{content:attr(data-l);display:block;font-size:.8rem;color:var(--muted)}
+}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · chapter 2: lists">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapter 2 of 3</div>
+      <h1>A list is read by its <span class="w">head</span> or by its <span class="w">rank</span>.</h1>
+      <p class="lead">A list stores elements in boxes, one after the other. You can describe it in two ways: recursive, where only the first element is accessible, or iterative, where each element has a rank. This chapter writes and reads the axioms of both, as in the exam.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parts</span><span class="chip">MiMos of weeks 3 and 4 · course sheet “Lists”</span><span class="chip ex">list exercises in the 2023 and 2024 exams</span></div>
+    </div>
+    <div id="heroLists" aria-label="Workshop: the same list read in two ways"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Lists</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>List and box</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>The recursive list</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Writing, evaluating</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>Defining an operation</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>The iterative list</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>insert, delete</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Mystery operation</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Recursive or iterative</span></a></li>
+    </ol>
+    <p class="toc-note">The number of plates gives the part number. A check mark appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="cours-1-types.html">← Chapter 1: abstract types</a><a href="cours-3-piles-files.html">Chapter 3: stacks and queues →</a><a href="index.html">TAA home</a><a href="../qcm/index.html#taa">TAA MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">List and box</a></li><li><a href="#s2">The recursive list</a></li><li><a href="#s3">Writing, evaluating</a></li><li><a href="#s4">Defining an operation</a></li>
+      <li><a href="#s5">The iterative list</a></li><li><a href="#s6">insert, delete</a></li><li><a href="#s7">Mystery operation</a></li><li><a href="#s8">Recursive or iterative</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Part 1</div><h2>List and box: contents and next</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The <b>linear list</b> is the simplest way to organize data. The elements are stored one after the other in <b>boxes</b>, so you can process them one by one, in order.</p>
+          <p>Key point: the order of the elements does not depend on the elements themselves, but on their box in the list. Nothing forces a list to be sorted, and two boxes can hold the same element. <code>{c, a, b}</code> and <code>{a, b, c}</code> contain the same elements, but they are not the same lists.</p>
+          <p>A list therefore defines two types at once: <code>list</code> and <code>box</code>, the cell that holds an element. Two operations work on boxes:</p>
+        </div>
+<pre data-spec data-roles="1" aria-label="The types list and box, and the box operations">
+types
+    list, box
+uses
+    element
+operations
+    contents : box → element
+        next : box → box
+</pre>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-obs">contents</span> : box → element</h4><p>Gets the element of a box.</p><p class="muted"><code>contents(p)</code>: what is stored in the box <code>p</code>.</p></div>
+          <div class="card"><h4><span class="op-int">next</span> : box → box</h4><p>Moves to the next box. The result is a box, not an element.</p><p class="muted">The next element is therefore written <code>contents(next(p))</code>.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li>A list stores its elements in boxes: the order comes from the boxes, not from the values.</li>
+          <li>Two defined types, <code>list</code> and <code>box</code>; <code>element</code> is predefined.</li>
+          <li><code>contents</code> reads a box, <code>next</code> moves to the next box.</li>
+          <li>A list is described in two ways, recursively or iteratively: it is still the same data, only the way you use it changes.</li>
+        </ul></div>
+        <h3>The erratum of the video on next</h3>
+        <div class="prose"><p>The MiMo video on iterative lists contains an error about the <code>next</code> operation. The Moodle erratum restates its profile, <code class="nw">next : box → box</code>, and shows its use on a list <code>li</code> of four pictures: a lightning bolt, a sun, a cloud, a moon. Here they are written by name.</p></div>
+<pre data-spec aria-label="Use of next, from the erratum">
+p2 ← access(li, 2)
+e ← contents(next(p2))
+</pre>
+        <ol class="steps">
+          <li><div><b><code>p2 ← access(li, 2)</code></b>: <code>access(li, 2)</code> gives the box of the 2<sup>nd</sup> element. <code>p2</code> is therefore the box that holds the sun. (<code>access</code> belongs to the iterative list, part 5.)</div></li>
+          <li><div><b><code>next(p2)</code></b>: the next box, the 3<sup>rd</sup>.</div></li>
+          <li><div><b><code>e ← contents(next(p2))</code></b>: you read what this box holds. <code>e</code> is cloud, the 3<sup>rd</sup> element of <code>li</code>.</div></li>
+        </ol>
+        <div id="placeBench" aria-label="Workshop: move a box with next and read its contents"></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><code>next</code> returns a box, not an element. Writing <code>next(p2) = cloud</code> mixes types: it is <code>contents(next(p2))</code> that equals cloud.</li>
+          <li>The course sheet presents <code>contents</code> and <code>next</code> as “the internal box operations”. With the rule from chapter 1, <code>next</code> is indeed internal (it returns a box, a defined type), but <code>contents</code> is an observer (it returns an element, a predefined type).</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Part 2</div><h2>The recursive list: emptylist, cons, tail, head, first</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>First way to describe a list: by how you build it. A list is</p>
+          <ul><li>either <b>empty</b>: <code>emptylist</code>;</li><li>or made of an <b>element</b>, the head, followed by a <b>list</b>: <code>cons(e, λ)</code>.</li></ul>
+          <p>The definition is recursive: what follows the head is again a list. Here is the complete type given on the Moodle, with the box operations from part 1.</p>
+        </div>
+        <div class="legend"><span><i style="background:var(--int)"></i>internal operation</span><span><i style="background:var(--obs)"></i>observer</span><span><i style="background:var(--cst)"></i>constant</span></div>
+<pre data-spec data-roles="1" aria-label="The recursive list type">
+types
+    list, box
+uses
+    element
+operations
+    emptylist : → list
+         cons : element x list → list
+         tail : list → list
+         head : list → box
+     contents : box → element
+        first : list → element
+         next : box → box
+preconditions
+    tail(λ) is-defined-iaoi λ ≠ emptylist
+    head(λ) is-defined-iaoi λ ≠ emptylist
+    first(λ) is-defined-iaoi λ ≠ emptylist
+axioms
+    first(λ) = contents(head(λ))
+    tail(cons(e, λ)) = λ
+    first(cons(e, λ)) = e
+    next(head(λ)) = head(tail(λ))
+with
+    list λ
+    element e
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Operation</th><th>What it gives, on <code>λ = {a, b, c}</code></th></tr></thead>
+          <tbody>
+            <tr><td><code class="op-cst">emptylist</code></td><td>creates a list with no elements</td></tr>
+            <tr><td><code class="op-int">cons(e, λ)</code></td><td>adds an element at the head of the list<br><span class="muted"><code>cons(d, λ)</code> = {d, a, b, c}</span></td></tr>
+            <tr><td><code class="op-int">tail(λ)</code></td><td>the list without its head element<br><span class="muted">{b, c}</span></td></tr>
+            <tr><td><code class="op-int">head(λ)</code></td><td>the first box, the head one<br><span class="muted">the box that holds a</span></td></tr>
+            <tr><td><code class="op-obs">first(λ)</code></td><td>the first element of the list<br><span class="muted">a</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The four axioms, in the order of the Moodle. The workshops number them A1 to A4.</p></div>
+        <div class="grid2">
+          <div class="card"><h4>A1</h4><p><code>first(λ) = contents(head(λ))</code></p><p class="muted">The first element is the contents of the head box.</p></div>
+          <div class="card"><h4>A2</h4><p><code>tail(cons(e, λ)) = λ</code></p><p class="muted">Adding e at the head and then removing the head gives back λ.</p></div>
+          <div class="card"><h4>A3</h4><p><code>first(cons(e, λ)) = e</code></p><p class="muted">The first element of <code>cons(e, λ)</code> is e.</p></div>
+          <div class="card"><h4>A4</h4><p><code>next(head(λ)) = head(tail(λ))</code></p><p class="muted">The box that follows the head is the head of the rest of the list.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li>A recursive list is either <code>emptylist</code> or <code>cons(e, λ)</code>: an element followed by a list.</li>
+          <li><b>Only the head element is immediately accessible</b>: <code>first(λ)</code>, and its box <code>head(λ)</code>. To reach the others, you remove the head with <code>tail</code>.</li>
+          <li><code>tail</code>, <code>head</code> and <code>first</code> make no sense on the empty list: their precondition is <code class="nw">λ ≠ emptylist</code>.</li>
+        </ul></div>
+        <div class="prose"><p>Build lists and watch: <code>cons</code> always adds at the head, and only the head can be read.</p></div>
+        <div id="consBench" aria-label="Workshop: build a list with cons"></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><code>cons</code> takes the element first: <code>cons(e, λ)</code>, never <code>cons(λ, e)</code>. Its profile is element × list → list.</li>
+          <li><code>tail</code> returns a list, <code>first</code> an element. <code>first(tail(λ))</code> makes sense: it is the 2<sup>nd</sup> element. <code>tail(first(λ))</code> does not: <code>tail</code> expects a list.</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Part 3</div><h2>Writing and evaluating a recursive list</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A list is written between braces, in the order of its elements: <code>{e1, e2, e3}</code>. With the operations of the type, this list is written <code>cons(e1, cons(e2, cons(e3, emptylist)))</code>.</p>
+          <p>The term is read from the inside out: you start from the empty list, and each <code>cons</code> adds an element at the head.</p>
+        </div>
+        <div class="tbl wc"><table>
+          <thead><tr><th>List</th><th>Term</th></tr></thead>
+          <tbody>
+            <tr><td>empty</td><td><code>emptylist</code></td></tr>
+            <tr><td>{e3}</td><td><code>cons(e3, emptylist)</code></td></tr>
+            <tr><td>{e2, e3}</td><td><code>cons(e2, cons(e3, emptylist))</code></td></tr>
+            <tr><td>{e1, e2, e3}</td><td><code>cons(e1, cons(e2, cons(e3, emptylist)))</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li><code>{e1, e2, e3} = cons(e1, cons(e2, cons(e3, emptylist)))</code>: one <code>cons</code> per element, in the order of the list, and <code>emptylist</code> at the very bottom.</li>
+          <li>The last element added is the head: <code>e3</code> was added first, <code>e1</code> last.</li>
+          <li>The k-th element is obtained with k&nbsp;−&nbsp;1 <code>tail</code>, then <code>first</code>: the 3<sup>rd</sup> element of λ is <code>first(tail(tail(λ)))</code>.</li>
+        </ul></div>
+        <h3>Evaluating a term</h3>
+        <div class="prose">
+          <p>To compute a term, you rewrite it with the axioms, as in chapter 1. Here two axioms do all the work: A2, <code>tail(cons(e, λ)) = λ</code>, and A3, <code>first(cons(e, λ)) = e</code>. Each applies to a piece of the form “tail of a cons” or “first of a cons”.</p>
+          <p>If a <code>tail</code> or a <code>first</code> lands on <code>emptylist</code>, the precondition is violated: the term is undefined.</p>
+        </div>
+        <div id="rwRec"></div>
+        <div class="prose"><p>Your turn, with λ = {b, a, c}. Answer in your head, then open the answer.</p></div>
+        <div class="qa-list">
+          <details class="qa"><summary>Write λ with <code>cons</code> and <code>emptylist</code>.</summary><p><code>cons(b, cons(a, cons(c, emptylist)))</code></p></details>
+          <details class="qa"><summary>What is <code>first(tail(λ))</code>?</summary><p><code>a</code>: A2 removes b, then A3 reads the new head.</p></details>
+          <details class="qa"><summary>What is <code>tail(tail(tail(λ)))</code>?</summary><p><code>emptylist</code>: the three <code>tail</code> remove the three elements.</p></details>
+          <details class="qa"><summary>And <code>first(tail(tail(tail(λ))))</code>?</summary><p>Undefined: it is <code>first(emptylist)</code>, which violates the precondition <code>λ ≠ emptylist</code>.</p></details>
+        </div>
+        <div class="note why"><span class="tag">Why it is useful</span><p>Every non-empty list can be rebuilt from its two pieces: <code>cons(first(λ), tail(λ)) = λ</code>. Indeed, a non-empty list is written <code>cons(e, λ′)</code>, and A3 and A2 give back <code>e</code> and <code>λ′</code>. You will use this in part 4.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p><code>emptylist</code> is not an element, and a one-element list is not that element. <code>cons(a, emptylist)</code> is the list {a}; <code>first(cons(a, emptylist))</code> is the element <code>a</code>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Part 4</div><h2>Defining a new operation on a recursive list</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Typical exam exercise in 2023 and 2024: add an operation to the recursive list, giving its preconditions if there are any and its axioms.</p>
+          <p>The method comes from the definition itself: a list has only two forms, <code>emptylist</code> or <code>cons(e, λ)</code>. So you write one axiom for each form. In the <code>cons(e, λ)</code> case, you can use the operation itself on <code>λ</code>, which has one element fewer: the axiom is recursive.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>The profile.</b> Find the types of the arguments and of the result. If the operation returns a type the list does not use yet (integer, boolean), add it to <code>uses</code>.</div></li>
+          <li><div><b>The preconditions.</b> Ask yourself whether the operation makes sense on the empty list. If it does: no precondition, and say so. If not: <code>… is-defined-iaoi λ ≠ emptylist</code>.</div></li>
+          <li><div><b>The <code>emptylist</code> case.</b> Give the value directly, unless the precondition rules it out.</div></li>
+          <li><div><b>The <code>cons(e, λ)</code> case.</b> Express the result with <code>e</code> and with the operation applied to <code>λ</code>.</div></li>
+          <li><div><b>Check on an example.</b> Rewrite the operation on a list of two or three elements: you must get the right result.</div></li>
+        </ol>
+        <h3>Example 1: length</h3>
+        <div class="prose"><p>The recursive list has no operation that counts its elements. Let us add <code class="nw">length : list → integer</code>. The result is an integer: <code>integer</code> joins <code>uses</code>. The empty list has a length, 0: no precondition.</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Case <code>emptylist</code></h4><p>No element.</p>
+<pre data-spec data-cls="flat">
+length(emptylist) = 0
+</pre></div>
+          <div class="card"><h4>Case <code>cons(e, λ)</code></h4><p>One element more than λ.</p>
+<pre data-spec data-cls="flat">
+length(cons(e, λ))
+= length(λ) + 1
+</pre></div>
+        </div>
+<pre data-spec aria-label="The length operation added to the recursive list">
+uses
+    element, integer
+operations
+    length : list → integer
+preconditions
+    none
+axioms
+    length(emptylist) = 0
+    length(cons(e, λ)) = length(λ) + 1
+with
+    list λ
+    element e
+</pre>
+        <h3>Example 2: concatenate (exam of 30 October 2023)</h3>
+        <div class="prose">
+          <p>The paper dealt with the recursive list without boxes. It added <code>concatenate : list × list → list</code>, which puts λ2 after λ, and asked for the axioms, with the preconditions if there are any.</p>
+          <p>Two lists as arguments: you split the <b>first</b> one. The result starts with the elements of λ, so if λ starts with <code>e</code>, the result does too. The second list is simply copied at the end.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4>Case <code>emptylist</code></h4><p>Nothing to put in front: λ2 remains.</p>
+<pre data-spec data-cls="flat">
+concatenate(emptylist, λ2)
+= λ2
+</pre></div>
+          <div class="card"><h4>Case <code>cons(e, λ)</code></h4><p><code>e</code> stays at the head, followed by the concatenation of the rest of the list with λ2.</p>
+<pre data-spec data-cls="flat">
+concatenate(cons(e, λ), λ2)
+= cons(e, concatenate(λ, λ2))
+</pre></div>
+        </div>
+<pre data-spec aria-label="The concatenate operation added to the recursive list">
+operations
+    concatenate : list x list → list
+preconditions
+    none
+axioms
+    concatenate(emptylist, λ2) = λ2
+    concatenate(cons(e, λ), λ2) = cons(e, concatenate(λ, λ2))
+with
+    list λ, λ2
+    element e
+</pre>
+        <div class="note why"><span class="tag">Why two axioms are enough</span><p>Every list is either <code>emptylist</code> or <code>cons(e, λ)</code>: the two axioms cover all the cases (completeness) and do not contradict each other (consistency). Each use of the recursive axiom removes one element from the first list, so you always end up in the <code>emptylist</code> case. An axiom <code>concatenate(λ, emptylist) = λ</code> is not needed: it can be deduced from the other two (try “empty λ2” in the workshop).</p></div>
+        <div class="prose"><p>In the workshop, the axioms of length are L1 and L2, those of concatenate C1 and C2; A2 and A3 are those of part 2. Change the terms to test other lists.</p></div>
+        <div id="rwOps"></div>
+        <div class="note keep"><span class="tag">Key points: the method by cases</span><ul>
+          <li>One axiom for <code>emptylist</code>, one axiom for <code>cons(e, λ)</code>.</li>
+          <li>The <code>cons(e, λ)</code> case uses the operation on <code>λ</code>: that is the recursion.</li>
+          <li>A precondition only if the operation makes no sense on the empty list, like <code>first</code> or <code>tail</code>. Otherwise, write “none”.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Do not invent a precondition: <code>length</code> and <code>concatenate</code> make sense on empty lists.</li>
+          <li>If you write the non-empty case with <code>first</code> and <code>tail</code>, restrict it to non-empty lists: <code class="nw">λ ≠ emptylist ⇒</code> <code>concatenate(λ, λ2) = cons(first(λ), concatenate(tail(λ), λ2))</code>. Without the condition, the axiom would also apply to <code>emptylist</code>, where <code>first</code> is not defined.</li>
+          <li>Add <code>integer</code> or <code>boolean</code> to <code>uses</code> if the operation needs it.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <p>30 October 2023 (out of 10 points): after course questions, you had to write the preconditions and the axioms of <code>concatenate</code> for the recursive list without boxes. Accepted answer: no precondition, then the two axioms above.</p>
+          <p>30 October 2024, exercise 2 (5 points): same request for <code>deletegreater : list × element → list</code>, which deletes all the elements strictly greater than a given element. Same method by cases. Practice on <a href="entrainement.html#p2024-ex2">exercise 2 of 2024</a>.</p>
+        </div>
+        <div class="prose"><p>Your turn. Choose an operation, write its preconditions and its axioms, then click Test: the workshop tries them on all the small lists and shows the first example that fails (no axiom applies, two axioms contradict each other, an undefined computation, a wrong result), with its step-by-step rewriting. Each operation starts from a draft that contains a common mistake: find it and fix it.</p></div>
+        <div class="viz-axiomes" data-viz="axiomes"></div>
+        <div data-check-ref="taa/cours-2-listes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Part 5</div><h2>The iterative list: rank, access, nth, length</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Second way to describe the same data: by <b>ranks</b>. This time, all the elements are accessible, by their rank. The type <code>integer</code> is used to represent ranks: the first element has rank 1, the last has rank <code>length(λ)</code>.</p>
+        </div>
+<pre data-spec data-roles="1" aria-label="The iterative list type: signature">
+types
+    list, box
+uses
+    integer, element
+operations
+    emptylist : → list
+       access : list x integer → box
+     contents : box → element
+          nth : list x integer → element
+       length : list → integer
+       delete : list x integer → list
+       insert : list x integer x element → list
+         next : box → box
+</pre>
+        <div class="tbl wc"><table>
+          <thead><tr><th>Operation</th><th>What it gives, on <code>λ = {a, b, c}</code></th></tr></thead>
+          <tbody>
+            <tr><td><code class="op-int">access(λ, i)</code></td><td>the box of the i-th element of λ<br><span class="muted"><code>access(λ, 2)</code>: the box that holds b</span></td></tr>
+            <tr><td><code class="op-obs">nth(λ, i)</code></td><td>the i-th element of λ<br><span class="muted"><code>nth(λ, 2) = b</code></span></td></tr>
+            <tr><td><code class="op-obs">length(λ)</code></td><td>the number of elements<br><span class="muted"><code>length(λ) = 3</code></span></td></tr>
+            <tr><td><code class="op-int">delete(λ, k)</code></td><td>deletes the k-th element of λ<br><span class="muted">part 6</span></td></tr>
+            <tr><td><code class="op-int">insert(λ, k, e)</code></td><td>inserts e at rank k in λ<br><span class="muted">part 6</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>An iterative list is described by its length and by its elements, rank by rank. The course sheet defines λ = {e1, e2, e3} this way:</p></div>
+<pre data-spec aria-label="The list {e1, e2, e3} as an iterative list">
+length(λ) = 3
+nth(λ, 1) = e1
+nth(λ, 2) = e2
+nth(λ, 3) = e3
+</pre>
+        <div class="prose"><p>For now, one precondition and three axioms, numbered I1 to I3 in the workshop below:</p></div>
+<pre data-spec aria-label="Precondition of access and axioms of length, contents and next">
+preconditions
+    access(λ, k) is-defined-iaoi λ ≠ emptylist &amp; 1 ≤ k ≤ length(λ)
+axioms
+    length(emptylist) = 0
+    contents(access(λ, k)) = nth(λ, k)
+    next(access(λ, k)) = access(λ, k + 1)
+with
+    list λ
+    integer k
+</pre>
+        <div class="prose"><p>The second axiom links the two readings: the contents of the k-th box is the k-th element. The third says that the box that follows the k-th is the (k&nbsp;+&nbsp;1)-th. Together, they prove the erratum of part 1: <code>contents(next(access(li, 2)))</code> rewrites to <code>nth(li, 3)</code>, the 3<sup>rd</sup> element.</p></div>
+        <div id="rwIter"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li>All the elements are accessible by their rank, from 1 to <code>length(λ)</code>.</li>
+          <li><code>access</code> returns a box, <code>nth</code> an element: <code>contents(access(λ, k)) = nth(λ, k)</code>.</li>
+          <li>An iterative list is known as soon as you know its length and <code>nth(λ, i)</code> for each rank i from 1 to <code>length(λ)</code>. This is how a result is described in parts 6 and 7.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Ranks start at 1, not 0. The last element is <code>nth(λ, length(λ))</code>.</li>
+          <li><code>access</code> is an internal operation (<code>box</code> is a defined type); <code>nth</code> and <code>length</code> are observers.</li>
+          <li><code>nth(λ, i)</code> only makes sense for <code class="nw">1 ≤ i ≤ length(λ)</code>: no axiom speaks about the other ranks, even though the course sheet gives it no precondition.</li>
+        </ul></div>
+        <div data-check-ref="taa/cours-2-listes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Part 6</div><h2>insert and delete: the ranks shift</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Inserting or deleting an element in the middle of the list moves all those that follow. The axioms describe this shift rank by rank: for each rank i of the <b>result</b>, they say which element of λ is there.</p>
+          <p>First, the preconditions:</p>
+        </div>
+<pre data-spec aria-label="Preconditions of delete and insert">
+preconditions
+    delete(λ, k) is-defined-iaoi λ ≠ emptylist &amp; 1 ≤ k ≤ length(λ)
+    insert(λ, k, e) is-defined-iaoi 1 ≤ k ≤ length(λ) + 1
+</pre>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-int">delete</span>(λ, k)</h4><p>You can only delete an element that exists: k goes from 1 to <code>length(λ)</code>. An empty list has nothing to delete.</p></div>
+          <div class="card"><h4><span class="op-int">insert</span>(λ, k, e)</h4><p>k can go up to <code>length(λ) + 1</code>: inserting at that rank means adding e at the end. You can also insert into an empty list, at rank 1.</p></div>
+        </div>
+        <div class="prose"><p>Then the axioms. The first two give the length of the result; the others, its i-th element, with one case per range of ranks.</p></div>
+<pre data-spec aria-label="Axioms of delete and insert">
+axioms
+    length(delete(λ, k)) = length(λ) − 1
+    length(insert(λ, k, e)) = length(λ) + 1
+
+    1 ≤ i &lt; k ⇒ nth(delete(λ, k), i) = nth(λ, i)
+    k ≤ i ≤ length(λ) − 1 ⇒ nth(delete(λ, k), i) = nth(λ, i + 1)
+
+    1 ≤ i &lt; k ⇒ nth(insert(λ, k, e), i) = nth(λ, i)
+    k = i ⇒ nth(insert(λ, k, e), i) = e
+    k &lt; i ≤ length(λ) + 1 ⇒ nth(insert(λ, k, e), i) = nth(λ, i − 1)
+with
+    list λ
+    integer i, k
+    element e
+</pre>
+        <h3>Reading the shifts</h3>
+        <div class="prose"><p>For each axiom, ask yourself the same question: <b>the element that is at rank i of the result, at which rank was it in λ?</b></p></div>
+        <ol class="steps">
+          <li><div><b>Before k</b> (<code class="nw">1 ≤ i &lt; k</code>): nothing moved. The element is at the same rank: <code class="nw">nth(λ, i)</code>.</div></li>
+          <li><div><b>After a deletion</b> (<code class="nw">k ≤ i</code>): the elements that followed rank k moved forward by one rank. The one that is now at rank i was just behind, at rank i&nbsp;+&nbsp;1: <code class="nw">nth(λ, i + 1)</code>.</div></li>
+          <li><div><b>After an insertion</b>: at rank k is the new element <code>e</code>. Beyond it (<code class="nw">k &lt; i</code>), the elements moved back by one rank: the one that is at rank i was at rank i&nbsp;−&nbsp;1, hence <code class="nw">nth(λ, i − 1)</code>.</div></li>
+          <li><div><b>The bounds</b>: the last case stops at the length of the result. After <code>delete</code>, there is one element fewer: i goes up to <code class="nw">length(λ) − 1</code>. After <code>insert</code>, one more: i goes up to <code class="nw">length(λ) + 1</code>.</div></li>
+        </ol>
+        <div class="prose"><p>On λ = {a, b, c, d, e}, with k = 2:</p></div>
+        <div class="tbl wc"><table>
+          <thead><tr><th>Rank i</th><th><code>delete(λ, 2) = {a, c, d, e}</code></th><th><code>insert(λ, 2, x) = {a, x, b, c, d, e}</code></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>nth(λ, 1) = a</code> (i &lt; k)</td><td><code>nth(λ, 1) = a</code> (i &lt; k)</td></tr>
+            <tr><td>2</td><td><code>nth(λ, 3) = c</code> (k ≤ i)</td><td><code>x</code> (i = k)</td></tr>
+            <tr><td>3</td><td><code>nth(λ, 4) = d</code></td><td><code>nth(λ, 2) = b</code> (k &lt; i)</td></tr>
+            <tr><td>4</td><td><code>nth(λ, 5) = e</code></td><td><code>nth(λ, 3) = c</code></td></tr>
+            <tr><td>5</td><td class="muted">none: length 4</td><td><code>nth(λ, 4) = d</code></td></tr>
+            <tr><td>6</td><td class="muted">none</td><td><code>nth(λ, 5) = e</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Choose the operation and the rank k: the colors follow the cases of the axioms.</p></div>
+        <div id="ranksBench"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li>In the axioms, i is always a rank of the <b>result</b>.</li>
+          <li>Before k: same rank. After k: <code class="nw">i + 1</code> for delete (the elements move forward), <code class="nw">i − 1</code> for insert (they move back).</li>
+          <li>The bound of the last case is the length of the result: <code class="nw">length(λ) − 1</code> after delete, <code class="nw">length(λ) + 1</code> after insert.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The shifts seem backwards: delete removes an element, and yet the axiom says <code class="nw">i + 1</code>. That is normal: you go and look for the element further along in λ.</li>
+          <li>For delete, there is no separate <code class="nw">i = k</code> case: it is included in <code class="nw">k ≤ i</code>, because the element that followed takes the vacated spot.</li>
+          <li><code>insert</code> accepts rank <code class="nw">k = length(λ) + 1</code>: it is an addition at the end. <code>delete</code> rejects it: that rank does not exist in λ.</li>
+        </ul></div>
+        <div class="prose"><p>Your turn, with λ = {a, b, c, d}.</p></div>
+        <div class="qa-list">
+          <details class="qa"><summary>What is <code>nth(delete(λ, 3), 3)</code>?</summary><p><code>d</code>: case <code>k ≤ i ≤ length(λ) − 1</code> (3 ≤ 3 ≤ 3), so <code>nth(λ, 4)</code>.</p></details>
+          <details class="qa"><summary>What is <code>nth(insert(λ, 1, x), 4)</code>?</summary><p><code>c</code>: case <code>k &lt; i ≤ length(λ) + 1</code> (1 &lt; 4 ≤ 5), so <code>nth(λ, 3)</code>.</p></details>
+          <details class="qa"><summary>What is <code>length(insert(delete(λ, 1), 2, x))</code>?</summary><p>4: the deletion gives 4 − 1 = 3, the insertion 3 + 1 = 4.</p></details>
+          <details class="qa"><summary>Is <code>insert(λ, 6, x)</code> defined?</summary><p>No: the precondition requires <code>6 ≤ length(λ) + 1</code>, that is 6 ≤ 5, which is false.</p></details>
+        </div>
+        <div data-check-ref="taa/cours-2-listes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Part 7</div><h2>Reading a mystery operation</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Another exam exercise: an unknown operation on the iterative list, given only by its precondition and its axioms. You must compute its result on a concrete list. No need to guess what it does: the axioms are enough, exactly as for <code>insert</code> and <code>delete</code>.</p>
+          <p>Here is an operation <code>mystery</code>, written the way an exam would write it:</p>
+        </div>
+<pre data-spec aria-label="The mystery operation: precondition and axioms">
+operations
+    mystery : list x integer x integer → list
+preconditions
+    mystery(λ, x, y) is-defined-iaoi 1 ≤ x ≤ y ≤ length(λ)
+axioms
+    1 ≤ x ≤ y ≤ length(λ) ⇒ length(mystery(λ, x, y)) = length(λ) + y − x + 1
+    1 ≤ x ≤ y ≤ length(λ) &amp; 1 ≤ i ≤ y ⇒ nth(mystery(λ, x, y), i) = nth(λ, i)
+    1 ≤ x ≤ y ≤ length(λ) &amp; y &lt; i ≤ length(λ) + y − x + 1
+                ⇒ nth(mystery(λ, x, y), i) = nth(λ, i − y + x − 1)
+with
+    list λ
+    integer x, y, i
+</pre>
+        <ol class="steps">
+          <li><div><b>The precondition.</b> Replace x, y and <code>length(λ)</code> with their values. If it is false, the result is undefined: you are done.</div></li>
+          <li><div><b>The length of the result first.</b> Compute it with the length axiom. It tells you how many ranks to fill.</div></li>
+          <li><div><b>Each rank by its case.</b> For i from 1 to that length, find the axiom whose condition contains i, then compute the rank to read in λ.</div></li>
+          <li><div><b>Read and write.</b> Read the elements in λ and write the result between braces. Count: there must be as many elements as the length.</div></li>
+        </ol>
+        <h3>Example: mystery(λ, 2, 3) with λ = {a, b, c, d, e}</h3>
+        <div class="prose"><p>Precondition: 1 ≤ 2 ≤ 3 ≤ 5, true. Length: 5 + 3 − 2 + 1 = 7. The seven ranks i remain to be filled. In the second case, the rank read in λ is <code class="nw">i − y + x − 1</code>, that is <code class="nw">i − 3 + 2 − 1 = i − 2</code>:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th><code>i</code></th><th>Case</th><th>Rank read in <code>λ</code></th><th>Element</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>1 ≤ i ≤ y</code></td><td>1</td><td>a</td></tr>
+            <tr><td>2</td><td><code>1 ≤ i ≤ y</code></td><td>2</td><td>b</td></tr>
+            <tr><td>3</td><td><code>1 ≤ i ≤ y</code></td><td>3</td><td>c</td></tr>
+            <tr><td>4</td><td><code>y &lt; i ≤ 7</code></td><td>4 − 2 = 2</td><td>b</td></tr>
+            <tr><td>5</td><td><code>y &lt; i ≤ 7</code></td><td>5 − 2 = 3</td><td>c</td></tr>
+            <tr><td>6</td><td><code>y &lt; i ≤ 7</code></td><td>6 − 2 = 4</td><td>d</td></tr>
+            <tr><td>7</td><td><code>y &lt; i ≤ 7</code></td><td>7 − 2 = 5</td><td>e</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Result: <code>mystery(λ, 2, 3) = {a, b, c, b, c, d, e}</code>. The piece from x to y, here b and c, is copied right after itself: <code>mystery</code> duplicates this piece. Finding this meaning is not required, but it is a good check.</p></div>
+        <div class="prose"><p>Your turn: choose other arguments, write your answer, then check it or step through the calculation. One of the pairs does not satisfy the precondition.</p></div>
+        <div id="mysteryBench"></div>
+        <div class="note keep"><span class="tag">Key points: the method</span><ol>
+          <li>The precondition, with the values.</li>
+          <li>The length of the result: the number of ranks to fill.</li>
+          <li>For each rank i, the case that contains it, then the rank to read in λ.</li>
+          <li>The result between braces, with the right length.</li>
+        </ol></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The cases are about the rank i of the <b>result</b>, not that of λ.</li>
+          <li>Compute the formulas with the values: for x = 2 and y = 3, <code class="nw">i − y + x − 1</code> is <code class="nw">i − 2</code>.</li>
+          <li>The axioms may repeat the precondition (<code>1 ≤ x ≤ y ≤ length(λ) &amp; …</code>). It does not depend on i: check it only once, at the start.</li>
+          <li>With x = y, the piece has a single element: the formulas still apply.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>30 October 2024 (30 min, out of 10 points), exercise 1 (5 points): on the iterative list, a <code>mystery</code> operation with profile <code>list × integer × integer → list</code>, defined by its axioms, to evaluate on a given list. It is the exercise of this part, with a different operation. Do the real paper: <a href="entrainement.html#p2024-ex1">exercise 1 of 2024</a>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Part 8</div><h2>Recursive or iterative?</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course sheet says it from the start: there are several ways to describe a list, but it is still the same data, only the way you use it changes. The workshop at the top of the page shows it: for each element, it gives both notations.</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Recursive list</h4><p>A list is empty, or an element followed by a list. Only the head element is immediately accessible.</p><p class="muted">Operations: emptylist, cons, tail, head, first. A new operation is defined by cases: <code>emptylist</code> and <code>cons(e, λ)</code>.</p></div>
+          <div class="card"><h4>Iterative list</h4><p>All the elements are accessible, by their rank. A list is known by its length and its <code>nth</code>.</p><p class="muted">Operations: emptylist, access, nth, length, insert, delete. A result is described by its length and one case per range of ranks.</p></div>
+        </div>
+        <h3>The same question, two notations</h3>
+        <div class="prose"><p>For λ = {e1, e2, e3}:</p></div>
+        <div class="tbl wc cmp"><table>
+          <thead><tr><th>Question</th><th>Recursive list</th><th>Iterative list</th></tr></thead>
+          <tbody>
+            <tr><td>The list</td><td data-l="recursive"><code>cons(e1, cons(e2, cons(e3, emptylist)))</code></td><td data-l="iterative"><code>length(λ) = 3</code><br><code>nth(λ, 1) = e1</code><br><code>nth(λ, 2) = e2</code><br><code>nth(λ, 3) = e3</code></td></tr>
+            <tr><td>1<sup>st</sup> element</td><td data-l="recursive"><code>first(λ)</code></td><td data-l="iterative"><code>nth(λ, 1)</code></td></tr>
+            <tr><td>3<sup>rd</sup> element</td><td data-l="recursive"><code>first(tail(tail(λ)))</code></td><td data-l="iterative"><code>nth(λ, 3)</code></td></tr>
+            <tr><td>1<sup>st</sup> box</td><td data-l="recursive"><code>head(λ)</code></td><td data-l="iterative"><code>access(λ, 1)</code></td></tr>
+            <tr><td>Next box</td><td data-l="recursive"><code>next(head(λ)) = head(tail(λ))</code></td><td data-l="iterative"><code>next(access(λ, k)) = access(λ, k + 1)</code></td></tr>
+            <tr><td>Add</td><td data-l="recursive"><code>cons(e, λ)</code>: at the head only</td><td data-l="iterative"><code>insert(λ, k, e)</code>: at any rank from 1 to <code>length(λ) + 1</code></td></tr>
+            <tr><td>Remove</td><td data-l="recursive"><code>tail(λ)</code>: the head only</td><td data-l="iterative"><code>delete(λ, k)</code>: at any rank from 1 to <code>length(λ)</code></td></tr>
+            <tr><td>Length</td><td data-l="recursive">to be defined (part 4)</td><td data-l="iterative"><code>length(λ)</code></td></tr>
+          </tbody>
+        </table></div>
+        <h3>Which one to use?</h3>
+        <div class="prose"><ul>
+          <li><b>First look at the operations the question gives you.</b> If they are <code>cons</code>, <code>tail</code>, <code>first</code>, reason by cases <code>emptylist</code> / <code>cons(e, λ)</code>. If they are <code>nth</code>, <code>length</code>, <code>insert</code>, describe the result by its length and its <code>nth</code>.</li>
+          <li>The recursive description is natural for processing that walks through the list from the head: counting, concatenating, removing some elements.</li>
+          <li>The iterative description is required as soon as a rank matters: reading the k-th element, inserting or deleting in the middle.</li>
+        </ul></div>
+        <h3>All the operations</h3>
+        <div class="tbl wc"><table>
+          <thead><tr><th>Operation and role</th><th>Precondition</th></tr></thead>
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Both lists</th></tr>
+            <tr><td><code class="op-cst">emptylist</code> <span class="op-cst">constant</span></td><td>none</td></tr>
+            <tr><td><code class="op-obs">contents(p)</code> <span class="op-obs">observer</span></td><td>none</td></tr>
+            <tr><td><code class="op-int">next(p)</code> <span class="op-int">internal</span></td><td>none in the course sheet</td></tr>
+          </tbody>
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Recursive list</th></tr>
+            <tr><td><code class="op-int">cons(e, λ)</code> <span class="op-int">internal</span></td><td>none</td></tr>
+            <tr><td><code class="op-int">tail(λ)</code> <span class="op-int">internal</span></td><td><code>λ ≠ emptylist</code></td></tr>
+            <tr><td><code class="op-int">head(λ)</code> <span class="op-int">internal</span></td><td><code>λ ≠ emptylist</code></td></tr>
+            <tr><td><code class="op-obs">first(λ)</code> <span class="op-obs">observer</span></td><td><code>λ ≠ emptylist</code></td></tr>
+          </tbody>
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Iterative list</th></tr>
+            <tr><td><code class="op-int">access(λ, k)</code> <span class="op-int">internal</span></td><td><code>λ ≠ emptylist &amp; 1 ≤ k ≤ length(λ)</code></td></tr>
+            <tr><td><code class="op-obs">nth(λ, i)</code> <span class="op-obs">observer</span></td><td>none in the course sheet (ranks 1 to <code>length(λ)</code>)</td></tr>
+            <tr><td><code class="op-obs">length(λ)</code> <span class="op-obs">observer</span></td><td>none</td></tr>
+            <tr><td><code class="op-int">insert(λ, k, e)</code> <span class="op-int">internal</span></td><td><code>1 ≤ k ≤ length(λ) + 1</code></td></tr>
+            <tr><td><code class="op-int">delete(λ, k)</code> <span class="op-int">internal</span></td><td><code>λ ≠ emptylist &amp; 1 ≤ k ≤ length(λ)</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul>
+          <li>Recursive and iterative describe the same list; only the way you use it changes.</li>
+          <li>Recursive: only the head is accessible, you reason by cases <code>emptylist</code> / <code>cons(e, λ)</code>.</li>
+          <li>Iterative: everything is accessible by rank, you reason with the length and with ranges of ranks.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Do not mix the two sets of operations in the same answer. If the paper gives you the recursive list, <code>nth</code> and <code>length</code> do not exist, unless you define them yourself as in part 4.</p></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>The TAA exams of 2023 and 2024 were partly about lists: <code>concatenate</code> on the recursive list in 2023; in 2024, the mystery operation on the iterative list (exercise 1) then <code>deletegreater</code> on the recursive list (exercise 2). The algo exams from 2017 to 2022 already contained an abstract types exercise on lists, recursive or iterative. Practice: <a href="entrainement.html#p2024-ex1">exercise 1 of 2024</a>, <a href="entrainement.html#p2024-ex2">exercise 2 of 2024</a>.</p></div>
+        <div data-check-ref="taa/cours-2-listes.html#s8" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="taa:listes:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Chapter 3 moves on to <a href="cours-3-piles-files.html">stacks, queues and sets</a>. You will find the shape of the recursive list axioms there: <code>pop(push(s, e)) = s</code> looks a lot like <code>tail(cons(e, λ)) = λ</code>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../data/en/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa, U = R.util;
+  function esc(s) { return U.esc(String(s)); }
+  function rid() { return Math.random().toString(36).slice(2, 7); }
+
+  /* colors of the roles in the displayed terms (English names: the axiom sets of an English page are renamed) */
+  var ROLES = { emptylist: 'cst', cons: 'int', tail: 'int', head: 'int', first: 'obs', contents: 'obs', next: 'int',
+    access: 'int', nth: 'obs', length: 'obs', insert: 'int', 'delete': 'int', concatenate: 'int' };
+  function term(src) { return T.term.show(T.term.parse(src), { set: { roles: ROLES } }); }
+  function head(a, b) { return '<div class="bench-head"><span>' + esc(a) + '</span><span>' + esc(b) + '</span></div>'; }
+  function cell(x, b, cls) { return '<div class="rank' + (cls ? ' ' + cls : '') + '"><b>' + esc(b) + '</b><span>' + esc(x) + '</span></div>'; }
+  function ord(k) { var m = k % 100; return k + (m >= 11 && m <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[k % 10] || 'th')); }
+  function rep(s, n) { var o = ''; for (var i = 0; i < n; i++) o += s; return o; }
+  function andList(a) { return a.length < 2 ? a.join('') : a.length === 2 ? a[0] + ' and ' + a[1] : a.slice(0, -1).join(', ') + ', and ' + a[a.length - 1]; }
+  function pressOnly(btns, b) { btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }
+
+  /* ---------- axiom sets: those of R.taa.rewrite.SETS.LISTE (already renamed on this page), written with λ as in the lesson ---------- */
+  var LISTE = T.rewrite.SETS.LISTE;
+  function lam(s) { return s.replace(/\bl2\b/g, 'λ2').replace(/\bl\b/g, 'λ'); }
+  function recSet(name, extra) {
+    return { name: name, vars: { 'λ': 1, 'λ2': 1, e: 1 }, roles: ROLES, partial: LISTE.partial,
+      axioms: LISTE.axioms.map(function (a) { return { id: a.id, l: lam(a.l), r: lam(a.r) }; }).concat(extra || []) };
+  }
+  var REC = recSet('recursive list');
+  var RECX = recSet('recursive list + length, concatenate', [
+    { id: 'L1', l: 'length(emptylist)', r: '0' },
+    { id: 'L2', l: 'length(cons(e, λ))', r: 'length(λ) + 1' },
+    { id: 'C1', l: 'concatenate(emptylist, λ2)', r: 'λ2' },
+    { id: 'C2', l: 'concatenate(cons(e, λ), λ2)', r: 'cons(e, concatenate(λ, λ2))' }
+  ]);
+  var ITER = { name: 'iterative list (excerpt)', vars: { 'λ': 1, k: 1 }, roles: ROLES, axioms: [
+    { id: 'I1', l: 'length(emptylist)', r: '0' },
+    { id: 'I2', l: 'contents(access(λ, k))', r: 'nth(λ, k)' },
+    { id: 'I3', l: 'next(access(λ, k))', r: 'access(λ, k + 1)' }
+  ] };
+
+  /* ---------- header: the same list read in two ways ---------- */
+  function twoViews(el) {
+    var L = ['a', 'b', 'c', 'd'];
+    el.classList.add('bench');
+    el.innerHTML = head('Try it: choose the element to read', 'λ = {a, b, c, d}') +
+      '<div class="bench-body">' +
+      '<div class="row" role="group" aria-label="Element to read">' + L.map(function (x, i) {
+        return '<button type="button" class="chip-btn" data-k="' + (i + 1) + '" aria-pressed="false">' + ord(i + 1) + ': ' + x + '</button>';
+      }).join('') + '</div>' +
+      '<div class="rw-now"><span class="lbl">Recursive list: only the head is accessible</span><div class="ranks" data-rc></div><div class="term" data-rt></div><p class="bn-why" data-rw></p></div>' +
+      '<div class="rw-now"><span class="lbl">Iterative list: each element has a rank</span><div class="ranks" data-ic></div><div class="term" data-it></div><p class="bn-why" data-iw></p></div>' +
+      '</div>';
+    var btns = U.$$('[data-k]', el);
+    function paint(k) {
+      var x = L[k - 1];
+      el.querySelector('[data-rc]').innerHTML = L.map(function (y, i) {
+        return i < k - 1 ? cell(y, 'tail', 'gone') : (i === k - 1 ? cell(y, 'head', 'k') : cell(y, ' ', ''));
+      }).join('');
+      el.querySelector('[data-rt]').innerHTML = term('first(' + rep('tail(', k - 1) + 'λ' + rep(')', k - 1) + ')') + ' = <b>' + esc(x) + '</b>';
+      el.querySelector('[data-rw]').textContent = k === 1 ? 'a is already at the head: first is enough.'
+        : 'Remove ' + andList(L.slice(0, k - 1)) + ' first, using tail ' + (k === 2 ? 'once' : (k - 1) + ' times') + ', then read the new head with first.';
+      el.querySelector('[data-ic]').innerHTML = L.map(function (y, i) { return cell(y, i + 1, i === k - 1 ? 'k' : ''); }).join('');
+      el.querySelector('[data-it]').innerHTML = term('nth(λ, ' + k + ')') + ' = <b>' + esc(x) + '</b>';
+      el.querySelector('[data-iw]').textContent = 'Direct access by rank: one operation, whatever the rank.';
+      pressOnly(btns, btns[k - 1]);
+    }
+    btns.forEach(function (b) { b.addEventListener('click', function () { paint(+b.dataset.k); }); });
+    paint(3);
+  }
+
+  /* ---------- part 1: a box, the next one, its contents (the erratum) ---------- */
+  function placeBench(el) {
+    var L = ['lightning', 'sun', 'cloud', 'moon'], p = 2, expr = 'access(li, 2)', id = 'pb' + rid();
+    el.classList.add('bench');
+    el.innerHTML = head('The erratum in action: a box, then the next one', 'li = {lightning, sun, cloud, moon}') +
+      '<div class="bench-body"><div class="ranks" data-cells></div>' +
+      '<div class="bn-blk"><span class="bn-lbl">The box p, written as a term:</span><div class="term" data-p></div></div>' +
+      '<div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row bn-end"><label class="field" for="' + id + '">rank k<select id="' + id + '">' +
+      [1, 2, 3, 4].map(function (k) { return '<option value="' + k + '"' + (k === 2 ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
+      '</select></label><button type="button" class="btn" data-a="acc"><code>p ← access(li, k)</code></button></div>' +
+      '<div class="row"><button type="button" class="btn primary" data-a="succ"><code>p ← next(p)</code></button><button type="button" class="btn" data-a="cont"><code>contents(p)</code> ?</button></div></div>';
+    var sel = el.querySelector('select'), out = el.querySelector('[data-out]');
+    function paint(msg) {
+      el.querySelector('[data-cells]').innerHTML = L.map(function (x, i) { return cell(x, i + 1, i + 1 === p ? 'k' : ''); }).join('');
+      el.querySelector('[data-p]').innerHTML = 'p = ' + term(expr);
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    el.querySelector('[data-a="acc"]').addEventListener('click', function () {
+      p = +sel.value; expr = 'access(li, ' + p + ')';
+      paint('<code>access(li, ' + p + ')</code>: p is the box of the ' + ord(p) + ' element, the one that holds ' + esc(L[p - 1]) + '.');
+    });
+    el.querySelector('[data-a="succ"]').addEventListener('click', function () {
+      if (p === L.length) { paint('<span class="rw-err">No box after the last one:</span> li has only ' + L.length + ' elements.'); return; }
+      p++; expr = 'next(' + expr + ')';
+      paint('<code>next(p)</code>: the next box. p is now the ' + ord(p) + ' box. next returns a box, not an element.');
+    });
+    el.querySelector('[data-a="cont"]').addEventListener('click', function () {
+      var hit = expr === 'next(access(li, 2))';
+      paint('<code>contents(p)</code> = <b>' + esc(L[p - 1]) + '</b>: the element stored in the ' + ord(p) + ' box.' +
+        (hit ? ' This is the erratum: <code>contents(next(p2))</code> gives the 3rd element.' : ''));
+    });
+    paint('<code>p2 ← access(li, 2)</code>: p is the box of the 2nd element, sun. Click next, then contents.');
+  }
+
+  /* ---------- part 2: build a list with cons ---------- */
+  function consBench(el) {
+    var items = [], pool = ['a', 'b', 'c', 'd'], cur = 'c', MAX = 6;
+    el.classList.add('bench');
+    el.innerHTML = head('Build a list with cons', 'recursive list') +
+      '<div class="bench-body">' +
+      '<p>Challenge: get <code>λ = {a, b, c}</code>. Which element do you start with?</p>' +
+      '<div class="ranks" data-cells></div>' +
+      '<div class="bn-blk"><span class="bn-lbl">The same state, written as a term:</span><div class="term" data-term></div></div>' +
+      '<div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row" role="group" aria-label="Element e to add"><span class="bn-lbl">element e:</span>' +
+      pool.map(function (x) { return '<button type="button" class="chip-btn" data-e="' + x + '" aria-pressed="' + (x === cur) + '">' + x + '</button>'; }).join('') + '</div>' +
+      '<div class="row"><button type="button" class="btn primary" data-a="cons"></button><button type="button" class="btn" data-a="fin"><code>tail(λ)</code></button>' +
+      '<button type="button" class="btn" data-a="prem"><code>first(λ)</code> ?</button><button type="button" class="btn" data-a="tete"><code>head(λ)</code> ?</button>' +
+      '<button type="button" class="btn" data-a="vide"><code>emptylist</code></button></div></div>';
+    var out = el.querySelector('[data-out]'), consBtn = el.querySelector('[data-a="cons"]'), chips = U.$$('[data-e]', el);
+    function src() { return items.reduceRight(function (acc, x) { return 'cons(' + x + ', ' + acc + ')'; }, 'emptylist'); }
+    function goal() {
+      return items.join(',') === 'a,b,c' ? ' <span class="rw-done">Challenge done.</span> You added c, then b, then a: the last one added is at the head.' : '';
+    }
+    function paint(msg) {
+      el.querySelector('[data-cells]').innerHTML = items.length
+        ? items.map(function (x, i) { return cell(x, i ? ' ' : 'head', i ? '' : 'k'); }).join('')
+        : '<div class="empty-note">empty list</div>';
+      el.querySelector('[data-term]').innerHTML = 'λ = ' + term(src());
+      consBtn.innerHTML = '<code>cons(' + cur + ', λ)</code>';
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    chips.forEach(function (b) {
+      b.addEventListener('click', function () { cur = b.dataset.e; pressOnly(chips, b); paint(); });
+    });
+    consBtn.addEventListener('click', function () {
+      if (items.length >= MAX) { paint('The demo stops at ' + MAX + ' elements. A real list has no limit.'); return; }
+      items.unshift(cur);
+      paint('<code>cons(' + cur + ', λ)</code>: ' + cur + ' is added at the head. Now <code>first(λ) = ' + cur + '</code>.' + goal());
+    });
+    el.querySelector('[data-a="fin"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Impossible:</span> <code>tail(emptylist)</code> violates the precondition <code>λ ≠ emptylist</code>.'); return; }
+      var x = items.shift();
+      paint('<code>tail(λ)</code> removes the head element, ' + x + '. Axiom A2: <code>tail(cons(e, λ)) = λ</code>.' + goal());
+    });
+    el.querySelector('[data-a="prem"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Undefined:</span> <code>first(emptylist)</code> violates the precondition <code>λ ≠ emptylist</code>.'); return; }
+      paint('<code>first(λ) = ' + items[0] + '</code>. Axiom A3: <code>first(cons(e, λ)) = e</code>. The list does not change: first is an observer.');
+    });
+    el.querySelector('[data-a="tete"]').addEventListener('click', function () {
+      if (!items.length) { paint('<span class="rw-err">Undefined:</span> <code>head(emptylist)</code> violates the precondition <code>λ ≠ emptylist</code>.'); return; }
+      paint('<code>head(λ)</code> is the head box. It holds ' + items[0] + ': <code>contents(head(λ)) = first(λ)</code>, axiom A1.');
+    });
+    el.querySelector('[data-a="vide"]').addEventListener('click', function () { items = []; paint('Back to the constant <code>emptylist</code>.'); });
+    paint('λ = emptylist. Choose an element e, then click cons.');
+  }
+
+  /* ---------- part 7: evaluate a mystery operation rank by rank ---------- */
+  var MYST = {
+    name: 'mystery', list: ['a', 'b', 'c', 'd', 'e'], pairs: [[2, 3], [1, 1], [4, 5], [1, 5], [3, 6]],
+    len: function (n, x, y) { return n + y - x + 1; },
+    lenInst: function (n, x, y) { return 'length(λ) + y − x + 1 = ' + n + ' + ' + y + ' − ' + x + ' + 1 = ' + (n + y - x + 1); },
+    cases: [
+      { gen: '1 ≤ i ≤ y', when: function (i, n, x, y) { return i <= y; },
+        inst: function (i, n, x, y) { return '1 ≤ ' + i + ' ≤ ' + y; }, src: function (i) { return i; } },
+      { gen: 'y < i ≤ length(λ) + y − x + 1', when: function (i, n, x, y) { return i > y; },
+        inst: function (i, n, x, y) { return y + ' < ' + i + ' ≤ ' + (n + y - x + 1); },
+        calc: function (i, n, x, y) { return 'nth(λ, ' + i + ' − ' + y + ' + ' + x + ' − 1)'; },
+        src: function (i, n, x, y) { return i - y + x - 1; } }
+    ]
+  };
+  function mysteryBench(el, M) {
+    var L = M.list, n = L.length, id = 'my' + rid(), x, y, ok, len, full, src, st;
+    el.classList.add('bench');
+    el.innerHTML = head('Evaluate ' + M.name + '(λ, x, y)', 'λ = {' + L.join(', ') + '}') +
+      '<div class="bench-body">' +
+      '<div class="row" role="group" aria-label="Arguments x and y"><span class="bn-lbl">(x, y):</span>' + M.pairs.map(function (q, i) {
+        return '<button type="button" class="chip-btn" data-q="' + i + '" aria-pressed="false" aria-label="' + esc(M.name + '(λ, ' + q[0] + ', ' + q[1] + ')') + '">(' + q[0] + ', ' + q[1] + ')</button>';
+      }).join('') + '</div>' +
+      '<div class="bn-blk"><span class="bn-lbl">λ, with the piece from x to y in color</span><div class="ranks" data-src></div></div>' +
+      '<div class="bn-blk"><span class="bn-lbl" data-rl></span><div class="ranks" data-res></div></div>' +
+      '<div class="row bn-end"><label class="field" for="' + id + '">Your answer, before stepping through<input id="' + id + '" class="term-in" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="{a, b, …} or undefined"></label>' +
+      '<button type="button" class="btn" data-a="check">Check</button></div>' +
+      '<div class="readout" data-fb aria-live="polite"></div>' +
+      '<ol class="rw-steps" data-steps></ol></div>' +
+      '<div class="ctrls"><div class="row"><button type="button" class="btn primary" data-a="step">Next step</button><button type="button" class="btn" data-a="all">Show all steps</button><button type="button" class="btn" data-a="reset">Start again</button></div></div>';
+    var input = el.querySelector('input'), fb = el.querySelector('[data-fb]'), chips = U.$$('[data-q]', el);
+    function caseOf(i) { for (var c = 0; c < M.cases.length; c++) if (M.cases[c].when(i, n, x, y)) return M.cases[c]; return null; }
+    function total() { return ok ? len + 1 : 1; }
+    function load(q) {
+      x = M.pairs[q][0]; y = M.pairs[q][1];
+      ok = 1 <= x && x <= y && y <= n;
+      len = ok ? M.len(n, x, y) : 0;
+      full = []; src = [];
+      for (var i = 1; i <= len; i++) { var s = caseOf(i).src(i, n, x, y); src.push(s); full.push(L[s - 1]); }
+      st = 0; input.value = '';
+      fb.innerHTML = 'Write your answer then click Check, or step through the calculation.';
+      pressOnly(chips, chips[q]);
+      paint();
+    }
+    function stepHTML(k) {
+      var pre = '1 ≤ ' + x + ' ≤ ' + y + ' ≤ ' + n;
+      if (k === 0) {
+        if (!ok) return '<span class="rw-err">False precondition:</span> <code>' + esc(pre) + '</code> does not hold, because ' +
+          esc(x < 1 ? x + ' < 1' : x > y ? x + ' > ' + y : y + ' > ' + n) + '. The result is undefined.';
+        return 'Precondition: <code>' + esc(pre) + '</code>, true. Length: <code>' + esc(M.lenInst(n, x, y)) + '</code>. The result has ' + len + ' ranks.';
+      }
+      var c = caseOf(k), s = src[k - 1];
+      return '<b>i = ' + k + '</b>: <code>' + esc(c.inst(k, n, x, y)) + '</code> <span class="muted">(case ' + esc(c.gen) + ')</span>, so ' +
+        (c.calc ? '<code>' + esc(c.calc(k, n, x, y)) + '</code> = ' : '') + '<code>nth(λ, ' + s + ')</code> = <b>' + esc(full[k - 1]) + '</b>.';
+    }
+    function paint() {
+      var last = st >= 2 ? src[st - 2] : 0, done = st >= total();
+      el.querySelector('[data-src]').innerHTML = L.map(function (v, i) {
+        var r = i + 1; return cell(v, r, r === last ? 'k' : (r >= x && r <= y ? 'lo' : ''));
+      }).join('');
+      var rl = el.querySelector('[data-rl]'), res = el.querySelector('[data-res]');
+      if (!st) { rl.textContent = 'Result: length to compute'; res.innerHTML = '<div class="empty-note">?</div>'; }
+      else if (!ok) { rl.textContent = 'Result'; res.innerHTML = '<div class="empty-note">undefined</div>'; }
+      else {
+        rl.textContent = done ? 'Result: ' + M.name + '(λ, ' + x + ', ' + y + ') = {' + full.join(', ') + '}' : 'Result: ' + len + ' ranks to fill';
+        var h = '';
+        for (var i = 1; i <= len; i++) h += i <= st - 1 ? cell(full[i - 1], i, i === st - 1 ? 'k' : '') : cell('?', i, 'todo');
+        res.innerHTML = h;
+      }
+      var steps = '';
+      for (var k = 0; k < st; k++) steps += '<li><div>' + stepHTML(k) + '</div></li>';
+      el.querySelector('[data-steps]').innerHTML = steps;
+      el.querySelector('[data-a="step"]').disabled = done;
+      el.querySelector('[data-a="all"]').disabled = done;
+    }
+    function check() {
+      var raw = input.value.trim();
+      if (!raw) { fb.innerHTML = 'Write your answer first, for example <code>{a, b, c}</code>.'; return; }
+      var und = /undef|ind[ée]fini/i.test(raw);
+      if (!ok || und) {
+        fb.innerHTML = !ok && und ? '<span class="rw-done">Correct.</span> The precondition is false: the result is undefined.'
+          : !ok ? '<span class="rw-err">Not quite.</span> First check the precondition <code>1 ≤ x ≤ y ≤ length(λ)</code>.'
+          : '<span class="rw-err">Not quite.</span> Here the precondition is true: the result is a list.';
+        return;
+      }
+      var got = raw.replace(/[{}]/g, ' ').split(/[\s,;]+/).filter(Boolean);
+      if (got.length !== len) {
+        fb.innerHTML = '<span class="rw-err">Not quite.</span> Your list has ' + got.length + ' element' + (got.length === 1 ? '' : 's') + ', the result has ' + len + '. Start with the length.';
+        return;
+      }
+      var bad = [];
+      for (var i = 0; i < len; i++) if (got[i].toLowerCase() !== full[i]) bad.push(i + 1);
+      fb.innerHTML = bad.length
+        ? '<span class="rw-err">Not quite.</span> Rank' + (bad.length > 1 ? 's' : '') + ' to check: ' + bad.join(', ') + '. Step through the calculation to see the case of each rank.'
+        : '<span class="rw-done">Correct:</span> <code>{' + esc(full.join(', ')) + '}</code>.';
+    }
+    el.querySelector('[data-a="step"]').addEventListener('click', function () { if (st < total()) { st++; paint(); } });
+    el.querySelector('[data-a="all"]').addEventListener('click', function () { st = total(); paint(); });
+    el.querySelector('[data-a="reset"]').addEventListener('click', function () { st = 0; paint(); });
+    el.querySelector('[data-a="check"]').addEventListener('click', check);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+    chips.forEach(function (b) { b.addEventListener('click', function () { load(+b.dataset.q); }); });
+    load(0);
+  }
+
+  twoViews(document.getElementById('heroLists'));
+  placeBench(document.getElementById('placeBench'));
+  consBench(document.getElementById('consBench'));
+  T.stepper(document.getElementById('rwRec'), { set: REC, label: 'Workshop: evaluate a recursive list term', editable: true, presets: [
+    { name: '2nd element', t: 'first(tail(cons(a, cons(b, cons(c, emptylist)))))' },
+    { name: '3rd element', t: 'first(tail(tail(cons(a, cons(b, cons(c, emptylist))))))' },
+    { name: 'tail of tail', t: 'tail(tail(cons(a, cons(b, emptylist))))' },
+    { name: 'one tail too many', t: 'first(tail(tail(cons(a, cons(b, emptylist)))))' },
+    { name: 'cons after tail', t: 'first(cons(d, tail(cons(a, cons(b, emptylist)))))' }
+  ] });
+  T.stepper(document.getElementById('rwOps'), { set: RECX, label: 'Workshop: rewrite length and concatenate', editable: true, presets: [
+    { name: 'length of {a, b, c}', t: 'length(cons(a, cons(b, cons(c, emptylist))))' },
+    { name: 'concatenate {a, b} and {c}', t: 'concatenate(cons(a, cons(b, emptylist)), cons(c, emptylist))' },
+    { name: 'empty λ2', t: 'concatenate(cons(a, emptylist), emptylist)' },
+    { name: 'length of a concatenation', t: 'length(concatenate(cons(a, emptylist), cons(b, cons(c, emptylist))))' }
+  ] });
+  T.stepper(document.getElementById('rwIter'), { set: ITER, label: 'Workshop: boxes and ranks', presets: [
+    { name: 'the erratum', t: 'contents(next(access(li, 2)))' },
+    { name: 'two next', t: 'contents(next(next(access(λ, 1))))' },
+    { name: 'next box', t: 'next(access(λ, 3))' }
+  ] });
+  T.ranksBench(document.getElementById('ranksBench'), { start: ['a', 'b', 'c', 'd', 'e'], k: 2, label: 'Insert, delete: the ranks move' });
+  mysteryBench(document.getElementById('mysteryBench'), MYST);
+})();
+</script>
+<script src="../assets/js/taa-viz.js"></script>
+</body>
+</html>

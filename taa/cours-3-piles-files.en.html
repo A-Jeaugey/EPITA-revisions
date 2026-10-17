@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks, queues, sets · TAA</title>
+<meta name="description" content="TAA, chapter 3: the stack (LIFO) and the queue (FIFO), their abstract types, the conditional axioms of the queue, evaluating a term, then sets and multisets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Specific to this page: the “stack and queue side by side” bench in the header, the axiom tables to reveal,
+   the hand-written derivations. */
+.twin-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:end}
+.twin-col{display:grid;gap:.55rem;min-width:0}
+.twin-lbl{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.04em;color:var(--muted);line-height:1.35}
+.twin-lbl b{color:var(--ink);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.twin .pile-box{min-height:186px}
+.twin-out{font-size:.88rem;color:var(--muted)}
+.twin-out b{font-family:var(--font-mono);color:var(--ink);font-weight:600}
+@media (max-width:520px){.twin-grid{grid-template-columns:minmax(0,1fr)}}
+
+.rv{font:inherit;font-family:var(--font-mono);font-size:.88rem;font-weight:600;min-height:36px;min-width:48px;padding:.2rem .8rem;border:1px dashed var(--accent);border-radius:8px;background:var(--accent-soft);color:var(--accent);cursor:pointer}
+.rv:hover{border-style:solid}
+.rv:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rv-a{display:none}
+.rv-a:focus{outline:none}
+.open>.rv{display:none}
+.open>.rv-a{display:block}
+.wrapcode code:not(.nw){white-space:normal}
+.tbl tr:last-child th{border-bottom:0}
+.rvt table{table-layout:fixed}
+.rvt thead th:first-child{width:7.5em}
+.rv-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.rv-bar p{font-size:.92rem;color:var(--muted)}
+
+/* set / multiset table: one row = one block on a small screen */
+@media (max-width:600px){
+  .tbl.stacked table,.tbl.stacked tbody,.tbl.stacked tr,.tbl.stacked th,.tbl.stacked td{display:block;width:auto}
+  .tbl.stacked thead{display:none}
+  .tbl.stacked tr{border-bottom:1px solid var(--line);padding:.5rem 0}
+  .tbl.stacked tr:last-child{border-bottom:0}
+  .tbl.stacked th,.tbl.stacked td{border:0;padding:.15rem .9rem}
+  .tbl.stacked tbody th{font-family:var(--font-body);font-size:.95rem;font-weight:600;color:var(--ink);background:transparent;padding-bottom:.3rem}
+  .tbl.stacked td::before{content:attr(data-l) ": ";color:var(--muted);font-size:.86rem}
+  .tbl.stacked .open>.rv-a{display:inline}
+}
+
+/* blocks without roles (additions to the set type): operation names in ink, not in the color of constants */
+.spec .sp-op:not(.sp-int):not(.sp-obs):not(.sp-cst){color:var(--ink)}
+
+.deriv{list-style:none;margin:0;padding:.9rem 1rem;display:grid;gap:.75rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.deriv li{display:grid;grid-template-columns:1.3em minmax(0,1fr);gap:.35rem;align-items:start}
+.deriv li::before{content:"=";font-family:var(--font-mono);color:var(--muted);line-height:1.7}
+.deriv li:first-child::before{content:""}
+.deriv .dwhy{display:block;font-size:.86rem;color:var(--muted);line-height:1.45;margin-top:.1rem}
+</style>
+</head>
+<body data-resume="TAA · chapter 3: stacks, queues and sets">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapter 3 of 3</div>
+      <h1>Stack or queue: everything is decided at the <span class="w">exit</span>.</h1>
+      <p class="lead">A stack and a queue receive their elements the same way, one at a time. What changes is which one comes out: the last one in for the stack, the first one in for the queue. You write their abstract types, you compute their terms, then you move on to sets, where order no longer matters.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parts</span><span class="chip">MiMos on stacks and queues (week of 19 Oct.) · sets as a bonus</span><span class="chip">sheets “Stacks”, “Queues”, “Sets”</span><span class="chip ex">stacks and queues are on the exam syllabus</span></div>
+    </div>
+    <div id="heroTwin" role="group" aria-label="Bench: the same elements in a stack and in a queue"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 3 · Stacks, queues, sets</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>The stack: LIFO</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>The stack abstract type</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Evaluating a stack term</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>The queue: FIFO</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>The queue abstract type</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>Evaluating a queue term</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Sets</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Multisets</span></a></li>
+    </ol>
+    <p class="toc-note">The number of plates is the number of the part. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← TAA home</a><a href="cours-2-listes.html">← Chapter 2: lists</a><a href="entrainement.html">Practice →</a><a href="../qcm/index.html#taa">TAA MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">The stack: LIFO</a></li><li><a href="#s2">The stack abstract type</a></li><li><a href="#s3">Evaluating a stack term</a></li><li><a href="#s4">The queue: FIFO</a></li>
+      <li><a href="#s5">The queue abstract type</a></li><li><a href="#s6">Evaluating a queue term</a></li><li><a href="#s7">Sets</a></li><li><a href="#s8">Multisets</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Part 1</div><h2>The stack: last in, first out</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Think of a pile of plates. You put a plate on top. You take back the one on top. The ones underneath stay stuck until you have removed the ones above them.</p>
+          <p>A <b>stack</b> stores elements the same way. It is a <b>LIFO</b> structure (<i>Last In, First Out</i>): the last one in is the first one out. Entries and exits happen on the same side, at the top.</p>
+        </div>
+        <div class="grid3">
+          <div class="card"><h4>You only see the top</h4><p>The only accessible element is the one on top: the <b>top</b>. An empty stack has no top.</p></div>
+          <div class="card"><h4>You only remove the top</h4><p>That is the operation <code>pop</code>. You cannot pop an empty stack.</p></div>
+          <div class="card"><h4>You add on top</h4><p>That is the operation <code>push</code>: the added element becomes the new top.</p></div>
+        </div>
+        <div class="prose"><p>Try it. Push, pop, ask for the top. Under the stack, the bench writes the same state as a <b>term</b>: each <code>push</code> adds a layer around the previous stack.</p></div>
+        <div id="stackS1"></div>
+        <div class="prose">
+          <p>The stack where <code>a</code>, then <code>b</code>, then <code>c</code> were pushed is written <code>push(push(push(emptystack, a), b), c)</code>. The top <code>c</code> is in the outermost <code>push</code> call. The bottom, <code>a</code>, is the most deeply buried, right next to <code>emptystack</code>. Keep this picture in mind: it explains the whole difference with the queue (part 5).</p>
+          <p><b>What is it for?</b> The summary sheet gives three uses:</p>
+          <ul>
+            <li><b>reversing the order</b> of elements: what goes in as a, b, c comes out as c, b, a (check it in the bench at the top of the page);</li>
+            <li><b>evaluating expressions</b>;</li>
+            <li><b>simulating the call stack</b>, to make a recursive algorithm iterative.</li>
+          </ul>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Stack = <b>LIFO</b>: last in, first out. You go in and out on the same side.</li><li>Only the <b>top</b> is accessible. You add with <code>push</code>, you remove with <code>pop</code>.</li><li>In a term, the top is the element of the outermost <code>push</code> call.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p><code>pop</code> does not return the removed element: it returns the <b>stack</b> without its top (<code class="nw">pop : stack → stack</code>). To know the element, use <code>top</code>, which changes nothing in the stack. In some languages a single function does both: not here.</p></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>The TAA exams of 2023 and 2024 contained neither stacks nor queues: their exercises were about lists. But according to Moodle, the MiMos on stacks and queues of the week of 19 October are “assumed known from the following Monday”: so they can come up in the exam of the week of 26 October. Know how to write both types by heart, preconditions and axioms included, and how to compute a term by hand.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Part 2</div><h2>The stack abstract type</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Here is the complete definition, as Moodle gives it. You will recognize the six keywords of chapter 1. The colors show the role of each operation.</p></div>
+        <div class="legend"><span><i style="background:var(--int)"></i>internal operation</span><span><i style="background:var(--obs)"></i>observer</span><span><i style="background:var(--cst)"></i>constant</span></div>
+<pre data-spec data-roles="1" aria-label="The stack abstract type">
+types
+    stack
+uses
+    boolean, element
+operations
+    emptystack : → stack
+          push : stack × element → stack
+           pop : stack → stack
+           top : stack → element
+       isempty : stack → boolean
+preconditions
+    pop(s) is-defined-iaoi isempty(s) = false
+    top(s) is-defined-iaoi isempty(s) = false
+axioms
+    pop(push(s, e)) = s
+    top(push(s, e)) = e
+    isempty(emptystack) = true
+    isempty(push(s, e)) = false
+with
+    stack s
+    element e
+</pre>
+        <div class="prose">
+          <p>The summary sheet writes <code class="nw">sort Stack</code> in place of <code class="nw">types stack</code>: both mean the type being defined.</p>
+          <p><code>top</code> and <code>pop</code> make no sense on an empty stack: they are <b>partial operations</b>. Their preconditions restrict them to the stacks such that <code class="nw">isempty(s) = false</code>. The two other operations are there “as always”: one to initialize, <code>emptystack</code>, and one to know whether the structure contains elements, <code>isempty</code>.</p>
+        </div>
+        <h3>How to find the four axioms</h3>
+        <div class="prose">
+          <p>The axioms say what the internal operations do; to find out, you apply the observers to them (sheet “Abstract types”). Every stack is built with <code>emptystack</code> and <code class="nw">push(s, e)</code>: the stack that contains <code>a</code> then <code>b</code> is <code>push(push(emptystack, a), b)</code>.</p>
+          <p>So you apply the observers <code>isempty</code> and <code>top</code>, and the operation <code>pop</code>, which undoes what <code>push</code> does, to these two shapes. Six cells: each gives an axiom, or nothing if a precondition forbids it.</p>
+        </div>
+        <div class="stack" data-reveal style="gap:.75rem">
+          <div class="rv-bar"><p>Your turn: guess each cell, then click to check.</p><button type="button" class="btn" data-rv-all>Show all</button></div>
+          <div class="tbl wrapcode stacked rvt"><table>
+            <thead><tr><th></th><th><code>emptystack</code></th><th><code class="nw">push(s, e)</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>isempty</code></th>
+                <td data-l="emptystack"><button type="button" class="rv" aria-label="Show: isempty applied to emptystack">?</button><span class="rv-a"><code>isempty(emptystack) = true</code></span></td>
+                <td data-l="push(s, e)"><button type="button" class="rv" aria-label="Show: isempty applied to push(s, e)">?</button><span class="rv-a"><code>isempty(push(s, e)) = false</code></span></td></tr>
+              <tr><th scope="row"><code>top</code></th>
+                <td data-l="emptystack"><button type="button" class="rv" aria-label="Show: top applied to emptystack">?</button><span class="rv-a muted">nothing: the precondition forbids it</span></td>
+                <td data-l="push(s, e)"><button type="button" class="rv" aria-label="Show: top applied to push(s, e)">?</button><span class="rv-a"><code>top(push(s, e)) = e</code></span></td></tr>
+              <tr><th scope="row"><code>pop</code></th>
+                <td data-l="emptystack"><button type="button" class="rv" aria-label="Show: pop applied to emptystack">?</button><span class="rv-a muted">nothing: the precondition forbids it</span></td>
+                <td data-l="push(s, e)"><button type="button" class="rv" aria-label="Show: pop applied to push(s, e)">?</button><span class="rv-a"><code>pop(push(s, e)) = s</code></span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="prose"><p>Four cells filled, four axioms. None has a condition: in <code class="nw">push(s, e)</code>, the top is always <code>e</code>, whatever the stack <code>s</code> underneath.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Two partial operations, <code>pop</code> and <code>top</code>: defined if and only if <code class="nw">isempty(s) = false</code>.</li><li>Four axioms without conditions: <code>pop(push(s, e)) = s</code>, <code>top(push(s, e)) = e</code>, <code>isempty(emptystack) = true</code>, <code>isempty(push(s, e)) = false</code>.</li><li>No axiom for <code>top(emptystack)</code> or <code>pop(emptystack)</code>: the preconditions forbid them.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Do not put a condition <code class="nw">isempty(s) = false</code> in front of the stack axioms. <code>pop(push(s, e)) = s</code> is true even if <code>s</code> is empty: <code>pop(push(emptystack, a)) = emptystack</code>. The precondition applies to the argument of <code>pop</code>, here <code class="nw">push(s, e)</code>, which is never empty.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Part 3</div><h2>Evaluating a stack term</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>You are given a term; you compute it with the axioms alone. Take <code>top(pop(pop(push(push(push(emptystack, a), b), c))))</code>. You push <code>a</code>, <code>b</code>, <code>c</code>, you pop twice, then you ask for the top. Intuitively, it is <code>a</code>. The axioms must confirm it.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>Read from the inside out.</b> The most deeply buried operation was done first: three <code>push</code>, then two <code>pop</code>, then <code>top</code>.</div></li>
+          <li><div><b>Spot “pop of a push”.</b> The innermost <code>pop</code> applies to <code>push(push(push(emptystack, a), b), c)</code>. The axiom <code>pop(push(s, e)) = s</code> cancels it: what remains is <code>push(push(emptystack, a), b)</code>.</div></li>
+          <li><div><b>Start again.</b> The second <code>pop</code> now applies to <code>push(push(emptystack, a), b)</code>: what remains is <code class="nw">push(emptystack, a)</code>.</div></li>
+          <li><div><b>Conclude.</b> <code>top(push(emptystack, a)) = a</code>, by the axiom <code>top(push(s, e)) = e</code>.</div></li>
+        </ol>
+        <div class="note why"><span class="tag">Why from the inside</span><p>The stack axioms only talk about <code>emptystack</code> and <code class="nw">push(s, e)</code>. None starts with <code>top(pop(…))</code> or <code>pop(pop(…))</code>. So you must first make the inner <code>pop</code>s disappear, until you land on a <code>push</code> again.</p></div>
+        <div class="prose"><p>Check it in the workshop. The preset “push after a pop” finishes in a single step: <code>top(push(s, e)) = e</code> applies right away, without computing the stack <code>s</code> (here <code>pop(push(push(emptystack, a), b))</code>, which is well defined). You can also write your own terms.</p></div>
+        <div id="rwPile"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>“pop of a push” cancels out: <code>pop(push(s, e)) = s</code>.</li><li>“top of a push” gives the pushed element: <code>top(push(s, e)) = e</code>.</li><li><code>isempty</code> is <code>true</code> on <code>emptystack</code> and <code>false</code> on any <code>push</code>.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>A <code>pop</code> or a <code>top</code> applied to an empty stack makes the <b>whole term undefined</b>, even if the rest can be computed. Check the preconditions as you go: in the preset “undefined”, the first <code>pop</code> leaves <code>emptystack</code>, and the second is no longer allowed to apply.</p></div>
+        <p class="muted" style="font-size:.92rem">To practice endlessly: the <a href="entrainement.html#infini">generator of terms to reduce</a> on the Practice page.</p>
+        <div data-check-ref="taa/cours-3-piles-files.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Part 4</div><h2>The queue: first in, first out</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Think of a waiting line. If nobody cuts in line, the first person to arrive is the first to leave. Newcomers take their place at the end.</p>
+          <p>A <b>queue</b> is a <b>FIFO</b> structure (<i>First In, First Out</i>): the first one in is the first one out. Entries and exits each happen at one end: you enter at the <b>back</b> (the last one) and you leave at the <b>front</b> (the first one, also called the head).</p>
+        </div>
+        <div class="grid3">
+          <div class="card"><h4>You only see the first</h4><p>The only accessible element is the <b>first</b>. An empty queue has no first.</p></div>
+          <div class="card"><h4>You only remove the first</h4><p>That is the operation <code>dequeue</code>, possible only if the queue is not empty.</p></div>
+          <div class="card"><h4>You add at the back</h4><p>That is the operation <code>enqueue</code>: the element is placed at the end, behind all the others.</p></div>
+        </div>
+        <div class="prose"><p>Try it. Enqueue, dequeue, ask for the first, and watch the term under the queue.</p></div>
+        <div id="queueS4"></div>
+        <div class="prose">
+          <p>In the term <code>enqueue(enqueue(enqueue(emptyqueue, a), b), c)</code>, the element enqueued first, <code>a</code>, is the most deeply buried, right next to <code>emptyqueue</code>. Yet it is the first of the queue. This is the opposite of the stack, where the accessible element is on the outside of the term.</p>
+          <p><b>What is it for?</b> According to the summary sheet:</p>
+          <ul>
+            <li><b>keeping the order</b> of elements: what goes in as a, b, c comes out as a, b, c;</li>
+            <li><b>implementing “buffers”</b>, waiting lines: printer, keyboard…;</li>
+            <li><b>traversing trees, graphs… breadth-first</b>.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>Stack</th><th>Queue</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Principle</th><td><b>LIFO</b>: last in, first out</td><td><b>FIFO</b>: first in, first out</td></tr>
+            <tr><th scope="row">In, out</th><td>on the same side, the top</td><td>each at one end: back, front</td></tr>
+            <tr><th scope="row">Constant</th><td><code>emptystack</code></td><td><code>emptyqueue</code></td></tr>
+            <tr><th scope="row">Add</th><td><code>push</code></td><td><code>enqueue</code></td></tr>
+            <tr><th scope="row">Remove</th><td><code>pop</code></td><td><code>dequeue</code></td></tr>
+            <tr><th scope="row">Accessible</th><td><code>top</code>: the last one in</td><td><code>first</code>: the first one in</td></tr>
+            <tr><th scope="row">Test</th><td><code>isempty</code></td><td><code>isempty</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Queue = <b>FIFO</b>: first in, first out.</li><li>You add at the back with <code>enqueue</code>, you remove at the front with <code>dequeue</code>; only the <b>first</b> is accessible.</li><li>In a term, the first is the element of the most deeply buried <code>enqueue</code> call.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>The first of the queue is not the last element written in the term. In <code>enqueue(enqueue(enqueue(emptyqueue, a), b), c)</code>, the first is <code>a</code>, not <code>c</code>: <code>c</code> has just arrived, it waits behind the others.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Part 5</div><h2>The queue abstract type: conditional axioms</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The signature of the queue has exactly the same shape as that of the stack: only the names change. So do the preconditions: <code>dequeue</code> and <code>first</code> are partial, since an empty queue has neither a first nor an element to remove.</p></div>
+<pre data-spec data-roles="1" aria-label="Signature and preconditions of the queue">
+types
+    queue
+uses
+    boolean, element
+operations
+    emptyqueue : → queue
+       enqueue : queue × element → queue
+       dequeue : queue → queue
+         first : queue → element
+       isempty : queue → boolean
+preconditions
+    dequeue(q) is-defined-iaoi isempty(q) = false
+    first(q) is-defined-iaoi isempty(q) = false
+</pre>
+        <div class="note trap"><span class="tag">Typo in the sheet</span><p>In the summary sheet “Queues”, the defined type is written <code class="nw">sort Stack</code>. Read <code class="nw">sort Queue</code>, as in all the profiles that follow.</p></div>
+        <h3>The first is at the bottom of the term</h3>
+        <div class="grid2">
+          <div class="card"><h4>Stack: the top is outside</h4><div class="term"><span class="o-int">push</span>(<span class="o-int">push</span>(<span class="o-int">push</span>(<span class="o-cst">emptystack</span>, a), b), <span class="rx">c</span>)</div><p>The top is in the <code>push</code> call that is <b>outermost</b>. In <code class="nw">push(s, e)</code>, the top is always <code>e</code>, whatever <code>s</code> is.</p></div>
+          <div class="card"><h4>Queue: the first is at the bottom</h4><div class="term"><span class="o-int">enqueue</span>(<span class="o-int">enqueue</span>(<span class="o-int">enqueue</span>(<span class="o-cst">emptyqueue</span>, <span class="rx">a</span>), b), c)</div><p>The first is in the <code>enqueue</code> call that is <b>most deeply buried</b>, the one that touches <code>emptyqueue</code>. In <code class="nw">enqueue(q, e)</code>, <code>e</code> has just arrived: it is the first only if <code>q</code> is empty.</p></div>
+        </div>
+        <div class="note why"><span class="tag">Why the queue needs conditions and the stack does not</span>
+          <p>For the stack, the element concerned by <code>top</code> and <code>pop</code> is always <code>e</code>, the last one pushed: the result does not depend on <code>s</code>, a single formula is enough.</p>
+          <p>For the queue, what comes out of <code class="nw">enqueue(q, e)</code> depends on <code>q</code>. If <code>q</code> is empty, <code>e</code> is alone: it is the first, and <code>dequeue</code> removes it. Otherwise, the first is somewhere at the bottom of <code>q</code>, and <code>e</code> changes nothing there. Two cases, so two axioms for <code>first</code> and two for <code>dequeue</code>, each preceded by its condition: <code class="nw">isempty(q) = true ⇒ …</code> or <code class="nw">isempty(q) = false ⇒ …</code>.</p></div>
+        <div class="stack" data-reveal style="gap:.75rem">
+          <div class="rv-bar"><p>Your turn: fill in the same table as for the stack, then check.</p><button type="button" class="btn" data-rv-all>Show all</button></div>
+          <div class="tbl wrapcode stacked rvt"><table>
+            <thead><tr><th></th><th><code>emptyqueue</code></th><th><code class="nw">enqueue(q, e)</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>isempty</code></th>
+                <td data-l="emptyqueue"><button type="button" class="rv" aria-label="Show: isempty applied to emptyqueue">?</button><span class="rv-a"><code>isempty(emptyqueue) = true</code></span></td>
+                <td data-l="enqueue(q, e)"><button type="button" class="rv" aria-label="Show: isempty applied to enqueue(q, e)">?</button><span class="rv-a"><code>isempty(enqueue(q, e)) = false</code>, without condition</span></td></tr>
+              <tr><th scope="row"><code>first</code></th>
+                <td data-l="emptyqueue"><button type="button" class="rv" aria-label="Show: first applied to emptyqueue">?</button><span class="rv-a muted">nothing: the precondition forbids it</span></td>
+                <td data-l="enqueue(q, e)"><button type="button" class="rv" aria-label="Show: first applied to enqueue(q, e)">?</button><span class="rv-a">two cases: <code>e</code> if <code class="nw">isempty(q) = true</code>; <code>first(q)</code> if <code class="nw">isempty(q) = false</code></span></td></tr>
+              <tr><th scope="row"><code>dequeue</code></th>
+                <td data-l="emptyqueue"><button type="button" class="rv" aria-label="Show: dequeue applied to emptyqueue">?</button><span class="rv-a muted">nothing: the precondition forbids it</span></td>
+                <td data-l="enqueue(q, e)"><button type="button" class="rv" aria-label="Show: dequeue applied to enqueue(q, e)">?</button><span class="rv-a">two cases: <code>emptyqueue</code> if <code class="nw">isempty(q) = true</code>; <code class="nw">enqueue(dequeue(q), e)</code> if <code class="nw">isempty(q) = false</code></span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="prose"><p>This gives the six axioms of Moodle. The four conditional axioms are highlighted.</p></div>
+<pre data-spec data-hl="2,3,4,5" aria-label="Axioms of the queue, the four conditional axioms highlighted">
+axioms
+    isempty(q) = true ⇒ first(enqueue(q, e)) = e
+    isempty(q) = false ⇒ first(enqueue(q, e)) = first(q)
+    isempty(q) = true ⇒ dequeue(enqueue(q, e)) = emptyqueue
+    isempty(q) = false ⇒ dequeue(enqueue(q, e)) = enqueue(dequeue(q), e)
+    isempty(emptyqueue) = true
+    isempty(enqueue(q, e)) = false
+with
+    queue q
+    element e
+</pre>
+        <h3>Reading <code>dequeue(enqueue(q, e)) = enqueue(dequeue(q), e)</code></h3>
+        <div class="prose"><p>This is the trickiest axiom of the chapter. It applies when <code>q</code> is not empty, and reads in three steps:</p></div>
+        <ol class="steps">
+          <li><div><b>Set <code>e</code> aside.</b> In <code class="nw">enqueue(q, e)</code>, <code>e</code> is the last to arrive: since <code>q</code> is not empty, it is not the one that leaves.</div></li>
+          <li><div><b>Dequeue <code>q</code>.</b> The first of the whole queue is the first of <code>q</code>: <code>dequeue(q)</code> removes it.</div></li>
+          <li><div><b>Put <code>e</code> back at the end.</b> <code class="nw">enqueue(dequeue(q), e)</code>: <code>e</code> takes its place again, at the back.</div></li>
+        </ol>
+        <div class="prose"><p>On the queue a, b, c, the <code>dequeue</code> thus goes down one level at each step, down to the <code>enqueue</code> call that touches <code>emptyqueue</code>. There, the case “q empty” applies, and <code>a</code> disappears:</p></div>
+        <ol class="deriv" aria-label="Computing dequeue on the queue a, b, c">
+          <li><div><div class="term">dequeue(enqueue(enqueue(enqueue(emptyqueue, a), b), c))</div></div></li>
+          <li><div><div class="term">enqueue(dequeue(enqueue(enqueue(emptyqueue, a), b)), c)</div><span class="dwhy"><code>q = enqueue(enqueue(emptyqueue, a), b)</code> is not empty: we set <code>c</code> aside and we dequeue <code>q</code>.</span></div></li>
+          <li><div><div class="term">enqueue(enqueue(dequeue(enqueue(emptyqueue, a)), b), c)</div><span class="dwhy">Same case one level down: <code>q = enqueue(emptyqueue, a)</code> is not empty, we set <code>b</code> aside.</span></div></li>
+          <li><div><div class="term">enqueue(enqueue(emptyqueue, b), c)</div><span class="dwhy">Finally <code class="nw">q = emptyqueue</code>: <code>dequeue(enqueue(emptyqueue, a)) = emptyqueue</code>. The queue b, c remains.</span></div></li>
+        </ol>
+        <div class="prose"><p>It remains to see why the axiom is true. When <code>q</code> is not empty, enqueuing <code>e</code> then dequeuing, or dequeuing then enqueuing <code>e</code>, gives the same queue: in both orders, it is the first of <code>q</code> that leaves. Compare the two columns, then choose “q empty”: the right-hand side no longer exists, hence the condition.</p></div>
+        <div class="viz-file" data-viz="file"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Six axioms: four conditional (<code>first</code> and <code>dequeue</code> on <code class="nw">enqueue(q, e)</code>, depending on whether <code>q</code> is empty or not) and two without condition for <code>isempty</code>.</li><li>The two conditions <code class="nw">isempty(q) = true</code> and <code class="nw">isempty(q) = false</code> cover all the cases: no gap, no contradiction.</li><li>The reason: in the term, the first one in is the most deeply buried.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p><code>dequeue(enqueue(q, e)) = q</code> is the axiom of the <b>stack</b>. For the queue, it is correct only if <code>q</code> is empty (and then <code class="nw">q = emptyqueue</code>). As soon as <code>q</code> contains an element, it is the first of <code>q</code> that leaves, not <code>e</code>.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Part 6</div><h2>Evaluating a queue term</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The method is the one for the stack, with one more reflex: before applying an axiom to <code class="nw">enqueue(q, e)</code>, compute <code>isempty(q)</code> to choose the right case.</p></div>
+        <ol class="steps">
+          <li><div><b>Spot the pattern.</b> <code class="nw">first(enqueue(q, e))</code> or <code class="nw">dequeue(enqueue(q, e))</code>. As for the stack, first reduce the inner <code>dequeue</code>s that do not have this shape.</div></li>
+          <li><div><b>Compute <code>isempty(q)</code>.</b> <code>false</code> if <code>q</code> is written <code>enqueue(…)</code>, <code>true</code> if <code>q</code> is <code>emptyqueue</code>. If <code>q</code> contains a <code>dequeue</code>, reduce it first.</div></li>
+          <li><div><b>Apply the axiom of the right case.</b> Empty case: <code>e</code> for <code>first</code>, <code>emptyqueue</code> for <code>dequeue</code>. Non-empty case: <code>first(q)</code>, or <code class="nw">enqueue(dequeue(q), e)</code>.</div></li>
+          <li><div><b>Start again</b> until the final form. <code>first</code> and <code>dequeue</code> thus go down to the bottom of the term.</div></li>
+        </ol>
+        <div id="rwFile"></div>
+        <h3>Stack and queue on the same elements</h3>
+        <div class="prose"><p>Put <code>a</code>, <code>b</code>, <code>c</code>, in that order, into a stack and into a queue, then count the computation steps (redo them in both workshops).</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Stack</h4><div class="term"><span class="o-int">push</span>(<span class="o-int">push</span>(<span class="o-int">push</span>(<span class="o-cst">emptystack</span>, a), b), c)</div>
+            <ul class="wrapcode" style="margin:0;padding-left:1.1rem;display:grid;gap:.3rem"><li><code>top</code> = <code>c</code>: <b>1 step</b>.</li><li><code>pop</code> → <code>push(push(emptystack, a), b)</code>: <b>1 step</b>.</li><li>Order of exit: c, b, a.</li></ul></div>
+          <div class="card"><h4>Queue</h4><div class="term"><span class="o-int">enqueue</span>(<span class="o-int">enqueue</span>(<span class="o-int">enqueue</span>(<span class="o-cst">emptyqueue</span>, a), b), c)</div>
+            <ul class="wrapcode" style="margin:0;padding-left:1.1rem;display:grid;gap:.3rem"><li><code>first</code> = <code>a</code>: <b>3 steps</b>.</li><li><code>dequeue</code> → <code>enqueue(enqueue(emptyqueue, b), c)</code>: <b>3 steps</b>.</li><li>Order of exit: a, b, c.</li></ul></div>
+        </div>
+        <div class="prose"><p>The stack answers in one step, because its accessible element is on the outside of the term. The queue has to go down to the bottom: one step per element traversed.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>On a queue written with <code>enqueue</code> around <code>emptyqueue</code>, <code>first</code> gives the element of the innermost <code>enqueue</code> call.</li><li><code>dequeue</code> removes this innermost call and keeps the others in the same order.</li><li>A <code>first</code> or a <code>dequeue</code> on an empty queue makes the term undefined, as for the stack.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>The condition is about <code>q</code>, and <code>q</code> can be a complicated term. In <code>first(enqueue(dequeue(enqueue(emptyqueue, a)), b))</code>, <code>q = dequeue(enqueue(emptyqueue, a))</code>: you have to reduce it to see that it equals <code>emptyqueue</code>. So <code class="nw">isempty(q) = true</code>, and the first is <code>b</code> (preset “q to reduce first”).</p></div>
+        <p class="muted" style="font-size:.92rem">The <a href="entrainement.html#infini">generator of terms to reduce</a> also offers queue terms.</p>
+        <div data-check-ref="taa/cours-3-piles-files.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Part 7</div><h2>Sets: only presence counts</h2></div>
+      <div class="stack">
+        <div class="note exam"><span class="tag">Bonus</span><p>In the Moodle planning of the MiMos, sets are presented as a “bonus”. The official plan of the ECUE also stops at the sequential types: lists, stacks and queues. Keep these last two parts for when stacks and queues are solid.</p></div>
+        <div class="prose">
+          <p>In a list, a stack or a queue, the order of the elements is fundamental. In a <b>set</b>, it does not matter at all. Only one thing counts: an element is present or not.</p>
+          <p>Adding <code>a</code> then <code>b</code>, or <code>b</code> then <code>a</code>, gives the same set. Adding <code>a</code> a second time changes nothing.</p>
+        </div>
+        <h3>The base: the empty set and membership</h3>
+<pre data-spec data-roles="1" aria-label="The base of the set type">
+types
+    set
+uses
+    element, boolean
+operations
+    emptyset : → set
+         _∈_ : element × set → boolean
+axioms
+    x ∈ emptyset = false
+</pre>
+        <div class="prose"><p><code>_∈_</code> is written between its two arguments: <code class="nw">x ∈ s</code>. Each <code>_</code> marks the place of an argument, as for <code>_^_</code> in chapter 1. In all the axioms that follow, <code>x</code> and <code>y</code> are elements and <code>s</code> is a <b>set</b>.</p></div>
+        <h3>Add, delete, count</h3>
+        <div class="prose">
+          <p>We must also be able to add and delete an element. The sheet makes a choice: these operations have <b>no effect in case of error</b>. Adding an element that is already present does nothing; deleting an absent element does nothing either. <code class="op-int">add</code> and <code class="op-int">delete</code> are therefore defined everywhere: no precondition.</p>
+          <p>On top of that comes the observer <code class="op-obs">card</code>, the number of elements of the set, also defined everywhere.</p>
+        </div>
+<pre data-spec aria-label="Add, delete and card in the set type">
+operations
+       add : element × set → set
+    delete : element × set → set
+      card : set → integer
+axioms
+    x = y ⇒ (x ∈ add(y, s)) = true
+    x ≠ y ⇒ (x ∈ add(y, s)) = (x ∈ s)
+    x = y ⇒ (x ∈ delete(y, s)) = false
+    x ≠ y ⇒ (x ∈ delete(y, s)) = (x ∈ s)
+    card(emptyset) = 0
+    x ∈ s = true ⇒ card(add(x, s)) = card(s)
+    x ∈ s = false ⇒ card(add(x, s)) = card(s) + 1
+    x ∈ s = true ⇒ card(delete(x, s)) = card(s) − 1
+    x ∈ s = false ⇒ card(delete(x, s)) = card(s)
+</pre>
+        <div class="prose">
+          <p>The axioms of <code>∈</code> separate two cases, like those of the vector in chapter 1: the tested element is the one we have just added or deleted (<code class="nw">x = y</code>), or it is another one (<code class="nw">x ≠ y</code>), which the operation does not concern.</p>
+          <p>Those of <code>card</code> separate “already present” and “absent”: this is where the choice “no effect in case of error” shows.</p>
+        </div>
+        <div class="note trap"><span class="tag">Typos in the sources</span><ul><li>On the Moodle page, the axiom of <code class="nw">card(delete(x, s))</code> for an absent element is written with <code class="nw">x ∈ = false</code>: the set is missing. Read <code class="nw">x ∈ s = false</code>.</li><li>In the PDF sheet, the first two axioms of <code>card</code> are stuck together on a single line. They are indeed two axioms: <code class="nw">card(emptyset) = 0</code>, then the one for <code class="nw">card(add(x, s))</code>.</li></ul></div>
+        <h3>Choosing an element</h3>
+        <div class="prose"><p>To apply the same treatment to all the elements, you <b>enumerate</b>: you choose an element, you process it, then you start again on the set obtained by deleting the processed element. This requires a choice operation.</p></div>
+<pre data-spec aria-label="The operation choose">
+operations
+    choose : set → element
+preconditions
+    choose(s) is-defined-iaoi s ≠ emptyset
+axioms
+    choose(s) ∈ s = true
+</pre>
+        <div class="prose"><p><code class="op-obs">choose</code> is partial: in an empty set, there is nothing to choose. Its only axiom just says that the chosen element belongs to the set, not which one. That is why the workshop below does not use it: there is nothing to compute.</p></div>
+        <div id="rwEns"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Set: an element is present or absent; order and repetitions do not count.</li><li><code>add</code> and <code>delete</code> have no precondition: no effect in case of error.</li><li><code>card</code> only increases if the added element was absent, and only decreases if the deleted element was present.</li><li><code>choose</code> is partial: defined if and only if <code class="nw">s ≠ emptyset</code>.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p><code class="nw">card(add(x, s))</code> is not always <code class="nw">card(s) + 1</code>: if <code>x</code> is already in <code>s</code>, the cardinality does not move (preset “a added twice”). Test <code class="nw">x ∈ s</code> first.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Part 8</div><h2>Multisets: when repetitions count</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>multiset</b>, or <b>family</b>, is a set that accepts multiple occurrences of an element. Adding <code>a</code> twice gives two <code>a</code>. The order, for its part, still does not count.</p>
+          <p>We keep the same operations, but their behavior changes. Adding an element that is already present increases the number of elements. Deleting an element does not necessarily make it disappear: other occurrences may remain. Hence one more operation, <code class="op-obs">nboccurrences</code>, which counts the occurrences of an element.</p>
+        </div>
+<pre data-spec data-roles="1" data-hl="16,20" aria-label="The multiset type, the two axioms that change the most highlighted">
+types
+    multiset
+uses
+    element, boolean, integer
+operations
+    emptymultiset : → multiset
+              add : element × multiset → multiset
+           delete : element × multiset → multiset
+              _∈_ : element × multiset → boolean
+             card : multiset → integer
+    nboccurrences : element × multiset → integer
+axioms
+    (x ∈ emptymultiset) = false
+    x = y ⇒ (x ∈ add(y, ms)) = true
+    x ≠ y ⇒ (x ∈ add(y, ms)) = (x ∈ ms)
+    nboccurrences(x, ms) ≤ 1 ⇒ (x ∈ delete(x, ms)) = false
+    x ≠ y ⇒ (x ∈ delete(y, ms)) = (x ∈ ms)
+
+    card(emptymultiset) = 0
+    card(add(x, ms)) = card(ms) + 1
+    x ∈ ms = true ⇒ card(delete(x, ms)) = card(ms) − 1
+    x ∈ ms = false ⇒ card(delete(x, ms)) = card(ms)
+
+    nboccurrences(x, emptymultiset) = 0
+    x = y ⇒ nboccurrences(x, add(y, ms)) = nboccurrences(x, ms) + 1
+    x ≠ y ⇒ nboccurrences(x, add(y, ms)) = nboccurrences(x, ms)
+    nboccurrences(x, ms) = 0 ⇒ nboccurrences(x, delete(x, ms)) = 0
+    nboccurrences(x, ms) ≥ 1 ⇒
+            nboccurrences(x, delete(x, ms)) = nboccurrences(x, ms) − 1
+    x ≠ y ⇒ nboccurrences(x, delete(y, ms)) = nboccurrences(x, ms)
+</pre>
+        <div class="note trap"><span class="tag">Typo on the Moodle page</span><p>The profile of <code>nboccurrences</code> is written there <code>element × multiset → element</code>. The operation counts occurrences: it returns an <b>integer</b>, as the PDF sheet writes it (and as its axioms show: <code class="nw">= 0</code>, <code class="nw">+ 1</code>).</p></div>
+        <h3>What changes compared with the set</h3>
+        <div class="tbl wrapcode stacked"><table>
+          <thead><tr><th></th><th>Set</th><th>Multiset</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">An element is there…</th><td data-l="Set">present or absent</td><td data-l="Multiset">present 0, 1, 2… times</td></tr>
+            <tr><th scope="row">Constant</th><td data-l="Set"><code>emptyset</code></td><td data-l="Multiset"><code>emptymultiset</code></td></tr>
+            <tr><th scope="row">Adding an element that is already present</th><td data-l="Set">no effect</td><td data-l="Multiset">one more occurrence</td></tr>
+            <tr><th scope="row"><code>card</code> after an <code>add</code></th><td data-l="Set"><code>card(s)</code> if <code class="nw">x ∈ s = true</code>, <code class="nw">card(s) + 1</code> otherwise</td><td data-l="Multiset">always <code class="nw">card(ms) + 1</code></td></tr>
+            <tr><th scope="row"><code class="nw">x ∈ delete(x, …)</code></th><td data-l="Set">always <code>false</code></td><td data-l="Multiset"><code>false</code> if <code>nboccurrences(x, ms) ≤ 1</code>; otherwise <code>x</code> stays present</td></tr>
+            <tr><th scope="row"><code>card</code> after a <code>delete</code></th><td colspan="2" data-l="Both">same axioms: <code class="nw">− 1</code> if <code>x</code> was present, unchanged otherwise</td></tr>
+            <tr><th scope="row">Counting the occurrences</th><td data-l="Set">useless: 0 or 1</td><td data-l="Multiset"><code>nboccurrences : element × multiset → integer</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>The key point is <code>card(add(x, ms)) = card(ms) + 1</code>: the condition has disappeared, since every addition counts. Conversely, the axiom of <code>∈</code> on <code>delete</code> gains one: after the deletion, <code>x</code> is absent only if it had at most one occurrence before.</p>
+          <p>The axioms of <code>nboccurrences</code> follow the pattern of <code>∈</code>: either the operation touches <code>x</code> itself (<code class="nw">x = y</code>, or <code class="nw">delete(x, ms)</code>), or it touches another element (<code class="nw">x ≠ y</code>) and the count of <code>x</code> does not move. For the deletion of <code>x</code> itself, two cases: if there was none, there is still none; if there was at least one, there is one fewer.</p>
+        </div>
+        <div id="rwMulti"></div>
+        <div class="note why"><span class="tag">Remark</span><p>The sheet gives no axiom for <code class="nw">x ∈ delete(x, ms)</code> when <code>x</code> has at least two occurrences in <code>ms</code>. Its text does settle the case, though: deleting an element “does not imply that it disappears from the set (if there are several occurrences)”. So <code>x</code> is still present.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Multiset (family) = a set that accepts multiple occurrences.</li><li><code>nboccurrences : element × multiset → integer</code> counts the occurrences of an element.</li><li>Every <code>add</code> increases <code>card</code> by 1, without condition.</li><li><code>delete</code> removes a single occurrence: <code>x</code> stays present if it had several.</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Do not copy the axioms of the set. <code>x ∈ s = true ⇒ card(add(x, s)) = card(s)</code> is false for a multiset: <code>card(add(a, add(a, emptymultiset)))</code> is 2, not 1 (preset “a added twice”, in both workshops).</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="taa:piles:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You have covered the whole TAA course. To practice: the <a href="entrainement.html">exam exercises and generators</a>, then the <a href="../qcm/index.html#taa">TAA MCQ</a>. To review lists, the core of past exams: <a href="cours-2-listes.html">chapter 2</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../data/en/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa, U = R.util;
+  function esc(s) { return U.esc(String(s)); }
+
+  /* ---------- header: the same elements go into a stack and into a queue ---------- */
+  function twin(el) {
+    var POOL = 'abcdefghijkl'.split(''), MAX = 5, pile, file, seen, outP, outF, k;
+    el.classList.add('bench', 'twin');
+    el.innerHTML = '<div class="bench-head"><span>Same inputs, two outputs</span><span>LIFO stack · FIFO queue</span></div>' +
+      '<div class="bench-body"><div class="twin-grid">' +
+      '<div class="twin-col"><div class="twin-lbl"><b>Stack</b> · in and out at the top</div><div class="pile-box" data-p></div><div class="twin-out">Came out: <b data-po></b></div></div>' +
+      '<div class="twin-col"><div class="twin-lbl"><b>Queue</b> · in at the back, out at the front</div><div class="file-ends"><span>← front: out</span><span>back: in ←</span></div><div class="file-box" data-f></div><div class="twin-out">Came out: <b data-fo></b></div></div>' +
+      '</div><div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row"><button type="button" class="btn primary" data-a="in"></button><button type="button" class="btn" data-a="out">Remove</button><button type="button" class="btn" data-a="reset">Start again</button></div></div>';
+    var q = function (s) { return el.querySelector(s); }, inBtn = q('[data-a="in"]'), out = q('[data-out]');
+    function plates(arr, top) {
+      return arr.length ? arr.map(function (x, i) { return '<div class="plate' + (i === top ? ' top' : '') + '">' + esc(x) + '</div>'; }).join('') : '<div class="empty-note">empty</div>';
+    }
+    /* next letter absent from both structures (at most 5 in each: one is always left) */
+    function next() {
+      for (var i = 0; i < POOL.length; i++) { var x = POOL[(k + i) % POOL.length]; if (pile.indexOf(x) < 0 && file.indexOf(x) < 0) { k += i; return x; } }
+      return POOL[k % POOL.length];
+    }
+    function paint(msg) {
+      q('[data-p]').innerHTML = plates(pile, pile.length - 1);
+      q('[data-f]').innerHTML = plates(file, 0);
+      q('[data-po]').textContent = outP.length ? outP.join(', ') : '—';
+      q('[data-fo]').textContent = outF.length ? outF.join(', ') : '—';
+      inBtn.innerHTML = 'Add <code>' + esc(next()) + '</code>';
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    function reset() {
+      pile = ['a', 'b', 'c']; file = pile.slice(); seen = pile.slice(); outP = []; outF = []; k = 3;
+      paint('a, then b, then c went into the stack and into the queue. Click “Remove”: which one comes out on each side?');
+    }
+    inBtn.addEventListener('click', function () {
+      if (pile.length >= MAX) { paint('The demo stops at ' + MAX + ' elements. Remove one first.'); return; }
+      if (!pile.length) { seen = []; outP = []; outF = []; } /* everything was out: new series */
+      var x = next(); k++; pile.push(x); file.push(x); seen.push(x);
+      paint('<code>' + esc(x) + '</code> goes in on both sides: it becomes the <b>top</b> of the stack and the <b>last</b> of the queue.');
+    });
+    q('[data-a="out"]').addEventListener('click', function () {
+      if (!pile.length) { paint('<span class="rw-err">Impossible:</span> the stack and the queue are empty. <code>pop</code> and <code>dequeue</code> are partial operations.'); return; }
+      var p = pile.pop(), f = file.shift(), m;
+      outP.push(p); outF.push(f);
+      m = !pile.length ? 'Both return their last element: <b>' + esc(p) + '</b> for the stack, <b>' + esc(f) + '</b> for the queue.' :
+        'The stack returns <b>' + esc(p) + '</b>, the most recent of the elements it holds. The queue returns <b>' + esc(f) + '</b>, the oldest.';
+      if (!pile.length) {
+        var rev = outP.join() === seen.slice().reverse().join();
+        m += ' Everything is out. The queue returned the elements in their order of arrival' + (rev ? ', the stack in the reverse order.' : '.');
+      }
+      paint(m);
+    });
+    q('[data-a="reset"]').addEventListener('click', reset);
+    reset();
+  }
+
+  /* ---------- “guess, then check” tables ---------- */
+  U.$$('[data-reveal]').forEach(function (box) {
+    var all = box.querySelector('[data-rv-all]');
+    function cells() { return U.$$('td', box).filter(function (td) { return td.querySelector('.rv'); }); }
+    function sync() { all.textContent = cells().some(function (td) { return !td.classList.contains('open'); }) ? 'Show all' : 'Hide all'; }
+    box.addEventListener('click', function (ev) {
+      var b = ev.target.closest('.rv');
+      if (b) {
+        var td = b.closest('td'), a = td.querySelector('.rv-a');
+        td.classList.add('open'); a.setAttribute('tabindex', '-1'); a.focus(); sync(); return;
+      }
+      if (ev.target.closest('[data-rv-all]')) {
+        var show = all.textContent === 'Show all';
+        cells().forEach(function (td) { td.classList.toggle('open', show); });
+        sync();
+      }
+    });
+  });
+
+  /* ---------- multiset: the axioms of the sheet, for the workshop of part 8.
+     The engine does not compare integers: “nboccurrences(x, ms) ≤ 1” and “≥ 1” are written
+     as a series of axioms with the same number, one per value (0, 1, 2…). ---------- */
+  var MULTI = {
+    name: 'multiset', vars: { x: 1, y: 1, ms: 1 },
+    roles: { emptymultiset: 'cst', add: 'int', 'delete': 'int', card: 'obs', nboccurrences: 'obs', '∈': 'obs' },
+    axioms: [
+      { id: 'A1', l: 'x ∈ emptymultiset', r: 'false', text: '(x ∈ emptymultiset) = false' },
+      { id: 'A2', l: 'x ∈ add(y, ms)', eq: ['x', 'y'], r: 'true', text: 'x = y ⇒ (x ∈ add(y, ms)) = true' },
+      { id: 'A3', l: 'x ∈ add(y, ms)', neq: ['x', 'y'], r: 'x ∈ ms', text: 'x ≠ y ⇒ (x ∈ add(y, ms)) = (x ∈ ms)' }
+    ]
+  };
+  var LE1 = 'nboccurrences(x, ms) ≤ 1 ⇒ (x ∈ delete(x, ms)) = false';
+  MULTI.axioms.push({ id: 'A4', l: 'x ∈ delete(x, ms)', c: 'nboccurrences(x, ms)', cv: '0', r: 'false', text: LE1 });
+  MULTI.axioms.push({ id: 'A4', l: 'x ∈ delete(x, ms)', c: 'nboccurrences(x, ms)', cv: '1', r: 'false', text: LE1 });
+  MULTI.axioms.push(
+    { id: 'A5', l: 'x ∈ delete(y, ms)', neq: ['x', 'y'], r: 'x ∈ ms', text: 'x ≠ y ⇒ (x ∈ delete(y, ms)) = (x ∈ ms)' },
+    { id: 'A6', l: 'card(emptymultiset)', r: '0' },
+    { id: 'A7', l: 'card(add(x, ms))', r: 'card(ms) + 1' },
+    { id: 'A8', l: 'card(delete(x, ms))', c: 'x ∈ ms', cv: 'true', r: 'card(ms) - 1', text: 'x ∈ ms = true ⇒ card(delete(x, ms)) = card(ms) − 1' },
+    { id: 'A9', l: 'card(delete(x, ms))', c: 'x ∈ ms', cv: 'false', r: 'card(ms)', text: 'x ∈ ms = false ⇒ card(delete(x, ms)) = card(ms)' },
+    { id: 'A10', l: 'nboccurrences(x, emptymultiset)', r: '0' },
+    { id: 'A11', l: 'nboccurrences(x, add(y, ms))', eq: ['x', 'y'], r: 'nboccurrences(x, ms) + 1', text: 'x = y ⇒ nboccurrences(x, add(y, ms)) = nboccurrences(x, ms) + 1' },
+    { id: 'A12', l: 'nboccurrences(x, add(y, ms))', neq: ['x', 'y'], r: 'nboccurrences(x, ms)', text: 'x ≠ y ⇒ nboccurrences(x, add(y, ms)) = nboccurrences(x, ms)' },
+    { id: 'A13', l: 'nboccurrences(x, delete(x, ms))', c: 'nboccurrences(x, ms)', cv: '0', r: '0', text: 'nboccurrences(x, ms) = 0 ⇒ nboccurrences(x, delete(x, ms)) = 0' }
+  );
+  for (var n = 1; n <= 6; n++) {
+    MULTI.axioms.push({ id: 'A14', l: 'nboccurrences(x, delete(x, ms))', c: 'nboccurrences(x, ms)', cv: String(n), r: 'nboccurrences(x, ms) - 1', text: 'nboccurrences(x, ms) ≥ 1 ⇒ nboccurrences(x, delete(x, ms)) = nboccurrences(x, ms) − 1' });
+  }
+  MULTI.axioms.push({ id: 'A15', l: 'nboccurrences(x, delete(y, ms))', neq: ['x', 'y'], r: 'nboccurrences(x, ms)', text: 'x ≠ y ⇒ nboccurrences(x, delete(y, ms)) = nboccurrences(x, ms)' });
+
+  /* ---------- editable workshops: an undefined subterm makes the whole term undefined.
+     The engine tries the axioms from the outside in: top(push(pop(emptystack), b))
+     would give b, the axiom removing the pop(emptystack) before it is seen. So, before applying an
+     axiom to op(push(…)) or op(enqueue(…)), we check that the argument is entirely defined. ---------- */
+  function guarded(base, ctor, empty) {
+    var P = base.partial, last = '';
+    function undef(t) { /* first undefined subterm, or null */
+      if (t.a !== undefined) return null;
+      for (var i = 0; i < t.args.length; i++) { var u = undef(t.args[i]); if (u) return u; }
+      if (P[t.f] && t.args.length) { var v = T.rewrite.normal(t.args[0], base); if (v && v.a === empty) return t; }
+      return null;
+    }
+    var set = { name: base.name, vars: base.vars, roles: base.roles, axioms: base.axioms, partial: {} };
+    base.axioms.forEach(function (ax) {
+      var h = T.term.parse(ax.l).f;
+      if (set.partial[h]) return;
+      set.partial[h] = {
+        test: function (args) {
+          if (P[h] && P[h].test(args)) { last = P[h].msg; return true; }
+          var u = args[0] && args[0].f === ctor ? undef(args[0]) : null;
+          if (u) { last = 'it contains ' + T.term.str(u) + ', but ' + P[u.f].msg; return true; }
+          return false;
+        },
+        get msg() { return last; }
+      };
+    });
+    return set;
+  }
+  var PILE = guarded(T.rewrite.SETS.PILE, 'push', 'emptystack'), FILE = guarded(T.rewrite.SETS.FILE, 'enqueue', 'emptyqueue');
+
+  twin(document.getElementById('heroTwin'));
+  T.stackBench(document.getElementById('stackS1'), { label: 'A stack: push, pop, query', start: ['a', 'b'] });
+  T.stepper(document.getElementById('rwPile'), { set: PILE, label: 'Workshop: evaluate a stack term', editable: true, presets: [
+    { name: 'two pops', t: 'top(pop(pop(push(push(push(emptystack, a), b), c))))' },
+    { name: 'push after a pop', t: 'top(push(pop(push(push(emptystack, a), b)), c))' },
+    { name: 'empty stack?', t: 'isempty(pop(pop(push(push(emptystack, a), b))))' },
+    { name: 'undefined', t: 'top(pop(pop(push(emptystack, a))))' }
+  ] });
+  T.queueBench(document.getElementById('queueS4'), { label: 'A queue: enqueue, dequeue, query', start: ['a', 'b'] });
+  T.stepper(document.getElementById('rwFile'), { set: FILE, label: 'Workshop: evaluate a queue term', editable: true, presets: [
+    { name: 'first after a dequeue', t: 'first(dequeue(enqueue(enqueue(enqueue(emptyqueue, a), b), c)))' },
+    { name: 'dequeue three elements', t: 'dequeue(enqueue(enqueue(enqueue(emptyqueue, a), b), c))' },
+    { name: 'first of three', t: 'first(enqueue(enqueue(enqueue(emptyqueue, a), b), c))' },
+    { name: 'q to reduce first', t: 'first(enqueue(dequeue(enqueue(emptyqueue, a)), b))' },
+    { name: 'undefined', t: 'first(dequeue(enqueue(emptyqueue, a)))' }
+  ] });
+  T.stepper(document.getElementById('rwEns'), { set: 'ENSEMBLE', label: 'Workshop: the axioms of the set', editable: true, presets: [
+    { name: 'a added twice', t: 'card(add(a, add(a, emptyset)))' },
+    { name: 'three adds, two elements', t: 'card(add(a, add(b, add(a, emptyset))))' },
+    { name: 'membership', t: 'a ∈ add(b, add(a, emptyset))' },
+    { name: 'delete an absent element', t: 'card(delete(c, add(a, emptyset)))' },
+    { name: 'after a deletion', t: 'b ∈ delete(b, add(b, add(a, emptyset)))' }
+  ] });
+  T.stepper(document.getElementById('rwMulti'), { set: MULTI, label: 'Workshop: the axioms of the multiset', presets: [
+    { name: 'a added twice', t: 'card(add(a, add(a, emptymultiset)))' },
+    { name: 'count the a’s', t: 'nboccurrences(a, add(a, add(b, add(a, emptymultiset))))' },
+    { name: 'delete one of the two a’s', t: 'nboccurrences(a, delete(a, add(a, add(a, emptymultiset))))' },
+    { name: 'last occurrence', t: 'a ∈ delete(a, add(a, emptymultiset))' },
+    { name: 'card after a deletion', t: 'card(delete(a, add(a, add(a, emptymultiset))))' }
+  ] });
+})();
+</script>
+<script src="../assets/js/taa-viz.js"></script>
+</body>
+</html>
