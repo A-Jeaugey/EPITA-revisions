@@ -1,7 +1,6 @@
 /* English text for data/elec/ex-td1.js (merged by id over the French file).
    Statements: word for word from the official English TD 1 (“DC circuit bases”) when it matches the French one. */
 (function () {
-  var R0 = window.REV;
   /* same notation as the French file: voltages in blue, currents in red, potentials in purple */
   function u(n, s) { return '<var class="u">' + n + '</var>' + (s ? '<sub>' + s + '</sub>' : ''); }
   function i(n, s) { return '<var class="i">' + n + '</var>' + (s ? '<sub>' + s + '</sub>' : ''); }
@@ -452,15 +451,75 @@
     }
   };
 
-  /* words drawn inside the diagrams (the circuits themselves are left as they are) */
+  /* words drawn inside the diagrams and descriptions of the diagrams (aria), by French text */
   var LAB = { 'aucun courant': 'no current', 'courant E/(2R)': 'current E/(2R)', 'courant E/R': 'current E/R' };
-  if (R0 && R0.i18n && R0.i18n.lang === 'en') (window.ELEC_EX || []).forEach(function (ex) {
-    if (!EN[ex.id]) return;
-    [ex.figs].concat((ex.solution || []).map(function (s) { return s.figs; })).forEach(function (figs) {
-      (figs || []).forEach(function (f) {
-        ((f && f.spec && f.spec.parts) || []).forEach(function (p) { if (p && LAB[p.s]) p.s = LAB[p.s]; if (p && LAB[p.l]) p.l = LAB[p.l]; });
-      });
+  var ARIA = {
+    'R2 en haut et R1 en dessous entre le fil de gauche et B, R3 vertical à droite, R4 et R5 en série au milieu, générateur E en bas':
+      'R2 at the top and R1 below it between the left wire and B, R3 vertical on the right, R4 and R5 in series in the middle, generator E at the bottom',
+    'Le circuit avec ses trois nœuds A, B et C':
+      'The circuit with its three nodes A, B and C',
+    'Circuit du TD 1 Ex 1 après regroupement des résistances':
+      'Circuit of TD 1 Ex 1 after grouping the resistors',
+    'Générateur E qui alimente une seule résistance équivalente 3R/2':
+      'Generator E feeding a single equivalent resistance 3R/2',
+    'Trois étages : R1 et R2 en haut, R3, R4, R5 au milieu, générateur E en bas ; flèches U6 et U7 entre le point du haut et les points du milieu':
+      'Three levels: R1 and R2 at the top, R3, R4, R5 in the middle, generator E at the bottom; arrows U6 and U7 between the top point and the middle points',
+    'Le même circuit avec les points A, B, C, D et F placés':
+      'The same circuit with the points A, B, C, D and F placed',
+    'Générateur E à gauche, R1 en haut, R2 à droite ; U1 fléchée vers la gauche, U2 vers le haut, courant I vers la droite':
+      'Generator E on the left, R1 at the top, R2 on the right; U1 drawn to the left, U2 upward, current I to the right',
+    'Générateur E qui alimente la seule résistance Req = R1 + R2, parcourue par I':
+      'Generator E feeding the single resistance Req = R1 + R2, which carries I',
+    'Source de courant I à gauche, R1 et R2 en parallèle ; courants I1 et I2 vers le bas, tension U vers le haut':
+      'Current source I on the left, R1 and R2 in parallel; currents I1 and I2 downward, voltage U upward',
+    'Source de courant I qui alimente la seule résistance Req ; la tension U est toujours fléchée':
+      'Current source I feeding the single resistance Req; the voltage U is still drawn',
+    'Générateur E en série avec R, qui alimente la charge RC ; tension U aux bornes de RC':
+      'Generator E in series with R, feeding the load RC; voltage U across RC',
+    'Boîte noire en pointillés contenant E, R1 et R2 ; bornes A et B à droite':
+      'Dashed black box containing E, R1 and R2; terminals A and B on the right',
+    'Voltmètre branché entre A et B':
+      'Voltmeter connected between A and B',
+    'Ampèremètre branché entre A et B, R2 court-circuitée':
+      'Ammeter connected between A and B, R2 short-circuited',
+    'Générateur E ; en haut, R en parallèle avec l’interrupteur K1 ; à droite, l’interrupteur K2 en série avec R ; U aux bornes de K2 et R':
+      'Generator E; at the top, R in parallel with the switch K1; on the right, the switch K2 in series with R; U across K2 and R',
+    'Source de courant I, puis une échelle : 2R vertical, R en haut, 2R vertical, R en haut, R vertical ; U1, U2, U3 aux bornes des résistances verticales':
+      'Current source I, then a ladder: vertical 2R, R at the top, vertical 2R, R at the top, vertical R; U1, U2, U3 across the vertical resistors',
+    'Échelle après réduction du dernier étage : un bloc R à la place des deux derniers étages':
+      'Ladder after reducing the last stage: a block R instead of the last two stages',
+    'La source de courant I alimente une seule résistance équivalente R':
+      'The current source I feeds a single equivalent resistance R',
+    'Générateur E à gauche ; au milieu, source de courant I1 (flèche vers le haut) au-dessus de R1, avec U aux bornes de la source ; R2 à droite ; courant I sur le fil du haut':
+      'Generator E on the left; in the middle, current source I1 (arrow pointing up) above R1, with U across the source; R2 on the right; current I on the top wire',
+    'Le circuit avec la tension de R1 fléchée vers le bas et le courant E/R2 dans R2':
+      'The circuit with the voltage of R1 drawn downward and the current E/R2 in R2',
+    'Générateur E, R′ en série, puis au nœud : 2R et 2R vers le bas, et R, 2R, 3R en chemin vers la droite ; U aux bornes de la branche du milieu, U′ aux bornes de la 2R de droite':
+      'Generator E, R′ in series, then at the node: 2R and 2R going down, and R, 2R, 3R along a path to the right; U across the middle branch, U′ across the right-hand 2R',
+    'Branche du milieu réduite à 4R, chemin de droite réduit à 6R':
+      'Middle branch reduced to 4R, right path reduced to 6R',
+    'R′ en série avec un seul bloc 12R/5, U aux bornes du bloc':
+      'R′ in series with a single block 12R/5, U across the block'
+  };
+
+  /* diagrams: English description (aria) and words drawn inside, added to the patch; the circuits are unchanged */
+  function key(s) { return typeof s === 'string' ? s.replace(/\u00a0/g, ' ') : s; } /* the French file has non-breaking spaces before : and ; */
+  function figText(frFigs, enFigs) {
+    (frFigs || []).forEach(function (f, k) {
+      var sp = f && f.spec, e = enFigs && enFigs[k];
+      if (!sp || !e) return;
+      var add = {};
+      if (ARIA[key(sp.aria)]) add.aria = ARIA[key(sp.aria)];
+      var parts = (sp.parts || []).map(function (p) { return p && LAB[key(p.s)] ? { s: LAB[key(p.s)] } : p && LAB[key(p.l)] ? { l: LAB[key(p.l)] } : null; });
+      if (parts.some(function (p) { return p; })) add.parts = parts;
+      if (add.aria || add.parts) e.spec = add;
     });
+  }
+  (window.ELEC_EX || []).forEach(function (ex) {
+    var en = EN[ex.id];
+    if (!en) return;
+    figText(ex.figs, en.figs);
+    (ex.solution || []).forEach(function (s, k) { if (en.solution && en.solution[k]) figText(s.figs, en.solution[k].figs); });
   });
 
   REV.i18n.patch(window.ELEC_EX, EN);

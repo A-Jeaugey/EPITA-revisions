@@ -2,6 +2,9 @@
    2019: wording and answers of the official English subject and answer key (“A little coursework…”);
    2021 to 2023: translated from the French papers. Copies of a question asked again (taa-p2021-q3, -q5,
    taa-p2022-q2) carry the same text as the original. */
+/* topic names (already given by data/en/qcm/taa.js; repeated in case this file is loaded alone) */
+REV.i18n.topics({ 'taa-signature': 'Signature and vocabulary', 'taa-hierarchie': 'Types and operations: the hierarchy', 'taa-precond': 'Preconditions',
+  'taa-axiomes': 'Axioms', 'taa-liste-rec': 'Recursive lists', 'taa-liste-iter': 'Iterative lists' });
 (function () {
   var AREAS = ['<code>types</code>', '<code>uses</code>', '<code>operations</code>', '<code>preconditions</code>', '<code>axioms</code>', '<code>with</code>'];
   var AXIOMS_PB = { q: 'What problems arise during the making of the set of axioms?',

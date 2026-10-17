@@ -1,7 +1,6 @@
 /* English text for data/elec/ex-p2017-2020.js (merged by id over the French file).
    Nov. 2017: statements word for word from the official English paper. Oct. 2018 and Nov. 2020: faithful translation. */
 (function () {
-  var R0 = window.REV;
 
   /* ---------- same notation as the French file ---------- */
   function sub(i) { return i == null ? '' : '<sub>' + i + '</sub>'; }
@@ -457,16 +456,68 @@
     }
   };
 
-  /* words drawn inside the diagrams (the circuits themselves are left as they are) */
+  /* words drawn inside the diagrams and descriptions of the diagrams (aria), by French text */
   var LAB = { 'K_1 ouvert': 'K_1 open', 'K_1 fermé': 'K_1 closed', 'K_2 ouvert': 'K_2 open', 'K_2 fermé': 'K_2 closed',
     'fil': 'wire', 'éteinte': 'off', 'R_{éq} = 2RR′/(2R + R′)': 'R_{eq} = 2RR′/(2R + R′)' };
-  if (R0 && R0.i18n && R0.i18n.lang === 'en') (window.ELEC_EX || []).forEach(function (ex) {
-    if (!EN[ex.id]) return;
-    [ex.figs].concat((ex.solution || []).map(function (s) { return s.figs; })).forEach(function (figs) {
-      (figs || []).forEach(function (f) {
-        ((f && f.spec && f.spec.parts) || []).forEach(function (p) { if (p && LAB[p.s]) p.s = LAB[p.s]; if (p && LAB[p.l]) p.l = LAB[p.l]; });
-      });
+  var ARIA = {
+    'Source de courant I, résistance R′, branche 2R puis R, et boucle de droite R, 3R, 2R ; U aux bornes de R′, U′ aux bornes de 3R':
+      'Current source I, resistor R′, branch 2R then R, and right-hand loop R, 3R, 2R; U across R′, U′ across 3R',
+    'Source I en parallèle avec R′, 3R et 6R':
+      'Source I in parallel with R′, 3R and 6R',
+    'Source I débitant dans la résistance équivalente':
+      'Source I delivering into the equivalent resistance',
+    'Source E ; R1 en parallèle avec l’interrupteur K1 ; R2 vers le fil du bas ; branche de droite K2 puis R3 ; flèches U1, U (aux bornes de K2) et U3':
+      'Source E; R1 in parallel with the switch K1; R2 to the bottom wire; right branch K2 then R3; arrows U1, U (across K2) and U3',
+    'Source E1 à gauche, R1 en haut avec la flèche I1 vers A, R3 entre A et B, source de courant I3 vers A à droite, R2 en bas':
+      'Source E1 on the left, R1 at the top with the arrow I1 toward A, R3 between A and B, current source I3 toward A on the right, R2 at the bottom',
+    'Réseau entre A et B : 4R, 2R et 4R du haut vers un nœud, puis R vers le rail du milieu ; 2R de A vers le rail du milieu ; trois 3R en parallèle vers B':
+      'Network between A and B: 4R, 2R and 4R from the top to a node, then R to the middle rail; 2R from A to the middle rail; three 3R in parallel to B',
+    'Trois étapes de réduction entre A et B':
+      'Three reduction steps between A and B',
+    'R3 sur le fil du haut, R4 en dessous reliée au fil du haut par un petit fil vertical, R2 à droite, R1 au milieu, source E sur le fil du bas fléchée vers la gauche':
+      'R3 on the top wire, R4 below it connected to the top wire by a small vertical wire, R2 on the right, R1 in the middle, source E on the bottom wire with its arrow pointing left',
+    'Circuit simplifié : E, R1 à ses bornes, puis R34 en série avec R2':
+      'Simplified circuit: E, R1 across it, then R34 in series with R2',
+    'Source de courant I ; R1 puis R3 au milieu ; R2 à droite ; K2 relie le point entre R1 et R3 au bas de R2 ; K1 sur le fil du bas, entre le pied de R3 et le fil de droite':
+      'Current source I; R1 then R3 in the middle; R2 on the right; K2 connects the point between R1 and R3 to the bottom of R2; K1 on the bottom wire, between the foot of R3 and the right wire',
+    'Réseau entre A et B : 4R et 2R du haut vers un nœud, puis R vers le rail du milieu ; deux 4R de A vers le rail du milieu ; trois 3R en parallèle vers B':
+      'Network between A and B: 4R and 2R from the top to a node, then R to the middle rail; two 4R from A to the middle rail; three 3R in parallel to B',
+    'Deux étapes de réduction entre A et B':
+      'Two reduction steps between A and B',
+    'Réseau entre A et B : colonne de gauche 2R, 4R puis R ; une 3R de A vers le point entre 4R et R ; deux 2R de A vers le nœud central ; du nœud central, 2R puis 4R vers B, et une 3R vers le point en bas à gauche, relié à B par un fil':
+      'Network between A and B: left column 2R, 4R then R; a 3R from A to the point between 4R and R; two 2R from A to the central node; from the central node, 2R then 4R to B, and a 3R to the bottom-left point, connected to B by a wire',
+    'Première réduction : 6R et 3R entre A et C, R entre C et B, R entre A et D, 6R et 3R entre D et B':
+      'First reduction: 6R and 3R between A and C, R between C and B, R between A and D, 6R and 3R between D and B',
+    'Deux chemins de 3R en parallèle entre A et B':
+      'Two paths of 3R in parallel between A and B',
+    'Branche du haut R1 puis R2, branche du milieu R3, R4, R5, source E sur le fil du bas ; cinq points à nommer ; flèches U1 à U7, I1, I2 et I':
+      'Top branch R1 then R2, middle branch R3, R4, R5, source E on the bottom wire; five points to name; arrows U1 to U7, I1, I2 and I',
+    'Source E, branche R1 puis R2 avec les flèches U1 et U2, résistance R à droite':
+      'Source E, branch R1 then R2 with the arrows U1 and U2, resistor R on the right',
+    'Source E en série avec r, puis R1, R2 et R3 en parallèle ; flèches I, I1 et I2':
+      'Source E in series with r, then R1, R2 and R3 in parallel; arrows I, I1 and I2',
+    'Une seule maille : E, r et R123 en série':
+      'A single loop: E, r and R123 in series'
+  };
+
+  /* diagrams: English description (aria) and words drawn inside, added to the patch; the circuits are unchanged */
+  function key(s) { return typeof s === 'string' ? s.replace(/\u00a0/g, ' ') : s; } /* the French file has non-breaking spaces before : and ; */
+  function figText(frFigs, enFigs) {
+    (frFigs || []).forEach(function (f, k) {
+      var sp = f && f.spec, e = enFigs && enFigs[k];
+      if (!sp || !e) return;
+      var add = {};
+      if (ARIA[key(sp.aria)]) add.aria = ARIA[key(sp.aria)];
+      var parts = (sp.parts || []).map(function (p) { return p && LAB[key(p.s)] ? { s: LAB[key(p.s)] } : p && LAB[key(p.l)] ? { l: LAB[key(p.l)] } : null; });
+      if (parts.some(function (p) { return p; })) add.parts = parts;
+      if (add.aria || add.parts) e.spec = add;
     });
+  }
+  (window.ELEC_EX || []).forEach(function (ex) {
+    var en = EN[ex.id];
+    if (!en) return;
+    figText(ex.figs, en.figs);
+    (ex.solution || []).forEach(function (s, k) { if (en.solution && en.solution[k]) figText(s.figs, en.solution[k].figs); });
   });
 
   REV.i18n.patch(window.ELEC_EX, EN);
