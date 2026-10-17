@@ -24,8 +24,17 @@
 .qa summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .qa[open] summary{margin-bottom:.45rem}
 .row.bn-end{align-items:flex-end}
-.tbl.wc code{white-space:normal;overflow-wrap:break-word} /* tableaux à longs termes : le code passe à la ligne au lieu de cacher une colonne */
-.tbl .grp th{background:var(--surface-2);color:var(--ink);font-family:var(--font-body);font-size:.86rem;letter-spacing:0;text-transform:none}
+.tbl.wc code{white-space:normal;overflow-wrap:anywhere} /* tableaux à longs termes : le code passe à la ligne au lieu de cacher une colonne */
+.tbl .grp th{background:var(--surface-2);color:var(--ink);font-family:var(--font-body);font-size:.86rem;letter-spacing:0;text-transform:none;border-top:1px solid var(--line)}
+@media (max-width:560px){ /* tableau de comparaison : une question par bloc sur téléphone */
+  .tbl.cmp table,.tbl.cmp tbody{display:block}
+  .tbl.cmp thead{display:none}
+  .tbl.cmp tr{display:grid;gap:.3rem;padding:.6rem .75rem;border-bottom:1px solid var(--line)}
+  .tbl.cmp tr:last-child{border-bottom:0}
+  .tbl.cmp td{display:block;padding:0;border:0}
+  .tbl.cmp td:first-child{font-weight:600}
+  .tbl.cmp td[data-l]::before{content:attr(data-l);display:block;font-size:.8rem;color:var(--muted)}
+}
 </style>
 <script src="../assets/js/core.js"></script>
 </head>
@@ -206,7 +215,7 @@ avec
         <div class="note keep"><span class="tag">À retenir</span><ul>
           <li><code>{e1, e2, e3} = cons(e1, cons(e2, cons(e3, listevide)))</code> : un <code>cons</code> par élément, dans l’ordre de la liste, et <code>listevide</code> tout au fond.</li>
           <li>Le dernier élément ajouté est la tête : <code>e3</code> a été ajouté en premier, <code>e1</code> en dernier.</li>
-          <li>Le k‑ième élément s’obtient avec k − 1 <code>fin</code>, puis <code>premier</code> : le 3<sup>e</sup> élément de λ est <code>premier(fin(fin(λ)))</code>.</li>
+          <li>Le k‑ième élément s’obtient avec k&nbsp;−&nbsp;1 <code>fin</code>, puis <code>premier</code> : le 3<sup>e</sup> élément de λ est <code>premier(fin(fin(λ)))</code>.</li>
         </ul></div>
         <h3>Évaluer un terme</h3>
         <div class="prose">
@@ -253,7 +262,7 @@ longueur(listevide) = 0
           <div class="card"><h4>Cas <code>cons(e, λ)</code></h4><p>Un élément de plus que λ.</p>
 <pre data-spec data-cls="flat">
 longueur(cons(e, λ))
-    = longueur(λ) + 1
+= longueur(λ) + 1
 </pre></div>
         </div>
 <pre data-spec aria-label="L’opération longueur ajoutée à la liste récursive">
@@ -279,12 +288,12 @@ avec
           <div class="card"><h4>Cas <code>listevide</code></h4><p>Rien à mettre devant : il reste λ2.</p>
 <pre data-spec data-cls="flat">
 concaténer(listevide, λ2)
-    = λ2
+= λ2
 </pre></div>
           <div class="card"><h4>Cas <code>cons(e, λ)</code></h4><p><code>e</code> reste en tête, suivi de la concaténation du reste de la liste avec λ2.</p>
 <pre data-spec data-cls="flat">
 concaténer(cons(e, λ), λ2)
-    = cons(e, concaténer(λ, λ2))
+= cons(e, concaténer(λ, λ2))
 </pre></div>
         </div>
 <pre data-spec aria-label="L’opération concaténer ajoutée à la liste récursive">
@@ -343,7 +352,7 @@ opérations
       insérer : liste x entier x élément → liste
          succ : place → place
 </pre>
-        <div class="tbl"><table>
+        <div class="tbl wc"><table>
           <thead><tr><th>Opération</th><th>Ce qu’elle donne, sur <code>λ = {a, b, c}</code></th></tr></thead>
           <tbody>
             <tr><td><code class="op-int">accès(λ, i)</code></td><td>la place du i‑ième élément de λ<br><span class="muted"><code>accès(λ, 2)</code> : la place qui contient b</span></td></tr>
@@ -372,7 +381,7 @@ avec
     liste λ
     entier k
 </pre>
-        <div class="prose"><p>Le deuxième axiome relie les deux lectures : le contenu de la k‑ième place est le k‑ième élément. Le troisième dit que la place qui suit la k‑ième est la (k + 1)‑ième. Ensemble, ils démontrent l’erratum de la partie 1 : <code>contenu(succ(accès(li, 2)))</code> se réécrit en <code>ième(li, 3)</code>, le 3<sup>e</sup> élément.</p></div>
+        <div class="prose"><p>Le deuxième axiome relie les deux lectures : le contenu de la k‑ième place est le k‑ième élément. Le troisième dit que la place qui suit la k‑ième est la (k&nbsp;+&nbsp;1)‑ième. Ensemble, ils démontrent l’erratum de la partie 1 : <code>contenu(succ(accès(li, 2)))</code> se réécrit en <code>ième(li, 3)</code>, le 3<sup>e</sup> élément.</p></div>
         <div id="rwIter"></div>
         <div class="note keep"><span class="tag">À retenir</span><ul>
           <li>Tous les éléments sont accessibles par leur rang, de 1 à <code>longueur(λ)</code>.</li>
@@ -382,7 +391,7 @@ avec
         <div class="note trap"><span class="tag">Pièges</span><ul>
           <li>Les rangs commencent à 1, pas à 0. Le dernier élément est <code>ième(λ, longueur(λ))</code>.</li>
           <li><code>accès</code> est une opération interne (<code>place</code> est un type défini) ; <code>ième</code> et <code>longueur</code> sont des observateurs.</li>
-          <li><code>ième(λ, i)</code> n’a de sens que pour 1 ≤ i ≤ <code>longueur(λ)</code> : aucun axiome ne parle des autres rangs, même si la fiche ne lui écrit pas de précondition.</li>
+          <li><code>ième(λ, i)</code> n’a de sens que pour <code class="nw">1 ≤ i ≤ longueur(λ)</code> : aucun axiome ne parle des autres rangs, même si la fiche ne lui écrit pas de précondition.</li>
         </ul></div>
         <div data-check-ref="taa/cours-2-listes.html#s5" data-n="3"></div>
       </div>
@@ -427,8 +436,8 @@ avec
         <div class="prose"><p>Pour chaque axiome, pose-toi la même question : <b>l’élément qui est au rang i du résultat, à quel rang était-il dans λ ?</b></p></div>
         <ol class="steps">
           <li><div><b>Avant k</b> (<code class="nw">1 ≤ i &lt; k</code>) : rien n’a bougé. L’élément est au même rang : <code class="nw">ième(λ, i)</code>.</div></li>
-          <li><div><b>Après une suppression</b> (<code class="nw">k ≤ i</code>) : les éléments qui suivaient le rang k ont avancé d’un rang. Celui qui est maintenant au rang i était juste derrière, au rang i + 1 : <code class="nw">ième(λ, i + 1)</code>.</div></li>
-          <li><div><b>Après une insertion</b> : au rang k se trouve le nouvel élément <code>e</code>. Au-delà (<code class="nw">k &lt; i</code>), les éléments ont reculé d’un rang : celui qui est au rang i était au rang i − 1, d’où <code class="nw">ième(λ, i − 1)</code>.</div></li>
+          <li><div><b>Après une suppression</b> (<code class="nw">k ≤ i</code>) : les éléments qui suivaient le rang k ont avancé d’un rang. Celui qui est maintenant au rang i était juste derrière, au rang i&nbsp;+&nbsp;1 : <code class="nw">ième(λ, i + 1)</code>.</div></li>
+          <li><div><b>Après une insertion</b> : au rang k se trouve le nouvel élément <code>e</code>. Au-delà (<code class="nw">k &lt; i</code>), les éléments ont reculé d’un rang : celui qui est au rang i était au rang i&nbsp;−&nbsp;1, d’où <code class="nw">ième(λ, i − 1)</code>.</div></li>
           <li><div><b>Les bornes</b> : le dernier cas s’arrête à la longueur du résultat. Après <code>supprimer</code>, il y a un élément de moins : i va jusqu’à <code class="nw">longueur(λ) − 1</code>. Après <code>insérer</code>, un de plus : i va jusqu’à <code class="nw">longueur(λ) + 1</code>.</div></li>
         </ol>
         <div class="prose"><p>Sur λ = {a, b, c, d, e}, avec k = 2 :</p></div>
@@ -453,7 +462,7 @@ avec
         <div class="note trap"><span class="tag">Pièges</span><ul>
           <li>Les décalages semblent à l’envers : supprimer retire un élément, et pourtant l’axiome dit <code class="nw">i + 1</code>. C’est normal : on va chercher l’élément plus loin dans λ.</li>
           <li>Pour supprimer, il n’y a pas de cas <code class="nw">i = k</code> à part : il est compris dans <code class="nw">k ≤ i</code>, car l’élément qui suivait prend la place libérée.</li>
-          <li>insérer accepte le rang <code class="nw">k = longueur(λ) + 1</code> : c’est un ajout à la fin. supprimer le refuse : ce rang n’existe pas dans λ.</li>
+          <li><code>insérer</code> accepte le rang <code class="nw">k = longueur(λ) + 1</code> : c’est un ajout à la fin. <code>supprimer</code> le refuse : ce rang n’existe pas dans λ.</li>
         </ul></div>
         <div class="prose"><p>À toi, avec λ = {a, b, c, d}.</p></div>
         <div class="qa-list">
@@ -496,17 +505,17 @@ avec
           <li><div><b>Lis et écris.</b> Lis les éléments dans λ et écris le résultat entre accolades. Compte : il doit y avoir autant d’éléments que la longueur.</div></li>
         </ol>
         <h3>Exemple : mystère(λ, 2, 3) avec λ = {a, b, c, d, e}</h3>
-        <div class="prose"><p>Précondition : 1 ≤ 2 ≤ 3 ≤ 5, vraie. Longueur : 5 + 3 − 2 + 1 = 7. Il reste à remplir les sept rangs :</p></div>
+        <div class="prose"><p>Précondition : 1 ≤ 2 ≤ 3 ≤ 5, vraie. Longueur : 5 + 3 − 2 + 1 = 7. Il reste à remplir les sept rangs i. Dans le second cas, le rang lu dans λ est <code class="nw">i − y + x − 1</code>, soit <code class="nw">i − 3 + 2 − 1 = i − 2</code> :</p></div>
         <div class="tbl"><table>
-          <thead><tr><th>Rang i</th><th>Cas</th><th>Rang lu dans <code>λ</code></th><th>Élément</th></tr></thead>
+          <thead><tr><th><code>i</code></th><th>Cas</th><th>Rang lu dans <code>λ</code></th><th>Élément</th></tr></thead>
           <tbody>
             <tr><td>1</td><td><code>1 ≤ i ≤ y</code></td><td>1</td><td>a</td></tr>
             <tr><td>2</td><td><code>1 ≤ i ≤ y</code></td><td>2</td><td>b</td></tr>
             <tr><td>3</td><td><code>1 ≤ i ≤ y</code></td><td>3</td><td>c</td></tr>
-            <tr><td>4</td><td><code>y &lt; i ≤ 7</code></td><td>4 − 3 + 2 − 1 = 2</td><td>b</td></tr>
-            <tr><td>5</td><td><code>y &lt; i ≤ 7</code></td><td>5 − 3 + 2 − 1 = 3</td><td>c</td></tr>
-            <tr><td>6</td><td><code>y &lt; i ≤ 7</code></td><td>6 − 3 + 2 − 1 = 4</td><td>d</td></tr>
-            <tr><td>7</td><td><code>y &lt; i ≤ 7</code></td><td>7 − 3 + 2 − 1 = 5</td><td>e</td></tr>
+            <tr><td>4</td><td><code>y &lt; i ≤ 7</code></td><td>4 − 2 = 2</td><td>b</td></tr>
+            <tr><td>5</td><td><code>y &lt; i ≤ 7</code></td><td>5 − 2 = 3</td><td>c</td></tr>
+            <tr><td>6</td><td><code>y &lt; i ≤ 7</code></td><td>6 − 2 = 4</td><td>d</td></tr>
+            <tr><td>7</td><td><code>y &lt; i ≤ 7</code></td><td>7 − 2 = 5</td><td>e</td></tr>
           </tbody>
         </table></div>
         <div class="prose"><p>Résultat : <code>mystère(λ, 2, 3) = {a, b, c, b, c, d, e}</code>. Le morceau de x à y, ici b et c, est recopié juste après lui-même : <code>mystère</code> duplique ce morceau. Trouver ce sens n’est pas demandé, mais c’est une bonne vérification.</p></div>
@@ -541,17 +550,17 @@ avec
         </div>
         <h3>La même question, deux écritures</h3>
         <div class="prose"><p>Pour λ = {e1, e2, e3} :</p></div>
-        <div class="tbl wc"><table>
+        <div class="tbl wc cmp"><table>
           <thead><tr><th>Question</th><th>Liste récursive</th><th>Liste itérative</th></tr></thead>
           <tbody>
-            <tr><td>La liste</td><td><code>cons(e1, cons(e2, cons(e3, listevide)))</code></td><td><code>longueur(λ) = 3</code><br><code>ième(λ, 1) = e1</code><br><code>ième(λ, 2) = e2</code><br><code>ième(λ, 3) = e3</code></td></tr>
-            <tr><td>1<sup>er</sup> élément</td><td><code>premier(λ)</code></td><td><code>ième(λ, 1)</code></td></tr>
-            <tr><td>3<sup>e</sup> élément</td><td><code>premier(fin(fin(λ)))</code></td><td><code>ième(λ, 3)</code></td></tr>
-            <tr><td>1<sup>re</sup> place</td><td><code>tête(λ)</code></td><td><code>accès(λ, 1)</code></td></tr>
-            <tr><td>Place suivante</td><td><code>succ(tête(λ)) = tête(fin(λ))</code></td><td><code>succ(accès(λ, k)) = accès(λ, k + 1)</code></td></tr>
-            <tr><td>Ajouter</td><td><code>cons(e, λ)</code> : en tête seulement</td><td><code>insérer(λ, k, e)</code> : à tout rang de 1 à <code>longueur(λ) + 1</code></td></tr>
-            <tr><td>Retirer</td><td><code>fin(λ)</code> : la tête seulement</td><td><code>supprimer(λ, k)</code> : à tout rang de 1 à <code>longueur(λ)</code></td></tr>
-            <tr><td>Longueur</td><td>à définir (partie 4)</td><td><code>longueur(λ)</code></td></tr>
+            <tr><td>La liste</td><td data-l="récursive"><code>cons(e1, cons(e2, cons(e3, listevide)))</code></td><td data-l="itérative"><code>longueur(λ) = 3</code><br><code>ième(λ, 1) = e1</code><br><code>ième(λ, 2) = e2</code><br><code>ième(λ, 3) = e3</code></td></tr>
+            <tr><td>1<sup>er</sup> élément</td><td data-l="récursive"><code>premier(λ)</code></td><td data-l="itérative"><code>ième(λ, 1)</code></td></tr>
+            <tr><td>3<sup>e</sup> élément</td><td data-l="récursive"><code>premier(fin(fin(λ)))</code></td><td data-l="itérative"><code>ième(λ, 3)</code></td></tr>
+            <tr><td>1<sup>re</sup> place</td><td data-l="récursive"><code>tête(λ)</code></td><td data-l="itérative"><code>accès(λ, 1)</code></td></tr>
+            <tr><td>Place suivante</td><td data-l="récursive"><code>succ(tête(λ)) = tête(fin(λ))</code></td><td data-l="itérative"><code>succ(accès(λ, k)) = accès(λ, k + 1)</code></td></tr>
+            <tr><td>Ajouter</td><td data-l="récursive"><code>cons(e, λ)</code> : en tête seulement</td><td data-l="itérative"><code>insérer(λ, k, e)</code> : à tout rang de 1 à <code>longueur(λ) + 1</code></td></tr>
+            <tr><td>Retirer</td><td data-l="récursive"><code>fin(λ)</code> : la tête seulement</td><td data-l="itérative"><code>supprimer(λ, k)</code> : à tout rang de 1 à <code>longueur(λ)</code></td></tr>
+            <tr><td>Longueur</td><td data-l="récursive">à définir (partie 4)</td><td data-l="itérative"><code>longueur(λ)</code></td></tr>
           </tbody>
         </table></div>
         <h3>Laquelle utiliser ?</h3>
@@ -562,23 +571,27 @@ avec
         </ul></div>
         <h3>Toutes les opérations</h3>
         <div class="tbl wc"><table>
-          <thead><tr><th>Opération</th><th>Rôle</th><th>Précondition</th></tr></thead>
+          <thead><tr><th>Opération et rôle</th><th>Précondition</th></tr></thead>
           <tbody>
-            <tr class="grp"><th colspan="3" scope="colgroup">Les deux listes</th></tr>
-            <tr><td><code>listevide</code></td><td class="op-cst">constante</td><td>aucune</td></tr>
-            <tr><td><code>contenu(p)</code></td><td class="op-obs">observateur</td><td>aucune</td></tr>
-            <tr><td><code>succ(p)</code></td><td class="op-int">interne</td><td>aucune dans la fiche</td></tr>
-            <tr class="grp"><th colspan="3" scope="colgroup">Liste récursive</th></tr>
-            <tr><td><code>cons(e, λ)</code></td><td class="op-int">interne</td><td>aucune</td></tr>
-            <tr><td><code>fin(λ)</code></td><td class="op-int">interne</td><td><code>λ ≠ listevide</code></td></tr>
-            <tr><td><code>tête(λ)</code></td><td class="op-int">interne</td><td><code>λ ≠ listevide</code></td></tr>
-            <tr><td><code>premier(λ)</code></td><td class="op-obs">observateur</td><td><code>λ ≠ listevide</code></td></tr>
-            <tr class="grp"><th colspan="3" scope="colgroup">Liste itérative</th></tr>
-            <tr><td><code>accès(λ, k)</code></td><td class="op-int">interne</td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
-            <tr><td><code>ième(λ, i)</code></td><td class="op-obs">observateur</td><td>aucune dans la fiche (rangs 1 à <code>longueur(λ)</code>)</td></tr>
-            <tr><td><code>longueur(λ)</code></td><td class="op-obs">observateur</td><td>aucune</td></tr>
-            <tr><td><code>insérer(λ, k, e)</code></td><td class="op-int">interne</td><td><code>1 ≤ k ≤ longueur(λ) + 1</code></td></tr>
-            <tr><td><code>supprimer(λ, k)</code></td><td class="op-int">interne</td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Les deux listes</th></tr>
+            <tr><td><code class="op-cst">listevide</code> <span class="op-cst">constante</span></td><td>aucune</td></tr>
+            <tr><td><code class="op-obs">contenu(p)</code> <span class="op-obs">observateur</span></td><td>aucune</td></tr>
+            <tr><td><code class="op-int">succ(p)</code> <span class="op-int">interne</span></td><td>aucune dans la fiche</td></tr>
+          </tbody>
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Liste récursive</th></tr>
+            <tr><td><code class="op-int">cons(e, λ)</code> <span class="op-int">interne</span></td><td>aucune</td></tr>
+            <tr><td><code class="op-int">fin(λ)</code> <span class="op-int">interne</span></td><td><code>λ ≠ listevide</code></td></tr>
+            <tr><td><code class="op-int">tête(λ)</code> <span class="op-int">interne</span></td><td><code>λ ≠ listevide</code></td></tr>
+            <tr><td><code class="op-obs">premier(λ)</code> <span class="op-obs">observateur</span></td><td><code>λ ≠ listevide</code></td></tr>
+          </tbody>
+          <tbody>
+            <tr class="grp"><th colspan="2" scope="rowgroup">Liste itérative</th></tr>
+            <tr><td><code class="op-int">accès(λ, k)</code> <span class="op-int">interne</span></td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
+            <tr><td><code class="op-obs">ième(λ, i)</code> <span class="op-obs">observateur</span></td><td>aucune dans la fiche (rangs 1 à <code>longueur(λ)</code>)</td></tr>
+            <tr><td><code class="op-obs">longueur(λ)</code> <span class="op-obs">observateur</span></td><td>aucune</td></tr>
+            <tr><td><code class="op-int">insérer(λ, k, e)</code> <span class="op-int">interne</span></td><td><code>1 ≤ k ≤ longueur(λ) + 1</code></td></tr>
+            <tr><td><code class="op-int">supprimer(λ, k)</code> <span class="op-int">interne</span></td><td><code>λ ≠ listevide &amp; 1 ≤ k ≤ longueur(λ)</code></td></tr>
           </tbody>
         </table></div>
         <div class="note keep"><span class="tag">À retenir</span><ul>

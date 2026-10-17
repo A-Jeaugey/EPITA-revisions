@@ -272,12 +272,12 @@
       ]
     },
     LISTE: {
-      name: 'liste récursive', vars: V('l l2 e'),
+      name: 'liste récursive', vars: V('λ λ2 e'),
       roles: { listevide: 'cst', cons: 'int', fin: 'int', premier: 'obs', longueur: 'obs', 'concaténer': 'int' },
       partial: { fin: emptyArg('listevide', 'fin(λ) n’est défini que si λ ≠ listevide'), premier: emptyArg('listevide', 'premier(λ) n’est défini que si λ ≠ listevide') },
       axioms: [
-        { id: 'A2', l: 'fin(cons(e, l))', r: 'l' },
-        { id: 'A3', l: 'premier(cons(e, l))', r: 'e' }
+        { id: 'A2', l: 'fin(cons(e, λ))', r: 'λ' },
+        { id: 'A3', l: 'premier(cons(e, λ))', r: 'e' }
       ]
     },
     BOOL: {
