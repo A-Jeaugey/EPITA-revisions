@@ -16,6 +16,13 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   rond traversé par le fil, source de courant = rond barré en travers). Documentation en tête du fichier.
 - `qcm-engine.js` : `REV.quiz.Card(question, opts)` et `REV.quiz.mountCheck(el, ids)` (vérifications de fin de
   section dans les cours : `<div data-check="id1,id2"></div>`).
+- `spec.js` : `REV.spec(texte, { roles, hl })` met en forme une spécification de type abstrait (mots-clés seuls sur
+  leur ligne : types, utilise, opérations, préconditions, axiomes, avec) ; `<pre data-spec data-roles="1">` dans une
+  page. Une question de QCM peut avoir `fig: { code: '…' }`.
+- `taa.js` (pages TAA) : `R.taa.term` (parse, show), `R.taa.rewrite` (jeux d’axiomes PILE, FILE, LISTE, BOOL,
+  ENSEMBLE, extensibles ; `trace` donne les étapes), bancs `stepper`, `stackBench`, `queueBench`, `ranksBench`,
+  `sorter`, et `<div data-check-ref="taa/cours-1-types.html#s2" data-n="3">` (questions de la banque qui renvoient
+  à cette partie). Numéros de parties : `<span class="plates" data-n="3">`.
 
 ## Formats de données
 
@@ -33,6 +40,10 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   solution, answer, traps, official). Une figure est `{spec}` (schéma), `{svg}` ou `{img:'assets/img/…', alt}`.
 - **Sujets d’élec** (`data/elec/exams.js`) : `window.ELEC_EXAMS` (clé `pAAAA` = année du partiel ; promo = AAAA + 5),
   `window.ELEC_TOPICS`, `window.ELEC_CATS`.
+- **Exercices TAA** (`data/taa/ex-*.js`, poussés dans `window.TAA_EX`) : même idée que l’élec, sans schémas :
+  `{ id, exam, kind:'partiel'|'td'|'archive'|'cours', order, src, title, pts, topics, lvl, time, intro,
+  specs:[{ code, cap }], questions, hints, solution:[{ t, html, spec }], answer (HTML ou { html, spec }), traps,
+  grading, official }`. Notions : `window.TAA_TOPICS` et sujets : `window.TAA_EXAMS` (`data/taa/exams.js`).
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
