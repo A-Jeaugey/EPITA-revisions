@@ -54,15 +54,18 @@
   }
   function isObj(o) { return o && typeof o === 'object' && !Array.isArray(o); }
   /* fusion d'une traduction dans un objet : chaînes remplacées, objets fusionnés, tableaux élément par élément
-     (null garde l'élément français ; un tableau anglais plus court ou plus long fixe la longueur) */
+     (null garde l'élément français ; un tableau anglais plus court ou plus long fixe la longueur).
+     Les tableaux et objets imbriqués sont copiés avant d'être modifiés : un tableau d'options ou une figure
+     partagés par plusieurs questions dans le fichier français ne sont jamais traduits pour toutes à la fois. */
   function merge(dst, src) {
     Object.keys(src).forEach(function (k) {
       var v = src[k], d = dst[k];
       if (v == null) return;
       if (Array.isArray(v) && Array.isArray(d)) {
-        v.forEach(function (x, i) { if (x == null) return; if (isObj(x) && isObj(d[i])) merge(d[i], x); else d[i] = x; });
+        d = dst[k] = d.slice();
+        v.forEach(function (x, i) { if (x == null) return; d[i] = isObj(x) && isObj(d[i]) ? merge(Object.assign({}, d[i]), x) : x; });
         d.length = v.length;
-      } else if (isObj(v) && isObj(d)) merge(d, v);
+      } else if (isObj(v) && isObj(d)) dst[k] = merge(Object.assign({}, d), v);
       else dst[k] = v;
     });
     return dst;
