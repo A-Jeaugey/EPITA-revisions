@@ -28,14 +28,14 @@
       id: 'taa', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
       course: 'Types algébriques abstraits', path: 'taa/index.html', dir: 'taa/', status: 'ready',
       exam: 'Écrit sur le sujet · 1 h cette année d’après le Moodle (30 min, noté sur 10, en 2024)',
-      annales: 'algo', train: 'taa/entrainement.html', fiche: 'taa/fiche.html', open: 'Ouvrir TAA',
+      annalesId: 'algo', train: 'taa/entrainement.html', fiche: 'taa/fiche.html', open: 'Ouvrir TAA',
       chapters: [
         { id: 'types', title: 'Les types abstraits', path: 'taa/cours-1-types.html', sections: 8 },
         { id: 'listes', title: 'Les listes', path: 'taa/cours-2-listes.html', sections: 8 },
         { id: 'piles', title: 'Piles, files, ensembles', path: 'taa/cours-3-piles-files.html', sections: 8 }
       ]
     },
-    { id: 'caml', name: 'Algo · Caml', short: 'Caml', status: 'soon', annales: 'algo' },
+    { id: 'caml', name: 'Algo · Caml', short: 'Caml', status: 'soon', annalesId: 'algo' },
     { id: 'archi', name: 'Architecture', short: 'Archi', status: 'soon', annales: 'Archi' }
   ];
   function subject(id) { for (var i = 0; i < SUBJECTS.length; i++) if (SUBJECTS[i].id === id) return SUBJECTS[i]; return null; }
