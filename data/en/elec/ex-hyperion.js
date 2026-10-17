@@ -124,7 +124,7 @@
     'hyp-td2-ex1-q1': {
       src: 'Old TD 2 · Ex 1 · Q1', title: 'One loop, two voltage sources pulling against each other',
       intro: td2e1 + '<p>' + E(1) + ' = 10 V; ' + E(2) + ' = 15 V; ' + R() + ' = 1 kΩ</p>',
-      figs: [{ alt: 'A single loop: R and E1 on the top wire, E2 on the bottom wire; the arrows of E1 and E2 point to the left; I is drawn downwards on the left wire', cap: 'Question 1' }],
+      figs: [{ alt: 'A single loop: R and E1 on the top wire, E2 on the bottom wire; the arrows of E1 and E2 point to the left; I is drawn downwards on the left wire', cap: 'Diagram for question 1' }],
       questions: ['<b>1)</b> Calculate ' + I()],
       hints: ['There is only one loop: the same current ' + I() + ' flows through ' + R() + ', ' + E(1) + ' and ' + E(2) + '. Find the direction in which it flows through ' + R() + '.',
         'Write Kirchhoff’s voltage law going around in the direction of ' + I() + ': an arrow along the path counts +, an arrow against it counts −. For ' + R() + ', draw the arrow with the receiver convention.'],
@@ -142,7 +142,7 @@
     'hyp-td2-ex1-q2': {
       src: 'Old TD 2 · Ex 1 · Q2', title: 'Current source, resistor and voltage source in series',
       intro: td2e1 + '<p>' + I() + ' = 0.3 A; ' + E() + ' = 5 V; ' + R() + ' = 8 Ω</p>',
-      figs: [{ alt: 'Bottom branch: current source I to the right, R, then source E; a wire at the top connects both ends. Below, U under the current source, E under the voltage source and V under R and E, all drawn to the left', cap: 'Question 2' }],
+      figs: [{ alt: 'Bottom branch: current source I to the right, R, then source E; a wire at the top connects both ends. Below, U under the current source, E under the voltage source and V under R and E, all drawn to the left', cap: 'Diagram for question 2' }],
       questions: ['<b>2)</b> Calculate ' + U() + ' and ' + UV],
       hints: ['The current source sets ' + I() + ' in the whole loop, including in ' + R() + '.',
         'The arrow ' + UV + ' covers ' + R() + ' and ' + E() + ': add the two voltages. Then look at the top wire: it connects the two ends of the arrows ' + U() + ' and ' + UV + '.'],
@@ -160,7 +160,7 @@
     'hyp-td2-ex1-q3': {
       src: 'Old TD 2 · Ex 1 · Q3', title: 'Choosing E2 to set the current',
       intro: td2e1 + '<p>' + E(1) + ' = 30 V; ' + R() + ' = 2 kΩ</p>',
-      figs: [{ alt: 'A loop: E1 on the left with its arrow pointing up, R at the top with I to the right, E2 on the right with its arrow pointing down', cap: 'Question 3' }],
+      figs: [{ alt: 'A loop: E1 on the left with its arrow pointing up, R at the top with I to the right, E2 on the right with its arrow pointing down', cap: 'Diagram for question 3' }],
       questions: ['<b>3)</b> Calculate ' + E(2) + ' so that <b>a)</b> ' + I() + ' = 10 mA <b>b)</b> ' + I() + ' = 0'],
       hints: ['Take the bottom wire at 0 V and write the potential of both ends of ' + R() + '.',
         'The arrow of ' + E(2) + ' points down: its + is at the bottom, so the top of ' + E(2) + ' is at −' + E(2) + '.'],
@@ -178,7 +178,7 @@
     'hyp-td2-ex1-q4': {
       src: 'Old TD 2 · Ex 1 · Q4', title: 'Finding E and R of a real generator from two measurements',
       intro: td2e1,
-      figs: [{ alt: 'Real generator: E with its arrow pointing up and R at the top, load RC on the right, U drawn upwards across RC', cap: 'Question 4' }],
+      figs: [{ alt: 'Real generator: E with its arrow pointing up and R at the top, load RC on the right, U drawn upwards across RC', cap: 'Diagram for question 4' }],
       questions: ['<b>4)</b> The generator (' + E() + ', ' + R() + ') gives ' + U() + ' = 80 V if ' + R('C') + ' = 8 Ω and twice that if ' + R('C') + ' = 32 Ω. Calculate ' + E() + ' and ' + R()],
       hints: ['In each case, first calculate the current ' + I() + ' = ' + U() + '/' + R('C') + '.',
         'For a real generator, ' + U() + ' = ' + E() + ' − ' + R() + I() + '. The two cases give two equations with two unknowns.'],
@@ -195,7 +195,7 @@
     'hyp-td2-ex1-q5': {
       src: 'Old TD 2 · Ex 1 · Q5', title: 'Switch in series: the voltages with K open and K closed',
       intro: td2e1 + '<p>' + E() + ' = 10 V; ' + R(1) + ' = 3' + R(2) + '</p>',
-      figs: [{ alt: 'E on the left with its arrow pointing up, R1 at the top with U1 drawn to the left, switch K then R2 on the right branch; U2 across R2, V across K and R2 together', cap: 'Question 5' }],
+      figs: [{ alt: 'E on the left with its arrow pointing up, R1 at the top with U1 drawn to the left, switch K then R2 on the right branch; U2 across R2, V across K and R2 together', cap: 'Diagram for question 5' }],
       questions: ['<b>5)</b> Calculate ' + U(1) + ', ' + U(2) + ' and ' + UV + ' depending on whether <i>K</i> is open or closed.'],
       hints: ['K open: no current flows in the loop. What, then, is the voltage across a resistor?',
         'K closed: the voltage across K is zero, and the loop becomes a voltage divider.'],
@@ -268,7 +268,7 @@
     'hyp-td2-ex2-q1': {
       src: 'Old TD 2 · Ex 2 · Q1', title: 'Resistance seen by a current source, then a current divider',
       intro: td2e2 + '<p>' + R(1) + ' = ' + R(3) + ' = 100 Ω; ' + R(2) + ' = 200 Ω; ' + R(4) + ' = 300 Ω; ' + I() + ' = 1 A</p>',
-      figs: [{ alt: 'Current source I on the left (arrow pointing up), R1 at the top, vertical R2, then R3 at the top and vertical R4 on the right', cap: 'Question 1' }],
+      figs: [{ alt: 'Current source I on the left (arrow pointing up), R1 at the top, vertical R2, then R3 at the top and vertical R4 on the right', cap: 'Diagram for question 1' }],
       questions: ['<b>1)</b> Calculate the equivalent resistance “seen” by the current generator and the currents in ' + R(2) + ' and ' + R(3) + '.'],
       hints: [R(3) + ' and ' + R(4) + ' are in series; together they are in parallel with ' + R(2) + '; ' + R(1) + ' is in series with the whole.',
         'At the node after ' + R(1) + ', the current ' + I() + ' splits between ' + R(2) + ' and the branch ' + R(3) + ' + ' + R(4) + ': current divider.'],
@@ -284,7 +284,7 @@
     'hyp-td2-ex2-q2': {
       src: 'Old TD 2 · Ex 2 · Q2', title: 'Draw and calculate three currents',
       intro: td2e2 + '<p>' + E() + ' = 64 V; ' + R(1) + ' = 6.25 kΩ; ' + R(2) + ' = 10 kΩ; ' + R(3) + ' = 6 kΩ</p>',
-      figs: [{ alt: 'E on the left, R1 at the top, then R2 and R3 vertical in parallel; U across R3', cap: 'Question 2' }],
+      figs: [{ alt: 'E on the left, R1 at the top, then R2 and R3 vertical in parallel; U across R3', cap: 'Diagram for question 2' }],
       questions: ['<b>2)</b> Draw the arrows of the 3 currents and calculate them'],
       hints: ['Let ' + I(1) + ' leave the + of ' + E() + ' towards ' + R(1) + ', and let ' + I(2) + ' and ' + I(3) + ' flow down through ' + R(2) + ' and ' + R(3) + ': Kirchhoff’s current law gives ' + I(1) + ' = ' + I(2) + ' + ' + I(3) + '.',
         'Resistance seen by ' + E() + ': ' + R(1) + ' + ' + R(2) + ' // ' + R(3) + '. From it you get ' + I(1) + ', then the voltage ' + U() + ' shared by ' + R(2) + ' and ' + R(3) + '.'],
@@ -301,7 +301,7 @@
     'hyp-td2-ex2-q3': {
       src: 'Old TD 2 · Ex 2 · Q3', title: 'Choosing R′ so that U = E/4, then finding U′',
       intro: td2e2,
-      figs: [{ alt: 'E, R′ at the top, then two vertical 2R in series with U across them; R at the top, vertical 2R on the right with U′, and 3R at the bottom going back to the bottom node', cap: 'Question 3' }],
+      figs: [{ alt: 'E, R′ at the top, then two vertical 2R in series with U across them; R at the top, vertical 2R on the right with U′, and 3R at the bottom going back to the bottom node', cap: 'Diagram for question 3' }],
       questions: ['<b>3)</b> Calculate ' + Rp + ' in terms of ' + R() + ' so that ' + U() + ' = ' + E() + '/4', 'Calculate ' + Up + ' in terms of ' + E() + '.'],
       hints: ['Below ' + Rp + ', two branches in parallel: 2' + R() + ' + 2' + R() + ', and ' + R() + ' + 2' + R() + ' + 3' + R() + ' (the bottom 3' + R() + ' belongs to the right-hand branch).',
         'Write ' + U() + ' with the voltage divider between ' + Rp + ' and this equivalent resistance, then solve ' + U() + ' = ' + E() + '/4.',
@@ -309,7 +309,7 @@
       solution: [
         { t: 'Resistance below R′', html: '<ul><li>Middle branch: 2' + R() + ' + 2' + R() + ' = 4' + R() + ';</li><li>right-hand branch: ' + R() + ' + 2' + R() + ' + 3' + R() + ' = 6' + R() + ' (a single path, same current);</li><li>in parallel: 4' + R() + ' // 6' + R() + ' = ' + F('24' + R() + '²', '10' + R()) + ' = ' + F('12' + R(), '5') + '.</li></ul>',
           figs: [{ spec: { aria: 'Voltage divider: E, R′ then the equivalent resistance 12R/5 across which U is read' }, cap: 'What the source sees: a voltage divider' }] },
-        { t: 'Condition U = E/4', html: '<p>Divider: ' + U() + ' = ' + E() + ' × ' + F('12' + R() + '/5', Rp + ' + 12' + R() + '/5') + '.</p><p>' + U() + ' = ' + E() + '/4 ⇔ ' + Rp + ' + ' + F('12' + R(), '5') + ' = 4 × ' + F('12' + R(), '5') + ' ⇔ ' + Rp + ' = 3 × ' + F('12' + R(), '5') + ' = ' + F('36' + R(), '5') + ' = 7.2' + R() + '.</p>' },
+        { t: 'Condition for U = E/4', html: '<p>Divider: ' + U() + ' = ' + E() + ' × ' + F('12' + R() + '/5', Rp + ' + 12' + R() + '/5') + '.</p><p>' + U() + ' = ' + E() + '/4 ⇔ ' + Rp + ' + ' + F('12' + R(), '5') + ' = 4 × ' + F('12' + R(), '5') + ' ⇔ ' + Rp + ' = 3 × ' + F('12' + R(), '5') + ' = ' + F('36' + R(), '5') + ' = 7.2' + R() + '.</p>' },
         { t: 'Calculating U′', html: '<p>The right-hand branch (' + R() + ', 2' + R() + ', 3' + R() + ' in series) is across ' + U() + '. ' + Up + ' is the voltage across its 2' + R() + ': voltage divider.</p><p>' + Up + ' = ' + U() + ' × ' + F('2' + R(), R() + ' + 2' + R() + ' + 3' + R()) + ' = ' + F(U(), '3') + ' = ' + F(E(), '12') + '.</p>' }
       ],
       answer: '<p>' + Rp + ' = 36' + R() + '/5 = 7.2' + R() + '; ' + Up + ' = ' + E() + '/12</p>',
@@ -320,7 +320,7 @@
     'hyp-td2-ex2-q4': {
       src: 'Old TD 2 · Ex 2 · Q4', title: 'Current source in series with R1 in the middle of the circuit',
       intro: td2e2 + '<p>' + E() + ' = 15 V; ' + R(1) + ' = 200 Ω; ' + R(2) + ' = 100 Ω; ' + I(1) + ' = 0.1 A</p>',
-      figs: [{ alt: 'E on the left; top wire with I to the right; middle branch: current source I1 pointing up, U across it, then R1 below; R2 on the right', cap: 'Question 4' }],
+      figs: [{ alt: 'E on the left; top wire with I to the right; middle branch: current source I1 pointing up, U across it, then R1 below; R2 on the right', cap: 'Diagram for question 4' }],
       questions: ['<b>4)</b> Calculate ' + U() + ' and ' + I()],
       hints: ['Bottom wire at 0 V: the top wire is connected to the + of E, so it is at ' + E() + '. This gives you the current in ' + R(2) + ' directly.',
         'Kirchhoff’s current law on the top wire for ' + I() + '. For ' + U() + ', find the potential of the point between the source and ' + R(1) + ': ' + I(1) + ' flows through ' + R(1) + '.'],
@@ -336,7 +336,7 @@
     'hyp-td2-ex2-q5': {
       src: 'Old TD 2 · Ex 2 · Q5', title: 'Three branches in parallel, two sources: the voltage U',
       intro: td2e2 + '<p>' + E(1) + ' = 10 V; ' + E(2) + ' = 20 V; ' + R(1) + ' = 2 kΩ; ' + R(2) + ' = 5 kΩ; ' + R(3) + ' = 10 kΩ</p>',
-      figs: [{ alt: 'Three branches between the top wire and the bottom wire: R1 above E1 (arrow pointing up), E2 (arrow pointing down) above R2, and R3 with U drawn upwards', cap: 'Question 5' }],
+      figs: [{ alt: 'Three branches between the top wire and the bottom wire: R1 above E1 (arrow pointing up), E2 (arrow pointing down) above R2, and R3 with U drawn upwards', cap: 'Diagram for question 5' }],
       questions: ['<b>5)</b> Calculate ' + U()],
       hints: ['Bottom wire at 0 V, top wire at ' + U() + ': write the current of each branch in terms of ' + U() + '.',
         'The + of ' + E(2) + ' is at the bottom (arrow pointing down): the point between ' + E(2) + ' and ' + R(2) + ' is at ' + U() + ' + ' + E(2) + '.',
@@ -354,7 +354,7 @@
     'hyp-td2-ex2-q6': {
       src: 'Old TD 2 · Ex 2 · Q6', title: 'Resistor ladder fed by a current source',
       intro: td2e2 + '<p>' + I() + ' = 2 mA; ' + R() + ' = 1 kΩ</p>',
-      figs: [{ alt: 'Current source I on the left; vertical 2R (U1), R at the top, vertical 2R (U2), R at the top, vertical R (U3)', cap: 'Question 6' }],
+      figs: [{ alt: 'Current source I on the left; vertical 2R (U1), R at the top, vertical 2R (U2), R at the top, vertical R (U3)', cap: 'Diagram for question 6' }],
       questions: ['<b>6)</b> Calculate ' + U(1) + ', ' + U(2) + ' and ' + U(3)],
       hints: ['Reduce the ladder from the right to find the resistance seen by the source.',
         U(1) + ' = (resistance seen) × ' + I() + '. Then each stage is a voltage divider.'],
@@ -371,7 +371,7 @@
     'hyp-td3-ex3-q1': {
       src: 'Old TD 3 · Superposition · Q1', title: 'Superposition: two voltage sources, one voltage U',
       intro: td3s + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = 2 kΩ; ' + E(2) + ' = 20 V; ' + R(2) + ' = 5 kΩ; ' + R(3) + ' = 10 kΩ</p>',
-      figs: [{ alt: 'Three branches between the top wire and the bottom wire: R1 above E1 (arrow pointing up), E2 (arrow pointing down) above R2, and R3 with U drawn upwards', cap: 'Question 1' }],
+      figs: [{ alt: 'Three branches between the top wire and the bottom wire: R1 above E1 (arrow pointing up), E2 (arrow pointing down) above R2, and R3 with U drawn upwards', cap: 'Diagram for question 1' }],
       questions: ['<b>1)</b> Calculate U.'],
       hints: ['Keep ' + E(1) + ' alone (' + E(2) + ' replaced by a wire) and calculate ' + Up + '; then ' + E(2) + ' alone (' + E(1) + ' replaced by a wire) and calculate ' + Upp + '.',
         'In each case it is a voltage divider: the source sees its own resistor in series with the other two resistors in parallel.',
@@ -381,7 +381,7 @@
           figs: [{ spec: { aria: 'E1 alone: E2 replaced by a wire', parts: parts(8, { 6: { s: 'E_2 → wire' } }) }, cap: 'E1 alone' }] },
         { t: 'E2 alone', html: '<p>' + E(1) + ' replaced by a wire: ' + R(1) + ' and ' + R(3) + ' are in parallel, ' + R(1) + ' // ' + R(3) + ' = ' + F('2 × 10', '12') + ' = ' + F('5', '3') + ' kΩ. The branch ' + E(2) + ' + ' + R(2) + ' is a generator with its + at the bottom: with no load, it would put the top wire at −' + E(2) + '. Voltage divider:</p><p>' + Upp + ' = −' + E(2) + ' × ' + F(R(1) + ' // ' + R(3), R(2) + ' + ' + R(1) + ' // ' + R(3)) + ' = −20 × ' + F('5/3', '5 + 5/3') + ' = −20 × ' + F('5', '20') + ' = −5 V.</p>',
           figs: [{ spec: { aria: 'E2 alone: E1 replaced by a wire', parts: parts(8, { 6: { s: 'E_1 → wire' } }) }, cap: 'E2 alone' }] },
-        { t: 'Superposition', html: '<p>' + U() + ' = ' + Up + ' + ' + Upp + ' = 6.25 − 5 = 1.25 V.</p><p>Literal expression: ' + U() + ' = ' + F(R(3) + '(' + R(2) + E(1) + ' − ' + R(1) + E(2) + ')', R(1) + R(2) + ' + ' + R(1) + R(3) + ' + ' + R(2) + R(3)) + '. This is the same circuit as in TD 2 (exercise 2, question 5): same result with Kirchhoff’s current law.</p><p>The archived handwritten solution forgets the − sign of ' + Upp + ' (it writes ' + R(1) + R(3) + E(2) + ' in the numerator, without −); its final formula, found with Kirchhoff’s laws, is correct.</p>' }
+        { t: 'Adding the two contributions', html: '<p>' + U() + ' = ' + Up + ' + ' + Upp + ' = 6.25 − 5 = 1.25 V.</p><p>Literal expression: ' + U() + ' = ' + F(R(3) + '(' + R(2) + E(1) + ' − ' + R(1) + E(2) + ')', R(1) + R(2) + ' + ' + R(1) + R(3) + ' + ' + R(2) + R(3)) + '. This is the same circuit as in TD 2 (exercise 2, question 5): same result with Kirchhoff’s current law.</p><p>The archived handwritten solution forgets the − sign of ' + Upp + ' (it writes ' + R(1) + R(3) + E(2) + ' in the numerator, without −); its final formula, found with Kirchhoff’s laws, is correct.</p>' }
       ],
       answer: '<p>' + Up + ' = 6.25 V; ' + Upp + ' = −5 V; ' + U() + ' = 1.25 V</p>',
       traps: ['Turning off a voltage source means replacing it with a wire: the resistor that was in series with it stays in place.',
@@ -391,7 +391,7 @@
     'hyp-td3-ex3-q2': {
       src: 'Old TD 3 · Superposition · Q2', title: 'Superposition: a voltage source and a current source',
       intro: td3s + '<p>' + E(1) + ' = 20 V; ' + R(1) + ' = 200 Ω; ' + I(0) + ' = 0.2 A; ' + R(2) + ' = 100 Ω; ' + R(3) + ' = 500 Ω; ' + R(4) + ' = 400 Ω</p>',
-      figs: [{ alt: 'E1 on the left, R1 at the top with I1 to the right, vertical R3 with I3 downwards, current source I0 (arrow pointing up) in series with R4 on the right, R2 on the bottom wire', cap: 'Question 2' }],
+      figs: [{ alt: 'E1 on the left, R1 at the top with I1 to the right, vertical R3 with I3 downwards, current source I0 (arrow pointing up) in series with R4 on the right, R2 on the bottom wire', cap: 'Diagram for question 2' }],
       questions: ['<b>2)</b> Calculate ' + I(1) + ' and ' + I(3) + '.'],
       hints: [E(1) + ' alone: the source ' + I(0) + ' is replaced by an open switch; the branch of ' + R(4) + ' no longer carries any current.',
         I(0) + ' alone: ' + E(1) + ' is replaced by a wire. ' + I(0) + ' arrives at the top of ' + R(3) + ' and splits between ' + R(3) + ' and the path ' + R(1) + ' + ' + R(2) + '.',
@@ -401,7 +401,7 @@
           figs: [{ spec: { aria: 'E1 alone: the source I0 is open, R4 carries no current', parts: parts(10, { 5: { s: 'I_0 open' } }) }, cap: 'E1 alone' }] },
         { t: 'I0 alone (E1 replaced by a wire)', html: '<p>' + R(4) + ' is in series with the current source: it changes nothing. ' + I(0) + ' arrives at the top of ' + R(3) + ' and splits between ' + R(3) + ' and the path ' + R(1) + ' + ' + R(2) + ' (which goes through the wire that replaces ' + E(1) + '). Current divider:</p><ul><li>' + I(3) + '″ = ' + I(0) + ' × ' + F(R(1) + ' + ' + R(2), R(1) + ' + ' + R(2) + ' + ' + R(3)) + ' = 0.2 × ' + F('300', '800') + ' = 0.075 A;</li><li>in ' + R(1) + ', the current flows from right to left, against the arrow of ' + I(1) + ': ' + I(1) + '″ = −' + I(0) + ' × ' + F(R(3), R(1) + ' + ' + R(2) + ' + ' + R(3)) + ' = −0.2 × ' + F('500', '800') + ' = −0.125 A.</li></ul>',
           figs: [{ spec: { aria: 'I0 alone: E1 replaced by a wire', parts: parts(10, { 0: { s: 'E_1 → wire' } }) }, cap: 'I0 alone' }] },
-        { t: 'Superposition', html: '<p>' + I(1) + ' = 0.025 − 0.125 = −0.1 A; ' + I(3) + ' = 0.025 + 0.075 = 0.1 A.</p><p>Check with Kirchhoff’s current law at the top of ' + R(3) + ': ' + I(1) + ' + ' + I(0) + ' = ' + I(3) + ', that is −0.1 + 0.2 = 0.1 A.</p><p>The archived handwritten solution writes “' + R(1) + R(2) + '” where ' + R(1) + ' + ' + R(2) + ' is needed and forgets the − sign of ' + I(1) + '″.</p>' }
+        { t: 'Adding the two contributions', html: '<p>' + I(1) + ' = 0.025 − 0.125 = −0.1 A; ' + I(3) + ' = 0.025 + 0.075 = 0.1 A.</p><p>Check with Kirchhoff’s current law at the top of ' + R(3) + ': ' + I(1) + ' + ' + I(0) + ' = ' + I(3) + ', that is −0.1 + 0.2 = 0.1 A.</p><p>The archived handwritten solution writes “' + R(1) + R(2) + '” where ' + R(1) + ' + ' + R(2) + ' is needed and forgets the − sign of ' + I(1) + '″.</p>' }
       ],
       answer: '<p>' + I(1) + ' = −0.1 A; ' + I(3) + ' = 0.1 A</p>',
       traps: [R(4) + ' is in series with the current source: it does not change any current in the circuit.',
@@ -412,7 +412,7 @@
     'hyp-td3-ex4-q1': {
       src: 'Old TD 3 · Thévenin · Q1', title: 'Thévenin seen by R4: a divider followed by a resistor',
       intro: td3t + '<p>' + E() + ' = 20 V; ' + R(1) + ' = 10 kΩ; ' + R(2) + ' = 15 kΩ; ' + R(3) + ' = 10 kΩ; ' + R(4) + ' = 4 kΩ</p>',
-      figs: [{ alt: 'E on the left, R1 at the top, vertical R2, R3 at the top up to A, R4 between A and B with U drawn upwards', cap: 'Question 1' }],
+      figs: [{ alt: 'E on the left, R1 at the top, vertical R2, R3 at the top up to A, R4 between A and B with U drawn upwards', cap: 'Diagram for question 1' }],
       questions: ['<b>1)</b> Determine the Thévenin equivalent “seen” by ' + R(4) + ' and deduce U'],
       hints: ['Disconnect ' + R(4) + ': with no load, no current flows through ' + R(3) + '.',
         E('th') + ' is then the voltage across ' + R(2) + ' (divider). For ' + R('th') + ', replace ' + E() + ' with a wire and look from A and B.'],
@@ -431,7 +431,7 @@
     'hyp-td3-ex4-q2': {
       src: 'Old TD 3 · Thévenin · Q2', title: 'Thévenin seen by RC: two sources and a useless resistor',
       intro: td3t + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = 3 kΩ; ' + R(2) + ' = 3 kΩ; ' + E(2) + ' = 10 V; ' + R(3) + ' = 6 kΩ; ' + R(4) + ' = 10 kΩ; ' + R(5) + ' = 2 kΩ</p>',
-      figs: [{ alt: 'E1 at the top left with R2 below it, R1 at the top towards a node, R3 from this node to a point connected to E2 (arrow pointing up) and to R4 in parallel, R5 towards A, RC between A and B with U', cap: 'Question 2' }],
+      figs: [{ alt: 'E1 at the top left with R2 below it, R1 at the top towards a node, R3 from this node to a point connected to E2 (arrow pointing up) and to R4 in parallel, R5 towards A, RC between A and B with U', cap: 'Diagram for question 2' }],
       questions: ['<b>2)</b> Determine the Thévenin equivalent “seen” by ' + R('C') + '.', 'Calculate ' + R('C') + ' such that U = 2 V.'],
       hints: [R(4) + ' is connected directly across the ideal source ' + E(2) + ': it does not change the voltage ' + E(2) + ', and it disappears when ' + E(2) + ' is turned off.',
         'With no load, ' + R(5) + ' carries no current: ' + E('th') + ' is the potential of node N at the end of ' + R(1) + '. Calculate it by superposition (' + E(1) + ' alone, then ' + E(2) + ' alone).',
@@ -452,7 +452,7 @@
     'hyp-td3-ex4-q3': {
       src: 'Old TD 3 · Thévenin · Q3', title: 'Resistor bridge: Thévenin seen by RC and the balance condition',
       intro: td3t,
-      figs: [{ alt: 'Bridge: E on the left; R1 and R2 in series from top to bottom with point A in the middle; R3 and R4 in series with B in the middle; RC between A and B', cap: 'Question 3' }],
+      figs: [{ alt: 'Bridge: E on the left; R1 and R2 in series from top to bottom with point A in the middle; R3 and R4 in series with B in the middle; RC between A and B', cap: 'Diagram for question 3' }],
       questions: ['<b>3) a)</b> Determine the voltage ' + E('TH') + ' of the Thévenin equivalent “seen” by ' + R('C') + ' and deduce the relation that must hold between the 4 resistors ' + R(1) + ' to ' + R(4) + ' for the current in ' + R('C') + ' to be zero whatever the value of this resistor.',
         '<b>b)</b> Determine the expression of ' + R('TH') + '.'],
       hints: ['Without ' + R('C') + ', ' + R(1) + ' and ' + R(2) + ' form a voltage divider across ' + E() + ', and ' + R(3) + ' and ' + R(4) + ' another one.',
@@ -473,7 +473,7 @@
     'hyp-td3-ex4-q4': {
       src: 'Old TD 3 · Thévenin · Q4', title: 'Thévenin seen by RC between two dividers: finding E4 so that I = 0',
       intro: td3t + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = 1 kΩ; ' + R(2) + ' = 3 kΩ; ' + R(3) + ' = ' + R(4) + ' = 5 kΩ</p>',
-      figs: [{ alt: 'E1 on the left, R1 at the top, vertical R2, RC at the top with I to the right, vertical R3, R4 at the top, E4 on the right with its arrow pointing up', cap: 'Question 4' }],
+      figs: [{ alt: 'E1 on the left, R1 at the top, vertical R2, RC at the top with I to the right, vertical R3, R4 at the top, E4 on the right with its arrow pointing up', cap: 'Diagram for question 4' }],
       questions: ['<b>4)</b> Calculate the Thévenin equivalent “seen” by ' + R('C') + ' and deduce ' + E(4) + ' so that ' + I() + ' = 0 whatever ' + R('C')],
       hints: ['Disconnect ' + R('C') + ': two independent dividers remain, (' + E(1) + ', ' + R(1) + ', ' + R(2) + ') on the left and (' + E(4) + ', ' + R(4) + ', ' + R(3) + ') on the right.',
         'With ' + I() + ' drawn from left to right in ' + R('C') + ', take ' + E('th') + ' = (potential on the left of ' + R('C') + ') − (potential on the right).',
@@ -482,7 +482,7 @@
         { t: 'Thévenin voltage (RC disconnected)', html: '<p>Bottom wire: 0 V. Call A the left end of ' + R('C') + ' (top of ' + R(2) + ') and B the right end (top of ' + R(3) + ').</p><ul><li>' + V('A') + ' = ' + E(1) + ' × ' + F(R(2), R(1) + ' + ' + R(2)) + ' = 10 × ' + F('3', '4') + ' = 7.5 V;</li><li>' + V('B') + ' = ' + E(4) + ' × ' + F(R(3), R(3) + ' + ' + R(4)) + ' = ' + F(E(4), '2') + '.</li></ul><p>' + E('th') + ' = ' + V('A') + ' − ' + V('B') + ' = 7.5 − ' + E(4) + '/2 (in V).</p>',
           figs: [{ spec: { aria: 'RC disconnected: divider E1, R1, R2 on the left and divider E4, R4, R3 on the right; E_th between A and B' }, cap: 'Load disconnected: two independent dividers' }] },
         { t: 'Thévenin resistance (sources turned off)', html: '<p>' + E(1) + ' and ' + E(4) + ' replaced by wires: on the left, ' + R(1) + ' // ' + R(2) + '; on the right, ' + R(3) + ' // ' + R(4) + '; the two are in series through the bottom wire.</p><p>' + R('th') + ' = ' + F(R(1) + R(2), R(1) + ' + ' + R(2)) + ' + ' + F(R(3) + R(4), R(3) + ' + ' + R(4)) + ' = 0.75 + 2.5 = 3.25 kΩ.</p>' },
-        { t: 'Condition I = 0', html: '<p>' + I() + ' = ' + F(E('th'), R('th') + ' + ' + R('C')) + ' is zero for every ' + R('C') + ' if and only if ' + E('th') + ' = 0:</p><p>' + E(4) + ' = 2 × 7.5 = 15 V, or as a literal expression ' + E(4) + ' = ' + F(E(1) + R(2) + '(' + R(3) + ' + ' + R(4) + ')', R(3) + '(' + R(1) + ' + ' + R(2) + ')') + '.</p><p>The archived handwritten solution starts from the correct equality ' + R(2) + '(' + R(3) + ' + ' + R(4) + ')' + E(1) + ' = ' + R(3) + '(' + R(1) + ' + ' + R(2) + ')' + E(4) + ', but isolates ' + E(4) + ' wrongly: it writes ' + R(3) + R(2) + ' in the denominator, which would give 20 V. The correct denominator is ' + R(3) + '(' + R(1) + ' + ' + R(2) + '): ' + E(4) + ' = 15 V.</p>',
+        { t: 'Condition for I = 0', html: '<p>' + I() + ' = ' + F(E('th'), R('th') + ' + ' + R('C')) + ' is zero for every ' + R('C') + ' if and only if ' + E('th') + ' = 0:</p><p>' + E(4) + ' = 2 × 7.5 = 15 V, or as a literal expression ' + E(4) + ' = ' + F(E(1) + R(2) + '(' + R(3) + ' + ' + R(4) + ')', R(3) + '(' + R(1) + ' + ' + R(2) + ')') + '.</p><p>The archived handwritten solution starts from the correct equality ' + R(2) + '(' + R(3) + ' + ' + R(4) + ')' + E(1) + ' = ' + R(3) + '(' + R(1) + ' + ' + R(2) + ')' + E(4) + ', but isolates ' + E(4) + ' wrongly: it writes ' + R(3) + R(2) + ' in the denominator, which would give 20 V. The correct denominator is ' + R(3) + '(' + R(1) + ' + ' + R(2) + '): ' + E(4) + ' = 15 V.</p>',
           figs: [{ spec: { aria: 'Equivalent Thévenin generator with its load' }, cap: E('th') + ' = 7.5 − ' + E(4) + '/2 (V) and ' + R('th') + ' = 3.25 kΩ' }] }
       ],
       answer: '<p>' + E('th') + ' = ' + E(1) + R(2) + '/(' + R(1) + ' + ' + R(2) + ') − ' + E(4) + R(3) + '/(' + R(3) + ' + ' + R(4) + ') = 7.5 − ' + E(4) + '/2 (V); ' + R('th') + ' = 3.25 kΩ; ' + E(4) + ' = 15 V</p>',
@@ -493,7 +493,7 @@
     'hyp-td3-ex4-q5': {
       src: 'Old TD 3 · Thévenin · Q5', title: 'Thévenin seen by the right-hand R2, then the value of R2 that maximizes U',
       intro: td3t,
-      figs: [{ alt: 'E1 at the top left with its arrow pointing down and E2 below it with its arrow pointing up, joined in the middle; the top R2 and the middle R2 go to the right-hand node; R1 on the bottom wire and a vertical R1; the right-hand R2, across which U is measured', cap: 'Question 5' }],
+      figs: [{ alt: 'E1 at the top left with its arrow pointing down and E2 below it with its arrow pointing up, joined in the middle; the top R2 and the middle R2 go to the right-hand node; R1 on the bottom wire and a vertical R1; the right-hand R2, across which U is measured', cap: 'Diagram for question 5' }],
       questions: ['<b>5) a)</b> Calculate the Thévenin equivalent “seen” by the right-hand resistor ' + R(2) + '.',
         '<b>b)</b> Assuming that ' + R(2) + ' varies, for what value of this resistance (in terms of ' + R(1) + ') is the voltage U maximum?'],
       hints: ['Call X the top-right node, Y the bottom-right node, and M the middle point on the left. The arrows of ' + E(1) + ' and ' + E(2) + ' both point towards M: take M as the reference (0 V).',
@@ -507,7 +507,7 @@
         { t: 'a) Thévenin resistance', html: '<p>Sources turned off: H, M and Q form a single node. Between X and this node: ' + R(2) + '/2; between this node and Y: ' + R(1) + '; between X and Y: ' + R(1) + '. So ' + R(1) + ' (vertical) is in parallel with ' + R(2) + '/2 + ' + R(1) + ':</p><p>' + R('th') + ' = ' + F(R(1) + '(' + R(1) + ' + ' + R(2) + '/2)', '2' + R(1) + ' + ' + R(2) + '/2') + ' = ' + F(R(1) + '(2' + R(1) + ' + ' + R(2) + ')', '4' + R(1) + ' + ' + R(2)) + '.</p>',
           figs: [{ spec: { aria: 'Sources turned off: R2/2 between X and the left node, R1 between this node and Y, R1 between X and Y' }, cap: 'Sources turned off: the whole left side is a single node' }] },
         { t: 'b) U in terms of R2', html: '<p>All the ' + R(2) + ' in the diagram have the same value and vary together. Voltage divider on the load:</p><p>' + U() + ' = ' + E('th') + ' × ' + F(R(2), R('th') + ' + ' + R(2)) + ', with ' + R('th') + ' + ' + R(2) + ' = ' + F(R(1) + '(2' + R(1) + ' + ' + R(2) + ') + ' + R(2) + '(4' + R(1) + ' + ' + R(2) + ')', '4' + R(1) + ' + ' + R(2)) + ' = ' + F('2' + R(1) + '² + 5' + R(1) + R(2) + ' + ' + R(2) + '²', '4' + R(1) + ' + ' + R(2)) + '.</p><p>Hence ' + U() + ' = ' + F(R(1) + R(2) + '(2' + E(2) + ' − ' + E(1) + ')', '2' + R(1) + '² + 5' + R(1) + R(2) + ' + ' + R(2) + '²') + ' = ' + F(R(1) + '(2' + E(2) + ' − ' + E(1) + ')', '2' + R(1) + '²/' + R(2) + ' + 5' + R(1) + ' + ' + R(2)) + '.</p>' },
-        { t: 'b) Maximum', html: '<p>' + U() + ' is maximum when the denominator is minimum, that is when D(' + R(2) + ') = 2' + R(1) + '²/' + R(2) + ' + ' + R(2) + ' is minimum. D′(' + R(2) + ') = −2' + R(1) + '²/' + R(2) + '² + 1 is zero for ' + R(2) + '² = 2' + R(1) + '²:</p><p>' + R(2) + ' = √2 · ' + R(1) + ' ≈ 1.41' + R(1) + '.</p><p>Then 2' + R(1) + '²/' + R(2) + ' = ' + R(2) + ' = √2' + R(1) + ' and ' + U('max') + ' = ' + F('2' + E(2) + ' − ' + E(1), '5 + 2√2') + ' ≈ 0.13 (2' + E(2) + ' − ' + E(1) + ').</p><p>The archived handwritten solution stops before this question.</p>' }
+        { t: 'b) Finding the maximum', html: '<p>' + U() + ' is maximum when the denominator is minimum, that is when D(' + R(2) + ') = 2' + R(1) + '²/' + R(2) + ' + ' + R(2) + ' is minimum. D′(' + R(2) + ') = −2' + R(1) + '²/' + R(2) + '² + 1 is zero for ' + R(2) + '² = 2' + R(1) + '²:</p><p>' + R(2) + ' = √2 · ' + R(1) + ' ≈ 1.41' + R(1) + '.</p><p>Then 2' + R(1) + '²/' + R(2) + ' = ' + R(2) + ' = √2' + R(1) + ' and ' + U('max') + ' = ' + F('2' + E(2) + ' − ' + E(1), '5 + 2√2') + ' ≈ 0.13 (2' + E(2) + ' − ' + E(1) + ').</p><p>The archived handwritten solution stops before this question.</p>' }
       ],
       answer: '<p>' + E('th') + ' = ' + R(1) + '(2' + E(2) + ' − ' + E(1) + ')/(4' + R(1) + ' + ' + R(2) + '); ' + R('th') + ' = ' + R(1) + '(2' + R(1) + ' + ' + R(2) + ')/(4' + R(1) + ' + ' + R(2) + '); ' + U() + ' is maximum for ' + R(2) + ' = √2 · ' + R(1) + '</p>',
       traps: ['The arrows of ' + E(1) + ' and ' + E(2) + ' both point towards the middle point: their + terminals are in the middle, not at the corners.',
@@ -518,7 +518,7 @@
     'hyp-td3-ex5-q1': {
       src: 'Old TD 3 · Ex 5 (Norton) · Q1', title: 'Norton seen by RC: a single source',
       intro: td3n + '<p>' + E() + ' = 10 V; ' + R(1) + ' = 100 Ω; ' + R(2) + ' = 200 Ω; ' + R(3) + ' = 300 Ω; ' + R('C') + ' = 100 Ω</p>',
-      figs: [{ alt: 'E on the left, R1 on the top wire, R2 on the bottom wire, vertical R3, RC on the right with I and U', cap: 'Question 1' }],
+      figs: [{ alt: 'E on the left, R1 on the top wire, R2 on the bottom wire, vertical R3, RC on the right with I and U', cap: 'Diagram for question 1' }],
       questions: ['<b>1)</b> Calculate the Norton equivalent “seen” by ' + R('C') + ' and deduce ' + U() + ' and ' + I()],
       hints: [I('N') + ' is the current in a wire that replaces ' + R('C') + ': this wire also short-circuits ' + R(3) + '.',
         R('N') + ': ' + E() + ' replaced by a wire, then the resistance seen from the terminals of ' + R('C') + '.',
@@ -538,7 +538,7 @@
     'hyp-td3-ex5-q2': {
       src: 'Old TD 3 · Ex 5 (Norton) · Q2', title: 'Norton seen by RC: a voltage source and a current source',
       intro: td3n + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = 2 kΩ; ' + R(2) + ' = 6 kΩ; ' + I(2) + ' = 13 mA; ' + R('C') + ' = 10.5 kΩ</p>',
-      figs: [{ alt: 'E1 on the left, R1 at the top, current source I2 pointing down, vertical R2, then RC on the right with I and U', cap: 'Question 2' }],
+      figs: [{ alt: 'E1 on the left, R1 at the top, current source I2 pointing down, vertical R2, then RC on the right with I and U', cap: 'Diagram for question 2' }],
       questions: ['<b>2)</b> Calculate the Norton equivalent “seen” by ' + R('C') + ' and deduce ' + U() + ' and ' + I()],
       hints: ['In short circuit, the top wire is at 0 V: ' + R(2) + ' carries no current. Add up the currents arriving at the top wire.',
         'The arrow of ' + I(2) + ' points down: the source takes 13 mA away from the top wire.',
@@ -558,7 +558,7 @@
     'hyp-td3-ex5-q3': {
       src: 'Old TD 3 · Ex 5 (Norton) · Q3', title: 'Norton seen by RC: three voltage sources',
       intro: td3n + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = 4 kΩ; ' + R('C') + ' = 2 kΩ; ' + E(2) + ' = 9 V; ' + R(2) + ' = 3 kΩ; ' + E(3) + ' = 15 V; ' + R(3) + ' = 6 kΩ</p>',
-      figs: [{ alt: 'E1 on the left, R1 at the top; branch E2 (arrow pointing down) then R2; RC with I downwards; branch R3 then E3 (arrow pointing down)', cap: 'Question 3' }],
+      figs: [{ alt: 'E1 on the left, R1 at the top; branch E2 (arrow pointing down) then R2; RC with I downwards; branch R3 then E3 (arrow pointing down)', cap: 'Diagram for question 3' }],
       questions: ['<b>3)</b> Calculate the Norton equivalent “seen” by ' + R('C') + ' and deduce ' + I() + '.'],
       hints: ['In short circuit, the top wire (node N) is at 0 V: the current in each branch follows directly from Ohm’s law.',
         E(2) + ' and ' + E(3) + ' are drawn downwards: their + is at the bottom. The + of ' + E(2) + ' is connected to ' + R(2) + ', that of ' + E(3) + ' to the bottom wire.',
@@ -578,7 +578,7 @@
     'hyp-td3-ex5-q4': {
       src: 'Old TD 3 · Ex 5 (Norton) · Q4', title: 'Norton seen by RC: current source in parallel with R3',
       intro: td3n + '<p>' + E(1) + ' = 10 V; ' + R(1) + ' = ' + R(2) + ' = 10 Ω; ' + I(3) + ' = 5 A; ' + R(3) + ' = 3 Ω, ' + R(4) + ' = 2 Ω; ' + R('C') + ' = 8.4 Ω</p>',
-      figs: [{ alt: 'E1 at the bottom left with R1 above it; vertical R2; on the top wire, R3 in parallel with the current source I3 pointing left; vertical R4; RC on the right with I to the right', cap: 'Question 4' }],
+      figs: [{ alt: 'E1 at the bottom left with R1 above it; vertical R2; on the top wire, R3 in parallel with the current source I3 pointing left; vertical R4; RC on the right with I to the right', cap: 'Diagram for question 4' }],
       questions: ['<b>4)</b> Calculate ' + I() + '.'],
       hints: ['Norton method seen by ' + R('C') + ': replace ' + R('C') + ' with a wire (' + R(4) + ' is then short-circuited) and find ' + I('cc') + '.',
         'Call L the top-left node (where ' + R(1) + ', ' + R(2) + ', ' + R(3) + ' and ' + I(3) + ' meet) and N the right-hand node. In short circuit, N is at 0 V: Millman at L gives ' + V('L') + '; the arrow of ' + I(3) + ' brings 5 A to L and takes them from N.',
