@@ -55,7 +55,7 @@
     'Bande rouge pâle : le courant qui circule vraiment, d’autant plus large qu’il est fort. Flèche fine : la flèche de l’énoncé, la même dans les trois schémas.': 'Pale red band: the current that actually flows, wider when it is stronger. Thin arrow: the arrow of the problem statement, the same in all three diagrams.',
     'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)': 'R₁ = 2 kΩ, R₂ = 1 kΩ, R₃ = 3 kΩ (V/kΩ = mA)',
     'C’est bien le courant du circuit complet ✓': 'This is exactly the current of the full circuit ✓',
-    'Même chose dans R₃ : {a} + {b} = {c} mA.': 'Same in R₃: {a} + {b} = {c} mA.'
+    'Même chose dans {r} : {a} + {b} = {c} mA.': 'Same in {r}: {a} + {b} = {c} mA.'
   });
 
   var reduce = U.reduceMotion();
@@ -273,14 +273,19 @@
     return { I1p: E1 / S, I1pp: -r.R3 * I3 / S, I1: (E1 - r.R3 * I3) / S };
   }
   var FL = { L: [[200, 180], [40, 180], [40, 40], [200, 40]], R3: [[200, 40], [200, 180]], J: [[200, 180], [270, 180], [270, 40], [200, 40]] };
-  function flow(pts, I) {
+  /* bande le long des fils, dans le sens réel du courant ; chevrons espacés, jamais sur la flèche de l'énoncé (avoid) */
+  function flow(pts, I, avoid) {
     if (Math.abs(I) < 1e-9) return '';
     if (I < 0) pts = pts.slice().reverse();
-    var w = 3 + 11 * Math.min(1, Math.abs(I) / IMAX), s = '<path class="vs-flow" style="stroke-width:' + r1(w) + 'px" d="' + poly(pts) + '"/>';
-    var step = 44, pos = 24;
+    var w = 4 + 11 * Math.min(1, Math.abs(I) / IMAX), s = '<path class="vs-flow" style="stroke-width:' + r1(w) + 'px" d="' + poly(pts) + '"/>';
+    var step = 40, pos = 22, cl = 7 + w * .25, cw = 3.6 + w * .14;
     for (var i = 1; i < pts.length; i++) {
       var a = pts[i - 1], b = pts[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
-      while (pos <= L - 6) { s += tri(a[0] + ux * (pos + 4), a[1] + uy * (pos + 4), ux, uy, 8, 4.5, 'vs-chev'); pos += step; }
+      while (pos <= L - 6) {
+        var x = a[0] + ux * (pos + cl / 2), y = a[1] + uy * (pos + cl / 2);
+        if (!avoid || Math.hypot(x - avoid[0], y - avoid[1]) > 26) s += tri(x, y, ux, uy, cl, cw, 'vs-chev');
+        pos += step;
+      }
       pos = Math.max(6, pos - L);
     }
     return s;
@@ -301,7 +306,7 @@
     var aria = st === 'all' ? t('Circuit complet : source E₁ à gauche, R₁ en haut avec la flèche I₁ vers A, R₃ entre A et B, source de courant I₃ vers A à droite, R₂ en bas')
       : st === 'E' ? t('E₁ seule : la branche de I₃ est ouverte, il reste une seule maille') : t('I₃ seule : E₁ est remplacée par un fil, R₁ + R₂ est en parallèle sur R₃');
     return { w: 300, h: 214, aria: aria, wires: wires, parts: parts,
-      under: [{ t: 'raw', svg: flow(FL.L, cur.I1) + flow(FL.R3, cur.IR3) + flow(FL.J, cur.IJ) }] };
+      under: [{ t: 'raw', svg: flow(FL.L, cur.I1, [152, 40]) + flow(FL.R3, cur.IR3) + flow(FL.J, cur.IJ) }] };
   }
 
   function mountSup(host) {
@@ -341,7 +346,7 @@
       });
       host.querySelector('.viz-read').innerHTML =
         '<div class="f-inline">' + I1p + ' + ' + I1pp + ' = ' + par(a.I1) + ' + ' + par(b.I1) + ' = <span class="big">' + num(a.I1 + b.I1) + ' mA</span> = ' + I1s + '</div>' +
-        '<div>' + t('C’est bien le courant du circuit complet ✓') + ' <span class="muted">' + t('Même chose dans R₃ : {a} + {b} = {c} mA.', { a: num(a.IR3), b: num(b.IR3), c: num(full.IR3) }) + '</span></div>';
+        '<div>' + t('C’est bien le courant du circuit complet ✓') + ' <span class="muted">' + t('Même chose dans {r} : {a} + {b} = {c} mA.', { r: sym('R_3'), a: num(a.IR3), b: num(b.IR3), c: num(full.IR3) }) + '</span></div>';
     }
     host.querySelector('#vsE').addEventListener('input', render);
     host.querySelector('#vsI').addEventListener('input', render);

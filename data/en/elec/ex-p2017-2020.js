@@ -62,7 +62,7 @@
             '<p>Hence <b>' + R + '′ = 2' + R + '/7</b>.</p>' +
             '<p>Check: ' + R + '′ // 2' + R + ' = (2' + R + '/7 · 2' + R + ')/(2' + R + '/7 + 2' + R + ') = (4' + R + '²/7)/(16' + R + '/7) = ' + R + '/4. ✓</p>' +
             '<p>The answer key points it out: by simplifying, we kept ' + U + ' but lost ' + U + '′. For question 2, you have to go back to the original diagram.</p>' },
-        { t: 'Question 2',
+        { t: 'Question 2: the voltage U′',
           html: '<p>On the original diagram, ' + R + ', 3' + R + ' and 2' + R + ' (right-hand loop) are in series, and this set is connected between the top wire and the bottom wire: it has ' + U + ' across it. ' + U + '′ is the voltage across 3' + R + ', drawn in the same direction as ' + U + '.</p>' +
             '<p>Voltage divider: ' + U + '′ = ' + fr('3' + R, R + ' + 3' + R + ' + 2' + R) + '·' + U + ' = ' + U + '/2.</p>' +
             '<p>With ' + U + ' = ' + R + '·' + I + '/4: <b>' + U + '′ = ' + R + '·' + I + '/8</b>.</p>',
@@ -150,7 +150,7 @@
             '<p>' + I3 + ' arrives at A and splits. Current divider, with the resistance of the other branch in the numerator: the branch ' + R1 + ' + ' + R2 + ' gets ' + R3 + I3 + '/(' + R1 + ' + ' + R2 + ' + ' + R3 + '). This current leaves A and flows through ' + R1 + ' from right to left, opposite to the arrow ' + I1 + ':</p>' +
             '<p class="f-block">' + I1 + '″ = −' + fr(R3 + I3, R1 + ' + ' + R2 + ' + ' + R3) + '</p>',
           figs: [{ cap: 'State 2: ' + E1 + ' turned off (wire), ' + R1 + ' + ' + R2 + ' in parallel with ' + R3 }] },
-        { t: 'Superposition',
+        { t: 'Adding the two states',
           html: '<p>Add the two contributions:</p>' +
             '<p class="f-block">' + I1 + ' = ' + I1 + '′ + ' + I1 + '″ = ' + fr(E1 + ' − ' + R3 + I3, R1 + ' + ' + R2 + ' + ' + R3) + '</p>' +
             '<p>Dimensional check: ' + R3 + I3 + ' is a voltage, like ' + E1 + '; divided by ohms, it does give a current.</p>' }
@@ -408,7 +408,7 @@
     'p2020-ex4': {
       src: 'Midterm Nov. 2020 · Ex 4',
       title: 'Voltage and current dividers, real source',
-      figs: [{ cap: 'Circuit 1 (question 1)' }, { cap: 'Circuit 2 (question 2)' }],
+      figs: [{ cap: 'Circuit 1 (for question 1)' }, { cap: 'Circuit 2 (for question 2)' }],
       questions: ['<b>1.</b> Consider the circuit opposite (circuit 1).<br>Find the expressions of the voltages ' + U1 + ' and ' + U2 + ' in terms of ' + E + ' and the resistances. Give your result with a single fraction bar (no fractions of fractions!)',
         '<b>2.</b> Consider the circuit opposite (circuit 2).<br><b>a.</b> Express ' + I1 + ' and ' + I2 + ' in terms of ' + I + ' and the resistances. Give your result with a single fraction bar (no fractions of fractions!)',
         '<b>b.</b> Give the expression of ' + I + ' in terms of ' + E + ' and the resistances. Give your result with a single fraction bar (no fractions of fractions!)',
@@ -417,7 +417,7 @@
         'Question 2a: three resistors in parallel share ' + I + '. The current divider is simpler with the conductances <var>G</var> = 1/' + R + '.',
         'Question 2b: replace the three resistors by their equivalent, then write Kirchhoff’s voltage law in the only loop that remains.'],
       solution: [
-        { t: 'Question 1',
+        { t: 'Question 1: voltages U₁ and U₂',
           html: '<p>' + R1 + ' and ' + R2 + ' are in series: same current, no node between them. This branch is connected directly between the two terminals of ' + E + ': it has the voltage ' + E + ' across it.</p>' +
             '<p>' + R + ', also connected across the ideal source, does not change this voltage: it plays no part in ' + U1 + ' and ' + U2 + '. It only changes the current supplied by the source.</p>' +
             '<p>Voltage divider:</p>' +
@@ -425,13 +425,13 @@
             '<p>Check: ' + U1 + ' + ' + U2 + ' = ' + E + '.</p>' +
             '<p class="sol-note">The official answer key writes “' + E + ': voltage across ' + R1 + ' + ' + R3 + '”: this is a slip of the pen for ' + R1 + ' + ' + R2 + ', and its final formulas are correct.</p>',
           figs: [{ cap: 'The branch ' + R1 + ', ' + R2 + ' is across ' + E + '; ' + R + ' plays no part' }] },
-        { t: 'Question 2a',
+        { t: 'Question 2a: current divider',
           html: '<p>' + R1 + ', ' + R2 + ' and ' + R3 + ' all connect the top wire to the bottom wire: they are in parallel and share ' + I + '.</p>' +
             '<p>With three branches, write the current divider with the conductances <var>G</var> = 1/' + R + ':</p>' +
             '<p class="f-block">' + I1 + ' = ' + fr(v('G', 1) + I, v('G', 1) + ' + ' + v('G', 2) + ' + ' + v('G', 3)) + ' = ' + fr('1/' + R1, '1/' + R1 + ' + 1/' + R2 + ' + 1/' + R3) + '·' + I + '</p>' +
             '<p>To have a single fraction bar, multiply top and bottom by ' + R1 + R2 + R3 + ':</p>' +
             '<p class="f-block">' + I1 + ' = ' + fr(R2 + R3 + I, D20) + ' &nbsp; and likewise &nbsp; ' + I2 + ' = ' + fr(R1 + R3 + I, D20) + '</p>' },
-        { t: 'Question 2b',
+        { t: 'Question 2b: current I',
           html: '<p>The three resistors in parallel are replaced by ' + R123 + ', with 1/' + R123 + ' = 1/' + R1 + ' + 1/' + R2 + ' + 1/' + R3 + ':</p>' +
             '<p class="f-block">' + R123 + ' = ' + fr(R1 + R2 + R3, D20) + '</p>' +
             '<p>A single loop remains: ' + E + ', ' + r + ' and ' + R123 + ' in series. Kirchhoff’s voltage law: ' + E + ' − ' + r + I + ' − ' + R123 + I + ' = 0, so:</p>' +
@@ -439,7 +439,7 @@
             '<p>Multiply top and bottom by (' + D20 + ') to have a single fraction bar:</p>' +
             '<p class="f-block">' + I + ' = ' + fr('(' + D20 + ')' + E, r + '(' + D20 + ') + ' + R1 + R2 + R3) + '</p>',
           figs: [{ cap: 'Equivalent diagram: ' + E + ', ' + r + ' and ' + R123 + ' in series, voltage arrows in receiver convention' }] },
-        { t: 'Question 2c',
+        { t: 'Question 2c: numerical application',
           html: '<p>Combining a and b:</p><p class="f-block">' + I1 + ' = ' + fr(R2 + R3 + E, r + '(' + D20 + ') + ' + R1 + R2 + R3) + '</p>' +
             '<p>Without a calculator, reason on the circuit: three equal 3 kΩ resistors in parallel give ' + R123 + ' = 3/3 = 1 kΩ. ' + r + ' = 1 Ω is negligible compared with 1 kΩ, so ' + I + ' = 10/(1 + 1000) A ≈ 10 V/1 kΩ = 10 mA.</p>' +
             '<p>The three branches are identical, so they share ' + I + ' equally: <b>' + I1 + ' = ' + I2 + ' = ' + I + '/3 ≈ 3.33 mA</b> (exactly 10/3003 A).</p>' }

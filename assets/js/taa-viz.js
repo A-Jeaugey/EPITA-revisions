@@ -44,7 +44,7 @@
     'Écris au moins un axiome.': 'Write at least one axiom.',
     'Lecture impossible': 'Cannot read this', 'Ligne {n} : {m}': 'Line {n}: {m}', 'Précondition : {m}': 'Precondition: {m}',
     'Axiomes lus': 'Axioms as read', 'Précondition lue : {p}': 'Precondition as read: {p}', 'Précondition lue : aucune': 'Precondition as read: none',
-    'caractère inattendu : {c}': 'unexpected character: {c}', 'terme incomplet': 'incomplete term', 'parenthèse non fermée': 'unclosed parenthesis',
+    'caractère inattendu : {c}': 'unexpected character: {c}', 'terme incomplet': 'incomplete term', 'parenthèse non fermée': 'unclosed parenthesis', 'parenthèse fermante en trop': 'one closing parenthesis too many',
     'symbole inattendu : {c}': 'unexpected symbol: {c}', 'parenthèse manquante après {f}': 'missing parenthesis after {f}',
     '{f} s’écrit avec ses arguments entre parenthèses': '{f} needs its arguments in parentheses',
     'deux comparaisons à la suite : sépare-les par &': 'two comparisons in a row: separate them with &',
@@ -309,7 +309,10 @@
   var DECL = /^(liste|list|[ée]l[ée]ment|element|entier|integer|bool[ée]en|boolean)\s+[^=()]*$/i;
   var PRE_RX = /est[\s-]*d[ée]fini|is[\s-]*defined|\bssi\b|\biaoi\b|\biff\b/i;
   function parseAxiom(line, op) {
-    var tk = tokenize(normSym(line)), cond = null, im = topIdx(tk, function (w) { return w === '⇒'; });
+    var tk = tokenize(normSym(line)), cond = null, depth = 0;
+    tk.forEach(function (w) { if (w === '(') depth++; else if (w === ')' && --depth < 0) throw Err(T('parenthèse fermante en trop')); });
+    if (depth > 0) throw Err(T('parenthèse non fermée'));
+    var im = topIdx(tk, function (w) { return w === '⇒'; });
     if (im.length > 1) throw Err(T('un seul ⇒ par axiome'));
     if (im.length) {
       if (!im[0]) throw Err(T('il manque la condition avant ⇒'));
@@ -658,13 +661,12 @@
   function report(o, preText, axText) {
     var P = axParse(o, preText, axText);
     if (P.errors) return { v: '<b class="vz-bad-t">' + T('Lecture impossible') + '</b>', d: '<ul class="vz-errs">' + P.errors.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' };
-    var role = o.res === 'L' ? 'int' : 'obs', RO = { html: true, op: o.id, opRole: role };
+    var role = o.res === 'L' ? 'int' : 'obs';
     function code(t, marks) { return '<code>' + render(t, { html: true, op: o.id, opRole: role, marks: marks }, '') + '</code>'; }
     function vnote(t) { var l = listNote(t); return l && l !== txt(t) ? code(t) + ' = ' + esc(l) : code(t); }
     var read = '<div class="vz-read"><span class="vz-lbl">' + T('Axiomes lus') + '</span><ol class="vz-axl">' + P.axioms.map(function (ax) { return '<li><code>' + esc(axLine(ax)) + '</code></li>'; }).join('') + '</ol>' +
       '<span class="vz-lbl">' + (P.pre ? T('Précondition lue : {p}', { p: '<code>' + esc(preLine(P.pre, o)) + '</code>' }) : T('Précondition lue : aucune')) + '</span></div>';
     var r = axRun(o, P.axioms, P.pre), ctx = { op: o, ax: P.axioms, pre: P.pre, memo: {}, depth: 0 };
-    void RO;
     function traceHTML(t0, force, expect) {
       var tr = axTrace(t0, ctx, force), shown = tr.steps.slice(0, 14), h = '<ol class="rw-steps">';
       shown.forEach(function (s) {
