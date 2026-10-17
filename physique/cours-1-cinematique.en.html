@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cartesian kinematics · Physics</title>
+<meta name="description" content="Physics, chapter 1: reference frame and coordinate system, position, velocity and acceleration vectors in Cartesian coordinates, rectilinear motion, integrating with the initial conditions, trajectory equation, projectiles and falls.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics · chapter 1: Cartesian kinematics">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Chapter 1 of 4</div>
+      <h1>Motion is read <span class="w">exposure by exposure</span>.</h1>
+      <p class="lead">Kinematics describes motion independently of its cause: where the point is, how fast it goes, how that velocity changes. Three vectors, two moves (differentiate, integrate), then a projectile launch to bring it all together.</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">8 parts</span><span class="chip">course ch. I · TD 1</span><span class="chip ex">in all 7 midterms found</span></div>
+      <div class="vlegend" aria-label="Vector colours, the same across the whole site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>velocity</span><span><i class="la"></i>acceleration</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Chronophotographic plate: a launch whose initial speed, angle and instant you set"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 1 · Cartesian kinematics</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>The study framework</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>The position vector</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>The velocity vector</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>The acceleration vector</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Rectilinear motion</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Integrating, with the initial conditions</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>The trajectory equation</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>Projectiles and falls</span></a></li>
+    </ol>
+    <p class="toc-note">Each part adds one exposure of the same launch: part 8 shows the whole parabola. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Physics home</a><a href="cours-2-dynamique.html">Chapter 2: forces and Newton’s laws →</a><a href="../qcm/index.html#physique">Physics MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">The study framework</a></li><li><a href="#s2">The position vector</a></li><li><a href="#s3">The velocity vector</a></li><li><a href="#s4">The acceleration vector</a></li>
+      <li><a href="#s5">Rectilinear motion</a></li><li><a href="#s6">Integrating, with the initial conditions</a></li><li><a href="#s7">The trajectory equation</a></li><li><a href="#s8">Projectiles and falls</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The framework: system, reference frame, coordinates, time</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><b>Kinematics</b> studies motion independently of its cause. It describes <i>how</i> a point moves, not <i>why</i>: forces come in chapter 2.</p>
+          <p>Before any calculation, you fix four things. Without them, “the velocity of the point” means nothing.</p>
+        </div>
+        <div class="grid4">
+          <div class="card"><span class="k">The system</span><p>What you study. You model it as a <b>material point</b>: a system whose spatial extension and rotation on itself can both be neglected.</p><p class="muted">It depends on the problem: the Earth moving around the Sun is a point; the Earth spinning on itself (length of the day) is not.</p></div>
+          <div class="card"><span class="k">The reference frame</span><p>The space and time frame you observe from: terrestrial, geocentric, heliocentric. It is <b>Galilean</b> if it moves without any acceleration.</p><p class="muted">For a ball, a car, a pebble: terrestrial reference frame, assumed Galilean.</p></div>
+          <div class="card"><span class="k">The coordinate system</span><p>An origin O and axes, to give the point coordinates. In Cartesian coordinates: (O, <var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>).</p><p class="muted">Suitable for most cases of motion in a plane, except circular motion (polar coordinates, chapter 4).</p></div>
+          <div class="card"><span class="k">The time origin</span><p>The instant chosen as <var>t</var> = 0: usually the start, the release or the launch.</p><p class="muted">The <b>initial conditions</b> are the position and the velocity at that instant.</p></div>
+        </div>
+        <div class="prose">
+          <p><b>Example</b> <span class="src-tag c">TD 1 · Ex 1</span> A car starts moving. The origin of the frame is the entry door of the driver’s home, the axis follows the road, and <var>t</var> = 0 when the car starts. The car is parked 7&nbsp;m from the door: its initial position is <var>x</var>(0) = 7&nbsp;m, not 0.</p>
+        </div>
+        <div class="note keep"><span class="tag">Write-up: the first lines of an answer</span>
+          <ul>
+            <li><b>System</b>: the projectile, modelled as a material point M.</li>
+            <li><b>Reference frame</b>: terrestrial, assumed Galilean.</li>
+            <li><b>Coordinate system</b>: (O, <var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>), O at the launch point, <var class="vec">u</var><sub><var>y</var></sub> pointing up.</li>
+            <li><b>Time origin</b>: <var>t</var> = 0 at the launch.</li>
+          </ul>
+          <p>This is exactly question 1 of exercise 3 in TD 1: “describe the study framework (reference frame, system under study, coordinate system)”.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap</span><p>Motion depends on the reference frame. A passenger sitting in a train is at rest in the train’s reference frame and rushes along at 300&nbsp;km/h in the terrestrial reference frame. “It is at rest” only makes sense once the reference frame is given.</p></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>The position vector</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In the Cartesian coordinate system, O is at the crossing of the axes. The vectors <var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>y</var></sub> are unit vectors and <b>fixed</b>; they form a right-handed orthonormal basis. Point M is defined by two numbers:</p>
+          <ul>
+            <li><var>x</var>, the projection of M on the axis (O, <var class="vec">u</var><sub><var>x</var></sub>);</li>
+            <li><var>y</var>, the projection of M on the axis (O, <var class="vec">u</var><sub><var>y</var></sub>).</li>
+          </ul>
+        </div>
+        <figure class="fig"><div class="mk-host" id="figRepere"></div><figcaption>The position vector <var class="vec kp">OM</var> points from the origin to the point. Its coordinates are the projections of M on the axes. The faint exposures show M at other instants: when M moves, <var>x</var> and <var>y</var> change.</figcaption></figure>
+        <div class="eq"><span class="nw"><var class="vec kp">OM</var>(<var>t</var>) = <var>x</var>(<var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + <var>y</var>(<var>t</var>) <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span><var>x</var>(<var>t</var>)</span><span><var>y</var>(<var>t</var>)</span></span></span></div>
+        <div class="prose">
+          <p>The functions <var>x</var>(<var>t</var>) and <var>y</var>(<var>t</var>) are the <b>equations of motion</b> (the time equations; the English midterm of November 2021 calls them “hourly equations”). They tell you where the point is at each instant. The distance from O to M is the norm of the position vector:</p>
+        </div>
+        <div class="eq"><span class="nw">OM = ‖<var class="vec kp">OM</var>‖ = <span class="sqrt">√<span><var>x</var>² + <var>y</var>²</span></span></span></div>
+        <div class="prose">
+          <p><b>Example</b> <span class="src-tag c">TD 1 · Ex 4</span> A pebble is thrown horizontally; the origin is its starting point, <var class="vec">u</var><sub><var>y</var></sub> points up. Motion tracking gives <var>x</var>(<var>t</var>) = 0.5 <var>t</var> and <var>y</var>(<var>t</var>) = −5 <var>t</var>² (in metres). So <span class="f"><var class="vec kp">OM</var>(<var>t</var>) = 0.5 <var>t</var> <var class="vec">u</var><sub><var>x</var></sub> − 5 <var>t</var>² <var class="vec">u</var><sub><var>y</var></sub></span>. At <var>t</var> = 1 s, M is at (0.5; −5): 0.5&nbsp;m to the right and 5&nbsp;m below the starting point, at OM = √25.25 ≈ 5.0&nbsp;m from O.</p>
+        </div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>The position vector depends on the choice of origin O. Move O, and every coordinate changes.</li>
+          <li>A coordinate is a position, in metres, with a sign: <var>y</var> = −5&nbsp;m means 5&nbsp;m <i>below</i> the <var>x</var>-axis.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>Midterms of November 2021 and October 2022: the paper gives <var class="vec kp">OM</var>(<var>t</var>) and the first question asks for “the equations of motion”. Answer with the two functions <var>x</var>(<var>t</var>) = … and <var>y</var>(<var>t</var>) = …: they are numbers, with no <var class="vec">u</var><sub><var>x</var></sub> or <var class="vec">u</var><sub><var>y</var></sub>.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Do not write <var class="vec kp">OM</var> = <var>x</var> + <var>y</var>: a vector is not a number. You need the basis vectors (<var>x</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>y</var> <var class="vec">u</var><sub><var>y</var></sub>) or the column of coordinates.</p></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>The velocity vector</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The velocity vector is the first derivative of the position vector with respect to time. Its norm is measured in m·s⁻¹.</p></div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var>(<var>t</var>) = <span class="frac"><span>d<var class="vec kp">OM</var></span><span>d<var>t</var></span></span></span></div>
+        <div class="prose">
+          <p>In Cartesian coordinates, <var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>y</var></sub> are fixed: differentiating <var class="vec kp">OM</var> means differentiating each coordinate. A dot above a letter means “derivative with respect to time”: <span class="f"><var>ẋ</var> = <span class="frac"><span>d<var>x</var></span><span>d<var>t</var></span></span></span>. You also write <var>v</var><sub><var>x</var></sub> = <var>ẋ</var> and <var>v</var><sub><var>y</var></sub> = <var>ẏ</var>.</p>
+        </div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <span class="frac"><span>d<var>x</var></span><span>d<var>t</var></span></span> <var class="vec">u</var><sub><var>x</var></sub> + <span class="frac"><span>d<var>y</var></span><span>d<var>t</var></span></span> <var class="vec">u</var><sub><var>y</var></sub> = <var>ẋ</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>ẏ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span><var>ẋ</var></span><span><var>ẏ</var></span></span></span><span class="nw">‖<var class="vec kv">v</var>‖ = <span class="sqrt">√<span><var>ẋ</var>² + <var>ẏ</var>²</span></span></span></div>
+        <div class="prose">
+          <p><b>Its direction.</b> During an instant d<var>t</var>, M moves by the infinitesimal displacement <span class="f">d<var class="vec kp">OM</var> = d<var>x</var> <var class="vec">u</var><sub><var>x</var></sub> + d<var>y</var> <var class="vec">u</var><sub><var>y</var></sub></span>, a tiny piece of trajectory. <var class="vec kv">v</var> is collinear to this displacement: it is <b>tangent to the trajectory</b>, in the direction of motion.</p>
+        </div>
+        <div class="note why"><span class="tag">Reading a chronophotograph</span><p>The exposures are taken at regular intervals Δ<var>t</var>. Two exposures far apart: the point was moving fast. Two exposures close together: it was moving slowly. On the plate at the top of the page, the exposures bunch up near the top of the trajectory: the speed is smallest there, but not zero.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The pebble</b> <span class="src-tag c">TD 1 · Ex 4</span> <var>x</var> = 0.5 <var>t</var> and <var>y</var> = −5 <var>t</var>² give <var>v</var><sub><var>x</var></sub> = 0.5&nbsp;m·s⁻¹ (constant, positive: it moves to the right) and <var>v</var><sub><var>y</var></sub> = −10 <var>t</var> (negative: it goes down).</p><p>At <var>t</var> = 0, <var class="vec kv">v</var>(0) = (0.5; 0): the velocity is horizontal, so the pebble was indeed thrown horizontally.</p></div></li>
+          <li><div><p><b>The car</b> <span class="src-tag c">TD 1 · Ex 1</span> <var>x</var>(<var>t</var>) = 1.25 <var>t</var>² + 7 gives <var>v</var>(<var>t</var>) = 2.5 <var>t</var>. It reaches 10&nbsp;m·s⁻¹ when 2.5 <var>t</var> = 10, that is <var>t</var> = 4 s.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Units</span><p>1&nbsp;m·s⁻¹ = 3.6&nbsp;km/h. To go from km/h to m·s⁻¹, divide by 3.6: 90&nbsp;km/h = 25&nbsp;m·s⁻¹, 180&nbsp;km/h = 50&nbsp;m·s⁻¹.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>Differentiating Cartesian equations of motion to get <var class="vec kv">v</var> and its norm: asked in all 7 midterm papers found (2017 to 2022). An MCQ example (2020-2021): <var>x</var>(<var>t</var>) = −2<var>t</var>³ − <var>t</var> and <var>y</var>(<var>t</var>) = 4<var>t</var>² give <var class="vec kv">v</var> = (−6<var>t</var>² − 1; 8<var>t</var>).</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var class="vec kv">v</var> is collinear to the displacement d<var class="vec kp">OM</var>, not to the position vector <var class="vec kp">OM</var>. The English course says velocity is “collinear to displacement (that is, the position vector)”: that parenthesis is a slip. On the plate, keep <var class="vec kp">OM</var> displayed and drag <var>t</var>: the two arrows are almost never aligned.</li>
+          <li>The norm uses Pythagoras: ‖<var class="vec kv">v</var>‖ = √(<var>ẋ</var>² + <var>ẏ</var>²), never <var>ẋ</var> + <var>ẏ</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>The acceleration vector</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The acceleration vector is the derivative of the velocity vector, so the second derivative of the position vector. Its norm is measured in m·s⁻².</p></div>
+        <div class="eq"><span class="nw"><var class="vec ka">a</var>(<var>t</var>) = <span class="frac"><span>d<var class="vec kv">v</var></span><span>d<var>t</var></span></span> = <span class="frac"><span>d²<var class="vec kp">OM</var></span><span>d<var>t</var>²</span></span> = <var>ẍ</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>ÿ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span><var>ẍ</var></span><span><var>ÿ</var></span></span></span><span class="nw">‖<var class="vec ka">a</var>‖ = <span class="sqrt">√<span><var>ẍ</var>² + <var>ÿ</var>²</span></span></span></div>
+        <div class="prose">
+          <p>Acceleration has two possible effects: change the norm of the velocity, or change its direction (bend the trajectory). The sign of the scalar product <var class="vec kv">v</var> · <var class="vec ka">a</var> tells you which. In Cartesian coordinates, <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = <var>ẋ</var><var>ẍ</var> + <var>ẏ</var><var>ÿ</var></span>.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sign</th><th>The two vectors</th><th>The motion</th></tr></thead>
+          <tbody>
+            <tr><td class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> &gt; 0</td><td>point the same way</td><td><b>accelerated</b>: ‖<var class="vec kv">v</var>‖ increases</td></tr>
+            <tr><td class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = 0</td><td>orthogonal (<var class="vec ka">a</var> ≠ <var class="vec">0</var>)</td><td>only the direction changes: the trajectory bends</td></tr>
+            <tr><td class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> &lt; 0</td><td>point opposite ways</td><td><b>decelerated</b> (slowed down): ‖<var class="vec kv">v</var>‖ decreases</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>If <var class="vec kv">v</var> and <var class="vec ka">a</var> are collinear, the direction does not change: the trajectory stays straight.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The launch</b> <span class="src-tag c">TD 1 · Ex 3</span> <var class="vec kv">v</var> = (<var>v</var><sub>0</sub> cos <var>α</var>; <var>v</var><sub>0</sub> sin <var>α</var> − <var>g</var><var>t</var>) gives <var class="vec ka">a</var> = (0; −<var>g</var>), of norm <var>g</var> = 10&nbsp;m·s⁻²: the same at every point. Then <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = −<var>g</var> (<var>v</var><sub>0</sub> sin <var>α</var> − <var>g</var><var>t</var>)</span>: negative on the way up (decelerated), zero at the top, positive on the way down (accelerated).</p><p>Axis by axis (question 6): on <var>x</var>, uniform motion in the positive direction; on <var>y</var>, decelerated while going up until the top, then accelerated while coming down. Drag <var>t</var> on the plate: the line under the readings gives this sign.</p></div></li>
+          <li><div><p><b>Average acceleration</b> <span class="src-tag c">TD 1 · Ex 2</span> <span class="f"><var>a</var><sub>avg</sub> = Δ<var>v</var> / Δ<var>t</var></span>. The TGV goes from 90 to 320&nbsp;km/h in 5 min 20 s: Δ<var>v</var> = 230&nbsp;km/h ≈ 64&nbsp;m·s⁻¹, Δ<var>t</var> = 320 s, so <var>a</var> ≈ 0.2&nbsp;m·s⁻², that is 0.02 <var>g</var>. The Formula 1 car goes from 0 to 180&nbsp;km/h (50&nbsp;m·s⁻¹) in 4 s: <var>a</var> = 12.5&nbsp;m·s⁻² ≈ 1.25 <var>g</var>, about 60 times more.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><p>November 2021 midterm, MCQ: <var>x</var>(<var>t</var>) = 10 − 2<var>t</var>² along a straight line. Differentiate: <var>v</var> = −4<var>t</var> and <var>a</var> = −4&nbsp;m·s⁻². Then <var>v</var> · <var>a</var> = 16<var>t</var> &gt; 0: the motion is <b>accelerated</b>, even though <var>x</var> decreases. None of the answers offered (“uniform”, “uniformly circular”, “decelerated”, “the norm of the acceleration is 2&nbsp;m/s²”) was right. The same paper also asked for <span class="f"><var class="vec ka">a</var> = d²<var class="vec kp">OM</var>/d<var>t</var>²</span>, and the October 2022 paper for the unit m·s⁻².</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The sign of <var>a</var><sub><var>y</var></sub> alone does not tell you whether it speeds up. On the way down, <var>a</var><sub><var>y</var></sub> = −<var>g</var> &lt; 0 and yet the motion is accelerated, because <var>v</var><sub><var>y</var></sub> is negative too. Always compare the signs of <var>v</var> and <var>a</var>.</li>
+          <li>At the top, <var>v</var><sub><var>y</var></sub> = 0 but <var class="vec ka">a</var> = −<var>g</var> <var class="vec">u</var><sub><var>y</var></sub> ≠ <var class="vec">0</var>: zero velocity along one axis does not mean zero acceleration.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>Rectilinear motion: uniform, uniformly varied</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A motion is <b>rectilinear</b> if its trajectory is a straight line. You take an axis along that line: <span class="f"><var class="vec kp">OM</var> = <var>x</var>(<var>t</var>) <var class="vec">u</var><sub><var>x</var></sub></span>, and everything comes down to three numbers: <var>x</var>, <var>v</var> = <var>ẋ</var> and <var>a</var> = <var>ẍ</var>. It is <b>uniform</b> if the norm of its velocity is constant.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Uniform rectilinear</span><p>Constant velocity, zero acceleration.</p><div class="eq left"><span class="nw"><var>a</var> = 0</span><span class="nw"><var>v</var> = <var>v</var><sub>0</sub></span><span class="nw"><var>x</var>(<var>t</var>) = <var>v</var><sub>0</sub> <var>t</var> + <var>x</var><sub>0</sub></span></div></div>
+          <div class="card"><span class="k">Uniformly varied rectilinear</span><p>Constant acceleration. Accelerated if <var>v</var> and <var>a</var> have the same sign, decelerated otherwise.</p><div class="eq left"><span class="nw"><var>a</var> = constant</span><span class="nw"><var>v</var>(<var>t</var>) = <var>a</var> <var>t</var> + <var>v</var><sub>0</sub></span><span class="nw"><var>x</var>(<var>t</var>) = ½ <var>a</var> <var>t</var>² + <var>v</var><sub>0</sub> <var>t</var> + <var>x</var><sub>0</sub></span></div></div>
+        </div>
+        <div class="prose"><p>The three equations follow from one another: differentiate to go down from <var>x</var> to <var>a</var>, integrate to go back up. On the graphs, the velocity is the <b>slope</b> of <var>x</var>(<var>t</var>), the acceleration is the slope of <var>v</var>(<var>t</var>), and the <b>area</b> under <var>v</var>(<var>t</var>) between 0 and <var>t</var> is the displacement <var>x</var>(<var>t</var>) − <var>x</var>(0). Try the three presets.</p></div>
+        <div id="linked" aria-label="Rectilinear motion: strip of exposures and linked graphs x(t), v(t), a(t)"></div>
+        <div class="prose"><p><b>Full example</b> <span class="src-tag c">TD 1 · Ex 1</span> <var>x</var>(<var>t</var>) = 1.25 <var>t</var>² + 7 (in metres), the car of the second preset.</p></div>
+        <ol class="steps">
+          <li><div><p>Parked before starting: <var>x</var>(0) = 7&nbsp;m from home.</p></div></li>
+          <li><div><p><var>v</var>(<var>t</var>) = 2.5 <var>t</var>; 10&nbsp;m·s⁻¹ at <var>t</var> = 10 / 2.5 = 4 s.</p></div></li>
+          <li><div><p>Position at 4 s: <var>x</var>(4) = 1.25 × 16 + 7 = 27&nbsp;m. Since it started, it has travelled 27 − 7 = 20&nbsp;m.</p></div></li>
+          <li><div><p><var>a</var> = d<var>v</var>/d<var>t</var> = 2.5&nbsp;m·s⁻², constant: uniformly accelerated rectilinear motion.</p></div></li>
+          <li><div><p>To reach 10&nbsp;m·s⁻¹ in 2 s with <var>v</var>(0) = 0: <var>v</var>(<var>t</var>) = <var>a</var> <var>t</var>, so <var>a</var> = 10 / 2 = 5&nbsp;m·s⁻².</p></div></li>
+          <li><div><p>With 5&nbsp;m·s⁻² for 4 s: <var>v</var>(4) = 20&nbsp;m·s⁻¹; <var>x</var>(4) = 5 × 4²/2 + 7 = 47&nbsp;m, that is 40&nbsp;m travelled.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Trap: position or distance travelled?</span><p><var>x</var>(<var>t</var>) is the distance from home (the origin), not the distance driven. The TD correction answers 27&nbsp;m and 47&nbsp;m to “what distance has it travelled”: those are the positions. The distance travelled since the start is <var>x</var>(<var>t</var>) − <var>x</var>(0) = 20&nbsp;m and 40&nbsp;m (the motion goes one way only). Say what you compute: “position” or “distance travelled”.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><ul>
+          <li>November 2021, MCQ: “A motion is said uniform if…”: its velocity (its norm) is constant. Not “its trajectory is a straight line”, not “its acceleration is constant”.</li>
+          <li>October 2022, MCQ: “a motion can be uniform along only one of its components” is true (the launch: uniform along <var>x</var>); “in a uniform rectilinear motion, the acceleration is zero” is true.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Part 6</div><h2>Integrating: from acceleration to the equations of motion</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Often you know the acceleration (in chapter 2, Newton’s second law, the fundamental principle of dynamics, gives it) and you look for the motion. You go back up the chain by integrating, twice.</p>
+        </div>
+        <div class="chain" role="group" aria-label="Differentiating goes from position to velocity to acceleration; integrating goes the other way, with a constant each time">
+          <div class="node np"><span class="f"><var class="vec kp">OM</var>(<var>t</var>)</span><span>position</span></div>
+          <div class="ops"><span class="d">differentiate</span><span class="i">integrate + <var>C</var><sub>2</sub></span></div>
+          <div class="node nv"><span class="f"><var class="vec kv">v</var>(<var>t</var>)</span><span>velocity</span></div>
+          <div class="ops"><span class="d">differentiate</span><span class="i">integrate + <var>C</var><sub>1</sub></span></div>
+          <div class="node na"><span class="f"><var class="vec ka">a</var>(<var>t</var>)</span><span>acceleration</span></div>
+        </div>
+        <div class="prose"><p>Differentiating wipes out the constants (<var>x</var><sub>0</sub> and <var>v</var><sub>0</sub> no longer appear in <var>a</var>). Integrating forces you to find them again: each integration adds a constant, fixed by the <b>initial conditions</b>, that is the velocity and the position at <var>t</var> = 0.</p></div>
+        <div class="note keep"><span class="tag">Method, axis by axis</span><ol>
+          <li>Write the components of <var class="vec ka">a</var>: <var>a</var><sub><var>x</var></sub>(<var>t</var>), <var>a</var><sub><var>y</var></sub>(<var>t</var>).</li>
+          <li>Integrate: <var>v</var><sub><var>x</var></sub>(<var>t</var>) = ∫ <var>a</var><sub><var>x</var></sub> d<var>t</var> + <var>C</var><sub>1</sub>. Fix <var>C</var><sub>1</sub> with <var>v</var><sub><var>x</var></sub>(0).</li>
+          <li>Integrate again: <var>x</var>(<var>t</var>) = ∫ <var>v</var><sub><var>x</var></sub> d<var>t</var> + <var>C</var><sub>2</sub>. Fix <var>C</var><sub>2</sub> with <var>x</var>(0).</li>
+          <li>Check: at <var>t</var> = 0 you get the initial conditions back; differentiating twice gives <var class="vec ka">a</var> back.</li>
+        </ol></div>
+        <div class="prose"><p><b>The course example</b> <span class="src-tag c">Course p. 7</span> A point M is released with no initial velocity from a height <var>y</var><sub>0</sub> = 5&nbsp;m, axis <var class="vec">u</var><sub><var>y</var></sub> pointing up. Its acceleration is <var>a</var> = −<var>g</var>.</p></div>
+        <ol class="steps">
+          <li><div><p><var>v</var>(<var>t</var>) = ∫ −<var>g</var> d<var>t</var> = −<var>g</var><var>t</var> + <var>c</var><sub>1</sub>. Released with no velocity: <var>v</var>(0) = 0, so <var>c</var><sub>1</sub> = 0.</p></div></li>
+          <li><div><p><var>y</var>(<var>t</var>) = ∫ −<var>g</var><var>t</var> d<var>t</var> = −<var>g</var><var>t</var>²/2 + <var>c</var><sub>2</sub>. Starting at 5&nbsp;m: <var>y</var>(0) = 5, so <var>c</var><sub>2</sub> = 5 and <span class="f"><var>y</var>(<var>t</var>) = 5 − <var>g</var><var>t</var>²/2</span>.</p></div></li>
+          <li><div><p>It hits the ground when <var>y</var>(<var>T</var>) = 0: <var>T</var> = √(10/<var>g</var>). With <var>g</var> = 10&nbsp;m·s⁻²: <var>T</var> = 1 s, and <var>v</var>(<var>T</var>) = −<var>g</var><var>T</var> = −10&nbsp;m·s⁻¹ (the minus sign: it goes down). The course takes <var>g</var> = 9.81, rounds <var>T</var> to 1 s and writes <var>v</var> = −9.81&nbsp;m·s⁻¹.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>The launch, on two axes.</b> A projectile leaves O at <var>t</var> = 0 with an initial velocity <var>v</var><sub>0</sub> at an angle <var>α</var> with the horizontal. Only gravity acts: <var class="vec ka">a</var> = −<var>g</var> <var class="vec">u</var><sub><var>y</var></sub>. The angle is measured from the horizontal, so the horizontal component of <var class="vec kv">v</var><sub>0</sub> takes the cosine.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><var>x</var>-axis</th><th><var>y</var>-axis</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Acceleration</th><td class="f"><var>a</var><sub><var>x</var></sub> = 0</td><td class="f"><var>a</var><sub><var>y</var></sub> = −<var>g</var></td></tr>
+            <tr><th scope="row">Initial conditions</th><td class="f"><var>v</var><sub><var>x</var></sub>(0) = <var>v</var><sub>0</sub> cos <var>α</var>; <var>x</var>(0) = 0</td><td class="f"><var>v</var><sub><var>y</var></sub>(0) = <var>v</var><sub>0</sub> sin <var>α</var>; <var>y</var>(0) = 0</td></tr>
+            <tr><th scope="row">Velocity</th><td class="f"><var>v</var><sub><var>x</var></sub> = <var>v</var><sub>0</sub> cos <var>α</var></td><td class="f"><var>v</var><sub><var>y</var></sub> = −<var>g</var><var>t</var> + <var>v</var><sub>0</sub> sin <var>α</var></td></tr>
+            <tr><th scope="row">Position</th><td class="f"><var>x</var> = <var>v</var><sub>0</sub> cos <var>α</var> · <var>t</var></td><td class="f"><var>y</var> = −½ <var>g</var><var>t</var>² + <var>v</var><sub>0</sub> sin <var>α</var> · <var>t</var></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>These are the equations of motion given in exercise 3 of TD 1. On the plate, set <var>t</var> = 0: the readings give <var>v</var><sub><var>x</var></sub>(0) = <var>v</var><sub>0</sub> cos <var>α</var> and <var>v</var><sub><var>y</var></sub>(0) = <var>v</var><sub>0</sub> sin <var>α</var>.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Do not set the constant to 0 out of habit: it equals the initial value. <var>c</var><sub>1</sub> = 0 only if the initial velocity (along that axis) is zero.</li>
+          <li>The sign of <var>g</var> depends on the axis: <var class="vec">u</var><sub><var>y</var></sub> pointing up gives <var>a</var><sub><var>y</var></sub> = −<var>g</var>, pointing down <var>a</var><sub><var>y</var></sub> = +<var>g</var>. Draw the axis, then write the sign.</li>
+          <li>∫ <var>g</var><var>t</var> d<var>t</var> = <var>g</var><var>t</var>²/2, not <var>g</var><var>t</var>². Differentiate your result to check.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Part 7</div><h2>The trajectory equation</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The equations of motion tell you where the point is at each instant. The <b>trajectory</b> is the curve it draws, without the time information: a relation between <var>y</var> and <var>x</var>. To get it, you <b>eliminate <var>t</var></b>.</p>
+        </div>
+        <div class="note keep"><span class="tag">Method</span><ol>
+          <li>Isolate <var>t</var> in the simplest equation, often <var>x</var>(<var>t</var>), which is linear in <var>t</var>.</li>
+          <li>Substitute <var>t</var> into the other equation.</li>
+          <li>Simplify and recognise the curve: straight line, parabola, circle…</li>
+        </ol></div>
+        <ol class="steps">
+          <li><div><p><b>The pebble</b> <span class="src-tag c">TD 1 · Ex 4</span> <var>x</var> = 0.5 <var>t</var> gives <var>t</var> = 2<var>x</var>. Then <var>y</var> = −5 (2<var>x</var>)² = −20 <var>x</var>²: a downward parabola with its top at O.</p></div></li>
+          <li><div><p><b>The launch</b> <span class="src-tag c">TD 1 · Ex 3</span> <var>x</var> = <var>v</var><sub>0</sub> cos <var>α</var> · <var>t</var> gives <span class="f"><var>t</var> = <span class="frac"><span><var>x</var></span><span><var>v</var><sub>0</sub> cos <var>α</var></span></span></span>. Substitute into <var>y</var>(<var>t</var>):</p>
+            <div class="eq"><span class="nw"><var>y</var>(<var>x</var>) = −<span class="frac"><span><var>g</var></span><span>2 <var>v</var><sub>0</sub>² cos² <var>α</var></span></span> <var>x</var>² + <var>x</var> tan <var>α</var></span></div>
+            <p>A parabola: that is why TD 1 calls it parabolic motion.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Check</span><p>There is no <var>t</var> left in <var>y</var>(<var>x</var>). Test a known point: <var>x</var> = 0 must give <var>y</var> = 0 back, the starting point.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><ul>
+          <li>The trajectory equation is asked in 6 of the 7 papers found (circle, ellipse, straight line, parabola); the parabola of a launch in the last two (2021, 2022).</li>
+          <li>October 2022, MCQ: <var>x</var>(<var>t</var>) = 4<var>t</var> and <var>y</var>(<var>t</var>) = 3<var>t</var>² − 6<var>t</var> + 5. With <var>t</var> = <var>x</var>/4: <var>y</var> = 3<var>x</var>²/16 − 3<var>x</var>/2 + 5, the motion is parabolic. Its velocity (4; 6<var>t</var> − 6) never vanishes, since <var>v</var><sub><var>x</var></sub> = 4.</li>
+          <li>Same MCQ: “the trajectory equation tells you whether the motion is uniform” is false.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Write <var>y</var>(<var>x</var>) = …, not <var>y</var>(<var>t</var>) = …: the variable is <var>x</var>. A stray <var>t</var> in “<var>y</var>(<var>x</var>)” is a mistake.</li>
+          <li>The trajectory does not say how fast the point travels along it: two bodies can follow the same parabola at different speeds. For instants and velocities, go back to the equations of motion.</li>
+          <li>(<var>v</var><sub>0</sub> cos <var>α</var>)² = <var>v</var><sub>0</sub>² cos² <var>α</var>: the square applies to the whole product.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Part 8</div><h2>Projectiles and falls: top, range, point of impact</h2></div>
+      <div class="stack">
+        <div class="prose"><p>With the equations of motion of the launch (part 6), three questions keep coming back: the top of the trajectory, the range, the point of impact. Each one becomes a simple condition on <var>v</var><sub><var>y</var></sub> or on <var>y</var>.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>You look for</th><th>Condition</th><th>Result (launch from the ground)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">The top S (apex)</th><td>the vertical velocity vanishes: <span class="f"><var>v</var><sub><var>y</var></sub>(<var>t</var><sub>S</sub>) = 0</span></td><td class="f"><var>t</var><sub>S</sub> = <span class="frac"><span><var>v</var><sub>0</sub> sin <var>α</var></span><span><var>g</var></span></span>; <var>x</var><sub>S</sub> = <span class="frac"><span><var>v</var><sub>0</sub>² sin <var>α</var> cos <var>α</var></span><span><var>g</var></span></span>; <var>y</var><sub>S</sub> = <span class="frac"><span><var>v</var><sub>0</sub>² sin² <var>α</var></span><span>2<var>g</var></span></span></td></tr>
+            <tr><th scope="row">The point of impact P, the range</th><td>it lands on the ground: <span class="f"><var>y</var>(<var>t</var><sub>P</sub>) = 0</span>, with <var>t</var><sub>P</sub> ≠ 0</td><td class="f"><var>t</var><sub>P</sub> = <span class="frac"><span>2 <var>v</var><sub>0</sub> sin <var>α</var></span><span><var>g</var></span></span>; <var>x</var><sub>P</sub> = <span class="frac"><span>2 <var>v</var><sub>0</sub>² sin <var>α</var> cos <var>α</var></span><span><var>g</var></span></span> = <span class="frac"><span><var>v</var><sub>0</sub>² sin 2<var>α</var></span><span><var>g</var></span></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>For P, factorise: <span class="f"><var>y</var> = <var>t</var> (<var>v</var><sub>0</sub> sin <var>α</var> − <var>g</var><var>t</var>/2) = 0</span>. Two solutions: <var>t</var> = 0, the start, and <var>t</var><sub>P</sub> = 2 <var>v</var><sub>0</sub> sin <var>α</var> / <var>g</var>, the impact. Then <var>x</var><sub>P</sub> = <var>x</var>(<var>t</var><sub>P</sub>).</p></div>
+        <div class="prose"><p><b>Without a calculator</b>: <var>v</var><sub>0</sub> = 20&nbsp;m·s⁻¹, <var>α</var> = 30°, <var>g</var> = 10&nbsp;m·s⁻², with sin 30° = ½ and cos 30° = √3/2 ≈ 0.87. These are the starting settings of the plate at the top of the page.</p></div>
+        <ol class="steps">
+          <li><div><p><var>t</var><sub>S</sub> = 20 × ½ / 10 = 1 s; <var>y</var><sub>S</sub> = 400 × ¼ / 20 = 5&nbsp;m; <var>x</var><sub>S</sub> = 400 × ½ × (√3/2) / 10 = 10√3 ≈ 17&nbsp;m.</p></div></li>
+          <li><div><p><var>t</var><sub>P</sub> = 2 <var>t</var><sub>S</sub> = 2 s; <var>x</var><sub>P</sub> = 20√3 ≈ 35&nbsp;m.</p></div></li>
+          <li><div><p>At the top, <var class="vec kv">v</var> = <var>v</var><sub>0</sub> cos <var>α</var> <var class="vec">u</var><sub><var>x</var></sub>: 10√3 ≈ 17&nbsp;m·s⁻¹, horizontal.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>The fall into a well</b> <span class="src-tag c">TD 1 · Ex 4</span> The same pebble is thrown horizontally from the edge of a well, origin at the starting point: <var>y</var>(<var>t</var>) = −5 <var>t</var>². It reaches the bottom after 2.0 s: <var>y</var>(2) = −5 × 4 = −20&nbsp;m. Since the origin is at the start, the depth is −<var>y</var>: the well is 20&nbsp;m deep.</p>
+        <p>If the origin is on the ground, below a launch point at height <var>h</var>, a horizontal throw gives <var>y</var>(<var>t</var>) = <var>h</var> − ½ <var>g</var><var>t</var>²: it hits the ground at <span class="f"><var>t</var><sub>P</sub> = √(2<var>h</var>/<var>g</var>)</span>, and <var>x</var><sub>P</sub> = <var>v</var><sub>0</sub> <var>t</var><sub>P</sub>. With <var>h</var> = 20&nbsp;m: <var>t</var><sub>P</sub> = 2 s, like the well.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>At the top, only <var>v</var><sub><var>y</var></sub> vanishes: <var class="vec kv">v</var>(<var>t</var><sub>S</sub>) = <var>v</var><sub>0</sub> cos <var>α</var> <var class="vec">u</var><sub><var>x</var></sub>, horizontal, not zero.</li>
+          <li>Start and impact at the same height: <var>t</var><sub>P</sub> = 2 <var>t</var><sub>S</sub> (the parabola is symmetric) and the velocity at impact has the same norm <var>v</var><sub>0</sub>.</li>
+          <li>For a given <var>v</var><sub>0</sub>, the range is largest at <var>α</var> = 45° (sin 2<var>α</var> = 1): <var>x</var><sub>P</sub> = <var>v</var><sub>0</sub>²/<var>g</var>. Check it on the plate.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The parabolic launch came up in the last two midterms found. November 2021: <var class="vec kp">OM</var> given with “5<var>t</var>²” (<var>g</var> = 10), equations of motion, trajectory, velocity and its magnitude, then the maximal height <var>v</var><sub>0</sub>² sin² <var>α</var> / 20 reached at the apex. October 2022: a ball launched from (0, <var>h</var>), the same questions, the nature of the motion on each axis, vectors <var class="vec kv">v</var> and <var class="vec ka">a</var> to draw at four points (that is the plate), the top <var>x</var><sub>S</sub> = <var>v</var><sub>0</sub>² sin <var>α</var> cos <var>α</var> / <var>g</var> and <var>y</var><sub>S</sub> = <var>h</var> + <var>v</var><sub>0</sub>² sin² <var>α</var> / (2<var>g</var>).</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>If the impact is not at the starting height (launch from a height <var>h</var>, fall into a well), <var>t</var><sub>P</sub> ≠ 2 <var>t</var><sub>S</sub>: solve <var>y</var>(<var>t</var><sub>P</sub>) = landing height and keep the positive root.</li>
+          <li><var>t</var> = 0 is the “start” solution of <var>y</var>(<var>t</var>) = 0, not the impact.</li>
+          <li>sin <var>α</var> cos <var>α</var> = ½ sin 2<var>α</var>: do not confuse sin 2<var>α</var> with 2 sin <var>α</var>. And √(2<var>h</var>/<var>g</var>), not √(2<var>h</var>)/<var>g</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-1-cinematique.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="physique:cinematique:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Here, the acceleration was given. Chapter 2, <a href="cours-2-dynamique.html">forces and Newton’s laws</a>, explains where it comes from: the sum of the forces, with <span class="f">Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var></span>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca;
+  M.launcher(document.getElementById('plate'), { v0: 20, alpha: 30, g: 10, dt: 0.2 });
+  M.linked(document.getElementById('linked'), { start: 1, T: 4 });
+  /* part 2: coordinate system, point M, position vector */
+  var traj = function (t) { return [0.8 + t, 0.5 + 1.5 * t - 0.3 * t * t]; }, tm = 2.8, m = traj(tm);
+  M.mount(document.getElementById('figRepere'), function (w) {
+    var p = M.plot({ x: [-0.9, 5.8], y: [-0.75, 3.3], w: Math.min(w, 620), equal: true, pad: [12, 14, 10, 14] });
+    p.grid({ x: [0.25, 1], y: [0.25, 1] });
+    p.axes({ x: { v: 'x' }, y: { v: 'y' }, origin: 'O' });
+    p.param(traj, 0, 4.6, { cls: 'mk-traj' });
+    p.chrono(traj, 0.4, 4.4, 0.8, { r: 4 });
+    p.line([m[0], 0], m, { cls: 'mk-dash' }).line([0, m[1]], m, { cls: 'mk-dash' });
+    p.label([m[0], 0], 'x', { dy: 20, anchor: 'middle', fs: 17 });
+    p.label([0, m[1]], 'y', { dx: -9, dy: 6, anchor: 'end', fs: 17 });
+    p.vec([0, 0], [1, 0], { kind: 'ink', label: 'u', sub: 'x', head: 8, lab: [-14, 18], anchor: 'middle' });
+    p.vec([0, 0], [0, 1], { kind: 'ink', label: 'u', sub: 'y', head: 8, lab: [-16, 14], anchor: 'end' });
+    p.vec([0, 0], m, { kind: 'pos', w: 2.6, head: 11 });
+    p.label([m[0] / 2, m[1] / 2], 'OM', { kind: 'pos', arrow: true, dx: -30, dy: -6, fs: 17 });
+    p.point(m, { r: 4.5, label: 'M(t)', dx: 8, dy: -9 });
+    return p.svg({ label: 'Coordinate system (O, ux, uy), point M with coordinates x and y, position vector OM from the origin to the point' });
+  });
+})();
+</script>
+</body>
+</html>

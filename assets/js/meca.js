@@ -29,11 +29,18 @@
           vraie par défaut) ; scale : unités du monde par unité du vecteur ; px: true → [dx, dy] en pixels
           (y vers le haut) ; lab: [dx, dy] décalage de l’étiquette en px ; w : épaisseur ; head : taille de la pointe
       .point([x, y], { label: 'S', dx: 7, dy: -7 })  .line(a, b, { cls: 'mk-dash' })  .text([x, y], 't', { anchor })
-      .area(f, a, b, { cls })   aire entre y = f(x) et l’axe y = 0, de x = a à x = b
+      .label([x, y], 'OM', { kind: 'pos', arrow: true, dx, dy, fs })   symbole mathématique (fléché si arrow)
+      .area(f, a, b, { cls: 'mk-area k-pos' })   aire entre y = f(x) et l’axe y = 0, de x = a à x = b
+      .add('<path …/>')   SVG brut, en px
      p.svg({ label: 'description pour lecteur d’écran' }) rend la chaîne <svg…> ; p.X(x), p.Y(y) en px.
    R.meca.mount(el, function (w) { return '<svg…>'; }) dessine à la largeur réelle du conteneur (texte net sur
    téléphone) et redessine quand cette largeur change ; renvoie { redraw }.
-   R.meca.label(x, y, 'v', { sub: '0', kind: 'vel', anchor: 'start', fs: 16 }) : symbole fléché seul (SVG).
+   En px, hors repère : R.meca.label(x, y, 'v', { sub: '0', kind: 'vel', anchor: 'start', fs: 16, arrow: true })
+   et R.meca.arrow(x0, y0, x1, y1, { kind, label, head, w }). R.meca.frames(n) : l’icône de numéro de partie.
+   Classes CSS utiles (physique.css) : mk-traj (trajectoire en tirets), mk-curve (courbe pleine), mk-dash,
+   mk-cursor, mk-tan, mk-area, mk-img (pose), mk-now (instant courant), mk-key (point remarquable),
+   k-pos / k-vel / k-acc / k-frc / k-ink (couleur). Une figure claire se pose dans <figure class="fig"><div
+   class="mk-host" id="…"></div><figcaption>…</figcaption></figure> ; la plaque sombre est .plate.
 
    CALCULS (purs, testables sous node) — R.meca.calc :
      projectile({ v0, alpha (degrés), g = 10, h = 0 }) → { vx0, vy0, tS, xS, yS, tP, xP, at(t) }
@@ -44,8 +51,8 @@
    VISUELS PRÊTS À L’EMPLOI
      R.meca.launcher(el, { v0: 20, alpha: 30, g: 10, dt: 0.2 }) : plaque chronophotographique d’un tir depuis le
        sol ; réglages v0, α et instant t, bouton « Lancer » (une seule fois, rien en boucle ; immédiat si
-       l’utilisateur réduit les animations) ; poses tous les Δt, v⃗ et a⃗ à chaque pose, OM⃗ à l’instant t,
-       sommet S, impact P, lecture des coordonnées et du signe de v⃗·a⃗.
+       l’utilisateur réduit les animations) ; poses tous les Δt, vitesse et accélération à chaque pose, vecteur
+       position à l’instant t, sommet S, impact P, lecture des coordonnées et du signe du produit v·a.
      R.meca.linked(el, { presets: [{ name, x0, v0, a }], start: 1, T: 4 }) : mouvement rectiligne ;
        bande de poses et graphes x(t), v(t), a(t) liés (tangente = pente, aires sous les courbes).
    Textes affichés : REV.t('français') ; l’anglais est déclaré ci-dessous (REV.i18n.add).
@@ -59,17 +66,16 @@
     'Vitesse initiale': 'Initial speed', 'Angle de tir': 'Launch angle', 'Instant': 'Instant',
     'à chaque pose': 'at each exposure', 'à l’instant t': 'at instant t', 'Lancer': 'Launch',
     'Position': 'Position', 'Vitesse': 'Velocity', 'Accélération': 'Acceleration',
-    'Sommet': 'Top', 'Impact': 'Impact', 'portée': 'range',
     'Plaque : tir à {v} avec un angle de {a}. Sommet à {ys} de haut, impact à {xp}.':
       'Plate: launch at {v} at an angle of {a}. Top at a height of {ys}, impact at {xp}.',
-    'Montée : v⃗·a⃗ < 0, le mouvement est <b>ralenti</b> (‖v⃗‖ diminue).': 'Going up: v⃗·a⃗ < 0, the motion is <b>decelerated</b> (‖v⃗‖ decreases).',
-    'Sommet : v⃗·a⃗ = 0, v⃗ ⊥ a⃗. Ni accéléré ni ralenti à cet instant : seule la direction de v⃗ change.':
-      'Top: v⃗·a⃗ = 0, v⃗ ⊥ a⃗. Neither accelerated nor decelerated at this instant: only the direction of v⃗ changes.',
-    'Descente : v⃗·a⃗ > 0, le mouvement est <b>accéléré</b> (‖v⃗‖ augmente).': 'Going down: v⃗·a⃗ > 0, the motion is <b>accelerated</b> (‖v⃗‖ increases).',
+    'Montée : {va} &lt; 0, le mouvement est <b>ralenti</b> ({nv} diminue).': 'Going up: {va} &lt; 0, the motion is <b>decelerated</b> ({nv} decreases).',
+    'Sommet : {va} = 0, {v} ⊥ {a}. Ni accéléré ni ralenti à cet instant : seule la direction de {v} change.':
+      'Top: {va} = 0, {v} ⊥ {a}. Neither accelerated nor decelerated at this instant: only the direction of {v} changes.',
+    'Descente : {va} &gt; 0, le mouvement est <b>accéléré</b> ({nv} augmente).': 'Going down: {va} &gt; 0, the motion is <b>accelerated</b> ({nv} increases).',
     'Sommet S : t<sub>S</sub> = {ts} · x<sub>S</sub> = {xs} · y<sub>S</sub> = {ys}. Impact P : t<sub>P</sub> = {tp} · portée x<sub>P</sub> = {xp}.':
       'Top S: t<sub>S</sub> = {ts} · x<sub>S</sub> = {xs} · y<sub>S</sub> = {ys}. Impact P: t<sub>P</sub> = {tp} · range x<sub>P</sub> = {xp}.',
     'Mouvement rectiligne : trois courbes liées': 'Rectilinear motion: three linked graphs',
-    'Uniforme': 'Uniform', 'Voiture du TD 1': 'Car from tutorial 1', 'Freinage': 'Braking',
+    'Uniforme': 'Uniform', 'Voiture du TD 1': 'Car from TD 1', 'Freinage': 'Braking',
     'Position initiale': 'Initial position', 'Accélération (constante)': 'Acceleration (constant)',
     'pente = v': 'slope = v', 'aire = Δx': 'area = Δx', 'aire = Δv': 'area = Δv',
     'Bande de poses (toutes les {dt}) et graphes x(t), v(t), a(t).': 'Strip of exposures (every {dt}) and graphs x(t), v(t), a(t).',
@@ -79,7 +85,7 @@
     'Mouvement <b>uniforme</b> : a = 0, v constante.': '<b>Uniform</b> motion: a = 0, v constant.',
     'Mouvement <b>accéléré</b> : v et a de même signe.': '<b>Accelerated</b> motion: v and a have the same sign.',
     'Mouvement <b>ralenti</b> : v et a de signes opposés.': '<b>Decelerated</b> motion: v and a have opposite signs.',
-    'Arrêt instantané : v = 0 mais a ≠ 0, le mobile repart en sens inverse.': 'Momentary stop: v = 0 but a ≠ 0, the body moves off the other way.',
+    'Arrêt à cet instant : v = 0 mais a ≠ 0.': 'Stopped at this instant: v = 0 but a ≠ 0.',
     'Immobile : v = 0 et a = 0.': 'At rest: v = 0 and a = 0.',
     'Préréglages': 'Presets'
   });
@@ -94,10 +100,10 @@
   /* Les 8 poses d'un même tir ; la partie n montre les n premières, la dernière en couleur pleine. */
   function framesSVG(n) {
     n = Math.max(1, Math.min(8, n | 0));
-    var s = '<svg viewBox="0 0 34 22" aria-hidden="true" focusable="false">';
+    var s = '<svg viewBox="0 0 34 22" aria-hidden="true" focusable="false"><path class="arc" d="M3 19Q17 -9 31 19"/>';
     for (var k = 0; k < n; k++) {
       var x = 3 + 4 * k, y = 19 - 1.143 * k * (7 - k);
-      s += '<circle cx="' + x + '" cy="' + y.toFixed(1) + '" r="' + (k === n - 1 ? 2.7 : 2) + '"' + (k === n - 1 ? ' class="now"' : '') + '/>';
+      s += '<circle cx="' + x + '" cy="' + y.toFixed(1) + '" r="' + (k === n - 1 ? 3 : 2.1) + '"' + (k === n - 1 ? ' class="now"' : '') + '/>';
     }
     return s + '</svg>';
   }
@@ -409,10 +415,10 @@
     }
     function read() {
       var M = P.at(st.t);
-      var line;
-      if (Math.abs(M.vy) < 1e-6) line = T('Sommet : v⃗·a⃗ = 0, v⃗ ⊥ a⃗. Ni accéléré ni ralenti à cet instant : seule la direction de v⃗ change.');
-      else if (M.vy > 0) line = T('Montée : v⃗·a⃗ < 0, le mouvement est <b>ralenti</b> (‖v⃗‖ diminue).');
-      else line = T('Descente : v⃗·a⃗ > 0, le mouvement est <b>accéléré</b> (‖v⃗‖ augmente).');
+      var line, vv = { va: VEC('v', 'kv') + ' · ' + VEC('a', 'ka'), v: VEC('v', 'kv'), a: VEC('a', 'ka'), nv: '‖' + VEC('v', 'kv') + '‖' };
+      if (Math.abs(M.vy) < 1e-6) line = T('Sommet : {va} = 0, {v} ⊥ {a}. Ni accéléré ni ralenti à cet instant : seule la direction de {v} change.', vv);
+      else if (M.vy > 0) line = T('Montée : {va} &lt; 0, le mouvement est <b>ralenti</b> ({nv} diminue).', vv);
+      else line = T('Descente : {va} &gt; 0, le mouvement est <b>accéléré</b> ({nv} augmente).', vv);
       out.innerHTML =
         '<div class="ro-t"><var>t</var> = ' + unit(st.t, 2, 's') + '</div>' +
         '<div class="ro-grid">' +
@@ -502,7 +508,8 @@
     }
     function graph(w, key) {
       var r = rng[key], hh = { x: 150, v: 124, a: 104 }[key], kind = { x: 'pos', v: 'vel', a: 'acc' }[key];
-      var p = plot({ x: [0, Tm], y: [r.lo, r.hi], w: w, h: hh, pad: [14, 16, 22, 44] });
+      // un peu de marge au bout des axes : la dernière graduation garde son nombre, loin de la pointe
+      var p = plot({ x: [0, Tm + 0.35], y: [r.lo, r.hi + r.step * 0.45], w: w, h: hh, pad: [14, 16, 22, 44] });
       var f = function (t) { return M.at(t)[key]; };
       p.grid({ x: [0.5, 1], y: [r.step / 2, r.step] });
       if (key === 'v') p.area(f, 0, st.t, { cls: 'mk-area k-pos' });
@@ -510,7 +517,7 @@
       p.axes({ x: { v: 't', u: 's' }, y: { v: key, u: { x: 'm', v: MS, a: MS2 }[key] }, tx: 0.5, lx: 1, ty: r.step, ly: r.step, at: [0, Math.min(Math.max(0, r.lo), r.hi)] });
       p.curve(f, { from: 0, to: Tm, cls: 'mk-curve k-' + kind });
       var m = M.at(st.t);
-      p.line([st.t, r.lo], [st.t, r.hi], { cls: 'mk-cursor' });
+      p.line([st.t, r.lo], [st.t, r.hi + r.step * 0.3], { cls: 'mk-cursor' });
       if (key === 'x') {
         var d = Math.min(0.9, Tm / 4);
         p.line([st.t - d, m.x - m.v * d], [st.t + d, m.x + m.v * d], { cls: 'mk-tan k-vel', clip: true });
@@ -539,7 +546,7 @@
     function read() {
       var m = M.at(st.t), nat;
       if (Math.abs(st.a) < 1e-9) nat = Math.abs(m.v) < 1e-9 ? T('Immobile : v = 0 et a = 0.') : T('Mouvement <b>uniforme</b> : a = 0, v constante.');
-      else if (Math.abs(m.v) < 1e-9) nat = T('Arrêt instantané : v = 0 mais a ≠ 0, le mobile repart en sens inverse.');
+      else if (Math.abs(m.v) < 1e-9) nat = T('Arrêt à cet instant : v = 0 mais a ≠ 0.');
       else nat = m.v * st.a > 0 ? T('Mouvement <b>accéléré</b> : v et a de même signe.') : T('Mouvement <b>ralenti</b> : v et a de signes opposés.');
       el.querySelector('.lk-read').innerHTML =
         '<p>' + T('À t = {t} : x = {x} · v = {v} · a = {a}.', { t: unit(st.t, 1, 's'), x: unit(m.x, 2, 'm'), v: unit(m.v, 2, MS), a: unit(st.a, 1, MS2) }) + ' ' + nat + '</p>' +
