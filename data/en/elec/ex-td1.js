@@ -171,7 +171,7 @@
           html: '<p>On ' + r('2') + ', ' + I + ' goes down and ' + u('U', '2') + ' points up: receiver convention, ' + u('U', '2') + ' = ' + r('2') + I + '.</p>' +
             '<p><span class="f-inline">' + u('U', '2') + ' = ' + fr(r('2'), r('1') + ' + ' + r('2')) + ' ' + E + '</span></p>' +
             '<p>This is the <b>voltage divider</b> formula: the voltage is shared between the resistors in series, in proportion to their values.</p>' },
-        { t: 'Application · rover',
+        { t: 'Application · the rover',
           html: '<p>You want ' + u('U', '2') + ' = 3.3 V with ' + E + ' = 12 V:</p>' +
             '<p><span class="f-inline">3.3 = 12 × ' + fr(r('2'), r('1') + ' + ' + r('2')) + '</span></p>' +
             '<p>Cross-multiplying: 3.3' + r('1') + ' + 3.3' + r('2') + ' = 12' + r('2') + ', so 3.3' + r('1') + ' = 8.7' + r('2') + '.</p>' +
@@ -288,7 +288,7 @@
           html: '<p>The ammeter has zero resistance: it is a wire between A and B, so across ' + r('2') + '. ' + r('2') + ' is <b>short-circuited</b>: zero voltage, no current. All the current flows through ' + r('1') + ' and the ammeter, and ' + r('1') + ' gets the whole voltage ' + E + '.</p>' +
             '<p><span class="f-inline">' + I + ' = ' + fr(E, r('1')) + ' = 0.5 A, so ' + r('1') + ' = ' + fr('6', '0.5') + ' = 12 Ω</span></p>',
           figs: [{ cap: 'Ammeter between A and B: R₂ is short-circuited (faded).' }] },
-        { t: 'Conclusion',
+        { t: 'Result',
           html: '<p><span class="f-inline">' + r('1') + ' = 12 Ω</span> and <span class="f-inline">' + r('2') + ' = 2' + r('1') + ' = 24 Ω</span></p>' +
             '<p>Check: 6 × 24/(12 + 24) = 6 × 2/3 = 4 V.</p>' }
       ],
