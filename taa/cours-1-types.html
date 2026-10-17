@@ -110,7 +110,8 @@ opérations
             <tr><td><code>Faux</code></td><td>aucun</td><td>un booléen</td><td><code>Faux</code> : c’est une <b>constante</b></td></tr>
           </tbody>
         </table></div>
-        <div class="note keep"><span class="tag">À retenir</span><ul><li>La définition d’une opération = son <b>nom</b> + son <b>profil</b>.</li><li>Le profil se lit « types des arguments → type du résultat ». Le symbole <code>×</code> sépare les arguments.</li><li>Une <b>constante</b> est une opération sans argument : rien avant la flèche (<code>Faux : → booléen</code>, <code>pilevide : → pile</code>).</li></ul></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>La définition d’une opération = son <b>nom</b> + son <b>profil</b>.</li><li>Le profil se lit « types des arguments → type du résultat ». Le symbole <code>×</code> sépare les arguments.</li><li>Une <b>constante</b> est une opération sans argument : rien avant la flèche. Elle renvoie une valeur du <b>type défini</b> : <code>pilevide : → pile</code> dans le type pile, <code>Faux : → booléen</code> dans le type booléen.</li></ul></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Partiel 2023 : « Quel type de données retourne une constante ? » Réponse attendue : <b>un type défini</b>. Une copie qui répondait « prédéfini » a eu 0 : l’exemple <code>Faux : → booléen</code> de la fiche est la constante du type booléen lui-même.</p></div>
         <div class="note trap"><span class="tag">Piège</span><p>Le profil ne dit pas ce que fait l’opération. <code>empiler : pile × élément → pile</code> et <code>dépiler : pile → pile</code> renvoient toutes les deux une pile : ce sont les axiomes qui disent laquelle ajoute et laquelle retire.</p></div>
         <div data-check-ref="taa/cours-1-types.html#s2" data-n="3"></div>
       </div>
@@ -135,7 +136,7 @@ utilise
     entier, élément
 </pre>
         <div class="prose"><p>Ici, la liste itérative définit deux types à la fois : la <code>liste</code> et la <code>place</code> (la case qui contient un élément). Elle utilise les entiers (pour les rangs) et les éléments (ce qu’on range), qui existent déjà.</p></div>
-        <div class="note keep"><span class="tag">À retenir</span><p>Défini = dans <code>types</code>, c’est le nouveau. Prédéfini = dans <code>utilise</code>, il existe déjà. Cette distinction sert à classer les opérations (partie suivante).</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><p>Défini = dans <code>types</code>, c’est le nouveau. Prédéfini = dans <code>utilise</code>, il existe déjà. Cette distinction sert à classer les opérations (partie suivante).</p><p>La partie <code>utilise</code> fait partie de la signature : les corrigés d’examen citent trois zones pour la signature, <code>types</code>, <code>utilise</code> et <code>opérations</code>. Les préconditions, les axiomes et la partie <code>avec</code> n’en font pas partie.</p></div>
         <div data-check-ref="taa/cours-1-types.html#s3" data-n="2"></div>
       </div>
       <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="taa:types:s3"></button></div>
@@ -168,7 +169,7 @@ opérations
         <div class="note trap"><span class="tag">Pièges classiques</span><ul>
           <li>« Observateur » ne veut pas dire « renvoie un booléen ». <code>sommet</code> renvoie un élément et c’est un observateur.</li>
           <li>Un type défini peut ne pas être le type « principal ». Dans la liste itérative, <code>place</code> est défini : <code>accès : liste × entier → place</code> est donc une opération interne, alors que <code>contenu : place → élément</code> est un observateur.</li>
-          <li>Une constante comme <code>pilevide</code> n’a pas d’argument : elle ne peut pas être un observateur, qui a besoin d’un argument de type défini.</li>
+          <li>Une constante comme <code>pilevide</code> n’a pas d’argument : elle ne peut pas être un observateur, qui a besoin d’un argument de type défini. Elle renvoie le type défini : c’est une opération interne sans argument.</li>
         </ul></div>
         <div class="note exam"><span class="tag">À l’examen</span><p>Questions de cours vues aux partiels : « Quelles sont les spécifications du profil d’un observateur ? », « La définition d’une opération est composée de ? ». Réponds avec les mots du cours : un argument de type défini <b>au moins</b>, un résultat de type prédéfini ; un nom et un profil.</p></div>
         <div data-check-ref="taa/cours-1-types.html#s4" data-n="3"></div>
@@ -191,6 +192,15 @@ préconditions
     supprimer(λ, i) est-défini-ssi estvide(λ) = Faux &amp; 1 ≤ i ≤ longueur(λ)
 </pre>
         <div class="note keep"><span class="tag">Méthode : une opération est-elle partielle ?</span><ol><li>Cherche un argument pour lequel le résultat n’a aucun sens : structure vide, rang hors des bornes, case jamais remplie.</li><li>S’il y en a un, écris la précondition qui l’exclut, avec les opérations du type (<code>estvide</code>, <code>longueur</code>, <code>≠ listevide</code>…).</li><li>Sinon, l’opération est totale : <b>pas de précondition</b>, et dis-le.</li></ol></div>
+        <div class="prose"><p>Pour écrire une précondition, on a parfois besoin d’une opération qui n’existe pas encore. Pour chercher un élément dans une liste, il faut d’abord savoir s’il y est : on ajoute <code>est-présent</code> à la signature, rien que pour écrire le domaine de <code>rechercher</code>. Une opération qui sert à spécifier le domaine de définition d’une autre s’appelle une <b>opération auxiliaire</b>.</p></div>
+<pre data-spec aria-label="Une opération auxiliaire dans une précondition">
+opérations
+    est-présent : élément x liste → booléen
+     rechercher : élément x liste → place
+préconditions
+    rechercher(e, λ) est-défini-ssi est-présent(e, λ) = vrai
+</pre>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Partiel 2019 : « l’opération qui sert à spécifier le domaine de définition d’une autre » est une <b>opération auxiliaire</b> ; « une opération qui n’est pas définie partout » est une <b>opération partielle</b> (2021, 2022). <code>est-présent</code> et <code>rechercher</code> sont tombés en 2018 et en 2020.</p></div>
         <div class="note trap"><span class="tag">Piège</span><p>N’invente pas de précondition. <code>empiler</code> marche sur toute pile. Concaténer deux listes marche même si l’une est vide : au partiel 2023, la bonne réponse à « préconditions de concaténer ? » était <b>aucune</b>.</p></div>
         <div class="prose"><p>Une précondition non respectée rend le terme <b>indéfini</b>. Essaie : l’atelier s’arrête dès qu’une opération partielle reçoit une pile vide.</p></div>
         <div id="rwPartial"></div>

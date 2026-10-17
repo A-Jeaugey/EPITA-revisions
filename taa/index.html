@@ -76,19 +76,20 @@
   </section>
 
   <section aria-labelledby="t-falls">
-    <div class="sec-title"><div><div class="eyebrow">Annales</div><h2 id="t-falls">Ce qui tombe</h2></div><p>D’après les sujets retrouvés. Les deux derniers examens étaient des épreuves de TAA seules ; avant 2023, la partie types abstraits ouvrait le sujet d’algo.</p></div>
+    <div class="sec-title"><div><div class="eyebrow">Annales</div><h2 id="t-falls">Ce qui tombe</h2></div><p>D’après les 9 sujets retrouvés, de 2017 à 2024. Jusqu’en 2022, la partie types abstraits ouvrait le sujet d’algo (4 à 6 points sur 20) ; depuis 2023, c’est une épreuve à part, notée sur 10.</p></div>
+    <div class="grid2">
+      <div class="note keep"><span class="tag">5 sujets sur 9</span><p>Écrire les préconditions et les axiomes d’une nouvelle opération sur une <b>liste récursive</b> : <code>concaténer</code>, <code>est-présent</code>, <code>rechercher</code>, <code>supprime-sup</code>… Chaque année depuis 2023.</p></div>
+      <div class="note exam"><span class="tag">4 sujets sur 9</span><p><b>Questions de cours</b> sur le vocabulaire : opération interne, observateur, constante, opération partielle ou auxiliaire, zones de la signature.</p></div>
+      <div class="note why"><span class="tag">3 sujets sur 9</span><p><b>Liste itérative</b> : l’opération <code>modifier</code> (2017, 2021) puis une opération mystère à appliquer à une liste (2024).</p></div>
+      <div class="note trap"><span class="tag">Jamais tombé</span><p><b>Piles, files, ensembles</b>. Mais ils sont au programme de cette année : les MiMos se terminent le 25 octobre et sont « supposés connus » dès la semaine de l’examen.</p></div>
+    </div>
     <div class="tbl"><table>
-      <thead><tr><th>Examen</th><th>Ce qu’on demandait</th><th>Points</th></tr></thead>
+      <thead><tr><th>Sujet</th><th>Partie types abstraits</th><th>Points</th></tr></thead>
       <tbody id="falls">
         <tr><td>30 octobre 2024</td><td>Liste itérative : appliquer une opération mystère (définie par ses axiomes) à une liste, 5 fois. Liste récursive : préconditions et axiomes de <code>supprime-sup</code>.</td><td>5 + 5 sur 10</td></tr>
         <tr><td>30 octobre 2023</td><td>Questions de cours (définition d’une opération, opérations d’une liste itérative, constante, profil d’un observateur) puis axiomes de <code>concaténer</code> sur la liste récursive.</td><td>10 sur 10</td></tr>
       </tbody>
     </table></div>
-    <div class="grid3">
-      <div class="note keep"><span class="tag">Le plus fréquent</span><p>Écrire les préconditions et les axiomes d’une nouvelle opération sur une liste.</p></div>
-      <div class="note exam"><span class="tag">Souvent</span><p>Questions de cours sur le vocabulaire : opération, profil, observateur, constante.</p></div>
-      <div class="note why"><span class="tag">Nouveau en 2024</span><p>Appliquer une opération inconnue à une liste à partir de ses seuls axiomes.</p></div>
-    </div>
     <p><a class="btn" href="annales.html">Tous les sujets, exercice par exercice →</a></p>
   </section>
 
@@ -106,7 +107,9 @@
 
 <script src="../assets/js/qcm-engine.js"></script>
 <script src="../data/qcm/taa.js"></script>
+<script src="../data/qcm/taa-annales.js"></script>
 <script src="../data/taa/exams.js"></script>
+<script src="../data/taa/ex-annales.js"></script>
 <script src="../assets/js/spec.js"></script>
 <script src="../assets/js/taa.js"></script>
 <script>
@@ -122,6 +125,14 @@
     var bank = R.quiz.bank().filter(function (q) { return q.s === 'taa'; }), st = R.qcm.stats('taa', bank), nex = (window.TAA_EX || []).length;
     if (bank.length) document.getElementById('nQ').textContent = bank.length + ' questions, dont ' + st.due + ' à revoir aujourd’hui.';
     if (nex) document.getElementById('nEx').textContent = nex + ' exercices corrigés pas à pas, et deux générateurs sans fin.';
+    /* tableau « ce qui tombe » à partir de l’analyse des sujets, quand elle est chargée */
+    var E = window.TAA_EXAMS || [];
+    if (E.length) document.getElementById('falls').innerHTML = E.map(function (e) {
+      var parts = (e.parts || []).filter(function (p) { return p.taa !== false; });
+      return '<tr><td><a href="annales.html#' + e.key + '">' + e.title.replace(/^Partiel du /, '').replace(/^Contrôle du /, '') + '</a></td><td>' + parts.map(function (p) {
+        return (p.card ? '<a href="entrainement.html#' + p.card + '">' + p.t + '</a>' : p.t);
+      }).join(' · ') + '</td><td>' + (e.taaPts || '') + '</td></tr>';
+    }).join('');
   }
   paint();
   R.store.on(paint);
