@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCQ · S1 Revision</title>
+<meta name="description" content="MCQs to revise for the S1 midterms: practice, timed mock exam and spaced repetition of the questions you missed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.top{padding-block:36px 26px}
+.top .sheet{padding:22px 24px 24px 64px;display:grid;gap:10px}
+@media (max-width:560px){.top .sheet{padding:18px 16px 20px 34px}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:18px;min-width:0}
+.field{display:grid;gap:8px}
+.field>.lbl{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:720px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mode{display:grid;gap:3px;text-align:left;font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:.65rem .75rem;cursor:pointer;min-width:0}
+.mode b{font-size:.98rem}
+.mode span{font-size:.82rem;color:var(--muted);line-height:1.35}
+.mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.mode:disabled{opacity:.45;cursor:not-allowed}
+.startrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.startrow .note{font-size:.88rem;color:var(--muted)}
+
+.run{display:grid;gap:14px}
+.runbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--font-mono);font-size:.85rem;color:var(--muted)}
+.runbar .bar{flex:1;min-width:120px}
+.runbar b{color:var(--ink);font-variant-numeric:tabular-nums}
+.runctl{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.kbd{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.kbd kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;background:var(--surface)}
+
+.result{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px 28px;align-items:center;padding:22px 24px 22px 64px}
+@media (max-width:640px){.result{grid-template-columns:minmax(0,1fr);padding:18px 16px 20px 34px}}
+.grade{position:relative;display:grid;place-items:center;width:150px;height:116px}
+.grade svg{position:absolute;inset:0;width:100%;height:100%}
+.grade svg path{fill:none;stroke:var(--red);stroke-width:3;stroke-linecap:round}
+.grade .g{font-family:var(--font-hand);color:var(--red);font-size:3.4rem;line-height:1;font-weight:600}
+.grade .g small{font-size:.55em}
+.result h2{margin-bottom:6px}
+.topics{display:grid;gap:9px}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:.9rem}
+.trow .bar{grid-column:1/-1;height:6px}
+.trow .v{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow .bar>i.good{background:var(--ok)} .trow .bar>i.mid{background:var(--warn)} .trow .bar>i.low{background:var(--bad)}
+.review{display:grid;gap:12px}
+
+.side{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 68px)}
+@media (max-width:980px){.side{position:static}}
+.side h2{font-size:1.25rem}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:.55rem .6rem;display:grid;gap:2px;background:var(--bg)}
+.kpi b{font-family:var(--font-display);font-stretch:118%;font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.76rem;color:var(--muted);line-height:1.25}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.empty{color:var(--muted);font-size:.95rem;padding:.4rem 0}
+</style>
+</head>
+<body data-resume="MCQ">
+<div id="shell"></div>
+<header class="top wrap">
+  <div class="sheet margin">
+    <span class="eyebrow">MCQ · all subjects</span>
+    <h1>Quiz yourself</h1>
+    <p class="lead">Pick a subject, some topics and a mode. The questions you miss come back the next day, then every 2, 4, 8 and 16 days until you know them.</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+  <div style="display:grid;gap:20px;min-width:0">
+    <section class="panel" id="setup" aria-label="Settings">
+      <div class="field"><span class="lbl">Subject</span><div class="chips" id="subjChips"></div></div>
+      <div class="field"><span class="lbl">Topics <button type="button" class="linkish" id="allTopics" style="font:inherit;font-size:.72rem;letter-spacing:.06em;text-transform:none;background:none;border:0;color:var(--accent);cursor:pointer;padding:0 0 0 8px">select / clear all</button></span><div class="chips" id="topicChips"></div></div>
+      <div class="field" id="srcField"><span class="lbl">Source</span><div class="chips" id="srcChips"></div></div>
+      <div class="field"><span class="lbl">Mode</span>
+        <div class="modes" role="group" aria-label="Mode">
+          <button type="button" class="mode" data-mode="train" aria-pressed="true"><b>Practice</b><span>answer shown after each question</span></button>
+          <button type="button" class="mode" data-mode="exam" aria-pressed="false"><b>Mock exam</b><span>timed, answers at the end</span></button>
+          <button type="button" class="mode" data-mode="due" aria-pressed="false"><b>To review</b><span id="dueLbl">missed questions or ones due for a refresh</span></button>
+          <button type="button" class="mode" data-mode="new" aria-pressed="false"><b>Never seen</b><span id="newLbl">the ones you have not done yet</span></button>
+        </div>
+      </div>
+      <div class="field"><span class="lbl">Number of questions</span>
+        <div class="chips" id="countChips" role="group" aria-label="Number of questions">
+          <button type="button" class="chip" data-n="10" aria-pressed="true">10</button>
+          <button type="button" class="chip" data-n="20" aria-pressed="false">20</button>
+          <button type="button" class="chip" data-n="40" aria-pressed="false">40</button>
+          <button type="button" class="chip" data-n="0" aria-pressed="false">all</button>
+        </div>
+      </div>
+      <div class="startrow"><button type="button" class="btn primary" id="start">Start</button><span class="note" id="startNote"></span></div>
+    </section>
+
+    <section class="run" id="run" hidden aria-label="Questions">
+      <div class="runbar"><span><b id="rk">1</b> / <span id="rn">10</span></span><div class="bar" aria-hidden="true"><i id="rbar"></i></div><span id="rscore"></span><span id="rtime" hidden></span></div>
+      <div id="card"></div>
+      <div class="runctl">
+        <span class="kbd"><kbd>1</kbd>–<kbd>4</kbd> to answer · <kbd>Enter</kbd> to continue</span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ghost" id="quit">Stop</button><button type="button" class="btn primary" id="next">Next question</button></span>
+      </div>
+    </section>
+
+    <section id="done" hidden aria-label="Result" style="display:grid;gap:18px"></section>
+  </div>
+
+  <aside class="side" aria-label="Your progress">
+    <section class="panel">
+      <h2 id="sideTitle">Your progress</h2>
+      <div class="kpis" id="kpis"></div>
+      <div class="topics" id="sideTopics"></div>
+      <div class="confirm" id="resetBox"><button type="button" class="btn ghost" id="reset" style="min-height:34px;font-size:.85rem">Reset</button></div>
+    </section>
+  </aside>
+</main>
+
+<footer class="page-foot"><div class="wrap"><span>Sources: course and TDs of the class of 2031, midterm papers 2017–2024, weekly MCQs of previous classes.</span><span>Your progress stays in this browser.</span></div></footer>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/en/qcm/elec.js"></script>
+<script src="../data/qcm/elec-td0.js"></script>
+<script src="../data/en/qcm/elec-td0.js"></script>
+<script src="../data/qcm/elec-p2023-2024.js"></script>
+<script src="../data/en/qcm/elec-p2023-2024.js"></script>
+<script src="../data/qcm/elec-p2021-2022.js"></script>
+<script src="../data/en/qcm/elec-p2021-2022.js"></script>
+<script src="../data/qcm/elec-p2017-2020.js"></script>
+<script src="../data/en/qcm/elec-p2017-2020.js"></script>
+<script src="../data/qcm/elec-hebdo.js"></script>
+<script src="../data/en/qcm/elec-hebdo.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../data/en/qcm/taa.js"></script>
+<script src="../data/qcm/taa-annales.js"></script>
+<script src="../data/en/qcm/taa-annales.js"></script>
+<script src="../data/qcm/taa-hebdo.js"></script>
+<script src="../data/en/qcm/taa-hebdo.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
+  var BANK = R.quiz.bank(); /* deduplicated: see qcm-engine.js */
+  var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
+  var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10, srcs: null, exam: null };
+  var SRC = [{ id: 'cours', t: 'Course', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Midterms', test: /^[a-z]+-p20\d\d-/ }, { id: 'hebdo', t: 'Weekly MCQs', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
+  function srcOf(id) { for (var i = 0; i < SRC.length; i++) if (SRC[i].test.test(id)) return SRC[i].id; return 'cours'; }
+  /* a question also used elsewhere (q.alt) counts for each of its sources */
+  function hasSrc(q, src) { return R.quiz.ids(q).some(function (id) { return srcOf(id) === src; }); }
+  function fromExam(q, exam) { return R.quiz.ids(q).some(function (id) { return id.indexOf(q.s + '-' + exam + '-') === 0; }); }
+  function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+
+  function inSubj() { return BANK.filter(function (q) { return q.s === st.subj && (!st.exam || fromExam(q, st.exam)); }); }
+  function inSrc(list) { return st.srcs ? list.filter(function (q) { return st.srcs.some(function (x) { return hasSrc(q, x); }); }) : list; }
+  function topicsOf(list) {
+    var seen = [], m = {};
+    list.forEach(function (q) { if (!m[q.topic]) { m[q.topic] = 0; seen.push(q.topic); } m[q.topic]++; });
+    return seen.map(function (t) { return { id: t, n: m[t] }; });
+  }
+
+  /* ---------- settings ---------- */
+  function paintSubjects() {
+    $('#subjChips').innerHTML = subjects.map(function (s) {
+      var n = BANK.filter(function (q) { return q.s === s.id; }).length;
+      return '<button type="button" class="chip" data-s="' + s.id + '" aria-pressed="' + (s.id === st.subj) + '">' + s.name + ' <span class="n">' + n + '</span></button>';
+    }).join('') || '<span class="empty">No questions yet.</span>';
+    $$('#subjChips [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.subj = b.dataset.s; st.topics = null; st.srcs = null; st.exam = null; paintAll(); }); });
+  }
+  function paintTopics() {
+    var ts = topicsOf(inSubj());
+    if (!st.topics) st.topics = ts.map(function (t) { return t.id; });
+    $('#topicChips').innerHTML = ts.map(function (t) {
+      return '<button type="button" class="chip" data-t="' + t.id + '" aria-pressed="' + (st.topics.indexOf(t.id) >= 0) + '">' + U.esc(R.quiz.topicName(t.id)) + ' <span class="n">' + t.n + '</span></button>';
+    }).join('');
+    $$('#topicChips [data-t]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.dataset.t, k = st.topics.indexOf(t);
+        if (k >= 0) st.topics.splice(k, 1); else st.topics.push(t);
+        paintTopics(); paintStart();
+      });
+    });
+  }
+  function pool() {
+    var now = Date.now();
+    var list = inSrc(inSubj()).filter(function (q) { return st.topics.indexOf(q.topic) >= 0; });
+    if (st.mode === 'due') list = list.filter(function (q) { var s = R.qcm.get(q.id); return s && (R.qcm.isDue(q.id, now) || !s.lastOk); });
+    if (st.mode === 'new') list = list.filter(function (q) { return !R.qcm.get(q.id); });
+    return list;
+  }
+  function paintStart() {
+    var p = pool(), n = st.n ? Math.min(st.n, p.length) : p.length;
+    var all = inSubj(), now = Date.now();
+    var due = all.filter(function (q) { var s = R.qcm.get(q.id); return s && (R.qcm.isDue(q.id, now) || !s.lastOk); }).length;
+    var fresh = all.filter(function (q) { return !R.qcm.get(q.id); }).length;
+    $('#dueLbl').textContent = due ? pl(due, 'question') + ' missed or due for a refresh' : 'nothing to review for now';
+    $('#newLbl').textContent = fresh ? fresh + ' not done yet' : 'you have seen them all';
+    $('#start').disabled = !n;
+    $('#start').textContent = n ? 'Start · ' + pl(n, 'question') : 'Start';
+    var note = '';
+    if (!n) note = st.mode === 'due' ? 'Nothing to review in these topics: do a practice round.' : (st.mode === 'new' ? 'You have already seen all these questions.' : 'Select at least one topic.');
+    else if (st.mode === 'exam') note = 'Suggested time: ' + Math.ceil(n * 1.2) + ' min. No negative marking.';
+    $('#startNote').textContent = note;
+  }
+  function paintSrcs() {
+    var all = inSubj(), avail = SRC.filter(function (x) { return all.some(function (q) { return hasSrc(q, x.id); }); });
+    if (!st.srcs) st.srcs = avail.map(function (x) { return x.id; });
+    $('#srcField').hidden = avail.length < 2 && !st.exam;
+    $('#srcChips').innerHTML = (st.exam ? '<span class="chip" aria-pressed="true" style="cursor:default">' + st.exam.replace('p', 'Midterm ') + ' only</span><button type="button" class="chip" id="clearExam">All MCQs</button>' : '') + avail.map(function (x) {
+      var n = all.filter(function (q) { return hasSrc(q, x.id); }).length;
+      return '<button type="button" class="chip" data-src="' + x.id + '" aria-pressed="' + (st.srcs.indexOf(x.id) >= 0) + '">' + x.t + ' <span class="n">' + n + '</span></button>';
+    }).join('');
+    $$('#srcChips [data-src]').forEach(function (b) { b.addEventListener('click', function () { var k = st.srcs.indexOf(b.dataset.src); if (k >= 0) st.srcs.splice(k, 1); else st.srcs.push(b.dataset.src); paintSrcs(); paintStart(); }); });
+    var ce = $('#clearExam'); if (ce) ce.addEventListener('click', function () { st.exam = null; st.srcs = null; st.topics = null; paintAll(); });
+  }
+  function paintModes() { $$('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)); }); }
+  function paintCounts() { $$('#countChips [data-n]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.n === st.n)); }); }
+  $$('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { st.mode = b.dataset.mode; paintModes(); paintStart(); }); });
+  $$('#countChips [data-n]').forEach(function (b) { b.addEventListener('click', function () { st.n = +b.dataset.n; paintCounts(); paintStart(); }); });
+  $('#allTopics').addEventListener('click', function () {
+    var ts = topicsOf(inSubj()).map(function (t) { return t.id; });
+    st.topics = st.topics.length === ts.length ? [] : ts; paintTopics(); paintStart();
+  });
+
+  /* ---------- progress (right column) ---------- */
+  function paintSide() {
+    var s = R.subject(st.subj), list = inSubj(), stats = R.qcm.stats(st.subj, list);
+    $('#sideTitle').textContent = s ? 'Your progress · ' + s.short : 'Your progress';
+    $('#kpis').innerHTML = '<div class="kpi"><b>' + stats.seen + '</b><span>seen out of ' + list.length + '</span></div>' +
+      '<div class="kpi"><b>' + stats.mastered + '</b><span>mastered</span></div>' +
+      '<div class="kpi"><b>' + stats.due + '</b><span>to review</span></div>';
+    $('#sideTopics').innerHTML = topicsOf(list).map(function (t) {
+      var qs = list.filter(function (q) { return q.topic === t.id; }), sum = 0, seen = 0;
+      qs.forEach(function (q) { var x = R.qcm.get(q.id); if (x) { seen++; sum += Math.min(x.box, 5) / 5; } });
+      var m = qs.length ? sum / qs.length : 0, cls = m >= .7 ? 'good' : (m >= .35 ? 'mid' : 'low');
+      return '<div class="trow"><span>' + U.esc(R.quiz.topicName(t.id)) + '</span><span class="v">' + seen + '/' + qs.length + '</span><div class="bar"><i class="' + cls + '" style="width:' + Math.round(m * 100) + '%"></i></div></div>';
+    }).join('');
+  }
+  function restoreReset() {
+    $('#resetBox').innerHTML = '<button type="button" class="btn ghost" id="reset" style="min-height:34px;font-size:.85rem">Reset</button>';
+    wireReset();
+  }
+  function wireReset() {
+    $('#reset').onclick = function () {
+      var box = $('#resetBox');
+      box.innerHTML = '<span>Erase your progress in ' + (R.subject(st.subj) || {}).short + '?</span><button type="button" class="btn" id="rsYes" style="min-height:34px;font-size:.85rem;color:var(--bad)">Yes, erase it</button><button type="button" class="btn ghost" id="rsNo" style="min-height:34px;font-size:.85rem">Cancel</button>';
+      $('#rsYes').onclick = function () { R.qcm.reset(st.subj + '-'); restoreReset(); paintAll(); };
+      $('#rsNo').onclick = restoreReset;
+    };
+  }
+
+  /* ---------- session ---------- */
+  var run = null;
+  function start() {
+    var p = U.shuffle(pool());
+    if (st.mode === 'due') p.sort(function (a, b) { return ((R.qcm.get(a.id) || {}).box || 0) - ((R.qcm.get(b.id) || {}).box || 0); });
+    var n = st.n ? Math.min(st.n, p.length) : p.length;
+    if (!n) return;
+    run = { qs: p.slice(0, n), i: 0, ok: 0, answers: [], exam: st.mode === 'exam', t0: Date.now(), timer: null, cards: [] };
+    $('#setup').hidden = true; $('#done').hidden = true; $('#run').hidden = false;
+    $('#rn').textContent = n;
+    $('#rtime').hidden = !run.exam;
+    if (run.exam) { run.timer = setInterval(tick, 1000); tick(); }
+    show();
+    window.scrollTo({ top: $('#run').getBoundingClientRect().top + window.scrollY - 80, behavior: U.reduceMotion() ? 'auto' : 'smooth' });
+  }
+  function tick() {
+    var s = Math.floor((Date.now() - run.t0) / 1000);
+    $('#rtime').textContent = '⏱ ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+  function show() {
+    var q = run.qs[run.i];
+    var card = R.quiz.Card(q, {
+      index: run.i, total: run.qs.length, mode: run.exam ? 'exam' : 'train', shuffle: true,
+      onAnswer: function (ok) { if (ok) run.ok++; run.answers[run.i] = ok; paintRun(); if (!run.exam) $('#next').focus(); },
+      onPick: paintRun, onEnter: next
+    });
+    run.cards[run.i] = card;
+    var host = $('#card'); host.innerHTML = ''; host.appendChild(card);
+    paintRun();
+  }
+  function paintRun() {
+    var card = run.cards[run.i], last = run.i === run.qs.length - 1;
+    $('#rk').textContent = run.i + 1;
+    $('#rbar').style.width = (100 * (run.i + (card && card.answered() ? 1 : 0)) / run.qs.length) + '%';
+    $('#rscore').textContent = run.exam ? '' : run.ok + ' correct';
+    var nb = $('#next');
+    if (run.exam) { nb.disabled = false; nb.textContent = last ? 'Hand in your paper' : (card.hasPick() ? 'Next question' : 'Skip'); }
+    else { nb.disabled = !card.answered(); nb.textContent = last ? 'See the result' : 'Next question'; }
+  }
+  function next() {
+    var card = run.cards[run.i];
+    if (run.exam && !card.answered()) card.submit();
+    if (!card.answered()) return;
+    if (run.i < run.qs.length - 1) { run.i++; show(); } else finish();
+  }
+  $('#next').addEventListener('click', next);
+  $('#quit').addEventListener('click', function () {
+    if (!run) return;
+    var c = run.cards[run.i];
+    if (run.exam && c && !c.answered() && c.hasPick()) c.submit();
+    finish(true);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!run || $('#run').hidden || e.target.tagName === 'INPUT' || e.altKey || e.ctrlKey || e.metaKey) return;
+    var card = run.cards[run.i];
+    if (e.key === 'Enter') { if ((card.answered() || run.exam) && !card.key('Enter')) { e.preventDefault(); next(); } return; }
+    if (card.key(e.key)) e.preventDefault();
+  });
+
+  function grade(ok, n) { return Math.round(ok / n * 40) / 2; }
+  function finish(early) {
+    if (run.timer) clearInterval(run.timer);
+    var done = run.cards.filter(function (c) { return c && c.answered(); });
+    var n = (early && !run.exam) ? done.length : run.qs.length, ok = done.filter(function (c) { return c.state.ok; }).length;
+    $('#run').hidden = true;
+    var box = $('#done'); box.hidden = false;
+    if (!n) { box.innerHTML = ''; backToSetup(); return; }
+    var g = grade(ok, n), secs = Math.round((Date.now() - run.t0) / 1000);
+    var msg = g >= 16 ? 'Solid. Move on to another topic or to a mock exam.' : g >= 12 ? 'Not bad. Reread the explanations of the questions you missed: they will come back tomorrow.' : g >= 8 ? 'There are still gaps. Go back over the course parts shown under each question you missed.' : 'Start by rereading the course on these topics, then take this MCQ again.';
+    var byT = {};
+    done.forEach(function (c) { var t = c.q.topic; byT[t] = byT[t] || { ok: 0, n: 0 }; byT[t].n++; if (c.state.ok) byT[t].ok++; });
+    var topics = Object.keys(byT).map(function (t) {
+      var r = byT[t], f = r.ok / r.n, cls = f >= .7 ? 'good' : (f >= .4 ? 'mid' : 'low');
+      return '<div class="trow"><span>' + U.esc(R.quiz.topicName(t)) + '</span><span class="v">' + r.ok + '/' + r.n + '</span><div class="bar"><i class="' + cls + '" style="width:' + Math.round(f * 100) + '%"></i></div></div>';
+    }).join('');
+    box.innerHTML = '<div class="sheet margin result"><div class="grade" aria-label="Grade: ' + U.nf(g, 1) + ' out of 20"><svg viewBox="0 0 150 116" aria-hidden="true"><path d="M78 8C40 6 8 26 9 58c1 30 34 50 70 48 36-2 64-24 62-52C139 24 108 6 70 10"/></svg><span class="g">' + U.nf(g, 1) + '<small>/20</small></span></div>' +
+      '<div style="display:grid;gap:8px;min-width:0"><h2>' + pl(ok, 'correct answer') + ' out of ' + n + '</h2><p>' + msg + '</p><p class="muted mono" style="font-size:.85rem">' + (run.exam ? 'Time: ' + Math.floor(secs / 60) + ' min ' + String(secs % 60).padStart(2, '0') + ' s · ' : '') + 'no negative marking</p>' +
+      '<div class="startrow"><button type="button" class="btn primary" id="again">New MCQ</button>' + (ok < n ? '<button type="button" class="btn" id="redo">Redo the ones you missed</button>' : '') + '</div></div></div>' +
+      '<section class="panel"><h2 style="font-size:1.2rem">By topic</h2><div class="topics">' + topics + '</div></section>' +
+      '<section style="display:grid;gap:12px"><h2 style="font-size:1.2rem">' + (run.exam ? 'Answers' : 'The questions you missed') + '</h2><div class="review" id="review"></div></section>';
+    var rv = $('#review'), missed = 0;
+    done.forEach(function (c) {
+      if (run.exam) { c.reveal(); rv.appendChild(c); }
+      else if (!c.state.ok) { rv.appendChild(c); missed++; }
+    });
+    if (!run.exam && !missed) rv.innerHTML = '<p class="empty">None. Everything is correct.</p>';
+    $('#again').addEventListener('click', backToSetup);
+    var rd = $('#redo');
+    if (rd) rd.addEventListener('click', function () {
+      var ids = done.filter(function (c) { return !c.state.ok; }).map(function (c) { return c.q; });
+      run = { qs: U.shuffle(ids), i: 0, ok: 0, answers: [], exam: false, t0: Date.now(), cards: [] };
+      $('#done').hidden = true; $('#run').hidden = false; $('#rn').textContent = run.qs.length; $('#rtime').hidden = true; show();
+    });
+    paintSide();
+    window.scrollTo({ top: box.getBoundingClientRect().top + window.scrollY - 80, behavior: U.reduceMotion() ? 'auto' : 'smooth' });
+  }
+  function backToSetup() { run = null; $('#done').hidden = true; $('#run').hidden = true; $('#setup').hidden = false; paintAll(); }
+  $('#start').addEventListener('click', start);
+
+  function paintAll() { paintSubjects(); paintSrcs(); paintTopics(); paintModes(); paintCounts(); paintStart(); paintSide(); }
+
+  /* direct links: #sprint, #revision, #examen, #elec, #taa-revision, #p2024, #t-<topic>.
+     Also read again when only the # changes (link to this page from this page). */
+  function applyHash() {
+    var h = (location.hash || '').slice(1);
+    if (!h) return;
+    if (run) backToSetup();
+    /* "taa-revision", "elec-sprint", "taa-p2024"…: subject, then mode or exam paper */
+    var m = /^([a-z]+)-(sprint|revision|examen|p20\d\d)$/.exec(h);
+    if (m && subjects.some(function (s) { return s.id === m[1]; })) {
+      if (m[1] !== st.subj) { st.subj = m[1]; st.topics = null; st.srcs = null; st.exam = null; }
+      h = m[2];
+    }
+    subjects.forEach(function (s) { if (h === s.id && s.id !== st.subj) { st.subj = s.id; st.topics = null; st.srcs = null; st.exam = null; } });
+    if (/^p20\d\d$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
+    if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) st.topics = [t]; }
+    if (/^(sprint|revision|examen)$/.test(h)) { st.exam = null; st.topics = null; st.srcs = null; }
+    if (h === 'sprint') { st.mode = 'train'; st.n = 10; }
+    if (h === 'revision') st.mode = 'due';
+    if (h === 'examen') { st.mode = 'exam'; st.n = 20; }
+    paintAll();
+    if (h === 'sprint' || (h === 'revision' && pool().length)) start();
+  }
+  paintAll(); wireReset(); applyHash();
+  window.addEventListener('hashchange', applyHash);
+})();
+</script>
+</body>
+</html>

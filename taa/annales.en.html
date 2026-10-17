@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Past exams · TAA</title>
+<meta name="description" content="TAA: all the S1 mid-semester algo papers found, the abstract types part analyzed exercise by exercise, with links to the detailed solutions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* TAA past exams: a topics × papers matrix, then one card per paper. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.ann{display:grid;gap:44px;padding-block:40px 96px}
+main.ann>section{display:grid;gap:16px;min-width:0}
+.matrix td,.matrix th{text-align:center;white-space:nowrap}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.dot-main{color:var(--accent);font-size:1.05rem}
+.dot-sub{color:var(--muted)}
+.exam{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;scroll-margin-top:72px;min-width:0}
+.exam-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.exam-h h3{margin:0;font-size:1.3rem}
+.exam-h .meta{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.exam-b{padding:12px 16px 16px;display:grid;gap:12px}
+.exam-b>*{min-width:0}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:.55rem .7rem;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.parts li.caml{opacity:.65}
+.parts .n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.parts .p{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.parts .pt{display:grid;gap:4px;min-width:0}
+.parts .pt a{font-size:.88rem}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.files a{font-size:.88rem}
+@media (max-width:560px){.parts li{grid-template-columns:40px minmax(0,1fr)}.parts .p{grid-column:2}}
+</style>
+</head>
+<body data-resume="TAA · past exams">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Past exams</div>
+      <h1>The papers, <span class="w">exercise by exercise</span>.</h1>
+      <p class="lead">All the mid-semester algo papers found. Until 2022, a single paper mixed Caml and abstract types; since 2023, abstract types have had their own exam. Only the TAA part is solved here.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx ann">
+  <section aria-labelledby="t-mx">
+    <div><div class="eyebrow">Overview</div><h2 id="t-mx">Which topics, which year</h2></div>
+    <p class="muted" style="max-width:62ch">● main topic of an exercise, ○ topic used along the way. The points of the TAA part are given under each year when the paper states them.</p>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+  <section aria-labelledby="t-ex">
+    <div><div class="eyebrow">Papers</div><h2 id="t-ex">Each paper</h2></div>
+    <div id="exams" style="display:grid;gap:18px"></div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../data/en/qcm/taa.js"></script>
+<script src="../data/qcm/taa-annales.js"></script>
+<script src="../data/en/qcm/taa-annales.js"></script>
+<script src="../data/qcm/taa-hebdo.js"></script>
+<script src="../data/en/qcm/taa-hebdo.js"></script>
+<script src="../data/taa/exams.js"></script>
+<script src="../data/en/taa/exams.js"></script>
+<script src="../data/taa/ex-annales.js"></script>
+<script src="../data/en/taa/ex-annales.js"></script>
+<script src="../data/taa/ex-externes.js"></script>
+<script src="../data/en/taa/ex-externes.js"></script>
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, E = window.TAA_EXAMS || [], TOP = window.TAA_TOPICS || {}, EX = window.TAA_EX || [];
+  var BANK = R.quiz.bank().filter(function (q) { return q.s === 'taa'; });
+  function esc(s) { return U.esc(String(s)); }
+  function card(id) { for (var i = 0; i < EX.length; i++) if (EX[i].id === id) return EX[i]; return null; }
+  var taaParts = function (e) { return (e.parts || []).filter(function (p) { return p.taa !== false; }); };
+  document.getElementById('chips').innerHTML = '<span class="chip">' + E.length + ' papers</span><span class="chip">' + E.reduce(function (n, e) { return n + taaParts(e).length; }, 0) + ' abstract types exercises</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">detailed solutions →</a>';
+
+  /* topics × papers matrix */
+  var topics = Object.keys(TOP).filter(function (t) { return E.some(function (e) { return taaParts(e).some(function (p) { return (p.topics || []).indexOf(t) >= 0; }); }); });
+  var head = '<thead><tr><th>Topic</th>' + E.map(function (e) { return '<th><a href="#' + e.key + '">' + e.key.slice(1) + '</a>' + (e.taaPts ? '<br><span class="muted" style="font-size:.72rem">' + esc(e.taaPts) + '</span>' : '') + '</th>'; }).join('') + '</tr></thead>';
+  var body = topics.map(function (t) {
+    return '<tr><td>' + esc(TOP[t]) + '</td>' + E.map(function (e) {
+      var main = taaParts(e).some(function (p) { return (p.topics || [])[0] === t; }), sub = !main && taaParts(e).some(function (p) { return (p.topics || []).indexOf(t) > 0; });
+      return '<td>' + (main ? '<span class="dot-main" title="main topic">●</span>' : sub ? '<span class="dot-sub" title="topic used">○</span>' : '') + '</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  document.getElementById('matrix').innerHTML = E.length ? head + '<tbody>' + body + '</tbody>' : '<tbody><tr><td>The analysis of the papers is coming.</td></tr></tbody>';
+
+  /* one card per paper */
+  document.getElementById('exams').innerHTML = E.map(function (e) {
+    var nq = BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('taa-' + e.key + '-') === 0; }); }).length;
+    var files = (e.files || []).map(function (f) { return '<a class="btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.t) + ' ↗</a>'; }).join('');
+    var parts = (e.parts || []).map(function (p) {
+      var c = p.card && card(p.card), links = [];
+      if (c) links.push('<a href="entrainement.html#' + c.id + '">Detailed solution →</a>');
+      return '<li class="' + (p.taa === false ? 'caml' : '') + '"><span class="n">Ex ' + esc(p.ex) + '</span><span class="pt"><span>' + p.t + (p.taa === false ? ' <span class="muted">(Caml)</span>' : '') + '</span>' + links.join(' ') + '</span><span class="p">' + (p.pts ? String(p.pts) + ' pts' : '') + '</span></li>';
+    }).join('');
+    return '<article class="exam" id="' + e.key + '"><div class="exam-h"><h3>' + esc(e.title) + '</h3><span class="meta">' + esc(e.meta || '') + '</span></div><div class="exam-b">' +
+      (e.note ? '<p>' + e.note + '</p>' : '') + '<ul class="parts">' + parts + '</ul>' +
+      '<div class="files">' + files + (nq ? '<a class="btn primary" href="../qcm/index.html#taa-' + e.key + '">Its ' + nq + ' questions in the MCQ</a>' : '') + '</div></div></article>';
+  }).join('') || '<p class="muted">The analysis of the papers is coming.</p>';
+  var h = (location.hash || '').slice(1), t = h && document.getElementById(h);
+  if (t) setTimeout(function () { t.scrollIntoView(); }, 50);
+})();
+</script>
+</body>
+</html>

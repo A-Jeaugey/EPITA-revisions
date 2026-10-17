@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Elec</title>
+<meta name="description" content="S1 electronics: a step-by-step method for each type of midterm question, the calculation reflexes without a calculator and the traps found in the answer keys.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.recipe{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:14px;align-items:start}
+@media (max-width:820px){.recipe{grid-template-columns:minmax(0,1fr)}}
+.express{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem;display:grid;gap:.5rem;min-width:0}
+.express .t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.express .fig{padding:6px;border:1px solid var(--line);border-radius:8px}
+.express .fig svg{max-width:360px}
+.decide{display:grid;gap:8px}
+.decide a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:.65rem .85rem;background:var(--surface);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink)}
+.decide a:hover{border-color:var(--accent)}
+.decide a span:last-child{font-family:var(--font-mono);font-size:.78rem;color:var(--accent);white-space:nowrap}
+.traplist{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:t}
+.traplist li{counter-increment:t;display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.6rem .8rem}
+.traplist li::before{content:counter(t);font-family:var(--font-mono);font-weight:600;color:var(--warn)}
+.traplist li>div{min-width:0}
+.traplist b{display:block}
+.traplist span{color:var(--muted);font-size:.93rem}
+</style>
+</head>
+<body data-resume="Elec · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">Elec</a> · Methods</div>
+      <h1>One question, <span class="w">one recipe</span>.</h1>
+      <p class="lead">The papers always ask the same types of questions. For each one, here is the order of the steps to write on your paper, a quick example, and the mistakes the answer keys penalize.</p>
+      <div class="chips"><span class="chip">11 methods</span><span class="chip">calculation reflexes</span><span class="chip">15 traps</span><span class="chip ex">what the grader expects</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Methods contents">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#choisir"><span class="code" data-n="0"></span><span>Which method?</span></a></li>
+      <li><a href="#compter"><span class="code" data-n="1"></span><span>Count</span></a></li>
+      <li><a href="#flecher"><span class="code" data-n="2"></span><span>Arrows, chaining</span></a></li>
+      <li><a href="#numerique"><span class="code" data-n="3"></span><span>Numerical fundamental laws</span></a></li>
+      <li><a href="#req"><span class="code" data-n="4"></span><span>Reduce a network</span></a></li>
+      <li><a href="#diviseurs"><span class="code" data-n="5"></span><span>Dividers</span></a></li>
+      <li><a href="#interrupteurs"><span class="code" data-n="6"></span><span>Switch table</span></a></li>
+      <li><a href="#thevenin"><span class="code" data-n="7"></span><span>Direct Thévenin</span></a></li>
+      <li><a href="#transfo"><span class="code" data-n="8"></span><span>Chained transformations</span></a></li>
+      <li><a href="#millman"><span class="code" data-n="9"></span><span>Millman</span></a></li>
+      <li><a href="#verifier"><span class="code" data-n="10"></span><span>Check</span></a></li>
+      <li><a href="#calcul"><span class="code" data-n="11"></span><span>Calculation reflexes</span></a></li>
+      <li><a href="#pieges"><span class="code" data-n="12"></span><span>The 15 traps</span></a></li>
+      <li><a href="#copie"><span class="code" data-n="13"></span><span>Writing your paper</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Elec home</a><a href="entrainement.html">Exercises →</a><a href="fiche.html">One-page summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Methods contents</summary>
+      <ol>
+        <li><a href="#choisir">Which method?</a></li><li><a href="#compter">Count</a></li><li><a href="#flecher">Arrows, chaining</a></li><li><a href="#numerique">Numerical fundamental laws</a></li>
+        <li><a href="#req">Reduce a network</a></li><li><a href="#diviseurs">Dividers</a></li><li><a href="#interrupteurs">Switch table</a></li><li><a href="#thevenin">Direct Thévenin</a></li>
+        <li><a href="#transfo">Chained transformations</a></li><li><a href="#millman">Millman</a></li><li><a href="#verifier">Check</a></li><li><a href="#calcul">Calculation reflexes</a></li><li><a href="#pieges">The 15 traps</a></li><li><a href="#copie">Writing your paper</a></li>
+      </ol>
+    </details>
+
+    <section class="sec" id="choisir">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="0"></span><span>Starting point</span></div><h2>Which method for which question?</h2></div>
+      <div class="decide">
+        <a href="#compter"><span>“How many nodes, branches and loops are in the scheme?”</span><span>Method 1</span></a>
+        <a href="#flecher"><span>“Draw the various voltages on the diagram using sign conventions”, “place the points”, “calculate <var class="u">U</var><sub>2</sub>, <var class="u">U</var><sub>3</sub>…”</span><span>Method 2</span></a>
+        <a href="#numerique"><span>A circuit with values (kΩ, mA): “calculate <var>R</var>₃, the current through <var>R</var>₂, the voltage <var class="u">U</var>₄”</span><span>Method 3</span></a>
+        <a href="#req"><span>“Equivalent resistance seen from points A and B / seen by the generator”, “what must be <var>R</var>′ value”</span><span>Method 4</span></a>
+        <a href="#diviseurs"><span>Voltage across a resistor in series, current in a branch in parallel</span><span>Method 5</span></a>
+        <a href="#interrupteurs"><span>“Find a formula for <var class="u">U</var> in the 4 possible cases”</span><span>Method 6</span></a>
+        <a href="#thevenin"><span>Voltage across a single resistor, simple circuit with one source</span><span>Method 7</span></a>
+        <a href="#transfo"><span>“Set the expressions of <var class="u">E</var><sub>th</sub> and <var>R</var><sub>th</sub> so as the 2 diagrams are equivalent”, “you can use Thévenin/Norton equivalents”</span><span>Method 8</span></a>
+        <a href="#millman"><span>Potential of a node where several branches with sources meet</span><span>Method 9</span></a>
+      </div>
+    </section>
+
+    <section class="sec" id="compter">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Method 1</span></div><h2>Count nodes, branches and loops</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Color</b> each piece of wire: everything joined by wire alone is a single point, even if it goes all the way around the drawing.</div></li>
+          <li><div><b>Nodes</b>: the colors that touch at least 3 elements. A black dot with 2 wires is not a node.</div></li>
+          <li><div><b>Branches</b>: the paths from one node to the next. Dipoles one after the other with no node between them form a single branch.</div></li>
+          <li><div><b>Loops</b>: <var>b</var> − <var>n</var> + 1 independent loops, but the answer keys count <b>all</b> the loops. List them, naming each one by its dipoles.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example · midterm Nov. 2023</span><p>4 branches in parallel between A and B (source <var class="i">I</var>, <var class="u">E</var> + 2<var>R</var>, 2<var>R</var>, <var>R</var> + <var class="u">E</var> + <var>R</var>): <b>2 nodes, 4 branches, 6 loops</b> (every pair of branches, 3 of them independent).</p><p class="muted" style="font-size:.9rem">If in doubt, write both numbers: “3 independent loops, 6 in total”.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="flecher">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Method 2</span></div><h2>Draw the arrows, then chain the voltages</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Resistors in receiver convention</b>: voltage arrow opposite to the current arrow. Then <span class="f-inline"><var class="u">U</var> = <var>R</var><var class="i">I</var></span>.</div></li>
+          <li><div><b>Generator in generator convention</b>: arrows in the same direction.</div></li>
+          <li><div><b>An unknown voltage</b> can be found along any path whose voltages you know: <span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span>, and reversing an arrow changes the sign.</div></li>
+          <li><div><b>Placing points</b> given by <var class="u">U</var> = <var class="v">V</var><sub>X</sub> − <var class="v">V</var><sub>Y</sub>: X is at the arrowhead, Y at the back of the arrow.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example · TD 1 Ex 2 and midterm 2020</span><p><var class="u">E</var> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub> = 240 V and <var class="u">U</var>₁ = <var class="v">V</var><sub>F</sub> − <var class="v">V</var><sub>B</sub> = 184 V. Then <span class="f-inline"><var class="u">U</var>₂ = <var class="v">V</var><sub>F</sub> − <var class="v">V</var><sub>A</sub> = 184 − 240 = −56 V</span>. The negative sign is the right answer, not a mistake.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="numerique">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Method 3</span></div><h2>The numerical “fundamental laws” exercise</h2></div>
+      <div class="prose"><p>The 2023 and 2024 format: a few currents in mA, a voltage in V, resistances in kΩ, and chained questions. Each answer feeds the next one.</p></div>
+      <ol class="steps">
+        <li><div><b>Copy the data onto the diagram</b>: write each value next to its component.</div></li>
+        <li><div><b>Look for the direct link</b>: a resistor for which you know two of the three quantities (<var>R</var>, <var class="u">U</var>, <var class="i">I</var>) → Ohm’s law.</div></li>
+        <li><div><b>Unknown current</b> → KCL at the node where all the other currents are known.</div></li>
+        <li><div><b>Unknown voltage</b> → KVL on the loop where all the other voltages are known.</div></li>
+        <li><div><b>Unknown resistance</b> → <var>R</var> = <var class="u">U</var>/<var class="i">I</var> with the two values you found (V/mA = kΩ).</div></li>
+        <li><div><b>Keep the signs</b>: a current of −5 mA means 5 mA in the other direction; do not reverse the arrow, write the sign.</div></li>
+      </ol>
+      <div class="note exam"><span class="tag">In the 2024 midterm</span><p>Expected results: <var>R</var>₃ = 2 kΩ, <var class="i">I</var>₂ = −5 mA, <var class="u">U</var>₂ = −10 V, <var class="u">U</var>₄ = 2 V. The negative current is deliberate. <a class="td x" href="entrainement.html#p2024-ex2">The solved exercise</a></p></div>
+    </section>
+
+    <section class="sec" id="req">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Method 4</span></div><h2>Reduce a resistor network</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Name the nodes</b> (A, B, then N1, N2…) and redraw the network if the wires cross: each resistor connects two nodes.</div></li>
+          <li><div><b>Spot the obvious pairs</b>: two resistors between the same two nodes (parallel) or one after the other with no node between them (series).</div></li>
+          <li><div><b>Merge from the end farthest</b> from A and B, one pair at a time, and <b>redraw</b> after each merge.</div></li>
+          <li><div><b>Repeat</b> until a single resistor remains between A and B.</div></li>
+          <li><div><b>Reverse question</b> (“what must be <var>R</var>′ value?”): express <var>R</var><sub>eq</sub> in terms of <var>R</var>′, write the required equality, cross-multiply.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example · midterm 2021</span><p>Two 2<var>R</var> between A and N1: <var>R</var>. Two 4<var>R</var> between N2 and B: 2<var>R</var>. Then (<var>R</var> + 2<var>R</var>) // 3<var>R</var> = 3<var>R</var>/2, + 2<var>R</var> = 7<var>R</var>/2, and finally // 3<var>R</var> (top branch):</p><p class="f-block">(7<var>R</var>/2 · 3<var>R</var>)/(7<var>R</var>/2 + 3<var>R</var>) = 21<var>R</var>/13 <span class="muted" style="font-family:var(--font-body);font-size:.85rem">(multiply top and bottom by 2)</span></p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="diviseurs">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Method 5</span></div><h2>Apply a divider without mistakes</h2></div>
+      <div class="grid2">
+        <div class="qty"><h3>Voltage divider</h3><p><b>Condition</b>: resistors in series, nothing leaks out between them (a voltmeter does not count, a load does).</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="u">U</var><sub>k</sub> = <var class="u">E</var>·<var>R</var><sub>k</sub>/Σ<var>R</var></div></div><p class="ex">The same resistor on top. If a load is connected in the middle, first put it in parallel with the bottom resistor.</p></div>
+        <div class="qty"><h3>Current divider</h3><p><b>Condition</b>: two branches in parallel fed by a known current.</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="i">I</var><sub>1</sub> = <var class="i">I</var>·<var>R</var><sub>2</sub>/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</div></div><p class="ex">The <b>other</b> resistor on top. With more than two branches, switch to conductances: <var class="i">I</var><sub>k</sub> = <var class="i">I</var>·<var>G</var><sub>k</sub>/Σ<var>G</var>.</p></div>
+      </div>
+      <div class="note trap" style="margin-top:14px"><span class="tag">Sanity check</span><p>The largest resistor takes the largest voltage and the smallest current. If your result says otherwise, you put the wrong resistor on top.</p></div>
+    </section>
+
+    <section class="sec" id="interrupteurs">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Method 6</span></div><h2>The table of the 4 switch cases</h2></div>
+      <ol class="steps">
+        <li><div><b>Draw a table</b> K₁ × K₂ (open / closed): 4 cells, 4 diagrams.</div></li>
+        <li><div><b>For each cell, redraw</b>: closed = wire (it short-circuits whatever is in parallel with it), open = gap (its branch disappears).</div></li>
+        <li><div><b>Calculate</b> on the simplified circuit: often a single voltage or current divider.</div></li>
+        <li><div><b>“Open loop” case</b>: no current, so no voltage across the resistors; the open switch takes the whole voltage (<var class="u">U</var> = <var class="u">E</var>). With a current source, opening its only loop is not possible: look for where the current can still flow.</div></li>
+      </ol>
+      <div class="note exam"><span class="tag">In the midterm</span><p>Came up in 2017 (voltage source, answers in terms of <var class="u">E</var>) and in 2018 (current source, answers in terms of <var class="i">I</var>), for 4.5 to 6 points. Same principle as TD 1 Ex 7. <a class="td x" href="entrainement.html#interrupteurs">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="thevenin">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Method 7</span></div><h2>Direct Thévenin</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Disconnect the load</b> and locate A and B.</div></li>
+          <li><div><b><var class="u">E</var><sub>th</sub> = no-load voltage</b> between A and B: voltage divider, KVL or Millman. No current leaves through A.</div></li>
+          <li><div><b><var>R</var><sub>th</sub></b>: turn off the sources (voltage → wire, current → gap), then the resistance seen from A and B.</div></li>
+          <li><div><b>Reconnect the load</b>: <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·<var>R</var><sub>L</sub>/(<var>R</var><sub>th</sub> + <var>R</var><sub>L</sub>)</span>.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><div class="fig" id="exThev"></div><p><var class="u">E</var><sub>th</sub> = 12 × 6/(3 + 6) = 8 V; <var>R</var><sub>th</sub> = 3 // 6 = 2 kΩ; with <var>R</var><sub>L</sub> = 2 kΩ: <var class="u">U</var> = 8 × 2/4 = 4 V.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="transfo">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Method 8</span></div><h2>Chained Thévenin ⇄ Norton transformations</h2></div>
+      <div class="prose"><p>The method for the 11-point exercises. The grader expects <b>one intermediate diagram per transformation</b>.</p></div>
+      <ol class="steps">
+        <li><div><b>Disconnect the 2<var>R</var> load</b>. Everything left is the “generator” to simplify.</div></li>
+        <li><div><b>Branches in parallel between the same two nodes</b>: turn each series (<var class="u">E</var>, <var>R</var>) into a Norton (<var class="u">E</var>/<var>R</var> // <var>R</var>, arrow toward the +), then add the current sources (algebraically) and combine the resistors in parallel.</div></li>
+        <li><div><b>Elements one after the other on a path</b>: turn each (<var class="i">I</var> // <var>R</var>) into a Thévenin (<var>R</var><var class="i">I</var> in series with <var>R</var>, emf in the direction of <var class="i">I</var>), then add the emfs (algebraically, from B to A) and the resistors.</div></li>
+        <li><div><b>Block “(<var class="u">E</var>, <var>R</var>) loaded by a resistor”</b>: intermediate Thévenin, <var class="u">E</var>·<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂) in series with <var>R</var>₁ // <var>R</var>₂ (2024 Q2: <var class="u">E</var>/2 and 2<var>R</var>).</div></li>
+        <li><div><b>A single source and a single resistor</b>: that is (<var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>). Reconnect 2<var>R</var>, voltage divider.</div></li>
+        <li><div><b>Check</b> <var>R</var><sub>th</sub> on the original circuit with the sources turned off, and the units of <var class="u">E</var><sub>th</sub> (volts everywhere, <var>R</var><var class="i">I</var> is in V).</div></li>
+      </ol>
+      <div class="tbl" style="margin-top:14px"><table>
+        <thead><tr><th>Midterm</th><th><var class="u">E</var><sub>th</sub></th><th><var>R</var><sub>th</sub></th><th><var class="u">U</var> across 2<var>R</var></th></tr></thead>
+        <tbody>
+          <tr><td>Nov. 2023 · Q1</td><td><var>R</var><var class="i">I</var> + <var class="u">E</var></td><td><var>R</var></td><td>2(<var>R</var><var class="i">I</var> + <var class="u">E</var>)/3</td></tr>
+          <tr><td>Nov. 2023 · Q2</td><td><var class="u">E</var> + 4<var>R</var><var class="i">I</var></td><td>4<var>R</var></td><td>(<var class="u">E</var> + 4<var>R</var><var class="i">I</var>)/3</td></tr>
+          <tr><td>Oct. 2024 · Q1</td><td>2(<var>R</var><var class="i">I</var> − <var class="u">E</var>)</td><td>5<var>R</var></td><td>4(<var>R</var><var class="i">I</var> − <var class="u">E</var>)/7</td></tr>
+          <tr><td>Oct. 2024 · Q2</td><td><var class="u">E</var>/2 − 4<var>R</var><var class="i">I</var></td><td>4<var>R</var></td><td>(<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6</td></tr>
+        </tbody></table></div>
+      <div class="note keep" style="margin-top:14px"><span class="tag">The arrow rule</span><p>Norton: the current arrow points toward the + terminal of the voltage source it replaces. Thévenin: the emf arrow points in the direction of the current arrow it replaces. A current source that <b>leaves</b> node A counts as a minus.</p></div>
+    </section>
+
+    <section class="sec" id="millman">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="9"></span><span>Method 9</span></div><h2>Millman in three steps</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Ground</b> at the point the sources share (often the bottom wire). Name the node A you are looking for.</div></li>
+          <li><div><b>Numerator</b>: for each branch reaching A, (potential of the other end ± emf)/<var>R</var>, + if the emf points toward A; plus the currents of the current sources (+ entering, − leaving).</div></li>
+          <li><div><b>Denominator</b>: sum of the 1/<var>R</var> of the branches with a resistor (not the branches with a current source in series). Multiply top and bottom to keep a single fraction bar.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><p>Branches (12 V, 2 Ω) and (6 V, 2 Ω) toward A, and 4 Ω from A to ground:</p><p class="f-block"><var class="v">V</var><sub>A</sub> = (12/2 + 6/2)/(1/2 + 1/2 + 1/4) = 9/(5/4) = 7.2 V</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="10"></span><span>Method 10</span></div><h2>Check without a calculator</h2></div>
+      <div class="grid2">
+        <div class="qty"><h3>Units</h3><p>Every term of a sum has the same unit: <var>R</var><var class="i">I</var> and <var class="u">E</var> are volts, <var class="u">E</var>/<var>R</var> and <var class="i">I</var> are amperes. A result <var class="u">U</var> = <var class="u">E</var> + <var class="i">I</var> is certainly wrong.</p></div>
+        <div class="qty"><h3>Limiting cases</h3><p>Set <var class="i">I</var> = 0 or <var class="u">E</var> = 0 and check that the result matches the simplified circuit. A resistance tending to 0 (wire) or to infinity (gap) must give a sensible result.</p></div>
+        <div class="qty"><h3><var>R</var><sub>th</sub> twice</h3><p>Once through the transformations, once by turning off the sources on the original diagram. If the two differ, an arrow or a grouping is wrong.</p></div>
+        <div class="qty"><h3>Another method</h3><p>Superposition (one source at a time) or Millman at node A: in 2024 Q2, both give (<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6 again in a few lines.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="calcul">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="11"></span><span>Reflexes</span></div><h2>Calculating without a calculator</h2></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Association</th><th class="num">Result</th><th>Association</th><th class="num">Result</th></tr></thead>
+        <tbody>
+          <tr><td><var>R</var> // <var>R</var></td><td class="num"><var>R</var>/2</td><td>3<var>R</var> // 6<var>R</var></td><td class="num">2<var>R</var></td></tr>
+          <tr><td><var>R</var> // 2<var>R</var></td><td class="num">2<var>R</var>/3</td><td>2<var>R</var> // 4<var>R</var></td><td class="num">4<var>R</var>/3</td></tr>
+          <tr><td><var>R</var> // 3<var>R</var></td><td class="num">3<var>R</var>/4</td><td>4<var>R</var> // 4<var>R</var></td><td class="num">2<var>R</var></td></tr>
+          <tr><td><var>R</var> // <var>R</var> // <var>R</var></td><td class="num"><var>R</var>/3</td><td>6<var>R</var> // 3<var>R</var> // 2<var>R</var></td><td class="num"><var>R</var></td></tr>
+          <tr><td>2<var>R</var> // 3<var>R</var></td><td class="num">6<var>R</var>/5</td><td>3<var>R</var> // 7<var>R</var>/2</td><td class="num">21<var>R</var>/13</td></tr>
+        </tbody></table></div>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card"><span class="t">units</span><span class="f">kΩ × mA = V</span><span class="d">and V / kΩ = mA, V / mA = kΩ</span></div>
+        <div class="card"><span class="t">stacked fraction</span><span class="f">(<var>a</var>/2)·<var>b</var> / (<var>a</var>/2 + <var>b</var>)</span><span class="d">multiply top and bottom by 2: <var>ab</var>/(<var>a</var> + 2<var>b</var>)</span></div>
+        <div class="card"><span class="t">a single bar</span><span class="f">(<var>x</var>/<var>a</var> + <var>y</var>/<var>b</var>)/(1/<var>a</var> + 1/<var>b</var>)</span><span class="d">= (<var>bx</var> + <var>ay</var>)/(<var>a</var> + <var>b</var>) by multiplying by <var>ab</var></span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="12"></span><span>To avoid</span></div><h2>The 15 traps found in the papers</h2></div>
+      <ol class="traplist">
+        <li><div><b>Counting 4 loops instead of 10</b><span>The 2022 and 2023 answer keys count every loop, not just the independent ones.</span></div></li>
+        <li><div><b>Taking a bend for a node</b><span>A point with two wires is not a node; dipoles separated by a bend are in series.</span></div></li>
+        <li><div><b>Misreading a resistor network</b><span>In 2018, the 2017 network comes back with a single connection moved: 27<var>R</var>/13 instead of 2<var>R</var>. Name every node before reducing.</span></div></li>
+        <li><div><b>Automatically classing two resistors as in series or in parallel</b><span>The course insists: they can be neither. Apply the definition.</span></div></li>
+        <li><div><b>Forgetting the sign of a result</b><span>−56 V, −5 mA, −1.84 A are the right answers when the arrow points the other way.</span></div></li>
+        <li><div><b>Writing <var class="u">U</var> = <var>R</var><var class="i">I</var> in generator convention</b><span>Arrows in the same direction on a resistor: <var class="u">U</var> = −<var>R</var><var class="i">I</var>.</span></div></li>
+        <li><div><b>Believing that a generator “adds” current</b><span>The current that enters a dipole comes out of it, generators included. Trick question in 2017, 2021 and 2022.</span></div></li>
+        <li><div><b>Connecting the ammeter in parallel</b><span>Ammeter in series (a wire), voltmeter in parallel (a gap).</span></div></li>
+        <li><div><b>Putting the wrong resistor on top of the divider</b><span>Voltage: the same one. Current: the other one.</span></div></li>
+        <li><div><b>Keeping the 2<var>R</var> load in <var class="u">E</var><sub>th</sub> or <var>R</var><sub>th</sub></b><span>Disconnect it first, reconnect it at the end.</span></div></li>
+        <li><div><b>Short-circuiting a current source for <var>R</var><sub>th</sub></b><span>Current source turned off = gap.</span></div></li>
+        <li><div><b>Reading a source arrow backward</b><span>2024: the 2<var>E</var> points downward, hence 2(<var>R</var><var class="i">I</var> − <var class="u">E</var>) and not 2(<var>R</var><var class="i">I</var> + <var class="u">E</var>).</span></div></li>
+        <li><div><b>Forgetting that a current source draws current</b><span>2024 Q2: <var class="i">I</var> leaves A, so it is subtracted: <var class="u">E</var>/(8<var>R</var>) − <var class="i">I</var>.</span></div></li>
+        <li><div><b>Forgetting a resistor on the bottom wire</b><span>2024 Q2: <var>R</var><sub>th</sub> = 2<var>R</var> + <var>R</var> + <var>R</var> = 4<var>R</var>.</span></div></li>
+        <li><div><b>Adding resistors in parallel</b><span>6<var>R</var> // 6<var>R</var> = 3<var>R</var>, not 12<var>R</var> (2023 Q2).</span></div></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="13"></span><span>Exam day</span></div><h2>Writing your paper</h2></div>
+      <div class="prose"><p>The papers say “Justify your answers” and you answer on the exam sheet itself. What earns points:</p>
+        <ul><li><b>One diagram per step</b> for the equivalents, with the arrows and the values.</li>
+        <li><b>The law you use, named</b>: “KVL on loop …”, “voltage divider”, “Norton → Thévenin”.</li>
+        <li><b>The symbolic expression first</b>, then the numerical value with its unit.</li>
+        <li><b>The result boxed</b>, simplified (a single fraction bar).</li>
+        <li><b>The MCQ has no negative points</b>: answer everything.</li>
+        <li><b>Time</b>: the paper gives no duration; aim for about 5 minutes on the MCQ, 15 on the fundamental laws and the rest on Thévenin/Norton.</li></ul></div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Next">
+      <a href="index.html"><span>Back</span><b>← Elec home</b></a>
+      <a class="next" href="entrainement.html"><span>Put it into practice</span><b>The exercises →</b></a>
+    </nav>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+REV.circuit.mount('#exThev', { w: 340, h: 190, aria: '12 V source, 3 kΩ in series, 6 kΩ between A and B',
+  wires: ['M50 40H280M50 160H280M50 40V160M190 40V160'],
+  parts: [{ t: 'E', x: 50, y: 100, d: 'v', p: 'n', l: '12 V' }, { t: 'R', x: 120, y: 40, l: '3 kΩ' }, { t: 'R', x: 190, y: 100, d: 'v', l: '6 kΩ' },
+    { t: 'dot', x: 190, y: 40 }, { t: 'dot', x: 190, y: 160 }, { t: 'term', x: 280, y: 40, l: 'A' }, { t: 'term', x: 280, y: 160, l: 'B' }] });
+</script>
+</body>
+</html>

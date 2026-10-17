@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S1 Revision</title>
+<meta name="description" content="Revision for the EPITA S1 midterms: courses explained step by step, past exams with solutions, targeted practice and MCQs with spaced repetition.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/css/shell.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/core.js"></script>
+<style>
+/* home: a revision desk. Header styled like an exam answer sheet, then a “today” column, then the subjects. */
+.hero{padding-block:44px 30px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:stretch}
+@media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.copie{padding:22px 24px 26px 64px;display:grid;gap:14px;align-content:start}
+@media (max-width:560px){.copie{padding:18px 16px 22px 34px}}
+.copie-fields{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--font-mono);font-size:.8rem;color:var(--muted);letter-spacing:.02em}
+.copie-fields b{font-weight:600;color:var(--ink)}
+.copie-fields .hand{font-size:1.35rem;line-height:1;margin-left:4px;letter-spacing:0}
+.copie h1 span{color:var(--accent)}
+.copie .rules{font-family:var(--font-mono);font-size:.82rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:4px}
+
+.count{padding:22px 22px;display:grid;gap:14px;align-content:start;background:var(--ink);color:var(--bg);border-radius:var(--radius)}
+.count .eyebrow{color:inherit;opacity:.7}
+.count-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.count-num{font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:4.2rem;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.count-txt{font-size:1.02rem;line-height:1.35;max-width:16em}
+.count form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.count label{font-size:.9rem;opacity:.85}
+.count input[type=date]{font:inherit;font-family:var(--font-mono);font-size:.9rem;padding:.45rem .6rem;border-radius:8px;border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);background:transparent;color:inherit;color-scheme:dark}
+:root[data-theme="dark"] .count input[type=date]{color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .count input[type=date]{color-scheme:light}}
+.count .btn{background:var(--bg);color:var(--ink);border-color:var(--bg);min-height:38px}
+.count-list{display:grid;gap:6px;font-size:.9rem}
+.count-list div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid color-mix(in srgb,var(--bg) 18%,transparent);padding-top:6px}
+.count-list .mono{font-variant-numeric:tabular-nums}
+.linkish{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;opacity:.85}
+
+main{display:grid;gap:56px;padding-bottom:24px}
+.today{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.today{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;min-width:0}
+a.step:hover{border-color:var(--accent)}
+.step .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.step .t{font-weight:700;font-size:1.08rem;line-height:1.3}
+.step .d{color:var(--muted);font-size:.93rem;line-height:1.45}
+.step .go{color:var(--accent);font-weight:700;font-size:.93rem;margin-top:2px}
+
+.subjects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.subjects{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.subjects{grid-template-columns:minmax(0,1fr)}}
+.subj{--c:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:12px;align-content:start;min-width:0;position:relative}
+.subj.ready{grid-column:1/-1;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:22px;border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+@media (max-width:620px){.subj.ready{grid-column:auto;grid-template-columns:minmax(0,1fr)}}
+.subj-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.subj h3{font-size:1.45rem}
+.subj .code{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.subj .tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:.15rem .55rem;border:1px solid currentColor;color:var(--c);white-space:nowrap}
+.subj p{color:var(--muted);font-size:.94rem;line-height:1.5}
+.subj .meters{display:grid;gap:10px;align-content:start}
+.meter{display:grid;gap:5px}
+.meter .row{display:flex;justify-content:space-between;font-size:.86rem;gap:10px}
+.meter .row span:last-child{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.meter .bar>i{background:var(--c)}
+.subj .links{display:flex;flex-wrap:wrap;gap:8px}
+.subj .links .btn{min-height:38px;padding:.4rem .8rem;font-size:.9rem}
+.subj.ready .btn.primary{background:var(--c);border-color:var(--c);color:var(--surface)}
+.subj.soon{background:transparent;border-style:dashed}
+.subj.soon h3{color:var(--muted)}
+.subj-elec{--c:var(--s-elec)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-taa,.subj-caml{--c:var(--s-algo)}
+.chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
+.chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
+.chapters a:hover{border-color:var(--c)}
+.chapters .mono{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tool{padding:18px 20px 20px 58px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit}
+@media (max-width:560px){.tool{padding-left:34px}}
+a.tool:hover{border-color:var(--accent)}
+.tool .big{font-family:var(--font-display);font-stretch:120%;font-size:2.1rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tool .t{font-weight:700;font-size:1.1rem}
+.tool .d{color:var(--muted);font-size:.93rem;line-height:1.45}
+
+.method{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;counter-reset:m;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+@media (max-width:900px){.method{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.method{grid-template-columns:minmax(0,1fr)}}
+.method li{list-style:none;counter-increment:m;padding:18px 18px 20px;display:grid;gap:6px;align-content:start;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin-right:-1px;margin-bottom:-1px}
+.method li::before{content:counter(m);font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:1.7rem;color:var(--accent);line-height:1}
+.method b{font-size:1.02rem}
+.method span{color:var(--muted);font-size:.93rem;line-height:1.5}
+</style>
+</head>
+<body data-resume="Home">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="sheet margin copie">
+      <div class="copie-fields" aria-hidden="true"><span>SURNAME: ……………………</span><span>First name: ……………………</span><span>Group: <b>Class of 2031</b></span></div>
+      <h1><span>S1</span> Midterms</h1>
+      <p class="lead">The course taken step by step, what really comes up in the midterm, past exam exercises with solutions, and an MCQ that asks you the questions you missed again at the right time.</p>
+      <div class="rules"><span>Calculators and documents are not allowed.</span><span>The points scale is given as an indication. Justify your answers.</span></div>
+    </div>
+    <aside class="count" id="count" aria-live="polite"></aside>
+  </div>
+</header>
+
+<main class="wrap">
+  <section aria-labelledby="t-today">
+    <div class="sec-title"><div><span class="eyebrow">Today</span><h2 id="t-today">Your next step</h2></div></div>
+    <div class="today" id="today"></div>
+  </section>
+
+  <section aria-labelledby="t-subj">
+    <div class="sec-title"><div><span class="eyebrow">Subjects</span><h2 id="t-subj">Where you stand</h2></div><p class="muted" style="max-width:34em">The other subjects will be added as their courses come in. Their past exams are already available.</p></div>
+    <div class="subjects" id="subjects"></div>
+  </section>
+
+  <section aria-labelledby="t-tools">
+    <div class="sec-title"><div><span class="eyebrow">Tools</span><h2 id="t-tools">For every subject</h2></div></div>
+    <div class="tools">
+      <a class="sheet margin tool" href="qcm/index.html"><span class="big" id="n-qcm">0</span><span class="t">MCQ</span><span class="d">Course questions and questions from real MCQs, with explanations. The ones you miss come back the next day, then less and less often.</span></a>
+      <a class="sheet margin tool" href="annales/index.html"><span class="big" id="n-ann">0</span><span class="t">Past exams</span><span class="d">Every S1 midterm paper we found, by subject and by year, with the solutions when they exist.</span></a>
+      <a class="sheet margin tool" href="fiches/index.html"><span class="big" id="n-fiche">1</span><span class="t">Summary sheets</span><span class="d">One page per subject with all the formulas and reflexes to reread just before the exam.</span></a>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-method">
+    <div class="sec-title"><div><span class="eyebrow">How to use it</span><h2 id="t-method">Revise a subject in four steps</h2></div></div>
+    <ol class="method" style="margin:0;padding:0">
+      <li><b>Understand</b><span>Read the course in order. Each part ends with 3 or 4 questions: answer them before you move on.</span></li>
+      <li><b>Know how</b><span>Learn the methods step by step. They are what you will be asked to apply on exam day.</span></li>
+      <li><b>Practice</b><span>Do the exercises taken from past exams, with the hints if you get stuck, then compare with the solution.</span></li>
+      <li><b>Test yourself</b><span>A full timed exam paper, then the MCQ every day so that nothing gets forgotten.</span></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="page-foot"><div class="wrap"><span>S1 Revision · EPITA class of 2031 · term 1</span><span>Your progress stays in this browser.</span></div></footer>
+
+<script src="assets/js/circuit.js"></script>
+<script src="assets/js/qcm-engine.js"></script>
+<script src="data/qcm/elec.js"></script>
+<script src="data/en/qcm/elec.js"></script>
+<script src="data/qcm/elec-td0.js"></script>
+<script src="data/en/qcm/elec-td0.js"></script>
+<script src="data/qcm/elec-p2023-2024.js"></script>
+<script src="data/en/qcm/elec-p2023-2024.js"></script>
+<script src="data/qcm/elec-p2021-2022.js"></script>
+<script src="data/en/qcm/elec-p2021-2022.js"></script>
+<script src="data/qcm/elec-p2017-2020.js"></script>
+<script src="data/en/qcm/elec-p2017-2020.js"></script>
+<script src="data/qcm/elec-hebdo.js"></script>
+<script src="data/en/qcm/elec-hebdo.js"></script>
+<script src="data/annales.js"></script>
+<script src="data/en/annales.js"></script>
+<script src="data/elec/ex-p2023-2024.js"></script>
+<script src="data/en/elec/ex-p2023-2024.js"></script>
+<script src="data/elec/ex-p2021-2022.js"></script>
+<script src="data/en/elec/ex-p2021-2022.js"></script>
+<script src="data/elec/ex-p2017-2020.js"></script>
+<script src="data/en/elec/ex-p2017-2020.js"></script>
+<script src="data/elec/ex-td1.js"></script>
+<script src="data/en/elec/ex-td1.js"></script>
+<script src="data/elec/ex-hyperion.js"></script>
+<script src="data/en/elec/ex-hyperion.js"></script>
+<script src="data/qcm/taa.js"></script>
+<script src="data/en/qcm/taa.js"></script>
+<script src="data/qcm/taa-annales.js"></script>
+<script src="data/en/qcm/taa-annales.js"></script>
+<script src="data/qcm/taa-hebdo.js"></script>
+<script src="data/en/qcm/taa-hebdo.js"></script>
+<script src="data/taa/exams.js"></script>
+<script src="data/en/taa/exams.js"></script>
+<script src="data/taa/ex-annales.js"></script>
+<script src="data/en/taa/ex-annales.js"></script>
+<script src="data/taa/ex-externes.js"></script>
+<script src="data/en/taa/ex-externes.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$;
+  var BANK = R.quiz.bank();
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [] };
+  function nEx(sid) { return (EXS[sid] || []).length; }
+  function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  var MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+  /* midterm papers of a subject (algo: TAA and Caml share the papers from before 2023) */
+  function annOf(s) {
+    var A = window.ANNALES || { midterms: [] }, id = s.annalesId || s.id;
+    return A.midterms.filter(function (m) {
+      if (m.subject !== id) return false;
+      var v = (m.variant || '').toUpperCase();
+      return (v !== 'TAA' && v !== 'CAML') || v === String(s.short).toUpperCase();
+    });
+  }
+  /* ready subjects, the most urgent first (midterm date entered), otherwise in registry order */
+  function byUrgency() {
+    return R.subjects.filter(function (s) { return s.status === 'ready'; }).map(function (s, i) {
+      var d = R.exams.daysLeft(R.exams.get(s.id)); return { s: s, d: d === null || d < 0 ? 999 : d, i: i };
+    }).sort(function (a, b) { return a.d - b.d || a.i - b.i; }).map(function (x) { return x.s; });
+  }
+
+  /* ---- countdown ---- */
+  function renderCount() {
+    var box = $('#count'), ready = R.subjects.filter(function (s) { return s.status === 'ready'; });
+    var dated = ready.map(function (s) { return { s: s, iso: R.exams.get(s.id), d: R.exams.daysLeft(R.exams.get(s.id)) }; })
+      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d; });
+    var html = '<span class="eyebrow">Countdown</span>';
+    if (dated.length) {
+      var n = dated[0];
+      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'Today' : n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'is your ' + n.s.name + ' midterm' : (n.d > 1 ? 'days' : 'day') + ' left before the ' + n.s.name + ' midterm') + '</span></div>';
+      html += '<div class="count-list">' + dated.map(function (x) {
+        var p = x.iso.split('-');
+        return '<div><span>' + x.s.name + '</span><span class="mono">' + (+p[2]) + ' ' + (MONTHS[+p[1] - 1] || p[1]) + ' ' + p[0] + '</span></div>';
+      }).join('') + '</div>';
+      html += '<button type="button" class="linkish" id="editDates">Change the dates</button>';
+    } else {
+      html += '<div class="count-main"><span class="count-num">?</span><span class="count-txt">Add the date of your midterm to start the countdown.</span></div>';
+    }
+    html += '<form id="dateForm"' + (dated.length ? ' hidden' : '') + '>' + ready.map(function (s) {
+      return '<label for="d-' + s.id + '">' + s.name + '</label><input type="date" id="d-' + s.id + '" value="' + R.exams.get(s.id) + '">';
+    }).join('') + '<button class="btn" type="submit">Save</button></form>';
+    box.innerHTML = html;
+    var f = $('#dateForm');
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ready.forEach(function (s) { R.exams.set(s.id, $('#d-' + s.id).value); });
+      renderCount();
+    });
+    var ed = $('#editDates'); if (ed) ed.addEventListener('click', function () { f.hidden = !f.hidden; });
+  }
+
+  /* ---- next step ---- */
+  function nextSection(s) {
+    for (var i = 0; i < s.chapters.length; i++) {
+      var c = s.chapters[i], done = R.progress.chapterDone(s.id, c.id);
+      if (done < c.sections) return { c: c, i: i, done: done };
+    }
+    return null;
+  }
+  function renderToday() {
+    var steps = [], d = R.store.load(), order = byUrgency(), top = order[0];
+    if (d.last && d.last.href && d.last.href !== 'index.html' && d.last.href !== '') {
+      steps.push({ k: 'Resume', t: d.last.title, d: 'The last page you opened.', href: d.last.href, go: 'Continue' });
+    }
+    for (var i = 0; i < order.length && steps.length < 2; i++) {
+      var s = order[i], ns = nextSection(s);
+      if (ns) steps.push({ k: s.short + ' · chapter ' + (ns.i + 1), t: ns.c.title, d: ns.done ? pl(ns.done, 'part') + ' out of ' + ns.c.sections + ' marked as understood.' : 'Not started yet. Allow about 30 minutes.', href: ns.c.path + (ns.done ? '#s' + (ns.done + 1) : ''), go: ns.done ? 'Continue' : 'Start' });
+    }
+    var st = R.qcm.stats(top.id, BANK.filter(function (q) { return q.s === top.id; }));
+    if (st.due > 0) steps.push({ k: 'Spaced repetition · ' + top.short, t: pl(st.due, 'question') + ' to review', d: 'Questions you missed or saw a few days ago. Now is the time to go over them again.', href: 'qcm/index.html#' + top.id + '-revision', go: 'Review now' });
+    else steps.push({ k: 'MCQ · ' + top.short, t: '10-question sprint', d: st.seen ? st.seen + ' questions already seen out of ' + st.total + ', ' + st.mastered + ' of them mastered.' : st.total + ' questions are waiting for you: course, traps and real MCQs.', href: 'qcm/index.html#' + top.id + '-sprint', go: 'Start' });
+    if (top.train) steps.push({ k: 'Past exams · ' + top.short, t: 'An exam exercise', d: 'Exercises from previous years’ papers, with hints and a detailed solution.', href: top.train, go: 'Practice' });
+    $('#today').innerHTML = steps.slice(0, 3).map(function (s) {
+      return '<a class="step" href="' + R.url(s.href) + '"><span class="k">' + U.esc(s.k) + '</span><span class="t">' + U.esc(s.t) + '</span><span class="d">' + U.esc(s.d) + '</span><span class="go">' + U.esc(s.go) + ' →</span></a>';
+    }).join('');
+  }
+
+  /* ---- subjects ---- */
+  function meter(label, frac, txt) {
+    return '<div class="meter"><div class="row"><span>' + label + '</span><span>' + txt + '</span></div><div class="bar"><i style="width:' + Math.round(frac * 100) + '%"></i></div></div>';
+  }
+  function renderSubjects() {
+    /* ready subjects first, each on the full width; the others after */
+    var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
+    $('#subjects').innerHTML = list.map(function (s) {
+      var nAnn = annOf(s).length, NEX = nEx(s.id);
+      if (s.status !== 'ready') {
+        return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">soon</span></div>' +
+          '<p>The course and the practice will come with your course materials. In the meantime: ' + pl(nAnn, 'midterm paper') + '.</p>' +
+          '<div class="links"><a class="btn ghost" href="annales/index.html#' + (s.annalesId || s.id) + '">See the past exams</a></div></article>';
+      }
+      var p = R.progress.subject(s.id), bank = BANK.filter(function (q) { return q.s === s.id; }), q = R.qcm.stats(s.id, bank);
+      var chapters = s.chapters.map(function (c, i) {
+        var done = Math.min(c.sections, R.progress.chapterDone(s.id, c.id));
+        return '<li><a href="' + R.url(c.path) + '"><span>' + (i + 1) + '. ' + c.title + '</span><span class="mono">' + done + '/' + c.sections + '</span></a></li>';
+      }).join('');
+      return '<article class="subj ready subj-' + s.id + '">' +
+        '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
+        '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">ready</span></div>' +
+        '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
+        '<p>' + s.exam + '. Three chapters, methods, ' + (NEX ? NEX + ' exercises with solutions, ' : '') + bank.length + ' MCQ questions and the ' + nAnn + ' midterm papers we found.</p>' +
+        '<ul class="chapters">' + chapters + '</ul>' +
+        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Open') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Practice</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Summary sheet</a>' : '') + '</div>' +
+        '</div><div class="meters">' +
+        meter('Course understood', p.pctRead, p.read + ' / ' + p.sections) +
+        meter('MCQs mastered', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
+        meter('MCQs seen', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
+        meter('Exercises solved', NEX ? p.ex.ok / NEX : 0, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' to review' : '')) +
+        '</div></article>';
+    }).join('');
+  }
+
+  function renderTools() {
+    var A = window.ANNALES || { midterms: [] };
+    $('#n-qcm').textContent = BANK.length;
+    $('#n-ann').textContent = A.midterms.length;
+    $('#n-fiche').textContent = R.subjects.filter(function (s) { return s.status === 'ready' && s.fiche; }).length;
+  }
+
+  function all() { renderCount(); renderToday(); renderSubjects(); renderTools(); }
+  all();
+  R.store.on(function () { renderToday(); renderSubjects(); });
+})();
+</script>
+</body>
+</html>

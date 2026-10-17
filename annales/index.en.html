@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Past exams · S1 Revision</title>
+<meta name="description" content="Every EPITA S1 midterm paper we found, by subject and by year, with the solutions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.top{padding-block:36px 22px}
+.top .sheet{padding:22px 24px 24px 64px;display:grid;gap:10px}
+@media (max-width:560px){.top .sheet{padding:18px 16px 20px 34px}}
+.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + 52px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);margin-bottom:26px}
+main{display:grid;gap:44px}
+.subj-sec{display:grid;gap:14px;scroll-margin-top:130px}
+.subj-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.subj-head .more{font-weight:700;text-decoration:none}
+.exams{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.ex{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 18px;padding:14px 16px;border-top:1px solid var(--line);align-items:start}
+.ex:first-child{border-top:0}
+@media (max-width:640px){.ex{grid-template-columns:minmax(0,1fr)}}
+.ex .when{display:grid;gap:2px}
+.ex .when b{font-family:var(--font-display);font-stretch:112%;font-size:1.08rem}
+.ex .when span{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:.35rem .65rem;min-height:36px}
+.file:hover{border-color:var(--accent)}
+.file .lang{font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 .3rem;text-transform:uppercase}
+.file.cor{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.file.ours{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.file .lang.en{color:var(--accent);border-color:var(--accent)}
+.mcq{display:grid;gap:10px}
+.mcq-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 18px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.mcq-row:first-child{border-top:0}
+@media (max-width:640px){.mcq-row{grid-template-columns:minmax(0,1fr)}}
+.num{display:inline-grid;place-items:center;min-width:38px;height:36px;padding:0 .4rem;border:1px solid var(--line);border-radius:7px;text-decoration:none;color:var(--ink);font-family:var(--font-mono);font-size:.85rem;font-weight:600;background:var(--bg)}
+.num:hover{border-color:var(--accent)}
+.num.c{border-color:var(--ok);color:var(--ok)}
+.legend{font-size:.88rem;color:var(--muted)}
+.credit{font-size:.92rem;color:var(--muted);max-width:60em}
+</style>
+</head>
+<body data-resume="Past exams">
+<div id="shell"></div>
+<header class="top wrap">
+  <div class="sheet margin">
+    <span class="eyebrow">Past exams · S1 midterms</span>
+    <h1>The papers from previous years</h1>
+    <p class="lead">Every paper we found, by subject and by year, with the solutions when they exist. Files marked EN are the official English versions: they come first. Take them in real conditions: no calculator, no documents, and time yourself.</p>
+  </div>
+</header>
+<div class="filters"><div class="wrap"><div class="chips" id="chips" role="group" aria-label="Filter by subject"></div></div></div>
+<main class="wrap" id="list"></main>
+<footer class="page-foot"><div class="wrap"><span class="credit">Papers hosted by <a href="https://github.com/Epidocs/Past-Exams">Epidocs · Past-Exams</a> and <a href="https://annales.hyperion.tf/">HyperAnnales</a>. The links open the original PDFs.</span><span>A class takes its S1 five years before graduating: class of 2029 = fall 2024.</span></div></footer>
+<script src="../data/annales.js"></script>
+<script src="../data/en/annales.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
+  var A = window.ANNALES, order = ['elec', 'maths', 'physique', 'algo', 'archi', 'prog', 'cie', 'tim', 'te'];
+  var sel = 'all';
+  function count(s) { return A.midterms.filter(function (m) { return m.subject === s; }).length; }
+  /* file and archive labels: the data keeps the French ones (Sujet, Corrigé…), translated here for display */
+  var LABEL = { 'Contrôle (nov. 2017)': 'Test (Nov. 2017)', 'Partiel de fin de semestre': 'End-of-semester exam', 'TD 1 à 3, ED 1 (anciens)': 'TD 1 to 3, ED 1 (older years)' };
+  var KIND = { 'Sujet': 'Exam paper', 'Corrigé': 'Solution', 'Feuille de réponses': 'Answer sheet', 'Corrigé (OCaml)': 'Solution (OCaml)', 'Grille du QCM (correction en ligne)': 'MCQ answer grid (online marking)' };
+  function kindName(k) {
+    var m;
+    if (KIND[k]) return KIND[k];
+    if ((m = /^(.+) \(partie (\d+)\)$/.exec(k)) && KIND[m[1]]) return KIND[m[1]] + ' (part ' + m[2] + ')';
+    if ((m = /^Corrigé (.+)$/.exec(k))) return m[1] + ' solution';
+    return k;
+  }
+  /* English versions first, inside each kind of file (paper, answer sheet, solution) */
+  function enFirst(files) {
+    var first = {};
+    files.forEach(function (f, i) { if (!(f.kind in first)) first[f.kind] = i; });
+    return files.map(function (f, i) { return { f: f, i: i }; }).sort(function (a, b) {
+      return first[a.f.kind] - first[b.f.kind] || (a.f.lang === 'en' ? 0 : 1) - (b.f.lang === 'en' ? 0 : 1) || a.i - b.i;
+    }).map(function (x) { return x.f; });
+  }
+  function fileLink(f) {
+    var cor = /Corrigé/.test(f.kind), ext = /mcq\.epidocs/.test(f.url);
+    return '<a class="file' + (cor ? ' cor' : '') + '" href="' + f.url + '" target="_blank" rel="noopener"' + (f.lang ? ' hreflang="' + f.lang + '"' : '') + '>' + U.esc(kindName(f.kind)) + (f.lang ? ' <span class="lang' + (f.lang === 'en' ? ' en' : '') + '">' + f.lang + '</span>' : '') + (ext ? ' ↗' : '') + '</a>';
+  }
+  function paintChips() {
+    var items = [{ id: 'all', name: 'All', n: A.midterms.length }].concat(order.filter(function (s) { return count(s); }).map(function (s) { return { id: s, name: A.subjects[s].name, n: count(s) }; }));
+    items.push({ id: 'qcm', name: 'Weekly MCQs', n: A.mcq.length });
+    $('#chips').innerHTML = items.map(function (it) { return '<button type="button" class="chip" data-f="' + it.id + '" aria-pressed="' + (sel === it.id) + '">' + it.name + ' <span class="n">' + it.n + '</span></button>'; }).join('');
+    $$('#chips [data-f]').forEach(function (b) { b.addEventListener('click', function () { sel = b.dataset.f; paintChips(); paintList(); }); });
+  }
+  function paintList() {
+    var html = '';
+    order.forEach(function (s) {
+      if (sel !== 'all' && sel !== s) return;
+      var ms = A.midterms.filter(function (m) { return m.subject === s; });
+      var hy = A.hyperion.filter(function (h) { return h.subject === s; });
+      if (!ms.length && !hy.length) return;
+      var info = A.subjects[s];
+      html += '<section class="subj-sec" id="' + s + '"><div class="subj-head"><h2>' + info.name + '</h2>' +
+        (info.page ? '<a class="more" href="' + R.url(info.page) + '">' + (s === 'algo' ? 'TAA part: solutions and analysis →' : 'Detailed solutions and analysis of the papers →') + '</a>' : '<span class="legend">' + ms.length + ' paper' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
+      ms.forEach(function (m) {
+        html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>fall ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
+          (info.page && (s === 'elec' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#p' + (m.promo - 5) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') + '</div></div>';
+      });
+      hy.forEach(function (h) {
+        html += '<div class="ex"><div class="when"><b>Archive</b><span>' + U.esc(LABEL[h.label] || h.label) + '</span></div><div class="files">' + enFirst(h.files).map(fileLink).join('') + '</div></div>';
+      });
+      html += '</div></section>';
+    });
+    if (sel === 'all' || sel === 'qcm') {
+      var promos = {};
+      A.mcq.forEach(function (e) { (promos[e.promo] = promos[e.promo] || []).push(e); });
+      html += '<section class="subj-sec" id="qcm"><div class="subj-head"><h2>Weekly MCQs</h2><span class="legend">All subjects mixed · in green: answer key available</span></div><div class="exams mcq">';
+      Object.keys(promos).sort().reverse().forEach(function (p) {
+        html += '<div class="mcq-row"><div class="when" style="display:grid;gap:2px"><b style="font-family:var(--font-display);font-stretch:112%">Class of ' + p + '</b><span class="mono muted" style="font-size:.76rem">fall ' + (p - 5) + '</span></div><div class="files">' +
+          promos[p].map(function (e) {
+            var subj = e.files.filter(function (f) { return f.kind === 'Sujet'; })[0], cor = e.files.filter(function (f) { return f.kind === 'Corrigé'; })[0];
+            var s = '';
+            if (subj) s += '<a class="num' + (cor ? ' c' : '') + '" href="' + subj.url + '" target="_blank" rel="noopener" title="MCQ ' + e.n + (cor ? ' (answer key available)' : '') + '">' + e.n + '</a>';
+            if (cor) s += '<a class="num c" href="' + cor.url + '" target="_blank" rel="noopener" title="Answer key for MCQ ' + e.n + '">✓' + e.n + '</a>';
+            return s;
+          }).join('') + '</div></div>';
+      });
+      html += '</div></section>';
+    }
+    $('#list').innerHTML = html;
+  }
+  var h = (location.hash || '').slice(1);
+  if (h && (order.indexOf(h) >= 0 || h === 'qcm')) sel = h;
+  paintChips(); paintList();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · TAA</title>
+<meta name="description" content="TAA: step-by-step methods for the exam. Classify the operations, find the preconditions, write the axioms of an operation on a recursive or iterative list, apply a mystery operation, reduce a term, answer the course questions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Methods</div>
+      <h1>One recipe per <span class="w">type of question</span>.</h1>
+      <p class="lead">In the exam, the same moves keep coming back: classify operations, write preconditions and axioms, apply axioms to a given list. Each method fits in a few steps, with an example written as you would on an exam paper.</p>
+      <div class="chips"><span class="chip">9 methods</span><span class="chip">examples not taken from exam papers</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">exam exercises with solutions →</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Contents of the methods">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#classer"><span class="num">1</span><span>Classify the operations</span></a></li>
+      <li><a href="#preconditions"><span class="num">2</span><span>Find the preconditions</span></a></li>
+      <li><a href="#recursive"><span class="num">3</span><span>Axioms: recursive list</span></a></li>
+      <li><a href="#iterative"><span class="num">4</span><span>Axioms: iterative list</span></a></li>
+      <li><a href="#mystere"><span class="num">5</span><span>Mystery operation</span></a></li>
+      <li><a href="#reecrire"><span class="num">6</span><span>Reduce a term</span></a></li>
+      <li><a href="#cours"><span class="num">7</span><span>Course questions</span></a></li>
+      <li><a href="#copie"><span class="num">8</span><span>Write up your paper</span></a></li>
+      <li><a href="#pieges"><span class="num">9</span><span>The traps</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← TAA home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">One-page summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Contents of the methods</summary><ol>
+      <li><a href="#classer">Classify the operations</a></li><li><a href="#preconditions">Find the preconditions</a></li><li><a href="#recursive">Axioms: recursive list</a></li><li><a href="#iterative">Axioms: iterative list</a></li>
+      <li><a href="#mystere">Mystery operation</a></li><li><a href="#reecrire">Reduce a term</a></li><li><a href="#cours">Course questions</a></li><li><a href="#copie">Write up your paper</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ classify -->
+    <section class="sec" id="classer">
+      <div class="sec-head"><div class="kicker"><span class="num">1</span>Method 1</div><h2>Classify the operations of a signature</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Find the defined types</b>: those in <code>types</code> (or <code>sort</code>). Everything else (<code>uses</code>) is predefined.</div></li>
+          <li><div><b>No argument?</b> It is a <span class="op-cst">constant</span> (<code>emptylist : → list</code>).</div></li>
+          <li><div><b>Result of a defined type?</b> <span class="op-int">Internal operation</span>.</div></li>
+          <li><div><b>Predefined result and at least one argument of a defined type?</b> <span class="op-obs">Observer</span>.</div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Trap</span><p>In the iterative list, <code>box</code> is a defined type too: <code>access : list × integer → box</code> is an internal operation, <code>contents : box → element</code> an observer.</p></div>
+        <div class="note keep"><span class="tag">Out loud as in writing</span><p>Justify with the rule: “<code>top</code> is an observer: its argument is a stack (defined type) and its result an element (predefined type).”</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ preconditions -->
+    <section class="sec" id="preconditions">
+      <div class="sec-head"><div class="kicker"><span class="num">2</span>Method 2</div><h2>Find the preconditions</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Try the edge cases</b> on each argument: empty list or stack, rank 0, rank beyond the length, missing element.</div></li>
+          <li><div><b>Does the result make sense?</b> If not, the operation is partial: write <code class="nw">op(…) is-defined-iaoi …</code> with the operations of the type (<code>λ ≠ emptylist</code>, <code>isempty(s) = false</code>, <code>1 ≤ k ≤ length(λ)</code>).</div></li>
+          <li><div><b>Otherwise, write “none”</b> and say why in one line: the marker expects an answer, even an empty one.</div></li>
+        </ol>
+        <div class="grid2">
+          <div class="card"><h4>Partial</h4><p><code>last : list → element</code>: the empty list has no last element.</p><p class="muted"><code class="nw">last(λ) is-defined-iaoi λ ≠ emptylist</code></p></div>
+          <div class="card"><h4>Total</h4><p><code>concatenate : list × list → list</code>: joining an empty list is no problem at all.</p><p class="muted">preconditions: none</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Bounds trap</span><p>For an <b>insertion</b>, the rank can be <code>length(λ) + 1</code> (insert at the end); for a <b>deletion</b> or an access, it stops at <code>length(λ)</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ recursive -->
+    <section class="sec" id="recursive">
+      <div class="sec-head"><div class="kicker"><span class="num">3</span>Method 3</div><h2>Write the axioms of an operation on a recursive list</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A recursive list is either <code>emptylist</code> or <code>cons(e, λ)</code>. So every operation is defined in two families of cases, and the <code>cons</code> case calls the operation again on the shorter list <code>λ</code>.</p></div>
+        <ol class="steps">
+          <li><div><b>Write the profile</b> and look for the preconditions (method 2).</div></li>
+          <li><div><b><code>emptylist</code> case</b>: what does the operation give on the empty list? One axiom.</div></li>
+          <li><div><b><code>cons(e, λ)</code> case</b>: what do you do with the first element <code>e</code>, given the result on <code>λ</code>? If the answer depends on <code>e</code>, write one axiom per case, with the condition before <code>⇒</code>.</div></li>
+          <li><div><b>Check</b>: each case has an axiom, the conditions do not overlap, both sides have the same type, the recursive call is on <code>λ</code>.</div></li>
+          <li><div><b>End with <code>with</code></b>: the type of each variable.</div></li>
+        </ol>
+        <h3>Example: number of occurrences</h3>
+<pre data-spec data-roles="1" aria-label="Axioms of nbocc">
+types
+    list
+uses
+    element, integer
+operations
+    nbocc : list x element → integer
+preconditions
+    none: the empty list contains x zero times
+axioms
+    nbocc(emptylist, x) = 0
+    e = x ⇒ nbocc(cons(e, λ), x) = nbocc(λ, x) + 1
+    e ≠ x ⇒ nbocc(cons(e, λ), x) = nbocc(λ, x)
+with
+    list λ
+    element e, x
+</pre>
+        <h3>Example: adding at the end</h3>
+<pre data-spec aria-label="Axioms of addlast">
+operations
+    addlast : list x element → list
+axioms
+    addlast(emptylist, x) = cons(x, emptylist)
+    addlast(cons(e, λ), x) = cons(e, addlast(λ, x))
+with
+    list λ
+    element e, x
+</pre>
+        <div class="note keep"><span class="tag">The template</span><p>An operation that “keeps or drops” each element depending on a condition (deleting some elements, filtering) always follows the same template: <code>condition(e) ⇒ op(cons(e, λ), …) = op(λ, …)</code> to drop it, <code>not condition(e) ⇒ op(cons(e, λ), …) = cons(e, op(λ, …))</code> to keep it.</p></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>October 2023: <code>concatenate</code>. October 2024: <code>deletegreater</code> (delete the elements strictly greater than a given element). Both follow this template: see the <a href="entrainement.html">solutions</a>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ iterative -->
+    <section class="sec" id="iterative">
+      <div class="sec-head"><div class="kicker"><span class="num">4</span>Method 4</div><h2>Write the axioms of an operation on an iterative list</h2></div>
+      <div class="stack">
+        <div class="prose"><p>An iterative list is described by its <b>length</b> and by its <b>i-th element</b> for each rank. So to define a new internal operation, you give the <code>length</code> of the result, then the <code>nth</code> element of the result rank by rank, range by range.</p></div>
+        <ol class="steps">
+          <li><div><b>Preconditions</b> on the ranks (method 2).</div></li>
+          <li><div><b>Draw</b> the list before and after, with the ranks above it. Find the ranges: unchanged ranks, new rank(s), shifted ranks.</div></li>
+          <li><div><b>Length</b> of the result: one axiom.</div></li>
+          <li><div><b>One axiom per range</b>: the condition on <code>i</code>, then the rank to read in λ (<code>i</code>, <code>i − 1</code>, <code>i + 1</code>…).</div></li>
+          <li><div><b>Test the boundaries</b> on your drawing: the first and the last rank of each range.</div></li>
+        </ol>
+        <h3>Example: doubling the element at rank k</h3>
+<pre data-spec aria-label="Axioms of double">
+operations
+    double : list x integer → list
+preconditions
+    double(λ, k) is-defined-iaoi 1 ≤ k ≤ length(λ)
+axioms
+    length(double(λ, k)) = length(λ) + 1
+    1 ≤ i ≤ k ⇒ nth(double(λ, k), i) = nth(λ, i)
+    i = k + 1 ⇒ nth(double(λ, k), i) = nth(λ, k)
+    k + 1 &lt; i ≤ length(λ) + 1 ⇒ nth(double(λ, k), i) = nth(λ, i - 1)
+with
+    list λ
+    integer i, k
+</pre>
+        <div class="note why"><span class="tag">Check on a drawing</span><p>λ = {a, b, c}, k = 2: result {a, b, b, c}. Ranks 1 and 2: unchanged. Rank 3: a copy of rank 2. Rank 4: you read rank 4 − 1 = 3 of λ, which is <code>c</code>. The length goes from 3 to 4.</p></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>The 2017 and 2021 papers asked for an operation on the iterative list (<code>modify</code>): same method, see <a href="entrainement.html#liste-iter">practice</a>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ mystery -->
+    <section class="sec" id="mystere">
+      <div class="sec-head"><div class="kicker"><span class="num">5</span>Method 5</div><h2>Apply a mystery operation</h2></div>
+      <div class="stack">
+        <div class="prose"><p>You get an unknown operation, given only by its axioms, a list and some arguments: you must find the resulting list. Do not guess what the operation does: compute.</p></div>
+        <ol class="steps">
+          <li><div><b>Precondition</b>: do the arguments satisfy it? If not, the result is undefined.</div></li>
+          <li><div><b>Length</b>: substitute into the length axiom. Now you know how many slots to fill.</div></li>
+          <li><div><b>Rank by rank</b>: for each <code>i</code>, find the axiom whose condition is true, and read the rank it gives in λ.</div></li>
+          <li><div><b>Check</b>: the length you found matches, and the result makes sense (a deleted range, a sublist…).</div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Write the table</span><p>On your scratch paper: one row “rank i”, one row “rank read in λ”, one row “value”. An offset error shows up at once.</p></div>
+        <p><a class="btn primary" href="entrainement.html#infini">Practice with the mystery operation generator</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================================ rewrite -->
+    <section class="sec" id="reecrire">
+      <div class="sec-head"><div class="kicker"><span class="num">6</span>Method 6</div><h2>Reduce a term with the axioms</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Read the term from the inside out</b>: the starting structure is in the middle.</div></li>
+          <li><div><b>Look for a piece with the exact shape</b> of an axiom’s left-hand side (<code>pop(push(…))</code>, <code>first(cons(…))</code>…). Match the variables, replace.</div></li>
+          <li><div><b>Conditional axiom</b> (queue, set): first compute the condition (<code>isempty(q)</code>, <code>x ∈ s</code>), then choose the axiom.</div></li>
+          <li><div><b>Partial operation on an empty structure</b>: the term is undefined, stop there.</div></li>
+        </ol>
+        <div id="rwM"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ course -->
+    <section class="sec" id="cours">
+      <div class="sec-head"><div class="kicker"><span class="num">7</span>Method 7</div><h2>Answer the course questions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Course questions are marked word for word: use the exact vocabulary of the course sheets. They came up in 2019, 2021, 2022 and 2023, for 4 to 6 points. The answers below are those of the answer keys (for 2019, the official English answer key).</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>You are asked</th><th>Expected answer</th></tr></thead>
+          <tbody>
+            <tr><td>The definition of an abstract type</td><td>A signature and a system of axioms that characterizes it.</td></tr>
+            <tr><td>The signature</td><td>The types and the operations.</td></tr>
+            <tr><td>The definition of an operation</td><td>Its name and its profile (types of the arguments and type of the result).</td></tr>
+            <tr><td>Defined type, predefined type</td><td>Defined: new, being designed, in <code>types</code>. Predefined: already designed, in <code>uses</code>.</td></tr>
+            <tr><td>Internal operation</td><td>An internal operation returns a defined type.</td></tr>
+            <tr><td>Observer</td><td>At least one argument of a defined type and a result of a predefined type.</td></tr>
+            <tr><td>What type of data does a constant return?</td><td>A defined type. It is an operation with no argument (<code>emptystack : → stack</code>).</td></tr>
+            <tr><td>What type does an internal operation return, and an observer?</td><td>Internal: a defined type. Observer: a predefined type.</td></tr>
+            <tr><td>An operation that is not defined everywhere</td><td>A partial operation.</td></tr>
+            <tr><td>An operation used to specify the domain of definition of another one</td><td>An auxiliary operation (e.g. <code>ispresent</code> for <code>search</code>).</td></tr>
+            <tr><td>The areas that make up the signature; those that are not part of it</td><td>The TYPES, USES and OPERATIONS areas; not <code>preconditions</code>, <code>axioms</code>, <code>with</code>.</td></tr>
+            <tr><td>The two ways to define a list</td><td>Recursive and iterative.</td></tr>
+            <tr><td>Some operations of a recursive list, of an iterative list (without boxes)</td><td>Recursive: <code>emptylist</code>, <code>cons</code>, <code>tail</code>, <code>first</code>. Iterative: <code>length</code>, <code>nth</code>, <code>insert</code>, <code>delete</code>.</td></tr>
+            <tr><td>Preconditions</td><td>The domain of definition of the partial operations, those that are not defined everywhere.</td></tr>
+            <tr><td>Axioms</td><td>They give the properties of the operations. We write axioms by application of observers to internal operations.</td></tr>
+            <tr><td>The problems that arise during the making of the set of axioms</td><td>The completeness and the consistency. Consistency: no contradictory axioms. Completeness: enough axioms written.</td></tr>
+            <tr><td>The <code>with</code> part</td><td>The type of each name used in the axioms.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ paper -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="num">8</span>Method 8</div><h2>Write up your paper</h2></div>
+      <div class="stack">
+        <ul class="prose" style="padding-left:1.2rem">
+          <li>Answer on the exam paper, in the boxes provided: anything outside them is not marked (instructions of October 2024).</li>
+          <li>Use a pen: a pencil answer is not marked. The presentation is marked.</li>
+          <li>Keep the order of the course: <code>preconditions</code>, then <code>axioms</code>, then <code>with</code>. Write the keywords.</li>
+          <li>One line per axiom. Align the <code>⇒</code> if you can: the marker reads faster.</li>
+          <li>Use the names from the paper (<code>emptylist</code> or <code>empty-list</code>, <code>λ</code>, <code>λ2</code>) and declare every variable in <code>with</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ traps -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="num">9</span>Method 9</div><h2>The traps that cost points</h2></div>
+      <div class="stack">
+        <div class="note trap"><span class="tag">Check before handing in</span><ul>
+          <li>A precondition invented on a total operation, or forgotten on a partial one.</li>
+          <li>A missing case: <code>emptylist</code>, a range of ranks, the equality <code>e = x</code>.</li>
+          <li>Overlapping conditions (two axioms for the same case): inconsistent axioms.</li>
+          <li>A reversed rank shift: after an insertion you read <code>i − 1</code>, after a deletion <code>i + 1</code>.</li>
+          <li>The two sides of an axiom with different types (<code>top(…) = s</code>).</li>
+          <li>“Observer” confused with “returns a boolean”.</li>
+          <li>Stack and queue swapped: the stack gives back the last one in, the queue the first one.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  REV.taa.stepper(document.getElementById('rwM'), { set: 'FILE', label: 'Reduce a queue term', editable: true, presets: [
+    { name: 'first after a dequeue', t: 'first(dequeue(enqueue(enqueue(emptyqueue, a), b)))' },
+    { name: 'dequeue three elements', t: 'dequeue(enqueue(enqueue(enqueue(emptyqueue, a), b), c))' },
+    { name: 'undefined', t: 'first(dequeue(enqueue(emptyqueue, a)))' }
+  ] });
+})();
+</script>
+</body>
+</html>

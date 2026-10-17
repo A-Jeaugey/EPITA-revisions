@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summary sheets · S1 Revision</title>
+<meta name="description" content="One-page summary sheets for the S1 midterms, to reread before the exam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.top{padding-block:36px 26px}
+.top .sheet{padding:22px 24px 24px 64px;display:grid;gap:10px}
+@media (max-width:560px){.top .sheet{padding:18px 16px 20px 34px}}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding-bottom:40px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.f{padding:18px 18px 20px 58px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;min-height:190px}
+@media (max-width:560px){.f{padding-left:34px}}
+a.f:hover{border-color:var(--accent)}
+.f .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.f h2{font-size:1.4rem}
+.f p{color:var(--muted);font-size:.93rem;line-height:1.5}
+.f ul{margin:0;padding-left:1.1rem;color:var(--muted);font-size:.9rem;display:grid;gap:.15rem}
+.f .go{color:var(--accent);font-weight:700;font-size:.93rem;margin-top:auto}
+.f.soon{background:transparent;border-style:dashed}
+.f.soon h2{color:var(--muted)}
+</style>
+</head>
+<body data-resume="Summary sheets">
+<div id="shell"></div>
+<header class="top wrap">
+  <div class="sheet margin">
+    <span class="eyebrow">Summary sheets · one page per subject</span>
+    <h1>To reread the night before</h1>
+    <p class="lead">All the formulas, methods and traps of a subject on a single page that prints on A4. They do not replace the course: they let you check that everything is there before the exam.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+</main>
+<footer class="page-foot"><div class="wrap"><span>The sheets print straight from your browser (A4 format).</span><span>S1 Revision</span></div></footer>
+<script>
+(function () {
+  var R = window.REV;
+  var FICHES = {
+    elec: { href: 'elec/fiche.html', items: ['Quantities, conventions, Ohm’s law', 'Kirchhoff’s laws, series, parallel, dividers', 'Thévenin, Norton, transformations, Millman', 'Calculation reflexes and traps'] },
+    taa: { href: 'taa/fiche.html', items: ['Signature, hierarchy, preconditions, axioms', 'Recursive and iterative lists: the complete types', 'Stacks, queues, sets: signatures and axioms', 'How to write the axioms, and traps'] }
+  };
+  document.getElementById('grid').innerHTML = R.subjects.map(function (s) {
+    var f = FICHES[s.id];
+    if (f) return '<a class="sheet margin f" href="' + R.url(f.href) + '"><span class="k">' + s.name + '</span><h2>The one-page sheet</h2><ul>' + f.items.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul><span class="go">Open the sheet →</span></a>';
+    return '<div class="sheet margin f soon"><span class="k">' + s.name + '</span><h2>Coming soon</h2><p>The sheet will come with the course for this subject.</p></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elec summary sheet · S1 Revision</title>
+<meta name="description" content="The one-page summary sheet for the S1 electronics midterm: formulas, methods, calculation reflexes and traps, printable on A4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:42em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;columns:3 300px;column-gap:16px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;margin:0 0 12px;display:grid;gap:.3rem;background:var(--bg)}
+.box h2{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.box.hot{border-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.45}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box .eq{font-family:var(--font-math);font-size:1.02rem;line-height:1.55}
+.box .fig{padding:4px;background:none}
+.box .fig svg{max-width:260px}
+.box table{font-size:.8rem}
+.box th,.box td{padding:.2rem .35rem}
+@media print{
+  @page{size:A4;margin:9mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell{display:none!important}
+  .top{padding:0 0 4mm}
+  .top h1{font-size:15pt}
+  .top p{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:4mm;margin:0}
+  .box{padding:2mm 2.4mm;margin-bottom:2.6mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li{font-size:8.1pt;line-height:1.32}
+  .box .eq{font-size:9.4pt}
+  .box h2{font-size:7pt}
+  .box .fig svg{max-width:46mm}
+  .box table{font-size:7.6pt}
+}
+</style>
+</head>
+<body data-resume="Elec · one-page summary sheet">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><a href="index.html">Elec</a> · Summary sheet</div><h1>The whole elec midterm on one page</h1><p>Reread it the day before and on the morning of the exam. Each box matches a part of the course or a method if a point is unclear.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Print on A4</button><a class="btn" href="methodes.html">Detailed methods</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box"><h2>Quantities</h2>
+      <p class="eq"><var class="i">I</var> in A = C/s · <var class="u">U</var> in V = J/C · <var>R</var> in Ω · <var>P</var> in W · <var>G</var> = 1/<var>R</var> in S</p>
+      <p class="eq"><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub> (head = A) · <var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></p>
+      <p>Ground = chosen reference (0 V), earth = the soil. Current arrow drawn at random: negative = other direction.</p></section>
+
+    <section class="box"><h2>Conventions and Ohm’s law</h2>
+      <p>Receiver: <b>opposite</b> arrows, <span class="eq"><var class="u">U</var> = <var>R</var><var class="i">I</var></span>, <var>P</var> = <var class="u">U</var><var class="i">I</var> received.</p>
+      <p>Generator: arrows in the <b>same direction</b>, on a resistor <span class="eq"><var class="u">U</var> = −<var>R</var><var class="i">I</var></span>, <var>P</var> supplied.</p>
+      <p class="eq"><var>P</var> = <var class="u">U</var><var class="i">I</var> = <var>R</var><var class="i">I</var>² = <var class="u">U</var>²/<var>R</var> · kΩ × mA = V</p></section>
+
+    <section class="box"><h2>Wire or gap</h2>
+      <p><b>Wire</b>: closed switch (<var class="u">U</var> = 0), ammeter (in series).</p>
+      <p><b>Gap</b>: open switch (<var class="i">I</var> = 0), voltmeter (in parallel).</p>
+      <p>Wire across a resistor = short circuit: 0 V, 0 A through it. Open loop: the whole voltage across the gap.</p></section>
+
+    <section class="box"><h2>Sources</h2>
+      <p>Voltage source: sets <var class="u">U</var>, line along the wire. Current source: sets <var class="i">I</var>, line across it.</p>
+      <p><b>Turn off</b>: voltage → wire; current → gap (remove the branch).</p>
+      <p class="eq">Real: <var class="u">u</var> = <var class="u">E</var> − <var>r</var><var class="i">i</var> (r in series, small) · <var class="i">i</var> = <var class="i">I</var> − <var class="u">u</var>/<var>r</var> (r in parallel, large)</p></section>
+
+    <section class="box"><h2>Nodes, branches, loops</h2>
+      <p>Node: ≥ 3 wires. Branch: between two consecutive nodes, same current. Loop: closed path.</p>
+      <p>Independent: <var>b</var> − <var>n</var> + 1. <b>The answer keys count every loop.</b></p></section>
+
+    <section class="box"><h2>Kirchhoff</h2>
+      <p class="eq">KCL: Σ <var class="i">I</var><sub>in</sub> = Σ <var class="i">I</var><sub>out</sub></p>
+      <p class="eq">KVL: Σ ± <var class="u">U</var> = 0 (+ if the arrow follows the direction of travel)</p></section>
+
+    <section class="box"><h2>Series, parallel</h2>
+      <p>Series = same current. Parallel = same voltage (same two nodes). Often neither.</p>
+      <p class="eq"><var>R</var><sub>eq</sub> = Σ<var>R</var><sub>k</sub> · 1/<var>R</var><sub>eq</sub> = Σ 1/<var>R</var><sub>k</sub> · <var>R</var>₁<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂)</p>
+      <table><tbody><tr><td><var>R</var> // <var>R</var> = <var>R</var>/2</td><td><var>R</var> // 2<var>R</var> = 2<var>R</var>/3</td></tr><tr><td>3<var>R</var> // 6<var>R</var> = 2<var>R</var></td><td>2<var>R</var> // 4<var>R</var> = 4<var>R</var>/3</td></tr><tr><td><var>n</var> × <var>R</var>: <var>R</var>/<var>n</var></td><td>2<var>R</var> // 3<var>R</var> = 6<var>R</var>/5</td></tr></tbody></table>
+      <p>Reduce from the far end, redraw after each merge.</p></section>
+
+    <section class="box"><h2>Dividers</h2>
+      <p class="eq">Voltage (series): <var class="u">U</var>₂ = <var class="u">E</var>·<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂) — the same one on top</p>
+      <p class="eq">Current (parallel): <var class="i">I</var>₂ = <var class="i">I</var>·<var>R</var>₁/(<var>R</var>₁ + <var>R</var>₂) — the other one on top</p>
+      <p>Large resistor: large voltage, small current.</p></section>
+
+    <section class="box hot"><h2>Thévenin and Norton · 11 pts</h2>
+      <div class="fig" id="ficheThev"></div>
+      <p><var class="u">E</var><sub>th</sub> = no-load voltage between A and B. <var>R</var><sub>th</sub> = resistance seen, sources off, load disconnected.</p>
+      <p><var class="i">I</var><sub>N</sub> = short-circuit current, <var>R</var><sub>N</sub> = <var>R</var><sub>th</sub>, <span class="eq"><var class="u">E</var><sub>th</sub> = <var>R</var>·<var class="i">I</var><sub>N</sub></span>.</p>
+      <p class="eq"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·2<var>R</var>/(<var>R</var><sub>th</sub> + 2<var>R</var>)</p></section>
+
+    <section class="box hot"><h2>Chained transformations</h2>
+      <p class="eq">(<var class="u">E</var> series <var>R</var>) ⇄ (<var class="u">E</var>/<var>R</var> parallel <var>R</var>)</p>
+      <ol><li>Disconnect the 2<var>R</var> load.</li><li>Branches in parallel → Norton, add the currents.</li><li>Elements in series (<var class="i">I</var> // <var>R</var> block on a line) → Thévenin <var>R</var><var class="i">I</var>, add the emfs.</li><li>One source + one resistor → reconnect 2<var>R</var>, divider.</li><li>Check <var>R</var><sub>th</sub> by turning off the sources.</li></ol>
+      <p>Norton current arrow toward the +; emf in the direction of the current. A source leaving A counts as a minus.</p></section>
+
+    <section class="box"><h2>Millman</h2>
+      <p class="eq"><var class="v">V</var><sub>A</sub> = [Σ (<var class="v">V</var><sub>k</sub> ± <var class="u">E</var><sub>k</sub>)/<var>R</var><sub>k</sub> + Σ<var class="i">I</var><sub>in</sub> − Σ<var class="i">I</var><sub>out</sub>] / Σ 1/<var>R</var><sub>k</sub></p>
+      <p>+ if the emf points toward A. Current source in series: numerator only.</p></section>
+
+    <section class="box"><h2>Superposition</h2>
+      <p>One source at a time (the others off: voltage → wire, current → gap), then add up the contributions. Ideal for checking.</p></section>
+
+    <section class="box trapb"><h2>Traps</h2>
+      <ul><li>Negative result = right answer if the arrow is reversed.</li><li>Disconnect the 2<var>R</var> load before <var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>.</li><li>Current source turned off = gap, not wire.</li><li>Read every source arrow (2<var>E</var> pointing down in 2024).</li><li>Current enters and leaves a generator unchanged.</li><li>6<var>R</var> // 6<var>R</var> = 3<var>R</var>, not 12<var>R</var>.</li><li>Ammeter in series, voltmeter in parallel.</li></ul></section>
+
+    <section class="box"><h2>On your paper</h2>
+      <ul><li>One diagram per transformation, arrows included.</li><li>Name the law you use.</li><li>Symbolic, then numerical with the unit.</li><li>A single fraction bar, result boxed.</li><li>MCQ with no negative points: answer everything.</li></ul></section>
+  </div>
+</div>
+<script src="../assets/js/circuit.js"></script>
+<script>
+(function () {
+  REV.circuit.mount('#ficheThev', { w: 300, h: 170, aria: 'Thévenin generator loaded by 2R',
+    wires: ['M40 30H210V150H40Z'],
+    parts: [{ t: 'E', x: 40, y: 90, d: 'v', p: 'n', l: 'E_th' }, { t: 'R', x: 125, y: 30, l: 'R_th' }, { t: 'R', x: 210, y: 90, d: 'v', l: '2R', lp: 'w' }, { t: 'U', a: [246, 140], b: [246, 40], l: 'U' },
+      { t: 'dot', x: 210, y: 30 }, { t: 'dot', x: 210, y: 150 }, { t: 'txt', x: 212, y: 20, s: 'A', c: 'cz-n' }, { t: 'txt', x: 212, y: 168, s: 'B', c: 'cz-n' }] });
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>
