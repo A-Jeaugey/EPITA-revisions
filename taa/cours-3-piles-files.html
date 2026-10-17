@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Piles, files, ensembles · TAA</title>
+<meta name="description" content="TAA, chapitre 3 : la pile (LIFO) et la file (FIFO), leurs types abstraits, les axiomes conditionnels de la file, l’évaluation d’un terme, puis les ensembles et les multi-ensembles.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Propre à cette page : le banc « pile et file côte à côte » de l’en-tête, les tableaux d’axiomes à révéler,
+   les dérivations écrites à la main. */
+.twin-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:end}
+.twin-col{display:grid;gap:.55rem;min-width:0}
+.twin-lbl{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.04em;color:var(--muted);line-height:1.35}
+.twin-lbl b{color:var(--ink);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.twin .pile-box{min-height:186px}
+.twin-out{font-size:.88rem;color:var(--muted)}
+.twin-out b{font-family:var(--font-mono);color:var(--ink);font-weight:600}
+@media (max-width:520px){.twin-grid{grid-template-columns:minmax(0,1fr)}}
+
+.rv{font:inherit;font-family:var(--font-mono);font-size:.88rem;font-weight:600;min-height:36px;min-width:48px;padding:.2rem .8rem;border:1px dashed var(--accent);border-radius:8px;background:var(--accent-soft);color:var(--accent);cursor:pointer}
+.rv:hover{border-style:solid}
+.rv:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rv-a{display:none}
+.rv-a:focus{outline:none}
+.open>.rv{display:none}
+.open>.rv-a{display:block}
+.wrapcode code{white-space:normal}
+.rv-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.rv-bar p{font-size:.92rem;color:var(--muted)}
+
+/* blocs sans rôles (ajouts au type ensemble) : noms d’opérations à l’encre, pas à la couleur des constantes */
+.spec .sp-op:not(.sp-int):not(.sp-obs):not(.sp-cst){color:var(--ink)}
+
+.deriv{list-style:none;margin:0;padding:.9rem 1rem;display:grid;gap:.75rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.deriv li{display:grid;grid-template-columns:1.3em minmax(0,1fr);gap:.35rem;align-items:start}
+.deriv li::before{content:"=";font-family:var(--font-mono);color:var(--muted);line-height:1.7}
+.deriv li:first-child::before{content:""}
+.deriv .dwhy{display:block;font-size:.86rem;color:var(--muted);line-height:1.45;margin-top:.1rem}
+</style>
+</head>
+<body data-resume="TAA · chapitre 3 : piles, files et ensembles">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapitre 3 sur 3</div>
+      <h1>Pile ou file : tout se joue à la <span class="w">sortie</span>.</h1>
+      <p class="lead">Une pile et une file reçoivent leurs éléments de la même façon, un par un. Ce qui change, c’est celui qui sort : le dernier arrivé pour la pile, le premier arrivé pour la file. Tu écris leurs types abstraits, tu calcules leurs termes, puis tu passes aux ensembles, où l’ordre ne compte plus.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parties</span><span class="chip">MiMos piles et files (semaine du 19 oct.) · ensembles en bonus</span><span class="chip">fiches « Les piles », « Les files », « Les ensembles »</span><span class="chip ex">piles et files au programme de l’examen</span></div>
+    </div>
+    <div id="heroTwin" role="group" aria-label="Banc : les mêmes éléments dans une pile et dans une file"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 3 · Piles, files, ensembles</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>La pile : LIFO</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>Le type abstrait pile</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Évaluer un terme de pile</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>La file : FIFO</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>Le type abstrait file</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>Évaluer un terme de file</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Les ensembles</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Les multi-ensembles</span></a></li>
+    </ol>
+    <p class="toc-note">Le nombre d’assiettes donne le numéro de la partie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil TAA</a><a href="cours-2-listes.html">← Chapitre 2 : les listes</a><a href="entrainement.html">Entraînement →</a><a href="../qcm/index.html#taa">QCM de TAA</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">La pile : LIFO</a></li><li><a href="#s2">Le type abstrait pile</a></li><li><a href="#s3">Évaluer un terme de pile</a></li><li><a href="#s4">La file : FIFO</a></li>
+      <li><a href="#s5">Le type abstrait file</a></li><li><a href="#s6">Évaluer un terme de file</a></li><li><a href="#s7">Les ensembles</a></li><li><a href="#s8">Les multi-ensembles</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Partie 1</div><h2>La pile : dernier entré, premier sorti</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pense à une pile d’assiettes. Tu poses une assiette sur le dessus. Tu reprends celle du dessus. Celles du dessous restent coincées tant que tu n’as pas retiré celles qui sont au-dessus.</p>
+          <p>Une <b>pile</b> range des éléments de la même façon. C’est une structure <b>LIFO</b> (<i lang="en">Last In, First Out</i>) : le dernier entré est le premier sorti. Les entrées et les sorties se font du même côté, par le dessus.</p>
+        </div>
+        <div class="grid3">
+          <div class="card"><h4>On ne voit que le sommet</h4><p>Le seul élément accessible est celui du dessus : le <b>sommet</b>. Une pile vide n’a pas de sommet.</p></div>
+          <div class="card"><h4>On ne retire que le sommet</h4><p>C’est l’opération <code>dépiler</code>. Impossible de dépiler une pile vide.</p></div>
+          <div class="card"><h4>On ajoute au-dessus</h4><p>C’est l’opération <code>empiler</code> : l’élément ajouté devient le nouveau sommet.</p></div>
+        </div>
+        <div class="prose"><p>Essaie. Empile, dépile, demande le sommet. Sous la pile, le banc écrit le même état sous forme de <b>terme</b> : chaque <code>empiler</code> ajoute une couche autour de la pile précédente.</p></div>
+        <div id="stackS1"></div>
+        <div class="prose">
+          <p>La pile où l’on a empilé <code>a</code>, puis <code>b</code>, puis <code>c</code> s’écrit <code>empiler(empiler(empiler(pilevide, a), b), c)</code>. Le sommet <code>c</code> est dans l’appel <code>empiler</code> le plus extérieur. Le fond, <code>a</code>, est le plus enfoui, tout contre <code>pilevide</code>. Garde cette image : elle explique toute la différence avec la file (partie 5).</p>
+          <p><b>À quoi ça sert ?</b> La fiche de synthèse donne trois usages :</p>
+          <ul>
+            <li><b>inverser l’ordre</b> des éléments : ce qui entre dans l’ordre a, b, c ressort dans l’ordre c, b, a (vérifie-le dans le banc en haut de page) ;</li>
+            <li><b>évaluer des expressions</b> ;</li>
+            <li><b>simuler la pile des appels</b>, pour rendre itératif un algorithme récursif.</li>
+          </ul>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Pile = <b>LIFO</b> : dernier entré, premier sorti. On entre et on sort du même côté.</li><li>Seul le <b>sommet</b> est accessible. On ajoute avec <code>empiler</code>, on retire avec <code>dépiler</code>.</li><li>Dans un terme, le sommet est l’élément de l’appel <code>empiler</code> le plus extérieur.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p><code>dépiler</code> ne rend pas l’élément retiré : il rend la <b>pile</b> privée de son sommet (<code class="nw">dépiler : pile → pile</code>). Pour connaître l’élément, c’est <code>sommet</code>, qui ne change rien à la pile. Dans certains langages, une seule fonction fait les deux : pas ici.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span><p>Les sujets de TAA de 2023 et de 2024 ne contenaient ni pile ni file : leurs exercices portaient sur les listes. Mais d’après le Moodle, les MiMos piles et files de la semaine du 19 octobre sont « supposés connus dès le lundi qui suit » : ils peuvent donc tomber à l’examen de la semaine du 26 octobre. Sache écrire les deux types de tête, préconditions et axiomes compris, et calculer un terme à la main.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Partie 2</div><h2>Le type abstrait pile</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Voici la définition complète, telle que le Moodle la donne. Tu y retrouves les six mots-clés du chapitre 1. Les couleurs donnent le rôle de chaque opération.</p></div>
+        <div class="legend"><span><i style="background:var(--int)"></i>opération interne</span><span><i style="background:var(--obs)"></i>observateur</span><span><i style="background:var(--cst)"></i>constante</span></div>
+<pre data-spec data-roles="1" aria-label="Le type abstrait pile">
+types
+    pile
+utilise
+    booléen, élément
+opérations
+    pilevide : → pile
+     empiler : pile × élément → pile
+     dépiler : pile → pile
+      sommet : pile → élément
+     estvide : pile → booléen
+préconditions
+    dépiler(p) est-défini-ssi estvide(p) = Faux
+     sommet(p) est-défini-ssi estvide(p) = Faux
+axiomes
+    dépiler(empiler(p, e)) = p
+    sommet(empiler(p, e)) = e
+    estvide(pilevide) = Vrai
+    estvide(empiler(p, e)) = Faux
+avec
+    pile p
+    élément e
+</pre>
+        <div class="prose">
+          <p>La fiche de synthèse écrit <code class="nw">sorte Pile</code> à la place de <code class="nw">types pile</code> : les deux désignent le type que l’on définit.</p>
+          <p><code>sommet</code> et <code>dépiler</code> n’ont pas de sens sur une pile vide : ce sont des <b>opérations partielles</b>. Leurs préconditions les limitent aux piles telles que <code class="nw">estvide(p) = Faux</code>. Les deux autres opérations sont là « comme toujours » : une pour initialiser, <code>pilevide</code>, et une pour savoir si la structure contient des éléments, <code>estvide</code>.</p>
+        </div>
+        <h3>Comment on trouve les quatre axiomes</h3>
+        <div class="prose">
+          <p>Les axiomes disent ce que font les opérations internes ; pour le savoir, on leur applique les observateurs (fiche « Types abstraits »). Toute pile se fabrique avec <code>pilevide</code> et <code class="nw">empiler(p, e)</code> : la pile qui contient <code>a</code> puis <code>b</code>, c’est <code>empiler(empiler(pilevide, a), b)</code>.</p>
+          <p>On applique donc les observateurs <code>estvide</code> et <code>sommet</code>, et l’opération <code>dépiler</code> qui défait ce que fait <code>empiler</code>, à ces deux formes. Six cases : chacune donne un axiome, ou rien si une précondition l’interdit.</p>
+        </div>
+        <div class="stack" data-reveal style="gap:.75rem">
+          <div class="rv-bar"><p>À toi : devine chaque case, puis clique pour vérifier.</p><button type="button" class="btn" data-rv-all>Tout montrer</button></div>
+          <div class="tbl wrapcode"><table>
+            <thead><tr><th></th><th><code>pilevide</code></th><th><code class="nw">empiler(p, e)</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>estvide</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à pilevide">?</button><span class="rv-a"><code>estvide(pilevide) = Vrai</code></span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à empiler(p, e)">?</button><span class="rv-a"><code>estvide(empiler(p, e)) = Faux</code></span></td></tr>
+              <tr><th scope="row"><code>sommet</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : sommet appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : sommet appliqué à empiler(p, e)">?</button><span class="rv-a"><code>sommet(empiler(p, e)) = e</code></span></td></tr>
+              <tr><th scope="row"><code>dépiler</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à pilevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : dépiler appliqué à empiler(p, e)">?</button><span class="rv-a"><code>dépiler(empiler(p, e)) = p</code></span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="prose"><p>Quatre cases remplies, quatre axiomes. Aucun n’a de condition : dans <code class="nw">empiler(p, e)</code>, le sommet est toujours <code>e</code>, quelle que soit la pile <code>p</code> en dessous.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Deux opérations partielles, <code>dépiler</code> et <code>sommet</code> : définies si et seulement si <code class="nw">estvide(p) = Faux</code>.</li><li>Quatre axiomes sans condition : <code>dépiler(empiler(p, e)) = p</code>, <code>sommet(empiler(p, e)) = e</code>, <code>estvide(pilevide) = Vrai</code>, <code>estvide(empiler(p, e)) = Faux</code>.</li><li>Aucun axiome pour <code>sommet(pilevide)</code> ni <code>dépiler(pilevide)</code> : les préconditions les interdisent.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>N’ajoute pas de condition <code class="nw">estvide(p) = Faux</code> devant les axiomes de la pile. <code>dépiler(empiler(p, e)) = p</code> est vrai même si <code>p</code> est vide : <code>dépiler(empiler(pilevide, a)) = pilevide</code>. La précondition porte sur l’argument de <code>dépiler</code>, ici <code class="nw">empiler(p, e)</code>, qui n’est jamais vide.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Partie 3</div><h2>Évaluer un terme de pile</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On te donne un terme ; tu le calcules avec les seuls axiomes. Prends <code>sommet(dépiler(dépiler(empiler(empiler(empiler(pilevide, a), b), c))))</code>. On empile <code>a</code>, <code>b</code>, <code>c</code>, on dépile deux fois, puis on demande le sommet. Intuitivement, c’est <code>a</code>. Les axiomes doivent le confirmer.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>Lis de l’intérieur vers l’extérieur.</b> L’opération la plus enfouie a été faite en premier : trois <code>empiler</code>, puis deux <code>dépiler</code>, puis <code>sommet</code>.</div></li>
+          <li><div><b>Repère « dépiler d’un empiler ».</b> Le <code>dépiler</code> le plus intérieur s’applique à <code>empiler(empiler(empiler(pilevide, a), b), c)</code>. L’axiome <code>dépiler(empiler(p, e)) = p</code> l’annule : il reste <code>empiler(empiler(pilevide, a), b)</code>.</div></li>
+          <li><div><b>Recommence.</b> Le second <code>dépiler</code> s’applique maintenant à <code>empiler(empiler(pilevide, a), b)</code> : il reste <code class="nw">empiler(pilevide, a)</code>.</div></li>
+          <li><div><b>Conclus.</b> <code>sommet(empiler(pilevide, a)) = a</code>, par l’axiome <code>sommet(empiler(p, e)) = e</code>.</div></li>
+        </ol>
+        <div class="note why"><span class="tag">Pourquoi de l’intérieur</span><p>Les axiomes de la pile ne parlent que de <code>pilevide</code> et de <code class="nw">empiler(p, e)</code>. Aucun ne commence par <code>sommet(dépiler(…))</code> ou <code>dépiler(dépiler(…))</code>. Il faut donc d’abord faire disparaître les <code>dépiler</code> intérieurs, jusqu’à retomber sur un <code>empiler</code>.</p></div>
+        <div class="prose"><p>Vérifie dans l’atelier. Le préréglage « empiler après dépiler » se conclut en une seule étape : <code>sommet(empiler(p, e)) = e</code> s’applique tout de suite, sans calculer la pile <code>p</code> (ici <code>dépiler(empiler(empiler(pilevide, a), b))</code>, qui est bien définie). Tu peux aussi écrire tes propres termes.</p></div>
+        <div id="rwPile"></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>« dépiler d’un empiler » s’annule : <code>dépiler(empiler(p, e)) = p</code>.</li><li>« sommet d’un empiler » donne l’élément empilé : <code>sommet(empiler(p, e)) = e</code>.</li><li><code>estvide</code> vaut <code>Vrai</code> sur <code>pilevide</code> et <code>Faux</code> sur n’importe quel <code>empiler</code>.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Un <code>dépiler</code> ou un <code>sommet</code> appliqué à une pile vide rend <b>tout le terme indéfini</b>, même si le reste se calcule. Vérifie les préconditions au fur et à mesure : dans le préréglage « indéfini », le premier <code>dépiler</code> laisse <code>pilevide</code>, et le second n’a plus le droit de s’appliquer.</p></div>
+        <p class="muted" style="font-size:.92rem">Pour t’entraîner sans fin : le <a href="entrainement.html#infini">générateur de termes à réduire</a> de la page Entraînement.</p>
+        <div data-check-ref="taa/cours-3-piles-files.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Partie 4</div><h2>La file : premier entré, premier sorti</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pense à une file d’attente. En l’absence de tout resquilleur, la première personne arrivée est la première à sortir. Les nouveaux se placent au bout.</p>
+          <p>Une <b>file</b> est une structure <b>FIFO</b> (<i lang="en">First In, First Out</i>) : le premier entré est le premier sorti. Les entrées et les sorties se font chacune à une extrémité : on entre par la <b>queue</b> (le dernier), on sort par la <b>tête</b> (le premier).</p>
+        </div>
+        <div class="grid3">
+          <div class="card"><h4>On ne voit que le premier</h4><p>Le seul élément accessible est le <b>premier</b>. Une file vide n’a pas de premier.</p></div>
+          <div class="card"><h4>On ne retire que le premier</h4><p>C’est l’opération <code>défiler</code>, possible seulement si la file n’est pas vide.</p></div>
+          <div class="card"><h4>On ajoute en queue</h4><p>C’est l’opération <code>enfiler</code> : l’élément se place à la fin, derrière tous les autres.</p></div>
+        </div>
+        <div class="prose"><p>Essaie. Enfile, défile, demande le premier, et regarde le terme sous la file.</p></div>
+        <div id="queueS4"></div>
+        <div class="prose">
+          <p>Dans le terme <code>enfiler(enfiler(enfiler(filevide, a), b), c)</code>, l’élément enfilé en premier, <code>a</code>, est le plus enfoui, tout contre <code>filevide</code>. Or c’est lui, le premier de la file. C’est l’inverse de la pile, où l’élément accessible est à l’extérieur du terme.</p>
+          <p><b>À quoi ça sert ?</b> D’après la fiche de synthèse :</p>
+          <ul>
+            <li><b>conserver l’ordre</b> des éléments : ce qui entre dans l’ordre a, b, c ressort dans l’ordre a, b, c ;</li>
+            <li><b>implémenter les « buffers »</b>, des files d’attente : imprimante, clavier… ;</li>
+            <li><b>parcourir en largeur</b> les arbres, les graphes…</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>Pile</th><th>File</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Principe</th><td><b>LIFO</b> : dernier entré, premier sorti</td><td><b>FIFO</b> : premier entré, premier sorti</td></tr>
+            <tr><th scope="row">Entrée, sortie</th><td>du même côté, le dessus</td><td>chacune à un bout : queue, tête</td></tr>
+            <tr><th scope="row">Constante</th><td><code>pilevide</code></td><td><code>filevide</code></td></tr>
+            <tr><th scope="row">Ajouter</th><td><code>empiler</code></td><td><code>enfiler</code></td></tr>
+            <tr><th scope="row">Retirer</th><td><code>dépiler</code></td><td><code>défiler</code></td></tr>
+            <tr><th scope="row">Accessible</th><td><code>sommet</code> : le dernier entré</td><td><code>premier</code> : le premier entré</td></tr>
+            <tr><th scope="row">Test</th><td><code>estvide</code></td><td><code>estvide</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>File = <b>FIFO</b> : premier entré, premier sorti.</li><li>On ajoute en queue avec <code>enfiler</code>, on retire en tête avec <code>défiler</code> ; seul le <b>premier</b> est accessible.</li><li>Dans un terme, le premier est l’élément de l’appel <code>enfiler</code> le plus enfoui.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Le premier de la file n’est pas le dernier élément écrit dans le terme. Dans <code>enfiler(enfiler(enfiler(filevide, a), b), c)</code>, le premier est <code>a</code>, pas <code>c</code> : <code>c</code> vient d’arriver, il attend derrière les autres.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Partie 5</div><h2>Le type abstrait file : des axiomes conditionnels</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La signature de la file a exactement la forme de celle de la pile : seuls les noms changent. Les préconditions aussi : <code>défiler</code> et <code>premier</code> sont partielles, car une file vide n’a rien à retirer ni de premier.</p></div>
+<pre data-spec data-roles="1" aria-label="Signature et préconditions de la file">
+types
+    file
+utilise
+    booléen, élément
+opérations
+    filevide : → file
+     enfiler : file × élément → file
+     défiler : file → file
+     premier : file → élément
+     estvide : file → booléen
+préconditions
+    défiler(f) est-défini-ssi estvide(f) = Faux
+    premier(f) est-défini-ssi estvide(f) = Faux
+</pre>
+        <div class="note trap"><span class="tag">Coquille de la fiche</span><p>Dans la fiche de synthèse « Les files », le type défini est écrit <code class="nw">sorte Pile</code>. Il faut lire <code class="nw">sorte File</code>, comme dans tous les profils qui suivent.</p></div>
+        <h3>Le premier est au fond du terme</h3>
+        <div class="grid2">
+          <div class="card"><h4>Pile : le sommet est dehors</h4><div class="term"><span class="o-int">empiler</span>(<span class="o-int">empiler</span>(<span class="o-int">empiler</span>(<span class="o-cst">pilevide</span>, a), b), <span class="rx">c</span>)</div><p>Le sommet est dans l’appel <code>empiler</code> le plus <b>extérieur</b>. Dans <code class="nw">empiler(p, e)</code>, le sommet est toujours <code>e</code>, quelle que soit <code>p</code>.</p></div>
+          <div class="card"><h4>File : le premier est au fond</h4><div class="term"><span class="o-int">enfiler</span>(<span class="o-int">enfiler</span>(<span class="o-int">enfiler</span>(<span class="o-cst">filevide</span>, <span class="rx">a</span>), b), c)</div><p>Le premier est dans l’appel <code>enfiler</code> le plus <b>enfoui</b>, celui qui touche <code>filevide</code>. Dans <code class="nw">enfiler(f, e)</code>, <code>e</code> vient d’arriver : il n’est le premier que si <code>f</code> est vide.</p></div>
+        </div>
+        <div class="note why"><span class="tag">Pourquoi des conditions pour la file, et pas pour la pile</span>
+          <p>Pour la pile, l’élément concerné par <code>sommet</code> et <code>dépiler</code> est toujours <code>e</code>, le dernier empilé : le résultat ne dépend pas de <code>p</code>, une seule formule suffit.</p>
+          <p>Pour la file, ce qui sort de <code class="nw">enfiler(f, e)</code> dépend de <code>f</code>. Si <code>f</code> est vide, <code>e</code> est seul : c’est le premier, et <code>défiler</code> le retire. Sinon, le premier est quelque part au fond de <code>f</code>, et <code>e</code> n’y change rien. Deux cas, donc deux axiomes pour <code>premier</code> et deux pour <code>défiler</code>, chacun précédé de sa condition : <code class="nw">estvide(f) = Vrai ⇒ …</code> ou <code class="nw">estvide(f) = Faux ⇒ …</code>.</p></div>
+        <div class="stack" data-reveal style="gap:.75rem">
+          <div class="rv-bar"><p>À toi : remplis le même tableau que pour la pile, puis vérifie.</p><button type="button" class="btn" data-rv-all>Tout montrer</button></div>
+          <div class="tbl wrapcode"><table>
+            <thead><tr><th></th><th><code>filevide</code></th><th><code class="nw">enfiler(f, e)</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>estvide</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à filevide">?</button><span class="rv-a"><code>estvide(filevide) = Vrai</code></span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : estvide appliqué à enfiler(f, e)">?</button><span class="rv-a"><code>estvide(enfiler(f, e)) = Faux</code>, sans condition</span></td></tr>
+              <tr><th scope="row"><code>premier</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : premier appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : premier appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>e</code> si <code class="nw">estvide(f) = Vrai</code> ; <code>premier(f)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
+              <tr><th scope="row"><code>défiler</code></th>
+                <td><button type="button" class="rv" aria-label="Montrer : défiler appliqué à filevide">?</button><span class="rv-a muted">rien : la précondition l’interdit</span></td>
+                <td><button type="button" class="rv" aria-label="Montrer : défiler appliqué à enfiler(f, e)">?</button><span class="rv-a">deux cas : <code>filevide</code> si <code class="nw">estvide(f) = Vrai</code> ; <code class="nw">enfiler(défiler(f), e)</code> si <code class="nw">estvide(f) = Faux</code></span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="prose"><p>Ce qui donne les six axiomes du Moodle. Les quatre axiomes conditionnels sont surlignés.</p></div>
+<pre data-spec data-hl="2,3,4,5" aria-label="Axiomes de la file, les quatre axiomes conditionnels surlignés">
+axiomes
+    estvide(f) = Vrai ⇒ premier(enfiler(f, e)) = e
+    estvide(f) = Faux ⇒ premier(enfiler(f, e)) = premier(f)
+    estvide(f) = Vrai ⇒ défiler(enfiler(f, e)) = filevide
+    estvide(f) = Faux ⇒ défiler(enfiler(f, e)) = enfiler(défiler(f), e)
+    estvide(filevide) = Vrai
+    estvide(enfiler(f, e)) = Faux
+avec
+    file f
+    élément e
+</pre>
+        <h3>Lire <code>défiler(enfiler(f, e)) = enfiler(défiler(f), e)</code></h3>
+        <div class="prose"><p>C’est l’axiome le plus délicat du chapitre. Il s’applique quand <code>f</code> n’est pas vide, et se lit en trois temps :</p></div>
+        <ol class="steps">
+          <li><div><b>Mets <code>e</code> de côté.</b> Dans <code class="nw">enfiler(f, e)</code>, <code>e</code> est le dernier arrivé : comme <code>f</code> n’est pas vide, ce n’est pas lui qui sort.</div></li>
+          <li><div><b>Défile <code>f</code>.</b> Le premier de toute la file est le premier de <code>f</code> : <code>défiler(f)</code> le retire.</div></li>
+          <li><div><b>Remets <code>e</code> au bout.</b> <code class="nw">enfiler(défiler(f), e)</code> : <code>e</code> reprend sa place, en queue.</div></li>
+        </ol>
+        <div class="prose"><p>Sur la file a, b, c, le <code>défiler</code> descend ainsi d’un niveau à chaque étape, jusqu’à l’appel <code>enfiler</code> qui touche <code>filevide</code>. Là, c’est le cas « f vide » qui s’applique, et <code>a</code> disparaît :</p></div>
+        <ol class="deriv" aria-label="Calcul de défiler sur la file a, b, c">
+          <li><div><div class="term">défiler(enfiler(enfiler(enfiler(filevide, a), b), c))</div></div></li>
+          <li><div><div class="term">enfiler(défiler(enfiler(enfiler(filevide, a), b)), c)</div><span class="dwhy"><code>f = enfiler(enfiler(filevide, a), b)</code> n’est pas vide : on met <code>c</code> de côté et on défile <code>f</code>.</span></div></li>
+          <li><div><div class="term">enfiler(enfiler(défiler(enfiler(filevide, a)), b), c)</div><span class="dwhy">Même cas un niveau plus bas : <code>f = enfiler(filevide, a)</code> n’est pas vide, on met <code>b</code> de côté.</span></div></li>
+          <li><div><div class="term">enfiler(enfiler(filevide, b), c)</div><span class="dwhy">Enfin <code class="nw">f = filevide</code> : <code>défiler(enfiler(filevide, a)) = filevide</code>. Il reste la file b, c.</span></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Six axiomes : quatre conditionnels (<code>premier</code> et <code>défiler</code> sur <code class="nw">enfiler(f, e)</code>, selon que <code>f</code> est vide ou non) et deux sans condition pour <code>estvide</code>.</li><li>Les deux conditions <code class="nw">estvide(f) = Vrai</code> et <code class="nw">estvide(f) = Faux</code> couvrent tous les cas : aucun trou, aucune contradiction.</li><li>La raison : dans le terme, le premier entré est le plus enfoui.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p><code>défiler(enfiler(f, e)) = f</code>, c’est l’axiome de la <b>pile</b>. Pour la file, il n’est juste que si <code>f</code> est vide (et alors <code class="nw">f = filevide</code>). Dès que <code>f</code> contient un élément, c’est le premier de <code>f</code> qui sort, pas <code>e</code>.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Partie 6</div><h2>Évaluer un terme de file</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La méthode est celle de la pile, avec un réflexe de plus : avant d’appliquer un axiome à <code class="nw">enfiler(f, e)</code>, calcule <code>estvide(f)</code> pour choisir le bon cas.</p></div>
+        <ol class="steps">
+          <li><div><b>Repère le motif.</b> <code class="nw">premier(enfiler(f, e))</code> ou <code class="nw">défiler(enfiler(f, e))</code>. Comme pour la pile, réduis d’abord les <code>défiler</code> intérieurs qui ne sont pas de cette forme.</div></li>
+          <li><div><b>Calcule <code>estvide(f)</code>.</b> <code>Faux</code> si <code>f</code> s’écrit <code>enfiler(…)</code>, <code>Vrai</code> si <code>f</code> est <code>filevide</code>. Si <code>f</code> contient un <code>défiler</code>, réduis-le d’abord.</div></li>
+          <li><div><b>Applique l’axiome du bon cas.</b> Cas vide : <code>e</code> pour <code>premier</code>, <code>filevide</code> pour <code>défiler</code>. Cas non vide : <code>premier(f)</code>, ou <code class="nw">enfiler(défiler(f), e)</code>.</div></li>
+          <li><div><b>Recommence</b> jusqu’à la forme finale. <code>premier</code> et <code>défiler</code> descendent ainsi jusqu’au fond du terme.</div></li>
+        </ol>
+        <div id="rwFile"></div>
+        <h3>Pile et file sur les mêmes éléments</h3>
+        <div class="prose"><p>Mets <code>a</code>, <code>b</code>, <code>c</code>, dans cet ordre, dans une pile et dans une file, puis compte les étapes de calcul (refais-les dans les deux ateliers).</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Pile</h4><div class="term"><span class="o-int">empiler</span>(<span class="o-int">empiler</span>(<span class="o-int">empiler</span>(<span class="o-cst">pilevide</span>, a), b), c)</div>
+            <ul class="wrapcode" style="margin:0;padding-left:1.1rem;display:grid;gap:.3rem"><li><code>sommet</code> = <code>c</code> : <b>1 étape</b>.</li><li><code>dépiler</code> → <code>empiler(empiler(pilevide, a), b)</code> : <b>1 étape</b>.</li><li>Ordre de sortie : c, b, a.</li></ul></div>
+          <div class="card"><h4>File</h4><div class="term"><span class="o-int">enfiler</span>(<span class="o-int">enfiler</span>(<span class="o-int">enfiler</span>(<span class="o-cst">filevide</span>, a), b), c)</div>
+            <ul class="wrapcode" style="margin:0;padding-left:1.1rem;display:grid;gap:.3rem"><li><code>premier</code> = <code>a</code> : <b>3 étapes</b>.</li><li><code>défiler</code> → <code>enfiler(enfiler(filevide, b), c)</code> : <b>3 étapes</b>.</li><li>Ordre de sortie : a, b, c.</li></ul></div>
+        </div>
+        <div class="prose"><p>La pile répond en une étape, parce que son élément accessible est à l’extérieur du terme. La file doit descendre jusqu’au fond : une étape par élément traversé.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Sur une file écrite avec des <code>enfiler</code> autour de <code>filevide</code>, <code>premier</code> donne l’élément de l’appel <code>enfiler</code> le plus intérieur.</li><li><code>défiler</code> supprime cet appel le plus intérieur et garde les autres dans le même ordre.</li><li>Un <code>premier</code> ou un <code>défiler</code> sur une file vide rend le terme indéfini, comme pour la pile.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>La condition porte sur <code>f</code>, et <code>f</code> peut être un terme compliqué. Dans <code>premier(enfiler(défiler(enfiler(filevide, a)), b))</code>, <code>f = défiler(enfiler(filevide, a))</code> : il faut le réduire pour voir qu’il vaut <code>filevide</code>. Donc <code class="nw">estvide(f) = Vrai</code>, et le premier est <code>b</code> (préréglage « f à réduire d’abord »).</p></div>
+        <p class="muted" style="font-size:.92rem">Le <a href="entrainement.html#infini">générateur de termes à réduire</a> propose aussi des termes de file.</p>
+        <div data-check-ref="taa/cours-3-piles-files.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Partie 7</div><h2>Les ensembles : seule la présence compte</h2></div>
+      <div class="stack">
+        <div class="note exam"><span class="tag">Bonus</span><p>Dans le planning des MiMos du Moodle, les ensembles sont présentés comme un « bonus ». Le plan officiel de l’ECUE s’arrête d’ailleurs aux types séquentiels : listes, piles et files. Garde ces deux dernières parties pour quand les piles et les files sont solides.</p></div>
+        <div class="prose">
+          <p>Dans une liste, une pile ou une file, l’ordre des éléments est fondamental. Dans un <b>ensemble</b>, il n’a aucune importance. Une seule chose compte : un élément est présent ou non.</p>
+          <p>Ajouter <code>a</code> puis <code>b</code>, ou <code>b</code> puis <code>a</code>, donne le même ensemble. Ajouter <code>a</code> une seconde fois ne change rien.</p>
+        </div>
+        <h3>La base : l’ensemble vide et l’appartenance</h3>
+<pre data-spec data-roles="1" aria-label="La base du type ensemble">
+types
+    ensemble
+utilise
+    élément, booléen
+opérations
+    ensemblevide : → ensemble
+             _∈_ : élément × ensemble → booléen
+axiomes
+    x ∈ ensemblevide = faux
+</pre>
+        <div class="prose"><p><code>_∈_</code> s’écrit entre ses deux arguments : <code class="nw">x ∈ e</code>. Chaque <code>_</code> marque la place d’un argument, comme pour <code>_^_</code> au chapitre 1. Dans tous les axiomes qui suivent, <code>x</code> et <code>y</code> sont des éléments et <code>e</code> est un <b>ensemble</b>.</p></div>
+        <h3>Ajouter, supprimer, compter</h3>
+        <div class="prose">
+          <p>On doit aussi pouvoir ajouter et supprimer un élément. La fiche fait un choix : ces opérations sont <b>sans effet en cas d’erreur</b>. Ajouter un élément déjà présent ne fait rien ; supprimer un élément absent non plus. <code class="op-int">ajouter</code> et <code class="op-int">supprimer</code> sont donc définies partout : pas de précondition.</p>
+          <p>S’y ajoute l’observateur <code class="op-obs">card</code>, le nombre d’éléments de l’ensemble, lui aussi défini partout.</p>
+        </div>
+<pre data-spec aria-label="Ajouter, supprimer et card dans le type ensemble">
+opérations
+      ajouter : élément × ensemble → ensemble
+    supprimer : élément × ensemble → ensemble
+         card : ensemble → entier
+axiomes
+    x = y ⇒ (x ∈ ajouter(y, e)) = vrai
+    x ≠ y ⇒ (x ∈ ajouter(y, e)) = (x ∈ e)
+    x = y ⇒ (x ∈ supprimer(y, e)) = faux
+    x ≠ y ⇒ (x ∈ supprimer(y, e)) = (x ∈ e)
+    card(ensemblevide) = 0
+    x ∈ e = vrai ⇒ card(ajouter(x, e)) = card(e)
+    x ∈ e = faux ⇒ card(ajouter(x, e)) = card(e) + 1
+    x ∈ e = vrai ⇒ card(supprimer(x, e)) = card(e) − 1
+    x ∈ e = faux ⇒ card(supprimer(x, e)) = card(e)
+</pre>
+        <div class="prose">
+          <p>Les axiomes de <code>∈</code> séparent deux cas, comme ceux du vecteur au chapitre 1 : l’élément testé est celui qu’on vient d’ajouter ou de supprimer (<code class="nw">x = y</code>), ou c’en est un autre (<code class="nw">x ≠ y</code>), que l’opération ne concerne pas.</p>
+          <p>Ceux de <code>card</code> séparent « déjà présent » et « absent » : c’est là que se voit le choix « sans effet en cas d’erreur ».</p>
+        </div>
+        <div class="note trap"><span class="tag">Coquilles des sources</span><ul><li>Sur la page du Moodle, l’axiome de <code class="nw">card(supprimer(x, e))</code> pour un élément absent est écrit avec <code class="nw">x ∈ = faux</code> : il manque l’ensemble. Lis <code class="nw">x ∈ e = faux</code>.</li><li>Dans la fiche PDF, les deux premiers axiomes de <code>card</code> sont collés sur une seule ligne. Ce sont bien deux axiomes : <code class="nw">card(ensemblevide) = 0</code>, puis celui de <code class="nw">card(ajouter(x, e))</code>.</li></ul></div>
+        <h3>Choisir un élément</h3>
+        <div class="prose"><p>Pour appliquer un même traitement à tous les éléments, on <b>énumère</b> : on choisit un élément, on le traite, puis on recommence sur l’ensemble obtenu en supprimant l’élément traité. Il faut pour cela une opération de choix.</p></div>
+<pre data-spec aria-label="L’opération choisir">
+opérations
+    choisir : ensemble → élément
+préconditions
+    choisir(e) est-défini-ssi e ≠ ensemblevide
+axiomes
+    choisir(e) ∈ e = vrai
+</pre>
+        <div class="prose"><p><code class="op-obs">choisir</code> est partielle : un ensemble vide n’a rien à offrir. Son unique axiome dit seulement que l’élément choisi appartient à l’ensemble, pas lequel. C’est pourquoi l’atelier ci-dessous ne l’utilise pas : il n’y a rien à calculer.</p></div>
+        <div id="rwEns"></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Ensemble : un élément est présent ou absent ; l’ordre et les répétitions ne comptent pas.</li><li><code>ajouter</code> et <code>supprimer</code> n’ont pas de précondition : sans effet en cas d’erreur.</li><li><code>card</code> n’augmente que si l’élément ajouté était absent, et ne diminue que si l’élément supprimé était présent.</li><li><code>choisir</code> est partielle : définie si et seulement si <code class="nw">e ≠ ensemblevide</code>.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p><code class="nw">card(ajouter(x, e))</code> ne vaut pas toujours <code class="nw">card(e) + 1</code> : si <code>x</code> est déjà dans <code>e</code>, le cardinal ne bouge pas (préréglage « a ajouté deux fois »). Teste d’abord <code class="nw">x ∈ e</code>.</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Partie 8</div><h2>Les multi-ensembles : quand les répétitions comptent</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>multi-ensemble</b>, ou <b>famille</b>, est un ensemble qui accepte les occurrences multiples d’un élément. Ajouter <code>a</code> deux fois donne deux <code>a</code>. L’ordre, lui, ne compte toujours pas.</p>
+          <p>On garde les mêmes opérations, mais leur comportement change. Ajouter un élément déjà présent augmente le nombre d’éléments. Supprimer un élément ne le fait pas forcément disparaître : il peut en rester d’autres occurrences. D’où une opération de plus, <code class="op-obs">nboccurrences</code>, qui compte les occurrences d’un élément.</p>
+        </div>
+<pre data-spec data-roles="1" data-hl="16,20" aria-label="Le type multi-ensemble, les deux axiomes qui changent le plus surlignés">
+types
+    multiensemble
+utilise
+    élément, booléen, entier
+opérations
+    multiensemblevide : → multiensemble
+              ajouter : élément × multiensemble → multiensemble
+            supprimer : élément × multiensemble → multiensemble
+                  _∈_ : élément × multiensemble → booléen
+                 card : multiensemble → entier
+        nboccurrences : élément × multiensemble → entier
+axiomes
+    (x ∈ multiensemblevide) = faux
+    x = y ⇒ (x ∈ ajouter(y, me)) = vrai
+    x ≠ y ⇒ (x ∈ ajouter(y, me)) = (x ∈ me)
+    nboccurrences(x, me) ≤ 1 ⇒ (x ∈ supprimer(x, me)) = faux
+    x ≠ y ⇒ (x ∈ supprimer(y, me)) = (x ∈ me)
+
+    card(multiensemblevide) = 0
+    card(ajouter(x, me)) = card(me) + 1
+    x ∈ me = vrai ⇒ card(supprimer(x, me)) = card(me) − 1
+    x ∈ me = faux ⇒ card(supprimer(x, me)) = card(me)
+
+    nboccurrences(x, multiensemblevide) = 0
+    x = y ⇒ nboccurrences(x, ajouter(y, me)) = nboccurrences(x, me) + 1
+    x ≠ y ⇒ nboccurrences(x, ajouter(y, me)) = nboccurrences(x, me)
+    nboccurrences(x, me) = 0 ⇒ nboccurrences(x, supprimer(x, me)) = 0
+    nboccurrences(x, me) ≥ 1 ⇒
+            nboccurrences(x, supprimer(x, me)) = nboccurrences(x, me) − 1
+    x ≠ y ⇒ nboccurrences(x, supprimer(y, me)) = nboccurrences(x, me)
+</pre>
+        <div class="note trap"><span class="tag">Coquille de la page Moodle</span><p>Le profil de <code>nboccurrences</code> y est écrit <code>élément × multiensemble → élément</code>. L’opération compte des occurrences : elle renvoie un <b>entier</b>, comme l’écrit la fiche PDF (et comme le montrent ses axiomes : <code class="nw">= 0</code>, <code class="nw">+ 1</code>).</p></div>
+        <h3>Ce qui change par rapport à l’ensemble</h3>
+        <div class="tbl wrapcode"><table>
+          <thead><tr><th></th><th>Ensemble</th><th>Multi-ensemble</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Un élément y est…</th><td>présent ou absent</td><td>présent 0, 1, 2… fois</td></tr>
+            <tr><th scope="row">Constante</th><td><code>ensemblevide</code></td><td><code>multiensemblevide</code></td></tr>
+            <tr><th scope="row">Ajouter un élément déjà présent</th><td>sans effet</td><td>une occurrence de plus</td></tr>
+            <tr><th scope="row"><code>card</code> après un <code>ajouter</code></th><td><code>card(e)</code> si <code class="nw">x ∈ e = vrai</code>, <code class="nw">card(e) + 1</code> sinon</td><td>toujours <code class="nw">card(me) + 1</code></td></tr>
+            <tr><th scope="row"><code class="nw">x ∈ supprimer(x, …)</code></th><td>toujours <code>faux</code></td><td><code>faux</code> si <code>nboccurrences(x, me) ≤ 1</code> ; sinon <code>x</code> reste présent</td></tr>
+            <tr><th scope="row"><code>card</code> après un <code>supprimer</code></th><td colspan="2">mêmes axiomes : <code class="nw">− 1</code> si <code>x</code> était présent, inchangé sinon</td></tr>
+            <tr><th scope="row">Compter les occurrences</th><td>inutile : 0 ou 1</td><td><code>nboccurrences : élément × multiensemble → entier</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Le point clé est <code>card(ajouter(x, me)) = card(me) + 1</code> : la condition a disparu, puisque chaque ajout compte. À l’inverse, l’axiome de <code>∈</code> sur <code>supprimer</code> en gagne une : <code>x</code> ne disparaît que s’il en restait au plus une occurrence.</p>
+          <p>Les axiomes de <code>nboccurrences</code> suivent le schéma de <code>∈</code> : soit l’opération touche <code>x</code> lui-même (<code class="nw">x = y</code>, ou <code class="nw">supprimer(x, me)</code>), soit elle touche un autre élément (<code class="nw">x ≠ y</code>) et le compte de <code>x</code> ne bouge pas. Pour la suppression, deux cas de plus : aucune occurrence, il en reste aucune ; au moins une, il y en a une de moins.</p>
+        </div>
+        <div id="rwMulti"></div>
+        <div class="note why"><span class="tag">Remarque</span><p>La fiche ne donne pas d’axiome pour <code class="nw">x ∈ supprimer(x, me)</code> quand <code>x</code> a au moins deux occurrences dans <code>me</code>. Son texte règle pourtant le cas : la suppression d’un élément « n’implique pas qu’il disparaisse de l’ensemble (s’il en existe plusieurs occurrences) ». <code>x</code> est donc encore présent.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Multi-ensemble (famille) = ensemble qui accepte les occurrences multiples.</li><li><code>nboccurrences : élément × multiensemble → entier</code> compte les occurrences d’un élément.</li><li>Chaque <code>ajouter</code> augmente <code>card</code> de 1, sans condition.</li><li><code>supprimer</code> retire une seule occurrence : <code>x</code> reste présent s’il en avait plusieurs.</li></ul></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Ne recopie pas les axiomes de l’ensemble. <code>x ∈ e = vrai ⇒ card(ajouter(x, e)) = card(e)</code> est faux pour un multi-ensemble : <code>card(ajouter(a, ajouter(a, multiensemblevide)))</code> vaut 2, pas 1 (préréglage « a ajouté deux fois », dans les deux ateliers).</p></div>
+        <div data-check-ref="taa/cours-3-piles-files.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="taa:piles:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu as fait le tour du cours de TAA. Pour t’entraîner : les <a href="entrainement.html">exercices d’examen et les générateurs</a>, puis le <a href="../qcm/index.html#taa">QCM de TAA</a>. Pour revoir les listes, le cœur des sujets passés : le <a href="cours-2-listes.html">chapitre 2</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa, U = R.util;
+  function esc(s) { return U.esc(String(s)); }
+
+  /* ---------- en-tête : les mêmes éléments entrent dans une pile et dans une file ---------- */
+  function twin(el) {
+    var POOL = 'abcdefghijkl'.split(''), MAX = 5, pile, file, seen, outP, outF, k;
+    el.classList.add('bench', 'twin');
+    el.innerHTML = '<div class="bench-head"><span>Mêmes entrées, deux sorties</span><span>pile LIFO · file FIFO</span></div>' +
+      '<div class="bench-body"><div class="twin-grid">' +
+      '<div class="twin-col"><div class="twin-lbl"><b>Pile</b> · on entre et on sort par le haut</div><div class="pile-box" data-p></div><div class="twin-out">Sorties : <b data-po></b></div></div>' +
+      '<div class="twin-col"><div class="twin-lbl"><b>File</b> · on entre en queue, on sort en tête</div><div class="file-ends"><span>← tête : sortie</span><span>queue : entrée ←</span></div><div class="file-box" data-f></div><div class="twin-out">Sorties : <b data-fo></b></div></div>' +
+      '</div><div class="readout" data-out aria-live="polite"></div></div>' +
+      '<div class="ctrls"><div class="row"><button type="button" class="btn primary" data-a="in"></button><button type="button" class="btn" data-a="out">Retirer</button><button type="button" class="btn" data-a="reset">Recommencer</button></div></div>';
+    var q = function (s) { return el.querySelector(s); }, inBtn = q('[data-a="in"]'), out = q('[data-out]');
+    function plates(arr, top) {
+      return arr.length ? arr.map(function (x, i) { return '<div class="plate' + (i === top ? ' top' : '') + '">' + esc(x) + '</div>'; }).join('') : '<div class="empty-note">vide</div>';
+    }
+    /* prochaine lettre absente des deux structures (5 au plus dans chacune : il en reste toujours une) */
+    function next() {
+      for (var i = 0; i < POOL.length; i++) { var x = POOL[(k + i) % POOL.length]; if (pile.indexOf(x) < 0 && file.indexOf(x) < 0) { k += i; return x; } }
+      return POOL[k % POOL.length];
+    }
+    function paint(msg) {
+      q('[data-p]').innerHTML = plates(pile, pile.length - 1);
+      q('[data-f]').innerHTML = plates(file, 0);
+      q('[data-po]').textContent = outP.length ? outP.join(', ') : '—';
+      q('[data-fo]').textContent = outF.length ? outF.join(', ') : '—';
+      inBtn.innerHTML = 'Ajouter <code>' + esc(next()) + '</code>';
+      if (msg !== undefined) out.innerHTML = msg;
+    }
+    function reset() {
+      pile = ['a', 'b', 'c']; file = pile.slice(); seen = pile.slice(); outP = []; outF = []; k = 3;
+      paint('a, puis b, puis c sont entrés dans la pile et dans la file. Clique sur « Retirer » : qui sort de chaque côté ?');
+    }
+    inBtn.addEventListener('click', function () {
+      if (pile.length >= MAX) { paint('La démo s’arrête à ' + MAX + ' éléments. Retire d’abord.'); return; }
+      var x = next(); k++; pile.push(x); file.push(x); seen.push(x);
+      paint('<code>' + esc(x) + '</code> entre des deux côtés : il devient le <b>sommet</b> de la pile et le <b>dernier</b> de la file.');
+    });
+    q('[data-a="out"]').addEventListener('click', function () {
+      if (!pile.length) { paint('<span class="rw-err">Impossible :</span> pile et file sont vides. <code>dépiler</code> et <code>défiler</code> sont des opérations partielles.'); return; }
+      var p = pile.pop(), f = file.shift(), m;
+      outP.push(p); outF.push(f);
+      m = !pile.length ? 'Les deux rendent leur dernier élément : <b>' + esc(p) + '</b> pour la pile, <b>' + esc(f) + '</b> pour la file.' :
+        'La pile rend <b>' + esc(p) + '</b>, le plus récent des éléments présents. La file rend <b>' + esc(f) + '</b>, le plus ancien.';
+      if (!pile.length) {
+        var rev = outP.join() === seen.slice().reverse().join();
+        m += ' Tout est sorti. La file a rendu les éléments dans leur ordre d’arrivée' + (rev ? ', la pile dans l’ordre inverse.' : '.');
+      }
+      paint(m);
+    });
+    q('[data-a="reset"]').addEventListener('click', reset);
+    reset();
+  }
+
+  /* ---------- tableaux « devine, puis vérifie » ---------- */
+  U.$$('[data-reveal]').forEach(function (box) {
+    var all = box.querySelector('[data-rv-all]');
+    function cells() { return U.$$('td', box).filter(function (td) { return td.querySelector('.rv'); }); }
+    function sync() { all.textContent = cells().some(function (td) { return !td.classList.contains('open'); }) ? 'Tout montrer' : 'Tout cacher'; }
+    box.addEventListener('click', function (ev) {
+      var b = ev.target.closest('.rv');
+      if (b) {
+        var td = b.closest('td'), a = td.querySelector('.rv-a');
+        td.classList.add('open'); a.setAttribute('tabindex', '-1'); a.focus(); sync(); return;
+      }
+      if (ev.target.closest('[data-rv-all]')) {
+        var show = all.textContent === 'Tout montrer';
+        cells().forEach(function (td) { td.classList.toggle('open', show); });
+        sync();
+      }
+    });
+  });
+
+  /* ---------- multi-ensemble : les axiomes de la fiche, pour l’atelier de la partie 8.
+     Le moteur ne compare pas des entiers : « nboccurrences(x, me) ≤ 1 » et « ≥ 1 » s’écrivent
+     comme une suite d’axiomes de même numéro, un par valeur (0, 1, 2…). ---------- */
+  var MULTI = {
+    name: 'multi-ensemble', vars: { x: 1, y: 1, me: 1 },
+    roles: { multiensemblevide: 'cst', ajouter: 'int', supprimer: 'int', card: 'obs', nboccurrences: 'obs', '∈': 'obs' },
+    axioms: [
+      { id: 'A1', l: 'x ∈ multiensemblevide', r: 'faux', text: '(x ∈ multiensemblevide) = faux' },
+      { id: 'A2', l: 'x ∈ ajouter(y, me)', eq: ['x', 'y'], r: 'vrai', text: 'x = y ⇒ (x ∈ ajouter(y, me)) = vrai' },
+      { id: 'A3', l: 'x ∈ ajouter(y, me)', neq: ['x', 'y'], r: 'x ∈ me', text: 'x ≠ y ⇒ (x ∈ ajouter(y, me)) = (x ∈ me)' }
+    ]
+  };
+  var LE1 = 'nboccurrences(x, me) ≤ 1 ⇒ (x ∈ supprimer(x, me)) = faux';
+  MULTI.axioms.push({ id: 'A4', l: 'x ∈ supprimer(x, me)', c: 'nboccurrences(x, me)', cv: '0', r: 'faux', text: LE1 });
+  MULTI.axioms.push({ id: 'A4', l: 'x ∈ supprimer(x, me)', c: 'nboccurrences(x, me)', cv: '1', r: 'faux', text: LE1 });
+  MULTI.axioms.push(
+    { id: 'A5', l: 'x ∈ supprimer(y, me)', neq: ['x', 'y'], r: 'x ∈ me', text: 'x ≠ y ⇒ (x ∈ supprimer(y, me)) = (x ∈ me)' },
+    { id: 'A6', l: 'card(multiensemblevide)', r: '0' },
+    { id: 'A7', l: 'card(ajouter(x, me))', r: 'card(me) + 1' },
+    { id: 'A8', l: 'card(supprimer(x, me))', c: 'x ∈ me', cv: 'vrai', r: 'card(me) - 1', text: 'x ∈ me = vrai ⇒ card(supprimer(x, me)) = card(me) − 1' },
+    { id: 'A9', l: 'card(supprimer(x, me))', c: 'x ∈ me', cv: 'faux', r: 'card(me)', text: 'x ∈ me = faux ⇒ card(supprimer(x, me)) = card(me)' },
+    { id: 'A10', l: 'nboccurrences(x, multiensemblevide)', r: '0' },
+    { id: 'A11', l: 'nboccurrences(x, ajouter(y, me))', eq: ['x', 'y'], r: 'nboccurrences(x, me) + 1', text: 'x = y ⇒ nboccurrences(x, ajouter(y, me)) = nboccurrences(x, me) + 1' },
+    { id: 'A12', l: 'nboccurrences(x, ajouter(y, me))', neq: ['x', 'y'], r: 'nboccurrences(x, me)', text: 'x ≠ y ⇒ nboccurrences(x, ajouter(y, me)) = nboccurrences(x, me)' },
+    { id: 'A13', l: 'nboccurrences(x, supprimer(x, me))', c: 'nboccurrences(x, me)', cv: '0', r: '0', text: 'nboccurrences(x, me) = 0 ⇒ nboccurrences(x, supprimer(x, me)) = 0' }
+  );
+  for (var n = 1; n <= 6; n++) {
+    MULTI.axioms.push({ id: 'A14', l: 'nboccurrences(x, supprimer(x, me))', c: 'nboccurrences(x, me)', cv: String(n), r: 'nboccurrences(x, me) - 1', text: 'nboccurrences(x, me) ≥ 1 ⇒ nboccurrences(x, supprimer(x, me)) = nboccurrences(x, me) − 1' });
+  }
+  MULTI.axioms.push({ id: 'A15', l: 'nboccurrences(x, supprimer(y, me))', neq: ['x', 'y'], r: 'nboccurrences(x, me)', text: 'x ≠ y ⇒ nboccurrences(x, supprimer(y, me)) = nboccurrences(x, me)' });
+
+  twin(document.getElementById('heroTwin'));
+  T.stackBench(document.getElementById('stackS1'), { label: 'Une pile : empile, dépile, interroge', start: ['a', 'b'] });
+  T.stepper(document.getElementById('rwPile'), { set: 'PILE', label: 'Atelier : évalue un terme de pile', editable: true, presets: [
+    { name: 'deux dépiler', t: 'sommet(dépiler(dépiler(empiler(empiler(empiler(pilevide, a), b), c))))' },
+    { name: 'empiler après dépiler', t: 'sommet(empiler(dépiler(empiler(empiler(pilevide, a), b)), c))' },
+    { name: 'pile vide ?', t: 'estvide(dépiler(dépiler(empiler(empiler(pilevide, a), b))))' },
+    { name: 'indéfini', t: 'sommet(dépiler(dépiler(empiler(pilevide, a))))' }
+  ] });
+  T.queueBench(document.getElementById('queueS4'), { label: 'Une file : enfile, défile, interroge', start: ['a', 'b'] });
+  T.stepper(document.getElementById('rwFile'), { set: 'FILE', label: 'Atelier : évalue un terme de file', editable: true, presets: [
+    { name: 'premier après un défiler', t: 'premier(défiler(enfiler(enfiler(enfiler(filevide, a), b), c)))' },
+    { name: 'défiler sur trois éléments', t: 'défiler(enfiler(enfiler(enfiler(filevide, a), b), c))' },
+    { name: 'premier de trois', t: 'premier(enfiler(enfiler(enfiler(filevide, a), b), c))' },
+    { name: 'f à réduire d’abord', t: 'premier(enfiler(défiler(enfiler(filevide, a)), b))' },
+    { name: 'indéfini', t: 'premier(défiler(enfiler(filevide, a)))' }
+  ] });
+  T.stepper(document.getElementById('rwEns'), { set: 'ENSEMBLE', label: 'Atelier : les axiomes de l’ensemble', editable: true, presets: [
+    { name: 'a ajouté deux fois', t: 'card(ajouter(a, ajouter(a, ensemblevide)))' },
+    { name: 'trois ajouts, deux éléments', t: 'card(ajouter(a, ajouter(b, ajouter(a, ensemblevide))))' },
+    { name: 'appartenance', t: 'a ∈ ajouter(b, ajouter(a, ensemblevide))' },
+    { name: 'supprimer un absent', t: 'card(supprimer(c, ajouter(a, ensemblevide)))' },
+    { name: 'après suppression', t: 'b ∈ supprimer(b, ajouter(b, ajouter(a, ensemblevide)))' }
+  ] });
+  T.stepper(document.getElementById('rwMulti'), { set: MULTI, label: 'Atelier : les axiomes du multi-ensemble', presets: [
+    { name: 'a ajouté deux fois', t: 'card(ajouter(a, ajouter(a, multiensemblevide)))' },
+    { name: 'compter les a', t: 'nboccurrences(a, ajouter(a, ajouter(b, ajouter(a, multiensemblevide))))' },
+    { name: 'supprimer un des deux a', t: 'nboccurrences(a, supprimer(a, ajouter(a, ajouter(a, multiensemblevide))))' },
+    { name: 'dernière occurrence', t: 'a ∈ supprimer(a, ajouter(a, multiensemblevide))' },
+    { name: 'card après suppression', t: 'card(supprimer(a, ajouter(a, ajouter(a, multiensemblevide))))' }
+  ] });
+})();
+</script>
+</body>
+</html>
