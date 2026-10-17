@@ -30,7 +30,7 @@
     'De {a} à {b} à travers {el}. La flèche {u} pointe vers {tip}, {sens} : tu écris <b>{term}</b>.': 'From {a} to {b} through {el}. The arrow {u} points to {tip}, {sens}: you write <b>{term}</b>.',
     'Tu montes de {d} V : {b} est à {v} V.': 'You go up {d} V: {b} is at {v} V.',
     'Tu descends de {d} V : {b} est à {v} V.': 'You go down {d} V: {b} is at {v} V.',
-    'Mais {u} = {val} V est négative : le + vient de la flèche, la valeur fait descendre.': 'But {u} = {val} V is negative: the + comes from the arrow, the value takes you down.',
+    'Mais {u} vaut {val} V : le + vient de la flèche, et c’est le signe de la valeur qui dit si tu montes ou si tu descends.': 'But {u} is {val} V: the + comes from the arrow, and the sign of the value tells you whether you go up or down.',
     'Pour retomber au même étage qu’au départ ({v0} V), il faut descendre de {d} V : <b>{u} = {val} V</b>.': 'To land back on the starting floor ({v0} V), you must go down {d} V: <b>{u} = {val} V</b>.',
     'Pour retomber au même étage qu’au départ ({v0} V), il faut monter de {d} V : <b>{u} = {val} V</b>.': 'To land back on the starting floor ({v0} V), you must go up {d} V: <b>{u} = {val} V</b>.',
     'retour en {b} : {terms} = {v0}, soit {nums} = {v0}, donc {u} = {val} V': 'back at {b}: {terms} = {v0}, that is {nums} = {v0}, so {u} = {val} V',
@@ -199,7 +199,7 @@
         a: r.a, b: r.b, el: el, u: sym(r.u, 'u'), tip: r.tip, sens: t(r.sign > 0 ? 'dans ton sens' : 'contre toi'), term: (r.sign > 0 ? '+' : '−') + sym(r.u, 'u') });
       if (r.unknown) note += ' ' + t(r.d < 0 ? 'Pour retomber au même étage qu’au départ ({v0} V), il faut descendre de {d} V : <b>{u} = {val} V</b>.' : 'Pour retomber au même étage qu’au départ ({v0} V), il faut monter de {d} V : <b>{u} = {val} V</b>.', { v0: num(sol.V[0]), d: nf(Math.abs(r.d)), u: sym(r.u, 'u'), val: num(r.val) });
       else {
-        if (r.d * r.sign < 0) note += ' ' + t('Mais {u} = {val} V est négative : le + vient de la flèche, la valeur fait descendre.', { u: sym(r.u, 'u'), val: num(r.val) });
+        if (r.d * r.sign < 0) note += ' ' + t('Mais {u} vaut {val} V : le + vient de la flèche, et c’est le signe de la valeur qui dit si tu montes ou si tu descends.', { u: sym(r.u, 'u'), val: num(r.val) });
         note += ' ' + t(r.d >= 0 ? 'Tu montes de {d} V : {b} est à {v} V.' : 'Tu descends de {d} V : {b} est à {v} V.', { d: nf(Math.abs(r.d)), b: r.b, v: num(sol.V[k]) });
       }
     }

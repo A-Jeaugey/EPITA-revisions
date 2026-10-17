@@ -9,6 +9,31 @@
   function vv(n) { return '<var class="v">V</var><sub>' + n + '</sub>'; }
   var RI = R + I, UAB = uu('AB');
 
+  /* descriptions of the diagrams (aria), same order as in the French file */
+  var MODEL = 'Thévenin generator (Eth, Rth) loaded by 2R between A and B',
+    C24EX2 = 'Source 2E on the left, R1 between the top junction and A, R2 toward B, R3 between A and B, R4 between B and the bottom wire, source E on the right',
+    C24NODES = 'Exercise circuit: the nodes without a dot, N at the top left and M the bottom wire, are highlighted',
+    C24U = 'Exercise circuit with the voltages U1 to U4 drawn in receiver convention',
+    C24A = 'Current source I pointing up, branch 2E (arrow pointing down) and 4R, block R in parallel with 2I on the bottom wire, 2R load between A and B',
+    S24A1 = 'Intermediate diagram 1: between A and N, source I pointing up, source E/(2R) pointing down and 4R; between N and B, R in parallel with 2I; load disconnected',
+    S24A2 = 'Intermediate diagram 2: between A and N, source I − E/(2R) toward A in parallel with 4R; between N and B, R in parallel with 2I',
+    S24A3 = 'Intermediate diagram 3: series loop, from N to A the emf 4RI − 2E (arrow toward A) and 4R; from N to B the emf 2RI (arrow toward B) and R',
+    C24B = 'Source E, 4R at the top, vertical 4R, R at the top toward A, R at the bottom toward B, 2R load between A and B, current source I pointing down on the right',
+    S24B1 = 'Intermediate diagram 1: E/2 in series with 2R, then R at the top toward A and R at the bottom toward B; 2R load and source I unchanged',
+    S24B2 = 'Intermediate diagram 2: E/2 in series with 4R between A and B; 2R load and source I',
+    S24B3 = 'Intermediate diagram 3: in parallel between A and B, source E/(8R) toward A, 4R, 2R load and source I toward B',
+    S24B4 = 'Intermediate diagram 4: source E/(8R) − I toward A, in parallel with 4R and the 2R load',
+    C23EX2 = 'Source E on the left, R1 at the top up to A, R2 between A and B, R3 at the top right, vertical wire on the right, R4 at the bottom right up to B, R5 at the bottom left',
+    C23U = 'Exercise circuit with the voltages U1 to U5 drawn in receiver convention',
+    C23A = 'Current source I pointing up, branch 2R and E, 2R load between A and B, branch R, E and R on the right',
+    S23A1 = 'Intermediate diagram 1: in parallel between A and B, source I, source E/(2R) and 2R, source E/(2R) and 2R, all sources toward A; load disconnected',
+    S23A2 = 'Intermediate diagram 2: source I + E/R toward A in parallel with R; load disconnected',
+    C23B = 'Source 2E and 6R, vertical current source I pointing up, vertical 6R, block source I (toward A) in parallel with R on the top line, 2R load between A and B',
+    S23B1 = 'Intermediate diagram 1: source E/(3R) pointing up in parallel with 6R, then source I, 6R, block I // R and 2R load',
+    S23B2 = 'Intermediate diagram 2: source E/(3R) + I pointing up in parallel with 3R, then block I // R and 2R load',
+    S23B3 = 'Intermediate diagram 3: series loop, emf E + 3RI (pointing up), 3R, emf RI (toward A), R, 2R load',
+    S23B4 = 'Intermediate diagram 4: emf E + 4RI in series with 4R, loaded by 2R';
+
   REV.i18n.patch(window.ELEC_EX, {
 
     /* ================= Midterm Oct. 2024 ================= */
@@ -17,7 +42,7 @@
       title: 'Fundamental laws: two sources, four resistors',
       intro: '<p>Consider the diagram on the right.</p><p>We set:<br>' + E + ' = 6 V, ' + UAB + ' = ' + vv('A') + ' − ' + vv('B') + ' = 4 V<br>' +
         ii(1) + ' = 10 mA, ' + ii(3) + ' = 2 mA, ' + ii(4) + ' = 7 mA<br>' + rr(2) + ' = 2 kΩ.</p>',
-      figs: [{ cap: 'Exercise 2 circuit' }],
+      figs: [{ spec: { aria: C24EX2 }, cap: 'Exercise 2 circuit' }],
       questions: [
         '<b>1.</b> In this circuit, find the number of: <b>a.</b> Nodes? <b>b.</b> Branches? <b>c.</b> Loops?',
         '<b>2.</b> Draw the various voltages on the diagram using sign conventions. Note ' + uu('i') + ' for the voltage between the terminals of resistor ' + rr('i') + ' (i.e. ' + uu(1) + ' = voltage between ' + rr(1) + ' terminals, ' + uu(2) + ' = voltage between ' + rr(2) + ' terminals…)',
@@ -35,13 +60,13 @@
             '<li>four loops of three branches: (2' + E + ', ' + rr(1) + ', ' + E + '), (2' + E + ', ' + rr(2) + ', ' + rr(4) + '), (' + E + ', ' + rr(3) + ', ' + rr(4) + '), (' + rr(1) + ', ' + rr(3) + ', ' + rr(2) + ');</li>' +
             '<li>three loops of four branches: (2' + E + ', ' + rr(1) + ', ' + rr(3) + ', ' + rr(4) + '), (2' + E + ', ' + rr(2) + ', ' + rr(3) + ', ' + E + '), (' + rr(1) + ', ' + E + ', ' + rr(4) + ', ' + rr(2) + ').</li></ul>' +
             '<p>Only 3 are independent (<var>b</var> − <var>n</var> + 1 = 6 − 4 + 1). The official 2023 answer key counts all the loops: answer 7, stating that 3 are independent.</p>',
-          figs: [{ cap: 'The two nodes without a dot: N, the top-left junction, and M, the whole bottom wire. With A and B, that makes 4 nodes.' }] },
+          figs: [{ spec: { aria: C24NODES }, cap: 'The two nodes without a dot: N, the top-left junction, and M, the whole bottom wire. With A and B, that makes 4 nodes.' }] },
         { t: 'Question 2', html: '<p>The two sources already have their arrows, in source (generator) convention. For each resistor, use the receiver convention: the voltage arrow is drawn opposite to the current arrow.</p><ul>' +
             '<li>' + uu(1) + ': ' + ii(1) + ' goes to the right, so ' + uu(1) + ' points to the left, toward N: ' + uu(1) + ' = ' + vv('N') + ' − ' + vv('A') + '.</li>' +
             '<li>' + uu(2) + ': ' + ii(2) + ' is drawn to the left, so ' + uu(2) + ' points to the right, toward B: ' + uu(2) + ' = ' + vv('B') + ' − ' + vv('N') + '.</li>' +
             '<li>' + uu(3) + ': ' + ii(3) + ' goes down, so ' + uu(3) + ' points up, toward A: ' + uu(3) + ' = ' + vv('A') + ' − ' + vv('B') + ' = ' + UAB + '.</li>' +
             '<li>' + uu(4) + ': ' + ii(4) + ' goes down, so ' + uu(4) + ' points up, toward B: ' + uu(4) + ' = ' + vv('B') + ' − ' + vv('M') + '.</li></ul>',
-          figs: [{ cap: 'Solution diagram: voltages in receiver convention.' }] },
+          figs: [{ spec: { aria: C24U }, cap: 'Solution diagram: voltages in receiver convention.' }] },
         { t: 'Question 3', html: '<p>' + uu(3) + ' is drawn in receiver convention for ' + ii(3) + ', and ' + uu(3) + ' = ' + UAB + '. Ohm’s law: ' + UAB + ' = ' + rr(3) + '·' + ii(3) + '.</p>' +
             '<p>' + rr(3) + ' = ' + UAB + '/' + ii(3) + ' = 4 V / 2 mA = <b>2 kΩ</b>. Volts divided by milliamperes give kilohms.</p>' },
         { t: 'Question 4', html: '<p>Kirchhoff’s current law at B: ' + ii(3) + ' arrives; ' + ii(2) + ' (drawn toward N) and ' + ii(4) + ' leave. So ' + ii(3) + ' = ' + ii(2) + ' + ' + ii(4) + '.</p>' +
@@ -70,7 +95,7 @@
       src: 'Midterm Oct. 2024 · Ex 3 · Q1',
       title: 'Thévenin equivalent of a three-source circuit',
       intro: '<p>Consider the two diagrams below.</p>',
-      figs: [{ cap: 'Left diagram' }, { cap: 'Right diagram' }],
+      figs: [{ spec: { aria: C24A }, cap: 'Left diagram' }, { spec: { aria: MODEL }, cap: 'Right diagram' }],
       questions: [
         '<b>a.</b> Determine the expressions of ' + Eth + ' and ' + Rth + ' – justifying your answers with intermediate diagrams – so that the 2 diagrams above are equivalent.',
         '<b>b.</b> Deduce the expression of the voltage ' + U + ' between the terminals of resistor 2' + R + ' in terms of ' + E + ', ' + I + ' and ' + R + '.'],
@@ -81,18 +106,18 @@
       solution: [
         { t: 'Question a: principle', html: '<p>Disconnect the 2' + R + ' load and look for the Thévenin generator equivalent to the left part, seen between A and B.</p>' +
             '<p>Call N the bottom-left wire, which connects the bottom of the source ' + I + ' and the bottom of the 4' + R + '. Careful: N is not B. The ' + R + ' // 2' + I + ' block sits between them, on the return wire.</p>',
-          figs: [{ cap: 'Load disconnected. The (2E, 4R) branch, between A and N, is about to be transformed.' }] },
+          figs: [{ spec: { aria: C24A }, cap: 'Load disconnected. The (2E, 4R) branch, between A and N, is about to be transformed.' }] },
         { t: 'Step 1: Thévenin → Norton on (2E, 4R)', html: '<p>The branch (2' + E + ' in series with 4' + R + ') becomes a current source 2' + E + '/(4' + R + ') = <b>' + E + '/(2' + R + ')</b> in parallel with <b>4' + R + '</b>.</p>' +
             '<p>Direction: the 2' + E + ' arrow points down, so the + is on the 4' + R + ' side, the N side. The arrow of the Norton source also points down, toward N. The source ' + I + ', for its part, points up, toward A.</p>',
-          figs: [{ cap: 'Intermediate diagram 1' }] },
+          figs: [{ spec: { aria: S24A1 }, cap: 'Intermediate diagram 1' }] },
         { t: 'Step 2: grouping the current sources', html: '<p>Between A and N, the two current sources are in parallel and point in opposite directions. Replace them with a single source pointing toward A: <b>' + I + ' − ' + E + '/(2' + R + ')</b>, still in parallel with 4' + R + '.</p>',
-          figs: [{ cap: 'Intermediate diagram 2' }] },
+          figs: [{ spec: { aria: S24A2 }, cap: 'Intermediate diagram 2' }] },
         { t: 'Step 3: Norton → Thévenin, twice', html: '<p>Between A and N: the source ' + I + ' − ' + E + '/(2' + R + ') in parallel with 4' + R + ' becomes an emf 4' + R + '·(' + I + ' − ' + E + '/(2' + R + ')) = <b>4' + RI + ' − 2' + E + '</b>, pointing toward A, in series with 4' + R + '.</p>' +
             '<p>Between N and B: the ' + R + ' // 2' + I + ' block becomes an emf ' + R + '·2' + I + ' = <b>2' + RI + '</b> in series with ' + R + '. Its arrow points toward B, in the same direction as the arrow of the current 2' + I + '.</p>',
-          figs: [{ cap: 'Intermediate diagram 3: everything is in series.' }] },
+          figs: [{ spec: { aria: S24A3 }, cap: 'Intermediate diagram 3: everything is in series.' }] },
         { t: 'Step 4: series combination', html: '<p>Only one loop remains. From B to A, you go through the emf 2' + RI + ', pointing toward B (against the direction of travel), then the emf 4' + RI + ' − 2' + E + ', pointing toward A:</p>' +
             '<p>' + Eth + ' = (4' + RI + ' − 2' + E + ') − 2' + RI + ' = <b>2' + RI + ' − 2' + E + ' = 2(' + RI + ' − ' + E + ')</b>, arrow toward A.</p><p>' + Rth + ' = 4' + R + ' + ' + R + ' = <b>5' + R + '</b>.</p>',
-          figs: [{ cap: 'Equivalent Thévenin generator' }] },
+          figs: [{ spec: { aria: MODEL }, cap: 'Equivalent Thévenin generator' }] },
         { t: 'Question b', html: '<p>Reconnect the 2' + R + ' load to the Thévenin generator. Voltage divider:</p>' +
             '<p>' + U + ' = 2' + R + '/(' + Rth + ' + 2' + R + ') · ' + Eth + ' = (2' + R + '/7' + R + ') · 2(' + RI + ' − ' + E + '), i.e. <b>' + U + ' = 4(' + RI + ' − ' + E + ')/7</b>.</p>' +
             '<p>' + U + ' is algebraic: if ' + E + ' > ' + RI + ', ' + U + ' is negative.</p>' },
@@ -112,7 +137,7 @@
       src: 'Midterm Oct. 2024 · Ex 3 · Q2',
       title: '4R/4R divider and a current source: the voltage U',
       intro: '<p>Consider the diagram on the right.</p>',
-      figs: [{ cap: 'Question 2 circuit' }],
+      figs: [{ spec: { aria: C24B }, cap: 'Question 2 circuit' }],
       questions: ['<b>2.</b> Determine the expression of the voltage ' + U + ' in terms of ' + E + ', ' + I + ' and ' + R + '. You can use Thévenin/Norton equivalents. Justify your answer.'],
       hints: [
         'Start on the left: the source ' + E + ' and the first 4' + R + ' form a generator, loaded by the vertical 4' + R + '. Replace this set with its Thévenin equivalent seen across the vertical 4' + R + '.',
@@ -123,14 +148,14 @@
             '<li>no-load voltage: ' + E + '·4' + R + '/(4' + R + ' + 4' + R + ') = <b>' + E + '/2</b>, arrow toward N<sub>1</sub>;</li>' +
             '<li>source turned off: 4' + R + ' // 4' + R + ' = <b>2' + R + '</b>.</li></ul>' +
             '<p>With Norton, you find the same thing: ' + E + '/(4' + R + ') in parallel with 4' + R + ' and 4' + R + ', i.e. ' + E + '/(4' + R + ') in parallel with 2' + R + ', which gives back 2' + R + ' × ' + E + '/(4' + R + ') = ' + E + '/2.</p>',
-          figs: [{ cap: 'Intermediate diagram 1' }] },
+          figs: [{ spec: { aria: S24B1 }, cap: 'Intermediate diagram 1' }] },
         { t: 'Step 2: series combination', html: '<p>' + E + '/2, 2' + R + ', the top ' + R + ' and the bottom ' + R + ' carry the same current: they are in series. You get ' + E + '/2 in series with 2' + R + ' + ' + R + ' + ' + R + ' = <b>4' + R + '</b> between A and B, with the + on the A side.</p>',
-          figs: [{ cap: 'Intermediate diagram 2' }] },
+          figs: [{ spec: { aria: S24B2 }, cap: 'Intermediate diagram 2' }] },
         { t: 'Step 3: Thévenin → Norton', html: '<p>The branch (' + E + '/2, 4' + R + ') becomes a current source (' + E + '/2)/(4' + R + ') = <b>' + E + '/(8' + R + ')</b> pointing toward A, in parallel with 4' + R + '. Everything is now in parallel between A and B: this source, 4' + R + ', the 2' + R + ' load and the source ' + I + '.</p>',
-          figs: [{ cap: 'Intermediate diagram 3' }] },
+          figs: [{ spec: { aria: S24B3 }, cap: 'Intermediate diagram 3' }] },
         { t: 'Step 4: grouping', html: '<p>The source ' + I + ' points down: it draws ' + I + ' from node A. The two current sources combine into a single one, pointing toward A: <b>' + E + '/(8' + R + ') − ' + I + '</b>.</p>' +
             '<p>The resistors: 4' + R + ' // 2' + R + ' = 8' + R + '²/(6' + R + ') = <b>4' + R + '/3</b>.</p>',
-          figs: [{ cap: 'Intermediate diagram 4' }] },
+          figs: [{ spec: { aria: S24B4 }, cap: 'Intermediate diagram 4' }] },
         { t: 'Result', html: '<p>' + U + ' = (4' + R + '/3)·(' + E + '/(8' + R + ') − ' + I + ') = ' + E + '/6 − 4' + RI + '/3, i.e. <b>' + U + ' = (' + E + ' − 8' + RI + ')/6</b>.</p>' },
         { t: 'Checks', html: '<ul><li>Millman at A, with B as the reference: ' + U + ' = ((' + E + '/2)/(4' + R + ') − ' + I + ')/(1/(4' + R + ') + 1/(2' + R + ')) = (' + E + '/(8' + R + ') − ' + I + ')·4' + R + '/3 ✓.</li>' +
             '<li>Superposition: ' + E + ' alone gives (' + E + '/2)·2' + R + '/(4' + R + ' + 2' + R + ') = ' + E + '/6; ' + I + ' alone gives −' + I + '·(2' + R + ' // 4' + R + ') = −4' + RI + '/3 ✓.</li>' +
@@ -147,7 +172,7 @@
       src: 'Midterm Nov. 2023 · Ex 2',
       title: 'Fundamental laws: one source, five resistors',
       intro: '<p>Consider the diagram on the right.</p><p>We set: ' + E + ' = 12 V, ' + UAB + ' = ' + vv('A') + ' − ' + vv('B') + ' = 4 V, ' + ii(1) + ' = 10 mA, ' + rr(1) + ' = 470 Ω and ' + rr(2) + ' = 1 kΩ.</p>',
-      figs: [{ cap: 'Exercise 2 circuit' }],
+      figs: [{ spec: { aria: C23EX2 }, cap: 'Exercise 2 circuit' }],
       questions: [
         '<b>1.</b> Draw the various voltages on the diagram using sign conventions. Note ' + uu('i') + ' for the voltage between the terminals of resistor ' + rr('i') + ' (i.e. ' + uu(1) + ' is the voltage between ' + rr(1) + ' terminals, ' + uu(2) + ' is the voltage between ' + rr(2) + ' terminals …)',
         '<b>2.</b> What is the intensity of the current flowing through ' + rr(5) + '?',
@@ -165,7 +190,7 @@
             '<li>' + uu(3) + ' points to the left, above ' + rr(3) + ': ' + ii(3) + ' goes to the right.</li>' +
             '<li>' + uu(4) + ' points to the right, below ' + rr(4) + ': the current ' + ii(3) + ' comes back down through the right-hand wire and flows through ' + rr(4) + ' from right to left, toward B.</li>' +
             '<li>' + uu(5) + ' points to the right, below ' + rr(5) + ': the current comes back from B toward the source and flows through ' + rr(5) + ' from right to left.</li></ul>',
-          figs: [{ cap: 'Solution diagram (official answer key). The red arrows added next to ' + rr(4) + ' and ' + rr(5) + ' show the direction of the current.' }] },
+          figs: [{ spec: { aria: C23U }, cap: 'Solution diagram (official answer key). The red arrows added next to ' + rr(4) + ' and ' + rr(5) + ' show the direction of the current.' }] },
         { t: 'Question 2', html: '<p>' + rr(5) + ' is in the same branch as ' + E + ' and ' + rr(1) + ': there is no node between them. The current that enters a dipole leaves it, so ' + rr(5) + ' carries ' + ii(1) + ' = <b>10 mA</b>.</p>' },
         { t: 'Question 3', html: '<p>Method 1, Ohm’s law: ' + uu(2) + ' = ' + UAB + ', so ' + ii(2) + ' = ' + UAB + '/' + rr(2) + ' = 4 V / 1 kΩ = <b>4 mA</b>.</p>' +
             '<p>Method 2, Kirchhoff’s current law: the right edge is a plain wire, so ' + rr(3) + ' and ' + rr(4) + ' are in series and ' + ii(3) + ' = 6 mA. At A: ' + ii(1) + ' = ' + ii(2) + ' + ' + ii(3) + ', i.e. ' + ii(2) + ' = 10 − 6 = <b>4 mA</b>.</p>' +
@@ -189,7 +214,7 @@
       src: 'Midterm Nov. 2023 · Ex 3 · Q1',
       title: 'Four branches between A and B: Thévenin, then U',
       intro: '<p>Consider the two diagrams below.</p>',
-      figs: [{ cap: 'Left diagram' }, { cap: 'Right diagram' }],
+      figs: [{ spec: { aria: C23A }, cap: 'Left diagram' }, { spec: { aria: MODEL }, cap: 'Right diagram' }],
       questions: [
         '<b>a.</b> On the left diagram, find the number of: <b>a.</b> Nodes? <b>b.</b> Branches? <b>c.</b> Loops?',
         '<b>b.</b> Set the expressions of ' + Eth + ' and ' + Rth + ' so as the 2 diagrams above are equivalents.',
@@ -202,15 +227,15 @@
         { t: 'Question a', html: '<p><b>2 nodes</b>: A, which is the whole top wire, and B, the whole bottom wire.</p>' +
             '<p><b>4 branches</b>, all between A and B: the source ' + I + '; 2' + R + ' and ' + E + '; the 2' + R + ' load; ' + R + ', ' + E + ' and ' + R + '. Several dipoles in series with no node between them form a single branch.</p>' +
             '<p><b>6 loops</b>: each pair of branches forms a loop, and there are 4 × 3 / 2 = 6 pairs. The official answer key counts all these loops. Only 3 are independent (<var>b</var> − <var>n</var> + 1 = 4 − 2 + 1).</p>',
-          figs: [{ cap: 'The 2 nodes: the whole top wire (A) and the whole bottom wire (B).' }] },
+          figs: [{ spec: { aria: C23A }, cap: 'The 2 nodes: the whole top wire (A) and the whole bottom wire (B).' }] },
         { t: 'Question b: disconnect the load', html: '<p>Disconnect the 2' + R + ' load and look for the equivalent generator seen between A and B. In the right-hand branch, ' + R + ', ' + E + ' and ' + R + ' are in series: it is ' + E + ' in series with 2' + R + ', with the + on the A side, as in the left-hand branch.</p>',
-          figs: [{ cap: 'Load disconnected. Both (E, 2R) branches are about to be transformed.' }] },
+          figs: [{ spec: { aria: C23A }, cap: 'Load disconnected. Both (E, 2R) branches are about to be transformed.' }] },
         { t: 'Step 1: Thévenin → Norton', html: '<p>Each branch (' + E + ' in series with 2' + R + ') becomes a current source <b>' + E + '/(2' + R + ')</b> in parallel with <b>2' + R + '</b>. The + of each source ' + E + ' is on the A side: the Norton arrows point toward A. Everything is now in parallel between A and B.</p>',
-          figs: [{ cap: 'Intermediate diagram 1' }] },
+          figs: [{ spec: { aria: S23A1 }, cap: 'Intermediate diagram 1' }] },
         { t: 'Step 2: grouping', html: '<p>Current sources in parallel, all pointing toward A: ' + I + ' + ' + E + '/(2' + R + ') + ' + E + '/(2' + R + ') = <b>' + I + ' + ' + E + '/' + R + '</b>. Resistors: 2' + R + ' // 2' + R + ' = <b>' + R + '</b> (without the load).</p>',
-          figs: [{ cap: 'Intermediate diagram 2: Norton generator' }] },
+          figs: [{ spec: { aria: S23A2 }, cap: 'Intermediate diagram 2: Norton generator' }] },
         { t: 'Step 3: Norton → Thévenin', html: '<p>' + Eth + ' = ' + R + '·(' + I + ' + ' + E + '/' + R + ') = <b>' + RI + ' + ' + E + '</b> and <b>' + Rth + ' = ' + R + '</b>.</p>',
-          figs: [{ cap: 'Equivalent Thévenin generator' }] },
+          figs: [{ spec: { aria: MODEL }, cap: 'Equivalent Thévenin generator' }] },
         { t: 'Question c', html: '<p>Reconnect the 2' + R + ' load. Voltage divider: ' + U + ' = 2' + R + '/(' + R + ' + 2' + R + ') × (' + RI + ' + ' + E + '), i.e. <b>' + U + ' = 2(' + RI + ' + ' + E + ')/3</b>.</p>' },
         { t: 'Checks', html: '<ul><li>' + Rth + ' by turning off the sources: ' + I + ' becomes an open circuit, both ' + E + ' become wires. What remains is 2' + R + ' in parallel with ' + R + ' + ' + R + ', i.e. 2' + R + ' // 2' + R + ' = ' + R + ' ✓.</li>' +
             '<li>Millman at A, load disconnected: ' + Eth + ' = (' + I + ' + ' + E + '/(2' + R + ') + ' + E + '/(2' + R + '))/(1/(2' + R + ') + 1/(2' + R + ')) = ' + R + '·(' + I + ' + ' + E + '/' + R + ') = ' + RI + ' + ' + E + ' ✓.</li>' +
@@ -228,7 +253,7 @@
       src: 'Midterm Nov. 2023 · Ex 3 · Q2',
       title: 'Two current sources and an I // R block',
       intro: '<p>Consider the diagram on the right.</p>',
-      figs: [{ cap: 'Question 2 circuit' }],
+      figs: [{ spec: { aria: C23B }, cap: 'Question 2 circuit' }],
       questions: ['<b>2.</b> Calculate the voltage ' + U + ' in terms of ' + E + ', ' + I + ' and ' + R + '. You can use Thévenin/Norton equivalents.'],
       hints: [
         'Start on the left: the source 2' + E + ' in series with 6' + R + ' converts to a Norton equivalent. The rest does not change.',
@@ -237,14 +262,14 @@
       solution: [
         { t: 'Step 1: Thévenin → Norton', html: '<p>Call N<sub>1</sub> the node just after the top 6' + R + '. The generator (2' + E + ', 6' + R + ') becomes a current source 2' + E + '/(6' + R + ') = <b>' + E + '/(3' + R + ')</b>, pointing up (toward N<sub>1</sub>), in parallel with <b>6' + R + '</b>.</p>' +
             '<p>The rest does not change: the vertical source ' + I + ', the vertical 6' + R + ', the ' + I + ' // ' + R + ' block and the 2' + R + ' load.</p>',
-          figs: [{ cap: 'Intermediate diagram 1' }] },
+          figs: [{ spec: { aria: S23B1 }, cap: 'Intermediate diagram 1' }] },
         { t: 'Step 2: grouping', html: '<p>Between N<sub>1</sub> and B, both current sources point toward N<sub>1</sub>: they add up, <b>' + E + '/(3' + R + ') + ' + I + '</b>. The two 6' + R + ' in parallel give 6' + R + ' // 6' + R + ' = <b>3' + R + '</b>.</p>',
-          figs: [{ cap: 'Intermediate diagram 2' }] },
+          figs: [{ spec: { aria: S23B2 }, cap: 'Intermediate diagram 2' }] },
         { t: 'Step 3: Norton → Thévenin, twice', html: '<p>Between N<sub>1</sub> and B: emf 3' + R + '·(' + E + '/(3' + R + ') + ' + I + ') = <b>' + E + ' + 3' + RI + '</b>, pointing toward N<sub>1</sub>, in series with 3' + R + '.</p>' +
             '<p>Between N<sub>1</sub> and A: the ' + I + ' // ' + R + ' block becomes an emf <b>' + RI + '</b> pointing toward A, in the direction of the arrow of ' + I + ', in series with ' + R + '.</p>',
-          figs: [{ cap: 'Intermediate diagram 3: everything is in series.' }] },
+          figs: [{ spec: { aria: S23B3 }, cap: 'Intermediate diagram 3: everything is in series.' }] },
         { t: 'Step 4: series combination', html: '<p>From B to A, both emfs point in the direction of travel: they add up. ' + E + ' + 3' + RI + ' + ' + RI + ' = <b>' + E + ' + 4' + RI + '</b>, and 3' + R + ' + ' + R + ' = <b>4' + R + '</b>.</p>',
-          figs: [{ cap: 'Intermediate diagram 4: Thévenin generator seen by the load' }] },
+          figs: [{ spec: { aria: S23B4 }, cap: 'Intermediate diagram 4: Thévenin generator seen by the load' }] },
         { t: 'Result', html: '<p>Voltage divider: ' + U + ' = 2' + R + '/(2' + R + ' + 4' + R + ') × (' + E + ' + 4' + RI + '), i.e. <b>' + U + ' = (' + E + ' + 4' + RI + ')/3</b>.</p>' },
         { t: 'Checks', html: '<ul><li>Resistance seen by the 2' + R + ', sources turned off (2' + E + ' becomes a wire, the ' + I + ' sources open circuits): (6' + R + ' // 6' + R + ') + ' + R + ' = 4' + R + ' ✓.</li>' +
             '<li>Superposition: 2' + E + ' alone gives ' + E + '/3; the vertical source ' + I + ' alone gives ' + RI + '; the source ' + I + ' of the block alone gives ' + RI + '/3. Sum: (' + E + ' + 4' + RI + ')/3 ✓.</li></ul>' }],

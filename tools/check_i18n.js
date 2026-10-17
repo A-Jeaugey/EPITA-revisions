@@ -112,7 +112,7 @@ patches.forEach(({ file, target, map, key, before }) => {
       g.done++;
       const after = target[i];
       leaves(o, '', []).forEach(([p, v]) => {
-        if (SKIP_FIELD.test(p) || !FRENCHY.test(v.replace(/<[^>]+>/g, ''))) return;
+        if (SKIP_FIELD.test(p) || /^(https?:|\.\.?\/|assets\/)/.test(v) || !FRENCHY.test(v.replace(/<[^>]+>/g, ''))) return;
         const now = p.split('.').reduce((n, k) => n == null ? n : n[k], after);
         if (now === v) g.same.push(o[key] + '.' + p);
       });
