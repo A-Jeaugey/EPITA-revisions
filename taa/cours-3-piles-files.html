@@ -32,6 +32,7 @@
 .open>.rv{display:none}
 .open>.rv-a{display:block}
 .wrapcode code:not(.nw){white-space:normal}
+.tbl tr:last-child th{border-bottom:0}
 .rvt table{table-layout:fixed}
 .rvt thead th:first-child{width:7.5em}
 .rv-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
@@ -619,16 +620,46 @@ axiomes
   }
   MULTI.axioms.push({ id: 'A15', l: 'nboccurrences(x, supprimer(y, me))', neq: ['x', 'y'], r: 'nboccurrences(x, me)', text: 'x ≠ y ⇒ nboccurrences(x, supprimer(y, me)) = nboccurrences(x, me)' });
 
+  /* ---------- ateliers éditables : un sous-terme indéfini rend tout le terme indéfini.
+     Le moteur essaie les axiomes de l’extérieur vers l’intérieur : sommet(empiler(dépiler(pilevide), b))
+     donnerait b, l’axiome emportant le dépiler(pilevide) avant qu’il soit vu. Ici, avant d’appliquer un
+     axiome à op(empiler(…)) ou op(enfiler(…)), on vérifie que l’argument est entièrement défini. ---------- */
+  function guarded(base, ctor, empty) {
+    var P = base.partial, last = '';
+    function undef(t) { /* premier sous-terme indéfini, ou null */
+      if (t.a !== undefined) return null;
+      for (var i = 0; i < t.args.length; i++) { var u = undef(t.args[i]); if (u) return u; }
+      if (P[t.f] && t.args.length) { var v = T.rewrite.normal(t.args[0], base); if (v && v.a === empty) return t; }
+      return null;
+    }
+    var set = { name: base.name, vars: base.vars, roles: base.roles, axioms: base.axioms, partial: {} };
+    base.axioms.forEach(function (ax) {
+      var h = T.term.parse(ax.l).f;
+      if (set.partial[h]) return;
+      set.partial[h] = {
+        test: function (args) {
+          if (P[h] && P[h].test(args)) { last = P[h].msg; return true; }
+          var u = args[0] && args[0].f === ctor ? undef(args[0]) : null;
+          if (u) { last = 'il contient ' + T.term.str(u) + ', or ' + P[u.f].msg; return true; }
+          return false;
+        },
+        get msg() { return last; }
+      };
+    });
+    return set;
+  }
+  var PILE = guarded(T.rewrite.SETS.PILE, 'empiler', 'pilevide'), FILE = guarded(T.rewrite.SETS.FILE, 'enfiler', 'filevide');
+
   twin(document.getElementById('heroTwin'));
   T.stackBench(document.getElementById('stackS1'), { label: 'Une pile : empile, dépile, interroge', start: ['a', 'b'] });
-  T.stepper(document.getElementById('rwPile'), { set: 'PILE', label: 'Atelier : évalue un terme de pile', editable: true, presets: [
+  T.stepper(document.getElementById('rwPile'), { set: PILE, label: 'Atelier : évalue un terme de pile', editable: true, presets: [
     { name: 'deux dépiler', t: 'sommet(dépiler(dépiler(empiler(empiler(empiler(pilevide, a), b), c))))' },
     { name: 'empiler après dépiler', t: 'sommet(empiler(dépiler(empiler(empiler(pilevide, a), b)), c))' },
     { name: 'pile vide ?', t: 'estvide(dépiler(dépiler(empiler(empiler(pilevide, a), b))))' },
     { name: 'indéfini', t: 'sommet(dépiler(dépiler(empiler(pilevide, a))))' }
   ] });
   T.queueBench(document.getElementById('queueS4'), { label: 'Une file : enfile, défile, interroge', start: ['a', 'b'] });
-  T.stepper(document.getElementById('rwFile'), { set: 'FILE', label: 'Atelier : évalue un terme de file', editable: true, presets: [
+  T.stepper(document.getElementById('rwFile'), { set: FILE, label: 'Atelier : évalue un terme de file', editable: true, presets: [
     { name: 'premier après un défiler', t: 'premier(défiler(enfiler(enfiler(enfiler(filevide, a), b), c)))' },
     { name: 'défiler sur trois éléments', t: 'défiler(enfiler(enfiler(enfiler(filevide, a), b), c))' },
     { name: 'premier de trois', t: 'premier(enfiler(enfiler(enfiler(filevide, a), b), c))' },

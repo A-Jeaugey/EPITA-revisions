@@ -173,13 +173,15 @@
     c.args[path[0]] = replace(t.args[path[0]], path.slice(1), u);
     return c;
   }
-  /* positions, de l'extérieur vers l'intérieur, de gauche à droite */
+  /* positions de l'intérieur vers l'extérieur, de gauche à droite (les arguments avant l'opération) :
+     un sous-terme indéfini est toujours vu avant qu'un axiome ne le fasse disparaître, comme
+     sommet(empiler(dépiler(pilevide), b)), indéfini et pas b. */
   function positions(t) {
-    var out = [], q = [[t, []]];
-    while (q.length) {
-      var n = q.shift(); out.push(n[1]);
-      if (n[0].args) n[0].args.forEach(function (a, i) { q.push([a, n[1].concat(i)]); });
-    }
+    var out = [];
+    (function walk(n, path) {
+      if (n.args) n.args.forEach(function (a, i) { walk(a, path.concat(i)); });
+      out.push(path);
+    })(t, []);
     return out;
   }
   function builtin(t) {
@@ -189,7 +191,8 @@
     }
     return null;
   }
-  /* un pas : premier sous-terme réécrivable ; renvoie { path, before, after, ax, conds } ou null,
+  /* un pas : premier sous-terme réécrivable (le plus à l'intérieur, puis le plus à gauche) ;
+     renvoie { path, before, after, ax, conds } ou null,
      ou { undef: chemin, msg } si une opération partielle est appliquée hors de son domaine */
   function step(t, set, depth) {
     compile(set);
@@ -343,7 +346,7 @@
       if (!s || s.undef) return false;
       n++;
       var li = document.createElement('li');
-      li.innerHTML = '<div><div class="term">' + show(cur, { set: set, path: s.path }) + '</div><div class="why">' +
+      li.innerHTML = '<div><div class="term">' + show(cur, { set: set, path: s.path }) + '</div><div class="rw-why">' +
         (s.ax.id === 'calcul' ? 'calcul' : esc(s.ax.id) + ' : <code>' + esc(axText(s.ax)) + '</code>') +
         (s.conds.length ? '<br>condition : ' + s.conds.map(function (c) { return '<code>' + esc(c.text) + '</code>' + (c.steps && c.steps.length ? ' (' + c.steps.map(function (k) { return k.ax.id; }).join(', ') + ')' : ''); }).join(' et ') : '') + '</div></div>';
       list.appendChild(li);
