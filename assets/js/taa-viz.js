@@ -132,7 +132,7 @@
     /* file */
     'Deux ordres, la même file': 'Two orders, the same queue', 'file FIFO': 'FIFO queue', 'File de départ': 'Starting queue',
     '{f} vide': '{f} empty', 'Dans chaque file, la tête, celle qui sort, est à gauche.': 'In each queue, the head, the one that leaves, is on the left.',
-    'Enfiler, puis défiler': 'Enqueue, then dequeue', 'Défiler, puis enfiler': 'Dequeue, then enqueue', 'indéfini': 'undefined', 'sort': 'leaves', 'entre': 'enters',
+    'Enfiler, puis défiler': 'Enqueue, then dequeue', 'Défiler, puis enfiler': 'Dequeue, then enqueue', 'indéfini': 'undefined', 'sort': 'leaves',
     'Même file des deux côtés : {q}. Enfiler {e} avant ou après le défiler ne change rien, car ce n’est pas {e} qui sort : c’est {a}, le premier de {f}. C’est l’axiome {ax}.':
       'Same queue on both sides: {q}. Enqueuing {e} before or after the dequeue changes nothing, because {e} is not the one that leaves: {a} is, the first of {f}. That is the axiom {ax}.',
     'Ici, les deux côtés ne vont plus ensemble : à gauche, {e} entre puis ressort aussitôt, il reste {nil} ; à droite, {t} n’existe pas (précondition). D’où la condition {c}, et un axiome à part pour ce cas : {ax}.':
