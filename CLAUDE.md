@@ -44,6 +44,11 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `{ id, exam, kind:'partiel'|'td'|'archive'|'cours', order, src, title, pts, topics, lvl, time, intro,
   specs:[{ code, cap }], questions, hints, solution:[{ t, html, spec }], answer (HTML ou { html, spec }), traps,
   grading, official }`. Notions : `window.TAA_TOPICS` et sujets : `window.TAA_EXAMS` (`data/taa/exams.js`).
+  Fichiers : `ex-annales.js` (partiels 2017-2024), `ex-externes.js` (janvier 2018, cours en ligne, exercices
+  construits). QCM : `data/qcm/taa.js` (cours), `taa-annales.js` (questions de cours des partiels, rattachées par
+  `same`), `taa-hebdo.js` (QCM hebdo des promos 2021 à 2030, `also` = autres apparitions).
+  Points vérifiés : une constante retourne un type défini (partiel 2023) ; la signature occupe les zones types,
+  utilise, opérations ; « opération auxiliaire » = sert à écrire le domaine d’une autre.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
