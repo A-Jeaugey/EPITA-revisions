@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Abstract types · TAA</title>
+<meta name="description" content="TAA, chapter 1: signature, hierarchy of types and operations, preconditions, axioms, rewriting a term, consistency and completeness.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/taa.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="TAA · chapter 1: abstract types">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">TAA</a> · Chapter 1 of 3</div>
+      <h1>An abstract type is a <span class="w">contract</span>.</h1>
+      <p class="lead">You describe what can be done with a piece of data and the rules those operations obey, without ever saying how it is coded. This chapter sets out all the vocabulary: signature, hierarchy, preconditions, axioms.</p>
+      <div class="chips"><span class="chip">≈ 35 min</span><span class="chip">8 parts</span><span class="chip">MiMos of weeks 1 and 2 · “Abstract types” sheet</span><span class="chip ex">course questions in the exam</span></div>
+    </div>
+    <div id="heroRw" aria-label="Workshop: rewrite a term with the axioms of the stack"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 1 · Abstract types</div>
+    <ol>
+      <li><a href="#s1"><span class="plates" data-n="1"></span><span>Why an abstract type</span></a></li>
+      <li><a href="#s2"><span class="plates" data-n="2"></span><span>The signature</span></a></li>
+      <li><a href="#s3"><span class="plates" data-n="3"></span><span>Defined and predefined types</span></a></li>
+      <li><a href="#s4"><span class="plates" data-n="4"></span><span>Internal operations and observers</span></a></li>
+      <li><a href="#s5"><span class="plates" data-n="5"></span><span>Preconditions</span></a></li>
+      <li><a href="#s6"><span class="plates" data-n="6"></span><span>The axioms</span></a></li>
+      <li><a href="#s7"><span class="plates" data-n="7"></span><span>Rewriting a term</span></a></li>
+      <li><a href="#s8"><span class="plates" data-n="8"></span><span>Consistency, completeness</span></a></li>
+    </ol>
+    <p class="toc-note">The number of plates gives the part number. A check mark appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← TAA home</a><a href="cours-2-listes.html">Chapter 2: lists →</a><a href="../qcm/index.html#taa">TAA MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Why an abstract type</a></li><li><a href="#s2">The signature</a></li><li><a href="#s3">Defined and predefined types</a></li><li><a href="#s4">Internal operations and observers</a></li>
+      <li><a href="#s5">Preconditions</a></li><li><a href="#s6">The axioms</a></li><li><a href="#s7">Rewriting a term</a></li><li><a href="#s8">Consistency, completeness</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="1"></span>Part 1</div><h2>Why an abstract type</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>There are two ways to design an algorithm. The first: code right away with the types of the language (arrays, records…) and their functions. The algorithm is then glued to that language, and hard to transcribe into another one.</p>
+          <p>The second: define an <b>abstract type</b> first. You give the type a name, list what can be done with it and the properties those operations obey, without saying anything about the language or the machine. If a problem needs a stack, you reason with “push” and “pop”, without wondering whether the stack is an array or a chain of cells in memory.</p>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><p>The definition of an <b>abstract algebraic type</b> (or abstract data type) is made of two parts:</p><ul><li>a <b>signature</b>: the types and the operations;</li><li>a <b>system of axioms</b>: the properties of those operations.</li></ul></div>
+        <div class="prose">
+          <p>The rest of the course follows the same plan. Here is the skeleton of a definition, with its six keywords in order:</p>
+        </div>
+<pre data-spec aria-label="Skeleton of an abstract type">
+types
+    the types we define
+uses
+    the types that already exist
+operations
+    name : types of the arguments → type of the result
+preconditions
+    the domain of the partial operations
+axioms
+    the properties of the operations
+with
+    the type of each name used in the axioms
+</pre>
+        <div class="note why"><span class="tag">Why it is useful</span><p>The axioms are enough to compute. In the workshop at the top of the page, the term <code>top(pop(push(push(emptystack, a), b)))</code> reduces to <code>a</code> just by applying two axioms, with no stack in memory.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="taa:types:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="2"></span>Part 2</div><h2>The signature: types and operations</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The <b>signature</b> of an abstract type is made of <b>types</b> and <b>operations</b>.</p>
+          <p>The <b>types</b> are names of sets of values: the ones you want to define. You list them after the keyword <code>types</code>, for example <code>stack</code>, <code>list</code>, <code>graph</code>.</p>
+          <p>Each <b>operation</b> is defined by its <b>name</b> and its <b>profile</b>: the types of its arguments, then, after the arrow, the type of its result.</p>
+        </div>
+<pre data-spec aria-label="Examples of operations from the summary sheet">
+operations
+    delete : list x integer → list
+    length : list → integer
+       nth : list x integer → element
+       _^_ : integer x integer → integer
+     false : → boolean
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Operation</th><th>Arguments</th><th>Result</th><th>How you write it</th></tr></thead>
+          <tbody>
+            <tr><td><code>delete</code></td><td>a list, an integer</td><td>a list</td><td><code>delete(λ, i)</code></td></tr>
+            <tr><td><code>length</code></td><td>a list</td><td>an integer</td><td><code>length(λ)</code></td></tr>
+            <tr><td><code>_^_</code></td><td>two integers</td><td>an integer</td><td><code>4^2</code>: each <code>_</code> marks the place of an argument (infix notation)</td></tr>
+            <tr><td><code>false</code></td><td>none</td><td>a boolean</td><td><code>false</code>: it is a <b>constant</b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>The definition of an operation = its <b>name</b> + its <b>profile</b>.</li><li>The profile reads “types of the arguments → type of the result”. The symbol <code>×</code> separates the arguments.</li><li>A <b>constant</b> is an operation with no argument: nothing before the arrow. It returns a value of the <b>defined type</b>: <code>emptystack : → stack</code> in the stack type, <code>false : → boolean</code> in the boolean type.</li></ul></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>2023 midterm: “What type of data does a constant return?” Expected answer: <b>a defined type</b>. A paper that answered “predefined” got 0: the sheet’s example <code>false : → boolean</code> is the constant of the boolean type itself.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>The profile does not say what the operation does. <code>push : stack × element → stack</code> and <code>pop : stack → stack</code> both return a stack: the axioms say which one adds and which one removes.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="taa:types:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="3"></span>Part 3</div><h2>The hierarchy: defined and predefined types</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>An abstract type almost always builds on other types. A list contains elements, is measured with integers, is tested with booleans. So we distinguish two kinds of types:</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-int">Defined</span> type</h4><p>It is <b>new</b>, “under design”. It is the one you are writing. It is listed in <code>types</code>.</p><p class="muted">E.g.: <code>list</code>, <code>box</code> in the list type.</p></div>
+          <div class="card"><h4><span class="op-obs">Predefined</span> type</h4><p>It <b>already exists</b>, “already designed”. You use it without redefining it. It is listed in <code>uses</code>, before the operations.</p><p class="muted">E.g.: <code>integer</code>, <code>boolean</code>, <code>element</code>.</p></div>
+        </div>
+<pre data-spec aria-label="Header of the iterative list">
+types
+    list, box
+uses
+    integer, element
+</pre>
+        <div class="prose"><p>Here, the iterative list defines two types at once: the <code>list</code> and the <code>box</code> (the cell that holds an element). It uses integers (for ranks) and elements (what you store), which already exist.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><p>Defined = in <code>types</code>, the new one. Predefined = in <code>uses</code>, it already exists. This distinction is used to classify the operations (next part).</p><p>The <code>uses</code> area is part of the signature: the exam answer keys name three areas for the signature, <code>types</code>, <code>uses</code> and <code>operations</code>. The preconditions, the axioms and the <code>with</code> area are not part of it.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="taa:types:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="4"></span>Part 4</div><h2>Internal operations and observers</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Once the types are classified, the profile of an operation is enough to tell its role.</p></div>
+        <div class="grid2">
+          <div class="card"><h4><span class="op-int">Internal operation</span></h4><p>It returns a result of a <b>defined type</b>. It builds or modifies a piece of data of the type.</p><p class="muted"><code>push : stack × element → stack</code></p></div>
+          <div class="card"><h4><span class="op-obs">Observer</span></h4><p>It has <b>at least one argument of a defined type</b> and returns a result of a <b>predefined type</b>. It queries the data without changing it.</p><p class="muted"><code>top : stack → element</code></p></div>
+        </div>
+        <div class="legend"><span><i style="background:var(--int)"></i>internal operation</span><span><i style="background:var(--obs)"></i>observer</span><span><i style="background:var(--cst)"></i>constant</span></div>
+<pre data-spec data-roles="1" aria-label="Signature of the stack, operations colored by role">
+types
+    stack
+uses
+    boolean, element
+operations
+    emptystack : → stack
+          push : stack x element → stack
+           pop : stack → stack
+           top : stack → element
+       isempty : stack → boolean
+</pre>
+        <div class="prose"><p>Your turn: classify each operation. Hint: look at the type of the result first, then at whether there is an argument of a defined type.</p></div>
+        <div id="sorter1" aria-label="Exercise: classify the operations"></div>
+        <div class="note trap"><span class="tag">Classic traps</span><ul>
+          <li>“Observer” does not mean “returns a boolean”. <code>top</code> returns an element and it is an observer.</li>
+          <li>A defined type may not be the “main” type. In the iterative list, <code>box</code> is defined: <code>access : list × integer → box</code> is therefore an internal operation, whereas <code>contents : box → element</code> is an observer.</li>
+          <li>A constant like <code>emptystack</code> has no argument: it cannot be an observer, which needs an argument of a defined type. It returns the defined type: it is an internal operation with no argument.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the exam</span><p>Course questions seen in the midterms: “What are the specifications of the profile of an observer?”, “The definition of an operation is made of?” Answer with the words of the course: <b>at least</b> one argument of a defined type, a result of a predefined type; a name and a profile.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="taa:types:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="5"></span>Part 5</div><h2>Partial operations and preconditions</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Some operations do not make sense everywhere. The top of an empty stack does not exist. You cannot delete the 5<sup>th</sup> element of a list that has 3. These operations are <b>partial</b>: they are defined only on part of their arguments.</p>
+          <p>The <b>preconditions</b> give this <b>domain of definition</b>, with the formula <code class="nw">is-defined-iaoi</code> (“is defined if and only if”). You write them before the axioms.</p>
+        </div>
+<pre data-spec aria-label="Preconditions of the stack and of the iterative list">
+preconditions
+    pop(s) is-defined-iaoi isempty(s) = false
+    top(s) is-defined-iaoi isempty(s) = false
+    delete(λ, i) is-defined-iaoi isempty(λ) = false &amp; 1 ≤ i ≤ length(λ)
+</pre>
+        <div class="note keep"><span class="tag">Method: is an operation partial?</span><ol><li>Look for an argument for which the result makes no sense: empty structure, rank out of bounds, cell never filled.</li><li>If there is one, write the precondition that rules it out, with the operations of the type (<code>isempty</code>, <code>length</code>, <code>≠ emptylist</code>…).</li><li>Otherwise, the operation is total: <b>no precondition</b>, and say so.</li></ol></div>
+        <div class="prose"><p>To write a precondition, you sometimes need an operation that does not exist yet. To search for an element in a list, you first need to know whether it is there: you add <code>ispresent</code> to the signature, just to write the domain of <code>search</code>. An operation that serves to specify the domain of definition of another one is called an <b>auxiliary operation</b>.</p></div>
+<pre data-spec aria-label="An auxiliary operation in a precondition">
+operations
+    ispresent : element x list → boolean
+       search : element x list → box
+preconditions
+    search(e, λ) is-defined-iaoi ispresent(e, λ) = true
+</pre>
+        <div class="note exam"><span class="tag">In the exam</span><p>2019 midterm: “an operation used to specify the domain of definition of another one” is an <b>auxiliary operation</b>; “an operation that is not defined everywhere” is a <b>partial operation</b> (2021, 2022). <code>ispresent</code> and <code>search</code> came up in 2018 and in 2020.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Do not invent a precondition. <code>push</code> works on any stack. Concatenating two lists works even if one of them is empty: at the 2023 midterm, the right answer to “preconditions of concatenate?” was <b>none</b>.</p></div>
+        <div class="prose"><p>A precondition that is not met makes the term <b>undefined</b>. Try it: the workshop stops as soon as a partial operation receives an empty stack.</p></div>
+        <div id="rwPartial"></div>
+        <div data-check-ref="taa/cours-1-types.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="taa:types:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="6"></span>Part 6</div><h2>The axioms: applying observers to internal operations</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The profile says what an operation takes and returns, not what it does. The <b>axioms</b> give the properties. To find out what an internal operation does, you apply the observers to it: “if I push <code>e</code>, what is the top? Is the stack empty?”.</p>
+          <p>In practice, you make a table: each observer (and each operation that undoes, like <code>pop</code>) applied to each way of building a stack (<code>emptystack</code>, <code>push(s, e)</code>). Each cell gives an axiom, or nothing if a precondition forbids it.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><code>emptystack</code></th><th><code>push(s, e)</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code class="op-obs">isempty</code></th><td><code>isempty(emptystack) = true</code></td><td><code>isempty(push(s, e)) = false</code></td></tr>
+            <tr><th scope="row"><code class="op-obs">top</code></th><td class="muted">forbidden (precondition)</td><td><code>top(push(s, e)) = e</code></td></tr>
+            <tr><th scope="row"><code class="op-int">pop</code></th><td class="muted">forbidden (precondition)</td><td><code>pop(push(s, e)) = s</code></td></tr>
+          </tbody>
+        </table></div>
+<pre data-spec aria-label="Axioms of the stack">
+axioms
+    pop(push(s, e)) = s
+    top(push(s, e)) = e
+    isempty(emptystack) = true
+    isempty(push(s, e)) = false
+with
+    stack s
+    element e
+</pre>
+        <div class="prose">
+          <p>An axiom can have a <b>condition</b>, written before <code>⇒</code>: the equality holds only if the condition does. This is essential when the result depends on a case. For the iterative list, the i-th element after a deletion depends on where i stands relative to k:</p>
+        </div>
+<pre data-spec aria-label="Conditional axioms of delete">
+axioms
+    1 ≤ i &lt; k ⇒ nth(delete(λ, k), i) = nth(λ, i)
+    k ≤ i ≤ length(λ) - 1 ⇒ nth(delete(λ, k), i) = nth(λ, i + 1)
+    length(delete(λ, k)) = length(λ) - 1
+</pre>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>The axioms define what the internal operations do: you apply their observers to them.</li><li>Every possible case must give a value; the cases forbidden by a precondition have no axiom.</li><li>The <code>with</code> area gives the type of each name used (<code>stack s</code>, <code>element e</code>).</li></ul></div>
+        <div class="note trap"><span class="tag">Trap</span><p>An axiom is an equality between two terms of the same type. <code>top(push(s, e)) = s</code> is wrong twice: the value is wrong, and the types do not match (an element on one side, a stack on the other).</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="taa:types:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="7"></span>Part 7</div><h2>Reading and rewriting a term</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>term</b> is a series of nested operations: <code>push(push(emptystack, a), b)</code> is the stack where you pushed <code>a</code> then <code>b</code>. You read it from the inside out: the innermost operation was done first.</p>
+          <p>To compute a term, you <b>rewrite</b> it: you look for a piece that has exactly the shape of the left-hand side of an axiom, replace it with the right-hand side, and start again until no axiom applies.</p>
+        </div>
+        <ol class="steps">
+          <li><div><b>Spot the pattern.</b> <code>pop(push(s, e))</code> applies to any piece of the form “pop of a push”, whatever the stack <code>s</code> and the element <code>e</code>.</div></li>
+          <li><div><b>Match the variables.</b> In <code>pop(push(push(emptystack, a), b))</code>, <code>s</code> is <code>push(emptystack, a)</code> and <code>e</code> is <code>b</code>.</div></li>
+          <li><div><b>Replace.</b> The right-hand side is <code>s</code>: the piece becomes <code>push(emptystack, a)</code>.</div></li>
+          <li><div><b>Check the conditions and the preconditions.</b> An axiom with <code>⇒</code> applies only if its condition is true; a partial operation outside its domain makes the term undefined.</div></li>
+        </ol>
+        <div class="prose"><p>The same steps, on the term drawn as a tree: each operation is a node, its arguments are its children. Go one step at a time and watch the highlighted subtree (the pattern), the frames of <code>s</code> and <code>e</code> (the variables), then the replacement. You will see why <code>top</code>, at the root, can do nothing until the <code>pop</code> below it is reduced.</p></div>
+        <div class="viz-arbre" data-viz="arbre"></div>
+        <div id="rwMain"></div>
+        <div class="note trap"><span class="tag">Trap</span><p>An axiom applies to a piece that has exactly its shape. <code>top(pop(push(push(emptystack, a), b)))</code> does not have the form <code>top(push(…))</code>: you must first reduce the <code>pop</code> inside.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="taa:types:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plates" data-n="8"></span>Part 8</div><h2>Consistency, completeness and two full examples</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The set of axioms of a type must have two properties:</p></div>
+        <div class="grid2">
+          <div class="card"><h4>Consistency</h4><p>No <b>contradictory</b> axioms: you must never be able to prove two different results for the same term.</p><p class="muted">Adding <code>top(push(s, e)) = first(s)</code> next to <code>top(push(s, e)) = e</code> would make the stack inconsistent.</p></div>
+          <div class="card"><h4>Completeness</h4><p>Having written <b>enough</b> axioms: every well-defined term must be computable.</p><p class="muted">Without <code>isempty(emptystack) = true</code>, we could not compute <code>isempty(emptystack)</code>.</p></div>
+        </div>
+        <h3>Example 1: the boolean type</h3>
+        <div class="prose"><p>This is the application exercise from Moodle: write the axioms of <code>not</code>, <code class="nw">_ and _</code> and <code class="nw">_ or _</code>. You apply each operation to the two constants <code>true</code> and <code>false</code>; for <code>and</code> and <code>or</code>, looking at the first argument is enough.</p></div>
+<pre data-spec data-roles="1" aria-label="The boolean type with its axioms">
+types
+    boolean
+operations
+       true : → boolean
+      false : → boolean
+        not : boolean → boolean
+    _ and _ : boolean x boolean → boolean
+     _ or _ : boolean x boolean → boolean
+axioms
+    not(true) = false
+    not(false) = true
+    true and b = b
+    false and b = false
+    true or b = true
+    false or b = b
+with
+    boolean b
+</pre>
+        <div class="prose"><p>Six axioms, and that is complete: every boolean term reduces to <code>true</code> or to <code>false</code>. Check it in the workshop.</p></div>
+        <div id="rwBool"></div>
+        <h3>Example 2: the vector type (Moodle appendix)</h3>
+        <div class="prose"><p>A vector has bounds and cells that you fill one by one. It brings back the whole chapter: a partial operation (<code>nth</code>) and conditional axioms that separate “same cell” and “other cell”.</p></div>
+<pre data-spec data-roles="1" aria-label="The vector type">
+types
+    vector
+uses
+    integer, boolean, element
+operations
+          vect : integer x integer → vector
+     modifynth : vector x integer x element → vector
+           nth : vector x integer → element
+        isinit : vector x integer → boolean
+    upperlimit : vector → integer
+    lowerlimit : vector → integer
+preconditions
+    nth(v, i) is-defined-iaoi lowerlimit(v) ≤ i ≤ upperlimit(v) &amp; isinit(v, i) = true
+axioms
+    lowerlimit(v) ≤ i ≤ upperlimit(v) ⇒ nth(modifynth(v, i, e), i) = e
+    lowerlimit(v) ≤ i ≤ upperlimit(v) &amp; lowerlimit(v) ≤ j ≤ upperlimit(v) &amp; i ≠ j
+                ⇒ nth(modifynth(v, i, e), j) = nth(v, j)
+    isinit(vect(i, j), k) = false
+    lowerlimit(v) ≤ i ≤ upperlimit(v) ⇒ isinit(modifynth(v, i, e), i) = true
+    lowerlimit(v) ≤ i ≤ upperlimit(v) &amp; lowerlimit(v) ≤ j ≤ upperlimit(v) &amp; i ≠ j
+                ⇒ isinit(modifynth(v, i, e), j) = isinit(v, j)
+    lowerlimit(vect(i, j)) = i
+    lowerlimit(modifynth(v, i, e)) = lowerlimit(v)
+    upperlimit(vect(i, j)) = j
+    upperlimit(modifynth(v, i, e)) = upperlimit(v)
+with
+    vector v
+    integer i, j, k
+    element e
+</pre>
+        <div class="note keep"><span class="tag">The “same cell, other cell” pattern</span><p>After <code>modifynth(v, i, e)</code>, cell <code>i</code> holds <code>e</code> and all the other cells <code>j ≠ i</code> are unchanged. This split into two cases comes back in almost every axiom for access by position.</p></div>
+        <div class="note trap"><span class="tag">Typo on the Moodle page</span><p>The second-to-last axiom on <code>isinit</code> is written there with <code>init(v, j)</code>, an operation that does not exist. Read it as <code>isinit(v, j)</code>, as above.</p></div>
+        <div data-check-ref="taa/cours-1-types.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="taa:types:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Chapter 2 applies all of this to <a href="cours-2-listes.html">recursive and iterative lists</a>, the heart of the exam exercises.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/spec.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/taa.js"></script>
+<script src="../data/en/qcm/taa.js"></script>
+<script src="../assets/js/taa.js"></script>
+<script>
+(function () {
+  var R = window.REV, T = R.taa;
+  T.stepper(document.getElementById('heroRw'), { set: 'PILE', label: 'Try it: rewrite with the axioms of the stack', presets: [
+    { name: 'top after a pop', t: 'top(pop(push(push(emptystack, a), b)))' },
+    { name: 'empty stack?', t: 'isempty(pop(push(emptystack, a)))' },
+    { name: 'three pops', t: 'top(pop(pop(push(push(push(emptystack, a), b), c))))' }
+  ] });
+  T.sorter(document.getElementById('sorter1'), { rows: [
+    { p: 'emptystack : → stack', r: 'cst', why: 'No argument: it is a constant. It returns a stack (defined type): it is the empty stack you start from.' },
+    { p: 'push : stack × element → stack', r: 'int', why: 'The result is a stack, the defined type: internal operation.' },
+    { p: 'pop : stack → stack', r: 'int', why: 'The result is a stack: internal operation, even though it removes an element.' },
+    { p: 'top : stack → element', r: 'obs', why: 'One argument of a defined type (stack) and a predefined result (element): observer.' },
+    { p: 'isempty : stack → boolean', r: 'obs', why: 'One stack argument, a boolean (predefined) result: observer.' },
+    { p: 'access : list × integer → box (iterative list, types list and box)', r: 'int', why: 'box is a defined type of the list: the result is of a defined type, so it is an internal operation.' },
+    { p: 'contents : box → element', r: 'obs', why: 'One argument of a defined type (box), a predefined result (element): observer.' }
+  ] });
+  T.stepper(document.getElementById('rwPartial'), { set: 'PILE', label: 'Defined or undefined?', presets: [
+    { name: 'top of an empty stack', t: 'top(pop(push(emptystack, a)))' },
+    { name: 'two pops too many', t: 'pop(pop(push(emptystack, a)))' },
+    { name: 'all fine', t: 'top(push(pop(push(emptystack, a)), b))' }
+  ] });
+  T.stepper(document.getElementById('rwMain'), { set: 'PILE', label: 'Workshop: write your own stack term', editable: true, presets: [
+    { name: 'example', t: 'top(pop(push(push(emptystack, a), b)))' },
+    { name: 'isempty', t: 'isempty(pop(pop(push(push(emptystack, a), b))))' },
+    { name: 'push after pop', t: 'top(push(pop(push(emptystack, a)), c))' }
+  ] });
+  T.stepper(document.getElementById('rwBool'), { set: 'BOOL', label: 'Workshop: the axioms of the boolean', editable: true, presets: [
+    { name: 'not not', t: 'not(not(true))' },
+    { name: 'and / or', t: 'not(false and true) and (true or false)' },
+    { name: 'De Morgan', t: 'not(true or false)' }
+  ] });
+})();
+</script>
+<script src="../assets/js/taa-viz.js"></script>
+</body>
+</html>

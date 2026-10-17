@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fundamental laws · Elec</title>
+<meta name="description" content="Electronics S1, chapter 2: nodes, branches and loops, Kirchhoff’s laws, series and parallel, equivalent resistance, voltage and current dividers, solving method.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+#ex1 .badge{opacity:0;transition:opacity .25s}
+#ex1.m-nodes .badge-n,#ex1.m-branches .badge-b{opacity:1}
+#ex1.m-nodes [data-node="A"]{stroke:var(--nA);stroke-width:6}
+#ex1.m-nodes [data-node="B"]{stroke:var(--nB);stroke-width:6}
+#ex1.m-nodes [data-node="C"]{stroke:var(--nC);stroke-width:6}
+#ex1.m-nodes [data-node="M"]{stroke:var(--muted);stroke-dasharray:4 5}
+#ex1.m-branches [data-br="1"]{stroke:var(--nA);fill:var(--pot-soft)}
+#ex1.m-branches [data-br="2"]{stroke:var(--nB);fill:var(--warn-soft)}
+#ex1.m-branches [data-br="3"]{stroke:var(--nC);fill:var(--accent-soft)}
+#ex1.m-branches [data-br="4"]{stroke:var(--volt);fill:var(--volt-soft)}
+#ex1.m-branches [data-node="M"]{stroke:var(--volt);stroke-width:4}
+#ex1.m-branches [data-br="5"]{stroke:var(--amp);fill:var(--amp-soft)}
+#ex1 .loop{fill:var(--pot-soft);fill-opacity:.55;stroke:var(--pot);stroke-width:5;stroke-linejoin:round;opacity:0;transition:opacity .25s}
+#ex1.m-loops .loop.on{opacity:1}
+.bA{fill:var(--nA)} .bB{fill:var(--nB)} .bC{fill:var(--nC)}
+.stepper-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stepper-nav .mono{font-variant-numeric:tabular-nums;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Elec · chapter 2: fundamental laws">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="ah-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-v"/></marker>
+    <marker id="ah-i" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-i"/></marker>
+    <marker id="ah-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-p"/></marker>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Elec</a> · Chapter 2 of 3</div>
+      <h1>Nothing is lost, everything <span class="w">is shared</span>.</h1>
+      <p class="lead">Two conservation laws and two sharing rules are enough to solve any resistor circuit. This is the heart of the “fundamental laws” exercise on the midterm, and the basis of Thévenin.</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">8 parts</span><span class="chip">course “Fundamental Laws” · TD 1</span><span class="chip ex">5 to 9 points on the midterm</span></div>
+    </div>
+    <div class="bench" aria-label="Simulator: voltage divider">
+      <div class="bench-head"><span>Try it: two resistors share 12 V</span><span>series</span></div>
+      <div class="fig" id="heroFig"></div>
+      <div class="ctrls">
+        <div class="grid2">
+          <div class="slider"><label for="hR1"><var>R</var><sub>1</sub></label><output id="hR1v">4 kΩ</output><input id="hR1" type="range" min="1" max="20" value="4"></div>
+          <div class="slider"><label for="hR2"><var>R</var><sub>2</sub></label><output id="hR2v">8 kΩ</output><input id="hR2" type="range" min="1" max="20" value="8"></div>
+        </div>
+        <div class="split" aria-hidden="true"><div class="sa" id="hA"></div><div class="sb" id="hB"></div></div>
+        <div class="readout" id="hRead" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Fundamental laws</div>
+    <ol>
+      <li><a href="#s1"><span class="code" data-n="1"></span><span>Nodes, branches, loops</span></a></li>
+      <li><a href="#s2"><span class="code" data-n="2"></span><span>Kirchhoff’s current law</span></a></li>
+      <li><a href="#s3"><span class="code" data-n="3"></span><span>Kirchhoff’s voltage law</span></a></li>
+      <li><a href="#s4"><span class="code" data-n="4"></span><span>Series or parallel</span></a></li>
+      <li><a href="#s5"><span class="code" data-n="5"></span><span>Equivalent resistance</span></a></li>
+      <li><a href="#s6"><span class="code" data-n="6"></span><span>Voltage divider</span></a></li>
+      <li><a href="#s7"><span class="code" data-n="7"></span><span>Current divider</span></a></li>
+      <li><a href="#s8"><span class="code" data-n="8"></span><span>Solving a circuit</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="cours-1-bases.html">← Chapter 1: the basics</a><a href="cours-3-theoremes.html">Chapter 3: theorems →</a><a href="methodes.html">Step-by-step methods</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Contents (8 parts)</summary>
+      <ol>
+        <li><a href="#s1">Nodes, branches, loops</a></li><li><a href="#s2">Kirchhoff’s current law</a></li><li><a href="#s3">Kirchhoff’s voltage law</a></li><li><a href="#s4">Series or parallel</a></li>
+        <li><a href="#s5">Equivalent resistance</a></li><li><a href="#s6">Voltage divider</a></li><li><a href="#s7">Current divider</a></li><li><a href="#s8">Solving a circuit</a></li>
+      </ol>
+    </details>
+
+    <!-- 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Part 1</span></div><h2>Nodes, branches, loops</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Word</th><th>Course definition</th></tr></thead>
+          <tbody>
+            <tr><td><b>Node</b></td><td>A point serving as a junction for several conductors: the interconnection of <b>at least 3 wires</b>. With 2 wires, it is a bend, not a junction.</td></tr>
+            <tr><td><b>Branch</b></td><td>A portion of circuit located between <b>two consecutive nodes</b>. The <b>same current</b> flows through it from start to finish.</td></tr>
+            <tr><td><b>Loop</b><br><span class="en">mesh</span></td><td>A set of branches forming a <b>closed contour</b>, which you can traverse passing only once through each intermediate node.</td></tr>
+          </tbody></table></div>
+        <h3>How to count</h3>
+        <ol class="steps">
+          <li><div><b>Color.</b> Everything connected by wire alone gets the same color. One color = one potential. A wire joining two black dots merges them into a single node.</div></li>
+          <li><div><b>Count the nodes.</b> Every color that touches 3 or more elements is a node.</div></li>
+          <li><div><b>Count the branches.</b> A branch goes from one node to another through one or more components.</div></li>
+          <li><div><b>Count the loops.</b> The “windows” of the drawing are the basic loops, and there are <b>branches − nodes + 1</b> of them. The midterm answer keys count <b>all</b> the loops, including the tours that enclose several windows.</div></li>
+        </ol>
+        <div class="bench" id="ex1wrap">
+          <div class="bench-head"><span>Figure 1 of TD 1, to explore</span><span class="td">TD1 · Ex 1</span></div>
+          <div class="fig">
+            <svg class="c m-nodes" id="ex1" viewBox="0 0 440 310" role="img" aria-label="Circuit of exercise 1 with five resistors and a generator">
+              <g id="ex1-loops">
+                <polygon class="loop" data-l="0" points="40,40 200,40 200,100 40,100"/>
+                <polygon class="loop" data-l="1" points="40,100 380,100 380,190 40,190"/>
+                <polygon class="loop" data-l="2" points="40,190 380,190 380,260 40,260"/>
+                <polygon class="loop" data-l="3" points="40,40 200,40 200,100 380,100 380,190 40,190"/>
+                <polygon class="loop" data-l="4" points="40,100 380,100 380,260 40,260"/>
+                <polygon class="loop" data-l="5" points="40,40 200,40 200,100 380,100 380,260 40,260"/>
+              </g>
+              <path class="w" data-node="A" d="M40 40V260M40 40H100M40 100H100M40 190H90M40 260H192"/>
+              <path class="w" data-node="B" d="M150 40H200V100M150 100H380V130"/>
+              <path class="w" data-node="C" d="M380 180V260M290 190H380M228 260H380"/>
+              <path class="w" data-node="M" d="M140 190H240"/>
+              <rect class="r" data-br="1" x="100" y="32" width="50" height="16"/>
+              <rect class="r" data-br="2" x="100" y="92" width="50" height="16"/>
+              <rect class="r" data-br="3" x="372" y="130" width="16" height="50"/>
+              <rect class="r" data-br="4" x="90" y="182" width="50" height="16"/>
+              <rect class="r" data-br="4" x="240" y="182" width="50" height="16"/>
+              <circle class="r" data-br="5" cx="210" cy="260" r="18"/>
+              <path class="w" d="M192 260H228"/>
+              <circle class="dot" cx="40" cy="100" r="4.5"/><circle class="dot" cx="200" cy="100" r="4.5"/>
+              <circle class="dot" cx="40" cy="190" r="4.5"/><circle class="dot" cx="380" cy="190" r="4.5"/>
+              <circle class="dot" cx="190" cy="190" r="3"/>
+              <text class="lbl" x="114" y="25">R<tspan class="s" dy="4">2</tspan></text>
+              <text class="lbl" x="114" y="128">R<tspan class="s" dy="4">1</tspan></text>
+              <text class="lbl" x="396" y="160">R<tspan class="s" dy="4">3</tspan></text>
+              <text class="lbl" x="104" y="220">R<tspan class="s" dy="4">4</tspan></text>
+              <text class="lbl" x="254" y="220">R<tspan class="s" dy="4">5</tspan></text>
+              <text class="lbl" x="204" y="298">E</text>
+              <g class="badge badge-n"><circle class="bA" cx="20" cy="150" r="11"/><text x="20" y="154" text-anchor="middle">A</text></g>
+              <g class="badge badge-n"><circle class="bB" cx="224" cy="78" r="11"/><text x="224" y="82" text-anchor="middle">B</text></g>
+              <g class="badge badge-n"><circle class="bC" cx="406" cy="228" r="11"/><text x="406" y="232" text-anchor="middle">C</text></g>
+              <text class="badge badge-n tiny" x="166" y="176">not a node</text>
+              <g class="badge badge-b"><text class="bt" x="156" y="30" style="fill:var(--nA)">b1</text><text class="bt" x="156" y="90" style="fill:var(--nB)">b2</text><text class="bt" x="350" y="150" style="fill:var(--nC)">b3</text><text class="bt" x="182" y="208" style="fill:var(--volt)">b4</text><text class="bt" x="236" y="252" style="fill:var(--amp)">b5</text></g>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row" role="group" aria-label="What to show">
+              <button class="btn" type="button" data-mode="nodes" aria-pressed="true">Nodes</button>
+              <button class="btn" type="button" data-mode="branches" aria-pressed="false">Branches</button>
+              <button class="btn" type="button" data-mode="loops" aria-pressed="false">Loops</button>
+              <span class="row" id="loopNav" hidden><button class="btn" type="button" id="lPrev" aria-label="Previous loop">◀</button><span class="mono" id="lCount">1 / 6</span><button class="btn" type="button" id="lNext" aria-label="Next loop">▶</button></span>
+            </div>
+            <div class="readout" id="ex1Read" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The question “how many nodes, branches and loops?” opens the fundamental laws exercise in 2022, 2023 and 2024. The official answer keys count every loop: 10 loops in 2022 (5 nodes, 8 branches), 6 in 2023 (2 nodes, 4 branches). If in doubt, write both numbers: “3 independent loops, 7 in total”. <a class="td x" href="entrainement.html#vocabulaire">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Plain wire = same point. Color before you count.</li><li>Node = 3 wires or more. Branch = from one node to the next. Loop = a closed tour.</li><li>Independent loops = branches − nodes + 1. Here 5 − 3 + 1 = 3 windows, and 6 loops in total.</li></ul></div>
+        <div data-check="elec-c2-01,elec-c2-02,elec-c2-03"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s1"></button></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Part 2</span></div><h2>Kirchhoff’s current law: nothing is lost <span class="en">KCL</span></h2></div>
+      <div class="stack">
+        <div class="prose"><p>A node is a roundabout. The charges that arrive leave again: nothing builds up, nothing disappears. The course, which calls it the node law, writes it as an <b>algebraic sum</b>: currents entering count +, currents leaving count −, and the total is zero.</p></div>
+        <div class="formula"><div>Σ <var class="i">I</var><sub>in</sub> = Σ <var class="i">I</var><sub>out</sub></div><small>or, equivalently: Σ ± <var class="i">I</var> = 0 (+ if the arrow arrives, − if it leaves)</small></div>
+        <div class="bench">
+          <div class="bench-head"><span>Roundabout example</span><span>calculate I₄</span></div>
+          <div class="fig sm">
+            <svg class="c" viewBox="0 0 330 190" role="img" aria-label="A node with four wires: 3 A and 1 A enter, 1.5 A and I4 leave">
+              <path class="w" d="M30 95H300M165 15V175"/>
+              <circle class="dot" cx="165" cy="95" r="6"/>
+              <path class="ai" d="M40 95H128" marker-end="url(#ah-i)"/><text class="lbl li" x="52" y="84">I₁ = 3 A</text>
+              <path class="ai" d="M165 22V66" marker-end="url(#ah-i)"/><text class="lbl li" x="176" y="40">I₂ = 1 A</text>
+              <path class="ai" d="M190 95H286" marker-end="url(#ah-i)"/><text class="lbl li" x="206" y="84">I₃ = 1.5 A</text>
+              <path class="ai" d="M165 120V168" marker-end="url(#ah-i)"/><text class="lbl li" x="176" y="156">I₄ = ?</text>
+            </svg>
+          </div>
+          <div class="ctrls"><details class="reveal"><summary>Show the answer</summary><p>Entering: 3 + 1 = 4 A. Leaving: 1.5 + <var class="i">I</var>₄. So <var class="i">I</var>₄ = 4 − 1.5 = <b>2.5 A</b>. As an algebraic sum: <var class="i">I</var>₁ + <var class="i">I</var>₂ − <var class="i">I</var>₃ − <var class="i">I</var>₄ = 0.</p></details></div>
+        </div>
+        <div class="prose"><p>An arrow whose current is negative stays where it is in the equation: you write the law with the arrows, then substitute the values, signs included. Example from the 2017 midterm: with <var class="i">I</var>₄ = −3 mA, a “leaving” current of −3 mA is in fact a current of 3 mA entering.</p></div>
+        <div class="note trap"><span class="tag">Recurring MCQ trap</span><p>“The incoming current in a generator has a lower intensity than the outgoing one”: <b>false</b>, asked in 2017, 2021 and 2022. A generator raises the potential of the charges; it does not make current. What enters a dipole leaves it, whatever it is.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Node: what comes in = what goes out.</li><li>You write the law with the arrows, then substitute the values with their signs.</li></ul></div>
+        <div data-check="elec-c2-04,elec-c2-05"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s2"></button></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Part 3</span></div><h2>Kirchhoff’s voltage law: a loop brings you back to the same floor <span class="en">KVL</span></h2></div>
+      <div class="stack">
+        <div class="prose"><p>You start at a point, go around a loop and come back to where you started: you are on the same floor as at the beginning. In total you have gone neither up nor down, so the sum of the voltages around the loop is 0. This is the relation <span class="f-inline"><var class="u">U</var><sub>AB</sub> = <var class="u">U</var><sub>AC</sub> + <var class="u">U</var><sub>CB</sub></span> applied to a complete tour. The course calls it the loop law.</p>
+          <ol><li>Choose a direction of travel (any one).</li><li>For each voltage arrow you meet: in your direction, write <b>+</b>; against you, write <b>−</b>.</li><li>Write that the sum equals 0.</li></ol></div>
+        <div class="bench">
+          <div class="bench-head"><span>Go around the loop step by step</span><span class="td">TD1 · Ex 3</span></div>
+          <div class="fig">
+            <svg class="c" viewBox="0 0 380 230" role="img" aria-label="Loop with a battery E, a resistor R1 at the top and R2 on the right, and a dot going around the loop">
+              <path class="path-hl" d="M70 50H300V190H70Z"/>
+              <path class="w" d="M70 50H300V190H70Z"/>
+              <circle class="src" cx="70" cy="120" r="20"/><path class="w" d="M70 100V140"/>
+              <rect class="r" x="160" y="42" width="60" height="16"/>
+              <rect class="r" x="292" y="90" width="16" height="60"/>
+              <path class="av" d="M36 175V68" marker-end="url(#ah-v)"/><text class="lbl lv" x="14" y="126">E</text>
+              <path class="av" d="M226 24H156" marker-end="url(#ah-v)"/><text class="lbl lv" x="180" y="16">U₁</text>
+              <path class="av" d="M336 175V68" marker-end="url(#ah-v)"/><text class="lbl lv" x="346" y="126">U₂</text>
+              <text class="lbl" x="178" y="80">R₁</text><text class="lbl" x="262" y="126">R₂</text>
+              <path class="ai" d="M98 50H134" marker-end="url(#ah-i)"/><text class="lbl li" x="110" y="40">I</text>
+              <path d="M188 106 a22 22 0 1 1 -1 0" fill="none" stroke="var(--pot)" stroke-width="1.6" stroke-dasharray="3 4" marker-end="url(#ah-p)"/>
+              <circle id="kdot" r="9" style="fill:var(--pot);transition:transform .7s ease-in-out;transform:translate(70px,190px)"/>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row"><button class="btn primary" type="button" id="kNext">Step forward</button><button class="btn" type="button" id="kReset">Start over</button></div>
+            <div class="readout" aria-live="polite"><div class="f-inline" id="kEq" style="font-size:1.35rem">…</div><div id="kNote" style="margin-top:.35rem"></div></div>
+          </div>
+        </div>
+        <div class="prose"><p>On the course example (three loops around nodes A and B), the same direction of travel gives three equations: <span class="f-inline"><var class="u">E</var> − <var class="u">U</var>₁ − <var class="u">U</var>₃ − <var class="u">U</var>₂ = 0</span>, then <span class="f-inline"><var class="u">E</var> − <var class="u">U</var>₁ − <var class="u">U</var>₄′ − <var class="u">U</var>₄ − <var class="u">U</var>₂ = 0</span>, and <span class="f-inline"><var class="u">U</var>₃ − <var class="u">U</var>₄′ − <var class="u">U</var>₄ = 0</span>. The third is the difference of the first two: only independent loops bring new information.</p></div>
+        <div class="prose"><p>The same tour with numbers, on the outer loop of TD1 Ex 2 (which came up in the 2020 midterm). Move one component at a time: the graph shows the floor of each point, and each term of the equation takes you up or down until you are back at the starting point. Look at the pass through <var>R</var>₄: you write +<var class="u">U</var>₄ because the arrow is in your direction, but <var class="u">U</var>₄ = −110 V, so you go down.</p></div>
+        <div class="bench viz-kvl" data-viz="kvl-floors"></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>Exercise 3 of the 2020 midterm (the same as TD1 Ex 2) gives <var class="u">E</var>, <var class="u">U</var>₁, <var class="u">U</var>₄, <var class="u">U</var>₅ and asks for all the other voltages: nothing but well-chosen loop laws. In 2023 and 2024, exercise 2 asks for one voltage and then another “using Kirchhoff’s voltage law”, with values in kΩ and mA. <a class="td x" href="entrainement.html#kirchhoff">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Loop: arrow in your direction +, against you −, total 0.</li><li>On the simple loop: <span class="f-inline"><var class="u">E</var> = <var class="u">U</var>₁ + <var class="u">U</var>₂</span>, the push of the battery is entirely spent in the resistors.</li><li>A voltage between two points can be calculated along <b>any path</b> that links them: choose the one whose voltages you know.</li></ul></div>
+        <div data-check="elec-c2-06,elec-c2-07"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s3"></button></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Part 4</span></div><h2>Series or parallel?</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="qty"><h3>In series</h3><p>Dipoles are in series if the <b>same current</b> flows through them. They sit one behind the other, with no junction between them, and form a branch.</p></div>
+          <div class="qty"><h3>In parallel</h3><p>Dipoles are in parallel if the <b>same voltage</b> is applied across them, that is, if their ends are connected to the <b>same two nodes</b>.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">The trap the course writes in capitals</span><p>Dipoles are <b>not necessarily</b> either in series or in parallel. The only criterion is the strict application of the definitions. If a wire leaves between two resistors, they are not in series. If they do not touch the same two nodes, they are not in parallel. In the course example, <var>R</var>₃ is neither in series nor in parallel with <var>R</var>₁, <var>R</var>₂ or <var>R</var>₄.</p></div>
+        <h3>Practice: series, parallel or neither?</h3>
+        <div class="grid3" id="spTest">
+          <div class="sp" data-ans="serie" data-why="Only one path and no wire leaving between Ra and Rb: same current, so series.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two resistors one after the other"><path class="w" d="M10 45H40M80 45H120M160 45H190"/><rect class="r" x="40" y="37" width="40" height="16"/><rect class="r" x="120" y="37" width="40" height="16"/><text class="lbl" x="50" y="30" style="font-size:14px">Ra</text><text class="lbl" x="130" y="30" style="font-size:14px">Rb</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+          <div class="sp" data-ans="para" data-why="Ra and Rb both touch the top wire and the bottom wire: same two nodes, so parallel.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two resistors between the same two wires"><path class="w" d="M10 15H170M10 75H170M70 15V25M70 65V75M140 15V25M140 65V75"/><rect class="r" x="62" y="25" width="16" height="40"/><rect class="r" x="132" y="25" width="16" height="40"/><circle class="dot" cx="70" cy="15" r="3.5"/><circle class="dot" cx="70" cy="75" r="3.5"/><text class="lbl" x="84" y="52" style="font-size:14px">Ra</text><text class="lbl" x="154" y="52" style="font-size:14px">Rb</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+          <div class="sp" data-ans="aucun" data-why="A wire leaves toward Rc between Ra and Rb: part of the current escapes. And they do not touch the same two nodes. Neither series nor parallel.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two resistors with a wire leaving between them toward a third"><path class="w" d="M10 25H40M80 25H120M160 25H190M100 25V45M100 77V88"/><rect class="r" x="40" y="17" width="40" height="16"/><rect class="r" x="120" y="17" width="40" height="16"/><rect class="r" x="92" y="45" width="16" height="32"/><circle class="dot" cx="100" cy="25" r="3.5"/><text class="lbl" x="48" y="54" style="font-size:14px">Ra</text><text class="lbl" x="130" y="54" style="font-size:14px">Rb</text><text class="lbl" x="114" y="70" style="font-size:14px">Rc</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+          <div class="sp" data-ans="para" data-why="The offset wire changes nothing: Ra connects the top node to the bottom node, and so does Rb. Same two nodes, so parallel, even if the drawing does not look like a ladder.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two resistors connected to the same points by wires of different shapes"><path class="w" d="M10 15H120V25M120 65V75H10M30 15V30M30 60V75M120 15L170 15V36M170 64V75H120"/><rect class="r" x="22" y="30" width="16" height="30"/><rect class="r" x="162" y="36" width="16" height="28"/><circle class="dot" cx="30" cy="15" r="3.5"/><circle class="dot" cx="30" cy="75" r="3.5"/><text class="lbl" x="44" y="52" style="font-size:14px">Ra</text><text class="lbl" x="140" y="54" style="font-size:14px">Rb</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+          <div class="sp" data-ans="serie" data-why="The point between Ra and Rb has only two wires: it is not a node. The bend changes nothing, same current: series.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two resistors separated by a bend"><path class="w" d="M10 20H40M80 20H110V50M110 50V55M110 85V88"/><rect class="r" x="40" y="12" width="40" height="16"/><rect class="r" x="102" y="52" width="16" height="32" transform="translate(0,-2)"/><text class="lbl" x="48" y="48" style="font-size:14px">Ra</text><text class="lbl" x="126" y="72" style="font-size:14px">Rb</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+          <div class="sp" data-ans="aucun" data-why="Ra goes from the top wire to point M, Rb from point M to the bottom wire: they do not touch the same two nodes. And the wire to Rc at M carries current away: not in series either.">
+            <svg class="c" viewBox="0 0 200 90" aria-label="Two vertical resistors one below the other with a wire leaving from the middle"><path class="w" d="M10 8H60V14M60 38V52M60 76V84H10M60 45H120V52M120 76V84H60"/><rect class="r" x="52" y="14" width="16" height="24"/><rect class="r" x="52" y="52" width="16" height="24"/><rect class="r" x="112" y="52" width="16" height="24"/><circle class="dot" cx="60" cy="45" r="3.5"/><text class="lbl" x="26" y="32" style="font-size:14px">Ra</text><text class="lbl" x="26" y="70" style="font-size:14px">Rb</text><text class="lbl" x="134" y="70" style="font-size:14px">Rc</text><text class="tiny" x="66" y="42">M</text></svg>
+            <p class="q">Ra and Rb are…</p>
+            <div class="row"><button class="btn" type="button" data-a="serie">Series</button><button class="btn" type="button" data-a="para">Parallel</button><button class="btn" type="button" data-a="aucun">Neither</button></div>
+            <p class="fb" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Series = same current, no node between the two.</li><li>Parallel = same voltage, ends on the same two nodes.</li><li>Neither one nor the other is possible, and common. Apply the definition, not the impression the drawing gives.</li></ul></div>
+        <div data-check="elec-c2-08,elec-c2-09,elec-c2-10"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s4"></button></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Part 5</span></div><h2>Equivalent resistance</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The equivalent resistance <var>R</var><sub>eq</sub> is the single resistor that, put in place of a group of resistors, would carry the same current under the same voltage: <span class="f-inline"><var class="u">u</var> = <var>R</var><sub>eq</sub>·<var class="i">i</var></span>.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Series</h3><div class="formula" style="font-size:1.35rem;padding:.6rem"><div><var>R</var><sub>eq</sub> = <var>R</var><sub>1</sub> + <var>R</var><sub>2</sub> + … + <var>R</var><sub>n</sub></div></div><p class="ex">The total is <b>larger</b> than each one. Proof: same current, and Kirchhoff’s voltage law adds up the voltages.</p></div>
+          <div class="qty"><h3>Parallel</h3><div class="formula" style="font-size:1.35rem;padding:.6rem"><div>1/<var>R</var><sub>eq</sub> = 1/<var>R</var><sub>1</sub> + … + 1/<var>R</var><sub>n</sub></div></div><p class="ex">The total is <b>smaller</b> than the smallest one. Proof: same voltage, and Kirchhoff’s current law adds up the currents. In conductances: <var>G</var><sub>eq</sub> = Σ <var>G</var><sub>k</sub>.</p></div>
+        </div>
+        <div class="formula"><div><var>R</var><sub>1</sub> // <var>R</var><sub>2</sub> = <span class="frac"><span><var>R</var><sub>1</sub>·<var>R</var><sub>2</sub></span><span><var>R</var><sub>1</sub> + <var>R</var><sub>2</sub></span></span></div><small>“product over sum”, for two resistors only · two equal ones: half · <var>n</var> equal ones: <var>R</var>/<var>n</var></small></div>
+        <h3>The method: start from the far end</h3>
+        <div class="prose"><p>Start from the end <b>farthest from where you are looking</b> (the source, or terminals A and B) and work back. At each step, merge two resistors into one, then <b>redraw</b>. Here is figure 1 of TD 1 with <var>R</var>₁ = <var>R</var>₂ = 4<var>R</var>, <var>R</var>₃ = <var>R</var>₄ = <var>R</var>, <var>R</var>₅ = 2<var>R</var>.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>Step-by-step reduction</span><span class="td">TD1 · Ex 1</span></div>
+          <div class="fig" id="reqFig"></div>
+          <div class="ctrls">
+            <div class="stepper-nav"><button class="btn" type="button" id="reqPrev">◀ Previous step</button><button class="btn primary" type="button" id="reqNext">Next step ▶</button><span class="mono" id="reqCount">0 / 4</span></div>
+            <div class="readout" id="reqRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>Series / parallel calculator</span><span>in ohms</span></div>
+          <div class="ctrls" style="border-top:0">
+            <div class="calc"><label for="c1">R₁<input id="c1" type="number" min="0" step="any" value="4"></label><label for="c2">R₂<input id="c2" type="number" min="0" step="any" value="12"></label></div>
+            <div class="readout" id="cRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>A resistor network to reduce comes up in almost every paper from 2017 to 2023 (“equivalent resistance seen from A and B”, with results such as 2<var>R</var>, 3<var>R</var>, 3<var>R</var>/2, 21<var>R</var>/13 or 27<var>R</var>/13). Variant: find an unknown resistance <var>R</var>′ that gives a required value (2017: <var class="u">U</var> = <var>R</var><var class="i">I</var>/4; 2021: resistance seen by the generator equal to <var>R</var>). Since 2023, this skill is mostly used to calculate <var>R</var><sub>th</sub>. <a class="td x" href="entrainement.html#req">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Series: add. Parallel: product over sum, or sum of the inverses.</li><li>Two equal ones in parallel: half. <var>R</var> // 2<var>R</var> = 2<var>R</var>/3, 3<var>R</var> // 6<var>R</var> = 2<var>R</var>.</li><li>Simplify from the far end and redraw at each step.</li></ul></div>
+        <div data-check="elec-c2-11,elec-c2-12,elec-c2-13"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s5"></button></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Part 6</span></div><h2>The voltage divider</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Resistors in series share the voltage like a pizza: each takes a share proportional to its size. The biggest resistor takes the biggest share.</p></div>
+        <div class="formula"><div><var class="u">U</var><sub>2</sub> = <var class="u">E</var> · <span class="frac"><span><var>R</var><sub>2</sub></span><span><var>R</var><sub>1</sub> + <var>R</var><sub>2</sub></span></span></div><small>on top: the resistor whose voltage you want · with <var>n</var> resistors: <var class="u">U</var><sub>k</sub> = <var class="u">E</var>·<var>R</var><sub>k</sub>/Σ<var>R</var></small></div>
+        <div class="prose"><p><b>Where it comes from</b> (this is exactly TD1 Ex 3): same current in both, <span class="f-inline"><var class="i">I</var> = <var class="u">E</var>/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</span>, then <span class="f-inline"><var class="u">U</var><sub>2</sub> = <var>R</var><sub>2</sub>·<var class="i">I</var></span>.</p>
+          <p><b>Condition:</b> the resistors must be in series, with no current escaping between them. A voltmeter connected in the middle does not count (it draws no current); a load connected in the middle does: you must first group it in parallel with the bottom resistor.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>Sharing the voltage</span><span class="td">TD1 · Ex 3, 5, 10</span></div>
+          <div class="ctrls" style="border-top:0">
+            <div class="grid3">
+              <div class="slider"><label for="vdE"><var class="u">E</var></label><output id="vdEv">12 V</output><input id="vdE" type="range" min="1" max="24" value="12"></div>
+              <div class="slider"><label for="vdR1"><var>R</var><sub>1</sub></label><output id="vdR1v">4 Ω</output><input id="vdR1" type="range" min="1" max="20" value="4"></div>
+              <div class="slider"><label for="vdR2"><var>R</var><sub>2</sub></label><output id="vdR2v">8 Ω</output><input id="vdR2" type="range" min="1" max="20" value="8"></div>
+            </div>
+            <div class="split" aria-hidden="true"><div class="sa" id="vdA"></div><div class="sb" id="vdB"></div></div>
+            <div class="readout" id="vdRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>Worked example: the Mars rover <span class="td">TD1 · Ex 3</span></h3>
+        <ol class="steps">
+          <li><div><b>Setup:</b> <var>R</var>₁ and <var>R</var>₂ in series under <var class="u">E</var> = 12 V, and we want <var class="u">U</var>₂ = 3.3 V for the sensor.</div></li>
+          <li><div><b>Kirchhoff’s voltage law:</b> <var>R</var>₁ takes the rest, <var class="u">U</var>₁ = 12 − 3.3 = 8.7 V.</div></li>
+          <li><div><b>Same current</b> in both, so the voltages follow the resistances: <var>R</var>₂/<var>R</var>₁ = <var class="u">U</var>₂/<var class="u">U</var>₁ = 3.3/8.7 = 11/29 ≈ <b>0.38</b>.</div></li>
+          <li><div><b>Check</b> with the formula: 12 × 3.3/(8.7 + 3.3) = 3.3 V. For example <var>R</var>₁ = 8.7 kΩ and <var>R</var>₂ = 3.3 kΩ.</div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Series → voltage divider: <span class="f-inline"><var class="u">U</var><sub>2</sub> = <var class="u">E</var>·<var>R</var><sub>2</sub>/(<var>R</var><sub>1</sub>+<var>R</var><sub>2</sub>)</span>.</li><li>Nothing must escape between the two resistors.</li></ul></div>
+        <div data-check="elec-c2-14,elec-c2-15"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s6"></button></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Part 7</span></div><h2>The current divider</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Resistors in parallel share the current. The current prefers the easy path: the <b>smallest</b> resistor gets the <b>biggest</b> current.</p></div>
+        <div class="formula"><div><var class="i">I</var><sub>2</sub> = <var class="i">I</var> · <span class="frac"><span><var>R</var><sub>1</sub></span><span><var>R</var><sub>1</sub> + <var>R</var><sub>2</sub></span></span></div><small>on top: the <b>other</b> resistor · with <var>n</var> branches, in conductances: <var class="i">I</var><sub>k</sub> = <var class="i">I</var>·<var>G</var><sub>k</sub>/Σ<var>G</var></small></div>
+        <div class="prose"><p><b>Where it comes from</b> (TD1 Ex 4): same voltage, <span class="f-inline"><var class="u">U</var> = <var class="i">I</var>·<var>R</var><sub>1</sub><var>R</var><sub>2</sub>/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</span>, then <span class="f-inline"><var class="i">I</var><sub>2</sub> = <var class="u">U</var>/<var>R</var><sub>2</sub></span>: the <var>R</var><sub>2</sub> cancels and the other resistor is left on top.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>Sharing the current</span><span class="td">TD1 · Ex 4, 8</span></div>
+          <div class="ctrls" style="border-top:0">
+            <div class="grid3">
+              <div class="slider"><label for="cdI"><var class="i">I</var></label><output id="cdIv">4 mA</output><input id="cdI" type="range" min="1" max="12" value="4"></div>
+              <div class="slider"><label for="cdR1"><var>R</var><sub>1</sub></label><output id="cdR1v">1 kΩ</output><input id="cdR1" type="range" min="1" max="10" value="1"></div>
+              <div class="slider"><label for="cdR2"><var>R</var><sub>2</sub></label><output id="cdR2v">3 kΩ</output><input id="cdR2" type="range" min="1" max="10" value="3"></div>
+            </div>
+            <div class="split" aria-hidden="true"><div class="ia" id="cdA"></div><div class="ib" id="cdB"></div></div>
+            <div class="readout" id="cdRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Trap</span><p>The two formulas look alike but are not read the same way. <b>Voltage</b>: the same resistor on top. <b>Current</b>: the other resistor on top. If in doubt, check with intuition: the biggest resistor takes more voltage but less current.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>Dividers are everywhere: in the fundamental laws exercise (2020: real generator and dividers, result 3.33 mA) and above all at the end of the Thévenin exercises, where you are asked for the voltage <var class="u">U</var> across the 2<var>R</var> load: <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·2<var>R</var>/(<var>R</var><sub>th</sub> + 2<var>R</var>)</span>. <a class="td x" href="entrainement.html#diviseurs">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Parallel → current divider: <span class="f-inline"><var class="i">I</var><sub>2</sub> = <var class="i">I</var>·<var>R</var><sub>1</sub>/(<var>R</var><sub>1</sub>+<var>R</var><sub>2</sub>)</span>.</li><li>The small resistor takes the big current.</li></ul></div>
+        <div data-check="elec-c2-16,elec-c2-17"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s7"></button></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Part 8</span></div><h2>Solving a circuit: the method</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><b>Color the nodes</b> (plain wire = same point) and name them. Choose a ground, preferably at the bottom of the source.</div></li>
+          <li><div><b>Replace the special cases</b>: switches, voltmeter, ammeter. Redraw if needed.</div></li>
+          <li><div><b>Simplify</b> series and parallel, from the far end toward the source, down to a single resistor <var>R</var><sub>eq</sub>.</div></li>
+          <li><div><b>Calculate the total current</b>: <span class="f-inline"><var class="i">I</var> = <var class="u">E</var>/<var>R</var><sub>eq</sub></span>. With a current source: <span class="f-inline"><var class="u">U</var> = <var>R</var><sub>eq</sub>·<var class="i">I</var></span>.</div></li>
+          <li><div><b>Work back down</b> to what you are asked for, with the dividers or Ohm’s law on a piece of the circuit.</div></li>
+          <li><div><b>Check</b>: the units, the sign (with the direction of the arrows), and one Kirchhoff’s current or voltage law.</div></li>
+        </ol>
+        <h3>Worked example: a current source in the circuit <span class="td">TD1 · Ex 9</span></h3>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="ex9Fig"></div><p class="fig-cap"><var class="u">E</var> = 15 V, <var class="i">I</var>₁ = 0.1 A, <var>R</var>₁ = 200 Ω, <var>R</var>₂ = 100 Ω. We look for <var class="u">U</var> and <var class="i">I</var>.</p></div>
+          <ol class="steps">
+            <li><div>The three branches are between the same two wires: each has the voltage <var class="u">E</var> = 15 V across it.</div></li>
+            <li><div>In the middle branch, the source sets <var class="i">I</var>₁ = 0.1 A, which goes <b>up</b> (read the direction of the arrow on the diagram). It flows through <var>R</var>₁ from bottom to top: <var>R</var>₁ has <var>R</var>₁<var class="i">I</var>₁ = 20 V across it, and its bottom side is the higher one in potential.</div></li>
+            <li><div>Loop in this branch, from the bottom wire to the top wire: you go down 20 V in <var>R</var>₁, then up <var class="u">U</var> in the source. <span class="f-inline"><var class="u">E</var> = <var class="u">U</var> − 20</span>, so <span class="f-inline"><var class="u">U</var> = 15 + 20 = <b>35 V</b></span>. <var class="u">U</var> and <var class="i">I</var>₁ are arrowed in the same direction and <var class="u">U</var> &gt; 0: the current source supplies 35 × 0.1 = 3.5 W.</div></li>
+            <li><div>Top node: <var class="i">I</var> and <var class="i">I</var>₁ arrive, <var class="u">E</var>/<var>R</var>₂ leaves through <var>R</var>₂. <span class="f-inline"><var class="i">I</var> + <var class="i">I</var>₁ = <var class="u">E</var>/<var>R</var>₂</span>, so <span class="f-inline"><var class="i">I</var> = 0.15 − 0.1 = <b>0.05 A</b></span>.</div></li>
+            <li><div>Trap: if you read <var class="i">I</var>₁ as pointing down, you would find −5 V and 0.25 A. The direction of the arrows is part of the problem statement.</div></li>
+          </ol>
+        </div>
+        <h3>Which question, which tool</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>The question says…</th><th>Tool</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>How many nodes, branches, loops?</td><td>Color, then count</td><td>Part 1</td></tr>
+            <tr><td>Are there resistors in series, in parallel?</td><td>Same current? Same two nodes?</td><td>Part 4</td></tr>
+            <tr><td>Equivalent resistance seen by the generator / between A and B</td><td>Merge from the far end</td><td>Part 5</td></tr>
+            <tr><td>Place the points, calculate <var class="u">U</var><sub>XY</sub></td><td><var class="u">U</var><sub>XY</sub> = <var class="v">V</var><sub>X</sub> − <var class="v">V</var><sub>Y</sub>, chain the voltages</td><td>Chapter 1 · part 3</td></tr>
+            <tr><td>Write Kirchhoff’s voltage law / current law</td><td>+ or − depending on the arrows; in = out</td><td>Parts 2 and 3</td></tr>
+            <tr><td>Voltage across a resistor in series</td><td>Voltage divider</td><td>Part 6</td></tr>
+            <tr><td>Current in a branch in parallel</td><td>Current divider</td><td>Part 7</td></tr>
+            <tr><td>Two situations, find <var class="u">E</var> and <var>R</var></td><td>Two equations, then substitution</td><td>Chapter 1 · part 8</td></tr>
+            <tr><td>Switches, “the 4 cases”</td><td>Wire or gap, redraw each case</td><td>Chapter 1 · part 6</td></tr>
+            <tr><td>Voltage across a load in a big circuit</td><td>Thévenin, then voltage divider</td><td>Chapter 3</td></tr>
+          </tbody></table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>A voltage source sets the voltage of all the branches in parallel with it.</li><li>A current source sets the current of its branch; its voltage is found with Kirchhoff’s voltage law.</li></ul></div>
+        <div data-check="elec-c2-18,elec-c2-19"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="elec:lois:s8"></button></div>
+      </div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Chapters">
+      <a href="cours-1-bases.html"><span>Chapter 1</span><b>← The basics</b></a>
+      <a class="next" href="cours-3-theoremes.html"><span>Chapter 3</span><b>Thévenin, Norton, Millman →</b></a>
+    </nav>
+    <footer class="foot">Based on the course “Electronics basic Concepts” (part B), TD 1 and the midterm papers from 2017 to 2024.</footer>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/en/qcm/elec.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, nf = U.nf;
+
+  /* ---- header: voltage divider ---- */
+  function updHero() {
+    var r1 = +$('#hR1').value, r2 = +$('#hR2').value, e = 12, u1 = e * r1 / (r1 + r2), u2 = e * r2 / (r1 + r2);
+    $('#hR1v').textContent = r1 + ' kΩ'; $('#hR2v').textContent = r2 + ' kΩ';
+    R.circuit.mount('#heroFig', { w: 360, h: 210, aria: 'Battery E of 12 V, R1 at the top, R2 on the right',
+      wires: ['M60 40H280V170H60Z'],
+      parts: [{ t: 'E', x: 60, y: 105, d: 'v', p: 'n', l: 'E = 12 V' }, { t: 'R', x: 170, y: 40, l: 'R_1 = ' + r1 + ' kΩ' }, { t: 'R', x: 280, y: 105, d: 'v', l: 'R_2', lp: 'w' },
+        { t: 'U', a: [210, 66], b: [130, 66], l: 'U_1 = ' + nf(u1) + ' V', lp: 's' }, { t: 'U', a: [318, 150], b: [318, 60], l: 'U_2' }, { t: 'I', x: 100, y: 40, d: 'e', l: 'I' }] });
+    $('#hA').style.width = (100 * r1 / (r1 + r2)) + '%'; $('#hB').style.width = (100 * r2 / (r1 + r2)) + '%';
+    $('#hA').textContent = 'U₁ ' + nf(u1) + ' V'; $('#hB').textContent = 'U₂ ' + nf(u2) + ' V';
+    $('#hRead').innerHTML = '<span class="f-inline"><var class="u">U</var>₂ = 12 × ' + r2 + '/(' + r1 + ' + ' + r2 + ') = </span><span class="big">' + nf(u2) + ' V</span> · current ' + nf(e / (r1 + r2)) + ' mA (V/kΩ = mA)';
+  }
+  $('#hR1').addEventListener('input', updHero); $('#hR2').addEventListener('input', updHero); updHero();
+
+  /* ---- TD1 Ex1 explorer ---- */
+  var ex1 = $('#ex1'), mode = 'nodes', li = 0;
+  var LOOPS = [['Window 1', 'R₂ then R₁'], ['Window 2', 'R₁, R₃, R₅, R₄'], ['Window 3', 'R₄, R₅ and the generator E'], ['Windows 1 + 2 joined', 'R₂, R₃, R₅, R₄'], ['Windows 2 + 3 joined', 'R₁, R₃ and E'], ['The outer loop (1 + 2 + 3)', 'R₂, R₃ and E']];
+  function updEx1() {
+    ex1.classList.remove('m-nodes', 'm-branches', 'm-loops'); ex1.classList.add('m-' + mode);
+    $$('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === mode)); });
+    $('#loopNav').hidden = mode !== 'loops';
+    $$('#ex1 .loop').forEach(function (p) { p.classList.toggle('on', +p.dataset.l === li); });
+    var r = $('#ex1Read');
+    var A = '<span style="color:var(--nA);font-weight:600">A</span>', B = '<span style="color:var(--nB);font-weight:600">B</span>', C = '<span style="color:var(--nC);font-weight:600">C</span>';
+    if (mode === 'nodes') r.innerHTML = '<b>3 nodes</b>: ' + A + ', ' + B + ', ' + C + '. The whole purple wire is a single point, even though it runs along the entire left side. The small dot between R₄ and R₅ is <b>not</b> a node: only 2 wires meet there.';
+    else if (mode === 'branches') r.innerHTML = '<b>5 branches</b>: R₂ · R₁ · R₃ · R₄ + R₅ · E. R₄ and R₅ form a single branch, because no node separates them: they are <b>in series</b>. R₁ and R₂ both go from A to B: they are <b>in parallel</b>.';
+    else { var l = LOOPS[li]; $('#lCount').textContent = (li + 1) + ' / 6'; r.innerHTML = '<b>Loop ' + (li + 1) + '</b> · ' + l[0] + ': you go through ' + l[1] + '.' + (li < 3 ? ' This is a basic loop.' : ' This is an assembly of windows: the answer keys count it too.'); }
+  }
+  $$('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { mode = b.dataset.mode; updEx1(); }); });
+  $('#lPrev').addEventListener('click', function () { li = (li + 5) % 6; updEx1(); });
+  $('#lNext').addEventListener('click', function () { li = (li + 1) % 6; updEx1(); });
+  updEx1();
+
+  /* ---- loop-law walker ---- */
+  var KS = [
+    { to: [70, 50], term: '+<var class="u">E</var>', note: 'You go up through the battery. The arrow <var class="u">E</var> points up, in your direction: <b>+E</b>.' },
+    { to: [300, 50], term: ' − <var class="u">U</var>₁', note: 'You go through R₁ to the right. The arrow <var class="u">U</var>₁ points left, against you: <b>−U₁</b>.' },
+    { to: [300, 190], term: ' − <var class="u">U</var>₂', note: 'You go down through R₂. The arrow <var class="u">U</var>₂ points up, against you: <b>−U₂</b>.' },
+    { to: [70, 190], term: ' = 0', note: 'Back at the start, on the same floor: the sum is 0. So <span class="f-inline"><var class="u">E</var> = <var class="u">U</var>₁ + <var class="u">U</var>₂</span>.' }];
+  var ks = 0;
+  function updK() {
+    var pos = ks === 0 ? [70, 190] : KS[ks - 1].to;
+    $('#kdot').style.transform = 'translate(' + pos[0] + 'px,' + pos[1] + 'px)';
+    $('#kEq').innerHTML = ks === 0 ? '<span style="color:var(--muted)">the equation will be written here</span>' : KS.slice(0, ks).map(function (s) { return s.term; }).join('');
+    $('#kNote').innerHTML = ks === 0 ? 'Start at the bottom left. You go around clockwise (the dashed purple arrow).' : KS[ks - 1].note;
+    $('#kNext').disabled = ks >= KS.length;
+  }
+  $('#kNext').addEventListener('click', function () { if (ks < KS.length) { ks++; updK(); } });
+  $('#kReset').addEventListener('click', function () { ks = 0; updK(); });
+  updK();
+
+  /* ---- series / parallel ---- */
+  $$('#spTest .sp').forEach(function (card) {
+    $$('button', card).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $$('button', card).forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+        var ok = btn.dataset.a === card.dataset.ans, fb = $('.fb', card);
+        fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = (ok ? 'Yes. ' : 'No. ') + card.dataset.why;
+      });
+    });
+  });
+
+  /* ---- step-by-step reduction (TD1 Ex1) ---- */
+  var REQ = [
+    { txt: 'The starting circuit. The generator <var class="u">E</var> is connected between A (left wire) and C. We look for the resistance it sees.', ghost: [], hl: [], lab: {} },
+    { txt: '<b>R₁ and R₂</b> both go from A to B: <b>parallel</b>. 4<var>R</var> // 4<var>R</var> = <b>2<var>R</var></b> (two equal ones: half).', ghost: [], hl: ['R1', 'R2'], lab: {} },
+    { txt: 'The 2<var>R</var> block then <b>R₃</b>: no node between them on the path A → B → C, same current: <b>series</b>. 2<var>R</var> + <var>R</var> = <b>3<var>R</var></b>.', ghost: ['R2'], hl: ['R1', 'R3'], lab: { R1: '2R' } },
+    { txt: '<b>R₄ and R₅</b>: the middle point has only two wires, it is not a node: <b>series</b>. <var>R</var> + 2<var>R</var> = <b>3<var>R</var></b>.', ghost: ['R2', 'R3'], hl: ['R4', 'R5'], lab: { R1: '3R (with R₃)' } },
+    { txt: 'Two branches of 3<var>R</var> remain between A and C: <b>parallel</b>. 3<var>R</var> // 3<var>R</var> = <b>3<var>R</var>/2</b>. The generator sees <span class="f-inline"><var>R</var><sub>eq</sub> = 1.5<var>R</var></span>, so <span class="f-inline"><var class="i">I</var> = <var class="u">E</var>/<var>R</var><sub>eq</sub> = 2<var class="u">E</var>/(3<var>R</var>)</span>, and <var class="u">U</var> = <var class="u">E</var> (same nodes A and C).', ghost: ['R2', 'R3', 'R5'], hl: ['R1', 'R4'], lab: { R1: '3R', R4: '3R (with R₅)' } }];
+  var rs = 0;
+  function reqSpec(st) {
+    function cls(id) { return st.ghost.indexOf(id) >= 0 ? 'cz-ghost' : (st.hl.indexOf(id) >= 0 ? 'cz-hl' : ''); }
+    var lab = function (id, def) { return st.lab[id] || def; };
+    return { w: 440, h: 300, aria: 'Network of TD1 Ex1 being reduced',
+      wires: ['M40 40H200V100', 'M40 100H380V180', 'M40 180H380', 'M40 40V250H380V180'],
+      parts: [
+        { t: 'R', x: 120, y: 40, l: lab('R2', 'R_2 = 4R'), c: cls('R2') },
+        { t: 'R', x: 120, y: 100, l: lab('R1', 'R_1 = 4R'), lp: 's', c: cls('R1') },
+        { t: 'R', x: 380, y: 140, d: 'v', l: lab('R3', 'R_3 = R'), c: cls('R3') },
+        { t: 'R', x: 120, y: 180, l: lab('R4', 'R_4 = R'), lp: 's', c: cls('R4') },
+        { t: 'R', x: 280, y: 180, l: lab('R5', 'R_5 = 2R'), lp: 's', c: cls('R5') },
+        { t: 'E', x: 210, y: 250, d: 'h', p: 'w', l: 'E', as: 's' },
+        { t: 'I', x: 80, y: 250, d: 'w', l: 'I', lp: 'n' },
+        { t: 'dot', x: 40, y: 100 }, { t: 'dot', x: 40, y: 180 }, { t: 'dot', x: 200, y: 100 }, { t: 'dot', x: 380, y: 180 }, { t: 'dot', x: 200, y: 180, r: 3 },
+        { t: 'txt', x: 22, y: 146, s: 'A', c: 'cz-n' }, { t: 'txt', x: 214, y: 92, s: 'B', c: 'cz-n' }, { t: 'txt', x: 402, y: 196, s: 'C', c: 'cz-n' }] };
+  }
+  function updReq() {
+    R.circuit.mount('#reqFig', reqSpec(REQ[rs]));
+    $('#reqRead').innerHTML = REQ[rs].txt; $('#reqCount').textContent = rs + ' / ' + (REQ.length - 1);
+    $('#reqPrev').disabled = rs === 0; $('#reqNext').disabled = rs === REQ.length - 1;
+  }
+  $('#reqPrev').addEventListener('click', function () { if (rs > 0) { rs--; updReq(); } });
+  $('#reqNext').addEventListener('click', function () { if (rs < REQ.length - 1) { rs++; updReq(); } });
+  updReq();
+
+  /* ---- calculator ---- */
+  function updCalc() {
+    var a = parseFloat($('#c1').value), b = parseFloat($('#c2').value), out = $('#cRead');
+    if (!(a > 0) || !(b > 0)) { out.innerHTML = 'Enter two positive values.'; return; }
+    out.innerHTML = 'In series: ' + nf(a) + ' + ' + nf(b) + ' = <span class="big">' + nf(a + b) + ' Ω</span><br>In parallel: ' + nf(a) + ' × ' + nf(b) + ' / (' + nf(a) + ' + ' + nf(b) + ') = <span class="big">' + nf(a * b / (a + b)) + ' Ω</span> <span style="color:var(--muted)">(smaller than ' + nf(Math.min(a, b)) + ' Ω, as expected)</span>';
+  }
+  $('#c1').addEventListener('input', updCalc); $('#c2').addEventListener('input', updCalc); updCalc();
+
+  /* ---- dividers ---- */
+  function updVD() {
+    var e = +$('#vdE').value, r1 = +$('#vdR1').value, r2 = +$('#vdR2').value, u1 = e * r1 / (r1 + r2), u2 = e * r2 / (r1 + r2);
+    $('#vdEv').textContent = e + ' V'; $('#vdR1v').textContent = r1 + ' Ω'; $('#vdR2v').textContent = r2 + ' Ω';
+    $('#vdA').style.width = (100 * r1 / (r1 + r2)) + '%'; $('#vdB').style.width = (100 * r2 / (r1 + r2)) + '%';
+    $('#vdA').textContent = 'U₁ ' + nf(u1) + ' V'; $('#vdB').textContent = 'U₂ ' + nf(u2) + ' V';
+    $('#vdRead').innerHTML = '<span class="f-inline"><var class="u">U</var>₂ = ' + e + ' × ' + r2 + '/(' + r1 + ' + ' + r2 + ') = </span><span class="big">' + nf(u2) + ' V</span> and <var class="u">U</var>₁ = ' + nf(u1) + ' V. Total: ' + nf(u1 + u2) + ' V = <var class="u">E</var>.';
+  }
+  ['vdE', 'vdR1', 'vdR2'].forEach(function (id) { $('#' + id).addEventListener('input', updVD); }); updVD();
+  function updCD() {
+    var i = +$('#cdI').value, r1 = +$('#cdR1').value, r2 = +$('#cdR2').value, i1 = i * r2 / (r1 + r2), i2 = i * r1 / (r1 + r2);
+    $('#cdIv').textContent = i + ' mA'; $('#cdR1v').textContent = r1 + ' kΩ'; $('#cdR2v').textContent = r2 + ' kΩ';
+    $('#cdA').style.width = (100 * i1 / i) + '%'; $('#cdB').style.width = (100 * i2 / i) + '%';
+    $('#cdA').textContent = 'I₁ ' + nf(i1) + ' mA'; $('#cdB').textContent = 'I₂ ' + nf(i2) + ' mA';
+    $('#cdRead').innerHTML = '<span class="f-inline"><var class="i">I</var>₂ = ' + i + ' × ' + r1 + '/(' + r1 + ' + ' + r2 + ') = </span><span class="big">' + nf(i2) + ' mA</span> and <var class="i">I</var>₁ = ' + nf(i1) + ' mA. Total: ' + nf(i1 + i2) + ' mA = <var class="i">I</var>.';
+  }
+  ['cdI', 'cdR1', 'cdR2'].forEach(function (id) { $('#' + id).addEventListener('input', updCD); }); updCD();
+
+  /* ---- TD1 Ex9 ---- */
+  R.circuit.mount('#ex9Fig', { w: 340, h: 230, aria: 'Source E on the left, current source I1 in series with R1 in the middle, R2 on the right',
+    wires: ['M50 40H290V190H50Z', 'M170 40V190'],
+    parts: [{ t: 'E', x: 50, y: 115, d: 'v', p: 'n', l: 'E' }, { t: 'J', x: 170, y: 82, d: 'v', to: 'n', l: 'I_1', as: 'e' }, { t: 'R', x: 170, y: 150, d: 'v', l: 'R_1' },
+      { t: 'R', x: 290, y: 115, d: 'v', l: 'R_2' }, { t: 'U', a: [140, 108], b: [140, 58], l: 'U', lp: 'w' }, { t: 'I', x: 100, y: 40, d: 'e', l: 'I' },
+      { t: 'dot', x: 170, y: 40 }, { t: 'dot', x: 170, y: 190 }] });
+})();
+</script>
+<script src="../assets/js/elec-viz.js"></script>
+</body>
+</html>

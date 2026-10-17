@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The basics · Elec</title>
+<meta name="description" content="Electronics S1, chapter 1: quantities, diagrams, arrows and conventions, Ohm’s law, switches and measuring instruments, ideal and real sources.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Elec · chapter 1: the basics">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="ah-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-v"/></marker>
+    <marker id="ah-i" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-i"/></marker>
+    <marker id="ah-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-p"/></marker>
+    <marker id="ah-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-k"/></marker>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Elec</a> · Chapter 1 of 3</div>
+      <h1>Electricity is just <span class="w">water</span> in pipes.</h1>
+      <p class="lead">Four quantities, two kinds of arrows, one law and a few components. This chapter sets up all the vocabulary of the course. Read it in order and play with the diagrams: they react.</p>
+      <div class="chips"><span class="chip">≈ 35 min</span><span class="chip">8 parts</span><span class="chip">course “Definitions” · TD 0 · TD 1</span><span class="chip ex">Course MCQs in the midterm</span></div>
+    </div>
+    <div class="bench" aria-label="Simulator: a battery and a resistor">
+      <div class="bench-head"><span>Try it: the pump and the pipe</span><span>direct current</span></div>
+      <div class="fig">
+        <svg class="c" viewBox="0 0 360 230" role="img" aria-label="Loop with a battery E and a resistor R; red dots show the current">
+          <path class="w" d="M60 40H300V190H60Z"/>
+          <g id="sim-dots"></g>
+          <path class="ai" d="M150 40H196" marker-end="url(#ah-i)"/>
+          <text class="lbl li" x="168" y="28">I</text>
+          <circle class="src" cx="60" cy="115" r="24"/>
+          <path class="w" d="M60 91V139"/>
+          <text class="tiny" x="74" y="92">+</text>
+          <text class="lbl lv" x="18" y="121">E</text>
+          <rect class="res" x="288" y="76" width="24" height="78" rx="9"/>
+          <rect id="b1" x="288" y="88" width="24" height="7"/>
+          <rect id="b2" x="288" y="100" width="24" height="7"/>
+          <rect id="b3" x="288" y="112" width="24" height="7"/>
+          <rect x="288" y="134" width="24" height="7" fill="#C9A227"/>
+          <text class="lbl" x="324" y="121">R</text>
+        </svg>
+      </div>
+      <div class="ctrls">
+        <div class="grid2">
+          <div class="slider"><label for="simE">Battery push <var class="u">E</var></label><output id="simEv">12 V</output><input id="simE" type="range" min="0" max="24" step="1" value="12"></div>
+          <div class="slider"><label for="simR">Resistance <var>R</var></label><output id="simRv">6 Ω</output><input id="simR" type="range" min="1" max="24" step="1" value="6"></div>
+        </div>
+        <div class="readout" aria-live="polite"><var class="i">I</var> = <var class="u">E</var> ÷ <var>R</var> = <span id="simCalc">12 ÷ 6</span> = <span class="big" id="simI">2 A</span><br><span style="color:var(--muted);font-size:.88rem">Power dissipated: <span id="simP" class="mono">24 W</span> · color code: <span id="simCode" class="mono">blue · black · gold · gold</span></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 1 · The basics</div>
+    <ol>
+      <li><a href="#s1"><span class="code" data-n="1"></span><span>The 4 quantities</span></a></li>
+      <li><a href="#s2"><span class="code" data-n="2"></span><span>Reading a diagram</span></a></li>
+      <li><a href="#s3"><span class="code" data-n="3"></span><span>The arrows</span></a></li>
+      <li><a href="#s4"><span class="code" data-n="4"></span><span>Dipoles and conventions</span></a></li>
+      <li><a href="#s5"><span class="code" data-n="5"></span><span>Ohm’s law and power</span></a></li>
+      <li><a href="#s6"><span class="code" data-n="6"></span><span>Wire or gap</span></a></li>
+      <li><a href="#s7"><span class="code" data-n="7"></span><span>Sources</span></a></li>
+      <li><a href="#s8"><span class="code" data-n="8"></span><span>Calculating without a calculator</span></a></li>
+    </ol>
+    <p class="toc-note">Numbers written with the resistor color code: black 0, brown 1, red 2, orange 3, yellow 4, green 5, blue 6, violet 7, grey 8, white 9.</p>
+    <div class="toc-nav"><a href="index.html">← Elec home</a><a href="cours-2-lois.html">Chapter 2: fundamental laws →</a><a href="fiche.html">One-page summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Contents (8 parts)</summary>
+      <ol>
+        <li><a href="#s1">The 4 quantities</a></li><li><a href="#s2">Reading a diagram</a></li><li><a href="#s3">The arrows</a></li><li><a href="#s4">Dipoles and conventions</a></li>
+        <li><a href="#s5">Ohm’s law and power</a></li><li><a href="#s6">Wire or gap</a></li><li><a href="#s7">Sources</a></li><li><a href="#s8">Calculating without a calculator</a></li>
+      </ol>
+    </details>
+
+    <!-- 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Part 1</span></div><h2>The 4 quantities</h2></div>
+      <div class="stack">
+        <div class="prose"><p>An <b>electrical circuit</b> is a set of components connected by conducting wires (usually copper). Current flows only if the loop is <b>closed</b>: the battery pushes the water, the water goes all the way around and returns to the battery. Four quantities are enough to describe what happens.</p></div>
+        <div class="grid2">
+          <div class="qty"><div class="qty-top"><span class="qty-sym" style="color:var(--amp)">I</span><span class="qty-unit">ampere (A)<br><span class="en">intensity</span></span></div><h3>Current</h3><p>The <b>flow rate</b> of charges: how many coulombs pass through the wire each second. <span class="f-inline"><var class="i">i</var> = d<var>q</var>/d<var>t</var></span>, and 1 A = 1 C/s. It <b>flows through</b> components. The arrow goes <b>on</b> the wire.</p><p class="ex">Phone charger: about 2 A.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym" style="color:var(--volt)">U</span><span class="qty-unit">volt (V)<br><span class="en">p.d.</span></span></div><h3>Voltage</h3><p>The <b>height difference</b> between two points, or <b>potential difference</b>. It is what makes the water flow. It is measured <b>between</b> two points. The arrow goes <b>next to</b> the component. 1 V = 1 J/C.</p><p class="ex">AA cell: 1.5 V. Car battery: 12 V.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym">R</span><span class="qty-unit">ohm (Ω)<br><span class="en">resistor</span></span></div><h3>Resistance</h3><p>A <b>narrowing</b> of the pipe: it slows the current down. The larger <var>R</var> is, the less current gets through for the same voltage.</p><p class="ex">1 kΩ = 1,000 Ω.</p></div>
+          <div class="qty"><div class="qty-top"><span class="qty-sym">P</span><span class="qty-unit">watt (W)</span></div><h3>Power</h3><p>The energy exchanged <b>each second</b>: <span class="f-inline"><var>P</var> = <var class="u">U</var>·<var class="i">I</var></span>. A resistor turns it into heat (Joule effect).</p><p class="ex">12 V × 2 A = 24 W.</p></div>
+        </div>
+        <h3>Potential: the floor of a point</h3>
+        <div class="prose">
+          <p>Every point of the circuit is on a <b>floor</b>: its potential <var class="v">V</var>, in volts. We choose one reference point at 0 V, the ground floor: this is the <b>ground</b>. The voltage between two points is the difference between their floors.</p>
+        </div>
+        <div class="formula"><div><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub></div><small>the voltage between A and B = the floor of A minus the floor of B</small></div>
+        <div class="note trap"><span class="tag">Vocabulary trap</span><p>The course insists: <b>ground ≠ earth</b>. The earth is <i>the</i> point of zero potential (the soil). The ground is the point <i>you choose</i> as the reference in your circuit. Also, the conventional direction of current is the opposite of the real direction of the electrons (which are negatively charged): this is historical, and we keep the convention.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Current <b>flows through</b> a component. Voltage is measured <b>between</b> two points.</li><li>A voltage is a <b>difference of potentials</b>. A single point has no voltage, it has a potential.</li><li>Units: A = C/s, V = J/C, W = V·A, Ω = V/A.</li></ul></div>
+        <div data-check="elec-c1-01,elec-c1-02,elec-c1-03"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s1"></button></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Part 2</span></div><h2>Reading a diagram</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A diagram is a plumbing plan. A component with two terminals is called a <b>dipole</b>: resistor, battery, switch… Any dipole can be drawn as a simple rectangle. Here are all the symbols of the course, with what they become in a calculation.</p></div>
+        <div class="grid2">
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M6 22H74"/></svg><div><h4>Wire</h4><p>A perfect pipe: it slows nothing down. Two points joined by a plain wire are <b>the same point</b>, at the same potential.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M6 18H74M40 18V40"/><circle class="dot" cx="40" cy="18" r="4"/></svg><div><h4>Node</h4><p>A point where <b>at least 3 wires</b> meet: a crossroads.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H22M58 22H76"/><rect class="r" x="22" y="14" width="36" height="16"/></svg><div><h4>Resistor</h4><p>Slows the current down. Its voltage is <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H76"/><circle class="src" cx="40" cy="22" r="14" style="fill:none"/></svg><div><h4>Voltage source</h4><p>The line <b>follows</b> the wire. It sets a voltage <var class="u">E</var>, whatever the current. Example: a battery.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H26M54 22H76M40 8V36"/><circle class="src" cx="40" cy="22" r="14" style="fill:none"/></svg><div><h4>Current source</h4><p>The line <b>cuts across</b> the wire. It sets a current <var class="i">I</var>. Its voltage adapts to the rest of the circuit.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H76"/><circle class="dot" cx="28" cy="22" r="3"/><circle class="dot" cx="52" cy="22" r="3"/></svg><div><h4>Closed switch <span class="en">K</span></h4><p>Replaced by <b>a wire</b>. Zero voltage across it.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H28L49 9M52 22H76"/><circle class="dot" cx="28" cy="22" r="3"/><circle class="dot" cx="52" cy="22" r="3"/></svg><div><h4>Open switch</h4><p>Replaced by <b>a gap</b>. No current, but a voltage can appear across it.</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H27M53 22H76"/><circle class="src" cx="40" cy="22" r="13"/><text x="40" y="27" text-anchor="middle" class="lbl" style="font-style:normal;font-family:var(--font-mono);font-size:14px;font-weight:600">V</text></svg><div><h4>Voltmeter</h4><p>Connected <b>in parallel</b>, between two points. In a calculation: <b>a gap</b> (infinite resistance).</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M4 22H27M53 22H76"/><circle class="src" cx="40" cy="22" r="13"/><text x="40" y="27" text-anchor="middle" class="lbl" style="font-style:normal;font-family:var(--font-mono);font-size:14px;font-weight:600">A</text></svg><div><h4>Ammeter</h4><p>Connected <b>in series</b>, in the wire. In a calculation: <b>a wire</b> (zero resistance).</p></div></div>
+          <div class="sym"><svg class="c" viewBox="0 0 80 44" aria-hidden="true"><path class="w" d="M40 4V20M26 20H54"/><path d="M28 30L33 20M37 30L42 20M46 30L51 20" stroke="currentColor" style="stroke:var(--ink)" stroke-width="1.6"/></svg><div><h4>Ground</h4><p>The point you choose as the reference: 0 V. All the ground symbols of a diagram are connected to each other.</p></div></div>
+        </div>
+        <div class="note trap"><span class="tag">Trap</span><p><b>Voltage source or current source?</b> Erase the circle in your head. If a continuous wire is left (the line runs along the wire), it is a <b>voltage</b> source. If a gap is left (the line cuts across the wire), it is a <b>current</b> source. Your course uses exactly this idea to “turn off” a source in chapter 3.</p></div>
+        <div data-check="elec-c1-04,elec-c1-05"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s2"></button></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Part 3</span></div><h2>Arrows: where it all happens</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Most mistakes come from arrows. There are two kinds, and they do not mean the same thing.</p></div>
+        <h3>The voltage arrow points to the point written first</h3>
+        <div class="prose"><p><span class="f-inline"><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub></span>: the arrowhead is on <b>A</b> (“arrowhead – back of arrow”, as the course puts it). If the result is positive, A is higher than B. If it is negative, A is lower. This is not an error: the arrow only shows which calculation we are doing.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>The building of potentials</span><span>move A and B</span></div>
+          <div class="fig">
+            <svg class="c" id="floors" viewBox="0 0 330 250" role="img" aria-label="Two points A and B placed on floors, and the voltage arrow pointing to A">
+              <g id="floor-lines"></g>
+              <line id="fArrow" class="ap" x1="238" y1="132" x2="162" y2="72" marker-end="url(#ah-p)"/>
+              <text id="fArrowLbl" class="lbl lp" x="200" y="96">U<tspan class="s" dy="4">AB</tspan></text>
+              <g id="mA" transform="translate(150 72)"><circle r="14" style="fill:var(--pot)"/><text y="5" text-anchor="middle" class="bt" style="fill:var(--surface);font-size:13px">A</text></g>
+              <g id="mB" transform="translate(250 132)"><circle r="14" style="fill:var(--ink)"/><text y="5" text-anchor="middle" class="bt" style="fill:var(--surface);font-size:13px">B</text></g>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="grid2">
+              <div class="slider"><label for="fA">Floor of A: <var class="v">V</var><sub>A</sub></label><output id="fAv">10 V</output><input id="fA" type="range" min="0" max="12" step="1" value="10"></div>
+              <div class="slider"><label for="fB">Floor of B: <var class="v">V</var><sub>B</sub></label><output id="fBv">6 V</output><input id="fB" type="range" min="0" max="12" step="1" value="6"></div>
+            </div>
+            <div class="readout" id="fRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>Voltages chain like floors</h3>
+        <div class="prose"><p>To go from A to C, you can go through B: <span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span>. This is the “Chasles relation” for voltages, and it is the basis of Kirchhoff’s voltage law (KVL) in chapter 2. Also, reversing the arrow changes the sign: <span class="f-inline"><var class="u">U</var><sub>BA</sub> = −<var class="u">U</var><sub>AB</sub></span>.</p></div>
+        <h3>The current arrow is a bet</h3>
+        <div class="prose"><p>You choose the direction of the arrow <var class="i">I</var> at random, then you calculate. Positive result: the current goes in the direction of your arrow. Negative result: it goes the other way. In a resistor, the real current <b>always goes down</b> from the high floor to the low floor, like water.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The midterm of Nov. 2020 (Ex 3, the same circuit as your TD 1 Ex 2) gave voltages like <span class="f-inline"><var class="u">U</var><sub>4</sub> = <var class="v">V</var><sub>C</sub> − <var class="v">V</var><sub>D</sub> = −110 V</span> and asked you to <b>place the points</b> A to F on the figure, then to calculate the other voltages by chaining. In Oct. 2022, exercise 3 required many arrows and gave negative results (<var class="u">U</var>₅ = −2.5 V, <var class="i">I</var>₅ = −5 mA). <a class="td x" href="entrainement.html#potentiels">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Arrowhead of the <var class="u">U</var> arrow = the point written first.</li><li><span class="f-inline"><var class="u">U</var><sub>AC</sub> = <var class="u">U</var><sub>AB</sub> + <var class="u">U</var><sub>BC</sub></span> and <span class="f-inline"><var class="u">U</var><sub>BA</sub> = −<var class="u">U</var><sub>AB</sub></span>.</li><li>A negative result just means “the other way”.</li></ul></div>
+        <div data-check="elec-c1-06,elec-c1-07,elec-c1-08"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s3"></button></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Part 4</span></div><h2>Dipoles and sign conventions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A dipole has two terminals. The current that enters by one terminal <b>comes out entirely</b> by the other: a dipole does not keep any current, not even a source. The course sorts dipoles by three criteria.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Criterion</th><th>Definition from the course</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td><b>Linear</b> / non-linear</td><td>Linear if the relationship between <var class="u">U</var> and <var class="i">I</var> does not depend on the current (constant impedance).</td><td>Resistor, capacitor, coil: linear. Diode, transistor: not.</td></tr>
+            <tr><td><b>Passive</b> / active</td><td>Passive if its characteristic passes through the origin: <var class="u">U</var> = 0 ⇔ <var class="i">I</var> = 0. It can only consume (Joule effect).</td><td>Resistor: passive. Cell, battery, motor: active.</td></tr>
+            <tr><td><b>Receiver</b> / source</td><td>Source if it supplies electrical energy, receiver if it consumes it.</td><td>A battery is a source when it powers your phone, a receiver when you recharge it.</td></tr>
+          </tbody></table></div>
+        <h3>The two conventions</h3>
+        <div class="prose"><p>On a given dipole, we compare the direction of the <var class="u">U</var> arrow with that of the <var class="i">I</var> arrow. A convention is a <b>choice of arrows</b>, not a property of the dipole.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Receiver convention</h3><p>Arrows in <b>opposite directions</b>. This is the normal setting for a resistor: <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>.</p><p class="ex"><var>P</var> = <var class="u">U</var>·<var class="i">I</var> is then the power <b>received</b>. If <var class="u">U</var> and <var class="i">I</var> have the same sign, the dipole is indeed a receiver.</p></div>
+          <div class="qty"><h3>Source convention</h3><p>Arrows in the <b>same direction</b>. Normal for a battery, which pushes the current toward its +. On a resistor, you then have to write <span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>.</p><p class="ex"><var>P</var> = <var class="u">U</var>·<var class="i">I</var> is then the power <b>supplied</b>. Same sign: the dipole is indeed a source.</p></div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>Ohm and the direction of the arrows</span><span>flip the I arrow</span></div>
+          <div class="fig">
+            <svg class="c" viewBox="0 0 330 120" role="img" aria-label="A resistor between A and B with a voltage arrow and a current arrow">
+              <path class="w" d="M20 74H110M220 74H310"/>
+              <rect class="r" x="110" y="62" width="110" height="24"/>
+              <text class="lbl" x="158" y="108">R</text>
+              <path class="av" d="M220 34H112" marker-end="url(#ah-v)"/>
+              <text class="lbl lv" x="138" y="24">U = V<tspan class="s" dy="4">A</tspan><tspan dy="-4"> − V</tspan><tspan class="s" dy="4">B</tspan></text>
+              <path id="convI" class="ai" d="M36 74H92" marker-end="url(#ah-i)"/>
+              <text class="lbl li" x="58" y="64">I</text>
+              <circle class="dot" cx="20" cy="74" r="4"/><circle class="dot" cx="310" cy="74" r="4"/>
+              <text class="lbl" x="14" y="104">A</text><text class="lbl" x="304" y="104">B</text>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row"><button class="btn primary" id="convBtn" type="button">Flip the I arrow</button></div>
+            <div class="readout" id="convRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note why"><span class="tag">Advice from the course</span><p>In a circuit with <b>a single source</b>, draw it in source convention and all the resistors in receiver convention: all your results will come out positive. With two sources pushing against each other, you cannot satisfy everyone: choose a direction at random and read the sign at the end.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Receiver: opposite arrows, <span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>, <var>P</var> = <var class="u">U</var><var class="i">I</var> received.</li><li>Source: arrows in the same direction, <var>P</var> = <var class="u">U</var><var class="i">I</var> supplied; on a resistor, <span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>.</li><li>The current that enters a dipole comes out in full, sources included.</li></ul></div>
+        <div data-check="elec-c1-09,elec-c1-10,elec-c1-11"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s4"></button></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Part 5</span></div><h2>Ohm’s law and power</h2></div>
+      <div class="stack">
+        <div class="formula"><div><var class="u">U</var> = <var>R</var> · <var class="i">I</var></div><small>Ohm’s law · in receiver convention · volts = ohms × amperes</small></div>
+        <div class="prose"><p>Not all materials conduct equally well: this is the <b>resistive effect</b>. A resistor is a <b>passive</b> dipole whose current is proportional to the voltage. Its characteristic <span class="f-inline"><var class="i">I</var> = <var>f</var>(<var class="u">U</var>)</span> is a straight line through the origin. You get the three versions by isolating the letter you are looking for:</p></div>
+        <div class="grid3">
+          <div class="card"><span class="t">I am looking for the voltage</span><span class="f"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span><span class="d">4 Ω with 3 A through it → 12 V</span></div>
+          <div class="card"><span class="t">I am looking for the current</span><span class="f"><var class="i">I</var> = <var class="u">U</var> / <var>R</var></span><span class="d">12 V across 4 Ω → 3 A</span></div>
+          <div class="card"><span class="t">I am looking for the resistance</span><span class="f"><var>R</var> = <var class="u">U</var> / <var class="i">I</var></span><span class="d">12 V and 3 A → 4 Ω</span></div>
+        </div>
+        <h3>Prefixes, and a trick</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Prefix</th><th>Means</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><b>µ</b> micro</td><td>× 10⁻⁶</td><td>5 µA = 0.000005 A</td></tr>
+            <tr><td><b>m</b> milli</td><td>× 10⁻³</td><td>2 mA = 0.002 A</td></tr>
+            <tr><td><b>k</b> kilo</td><td>× 10³</td><td>4.7 kΩ = 4,700 Ω</td></tr>
+            <tr><td><b>M</b> mega</td><td>× 10⁶</td><td>1 MΩ = 1,000,000 Ω</td></tr>
+          </tbody></table></div>
+        <div class="prose"><p><b>Trick:</b> kΩ × mA gives volts directly, because the kilo and the milli cancel out: 1 kΩ × 2 mA = 2 V. In the same way V / kΩ gives mA: 12 V / 4 kΩ = 3 mA. The numerical exercises in the midterms are almost always in kΩ and mA <span class="td x">Midterms 2023 and 2024 · Ex 2</span>.</p></div>
+        <h3>Power and the Joule effect</h3>
+        <div class="prose"><p><span class="f-inline"><var>P</var> = <var class="u">U</var>·<var class="i">I</var></span>. With Ohm’s law, for a resistor: <span class="f-inline"><var>P</var> = <var>R</var>·<var class="i">I</var>²</span> = <span class="f-inline"><var class="u">U</var>²/<var>R</var></span>. A resistor turns all this power into heat. The inverse of the resistance is the <b>conductance</b> <span class="f-inline"><var>G</var> = 1/<var>R</var></span>, in siemens (S): “how well it lets current through”.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>In the MCQ, the distractors play on units and powers of 10: “100 V / 0.1 A” gives <b>1 kΩ</b> (dividing by 0.1 is multiplying by 10), not 10 Ω. And an option with the right number but the wrong unit (“1,000 A” for a voltage) is wrong <span class="td x">Midterm 2021 · Ex 1</span>.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li><span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span> in receiver convention, with a minus sign otherwise.</li><li><span class="f-inline"><var>P</var> = <var class="u">U</var><var class="i">I</var> = <var>R</var><var class="i">I</var>² = <var class="u">U</var>²/<var>R</var></span> and <span class="f-inline"><var>G</var> = 1/<var>R</var></span>.</li><li>kΩ × mA = V, V / kΩ = mA.</li></ul></div>
+        <div data-check="elec-c1-12,elec-c1-13,elec-c1-14"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s5"></button></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Part 6</span></div><h2>Wire or gap: switches and measuring instruments</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Before calculating, replace every “special” element by what it really becomes, then redraw the circuit.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>You see</th><th>Replace with</th><th>What it gives</th></tr></thead>
+          <tbody>
+            <tr><td>Closed switch</td><td>a wire</td><td><var class="u">U</var><sub>K</sub> = 0, <var class="i">I</var><sub>K</sub> anything</td></tr>
+            <tr><td>Open switch</td><td>a gap (infinite resistance)</td><td><var class="i">I</var><sub>K</sub> = 0, <var class="u">U</var><sub>K</sub> anything</td></tr>
+            <tr><td>Voltmeter (connected in parallel)</td><td>a gap</td><td>it reads the voltage without changing anything <span class="td">TD1 · Ex 6</span></td></tr>
+            <tr><td>Ammeter (connected in series)</td><td>a wire</td><td>it short-circuits whatever is in parallel with it <span class="td">TD1 · Ex 6</span></td></tr>
+            <tr><td>Wire placed across a resistor</td><td>the resistor disappears</td><td>0 V across it so 0 A through it: it is a <b>short circuit</b></td></tr>
+          </tbody></table></div>
+        <div class="bench">
+          <div class="bench-head"><span>The 4 cases of the switches, with E = 12 V</span><span class="td">TD1 · Ex 7</span></div>
+          <div class="fig">
+            <svg class="c" id="sw" viewBox="0 0 370 230" role="img" aria-label="Circuit with a battery, a resistor in parallel with switch K1, then switch K2 in series with a resistor">
+              <polyline id="swPath" class="path-hl" points="40,200 40,50 300,50 300,200 40,200"/>
+              <path class="w" d="M40 102V50H120M120 20V50M220 20V50M220 50H300V62M300 102V120M300 164V200H40V138"/>
+              <path class="w" d="M120 20H150M190 20H220M120 50H140M200 50H220"/>
+              <circle class="src" cx="40" cy="120" r="18"/><path class="w" d="M40 102V138"/>
+              <path class="av" d="M12 140V100" marker-end="url(#ah-v)"/><text class="lbl lv" x="0" y="96">E</text>
+              <rect class="r" x="150" y="12" width="40" height="16"/><text class="lbl" x="164" y="10" style="font-size:14px">R</text>
+              <rect class="r" x="292" y="120" width="16" height="44"/><text class="lbl" x="270" y="148" style="font-size:14px">R</text>
+              <line id="k1" class="w" x1="140" y1="50" x2="196" y2="30" style="cursor:pointer"/>
+              <circle class="dot" cx="140" cy="50" r="3.5"/><circle class="dot" cx="200" cy="50" r="3.5"/>
+              <text class="tiny" x="162" y="72">K1</text>
+              <line id="k2" class="w" x1="300" y1="62" x2="318" y2="98" style="cursor:pointer"/>
+              <circle class="dot" cx="300" cy="62" r="3.5"/><circle class="dot" cx="300" cy="102" r="3.5"/>
+              <text class="tiny" x="270" y="86">K2</text>
+              <path class="av" d="M338 196V58" marker-end="url(#ah-v)"/><text class="lbl lv" x="346" y="132">U</text>
+            </svg>
+          </div>
+          <div class="ctrls">
+            <div class="row"><button class="btn" type="button" id="k1btn" aria-pressed="false">K1: open</button><button class="btn" type="button" id="k2btn" aria-pressed="false">K2: open</button></div>
+            <div class="readout" id="swRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The questions “the ammeter is connected in series / the voltmeter in parallel” come up in almost every course MCQ from 2017 to 2022. And TD1 Ex 6 (a black box with a voltmeter, then an ammeter) is a classic: a no-load measurement, then a short-circuit measurement, which is already the idea of Thévenin and Norton. <a class="td x" href="entrainement.html#appareils">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Closed switch, ammeter = <b>wire</b>. Open switch, voltmeter = <b>gap</b>.</li><li>No current in a resistor ⇒ no voltage across it (<span class="f-inline"><var>R</var>·0 = 0</span>). That is why an open switch “picks up” the whole voltage.</li></ul></div>
+        <div data-check="elec-c1-15,elec-c1-16,elec-c1-17"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s6"></button></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Part 7</span></div><h2>Sources, ideal and real</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A source can send current into a circuit. An <b>ideal</b> source does so without any loss. There are two types, and each one sets a single quantity.</p></div>
+        <div class="grid2">
+          <div class="bench"><div class="bench-head"><span>Ideal voltage source</span><span><var class="u">u</var> = <var class="u">E</var> for every <var class="i">i</var></span></div>
+            <div class="fig sm" id="fig-ideal-e"></div>
+            <p class="fig-cap">The voltage does not depend on the current supplied: horizontal characteristic. Cell, battery, mains.</p></div>
+          <div class="bench"><div class="bench-head"><span>Ideal current source</span><span><var class="i">i</var> = <var class="i">I</var> for every <var class="u">u</var></span></div>
+            <div class="fig sm" id="fig-ideal-i"></div>
+            <p class="fig-cap">The current does not depend on the voltage: vertical characteristic. Example from the course: a battery charger.</p></div>
+        </div>
+        <h3>Turning off a source: remove the circle</h3>
+        <div class="prose"><p>For the theorems of chapter 3, you will need to <b>cancel</b> (turn off) sources. The symbols are made for that: remove the circle and look at what is left.</p>
+          <ul><li><b>Voltage</b> source turned off: <var class="u">E</var> = 0, its two terminals are at the same potential. What is left is <b>a wire</b>: you short-circuit it.</li>
+          <li><b>Current</b> source turned off: <var class="i">I</var> = 0, nothing flows in its branch any more. What is left is <b>a gap</b>: you remove the whole branch.</li></ul></div>
+        <h3>Real sources</h3>
+        <div class="prose"><p>A real battery heats up a little: there are Joule losses in the wires. We model them with an <b>internal resistance</b> <var>r</var>.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Real voltage source</h3><p><var class="u">E</var> in <b>series</b> with <var>r</var>. The output voltage drops when you draw current:</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="u">u</var> = <var class="u">E</var> − <var>r</var>·<var class="i">i</var></div></div><p class="ex">Better when <var>r</var> is <b>small</b>. If the load <var>R</var> ≫ <var>r</var>, you can treat it as ideal.</p></div>
+          <div class="qty"><h3>Real current source</h3><p><var class="i">I</var> in <b>parallel</b> with <var>r</var>. Part of the current leaks through <var>r</var>:</p><div class="formula" style="font-size:1.3rem;padding:.6rem"><div><var class="i">i</var> = <var class="i">I</var> − <var class="u">u</var>/<var>r</var></div></div><p class="ex">Better when <var>r</var> is <b>large</b>. If the load <var>R</var> ≪ <var>r</var>, you can treat it as ideal.</p></div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>A real source supplying a load R</span><span id="rgMode">voltage source</span></div>
+          <div class="grid2" style="gap:0">
+            <div class="fig" id="fig-real"></div>
+            <div class="fig" id="fig-real-plot"></div>
+          </div>
+          <div class="ctrls">
+            <div class="row" role="group" aria-label="Type of source"><button class="btn" type="button" data-rg="v" aria-pressed="true">Voltage (E, r in series)</button><button class="btn" type="button" data-rg="i" aria-pressed="false">Current (I, r in parallel)</button></div>
+            <div class="grid2">
+              <div class="slider"><label for="rgR">Load <var>R</var></label><output id="rgRv">10 Ω</output><input id="rgR" type="range" min="1" max="60" step="1" value="10"></div>
+              <div class="slider"><label for="rgr">Internal resistance <var>r</var></label><output id="rgrv">2 Ω</output><input id="rgr" type="range" min="1" max="40" step="1" value="2"></div>
+            </div>
+            <div class="readout" id="rgRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>TD1 Ex 5 is the typical exercise: “the generator (<var class="u">E</var>, <var>R</var>) gives a voltage level <var class="u">U</var> = 2 V if <var>R</var><sub>C</sub> = 10 Ω and it doubles the voltage level if <var>R</var><sub>C</sub> = 25 Ω”. Two situations, two voltage divider equations, two unknowns: <var class="u">E</var> = 12 V and <var>R</var> = 50 Ω. <a class="td x" href="entrainement.html#generateurs">Practice</a></p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Voltage source: sets <var class="u">U</var>; its current depends on the circuit. Current source: sets <var class="i">I</var>; its voltage depends on the circuit.</li><li>Turn off: voltage → <b>wire</b>, current → <b>gap</b>.</li><li>Real: voltage source = <var class="u">E</var> + <var>r</var> in series; current source = <var class="i">I</var> + <var>r</var> in parallel.</li></ul></div>
+        <div data-check="elec-c1-18,elec-c1-19,elec-c1-20,elec-c1-21"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s7"></button></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Part 8</span></div><h2>Calculating without a calculator</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The midterm is taken <b>without a calculator</b>, and almost everything is symbolic (“in terms of <var class="u">E</var> and <var>R</var>”). TD 0 trains the calculation skills you need. Here they are, with examples taken from the TDs and the exams.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Fractions</h3><p>Common denominator first: <span class="f-inline"><var>a</var>/<var>b</var> + <var>c</var>/<var>d</var> = (<var>ad</var> + <var>cb</var>)/(<var>bd</var>)</span>. Dividing by a fraction is multiplying by its inverse.</p><p class="f-block">1/<var>R</var> + 1/(2<var>R</var>) = 2/(2<var>R</var>) + 1/(2<var>R</var>) = 3/(2<var>R</var>)<br>so the resistance is 2<var>R</var>/3</p></div>
+          <div class="qty"><h3>Isolating an unknown</h3><p>What you do on one side of the “=”, you do on the other. Cross-multiply to get rid of fractions.</p><p class="f-block">3.3·(<var>R</var>₁ + <var>R</var>₂) = 12·<var>R</var>₂<br>3.3·<var>R</var>₁ = 8.7·<var>R</var>₂<br><var>R</var>₂/<var>R</var>₁ = 3.3/8.7 ≈ 0.38</p></div>
+          <div class="qty"><h3>System of two equations</h3><p><b>Substitution</b>: isolate one unknown in one equation, replace it in the other. Or <b>combination</b>: add the equations to eliminate one.</p><p class="f-block">2<var>R</var> + 20 = 10<var class="u">E</var> and 4<var>R</var> + 100 = 25<var class="u">E</var><br>(1) gives <var>R</var> = 5<var class="u">E</var> − 10, in (2):<br>20<var class="u">E</var> − 40 + 100 = 25<var class="u">E</var> ⇒ <var class="u">E</var> = 12 V, <var>R</var> = 50 Ω</p></div>
+          <div class="qty"><h3>Checking the units <span class="en">dimensional consistency</span></h3><p>Both sides of the “=” have the same unit, and we only add things with the same unit. Building blocks: <b>V = Ω × A</b> and <b>W = V × A</b>.</p><p class="f-block">✓ <var class="u">U</var> = <var>R</var><var class="i">I</var> + <var class="u">E</var> : V + V<br>✓ <var>P</var> = <var class="u">U</var>²/<var>R</var> : V²/Ω = V·A = W<br>✗ <var class="i">I</var> = <var class="u">E</var>/<var>R</var> + <var class="u">E</var> : A + V, impossible</p></div>
+        </div>
+        <h3>Reflexes that save time</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Calculation</th><th>Reflex</th></tr></thead>
+          <tbody>
+            <tr><td>Two equal resistors in parallel</td><td><var>R</var> // <var>R</var> = <var>R</var>/2, and <var>n</var> equal ones: <var>R</var>/<var>n</var></td></tr>
+            <tr><td><var>R</var> // 2<var>R</var></td><td>2<var>R</var>²/3<var>R</var> = 2<var>R</var>/3</td></tr>
+            <tr><td>3<var>R</var> // 6<var>R</var></td><td>18<var>R</var>²/9<var>R</var> = 2<var>R</var></td></tr>
+            <tr><td>Complex fraction</td><td>multiply top and bottom by the same number: (7<var>R</var>/2)·3<var>R</var> / (7<var>R</var>/2 + 3<var>R</var>) = 21<var>R</var>/13 by multiplying everything by 2</td></tr>
+            <tr><td>Dividing by 0.1 or 0.5</td><td>multiply by 10 or by 2</td></tr>
+            <tr><td>Symbolic result</td><td>check the unit, then a limiting case (<var>R</var> → 0, <var>R</var> → ∞) that must make sense</td></tr>
+          </tbody></table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>Two unknowns need two equations: in electronics, they often come from two situations (two measurements, two settings).</li><li>Before handing in a formula, check the units: it is the fastest check there is.</li></ul></div>
+        <div data-check="elec-c1-22,elec-c1-23,elec-c1-24"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="elec:bases:s8"></button></div>
+      </div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Chapters">
+      <a href="index.html"><span>Back</span><b>Elec home</b></a>
+      <a class="next" href="cours-2-lois.html"><span>Chapter 2</span><b>Fundamental laws →</b></a>
+    </nav>
+    <footer class="foot">Based on the course “Electronics basic Concepts” (class of 2031), TD 0 and TD 1, and the midterm papers from 2017 to 2024.</footer>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/en/qcm/elec.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, nf = U.nf, E = R.elec;
+  var reduce = U.reduceMotion();
+
+  /* ---- header simulator ---- */
+  var simE = $('#simE'), simR = $('#simR'), dotsG = $('#sim-dots');
+  var L = 780, N = 20, NS = 'http://www.w3.org/2000/svg', dots = [];
+  for (var k = 0; k < N; k++) { var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '4'); c.setAttribute('class', 'flow'); dotsG.appendChild(c); dots.push(c); }
+  function pt(s) { s = ((s % L) + L) % L; if (s < 240) return [60 + s, 40]; s -= 240; if (s < 150) return [300, 40 + s]; s -= 150; if (s < 240) return [300 - s, 190]; s -= 240; return [60, 190 - s]; }
+  var off = 0, last = null, speed = 80;
+  function place() { dots.forEach(function (c, k) { var p = pt(off + k * L / N); c.setAttribute('cx', p[0]); c.setAttribute('cy', p[1]); }); }
+  function bandsFor(r) { return r < 10 ? [r, 0, 'gold'] : [Math.floor(r / 10), r % 10, 0]; }
+  function updSim() {
+    var e = +simE.value, r = +simR.value, i = e / r;
+    $('#simEv').textContent = e + ' V'; $('#simRv').textContent = r + ' Ω';
+    $('#simCalc').textContent = e + ' ÷ ' + r; $('#simI').textContent = nf(i) + ' A'; $('#simP').textContent = nf(e * i, 1) + ' W';
+    var b = bandsFor(r);
+    ['b1', 'b2', 'b3'].forEach(function (id, k) { var v = b[k]; $('#' + id).setAttribute('fill', v === 'gold' ? '#C9A227' : E.CC[v]); });
+    $('#simCode').textContent = b.map(function (v) { return v === 'gold' ? 'gold' : E.CN[v]; }).join(' · ') + ' · gold';
+    speed = Math.min(36 * i, 300);
+    if (reduce) place();
+  }
+  function frame(t) { if (last !== null) off += speed * (t - last) / 1000; last = t; place(); requestAnimationFrame(frame); }
+  simE.addEventListener('input', updSim); simR.addEventListener('input', updSim);
+  updSim(); place(); if (!reduce) requestAnimationFrame(frame);
+
+  /* ---- building of potentials ---- */
+  function yv(v) { return 226 - v * 15; }
+  (function drawFloors() {
+    var s = '';
+    for (var v = 0; v <= 12; v++) { var y = yv(v); s += '<line class="floor" x1="70" x2="290" y1="' + y + '" y2="' + y + '"/><text class="floor-lbl" x="60" y="' + (y + 3.5) + '" text-anchor="end">' + v + ' V</text>' + (v === 0 ? '<text class="floor-lbl" x="293" y="' + (y + 3.5) + '" style="font-size:9.5px">ground</text>' : ''); }
+    $('#floor-lines').innerHTML = s;
+  })();
+  function updFloors() {
+    var a = +$('#fA').value, b = +$('#fB').value, ya = yv(a), yb = yv(b);
+    $('#fAv').textContent = a + ' V'; $('#fBv').textContent = b + ' V';
+    $('#mA').setAttribute('transform', 'translate(150 ' + ya + ')'); $('#mB').setAttribute('transform', 'translate(250 ' + yb + ')');
+    var ar = $('#fArrow'), lb = $('#fArrowLbl'), dx = 150 - 250, dy = ya - yb, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
+    ar.setAttribute('x1', 250 + ux * 16); ar.setAttribute('y1', yb + uy * 16); ar.setAttribute('x2', 150 - ux * 18); ar.setAttribute('y2', ya - uy * 18);
+    lb.setAttribute('x', 204); lb.setAttribute('y', (ya + yb) / 2 - 8);
+    ar.style.opacity = a === b ? 0 : 1; lb.style.opacity = a === b ? 0 : 1;
+    var u = a - b, msg;
+    if (u > 0) msg = 'Positive: A is <b>higher</b> than B.';
+    else if (u < 0) msg = 'Negative: A is <b>lower</b> than B. The calculation is not wrong: the arrow always points to A, that is the definition.';
+    else msg = 'Same floor: no voltage between A and B.';
+    $('#fRead').innerHTML = '<span class="f-inline"><var class="u">U</var><sub>AB</sub> = <var class="v">V</var><sub>A</sub> − <var class="v">V</var><sub>B</sub> = ' + a + ' − ' + b + ' = </span><span class="big">' + u + ' V</span><br>' + msg;
+  }
+  $('#fA').addEventListener('input', updFloors); $('#fB').addEventListener('input', updFloors); updFloors();
+
+  /* ---- conventions ---- */
+  var same = false;
+  function updConv() {
+    $('#convI').setAttribute('d', same ? 'M92 74H36' : 'M36 74H92');
+    var uri = '<span class="f-inline"><var class="u">U</var> = <var>R</var>·<var class="i">I</var></span>', umri = '<span class="f-inline"><var class="u">U</var> = −<var>R</var>·<var class="i">I</var></span>';
+    $('#convRead').innerHTML = same ? '<b>Same direction</b> as the <var class="u">U</var> arrow: source convention. On a resistor, you have to write ' + umri + '. The product <var class="u">U</var><var class="i">I</var> is the power supplied, so it will come out negative: a resistor supplies nothing.'
+      : '<b>Opposite directions</b>: receiver convention. This is the normal case for a resistor: ' + uri + ', and <var class="u">U</var><var class="i">I</var> = <var>R</var><var class="i">I</var>² is the power received, always positive.';
+  }
+  $('#convBtn').addEventListener('click', function () { same = !same; updConv(); }); updConv();
+
+  /* ---- switches ---- */
+  var k1 = false, k2 = false;
+  function updSw() {
+    var s1 = $('#k1'), s2 = $('#k2');
+    if (k1) { s1.setAttribute('x2', '200'); s1.setAttribute('y2', '50'); } else { s1.setAttribute('x2', '196'); s1.setAttribute('y2', '30'); }
+    if (k2) { s2.setAttribute('x2', '300'); s2.setAttribute('y2', '102'); } else { s2.setAttribute('x2', '318'); s2.setAttribute('y2', '98'); }
+    var path = $('#swPath');
+    path.style.opacity = k2 ? 1 : 0;
+    path.setAttribute('points', k1 ? '40,200 40,50 300,50 300,200 40,200' : '40,200 40,50 120,50 120,20 220,20 220,50 300,50 300,200 40,200');
+    $('#k1btn').textContent = 'K1: ' + (k1 ? 'closed' : 'open'); $('#k1btn').setAttribute('aria-pressed', String(k1));
+    $('#k2btn').textContent = 'K2: ' + (k2 ? 'closed' : 'open'); $('#k2btn').setAttribute('aria-pressed', String(k2));
+    var html;
+    if (!k2) html = '<span class="big">U = E = 12 V</span><br>K2 open: the loop is cut, <b>no current</b> flows. The top resistor does not cost any floor (R × 0 = 0), so the whole voltage of the battery ends up across the gap. K1 changes nothing here.';
+    else if (!k1) html = '<span class="big">U = E/2 = 6 V</span><br>K2 closed, K1 open: the current flows through the two resistors <var>R</var> in series. Voltage divider: the bottom resistor takes half.';
+    else html = '<span class="big">U = E = 12 V</span><br>K1 closed short-circuits the top resistor: the current goes through the wire. Only the bottom resistor is left, and it takes the whole voltage.';
+    $('#swRead').innerHTML = html;
+  }
+  $('#k1btn').addEventListener('click', function () { k1 = !k1; updSw(); }); $('#k2btn').addEventListener('click', function () { k2 = !k2; updSw(); });
+  $('#k1').addEventListener('click', function () { k1 = !k1; updSw(); }); $('#k2').addEventListener('click', function () { k2 = !k2; updSw(); });
+  updSw();
+
+  /* ---- characteristics of ideal sources ---- */
+  function axes(xl, yl) {
+    return '<path class="cz-w" d="M40 150H290M40 150V20"/><path class="cz-uh" d="M290 150l-9 -4.5v9z" style="fill:var(--ink)"/><path d="M40 20l-4.5 9h9z" style="fill:var(--ink)"/>' +
+      '<text x="292" y="168" class="cz-l" text-anchor="end">' + xl + '</text><text x="30" y="24" class="cz-l" text-anchor="end">' + yl + '</text>';
+  }
+  $('#fig-ideal-e').innerHTML = '<svg class="cz" viewBox="0 0 310 180" role="img" aria-label="Characteristic of u as a function of i: a horizontal line at height E">' + axes('i', 'u') +
+    '<path d="M40 70H280" style="stroke:var(--volt);stroke-width:3;fill:none"/><text x="30" y="75" class="cz-l cz-lu" text-anchor="end">E</text></svg>';
+  $('#fig-ideal-i').innerHTML = '<svg class="cz" viewBox="0 0 310 180" role="img" aria-label="Characteristic of u as a function of i: a vertical line at abscissa I">' + axes('i', 'u') +
+    '<path d="M190 150V28" style="stroke:var(--amp);stroke-width:3;fill:none"/><text x="190" y="170" class="cz-l cz-li" text-anchor="middle">I</text></svg>';
+
+  /* ---- real source ---- */
+  var rg = 'v';
+  function updRG() {
+    var Rl = +$('#rgR').value, r = +$('#rgr').value, Ev = 12, Iv = 2, u, i, cap;
+    $('#rgRv').textContent = Rl + ' Ω'; $('#rgrv').textContent = r + ' Ω';
+    if (rg === 'v') {
+      i = Ev / (r + Rl); u = Ev * Rl / (r + Rl);
+      R.circuit.mount('#fig-real', { w: 320, h: 200, aria: 'Source E in series with r, supplying a load R',
+        wires: ['M60 40H260V160H60Z'],
+        parts: [{ t: 'E', x: 60, y: 100, d: 'v', p: 'n', l: 'E = 12 V' }, { t: 'R', x: 150, y: 40, d: 'h', l: 'r' }, { t: 'R', x: 260, y: 100, d: 'v', l: 'R', lp: 'w' },
+          { t: 'I', x: 210, y: 40, d: 'e', l: 'i' }, { t: 'U', a: [292, 150], b: [292, 50], l: 'u' }, { t: 'dot', x: 260, y: 40, r: 3 }] });
+      cap = '<span class="big">u = ' + nf(u) + ' V</span> · i = ' + nf(i) + ' A<br>Voltage divider: <span class="f-inline"><var class="u">u</var> = <var class="u">E</var>·<var>R</var>/(<var>R</var> + <var>r</var>) = 12 × ' + Rl + '/' + (Rl + r) + '</span>. The loss in <var>r</var> is <var>r</var>·<var class="i">i</var> = ' + nf(r * i) + ' V. ' + (Rl >= 10 * r ? 'Here <var>R</var> ≫ <var>r</var>: the source behaves almost like an ideal source.' : 'The load is too small compared with <var>r</var>: the voltage collapses.');
+    } else {
+      u = Iv * r * Rl / (r + Rl); i = Iv * r / (r + Rl);
+      R.circuit.mount('#fig-real', { w: 320, h: 200, aria: 'Current source I in parallel with r, supplying a load R',
+        wires: ['M60 40H260V160H60Z', 'M150 40V160'],
+        parts: [{ t: 'J', x: 60, y: 100, d: 'v', to: 'n', l: 'I = 2 A', as: 'w' }, { t: 'R', x: 150, y: 100, d: 'v', l: 'r' }, { t: 'R', x: 260, y: 100, d: 'v', l: 'R', lp: 'w' },
+          { t: 'I', x: 210, y: 40, d: 'e', l: 'i' }, { t: 'U', a: [292, 150], b: [292, 50], l: 'u' }, { t: 'dot', x: 150, y: 40 }, { t: 'dot', x: 150, y: 160 }] });
+      cap = '<span class="big">i = ' + nf(i) + ' A</span> · u = ' + nf(u) + ' V<br>Current divider: <span class="f-inline"><var class="i">i</var> = <var class="i">I</var>·<var>r</var>/(<var>r</var> + <var>R</var>) = 2 × ' + r + '/' + (r + Rl) + '</span>. ' + (Rl * 10 <= r ? 'Here <var>R</var> ≪ <var>r</var>: almost all the current goes into the load.' : 'The load is too large compared with <var>r</var>: a good part of the current leaks through <var>r</var>.');
+    }
+    /* characteristic u(i) and operating point */
+    var W = 320, H = 200, x0 = 46, y0 = 166, xm = 300, ym = 22;
+    var imax = rg === 'v' ? Ev / r : Iv, umax = rg === 'v' ? Ev : Iv * r;
+    function X(v) { return x0 + (xm - x0) * v / imax; } function Y(v) { return y0 - (y0 - ym) * v / umax; }
+    var s = '<svg class="cz" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Characteristic of the source and operating point">';
+    s += '<path class="cz-w" d="M' + x0 + ' ' + y0 + 'H' + (xm + 8) + 'M' + x0 + ' ' + y0 + 'V' + (ym - 8) + '"/>';
+    s += '<text x="' + (xm + 8) + '" y="' + (y0 + 18) + '" class="cz-l" text-anchor="end">i</text><text x="' + (x0 - 10) + '" y="' + (ym) + '" class="cz-l" text-anchor="end">u</text>';
+    s += '<path d="M' + X(0) + ' ' + Y(umax) + 'L' + X(imax) + ' ' + Y(0) + '" style="stroke:var(--volt);stroke-width:2.5;fill:none"/>';
+    s += '<text x="' + (x0 - 6) + '" y="' + (Y(umax) + 5) + '" class="cz-tiny" text-anchor="end">' + nf(umax, 1) + ' V</text>';
+    s += '<text x="' + X(imax) + '" y="' + (y0 + 16) + '" class="cz-tiny" text-anchor="middle">' + nf(imax, 1) + ' A</text>';
+    s += '<path d="M' + X(i) + ' ' + y0 + 'V' + Y(u) + 'H' + x0 + '" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;fill:none"/>';
+    s += '<circle cx="' + X(i) + '" cy="' + Y(u) + '" r="6" style="fill:var(--amp)"/>';
+    s += '<text x="' + (xm) + '" y="' + (ym + 6) + '" class="cz-tiny" text-anchor="end">' + (rg === 'v' ? 'u = E − r·i' : 'i = I − u/r') + '</text></svg>';
+    $('#fig-real-plot').innerHTML = s;
+    $('#rgRead').innerHTML = cap;
+    $('#rgMode').textContent = rg === 'v' ? 'voltage source' : 'current source';
+  }
+  $$('[data-rg]').forEach(function (b) { b.addEventListener('click', function () { rg = b.dataset.rg; $$('[data-rg]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); updRG(); }); });
+  $('#rgR').addEventListener('input', updRG); $('#rgr').addEventListener('input', updRG); updRG();
+})();
+</script>
+</body>
+</html>
