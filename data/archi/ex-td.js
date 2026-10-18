@@ -227,12 +227,12 @@
     return rows.map(function (r, i) {
       var t = (i + 1) + '. ' + (r.f === 10 ? dtext(r.n) : EN ? r.n.replace(/,/g, '.') : r.n) + ' → ' + L.conv.base(r.t) + (r.d ? ', ' + L.conv.digits(r.d).replace(/[()]/g, '') : '');
       return { t: t, html: '<p>' + texts[i] + '</p>' + r.tools.map(function (x) { return tool(x[0], x[1]); }).join('') +
-        '<p>' + L.conv.res + ' : ' + num(r.n, r.f) + ' = <b>' + num(r.res, r.t) + '</b></p>' };
+        '<p>' + L.conv.res + ' ' + num(r.n, r.f) + ' = <b>' + num(r.res, r.t) + '</b></p>' };
     });
   }
   /* opérations posées : énoncé (liste), réponse (tableau) */
   var SIGN = { add: '+', sub: MINUS, mul: '×', div: '/' };
-  function opText(o) { return o.ops.map(function (x) { return W(x); }).join(' ' + SIGN[o.op] + ' '); }
+  function opText(o) { return o.ops.map(function (x) { return W(x); }).join('\u00a0' + SIGN[o.op] + ' '); }   /* le signe reste avec l’opérande de gauche */
   function opsQuestions(list, L) {
     return list.map(function (o) { return opText(o) + (o.digits ? ' ' + L.digitsQ(o.digits) : ''); });
   }
@@ -265,9 +265,9 @@
   function t8Table(L, empty) {
     var head = [[{ h: L.operation, rs: 2 }, { h: L.binres, rs: 2 }, { h: L.decval, cs: 2 }], [L.u, L.s]];
     return tbl(head, T8.map(function (r) {
-      var o = W(r.a) + ' ' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b);
+      var o = '<span style="white-space:nowrap">' + W(r.a) + ' ' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b) + '</span>';
       if (empty) return [o, '', '', ''];
-      o = W(r.a) + '<br>' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b);           /* réponse : sur deux lignes, plus étroit */
+      o = W(r.a) + '<br><span style="white-space:nowrap">' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b) + '</span>';   /* réponse : sur deux lignes, plus étroit */
       return [o, '<b>' + W(r.w) + '</b>', r.u == null ? '<b>' + L.err + '</b>' : D(sgn(r.u)), r.s == null ? '<b>' + L.err + '</b>' : D(sgn(r.s))];
     }), { w: 44 });
   }
@@ -280,8 +280,8 @@
       forms: { 2: 'Binaire', 10: 'Décimale', 16: 'Hexadécimale' },
       digits: function (d) { return '(' + d + ' chiffres après la virgule)'; },
       ans: ['Nombre à convertir', 'Résultat'],
-      res: 'Résultat',
-      base: function (b) { return 'base ' + b; }
+      res: 'Résultat :',
+      base: function (b) { return { 2: 'binaire', 10: 'décimal', 16: 'hexadécimal' }[b]; }
     },
     digitsQ: function (d) { return '(' + d + ' chiffres après la virgule)'; },
     opsHead: ['Opération', 'Résultat', 'Contrôle en décimal'], rem: 'reste',
