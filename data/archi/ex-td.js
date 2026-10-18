@@ -267,6 +267,7 @@
     return tbl(head, T8.map(function (r) {
       var o = W(r.a) + ' ' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b);
       if (empty) return [o, '', '', ''];
+      o = W(r.a) + '<br>' + (r.op === '+' ? '+' : MINUS) + ' ' + W(r.b);           /* réponse : sur deux lignes, plus étroit */
       return [o, '<b>' + W(r.w) + '</b>', r.u == null ? '<b>' + L.err + '</b>' : D(sgn(r.u)), r.s == null ? '<b>' + L.err + '</b>' : D(sgn(r.s))];
     }), { w: 44 });
   }
