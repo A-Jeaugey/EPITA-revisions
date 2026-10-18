@@ -117,6 +117,11 @@ NODE_PATH=$(npm root -g) node tools/elshot.js "http://127.0.0.1:8765/elec/entrai
 `check.js` signale les erreurs console et tout débordement horizontal (1280 px et 375 px, clair et sombre).
 `node tools/check_i18n.js` vérifie la version anglaise (à lancer après toute modification de contenu).
 
+## Mise en ligne
+
+Site public : https://epita.arthurjeaugey.com, servi par GitHub Pages depuis la branche `main` (dossier racine ;
+`CNAME` = domaine, `.nojekyll`). Ce qui est sur `main` est en ligne : y fusionner le travail une fois vérifié.
+
 ## Aperçu claude.ai
 
 Aperçu privé du site : https://claude.ai/artifact/4ERsrJDktPHYY92et9KQmH. Pour le mettre à jour,
