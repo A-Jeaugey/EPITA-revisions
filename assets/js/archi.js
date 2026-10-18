@@ -99,7 +99,7 @@
     'La partie fractionnaire est nulle : il n’y a rien à convertir.': 'The fractional part is 0: there is nothing to convert.',
     'La partie fractionnaire est nulle : la conversion est exacte. On lit les chiffres de haut en bas.': 'The fractional part is 0: the conversion is exact. Read the digits from top to bottom.',
     'La partie fractionnaire {x} est déjà apparue : les mêmes chiffres reviennent sans fin. Le développement en base {b} est infini (les chiffres soulignés se répètent).':
-      'The fractional part {x} has already appeared: the same digits come back endlessly. The base-{b} expansion is infinite (the overlined digits repeat).',
+      'The fractional part {x} has already appeared: the same digits come back endlessly. The base-{b} expansion is infinite (the underlined digits repeat).',
     'On a les {n} chiffres demandés : on s’arrête là, sans arrondir. On lit les chiffres de haut en bas.': 'We have the {n} digits asked for: stop here, without rounding. Read the digits from top to bottom.',
     'On s’arrête ici : le développement continue ({p}).': 'We stop here: the expansion goes on ({p}).',
     'il est infini': 'it is infinite', 'il s’arrête après {n} chiffres': 'it ends after {n} digits', 'très long': 'very long',
@@ -126,7 +126,7 @@
     '{f} = 2<sup>{k}</sup> : chaque chiffre donne {k} bits.': '{f} = 2<sup>{k}</sup>: each digit gives {k} bits.',
     '{f} et {t} sont deux puissances de 2 : on passe par la base 2.': '{f} and {t} are both powers of 2: go through base 2.',
     '{n} chiffres après la virgule demandés : on s’arrête là, sans arrondir.': '{n} digits after the point asked for: stop there, without rounding.',
-    'Le développement est infini : les chiffres soulignés se répètent.': 'The expansion is infinite: the overlined digits repeat.',
+    'Le développement est infini : les chiffres soulignés se répètent.': 'The expansion is infinite: the underlined digits repeat.',
     'Vers la base 10 : la somme des produits, chiffre × poids.': 'To base 10: the sum of products, digit × weight.',
     'Partie entière : divisions successives. Partie fractionnaire : multiplications successives.': 'Integer part: successive divisions. Fractional part: successive multiplications.',
     'Ni {f} ni {t} ne sont des puissances d’une même base : on passe par la base 10.': '{f} and {t} are not powers of the same base: go through base 10.',
@@ -148,6 +148,10 @@
     'le chiffre de poids {p} du multiplicateur vaut 0 : une ligne de zéros, décalée de {j} rang(s).': 'the digit of weight {p} of the multiplier is 0: write down zeros, shifted {j} place(s) left.',
     'chiffre de poids {p} : {a} × {d} = {r}, décalé de {j} rang(s).': 'digit of weight {p}: {a} × {d} = {r}, shifted {j} place(s) left.',
     'on additionne les produits partiels, colonne par colonne avec les retenues.': 'add the partial products, column by column with the carries.',
+    'le chiffre de droite du multiplicateur vaut 1 : on écrit le multiplicande.': 'the rightmost digit of the multiplier is 1: write down the multiplicand.',
+    'le chiffre de droite du multiplicateur vaut 0 : une ligne de zéros.': 'the rightmost digit of the multiplier is 0: write down zeros.',
+    'Un seul chiffre dans cette colonne : on pose {d}.': 'Only one digit in this column: write down {d}.',
+    'Il reste la retenue {c} : on pose {d}, on retient {r}.': 'The carry {c} is left: write down {d}, carry {r}.',
     'Division par zéro.': 'Division by zero.',
     'Le dividende à gauche, le diviseur à droite, le quotient sous le diviseur.': 'The dividend on the left, the divisor on the right, the quotient under the divisor.',
     'Le diviseur ({d}) est plus grand que le dividende : le quotient commence par 0.': 'The divisor ({d}) is greater than the dividend: the quotient starts with 0.',
@@ -204,7 +208,7 @@
       'More than {n} bits would be needed: the first {n} are kept, rounded to nearest (the encoded value is not exactly the starting value).',
     'Il faudrait plus de {n} bits : on garde les {n} premiers, sans arrondir (la valeur codée n’est pas exactement la valeur de départ).':
       'More than {n} bits would be needed: the first {n} are kept, without rounding (the encoded value is not exactly the starting value).',
-    'Le mot : {w}.': 'The word: {w}.', 'Valeur codée : {v}.': 'Encoded value: {v}.', 'Sur la copie (sans espace)': 'On the exam paper (no spaces)',
+    'Le mot : {w}.': 'The word: {w}.', 'Valeur codée : {v}.': 'Encoded value: {v}.', 'Sur la copie (sans espace) :': 'On the exam paper (no spaces):',
     '{s} = {v} : le nombre est {p}.': '{s} = {v}: the number is {p}.',
     '{e} = {w} (rempli de 1) et {m} = 0 : c’est l’infini.': '{e} = {w} (all ones) and {m} = 0: this is infinity.', 'Représentation : {r}.': 'Associated representation: {r}.',
     '{e} = {w} (rempli de 1) et {m} ≠ 0 : ce n’est pas un nombre.': '{e} = {w} (all ones) and {m} ≠ 0: this is not a number.',
@@ -680,8 +684,13 @@
      o.period ({ start, len } : chiffres répétés soulignés d'un trait), o.cls */
   function num(x, base, o) {
     o = o || {}; base = +base || 10;
-    var p = parts(x, base, o), g = groupOf(base, o), per = o.period || p.period, n = p.int.length + p.frac.length;
-    var sp = base === 10 ? GSEP10 : (n > 12 && !o.nbsp ? ' ' : '\u00a0');
+    var p = parts(x, base, o), g = groupOf(base, o), per = o.period || p.period;
+    if (per && o.repeat !== false) {                /* le motif répété jusqu'à 12 chiffres au moins, le premier souligné */
+      var motif = p.frac.slice(per.start, per.start + per.len), ff = p.frac.slice(0, per.start + per.len);
+      while (ff.length < Math.max(12, per.start + 2 * per.len)) ff += motif;
+      p = { neg: p.neg, int: p.int, frac: ff };
+    }
+    var n = p.int.length + p.frac.length, sp = base === 10 ? GSEP10 : (n > 12 && !o.nbsp ? ' ' : '\u00a0');
     var ip = base === 10 && p.int.length < 4 && o.group == null ? [p.int] : gInt(p.int, g);
     var h = (p.neg ? MINUS : '') + esc(ip.join(sp));
     if (p.frac) {
@@ -875,7 +884,7 @@
       wrap.classList.toggle('done', k >= total);
       var s = r.mults[rows - 1];
       if (k >= total) {
-        resEl.innerHTML = num(f, 10, { max: 30 }) + ' = ' + (stopRep ? num(fr, b, { period: r.period }) : num(fr, b, { more: !r.exact && want == null }));
+        resEl.innerHTML = num(f, 10, { max: 30 }) + (r.exact || stopRep || want == null ? ' = ' : ' ≈ ') + (stopRep ? num(fr, b, { period: r.period }) : num(fr, b, { more: !r.exact && want == null }));
         if (!n) say.innerHTML = T('La partie fractionnaire est nulle : il n’y a rien à convertir.');
         else if (r.exact) say.innerHTML = T('La partie fractionnaire est nulle : la conversion est exacte. On lit les chiffres de haut en bas.');
         else if (stopRep) say.innerHTML = T('La partie fractionnaire {x} est déjà apparue : les mêmes chiffres reviennent sans fin. Le développement en base {b} est infini (les chiffres soulignés se répètent).', { x: esc(dec(r.mults[r.period.start].x)), b: b });
@@ -961,8 +970,8 @@
       }
       var res = r.res, per = d === '' && res.period;
       var shown = { neg: res.neg, int: res.int, frac: res.frac };
-      out.innerHTML = '<p class="cv-r">' + num(parts(r.src.int + (r.src.frac ? ',' + r.src.frac : ''), f), f) + ' = ' +
-        (r.src.neg ? MINUS : '') + num(shown, t, per ? { period: res.period } : { more: !res.exact && d === '' }) + '</p>' +
+      out.innerHTML = '<p class="cv-r">' + num({ neg: r.src.neg, int: r.src.int, frac: r.src.frac }, f) + (res.exact || per || d === '' ? ' = ' : ' ≈ ') +
+        num(shown, t, per ? { period: res.period } : { more: !res.exact && d === '' }) + '</p>' +
         '<p class="muted cv-note">' + routeNote(r, d) + '</p>';
       var parts2 = [];
       var absq = q.abs(r.src.q), ip = q.floor(absq), fq = q.sub(absq, Q(ip));
@@ -1117,17 +1126,19 @@
         rows.push(res);
         box.innerHTML = gridHTML(rows, top, F, k > 0 && k <= n ? A.cols[k - 1].pos : null);
         if (k === 0) { say.innerHTML = T('On additionne colonne par colonne, de droite à gauche, en reportant les retenues.'); return; }
-        var cc = A.cols[k - 1], ts = [];
+        var cc = A.cols[k - 1], ts = [], nd = cc.ds.filter(function (d) { return d != null; }).length;
         if (cc.cin) ts.push(cc.cin);
         cc.ds.forEach(function (d) { if (d != null) ts.push(d); });
         var expr;
-        if (!cc.ds.some(function (d) { return d != null; })) expr = T('Il reste la retenue {c} : on l’écrit.', { c: bn(intStr(cc.cin, b), b) });
+        if (!nd && cc.cin < b) expr = T('Il reste la retenue {c} : on l’écrit.', { c: bn(intStr(cc.cin, b), b) });
+        else if (!nd) expr = T('Il reste la retenue {c} : on pose {d}, on retient {r}.', { c: bn(intStr(cc.cin, b), b), d: bn(digit(cc.d), b), r: bn(intStr(cc.cout, b), b) });
+        else if (nd === 1 && !cc.cin) expr = T('Un seul chiffre dans cette colonne : on pose {d}.', { d: bn(digit(cc.d), b) });
         else {
-          expr = ts.map(function (d) { return bn(digit(d), b); }).join(' + ');
+          expr = ts.map(function (d) { return bn(intStr(d, b), b); }).join(' + ');
           if (b !== 2 && b !== 10 && ts.some(function (d) { return d >= 10; })) expr += ' = ' + ts.join(' + ');
           if (b !== 2 && b !== 10) expr += ' = ' + cc.s + '<sub>10</sub> = ' + num(intStr(cc.s, b), b, { group: 0 });
           else expr += ' = ' + bn(intStr(cc.s, b), b);
-          expr += ' : ' + (cc.cout ? T('on pose {d}, on retient {c}.', { d: bn(digit(cc.d), b), c: bn(intStr(cc.cout, b), b) }) : T('on pose {d}.', { d: bn(digit(cc.d), b) }));
+          expr += (EN ? ': ' : ' : ') + (cc.cout ? T('on pose {d}, on retient {c}.', { d: bn(digit(cc.d), b), c: bn(intStr(cc.cout, b), b) }) : T('on pose {d}.', { d: bn(digit(cc.d), b) }));
         }
         say.innerHTML = T('Étape {i} : ', { i: k }) + expr + (k === n ? ' ' + T('Résultat : {r}.', { r: num(A.result, b) }) : '');
       };
@@ -1172,7 +1183,8 @@
         if (k <= nr) {
           var r = Mm.rows[k - 1];
           say.innerHTML = T('Étape {i} : ', { i: k }) + (b === 2
-            ? (r.d ? T('le chiffre de poids {p} du multiplicateur vaut 1 : on écrit le multiplicande, décalé de {j} rang(s).', { p: pw(2, r.j), j: r.j }) : T('le chiffre de poids {p} du multiplicateur vaut 0 : une ligne de zéros, décalée de {j} rang(s).', { p: pw(2, r.j), j: r.j }))
+            ? (r.d ? (r.j ? T('le chiffre de poids {p} du multiplicateur vaut 1 : on écrit le multiplicande, décalé de {j} rang(s).', { p: pw(2, r.j), j: r.j }) : T('le chiffre de droite du multiplicateur vaut 1 : on écrit le multiplicande.'))
+              : (r.j ? T('le chiffre de poids {p} du multiplicateur vaut 0 : une ligne de zéros, décalée de {j} rang(s).', { p: pw(2, r.j), j: r.j }) : T('le chiffre de droite du multiplicateur vaut 0 : une ligne de zéros.')))
             : T('chiffre de poids {p} : {a} × {d} = {r}, décalé de {j} rang(s).', { p: pw(b, r.j), a: bn(Mm.a, b), d: bn(digit(r.d), b), r: bn(r.str, b), j: r.j }));
           return;
         }
@@ -1189,9 +1201,11 @@
         var lines = [{ cells: {}, cc: {} }], curL = lines[0], qs = '', i;
         for (i = 0; i < D.a.length; i++) lines[0].cells[i] = esc(D.a.charAt(i));
         function subRem(e) {
-          var sub = intStr(e.sub, b), rem = intStr(e.rem, b), sl = { cells: {}, cc: {}, op: MINUS }, rl = { cells: {}, cc: {} };
-          for (var j = 0; j < sub.length; j++) { sl.cells[e.col - sub.length + 1 + j] = esc(sub.charAt(j)); sl.cc[e.col - sub.length + 1 + j] = 'u'; }
+          var sub = intStr(e.sub, b), rem = intStr(e.rem, b), sl = { cells: {}, cc: {} }, rl = { cells: {}, cc: {} }, st = e.col - sub.length + 1;
+          for (var j = 0; j < sub.length; j++) { sl.cells[st + j] = esc(sub.charAt(j)); sl.cc[st + j] = 'u'; }
+          if (st > 0) { sl.cells[st - 1] = MINUS; sl.cc[st - 1] = 'mn'; } else sl.op = MINUS;
           for (j = 0; j < rem.length; j++) rl.cells[e.col - rem.length + 1 + j] = esc(rem.charAt(j));
+          if (e.rem === Z) rl.zero = e.col;
           lines.push(sl, rl); curL = rl;
         }
         for (i = 0; i < k; i++) {
@@ -1199,6 +1213,7 @@
           if (e.type === 'small') qs += '0';
           else if (e.type === 'first') { qs += digit(e.qd); if (now) for (var j = 0; j <= e.col; j++) lines[0].cc[j] = 'hl'; subRem(e); }
           else if (e.type === 'down' || e.type === 'zero') {
+            if (curL.zero != null && e.col === curL.zero + 1) curL.cc[curL.zero] = (curL.cc[curL.zero] || '') + ' lead0';
             curL.cells[e.col] = esc(e.type === 'zero' ? '0' : e.digit); curL.cc[e.col] = (curL.cc[e.col] || '') + (now ? ' hl' : '') + (e.type === 'zero' ? ' z0' : '');
             if (e.type === 'down' && now) lines[0].cc[e.col] = 'src';
             qs += digit(e.qd);
@@ -1376,12 +1391,13 @@
   function ieeeWordHTML(r) {
     var F = FMT[r.fmt], b = r.bits;
     function field(cls, lbl, s, from) {
-      var h = '';
-      for (var i = 0; i < s.length; i++) {
-        var gi = from + i;
-        h += (i && cls === 'm' && i % 4 === 0 ? '<span class="ie-gap"></span>' : '') + (i && cls === 'e' && (s.length - i) % 4 === 0 ? '<span class="ie-gap"></span>' : '') +
-          '<i class="' + (s.charAt(i) === '1' ? 'one' : '') + '" title="' + esc(T('bit {k}', { k: F.n - 1 - gi })) + '">' + s.charAt(i) + '</i>';
-      }
+      /* paquets de 4 : depuis la droite pour E (un entier), depuis la gauche pour M (des chiffres après la virgule) */
+      var gs = cls === 'm' ? gFrac(s, 4) : gInt(s, 4), h = '', i = 0;
+      gs.forEach(function (g) {
+        h += '<span class="ie-g">';
+        for (var j = 0; j < g.length; j++, i++) h += '<i class="' + (g.charAt(j) === '1' ? 'one' : '') + '" title="' + esc(T('bit {k}', { k: F.n - 1 - (from + i) })) + '">' + g.charAt(j) + '</i>';
+        h += '</span>';
+      });
       return '<span class="ie-f ie-' + cls + '"><span class="ie-lbl">' + lbl + '</span><span class="ie-bits">' + h + '</span></span>';
     }
     var nibs = '';
@@ -1392,21 +1408,23 @@
     }
     return '<div class="ie-word">' + field('s', 'S', b.charAt(0), 0) + field('e', 'E · ' + F.e + ' bits', b.slice(1, 1 + F.e), 1) + field('m', 'M · ' + F.m + ' bits', b.slice(1 + F.e), 1 + F.e) + '</div>' +
       '<div class="ie-nibs" role="img" aria-label="' + esc(T('Le mot en paquets de 4 bits, et son écriture hexadécimale')) + '">' + nibs + '</div>' +
-      '<p class="ie-hex">' + num(grp(r.hex, 4), 16, { group: 0 }) + '</p>';
+      '<p class="ie-hex">' + num(r.hex, 16, { group: 4, nbsp: true }) + '</p>';
   }
   function trimZ(s) { return s.replace(/0+$/, ''); }
+  /* une mantisse : des chiffres après la virgule, en paquets de 4 depuis la gauche */
+  function mantH(m) { return '<span class="bn w">' + esc(gFrac(m, 4).join(' ')) + '</span>'; }
   /* écriture décimale sans séparateurs de milliers (pour un champ de saisie) */
   function plain(v) { var t = toBase(v, 10, { max: 60 }); return (t.neg ? '-' : '') + t.int + (t.frac ? sepChar() + t.frac : ''); }
   function k2nHTML(k, n) { return (k < Z ? MINUS : '') + esc(String(babs(k))) + ' × ' + pw(2, n); }
   function valueHTML(v) {
     var t = toBase(q.abs(v), 10, { max: 40 });
-    if (t.exact && t.int.length + t.frac.length <= 40) return num(v, 10, { sub: false });
+    if (t.exact && t.int.length + t.frac.length <= 40) return num(v, 10, { sub: false, max: 40 });
     var s = sci(v, 4);
     return '≈ ' + (s.neg ? MINUS : '') + esc(s.m) + ' × ' + pw(10, s.e);
   }
   function ieeeSteps(r, mode, src) {
     var F = FMT[r.fmt], li = [];
-    function L(x) { li.push('<li><div>' + x + '</div></li>'); }
+    function L(x) { li.push('<li><div><p>' + x + '</p></div></li>'); }
     var sB = '<b class="ie-cs">S</b>', eB = '<b class="ie-ce">E</b>', mB = '<b class="ie-cm">M</b>';
     if (mode === 'encode') {
       if (r.cls === 'nan') { L(T('NaN (« pas un nombre ») : {e} rempli de 1 et {m} non nul.', { e: eB, m: mB })); return li; }
@@ -1433,11 +1451,11 @@
         }));
         L(T('Exposant : {e} = {E} + {b} = {v} = {w}.', { e: eB, E: r.E < 0 ? MINUS + (-r.E) : r.E, b: F.bias, v: r.e, w: num(bits(r.e, F.e), 2) }));
       }
-      L(T('Mantisse : les chiffres après la virgule, complétés à droite par des 0 jusqu’à {n} bits : {m} = {v}.', { n: F.m, m: mB, v: num(bits(r.M, F.m), 2, { sub: false }) }) +
+      L(T('Mantisse : les chiffres après la virgule, complétés à droite par des 0 jusqu’à {n} bits : {m} = {v}.', { n: F.m, m: mB, v: mantH(bits(r.M, F.m)) }) +
         (r.exact ? '' : ' ' + (r.round === 'trunc' ? T('Il faudrait plus de {n} bits : on garde les {n} premiers, sans arrondir (la valeur codée n’est pas exactement la valeur de départ).', { n: F.m })
           : T('Il faudrait plus de {n} bits : on garde les {n} premiers, arrondis au plus proche (la valeur codée n’est pas exactement la valeur de départ).', { n: F.m }))));
-      L(T('Le mot : {w}.', { w: num(grp(r.hex, 4), 16, { group: 0 }) }) + (r.exact ? '' : ' ' + T('Valeur codée : {v}.', { v: valueHTML(r.value) })) +
-        '<span class="ie-copy">' + T('Sur la copie (sans espace)') + ' : ' + sB + ' <span class="bn">' + r.s + '</span> · ' + eB + ' <span class="bn">' + bits(r.e, F.e) + '</span> · ' + mB + ' <span class="bn">' + bits(r.M, F.m) + '</span></span>');
+      L(T('Le mot : {w}.', { w: num(r.hex, 16, { group: 4, nbsp: true }) }) + (r.exact ? '' : ' ' + T('Valeur codée : {v}.', { v: valueHTML(r.value) })) +
+        '<span class="ie-copy">' + T('Sur la copie (sans espace) :') + ' ' + sB + ' <span class="bn">' + r.s + '</span> · ' + eB + ' <span class="bn">' + bits(r.e, F.e) + '</span> · ' + mB + ' <span class="bn">' + bits(r.M, F.m) + '</span></span>');
       return li;
     }
     /* décodage */
@@ -1448,10 +1466,10 @@
     if (r.cls === 'zero') { L(T('{e} = 0 et {m} = 0 : c’est zéro.', { e: eB, m: mB })); L(T('Représentation : {r}.', { r: '<b>' + (r.s ? MINUS : '+') + '0</b>' })); return li; }
     if (r.cls === 'subnormal') {
       L(T('{e} = 0 et {m} ≠ 0 : nombre dénormalisé. Pas de 1 avant la virgule, et l’exposant vaut {m0}.', { e: eB, m: mB, m0: MINUS + (F.bias - 1) }));
-      L(T('{m} = {v} : la valeur est 0,{t} × {p}.', { m: mB, v: num(mb, 2, { sub: false }), t: '<span class="bn">' + esc(gFrac(trimZ(mb), 4).join('\u00a0')) + '</span><sub>2</sub>', p: pw(2, 1 - F.bias) }));
+      L(T('{m} = {v} : la valeur est 0,{t} × {p}.', { m: mB, v: mantH(mb), t: '<span class="bn">' + esc(gFrac(trimZ(mb), 4).join('\u00a0')) + '</span><sub>2</sub>', p: pw(2, 1 - F.bias) }));
     } else {
       L(T('{e} = {w} = {v} : l’exposant vaut {v} − {b} = {E}.', { e: eB, w: num(eb, 2), v: r.e, b: F.bias, E: r.E < 0 ? MINUS + (-r.E) : r.E }));
-      L(T('{m} = {v} : la valeur est 1,{t} × {p}.', { m: mB, v: num(mb, 2, { sub: false }), t: trimZ(mb) ? '<span class="bn">' + esc(gFrac(trimZ(mb), 4).join('\u00a0')) + '</span><sub>2</sub>' : '0', p: pw(2, r.E) }));
+      L(T('{m} = {v} : la valeur est 1,{t} × {p}.', { m: mB, v: mantH(mb), t: trimZ(mb) ? '<span class="bn">' + esc(gFrac(trimZ(mb), 4).join('\u00a0')) + '</span><sub>2</sub>' : '0', p: pw(2, r.E) }));
     }
     var tz = trimZ(mb);
     L((tz ? T('On déplace la virgule de {f} rang(s) vers la droite pour obtenir un entier (impair), et on retire {f} à l’exposant.', { f: tz.length }) + ' ' : '') +

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Number bases · Archi</title>
+<meta name="description" content="Archi, chapter 1: positional notation, base 2, base 16 and any base, the integers from 0 to 15, converting to decimal, successive divisions and multiplications, groups of 4 bits, with step-by-step tools and a converter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi · chapter 1: number bases">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numeration</b> — sheet 1 of 4</span><span>Source: Chapter 1, § I (D. Bouchet) · Tutorial 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="1"></span><a href="index.html">Archi</a> · Chapter 1 of 4</div>
+      <h1>One number, <span class="w">several ways to write it.</span></h1>
+      <p class="lead"><span data-eq><span class="bn">157.625<sub>10</sub></span> = <span class="bn">1001 1101.101<sub>2</sub></span> = <span class="bn">9D.A<sub>16</sub></span></span>: three ways to write the same value. This chapter teaches you to go from one to another, both ways, with or without a radix point.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with step-by-step tools</span></li>
+        <li><span><span class="k">Course</span> Chapter 1, § I · Tutorial 1</span></li>
+        <li class="ex"><span><span class="k">Exam</span> a conversion table in all 10 exams</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="place" data-opts='{"base":2,"value":"10011101.101","title":"A binary number and its weights"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Click the bits: the value is worked out again in the three bases.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 1 · Number bases</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>Positional notation</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>Base 2</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>Base 16, any base</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>0 to 15, by heart</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>To decimal</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>Integer part: divisions</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Fractional part: multiplications</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>Groups of 4, any base</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is written in binary on 4 bits: part 5 is <span class="bn">0101</span>. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi home</a><a href="cours-2-operations.html">Chapter 2: operations →</a><a href="../qcm/index.html#archi">Archi MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Positional notation</a></li><li><a href="#s2">Base 2</a></li><li><a href="#s3">Base 16, any base</a></li><li><a href="#s4">0 to 15, by heart</a></li>
+      <li><a href="#s5">To decimal</a></li><li><a href="#s6">Integer part: divisions</a></li><li><a href="#s7">Fractional part: multiplications</a></li><li><a href="#s8">Groups of 4, any base</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Part 1 <span class="ref">course § I.1.1</span></div><h2>Positional notation</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In base 10, numbers are written with ten <b>digits</b>: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. What gives a digit its value is its <b>position</b>: in 157.625, the 1 is worth one hundred and the 5 is worth fifty. This is <b>positional notation</b>.</p>
+          <p>Positions are numbered from the radix point. Position 0 is the one <b>just to the left of the point</b>; positions increase to the left and become negative to the right of the point. Each digit is multiplied by a <b>weight</b>: 10 raised to the position of the digit.</p>
+        </div>
+        <div data-archi="place" data-opts='{"base":10,"value":"157.625","title":"157.625: positions and weights"}'></div>
+        <div class="prose"><p>The number is the <b>sum of products</b> digit × weight:</p></div>
+        <div class="calc" data-eq><div>157.625 = 1×10<sup>2</sup> + 5×10<sup>1</sup> + 7×10<sup>0</sup> + 6×10<sup>−1</sup> + 2×10<sup>−2</sup> + 5×10<sup>−3</sup></div><div>= 100 + 50 + 7 + 0.6 + 0.02 + 0.005</div></div>
+        <div class="tbl"><table>
+          <caption>Table 1.1 — The columns on both sides of the point (course, p. 3)</caption>
+          <thead><tr><th>Position</th><th>2</th><th>1</th><th>0</th><th>−1</th><th>−2</th><th>−3</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Weight</th><td>10<sup>2</sup></td><td>10<sup>1</sup></td><td>10<sup>0</sup></td><td>10<sup>−1</sup></td><td>10<sup>−2</sup></td><td>10<sup>−3</sup></td></tr>
+            <tr><th scope="row">Column</th><td>hundreds</td><td>tens</td><td>ones (units)</td><td>tenths</td><td>hundredths</td><td>thousandths</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Remember</span>
+          <p>The radix point separates the <b>integer part</b> (157) from the <b>fractional part</b> (0.625). Every base in this chapter follows the same rule: only the number raised to the power changes.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: position 0</span>
+          <p>Position 0 is not the position of the first digit written, it is the position of the digit <b>just before the point</b>. In 157.625, the 1 is in position 2 (weight 100) and the 6, just after the point, is in position −1 (weight 0.1).</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Part 2 <span class="ref">course § I.1.2</span></div><h2>Base 2: 0s and 1s</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A computer stores and manipulates only 0s and 1s. The <b>base-2 numeral system</b> (the <b>binary</b> system) therefore uses two digits: 0 and 1. A binary digit is called a <b>bit</b>. The rule does not change: the weight of a digit is 2 raised to its position.</p>
+          <p>Since each digit is 0 or 1, you just <b>add up the weights of the bits set to 1</b>:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1001 1101.101<sub>2</sub></span> = 1×2<sup>7</sup> + 1×2<sup>4</sup> + 1×2<sup>3</sup> + 1×2<sup>2</sup> + 1×2<sup>0</sup> + 1×2<sup>−1</sup> + 1×2<sup>−3</sup></div><div>= 128 + 16 + 8 + 4 + 1 + 0.5 + 0.125</div><div class="r">= <span class="bn">157.625<sub>10</sub></span></div></div>
+        <div class="prose">
+          <p>On this site, as in the recent exams, binary numbers are written <b>in groups of 4 digits</b> starting from the point: <span class="bn">1001 1101.101</span> rather than 10011101.101. It is easier to read, and it is the key to part 8.</p>
+          <p><b>The base in subscript.</b> When several bases are used at a time, the base is written in subscript to the right of the number: <span data-eq><span class="bn">10<sub>2</sub></span> = <span class="bn">2<sub>10</sub></span></span>, whereas 10<sub>10</sub> is ten. If a base is not specified in subscript, the context should be clear.</p>
+          <p>To work fast, you have to know the first powers of two <b>by heart</b> (Tutorial 1, exercise 1: from 2<sup>0</sup> to 2<sup>16</sup> and from 2<sup>−1</sup> to 2<sup>−5</sup>).</p>
+        </div>
+        <div class="grid2">
+          <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+            <caption>Table 1.2 — Positive powers of two</caption>
+            <thead><tr><th>Power</th><th class="n">Value</th><th>Power</th><th class="n">Value</th></tr></thead>
+            <tbody>
+              <tr><td>2<sup>0</sup></td><td>1</td><td>2<sup>9</sup></td><td>512</td></tr><tr><td>2<sup>1</sup></td><td>2</td><td>2<sup>10</sup></td><td>1,024</td></tr><tr><td>2<sup>2</sup></td><td>4</td><td>2<sup>11</sup></td><td>2,048</td></tr><tr><td>2<sup>3</sup></td><td>8</td><td>2<sup>12</sup></td><td>4,096</td></tr><tr><td>2<sup>4</sup></td><td>16</td><td>2<sup>13</sup></td><td>8,192</td></tr><tr><td>2<sup>5</sup></td><td>32</td><td>2<sup>14</sup></td><td>16,384</td></tr><tr><td>2<sup>6</sup></td><td>64</td><td>2<sup>15</sup></td><td>32,768</td></tr><tr><td>2<sup>7</sup></td><td>128</td><td>2<sup>16</sup></td><td>65,536</td></tr><tr><td>2<sup>8</sup></td><td>256</td><td></td><td></td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+              <caption>Table 1.3 — Negative powers of two</caption>
+              <thead><tr><th>Power</th><th class="n">Value</th></tr></thead>
+              <tbody>
+                <tr><td>2<sup>−1</sup></td><td>0.5</td></tr><tr><td>2<sup>−2</sup></td><td>0.25</td></tr><tr><td>2<sup>−3</sup></td><td>0.125</td></tr>
+                <tr><td>2<sup>−4</sup></td><td>0.0625</td></tr><tr><td>2<sup>−5</sup></td><td>0.03125</td></tr>
+              </tbody>
+            </table></div>
+            <div data-archi="drill" data-opts='{"kind":"pow2"}'></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: after the point, the weight is divided by 2</span>
+          <p>The first digit after the point weighs 2<sup>−1</sup> = 0.5: <span data-eq><span class="bn">0.1<sub>2</sub></span> = <span class="bn">0.5<sub>10</sub></span></span>, not 0.1. Likewise <span data-eq><span class="bn">0.01<sub>2</sub></span> = <span class="bn">0.25<sub>10</sub></span></span>. Each place to the right divides the weight by 2, just as each place to the left multiplies it by 2.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Part 3 <span class="ref">course § I.1.3 and I.1.4</span></div><h2>Base 16, then any base</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Binary is essential to the computer, but long to read for us: 157.625 already needs 11 bits. The <b>base-16 numeral system</b> (the <b>hexadecimal</b> system) is much more compact, and converts very easily into binary (part 8).</p>
+          <p>It uses sixteen digits: 0 to 9, then the letters <b>A, B, C, D, E, F</b> for the values 10, 11, 12, 13, 14 and 15. The letters are written in capitals. The weight of a digit is 16 raised to its position:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">9D.A<sub>16</sub></span> = 9×16<sup>1</sup> + 13×16<sup>0</sup> + 10×16<sup>−1</sup></div><div>= 144 + 13 + 0.625</div><div class="r">= <span class="bn">157.625<sub>10</sub></span></div></div>
+        <div data-archi="place" data-opts='{"base":16,"value":"9D.A","title":"9D.A: one hexadecimal digit per position"}'></div>
+        <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+          <caption>Table 1.4 — Powers of sixteen to know</caption>
+          <thead><tr><th>Power</th><th class="n">Value</th><th>Power</th><th class="n">Value</th></tr></thead>
+          <tbody>
+            <tr><td>16<sup>0</sup></td><td>1</td><td>16<sup>3</sup></td><td>4,096</td></tr>
+            <tr><td>16<sup>1</sup></td><td>16</td><td>16<sup>4</sup></td><td>65,536</td></tr>
+            <tr><td>16<sup>2</sup></td><td>256</td><td>16<sup>−1</sup></td><td>0.0625</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Any base.</b> The base <var>b</var> can be any whole number greater than or equal to two. A base-<var>b</var> system uses <var>b</var> digits, from 0 to <var>b</var> − 1; beyond 9, letters are used, starting with A. A number with integer part <var>a</var><sub><var>n</var></sub> … <var>a</var><sub>0</sub> and fractional part <var>a</var><sub>−1</sub> … <var>a</var><sub>−<var>m</var></sub> is worth:</p>
+        </div>
+        <div class="calc" style="font-size:1.05rem"><div><var>N</var> = <var>a</var><sub><var>n</var></sub>×<var>b</var><sup><var>n</var></sup> + … + <var>a</var><sub>1</sub>×<var>b</var><sup>1</sup> + <var>a</var><sub>0</sub>×<var>b</var><sup>0</sup> + <var>a</var><sub>−1</sub>×<var>b</var><sup>−1</sup> + … + <var>a</var><sub>−<var>m</var></sub>×<var>b</var><sup>−<var>m</var></sup></div></div>
+        <div class="note trap"><span class="tag">Pitfall: a digit is always smaller than the base</span>
+          <ul>
+            <li>In base 8, the digits go from 0 to 7: “8” does not exist. In base 16, the largest digit is F (15), and 16 is written <span data-eq><span class="bn">10<sub>16</sub></span> = <span class="bn">16<sub>10</sub></span></span>.</li>
+            <li>After the point, the hexadecimal weights are 16<sup>−1</sup> = 0.0625 and 16<sup>−2</sup> = 0.00390625. So <span data-eq><span class="bn">28.28<sub>16</sub></span> = 40 + 2×16<sup>−1</sup> + 8×16<sup>−2</sup> = <span class="bn">40.15625<sub>10</sub></span></span>, not 40.28 (2025-2026 exam).</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Part 4 <span class="ref">course § I.2.1</span></div><h2>The integers from 0 to 15, by heart</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Every conversion between binary and hexadecimal relies on this table: the course says it should be <b>memorized</b>. Four digits are enough to write any binary number between 0 and 15, with the weights 8, 4, 2 and 1. For instance: <span data-eq><span class="bn">1101<sub>2</sub></span> = 8 + 4 + 1 = <span class="bn">13<sub>10</sub></span> = <span class="bn">D<sub>16</sub></span></span>.</p>
+        </div>
+        <div class="grid2">
+          <div class="tbl nib-t"><table data-eq-rows="b">
+            <caption>Table 1.5 — Decimal, hexadecimal, binary</caption>
+            <thead><tr><th>Decimal</th><th>Hex</th><th>Binary</th></tr></thead>
+            <tbody>
+              <tr><td data-b="10">0</td><td data-b="16"><span class="bn">0</span></td><td data-b="2"><span class="bn">0000</span></td></tr>
+              <tr><td data-b="10">1</td><td data-b="16"><span class="bn">1</span></td><td data-b="2"><span class="bn">0001</span></td></tr>
+              <tr><td data-b="10">2</td><td data-b="16"><span class="bn">2</span></td><td data-b="2"><span class="bn">0010</span></td></tr>
+              <tr><td data-b="10">3</td><td data-b="16"><span class="bn">3</span></td><td data-b="2"><span class="bn">0011</span></td></tr>
+              <tr><td data-b="10">4</td><td data-b="16"><span class="bn">4</span></td><td data-b="2"><span class="bn">0100</span></td></tr>
+              <tr><td data-b="10">5</td><td data-b="16"><span class="bn">5</span></td><td data-b="2"><span class="bn">0101</span></td></tr>
+              <tr><td data-b="10">6</td><td data-b="16"><span class="bn">6</span></td><td data-b="2"><span class="bn">0110</span></td></tr>
+              <tr><td data-b="10">7</td><td data-b="16"><span class="bn">7</span></td><td data-b="2"><span class="bn">0111</span></td></tr>
+              <tr><td data-b="10">8</td><td data-b="16"><span class="bn">8</span></td><td data-b="2"><span class="bn">1000</span></td></tr>
+              <tr><td data-b="10">9</td><td data-b="16"><span class="bn">9</span></td><td data-b="2"><span class="bn">1001</span></td></tr>
+              <tr><td data-b="10">10</td><td data-b="16"><span class="bn">A</span></td><td data-b="2"><span class="bn">1010</span></td></tr>
+              <tr><td data-b="10">11</td><td data-b="16"><span class="bn">B</span></td><td data-b="2"><span class="bn">1011</span></td></tr>
+              <tr><td data-b="10">12</td><td data-b="16"><span class="bn">C</span></td><td data-b="2"><span class="bn">1100</span></td></tr>
+              <tr><td data-b="10">13</td><td data-b="16"><span class="bn">D</span></td><td data-b="2"><span class="bn">1101</span></td></tr>
+              <tr><td data-b="10">14</td><td data-b="16"><span class="bn">E</span></td><td data-b="2"><span class="bn">1110</span></td></tr>
+              <tr><td data-b="10">15</td><td data-b="16"><span class="bn">F</span></td><td data-b="2"><span class="bn">1111</span></td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="note keep"><span class="tag">To rebuild it quickly</span>
+              <ul>
+                <li>From top to bottom, the rightmost bit alternates 0, 1, 0, 1; the next one 00, 11; then 0000, 1111; the leftmost bit turns to 1 from 8 on.</li>
+                <li>A 4-bit word is read with the weights 8, 4, 2, 1: <span data-eq><span class="bn">1011<sub>2</sub></span> = 8 + 2 + 1 = <span class="bn">11<sub>10</sub></span> = <span class="bn">B<sub>16</sub></span></span>.</li>
+                <li>The letters: A = 10, and each next letter adds 1, up to F = 15.</li>
+              </ul>
+            </div>
+            <div data-archi="drill" data-opts='{"kind":"nibble"}'></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: C and D, B and D</span>
+          <p>Most mistakes come from neighbouring letters: C = 12 = <span class="bn">1100</span> and D = 13 = <span class="bn">1101</span>; B = <span class="bn">1011</span> and D = <span class="bn">1101</span> have the same bits in another order. Always check with the weights 8, 4, 2, 1, from left to right.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Part 5 <span class="ref">course § I.2.2</span></div><h2>Converting numbers from any base to decimal</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The method is the one of parts 1 to 3: write down the number as a <b>sum of products</b> digit × weight, then work out the result. It works for the integer part and for the fractional part alike. The three examples of the course:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">4213.04<sub>5</sub></span> = 4×5<sup>3</sup> + 2×5<sup>2</sup> + 1×5<sup>1</sup> + 3×5<sup>0</sup> + 0×5<sup>−1</sup> + 4×5<sup>−2</sup></div><div>= 4×125 + 2×25 + 1×5 + 3×1 + 4×0.04</div><div>= 500 + 50 + 5 + 3 + 0.16</div><div class="r">= <span class="bn">558.16<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">1 0110 1001.0101<sub>2</sub></span> = 1×2<sup>8</sup> + 1×2<sup>6</sup> + 1×2<sup>5</sup> + 1×2<sup>3</sup> + 1×2<sup>0</sup> + 1×2<sup>−2</sup> + 1×2<sup>−4</sup></div><div>= 256 + 64 + 32 + 8 + 1 + 0.25 + 0.0625</div><div class="r">= <span class="bn">361.3125<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">B3C.A<sub>16</sub></span> = 11×16<sup>2</sup> + 3×16<sup>1</sup> + 12×16<sup>0</sup> + 10×16<sup>−1</sup></div><div>= 11×256 + 3×16 + 12 + 10×0.0625</div><div>= 2,816 + 48 + 12 + 0.625</div><div class="r">= <span class="bn">2,876.625<sub>10</sub></span></div></div>
+        <div class="note why"><span class="tag">Tip: the whole fractional part at once</span>
+          <p><var>k</var> digits after the point make the integer formed by these digits, divided by <var>b</var><sup><var>k</var></sup>. Handy without a calculator:</p>
+          <ul>
+            <li><span data-eq><span class="bn">0.1000 1<sub>2</sub></span> = 17 / 2<sup>5</sup> = 17 / 32 = <span class="bn">0.53125<sub>10</sub></span></span> (since <span data-eq><span class="bn">1 0001<sub>2</sub></span> = <span class="bn">17<sub>10</sub></span></span>);</li>
+            <li><span data-eq><span class="bn">0.28<sub>16</sub></span> = 40 / 16<sup>2</sup> = 40 / 256 = <span class="bn">0.15625<sub>10</sub></span></span> (since <span data-eq><span class="bn">28<sub>16</sub></span> = <span class="bn">40<sub>10</sub></span></span>).</li>
+          </ul>
+          <p>Then write the answer in decimal: the exams ask for “0.25 and not ¼ or 2<sup>−2</sup>”.</p>
+        </div>
+        <div class="prose"><p><b>In the 2025-2026 exam</b> (“write down the result only”):</p></div>
+        <div class="tbl"><table>
+          <caption>Table 1.6 — The “to decimal” lines of the 2025-2026 B1 Examination, worked out again</caption>
+          <thead><tr><th>Number to convert</th><th>Source form</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr data-eq-row><td><span class="bn">1 0110 1101<sub>2</sub></span></td><td>binary</td><td><span class="bn">365<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">1A5<sub>16</sub></span></td><td>hexadecimal</td><td><span class="bn">421<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">1101.1000 1<sub>2</sub></span></td><td>binary</td><td><span class="bn">13.53125<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">28.28<sub>16</sub></span></td><td>hexadecimal</td><td><span class="bn">40.15625<sub>10</sub></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Pitfall: weights in the source base</span>
+          <p>The weight depends on the source base, not on 10: the digit 4 of <span class="bn">4213.04<sub>5</sub></span> in position −2 is worth 4 × 5<sup>−2</sup> = 4 × 0.04 = 0.16, not 0.04. Write down the line of weights before computing.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Part 6 <span class="ref">course § I.2.3</span></div><h2>From decimal to any base: the integer part</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>To go from decimal to a base <var>b</var>, the integer part and the fractional part are converted <b>separately</b>. For the integer part, use the <b>successive division method</b>:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Divide the integer part by <var>b</var>, then the quotient by <var>b</var>, and so on, <b>until the quotient is 0</b>.</p></div></li>
+          <li><div><p>The <b>remainders</b> make up the base-<var>b</var> number, read <b>from the last one to the first one</b>: the last remainder is the leftmost digit.</p></div></li>
+          <li><div><p>If <var>b</var> is greater than ten, a remainder from 10 to 15 is written with a letter (A to F in base 16).</p></div></li>
+        </ol>
+        <div data-archi="divs" data-opts='{"n":"715","base":2}'></div>
+        <div class="prose"><p>Each remainder is the digit of one position: the first division gives the digit of weight 2<sup>0</sup>, the second one the digit of weight 2<sup>1</sup>, and so on. Hence reading from bottom to top: <span data-eq><span class="bn">715<sub>10</sub></span> = <span class="bn">10 1100 1011<sub>2</sub></span></span>. Same method in base 16, with remainders that become letters:</p></div>
+        <div data-archi="divs" data-opts='{"n":"41695","base":16}'></div>
+        <div class="note why"><span class="tag">To check in binary</span>
+          <p>Find the powers of two that make up the number, from the largest to the smallest: <span data-eq>715 = 512 + 128 + 64 + 8 + 2 + 1 = 2<sup>9</sup> + 2<sup>7</sup> + 2<sup>6</sup> + 2<sup>3</sup> + 2<sup>1</sup> + 2<sup>0</sup></span>. 1s in positions 9, 7, 6, 3, 1 and 0: <span class="bn">10 1100 1011</span>. This is not the method of the course, but it is a good check.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: reading order and the last quotient</span>
+          <ul>
+            <li>Read the remainders <b>from bottom to top</b>. Reading them from top to bottom gives <span class="bn">11 0100 1101</span> instead of <span class="bn">10 1100 1011</span> for 715.</li>
+            <li>Stop when the <b>quotient</b> is 0, not when it is 1: the last division (1 / 2 = 0, remainder 1) gives the leftmost digit.</li>
+            <li>In base 16, a remainder of 15 is written F: <span data-eq><span class="bn">41,695<sub>10</sub></span> = <span class="bn">A2DF<sub>16</sub></span></span>, not “10 2 13 15”. In the 2025-2026 exam: <span data-eq><span class="bn">528<sub>10</sub></span> = <span class="bn">210<sub>16</sub></span></span>, a result that “looks decimal” but is right.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Part 7 <span class="ref">course § I.2.3</span></div><h2>The fractional part: successive multiplications</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>For the fractional part, do the reverse: the <b>successive multiplication method</b>.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Multiply the fractional part by <var>b</var>. The <b>integer part</b> of the product is the next digit.</p></div></li>
+          <li><div><p>Start again with the <b>fractional part of the product only</b>, until the fractional part is 0 or until you have the number of digits asked for.</p></div></li>
+          <li><div><p>Read the digits <b>from the first product to the last one</b>, from top to bottom: the first digit obtained comes just after the point.</p></div></li>
+        </ol>
+        <div data-archi="mults" data-opts='{"x":"0.40625","base":2}'></div>
+        <div class="prose"><p>With part 6: <span data-eq><span class="bn">715.40625<sub>10</sub></span> = <span class="bn">10 1100 1011.0110 1<sub>2</sub></span></span>. In base 16, an integer part of 12 gives the digit C:</p></div>
+        <div data-archi="mults" data-opts='{"x":"0.78125","base":16}'></div>
+        <div class="prose"><p>Hence <span data-eq><span class="bn">41,695.78125<sub>10</sub></span> = <span class="bn">A2DF.C8<sub>16</sub></span></span>.</p></div>
+        <div class="prose">
+          <p><b>An expansion that never ends.</b> A fractional part of 0 does not always come. With 0.1, the fractional part 0.2 obtained at the first multiplication comes back at the fifth one: from then on, the same digits repeat endlessly.</p>
+        </div>
+        <div data-archi="mults" data-opts='{"x":"0.1","base":2}'></div>
+        <div class="note why"><span class="tag">Why 0.1 never ends</span>
+          <p>The base-2 expansion is finite only when the fractional part can be written <var>k</var> / 2<sup><var>n</var></sup>: <span data-eq>0.40625 = 13 / 32</span> ends after 5 digits. But 0.1 = 1 / 10, and the factor 5 of the denominator never goes away when multiplying by 2. So a computer cannot store 0.1 exactly in binary: this is what chapter 4 is about.</p>
+        </div>
+        <div class="prose">
+          <p><b>The number of digits asked for.</b> When the question sets the number of digits after the point, do exactly that many multiplications and keep the digits obtained, <b>without rounding</b>. 2025-2026 exam: <span data-eq="t"><span class="bn">40.35<sub>10</sub></span> → <span class="bn">10 1000.0101 1<sub>2</sub></span></span> (5 digits) and <span data-eq="t"><span class="bn">22.84<sub>10</sub></span> → <span class="bn">16.D7<sub>16</sub></span></span> (2 digits).</p>
+        </div>
+        <div data-archi="mults" data-opts='{"x":"0.35","base":2,"digits":5,"title":"40.35: 5 digits after the point"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: rounding, or multiplying the whole product</span>
+          <ul>
+            <li><b>Truncate, do not round.</b> 2018 key: <span data-eq="t"><span class="bn">141.3<sub>10</sub></span> → <span class="bn">8D.4C<sub>16</sub></span></span> with 2 digits, whereas the next digit (C again, so 12 ≥ 8) would round it to 8D.4D. In the five lines of the keys where rounding and truncating give different results, the key truncates.</li>
+            <li>Only multiply the fractional part: <span data-eq>0.42 × 16 = 6.72</span> gives the digit 6, then go on with <span data-eq>0.72 × 16 = 11.52</span> (digit B), not with 6.72 × 16.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Part 8 <span class="ref">course § I.2.4 and I.2.5</span></div><h2>Base 2 and base 16 in groups of 4, then any base</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Since 16 = 2<sup>4</sup>, each hexadecimal digit is made up of exactly <b>4 bits</b> (the table of part 4). To go from binary to hexadecimal, split the number into <b>groups of 4 digits starting from the point</b>: leftwards for the integer part, rightwards for the fractional part. Complete the last group with zeros: <b>on the left</b> of the integer part, <b>on the right</b> of the fractional part.</p>
+        </div>
+        <div data-archi="groups" data-opts='{"value":"10010110110011111.11100101001","from":2,"to":16,"title":"Example of the course"}'></div>
+        <div class="prose"><p>Here <span data-eq><span class="bn w">1 0010 1101 1001 1111.1110 0101 001<sub>2</sub></span> = <span class="bn">12D9F.E52<sub>16</sub></span></span>: the last group <span class="bn">001</span> becomes <span class="bn">0010</span>, hence 2. The other way round, each hexadecimal digit gives its 4 bits, zeros included:</p></div>
+        <div data-archi="groups" data-opts='{"value":"DC.81","from":16,"to":2,"title":"2023 exam: DC.81 to base 2"}'></div>
+        <div class="prose">
+          <p>Same idea for base 8 = 2<sup>3</sup>, with groups of <b>3</b> digits: <span data-eq><span class="bn">4270.634<sub>8</sub></span> = <span class="bn">1000 1011 1000.1100 111<sub>2</sub></span></span> (100 010 111 000.110 011 100 before dropping the trailing zero).</p>
+          <p><b>Converting numbers from any base to any base.</b> If both bases are powers of the same whole number, go through that number; otherwise, go through base 10.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Powers of 2: through base 2</span>
+            <p><span data-eq><span class="bn">3D7.5<sub>16</sub></span> = <span class="bn">0011 1101 0111.0101<sub>2</sub></span> = <span class="bn">1727.24<sub>8</sub></span></span></p>
+            <p class="muted">Groups of 4 to read the binary number, then groups of 3 to write it in base 8: 001 111 010 111.010 100.</p></div>
+          <div class="card"><span class="k">Otherwise: through base 10</span>
+            <p><span data-eq><span class="bn">23<sub>5</sub></span> = 2×5 + 3 = <span class="bn">13<sub>10</sub></span> = <span class="bn">15<sub>8</sub></span></span></p>
+            <p class="muted">Sum of products to decimal (part 5), then successive divisions by 8 (part 6).</p></div>
+        </div>
+        <div class="prose"><p><b>Converter.</b> Type your own number: the tool picks the method of the course and shows the steps (division and multiplication tables, groups, sum of products).</p></div>
+        <div data-archi="converter" data-opts='{"value":"22.84","from":10,"to":16,"digits":"2"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: completing on the right side</span>
+          <p>2025-2026 exam: <span data-eq><span class="bn">1011 1011.1011 01<sub>2</sub></span> = <span class="bn">BB.B4<sub>16</sub></span></span>. The last group <span class="bn">01</span> is completed <b>on the right</b>: <span class="bn">0100</span> = 4. Completing it on the left (<span class="bn">0001</span> = 1) gives BB.B1; grouping the fractional part from the right gives BB.2D. Both are wrong.</p>
+          <p>The other way round, keep the zeros inside: <span data-eq><span class="bn">DC.81<sub>16</sub></span> = <span class="bn">1101 1100.1000 0001<sub>2</sub></span></span>, not 1101 1100.11.</p>
+        </div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>All <b>10 known exams</b> (2016 to 2025) have a conversion table: 8 to 10 lines, <b>4 or 5 points out of 20</b>, “write down the result only”. Since 2023, it is exercise 1.</li>
+            <li>Since 2023, only bases 2, 10 and 16. Each time: binary → decimal and hexadecimal → decimal with a point, decimal → binary with <b>5 digits after the point</b>, decimal → hexadecimal with 2 to 4 digits, binary → hexadecimal with a point.</li>
+            <li>Binary → hexadecimal with a fractional part: <b>10 exams out of 10</b>, and in all 10 the last group has to be completed on the right.</li>
+            <li>The other bases (3, 4, 5, 7, 8, 9, 13) came up in the 7 exams from 2016 to 2022, never since: they are not in this year’s Tutorial 1 either. The method stays the same.</li>
+            <li>Moodle test 2 (from 23 to 25 October 2026) covers chapters 1 and 2, Tutorials 1 and 2 and exercises 1 to 4 of Tutorial 3.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="archi:bases:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can write a number in any base. Chapter 2, <a href="cours-2-operations.html">operations</a>, performs additions, subtractions, multiplications and divisions directly in base 2 and base 16.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../assets/js/archi.js"></script>
+</body>
+</html>
