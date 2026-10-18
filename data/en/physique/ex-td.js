@@ -343,7 +343,8 @@
         { t: 'Question 4 · position', html: '<p>Integrate again; @OM(0) = @0 (origin at the starting point):</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
         { t: 'Question 5 · trajectory', html: '<p>From $x($t): $t = ' + fr('$x', '$v_0 cos$β') + '. Substitute into $y($t):</p>' + eq('$y($x) = −' + fr('$g$x²', '2 $v_0² cos²$β') + ' + $x tan$β') + '<p>It is a <b>parabola</b> (opening downwards).</p>' },
         { t: 'Question 6 · goal?', html: '<p>At the posts, $x = $d = 40 m (with $g = 9.81 m·s⁻²):</p>' +
-          eq('$y(40) = −' + fr('9.81 × 40²', '2 × 23² × cos²38°') + '+ 40 tan 38°', '$y(40) ≈ −23.9 + 31.3 ≈ 7.36 m') +
+          eq('$y(40) = −' + fr('$g × 40²', '2 $v_0² cos²$β'), '+ 40 tan$β', '$y(40) ≈ −23.9 + 31.3 ≈ 7.36 m') +
+          '<p>(details: 9.81 × 40² = 15 696; 2 × 23² × cos²38° ≈ 657; 15 696/657 ≈ 23.9; 40 tan 38° ≈ 31.3.)</p>' +
           '<p>3 m &lt; 7.36 m &lt; 8 m: the ball passes above the crossbar and below the top of the posts, in line with them. <b>The goal is scored.</b></p>' +
           fig(F.rugby({ en: true, traj: true }), 'Trajectory to scale: top at $x_S ≈ 26.2 m, $y_S ≈ 10.2 m; the ball is coming down when it passes the posts, at a height of 7.36 m.') +
           '<p>With $g = 10 m·s⁻², you get 6.90 m: same conclusion.</p>' +

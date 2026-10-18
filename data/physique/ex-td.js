@@ -691,7 +691,8 @@
       { t: 'Question 4 · position', html: '<p>On intègre encore ; @OM(0) = @0 (origine au point de départ) :</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
       { t: 'Question 5 · trajectoire', html: '<p>De $x($t) : $t = ' + fr('$x', '$v_0 cos$β') + '. On remplace dans $y($t) :</p>' + eq('$y($x) = −' + fr('$g$x²', '2 $v_0² cos²$β') + ' + $x tan$β') + '<p>C’est une <b>parabole</b> (tournée vers le bas).</p>' },
       { t: 'Question 6 · but ?', html: '<p>Au niveau des poteaux, $x = $d = 40 m (avec $g = 9,81 m·s⁻²) :</p>' +
-        eq('$y(40) = −' + fr('9,81 × 40²', '2 × 23² × cos²38°') + '+ 40 tan 38°', '$y(40) ≈ −23,9 + 31,3 ≈ 7,36 m') +
+        eq('$y(40) = −' + fr('$g × 40²', '2 $v_0² cos²$β'), '+ 40 tan$β', '$y(40) ≈ −23,9 + 31,3 ≈ 7,36 m') +
+          '<p>(détail : 9,81 × 40² = 15 696 ; 2 × 23² × cos²38° ≈ 657 ; 15 696/657 ≈ 23,9 ; 40 tan 38° ≈ 31,3.)</p>' +
         '<p>3 m &lt; 7,36 m &lt; 8 m : le ballon passe au-dessus de la barre transversale et sous le haut des poteaux, dans l’axe. <b>Le but est marqué.</b></p>' +
         fig(figRugby({ traj: true }), 'Trajectoire à l’échelle : sommet en $x_S ≈ 26,2 m, à $y_S ≈ 10,2 m ; le ballon redescend quand il passe les poteaux, à 7,36 m de haut.') +
         '<p>Avec $g = 10 m·s⁻², on trouve 6,90 m : même conclusion.</p>' +
