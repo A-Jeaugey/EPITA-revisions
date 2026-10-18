@@ -2102,7 +2102,7 @@
       '`add_times` : convertis les deux durées en secondes, additionne, reconvertis.'],
     solution: [
       { t: 'Questions 1 et 2', html: R('sem-2-6', '0-3') + '<p>83639 = 23 × 3600 + 839, et 839 = 13 × 60 + 59. Le type `int * int * int` est celui d’un triplet.</p>' },
-      { t: 'Question 3', html: R('sem-2-6', '4-6') + '<p>Le type de `add_times` est trop long pour une ligne : Caml l’affiche sur deux. Les retenues (59 min 59 s + 1 s) sont gérées par la conversion.</p>' }],
+      { t: 'Question 3 : additionner deux durées', html: R('sem-2-6', '4-6') + '<p>Le type de `add_times` est trop long pour une ligne : Caml l’affiche sur deux. Les retenues (59 min 59 s + 1 s) sont gérées par la conversion.</p>' }],
     answer: A(R('sem-2-6', '0,2,4')),
     traps: [
       'Écrire `sec_of_time (h, m, s)` : c’est une fonction à un seul paramètre, un triplet, alors que les exemples donnent trois paramètres.',
@@ -2162,10 +2162,10 @@
       'Caml ne sait pas si des gardes `when` couvrent tout : un filtrage dont tous les cas sont gardés est signalé non exhaustif.',
       'Un nom dans un motif est une nouvelle variable : il attrape tout, et ne compare rien.'],
     solution: [
-      { t: 'f1, f2, switchonoff', html: '<ul><li>`f1` est correcte : `y` attrape tout ce qui n’est pas 0.</li><li>`f2` : `_` n’est qu’un motif, pas une valeur : erreur de syntaxe à droite de `->`.</li>' +
+      { t: 'f1, f2 et switchonoff', html: '<ul><li>`f1` est correcte : `y` attrape tout ce qui n’est pas 0.</li><li>`f2` : `_` n’est qu’un motif, pas une valeur : erreur de syntaxe à droite de `->`.</li>' +
         '<li>`switchonoff` : une chaîne autre que `"on"` et `"off"` n’est pas filtrée (`Warning 8`, Caml cite `""`). Ajouter `| _ -> …` avec une exception.</li></ul>' },
       { t: 'Le match sur a * b − 27972, square', html: '<ul><li>42 × 666 = 27972 : `"zero"`.</li><li>`square` : les deux cas sont gardés, Caml ne voit pas qu’ils couvrent tout (`Warning 8`, « All clauses in this pattern-matching are guarded »). Remplacer la dernière garde par `_`. `square (-5)` déclenche bien l’exception.</li></ul>' },
-      { t: 'parity, grade, h', html: '<ul><li>`parity` : pour Caml, `n mod 10` peut valoir 10 ou −1, valeurs non filtrées (`Warning 8`) ; le résultat est `"even"`. Remplacer le dernier motif par `_`, et entourer le `match` de parenthèses dans un `if`.</li>' +
+      { t: 'parity, grade et h', html: '<ul><li>`parity` : pour Caml, `n mod 10` peut valoir 10 ou −1, valeurs non filtrées (`Warning 8`) ; le résultat est `"even"`. Remplacer le dernier motif par `_`, et entourer le `match` de parenthèses dans un `if`.</li>' +
         '<li>`grade 12 14` : (12 + 14) / 2 = 13. Les cas sont essayés dans l’ordre : 13 &gt; 15 non, 13 &gt; 5 oui : `\'D\'`. Les cas `\'C\'` et `\'B\'` ne servent jamais ; il faut les ranger du plus exigeant au moins exigeant.</li>' +
         '<li>`h` : le motif `y` est une nouvelle variable, il attrape tout ce qui n’est pas 0 (`Warning 11` : le cas `_` ne sert plus). `h 5 5` et `h 5 3` valent 1. Pour comparer au paramètre `y` : `| z when z = y -> 1`.</li></ul>' },
       { t: 'Les corrections', html: '<p>Les définitions corrigées, sans avertissement :</p>' + R('sem-3-5b') }],
@@ -2196,7 +2196,7 @@
       'Question 4 : une seule cascade de `if` sur le poids peut rendre les trois tarifs d’un coup, dans un triplet.'],
     solution: [
       { t: 'Questions 1 et 2', html: '<p>Une cascade de `if` sur le poids. Les montants sont des `float` : `11.` et non `11`.</p>' + S('sem-3-7', '0-2') },
-      { t: 'Question 3', html: '<p>`rate` teste d’abord le poids (négatif, puis trop lourd), puis filtre le code. Un code inconnu tombe dans `_`.</p>' + R('sem-3-7', '3-9') },
+      { t: 'Question 3 : la fonction rate', html: '<p>`rate` teste d’abord le poids (négatif, puis trop lourd), puis filtre le code. Un code inconnu tombe dans `_`.</p>' + R('sem-3-7', '3-9') },
       { t: 'Question 4 : une seule fonction', html: '<p>La cascade sur le poids rend le triplet des trois tarifs, ouvert par `let (eco, standard, express) = … in` ; le filtrage du code choisit dans le triplet.</p>' + R('sem-3-7b') }],
     answer: A(R('sem-3-7', '0-3')),
     traps: [
@@ -2219,9 +2219,9 @@
       'Le paramètre est un couple : les motifs sont des couples, comme `(0, _)`.',
       'Les cas sont essayés dans l’ordre : place les plus précis d’abord.'],
     solution: [
-      { t: 'Question 1', html: '<p>Trois cas : les deux nuls, un seul (motif « ou » `(0, _) | (_, 0)`, après le premier), aucun.</p>' + R('sem-3-9', '0-3') },
-      { t: 'Question 2', html: '<p>L’ordre des cas suit la définition : `m = 0` d’abord, puis `n = 0` (alors `m ≠ 0`), puis le cas général.</p>' + R('sem-3-9', '4-7') },
-      { t: 'Question 3', html: '<p>`and3` est vraie seulement pour `(true, true, true)` : un cas, et tout le reste.</p>' + R('sem-3-9', '8-10') }],
+      { t: 'Question 1 : compter les zéros', html: '<p>Trois cas : les deux nuls, un seul (motif « ou » `(0, _) | (_, 0)`, après le premier), aucun.</p>' + R('sem-3-9', '0-3') },
+      { t: 'Question 2 : la fonction f', html: '<p>L’ordre des cas suit la définition : `m = 0` d’abord, puis `n = 0` (alors `m ≠ 0`), puis le cas général.</p>' + R('sem-3-9', '4-7') },
+      { t: 'Question 3 : and3 sans opérateur logique', html: '<p>`and3` est vraie seulement pour `(true, true, true)` : un cas, et tout le reste.</p>' + R('sem-3-9', '8-10') }],
     answer: A(R('sem-3-9', '0,4,8')),
     traps: [
       'Placer `(0, _) | (_, 0)` avant `(0, 0)` : le couple `(0, 0)` serait compté une fois.',
@@ -2355,8 +2355,8 @@
       'Si n est pair, xⁿ = (x<sup>n/2</sup>)² ; s’il est impair, xⁿ = x × (x<sup>⌊n/2⌋</sup>)².',
       'Calcule x<sup>⌊n/2⌋</sup> une seule fois, avec `let p = … in`.'],
     solution: [
-      { t: 'Question 1', html: R('sem-4-10', '0-2') + '<p>n multiplications.</p>' },
-      { t: 'Question 2', html: '<p>Un seul appel récursif par niveau, sur `n / 2` : environ log₂ n appels (4 pour n = 10 : 10, 5, 2, 1).</p>' + R('sem-4-10', '3-7') +
+      { t: 'Question 1 : multiplications successives', html: R('sem-4-10', '0-2') + '<p>n multiplications, une par appel.</p>' },
+      { t: 'Question 2 : exponentiation rapide', html: '<p>Un seul appel récursif par niveau, sur `n / 2` : environ log₂ n appels (4 pour n = 10 : 10, 5, 2, 1).</p>' + R('sem-4-10', '3-7') +
         '<p>Écrire `fast_power x (n/2) *. fast_power x (n/2)` referait deux fois le même calcul à chaque niveau : on retomberait à n multiplications, tout le gain serait perdu.</p>' }],
     answer: A(R('sem-4-10', '0,3')),
     traps: [
@@ -3025,9 +3025,9 @@
       'Sinon, la réponse est celle de `loop` à partir de `f x` : le prédicat et la fonction ne changent pas.',
       'Pour `find_power`, pars de x⁰ = 1, et choisis `p` (« est ≥ n ») et `f` (« multiplier par x ») avec des fonctions anonymes. Que se passe-t-il si x vaut 0 ou 1 ?'],
     solution: [
-      { t: 'Question 1', html: '<ul><li>`p x` vrai : `x` (n = 0).</li><li>sinon : `loop p f (f x)`.</li></ul>' + R('td-os-1-3', '0-3') +
+      { t: 'Question 1 : écrire loop', html: '<ul><li>`p x` vrai : `x` (n = 0).</li><li>sinon : `loop p f (f x)`.</li></ul>' + R('td-os-1-3', '0-3') +
         '<p>Type : `(\'a -> bool) -> (\'a -> \'a) -> \'a -> \'a`. Rien n’oblige `x` à être un entier : le dernier exemple fait avancer des couples de Fibonacci jusqu’à dépasser 50.</p>' },
-      { t: 'Question 2', html: '<p>Les puissances de `x` sont 1, x, x², … : on part de 1, `f` multiplie par `x`, `p` teste « ≥ n ». Pour x &lt; 2, les puissances ne grandissent pas (0, 0… ou 1, 1…) : `loop` ne s’arrêterait jamais. Le chapeau le refuse (choix : `Invalid_argument`).</p>' + R('td-os-1-3', '4-8') +
+      { t: 'Question 2 : find_power avec loop', html: '<p>Les puissances de `x` sont 1, x, x², … : on part de 1, `f` multiplie par `x`, `p` teste « ≥ n ». Pour x &lt; 2, les puissances ne grandissent pas (0, 0… ou 1, 1…) : `loop` ne s’arrêterait jamais. Le chapeau le refuse (choix : `Invalid_argument`).</p>' + R('td-os-1-3', '4-8') +
         '<p class="sol-note">L’énoncé ne dit pas si x⁰ = 1 compte : ici oui, donc `find_power 10 1` vaut 1.</p>' }],
     answer: A(R('td-os-1-3', '0,4')),
     traps: [
@@ -3039,7 +3039,7 @@
 
   add({
     id: 'td-os-2-1', exam: null, kind: 'td', order: 4021, src: 'TD ordre supérieur · Ex 2.1',
-    title: 'map', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6,
+    title: 'map : appliquer f à chaque élément', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6,
     intro: '<p>Pour chaque fonction, donner plusieurs exemples d’utilisation.</p><p>Écrire la fonction `map` qui applique une fonction `f` donnée à tous les éléments d’une liste et qui construit la liste des valeurs retournées.</p><p>`map f [a1; ...; an]` retourne `[f a1; f a2; ...; f an]`</p>',
     hints: [
       'Le résultat est une liste de même longueur : un élément produit par élément lu.',
@@ -3059,7 +3059,7 @@
 
   add({
     id: 'td-os-2-2', exam: null, kind: 'td', order: 4022, src: 'TD ordre supérieur · Ex 2.2',
-    title: 'for_all', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 5,
+    title: 'for_all : tous les éléments vérifient p', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 5,
     intro: '<p>prédicat = fonction booléenne représentant une propriété</p><p>Écrire la fonction `for_all` qui vérifie si tous les éléments d’une liste `lst` vérifient le prédicat `p` donné.</p>',
     hints: [
       'Que vaut « tous les éléments de la liste vide vérifient p » ?',
@@ -3078,7 +3078,7 @@
 
   add({
     id: 'td-os-2-3', exam: null, kind: 'td', order: 4023, src: 'TD ordre supérieur · Ex 2.3',
-    title: 'exists', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 5,
+    title: 'exists : au moins un élément vérifie p', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 5,
     intro: '<p>Écrire la fonction `exists` qui vérifie si au moins un élément d’une liste `lst` vérifie le prédicat `p` donné.</p>',
     hints: [
       'Que vaut « un élément de la liste vide vérifie p » ?',
@@ -3137,7 +3137,7 @@
 
   add({
     id: 'td-os-2-6', exam: null, kind: 'td', order: 4026, src: 'TD ordre supérieur · Ex 2.6',
-    title: 'filter', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6, near: ['p2023-ex2'],
+    title: 'filter : garder les éléments qui vérifient p', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6, near: ['p2023-ex2'],
     intro: '<p>Écrire une fonction qui, à partir d’une liste, construit une nouvelle liste contenant les éléments qui satisfont un prédicat `p` donné.</p>',
     hints: [
       'Parcours complet : chaque élément est gardé ou non, puis on continue.',
@@ -3156,7 +3156,7 @@
 
   add({
     id: 'td-os-2-7', exam: null, kind: 'td', order: 4027, src: 'TD ordre supérieur · Ex 2.7',
-    title: 'partition', topics: ['ordre-superieur', 'listes', 'accumulateur'], lvl: 2, time: 12, near: ['p2021-ex4'],
+    title: 'partition : deux listes selon un prédicat', topics: ['ordre-superieur', 'listes', 'accumulateur'], lvl: 2, time: 12, near: ['p2021-ex4'],
     intro: '<p>Écrire une fonction qui, à partir d’une liste `l`, construit une paire de listes `(l1, l2)`, où `l1` est la liste contenant les éléments qui satisfont un prédicat `p` donné, et `l2` la liste des éléments ne vérifiant pas `p`.</p><p>Bonus : Préserver l’ordre initial des éléments dans chacune des deux listes résultantes.</p>',
     hints: [
       'Le résultat est un couple de listes. Pour la liste vide : `([], [])`.',
@@ -3179,7 +3179,6 @@
   add({
     id: 'td-os-2-8', exam: null, kind: 'td', order: 4028, src: 'TD ordre supérieur · Ex 2.8',
     title: 'for_all2 et almost', topics: ['ordre-superieur', 'deux-listes', 'exceptions'], lvl: 2, time: 15, also: ['p2019-ex4'],
-    intro: '<p>On two lists</p>',
     questions: [
       '<b>1.</b> Écrire la fonction Caml `for_all2` dont les spécifications sont les suivantes :<ul><li>Elle prend en paramètre une fonction booléenne (un prédicat) à deux paramètres : `p` ainsi que deux listes : [a1; a2; ⋯; an] et [b1; b2; ⋯; bn].</li><li>Elle vérifie si toutes les paires ai bi vérifient le prédicat `p`.</li><li>Si elle trouve une paire telle que `p ai bi` est faux, elle retourne faux. Sinon, elle déclenche une exception `Invalid_argument` si les deux listes sont de longueurs différentes.</li></ul>',
       '<b>2.</b> Utiliser la fonction `for_all2` pour définir une fonction qui vérifie si deux listes d’entiers sont "quasi-identiques" : la différence entre deux valeurs à la même place ne peut dépasser 1. Si aucune paire dont la différence dépasse 1 n’a été trouvée et si les deux listes sont de longueurs différentes, elle déclenche une exception.<p>Exemples d’utilisation :</p>' +
@@ -3220,7 +3219,7 @@
       'Déroule `process_list f init [e1; e2]` : `f e1 (f e2 init)`. Pour chaque fonction demandée, trouve la valeur pour `[]` (`init`) et comment combiner `e` avec `call`, le résultat pour la suite.',
       'Pour `append l1 l2` : la valeur d’arrêt n’est pas forcément `[]`. Pour `sum_list` : `init` et `call` sont des fonctions.'],
     solution: [
-      { t: 'Question 1', html: '<p>(a) `(\'a -> \'b -> \'b) -> \'b -> \'a list -> \'b`. (b) `process_list f init [e1; …; en]` = `f e1 (f e2 (… (f en init) …))` : on combine les éléments de droite à gauche, en partant de `init` (c’est un « fold_right »).</p>' + R('td-os-3-1', '0-2') },
+      { t: 'Question 1 : type et calcul', html: '<p>(a) `(\'a -> \'b -> \'b) -> \'b -> \'a list -> \'b`. (b) `process_list f init [e1; …; en]` = `f e1 (f e2 (… (f en init) …))` : on combine les éléments de droite à gauche, en partant de `init` (c’est un « fold_right »).</p>' + R('td-os-3-1', '0-2') },
       { t: 'Questions 2a à 2c', html: '<ul><li>`sum` : `init` = 0, on ajoute `e` à `call`.</li><li>`concatenate` : `init` = `""`, on colle `s` devant `call` avec `^`.</li><li>`append l1 l2` : on parcourt `l1` ; la valeur d’arrêt est `l2`, et on remet chaque `e` en tête.</li></ul>' + R('td-os-3-1', '3-9') },
       { t: 'Questions 2d et 2e', html: '<ul><li>`map` : `init` = `[]`, on met `f e` en tête de `call`.</li><li>`for_all` : `init` = `true`, on combine `p e && call`.</li></ul>' + R('td-os-3-1', '10-14') +
         '<p class="sol-note">Cette `for_all` ne s’arrête pas au premier élément faux : `call` (le résultat pour la suite) est calculé avant d’être passé à `f`. Sur `[-1; 2; 3; 4; 5]`, le prédicat est appelé 5 fois, contre 1 fois pour la version récursive du 2.2 (compté avec OCaml).</p>' },
@@ -3237,7 +3236,7 @@
 
   add({
     id: 'td-os-3-2', exam: null, kind: 'td', order: 4032, src: 'TD ordre supérieur · Ex 3.2',
-    title: 'fold_left', topics: ['ordre-superieur', 'listes', 'accumulateur'], lvl: 2, time: 10,
+    title: 'fold_left : un accumulateur, de gauche à droite', topics: ['ordre-superieur', 'listes', 'accumulateur'], lvl: 2, time: 10,
     intro: '<p>Écrire la fonction `fold_left` définie par :</p>' + ml(["val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a", '', 'fold_left f a [b1; ...; bn]   (* is *)   f (...(f (f a b1) b2) ...) bn']),
     hints: [
       '`a` joue le rôle d’un accumulateur : il est combiné avec chaque élément, de gauche à droite.',

@@ -156,7 +156,7 @@
       '`add_times`: convert both durations into seconds, add, convert back.'],
     solution: [
       { t: 'Questions 1 and 2', html: R('sem-2-6', '0-3') + '<p>83639 = 23 × 3600 + 839, and 839 = 13 × 60 + 59. The type `int * int * int` is the type of a triple.</p>' },
-      { t: 'Question 3', html: R('sem-2-6', '4-6') + '<p>The type of `add_times` is too long for one line: Caml prints it on two. The carries (59 min 59 s + 1 s) are handled by the conversion.</p>' }],
+      { t: 'Question 3: adding two durations', html: R('sem-2-6', '4-6') + '<p>The type of `add_times` is too long for one line: Caml prints it on two. The carries (59 min 59 s + 1 s) are handled by the conversion.</p>' }],
     traps: [
       'Writing `sec_of_time (h, m, s)`: that is a one-parameter function, taking a triple, whereas the examples give three parameters.',
       'Adding hours, minutes and seconds separately: the carries must be handled, the conversion does it for you.'],
@@ -210,10 +210,10 @@
       'Caml cannot tell whether `when` guards cover everything: a matching whose cases are all guarded is reported as not exhaustive.',
       'A name in a pattern is a new variable: it matches anything, and compares nothing.'],
     solution: [
-      { t: 'f1, f2, switchonoff', html: '<ul><li>`f1` is correct: `y` matches everything that is not 0.</li><li>`f2`: `_` is only a pattern, not a value: syntax error on the right of `->`.</li>' +
+      { t: 'f1, f2 and switchonoff', html: '<ul><li>`f1` is correct: `y` matches everything that is not 0.</li><li>`f2`: `_` is only a pattern, not a value: syntax error on the right of `->`.</li>' +
         '<li>`switchonoff`: a string other than `"on"` and `"off"` is not matched (`Warning 8`, Caml quotes `""`). Add `| _ -> …` with an exception.</li></ul>' },
       { t: 'The match on a * b − 27972, square', html: '<ul><li>42 × 666 = 27972: `"zero"`.</li><li>`square`: both cases are guarded, Caml does not see that they cover everything (`Warning 8`, “All clauses in this pattern-matching are guarded”). Replace the last guard with `_`. `square (-5)` does raise the exception.</li></ul>' },
-      { t: 'parity, grade, h', html: '<ul><li>`parity`: for Caml, `n mod 10` could be 10 or −1, values that are not matched (`Warning 8`); the result is `"even"`. Replace the last pattern with `_`, and put the `match` in parentheses inside an `if`.</li>' +
+      { t: 'parity, grade and h', html: '<ul><li>`parity`: for Caml, `n mod 10` could be 10 or −1, values that are not matched (`Warning 8`); the result is `"even"`. Replace the last pattern with `_`, and put the `match` in parentheses inside an `if`.</li>' +
         '<li>`grade 12 14`: (12 + 14) / 2 = 13. Cases are tried in order: 13 > 15 no, 13 > 5 yes: `\'D\'`. The `\'C\'` and `\'B\'` cases are never used; they must be ordered from the most demanding to the least demanding.</li>' +
         '<li>`h`: the pattern `y` is a new variable, it matches everything that is not 0 (`Warning 11`: the `_` case is no longer used). `h 5 5` and `h 5 3` are 1. To compare with the parameter `y`: `| z when z = y -> 1`.</li></ul>' },
       { t: 'The fixes', html: '<p>The fixed definitions, without any warning:</p>' + R('sem-3-5b') }],
@@ -242,7 +242,7 @@
       'Question 4: a single chain of `if` on the weight can return the three rates at once, in a triple.'],
     solution: [
       { t: 'Questions 1 and 2', html: '<p>A chain of `if` on the weight. The amounts are `float`: `11.` and not `11`.</p>' + S('sem-3-7', '0-2') },
-      { t: 'Question 3', html: '<p>`rate` tests the weight first (negative, then too heavy), then matches the code. An unknown code falls into `_`.</p>' + R('sem-3-7', '3-9') },
+      { t: 'Question 3: the function rate', html: '<p>`rate` tests the weight first (negative, then too heavy), then matches the code. An unknown code falls into `_`.</p>' + R('sem-3-7', '3-9') },
       { t: 'Question 4: a single function', html: '<p>The chain on the weight returns the triple of the three rates, opened by `let (eco, standard, express) = … in`; the matching on the code picks one of them.</p>' + R('sem-3-7b') }],
     traps: [
       'Writing `11` instead of `11.`: all branches must have type `float`.',
@@ -263,9 +263,9 @@
       'The parameter is a pair: the patterns are pairs, such as `(0, _)`.',
       'Cases are tried in order: put the most precise ones first.'],
     solution: [
-      { t: 'Question 1', html: '<p>Three cases: both zero, only one (“or” pattern `(0, _) | (_, 0)`, after the first one), none.</p>' + R('sem-3-9', '0-3') },
-      { t: 'Question 2', html: '<p>The order of the cases follows the definition: `m = 0` first, then `n = 0` (so `m ≠ 0`), then the general case.</p>' + R('sem-3-9', '4-7') },
-      { t: 'Question 3', html: '<p>`and3` is true only for `(true, true, true)`: one case, and everything else.</p>' + R('sem-3-9', '8-10') }],
+      { t: 'Question 1: counting the zeros', html: '<p>Three cases: both zero, only one (“or” pattern `(0, _) | (_, 0)`, after the first one), none.</p>' + R('sem-3-9', '0-3') },
+      { t: 'Question 2: the function f', html: '<p>The order of the cases follows the definition: `m = 0` first, then `n = 0` (so `m ≠ 0`), then the general case.</p>' + R('sem-3-9', '4-7') },
+      { t: 'Question 3: and3 without logical operators', html: '<p>`and3` is true only for `(true, true, true)`: one case, and everything else.</p>' + R('sem-3-9', '8-10') }],
     traps: [
       'Putting `(0, _) | (_, 0)` before `(0, 0)`: the pair `(0, 0)` would count once.',
       'Writing `let count x y = …`: the function takes a pair, a single parameter.'],
@@ -388,8 +388,8 @@
       'If n is even, xⁿ = (x<sup>n/2</sup>)²; if it is odd, xⁿ = x × (x<sup>⌊n/2⌋</sup>)².',
       'Compute x<sup>⌊n/2⌋</sup> only once, with `let p = … in`.'],
     solution: [
-      { t: 'Question 1', html: R('sem-4-10', '0-2') + '<p>n multiplications.</p>' },
-      { t: 'Question 2', html: '<p>A single recursive call per level, on `n / 2`: about log₂ n calls (4 for n = 10: 10, 5, 2, 1).</p>' + R('sem-4-10', '3-7') +
+      { t: 'Question 1: successive multiplications', html: R('sem-4-10', '0-2') + '<p>n multiplications, one per call.</p>' },
+      { t: 'Question 2: fast exponentiation', html: '<p>A single recursive call per level, on `n / 2`: about log₂ n calls (4 for n = 10: 10, 5, 2, 1).</p>' + R('sem-4-10', '3-7') +
         '<p>Writing `fast_power x (n/2) *. fast_power x (n/2)` would do the same computation twice at each level: back to n multiplications, all the gain would be lost.</p>' }],
     traps: [
       'Mixing `*` and `*.`: `x` is a `float`.',
@@ -998,9 +998,9 @@
       'Otherwise, the answer is the one of `loop` starting from `f x`: the predicate and the function do not change.',
       'For `find_power`, start from x⁰ = 1, and choose `p` (“is ≥ n”) and `f` (“multiply by x”) with anonymous functions. What happens if x is 0 or 1?'],
     solution: [
-      { t: 'Question 1', html: '<ul><li>`p x` true: `x` (n = 0).</li><li>otherwise: `loop p f (f x)`.</li></ul>' + R('td-os-1-3', '0-3') +
+      { t: 'Question 1: writing loop', html: '<ul><li>`p x` true: `x` (n = 0).</li><li>otherwise: `loop p f (f x)`.</li></ul>' + R('td-os-1-3', '0-3') +
         '<p>Type: `(\'a -> bool) -> (\'a -> \'a) -> \'a -> \'a`. Nothing forces `x` to be an integer: the last example moves pairs of Fibonacci numbers forward until one goes over 50.</p>' },
-      { t: 'Question 2', html: '<p>The powers of `x` are 1, x, x², …: start from 1, `f` multiplies by `x`, `p` tests “≥ n”. For x &lt; 2, the powers do not grow (0, 0… or 1, 1…): `loop` would never stop. The wrapper rejects it (a choice: `Invalid_argument`).</p>' + R('td-os-1-3', '4-8') +
+      { t: 'Question 2: find_power with loop', html: '<p>The powers of `x` are 1, x, x², …: start from 1, `f` multiplies by `x`, `p` tests “≥ n”. For x &lt; 2, the powers do not grow (0, 0… or 1, 1…): `loop` would never stop. The wrapper rejects it (a choice: `Invalid_argument`).</p>' + R('td-os-1-3', '4-8') +
         '<p class="sol-note">The statement does not say whether x⁰ = 1 counts: here it does, so `find_power 10 1` is 1.</p>' }],
     traps: [
       'Applying `f` before testing `p`: the case n = 0 is missed.',
@@ -1010,7 +1010,7 @@
   };
 
   M['td-os-2-1'] = {
-    src: 'Higher-order tutorial · Ex 2.1', title: 'map',
+    src: 'Higher-order tutorial · Ex 2.1', title: 'map: applying f to each element',
     intro: '<p>For each function, give several examples of use.</p><p>Write the function `map` that applies a given function `f` to all the elements of a list and builds the list of the returned values.</p><p>`map f [a1; ...; an]` returns `[f a1; f a2; ...; f an]`</p>',
     hints: [
       'The result is a list of the same length: one element produced for each element read.',
@@ -1028,7 +1028,7 @@
   };
 
   M['td-os-2-2'] = {
-    src: 'Higher-order tutorial · Ex 2.2', title: 'for_all',
+    src: 'Higher-order tutorial · Ex 2.2', title: 'for_all: every element satisfies p',
     intro: '<p>predicate = boolean function representing a property</p><p>Write the function `for_all` that checks whether all the elements of a list `lst` satisfy the given predicate `p`.</p>',
     hints: [
       'What is “all the elements of the empty list satisfy p”?',
@@ -1045,7 +1045,7 @@
   };
 
   M['td-os-2-3'] = {
-    src: 'Higher-order tutorial · Ex 2.3', title: 'exists',
+    src: 'Higher-order tutorial · Ex 2.3', title: 'exists: at least one element satisfies p',
     intro: '<p>Write the function `exists` that checks whether at least one element of a list `lst` satisfies the given predicate `p`.</p>',
     hints: [
       'What is “an element of the empty list satisfies p”?',
@@ -1098,7 +1098,7 @@
   };
 
   M['td-os-2-6'] = {
-    src: 'Higher-order tutorial · Ex 2.6', title: 'filter',
+    src: 'Higher-order tutorial · Ex 2.6', title: 'filter: keeping the elements that satisfy p',
     intro: '<p>Write a function that, from a list, builds a new list containing the elements that satisfy a given predicate `p`.</p>',
     hints: [
       'Full traversal: each element is kept or not, then the traversal goes on.',
@@ -1115,7 +1115,7 @@
   };
 
   M['td-os-2-7'] = {
-    src: 'Higher-order tutorial · Ex 2.7', title: 'partition',
+    src: 'Higher-order tutorial · Ex 2.7', title: 'partition: two lists according to a predicate',
     intro: '<p>Write a function that, from a list `l`, builds a pair of lists `(l1, l2)`, where `l1` is the list of the elements that satisfy a given predicate `p`, and `l2` the list of the elements that do not satisfy `p`.</p><p>Bonus: Keep the initial order of the elements in each of the two resulting lists.</p>',
     hints: [
       'The result is a pair of lists. For the empty list: `([], [])`.',
@@ -1136,7 +1136,6 @@
 
   M['td-os-2-8'] = {
     src: 'Higher-order tutorial · Ex 2.8', title: 'for_all2 and almost',
-    intro: '<p>On two lists</p>',
     questions: [
       '<b>1.</b> Write the Caml function `for_all2` with the following specifications:<ul><li>It takes a two-argument boolean function (a predicate): `p`, and two lists: [a1; a2; ⋯; an] and [b1; b2; ⋯; bn], as parameters.</li><li>It checks whether all pairs of elements ai bi satisfy the predicate `p`.</li><li>If a pair such that `p ai bi` is false is found, it returns false. Otherwise, it raises `Invalid_argument` if the two lists have different lengths.</li></ul>',
       '<b>2.</b> Use the function `for_all2` to define a function that verifies whether two integer lists are "quasi identical": difference between the values at the same place can not exceed 1. If no pair with a difference over one has been found and if the two lists have different lengths, an exception is raised.<p>Examples of utilisation:</p>' +
@@ -1175,7 +1174,7 @@
       'Unfold `process_list f init [e1; e2]`: `f e1 (f e2 init)`. For each function asked for, find the value for `[]` (`init`) and how to combine `e` with `call`, the result for the rest.',
       'For `append l1 l2`: the stopping value is not necessarily `[]`. For `sum_list`: `init` and `call` are functions.'],
     solution: [
-      { t: 'Question 1', html: '<p>(a) `(\'a -> \'b -> \'b) -> \'b -> \'a list -> \'b`. (b) `process_list f init [e1; …; en]` = `f e1 (f e2 (… (f en init) …))`: the elements are combined from right to left, starting from `init` (it is a “fold_right”).</p>' + R('td-os-3-1', '0-2') },
+      { t: 'Question 1: type and computation', html: '<p>(a) `(\'a -> \'b -> \'b) -> \'b -> \'a list -> \'b`. (b) `process_list f init [e1; …; en]` = `f e1 (f e2 (… (f en init) …))`: the elements are combined from right to left, starting from `init` (it is a “fold_right”).</p>' + R('td-os-3-1', '0-2') },
       { t: 'Questions 2a to 2c', html: '<ul><li>`sum`: `init` = 0, add `e` to `call`.</li><li>`concatenate`: `init` = `""`, put `s` in front of `call` with `^`.</li><li>`append l1 l2`: traverse `l1`; the stopping value is `l2`, and each `e` goes back at the head.</li></ul>' + R('td-os-3-1', '3-9') },
       { t: 'Questions 2d and 2e', html: '<ul><li>`map`: `init` = `[]`, put `f e` at the head of `call`.</li><li>`for_all`: `init` = `true`, combine `p e && call`.</li></ul>' + R('td-os-3-1', '10-14') +
         '<p class="sol-note">This `for_all` does not stop at the first false element: `call` (the result for the rest) is computed before being passed to `f`. On `[-1; 2; 3; 4; 5]`, the predicate is called 5 times, against once for the recursive version of 2.2 (counted with OCaml).</p>' },
@@ -1190,7 +1189,7 @@
   };
 
   M['td-os-3-2'] = {
-    src: 'Higher-order tutorial · Ex 3.2', title: 'fold_left',
+    src: 'Higher-order tutorial · Ex 3.2', title: 'fold_left: an accumulator, from left to right',
     intro: '<p>Write the function `fold_left` defined by:</p>' + ml(["val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a", '', 'fold_left f a [b1; ...; bn]   (* is *)   f (...(f (f a b1) b2) ...) bn']),
     hints: [
       '`a` plays the part of an accumulator: it is combined with each element, from left to right.',

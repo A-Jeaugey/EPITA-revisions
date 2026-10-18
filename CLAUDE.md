@@ -27,6 +27,11 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `R.meca.plot({…})` (repère, courbes, chronophotographie, vecteurs aux couleurs fixes position / vitesse /
   accélération / force), `R.meca.mount`, `R.meca.launcher` (tir), `R.meca.linked` (x, v, a liés), `R.meca.calc`.
   Thème `physique.css` : « plaque chronophotographique » ; vecteurs dans le texte : `<var class="vec kv">v</var>`.
+- `caml.js` (pages Caml, API documentée en tête du fichier) : coloration (`<pre data-ml>`, `<code class="ml">`,
+  réponse en ligne `<code data-ml-ans>`), boucle d’interaction `<pre data-ml-repl data-mode="show|reveal|guess">`
+  (`# phrase ;;` puis la réponse de Caml), `R.caml.unroll` (pile ou arbre des appels, à partir de `R.caml.trace`),
+  `R.caml.matcher` (filtrage pas à pas), `R.caml.apply` (lire un type, application partielle). Tout bloc ajouté par
+  script est coloré (MutationObserver). Thème `caml.css` : la boucle d’interaction, famille Recursive.
 
 ## Deux langues
 
@@ -82,6 +87,19 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   les 7 anciens sujets ne portent que sur la cinématique (forces, 2e loi, énergie : jamais tombés) ; Frénet, abscisse
   curviligne, produit vectoriel hors programme cette année ; le cours anglais dit « Newton's second law », poids W⃗,
   énergie cinétique E_k. Programme du partiel 1 non publié : le site suppose les TD 1 à 5.
+- **Caml** (Caml et récursivité) : cours `caml/cours-1-bases`, `-2-recursivite`, `-3-listes`, `-4-ordre-superieur`
+  (`data-done="caml:<chapitre>:sN"`, chapitres bases, recursivite, listes, ordre) ; exercices `window.CAML_EX`
+  (`data/caml/ex-annales.js` : 28 fiches des sujets 2017-2024, ids `pAAAA-exN`, `p2019d` = contrôle S1# d’avril 2019 ;
+  `ex-td.js` : séminaire `sem-…`, TP `tp-…`, TD `td-listes-…`, `td-os-…`, avec `also` / `near`), blocs de code
+  partagés `window.CAML_ML` ; sujets `CAML_EXAMS` (parties TAA marquées `caml:false`) et notions `CAML_TOPICS`
+  (`data/caml/exams.js`) ; QCM `data/qcm/caml.js` (`caml-cN-…`) et `caml-annales.js` (`caml-pAAAA-qN`), écrits en
+  balisage léger converti à la fin du fichier (`` `code` ``, `{{réponse}}`). **Tout code est exécuté avec OCaml 4.14**
+  (`apt-get install -y -q ocaml-nox`) et sa réponse recopiée telle quelle, sans les lignes « Line 1, characters … ».
+  Points vérifiés : liste + exception exigée 9 sujets sur 9 (`Failure` 7/9), ordre supérieur 7/9, Mystery 7/9,
+  récursivité sur les entiers seuls jamais ; aucune fonction prédéfinie hors `failwith` / `invalid_arg` ; trois
+  exercices retombés tels quels (assoc, for_all2, insert_nth) n’ont qu’une fiche. Corrigés officiels fautifs :
+  2019 `remove_nth` (`Failure` au lieu d’`Invalid_argument`), 2018 `encode` (ne compile pas). La page Moodle
+  « Conseils pour la récursivité » écrit `mult_rec (x, y-1)` : coquille. Éviter `@` dans les corrigés.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
