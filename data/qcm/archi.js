@@ -314,7 +314,7 @@
     { id: 'archi-c2-06', topic: 'archi-addition', lvl: 2, type: 'single',
       q: 'Dans une addition binaire, une colonne contient 1 + 1 + 1 + 1 (sans retenue entrante). Que pose-t-on ?',
       o: ['0, avec une retenue de 10₂ (deux rangs)', '0, avec une retenue de 1', '1, avec une retenue de 1', '00, avec une retenue de 1'], a: 0,
-      x: '1 + 1 + 1 + 1 = 4 = 100₂ : le chiffre posé est 0 et la retenue vaut 10₂ = 2. Elle s’écrit sur deux colonnes : 0 au-dessus de la suivante, 1 au-dessus de celle d’après.',
+      x: '1 + 1 + 1 + 1 = 4 = 100₂ : le chiffre posé est 0 et la retenue vaut 10₂ = 2. On l’écrit « 10 » au-dessus de la colonne suivante, ou réparti sur deux colonnes (0 au-dessus de la suivante, 1 au-dessus de celle d’après) : les deux écritures sont justes.',
       ref: C2 + '#s1' },
     /* ---------- 2. soustraction binaire ---------- */
     { id: 'archi-c2-07', topic: 'archi-soustraction', lvl: 1, type: 'single',
@@ -511,7 +511,7 @@
     { id: 'archi-c2-44', topic: 'archi-addition', lvl: 1, type: 'tf',
       q: 'Dans une addition binaire de quatre nombres, une colonne peut donner une retenue de [[10|2]], sur deux rangs.',
       a: true,
-      x: '1 + 1 + 1 + 1 = 100₂ : on pose 0 et la retenue 10 porte sur les deux colonnes suivantes (TD 1, exercice 3, première question).',
+      x: '1 + 1 + 1 + 1 = 100₂ : on pose 0 et la retenue 10 porte sur les deux colonnes suivantes : on l’écrit « 10 » au-dessus de la suivante, ou 0 puis 1 sur les deux suivantes (TD 1, exercice 3, première question).',
       ref: C2 + '#s8' },
     { id: 'archi-c2-45', topic: 'archi-division', lvl: 2, type: 'single',
       q: 'Une copie pose [[101001101|2]] / [[1001|2]] et trouve [[10101|2]]. Quelle est l’erreur ?',

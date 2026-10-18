@@ -164,7 +164,7 @@ REV.i18n.topics({
       x: '99 + 119 + 75 + 5 = 298 = 1 0010 1010₂ (Tutorial 1). With four terms, a column can reach 4 = 100₂ or more: the carry is then 10₂ and spreads over two columns. Cutting it down to 1 gives 1010 0100.' },
     'archi-c2-06': { q: 'In a binary addition, a column holds 1 + 1 + 1 + 1 (no incoming carry). What do you write?',
       o: ['0, with a carry of 10₂ (two places)', '0, with a carry of 1', '1, with a carry of 1', '00, with a carry of 1'],
-      x: '1 + 1 + 1 + 1 = 4 = 100₂: the digit written is 0 and the carry is 10₂ = 2. It is written over two columns: 0 above the next one, 1 above the one after.' },
+      x: '1 + 1 + 1 + 1 = 4 = 100₂: the digit written is 0 and the carry is 10₂ = 2. Write it as “10” above the next column, or spread over two columns (0 above the next one, 1 above the one after): both are correct.' },
     /* ---------- 2. binary subtraction ---------- */
     'archi-c2-07': { q: 'What is [[10|2]] − [[1|2]]?',
       x: '10₂ − 1₂ = 2 − 1 = 1. This is the computation done after a borrow: 0 − 1 becomes 10 − 1 = 1.' },
@@ -263,7 +263,7 @@ REV.i18n.topics({
       o: ['“Show all calculations.”', '“Write down the result only (do not show any calculation).”', '“Do not write down the result in a fraction form.”', '“Answer in base 10.”'],
       x: '“Perform the operations below. Show all calculations.”: carries, borrows, partial products, successive remainders. For the conversions, on the contrary, only the result is expected.' },
     'archi-c2-44': { q: 'In a binary addition of four numbers, a column can produce a carry of [[10|2]], over two places.',
-      x: '1 + 1 + 1 + 1 = 100₂: write 0, and the carry 10 spreads over the next two columns (Tutorial 1, exercise 3, first question).' },
+      x: '1 + 1 + 1 + 1 = 100₂: write 0, and the carry 10 spreads over the next two columns: write “10” above the next one, or 0 then 1 over the next two (Tutorial 1, exercise 3, first question).' },
     'archi-c2-45': { q: 'A paper works out [[101001101|2]] / [[1001|2]] and finds [[10101|2]]. What is the mistake?',
       o: ['A 0 missing from the quotient: it should be 100101', 'None: the result is right', 'The remainder is not zero: the division is not exact', 'The binary point is missing: it should be 1010.1'],
       x: '333 / 9 = 37 = 100101₂, remainder 0. After the first 1, the partial remainders 10, 101 and 100 are smaller than 1001: a 0 must be recorded in the quotient for each of them. The paper forgot one (10101 = 21). Division of the 2025 exam.' },
