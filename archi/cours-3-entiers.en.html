@@ -72,6 +72,11 @@
 .b8-ans dd.err{color:var(--bad)}
 .b8-ans[hidden]{display:none}
 @media (max-width:520px){.b8-form{grid-template-columns:minmax(0,1fr) 4.4rem minmax(0,1fr);gap:8px}.b8-ans{grid-template-columns:minmax(0,1fr)}}
+/* small screens: tighter calculations and tables, numbers never split */
+.calc.wrap>div{white-space:normal}
+.tbl .hx{display:block;font-size:.84em;color:var(--muted)}
+.rng td{white-space:nowrap}
+@media (max-width:520px){main .calc{font-size:.84rem;padding:.65rem .8rem}main .tbl th,main .tbl td{padding:.42rem .5rem}}
 </style>
 </head>
 <body data-resume="Archi · chapter 3: signed and unsigned integers">
@@ -183,8 +188,9 @@
           <p>The <b>one’s complement</b> of a word <b>inverts each bit</b>: each 0 becomes 1, each 1 becomes 0.</p>
           <p>The <b>two’s complement</b> inverts each bit <b>and adds one</b>: it is the one’s complement plus one. The course writes it 2’sC (…). The result keeps the size of the word: a carry out on the left is left out. The example of the course, a 10-bit word:</p>
         </div>
-        <div class="calc">
-          <div data-chk="c1"><span class="bn">11 1001 1000<sub>2</sub></span> → one’s complement: <span class="bn">00 0110 0111<sub>2</sub></span></div>
+        <div class="calc" data-chk="c1">
+          <div>word: <span class="bn">11 1001 1000<sub>2</sub></span></div>
+          <div>one’s complement: <span class="bn">00 0110 0111<sub>2</sub></span></div>
           <div data-eq><span class="bn">00 0110 0111<sub>2</sub></span> + <span class="bn">1<sub>2</sub></span> = <span class="bn">00 0110 1000<sub>2</sub></span></div>
           <div class="r" data-chk="c2">2’sC (<span class="bn">11 1001 1000<sub>2</sub></span>) = <span class="bn">00 0110 1000<sub>2</sub></span></div>
         </div>
@@ -208,14 +214,14 @@
           <p>In the one’s complement, the 0s to the right of the first 1 have become 1s, and that first 1 has become a 0. Adding one turns those 1s back into 0s with a carry, which stops on that 0 and turns it back into 1. The bits further left do not move: they stay inverted.</p>
         </div>
         <div class="tbl"><table data-chk="cpl">
-          <caption>Table 3.2 — One’s and two’s complements (examples of the course, pp. 18 and 19)</caption>
-          <thead><tr><th>Word</th><th>Hex</th><th>One’s complement</th><th>Hex</th><th>Two’s complement</th><th>Hex</th></tr></thead>
+          <caption>Table 3.2 — One’s and two’s complements (examples of the course, pp. 18 and 19); hexadecimal below binary</caption>
+          <thead><tr><th>Word</th><th>One’s complement</th><th>Two’s complement</th></tr></thead>
           <tbody>
-            <tr><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td><td><span class="bn">1111 1111</span></td><td><span class="bn">FF</span></td><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td></tr>
-            <tr><td><span class="bn">0011 0110</span></td><td><span class="bn">36</span></td><td><span class="bn">1100 1001</span></td><td><span class="bn">C9</span></td><td><span class="bn">1100 1010</span></td><td><span class="bn">CA</span></td></tr>
-            <tr><td><span class="bn">1001 1000</span></td><td><span class="bn">98</span></td><td><span class="bn">0110 0111</span></td><td><span class="bn">67</span></td><td><span class="bn">0110 1000</span></td><td><span class="bn">68</span></td></tr>
-            <tr><td><span class="bn">1011 1100</span></td><td><span class="bn">BC</span></td><td><span class="bn">0100 0011</span></td><td><span class="bn">43</span></td><td><span class="bn">0100 0100</span></td><td><span class="bn">44</span></td></tr>
-            <tr><td><span class="bn">1111 1111</span></td><td><span class="bn">FF</span></td><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td><td><span class="bn">0000 0001</span></td><td><span class="bn">01</span></td></tr>
+            <tr><td><span class="bn">0000 0000</span><span class="bn hx">00</span></td><td><span class="bn">1111 1111</span><span class="bn hx">FF</span></td><td><span class="bn">0000 0000</span><span class="bn hx">00</span></td></tr>
+            <tr><td><span class="bn">0011 0110</span><span class="bn hx">36</span></td><td><span class="bn">1100 1001</span><span class="bn hx">C9</span></td><td><span class="bn">1100 1010</span><span class="bn hx">CA</span></td></tr>
+            <tr><td><span class="bn">1001 1000</span><span class="bn hx">98</span></td><td><span class="bn">0110 0111</span><span class="bn hx">67</span></td><td><span class="bn">0110 1000</span><span class="bn hx">68</span></td></tr>
+            <tr><td><span class="bn">1011 1100</span><span class="bn hx">BC</span></td><td><span class="bn">0100 0011</span><span class="bn hx">43</span></td><td><span class="bn">0100 0100</span><span class="bn hx">44</span></td></tr>
+            <tr><td><span class="bn">1111 1111</span><span class="bn hx">FF</span></td><td><span class="bn">0000 0000</span><span class="bn hx">00</span></td><td><span class="bn">0000 0001</span><span class="bn hx">01</span></td></tr>
           </tbody>
         </table></div>
         <div class="note trap"><span class="tag">Pitfall: the first 1 is kept</span>
@@ -311,14 +317,14 @@
             <tr><td>−128</td><td>128 does not fit in a signed 8-bit word</td><td><span class="bn">1000 0000</span></td><td><span class="bn">80</span></td></tr>
           </tbody>
         </table></div>
-        <div class="tbl"><table data-chk="ranges">
+        <div class="tbl"><table class="rng" data-chk="ranges">
           <caption>Table 3.4 — Tutorial 2, exercise 1: decimal range of n-bit words</caption>
           <thead><tr><th>Bits</th><th class="n">Unsigned min</th><th class="n">Unsigned max</th><th class="n">Signed min</th><th class="n">Signed max</th></tr></thead>
           <tbody>
             <tr><td>4</td><td class="n">0</td><td class="n">15</td><td class="n">−8</td><td class="n">7</td></tr>
             <tr><td>8</td><td class="n">0</td><td class="n">255</td><td class="n">−128</td><td class="n">127</td></tr>
             <tr><td>16</td><td class="n">0</td><td class="n">65,535</td><td class="n">−32,768</td><td class="n">32,767</td></tr>
-            <tr><td>32</td><td class="n">0</td><td class="n">2<sup>32</sup> − 1 = 4,294,967,295</td><td class="n">−2<sup>31</sup> = −2,147,483,648</td><td class="n">2<sup>31</sup> − 1 = 2,147,483,647</td></tr>
+            <tr><td>32</td><td class="n">0</td><td class="n">2<sup>32</sup> − 1<br>= 4,294,967,295</td><td class="n">−2<sup>31</sup><br>= −2,147,483,648</td><td class="n">2<sup>31</sup> − 1<br>= 2,147,483,647</td></tr>
             <tr><td><var>n</var></td><td class="n">0</td><td class="n">2<sup><var>n</var></sup> − 1</td><td class="n">−2<sup><var>n</var>−1</sup></td><td class="n">2<sup><var>n</var>−1</sup> − 1</td></tr>
           </tbody>
         </table></div>
@@ -349,8 +355,8 @@
           <li><div><p><b>Sign bit 0</b>: the integer is positive. Decode it as an unsigned integer, with the sum of weights.</p></div></li>
           <li><div><p><b>Sign bit 1</b>: the integer is negative. Work out the two’s complement of the word, convert it into its decimal form and write down the minus sign in front of it.</p></div></li>
         </ol>
+        <div class="prose"><p>The example of the course, the 6-bit word <span class="bn">10 0110<sub>2</sub></span>: its sign bit is 1.</p></div>
         <div class="calc">
-          <div>The 6-bit word of the course, <span class="bn">10 0110<sub>2</sub></span>: the sign bit is 1.</div>
           <div data-eq="s">2’sC (<span class="bn">10 0110<sub>2</sub></span>) = <span class="bn">01 1010<sub>2</sub></span></div>
           <div data-eq><span class="bn">01 1010<sub>2</sub></span> = 16 + 8 + 2 = <span class="bn">26<sub>10</sub></span></div>
           <div class="r" data-eq="s"><span class="bn">10 0110<sub>2</sub></span> = <span class="bn">−26<sub>10</sub></span></div>
@@ -367,15 +373,15 @@
         </div>
         <div class="tbl"><table data-chk="hexsign">
           <caption>Table 3.5 — Tutorial 2, exercise 3, question 1: sign and value of 8-bit words</caption>
-          <thead><tr><th>Word</th><th>Binary</th><th>Sign</th><th class="n">Signed value</th><th class="n">Unsigned</th></tr></thead>
+          <thead><tr><th>Word (binary below)</th><th>Sign</th><th class="n">Signed</th><th class="n">Unsigned</th></tr></thead>
           <tbody>
-            <tr><td><span class="bn">FF</span></td><td><span class="bn">1111 1111</span></td><td class="neg">negative</td><td class="n">−1</td><td class="n">255</td></tr>
-            <tr><td><span class="bn">27</span></td><td><span class="bn">0010 0111</span></td><td>positive</td><td class="n">39</td><td class="n">39</td></tr>
-            <tr><td><span class="bn">7E</span></td><td><span class="bn">0111 1110</span></td><td>positive</td><td class="n">126</td><td class="n">126</td></tr>
-            <tr><td><span class="bn">9A</span></td><td><span class="bn">1001 1010</span></td><td class="neg">negative</td><td class="n">−102</td><td class="n">154</td></tr>
-            <tr><td><span class="bn">B7</span></td><td><span class="bn">1011 0111</span></td><td class="neg">negative</td><td class="n">−73</td><td class="n">183</td></tr>
-            <tr><td><span class="bn">6D</span></td><td><span class="bn">0110 1101</span></td><td>positive</td><td class="n">109</td><td class="n">109</td></tr>
-            <tr><td><span class="bn">81</span></td><td><span class="bn">1000 0001</span></td><td class="neg">negative</td><td class="n">−127</td><td class="n">129</td></tr>
+            <tr><td><span class="bn">FF</span><span class="bn hx">1111 1111</span></td><td class="neg">negative</td><td class="n">−1</td><td class="n">255</td></tr>
+            <tr><td><span class="bn">27</span><span class="bn hx">0010 0111</span></td><td>positive</td><td class="n">39</td><td class="n">39</td></tr>
+            <tr><td><span class="bn">7E</span><span class="bn hx">0111 1110</span></td><td>positive</td><td class="n">126</td><td class="n">126</td></tr>
+            <tr><td><span class="bn">9A</span><span class="bn hx">1001 1010</span></td><td class="neg">negative</td><td class="n">−102</td><td class="n">154</td></tr>
+            <tr><td><span class="bn">B7</span><span class="bn hx">1011 0111</span></td><td class="neg">negative</td><td class="n">−73</td><td class="n">183</td></tr>
+            <tr><td><span class="bn">6D</span><span class="bn hx">0110 1101</span></td><td>positive</td><td class="n">109</td><td class="n">109</td></tr>
+            <tr><td><span class="bn">81</span><span class="bn hx">1000 0001</span></td><td class="neg">negative</td><td class="n">−127</td><td class="n">129</td></tr>
           </tbody>
         </table></div>
         <div class="note trap"><span class="tag">Pitfall: reading a negative word as an unsigned one</span>
@@ -517,8 +523,8 @@
           <caption>Table 3.9 — Sign extension from 8 to 16 bits (examples of the course, p. 28)</caption>
           <thead><tr><th>Decimal Representation</th><th>8-bit Binary Word</th><th>16-bit Binary Word</th></tr></thead>
           <tbody>
-            <tr><td>104</td><td><span class="bn">0110 1000</span></td><td><span class="bn"><b>0000 0000</b> 0110 1000</span></td></tr>
-            <tr><td>−115</td><td><span class="bn">1000 1101</span></td><td><span class="bn"><b>1111 1111</b> 1000 1101</span></td></tr>
+            <tr><td>104</td><td><span class="bn">0110 1000</span></td><td><span class="bn w"><b>0000 0000</b> 0110 1000</span></td></tr>
+            <tr><td>−115</td><td><span class="bn">1000 1101</span></td><td><span class="bn w"><b>1111 1111</b> 1000 1101</span></td></tr>
           </tbody>
         </table></div>
         <figure style="margin:0">
@@ -579,7 +585,7 @@
         <div class="prose">
           <p>It is also called the <b>reflected binary code</b>: its least significant bits are symmetric about the axes drawn in the table. To build the list, copy the previous list <b>as a mirror image</b> after it, then put a 0 in front of the first half and a 1 in front of the second:</p>
         </div>
-        <div class="calc" data-chk="grayseq">
+        <div class="calc wrap" data-chk="grayseq">
           <div>1 bit: <span class="bn">0</span>, <span class="bn">1</span></div>
           <div>2 bits: <span class="bn">00</span>, <span class="bn">01</span>, <span class="bn">11</span>, <span class="bn">10</span></div>
           <div>3 bits: <span class="bn">000</span>, <span class="bn">001</span>, <span class="bn">011</span>, <span class="bn">010</span>, <span class="bn">110</span>, <span class="bn">111</span>, <span class="bn">101</span>, <span class="bn">100</span></div>
