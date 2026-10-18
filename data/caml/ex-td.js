@@ -2693,7 +2693,7 @@
 
   add({
     id: 'td-listes-3-3', exam: null, kind: 'td', order: 3033, src: 'TD listes · Ex 3.3',
-    title: 'Insertion à la ième place : insert_nth', topics: ['listes', 'rangs', 'exceptions', 'construire', 'filtrage'], lvl: 2, time: 12, also: ['p2018-ex4'],
+    title: 'Insertion à la ième place : insert_nth', topics: ['listes', 'rangs', 'exceptions', 'construire', 'filtrage', 'accumulateur'], lvl: 2, time: 12, also: ['p2018-ex4'],
     intro: '<p>Écrire la fonction `insert_nth x i lst` qui insère la valeur `x` à la ième place dans la liste `lst`. La fonction devra déclencher une exception `Invalid_argument` si `i` est négatif ou nul, ou une exception `Failure` si la liste est trop courte.</p><p>Exemples d’applications :</p>' +
       ex(['# insert_nth 0 5 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 0; 5; 6; 7; 8; 9]', '# insert_nth 0 10 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 0]',
         '# insert_nth 0 12 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Failure "out of bound".', '# insert_nth 0 (-2) [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Invalid_arg "negative rank".']) +

@@ -31,7 +31,7 @@
   /* notions des exercices retombés (les mêmes que sur leurs fiches) */
   var T_ASSOC = ['listes', 'listes-triees', 'exceptions', 'filtrage', 'accumulateur'];
   var T_FORALL2 = ['listes', 'ordre-superieur', 'deux-listes', 'exceptions'];
-  var T_INSERT_NTH = ['listes', 'rangs', 'exceptions', 'construire', 'filtrage'];
+  var T_INSERT_NTH = ['listes', 'rangs', 'exceptions', 'construire', 'filtrage', 'accumulateur'];
 
   window.CAML_EXAMS = [
     { key: 'p2024', title: 'Partiel du 30 octobre 2024', meta: 'promo 2029 · épreuve Caml seule · 1 h 30 · 20 points',

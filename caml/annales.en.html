@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Past papers · Caml</title>
+<meta name="description" content="Caml and recursion: the 9 algo midterm papers found (2017 to 2024), exercise by exercise. The topics of each paper, the rules of the headers, the exercises that came up again as they were, the links to the detailed solutions and to the original PDFs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Caml past papers: a topics × papers matrix, the rules of the headers, the repeats, then one card per paper. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.ann{display:grid;gap:52px;padding-block:40px 96px}
+main.ann>section{display:grid;gap:16px;min-width:0;scroll-margin-top:72px}
+.matrix td,.matrix th{text-align:center;white-space:nowrap;vertical-align:middle}
+.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:normal;min-width:11rem}
+.matrix thead a{color:inherit}
+.matrix .yr{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.68rem;color:var(--muted);letter-spacing:0}
+.matrix .tot{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;font-weight:700}
+.matrix tr.never td:first-child{color:var(--warn)}
+.matrix tr.never td.nv{color:var(--warn);font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.74rem;text-align:left}
+.dot{color:var(--camel);font-size:1.05rem}
+.rules-t td{text-align:center;vertical-align:middle;font-size:.88rem}
+.rules-t td:first-child{text-align:left;min-width:13rem;font-size:.94rem}
+.rules-t .y{color:var(--ok);font-weight:700}
+.rules-t .no{color:var(--muted)}
+.rules-t .bold{color:var(--exam);font-weight:700}
+.redo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.redo{grid-template-columns:minmax(0,1fr)}}
+.redo .card p{font-size:.93rem}
+.redo .when{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.76rem;color:var(--exam)}
+.exam-c{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;scroll-margin-top:72px;min-width:0}
+.exam-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.exam-h h3{margin:0;font-size:1.3rem}
+.exam-h .meta{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--muted)}
+.exam-b{padding:12px 16px 16px;display:grid;gap:12px}
+.exam-b>*{min-width:0}
+.pts{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--camel);border:1px solid var(--camel);border-radius:999px;padding:.08rem .6rem;justify-self:start}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:.55rem .7rem;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.parts li.taa{opacity:.68;border-style:dashed}
+.parts .n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted)}
+.parts .p{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.parts .pt{display:grid;gap:4px;min-width:0}
+.parts .pt a{font-size:.88rem}
+.parts .tg{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;margin-left:4px;white-space:nowrap}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:560px){.parts li{grid-template-columns:40px minmax(0,1fr)}.parts .p{grid-column:2}}
+</style>
+</head>
+<body data-resume="Caml · past papers">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Past papers</div>
+      <h1>The 9 papers, <span class="w">exercise by exercise.</span></h1>
+      <p class="lead">The algo midterm papers found, from November 2017 to October 2024, including the April 2019 test of the S1# group. Until 2022, one paper mixed abstract types and Caml; since 2023, Caml has its own exam. Only the Caml part is solved here: the TAA part links to its own page. The papers of 2018, 2019, April 2019 and 2020 also exist in English.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx ann">
+  <section aria-labelledby="t-mx">
+    <div><div class="eyebrow">Overview</div><h2 id="t-mx">Which topics, which paper</h2></div>
+    <p class="muted" style="max-width:66ch">● the topic is used in at least one Caml exercise of the paper (hover over the dot to see which). Under each year: the share of Caml in the grade. The last column counts the papers.</p>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+
+  <section id="regles" aria-labelledby="t-rules">
+    <div><div class="eyebrow">Headers</div><h2 id="t-rules">The rules, paper by paper</h2></div>
+    <p class="muted" style="max-width:66ch">Copied from the “Notes (read them!)” of each paper. ✓: the rule is written; <b style="color:var(--exam)">✓✓</b>: it is in bold or strengthened; –: missing.</p>
+    <div class="tbl"><table class="rules-t">
+      <thead><tr><th>Rule</th><th>2024</th><th>2023</th><th>2022</th><th>2021</th><th>2020</th><th>2019</th><th>Apr. 2019</th><th>2018</th><th>2017</th></tr></thead>
+      <tbody>
+        <tr><td>Answer directly on the paper</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="no">sheets</td><td class="y">✓</td><td class="no">sheets</td></tr>
+        <tr><td>Caml code not indented: not marked</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Only functions allowed: <code class="ml">failwith</code> and <code class="ml">invalid_arg</code></td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Each code followed by the Caml answer</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="no">–</td><td class="y">✓</td></tr>
+        <tr><td>Only one version per function</td><td class="y">✓</td><td class="y">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Follow the examples; document your own functions</td><td class="y">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Presentation marked</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td>negatively</td><td class="y">✓</td><td>negatively</td></tr>
+        <tr><td>No pencil (nor red pen)</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Duration printed</td><td>1 h 30</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td>2 h*</td><td class="no">–</td><td>2 h*</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="font-size:.9rem;max-width:72ch">Details: in 2024, the rule on functions is repeated in the statement of exercise 1. The Caml answer “is part of the mark”, in bold, in 2023 and 2024. The presentation is “negatively marked” (up to 2 points taken off) in 2017 and April 2019. The red pen is forbidden since 2021. * Duration of the whole test, abstract types included.</p>
+  </section>
+
+  <section aria-labelledby="t-redo">
+    <div><div class="eyebrow">Repeats</div><h2 id="t-redo">The three exercises that came up again as they were</h2></div>
+    <p class="muted" style="max-width:66ch">Same statement, same examples, from one paper to another. All three are also exercises of this year’s tutorials: a single card solves each of them.</p>
+    <div class="redo" id="redo"></div>
+    <div class="note why"><span class="tag">Reworded</span><p>The insertion sort with a comparison function as a parameter came up in <a href="#p2019d">April 2019</a> (<code class="ml">insert x list comp</code>) then in <a href="#p2024">October 2024</a> (<code class="ml">insert_x x order lst</code>): same idea, another order of the parameters. Four more exercises of this year’s tutorials repeat a paper: <a href="entrainement.html#td-listes-3-2">delete</a> (2020), <a href="entrainement.html#td-listes-3-4">remove_duplicates</a> (2023), <a href="entrainement.html#td-listes-1-6">second</a> (April 2019 Mystery), <a href="entrainement.html#td-listes-4-3">sublist</a> (2019 Mystery).</p></div>
+  </section>
+
+  <section aria-labelledby="t-ex">
+    <div><div class="eyebrow">Papers</div><h2 id="t-ex">Each paper</h2></div>
+    <div id="exams" style="display:grid;gap:18px"></div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../data/qcm/caml-annales.js"></script>
+<script src="../data/en/qcm/caml-annales.js"></script>
+<script src="../data/caml/exams.js"></script>
+<script src="../data/en/caml/exams.js"></script>
+<script src="../data/caml/ex-annales.js"></script>
+<script src="../data/en/caml/ex-annales.js"></script>
+<script src="../data/caml/ex-td.js"></script>
+<script src="../data/en/caml/ex-td.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, E = window.CAML_EXAMS || [], TOP = window.CAML_TOPICS || {}, EX = window.CAML_EX || [];
+  var BANK = R.quiz.bank().filter(function (q) { return q.s === 'caml'; });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  function esc(s) { return U.esc(String(s)); }
+  function pts(v) { return String(v); }
+  function yr(e) { return e.key === 'p2019d' ? 'Apr. 2019' : e.key.slice(1); }
+  function camlParts(e) { return (e.parts || []).filter(function (p) { return p.caml !== false; }); }
+  var nCards = {}, nParts = 0;
+  E.forEach(function (e) { camlParts(e).forEach(function (p) { nParts++; if (p.card && BY[p.card]) nCards[p.card] = 1; }); });
+  document.getElementById('chips').innerHTML = '<span class="chip">' + E.length + ' papers</span><span class="chip">' + nParts + ' Caml exercises, ' + Object.keys(nCards).length + ' solved cards</span><a class="chip ex" href="entrainement.html#partiel" style="text-decoration:none">detailed solutions →</a>';
+
+  /* topics × papers matrix */
+  var head = '<thead><tr><th>Topic</th>' + E.map(function (e) { return '<th><a href="#' + e.key + '" title="' + esc(e.title) + '">' + yr(e) + '</a>' + (e.camlPts ? '<br><span class="yr">' + esc(e.camlPts) + '</span>' : '') + '</th>'; }).join('') + '<th>Papers</th></tr></thead>';
+  var body = Object.keys(TOP).map(function (t) {
+    var n = 0;
+    var cells = E.map(function (e) {
+      var ps = camlParts(e).filter(function (p) { return (p.topics || []).indexOf(t) >= 0; });
+      if (ps.length) n++;
+      return '<td>' + (ps.length ? '<span class="dot" title="' + esc(ps.map(function (p) { return 'Ex ' + p.ex + ': ' + p.t; }).join(' · ')) + '">●</span>' : '') + '</td>';
+    }).join('');
+    if (!n) return '<tr class="never"><td>' + esc(TOP[t]) + '</td><td class="nv" colspan="' + (E.length + 1) + '">no exercise of its own · the seminar, used everywhere</td></tr>';
+    return '<tr><td>' + esc(TOP[t]) + '</td>' + cells + '<td class="tot">' + n + ' / ' + E.length + '</td></tr>';
+  }).join('');
+  document.getElementById('matrix').innerHTML = head + '<tbody>' + body + '</tbody>';
+
+  /* the three exercises that came up again as they were */
+  var REDO = [
+    { card: 'p2019d-ex3', td: 'td-listes-5-1', when: 'Nov. 2017 · ex. 3 → Apr. 2019 · ex. 3', keys: ['p2017', 'p2019d'], txt: 'List of pairs sorted by keys, two exceptions, stop as soon as a key goes past <code class="ml">k</code>. 4 then 5 points.' },
+    { card: 'p2019-ex4', td: 'td-os-2-8', when: 'Nov. 2017 · ex. 4 → Oct. 2019 · ex. 4', keys: ['p2017', 'p2019'], txt: 'A two-parameter predicate and two lists, then <code class="ml">almost</code> written with <code class="ml">for_all2</code>. 5 points both times.' },
+    { card: 'p2018-ex4', td: 'td-listes-3-3', when: 'Oct. 2018 · ex. 4 → Nov. 2020 · ex. 3', keys: ['p2018', 'p2020'], txt: 'Inserting at the rank i: <code class="ml">Invalid_argument</code> if the rank is negative or zero, <code class="ml">Failure</code> if the list is too short. 5 points both times.' }];
+  document.getElementById('redo').innerHTML = REDO.map(function (r) {
+    var c = BY[r.card], t = BY[r.td];
+    return '<div class="card"><span class="when">' + r.when + '</span><h4>' + (c ? c.title : r.card) + '</h4><p>' + r.txt + '</p><p><a href="entrainement.html#' + r.card + '">The solved card →</a>' + (t ? '<br><span class="muted">In ' + esc(t.src) + '.</span>' : '') + '</p></div>';
+  }).join('');
+
+  /* one card per paper */
+  document.getElementById('exams').innerHTML = E.map(function (e) {
+    var nq = BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('caml-' + e.key + '-') === 0; }); }).length;
+    var files = (e.files || []).map(function (f) { return '<a class="btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.t) + ' ↗</a>'; }).join('');
+    var parts = (e.parts || []).map(function (p) {
+      var taa = p.caml === false, c = !taa && p.card && BY[p.card], links = [];
+      if (c) links.push('<a href="entrainement.html#' + c.id + '">Detailed solution: ' + c.title + ' →</a>');
+      if (taa) links.push('<a href="../taa/annales.html#' + e.key + '">TAA part: solutions and analysis →</a>');
+      return '<li class="' + (taa ? 'taa' : '') + '"><span class="n">Ex ' + esc(p.ex) + '</span><span class="pt"><span>' + p.t + (taa ? ' <span class="tg">abstract types</span>' : '') + '</span>' + links.join(' ') + '</span><span class="p">' + (p.pts ? pts(p.pts) + ' pts' : '') + '</span></li>';
+    }).join('');
+    return '<article class="exam-c" id="' + e.key + '"><div class="exam-h"><h3>' + esc(e.title) + '</h3><span class="meta">' + esc(e.meta || '') + '</span></div><div class="exam-b">' +
+      (e.camlPts ? '<span class="pts">Caml: ' + esc(e.camlPts) + '</span>' : '') +
+      (e.note ? '<p>' + e.note + '</p>' : '') + '<ul class="parts">' + parts + '</ul>' +
+      '<div class="files">' + files + (nq ? '<a class="btn primary" href="../qcm/index.html#caml-' + e.key + '">Its ' + nq + ' questions in the MCQ</a>' : '') + '</div></div></article>';
+  }).join('');
+  var h = (location.hash || '').slice(1), t = h && document.getElementById(h);
+  if (t) setTimeout(function () { t.scrollIntoView(); }, 50);
+})();
+</script>
+</body>
+</html>

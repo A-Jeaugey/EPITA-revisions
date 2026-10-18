@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Caml</title>
+<meta name="description" content="Caml and recursion: the methods for the exam, each with a worked example that was run. Writing a recursive function, handling one or two lists, choosing failwith or invalid_arg, writing the Caml answer, reading a Mystery, using a higher-order function, optimising, the checklist and the traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Methods: one section per exam move, numbered; every example was run (OCaml 4.14). */
+.mn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--camel-soft);color:var(--camel);font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.82rem;font-weight:700;flex:none}
+.toc .mn{width:24px;height:24px;font-size:.76rem;justify-self:center}
+.steps>li>div>p{margin:0}
+.cases td:first-child{min-width:12rem}
+.cases td code.ml{white-space:nowrap}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Caml · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Methods</div>
+      <h1>One recipe per <span class="w">kind of question.</span></h1>
+      <p class="lead">The papers keep asking the same questions: a recursive function on a list with an exception, a function as a parameter, a Mystery to read. Each method fits in a few steps, with an example taken from the papers or the tutorials, run with OCaml 4.14 and written as on your exam script.</p>
+      <div class="chips"><span class="chip">7 methods, the checklist, the traps</span><span class="chip">all the code was run</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">solved exercises →</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Methods contents">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#recursive"><span class="mn">1</span><span>Writing a recursive function</span></a></li>
+      <li><a href="#listes"><span class="mn">2</span><span>Handling one or two lists</span></a></li>
+      <li><a href="#exceptions"><span class="mn">3</span><span>failwith or invalid_arg</span></a></li>
+      <li><a href="#reponse"><span class="mn">4</span><span>Writing the Caml answer</span></a></li>
+      <li><a href="#mystery"><span class="mn">5</span><span>Reading a Mystery</span></a></li>
+      <li><a href="#ordre-sup"><span class="mn">6</span><span>A function as a parameter</span></a></li>
+      <li><a href="#optimiser"><span class="mn">7</span><span>Optimising</span></a></li>
+      <li><a href="#copie"><span class="mn">✓</span><span>Before handing in</span></a></li>
+      <li><a href="#pieges"><span class="mn">!</span><span>The traps</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Caml home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">Summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Methods contents</summary><ol>
+      <li><a href="#recursive">Writing a recursive function</a></li><li><a href="#listes">Handling one or two lists</a></li><li><a href="#exceptions">failwith or invalid_arg</a></li>
+      <li><a href="#reponse">Writing the Caml answer</a></li><li><a href="#mystery">Reading a Mystery</a></li><li><a href="#ordre-sup">A function as a parameter</a></li>
+      <li><a href="#optimiser">Optimising</a></li><li><a href="#copie">Before handing in</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 recursive -->
+    <section class="sec" id="recursive">
+      <div class="sec-head"><div class="kicker"><span class="mn">1</span>Method 1</div><h2>Writing a recursive function</h2></div>
+      <div class="stack">
+        <div class="prose"><p>This is the method of the Moodle page “Advice on recursion” (in French, « Conseils pour la récursivité »), in its order. It works for almost every function to write: all 9 papers have a recursive function on a list, with an exception required by the statement.</p></div>
+        <ol class="steps">
+          <li><div><p><b>What is the question? The specification.</b> What the function computes, its parameters (meaning, type, order), the calling conditions and the exception when they do not hold. The examples of the paper give it: read them first. Write down the expected type: it will be your Caml answer.</p></div></li>
+          <li><div><p><b>The principle.</b> “I have already seen something like it”: a full traversal (counting), a partial traversal (searching), a list to build, a rank that goes down. It gives the structure and the cases.</p></div></li>
+          <li><div><p><b>The function with holes.</b> Write the structure with its cases, then the answer of each: the base cases (the answer is known without a new call), then the recursive cases (the same problem, smaller). Check that each call gets closer to a base case.</p></div></li>
+          <li><div><p><b>The special cases.</b> Once the general case is written, try the edge cases: empty list, a single element, parameter out of range, element not found. Add the missing cases.</p></div></li>
+          <li><div><p><b>The wrapper, if needed.</b> A non-recursive “wrapper” function checks the parameters once, then calls the local recursive function. It also gives that function its extra parameters (counter, accumulator) with their starting value.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">lists tutorial · ex. 1.4</span> The element at rank i of a list. Same scheme as <code class="ml">remove_nth</code> (October 2019) and <code class="ml">insert_nth</code> (2018 and 2020).</p></div>
+        <div class="sheet">
+          <span class="lbl">1. Specification:</span>
+          <p><code class="ml">nth i lst</code> returns the element at rank <code class="ml">i</code> of the list <code class="ml">lst</code> (the first one is at rank 1). It raises <code class="ml">Invalid_argument</code> if <code class="ml">i ≤ 0</code>, <code class="ml">Failure</code> if the list has fewer than <code class="ml">i</code> elements. Expected type: <code class="ml">int -> 'a list -> 'a</code>.</p>
+          <span class="lbl">2. Principle:</span>
+          <p>A partial traversal, like a search, with a rank that goes down: for each element passed, look for rank <code class="ml">i - 1</code> in the rest. At rank 1, it is the head.</p>
+          <span class="lbl">3. Function with holes (it does not compile yet):</span>
+<pre data-ml>
+let rec get i = function
+    [] -> (* no element left: the list is too short *)
+  | e :: l ->
+      if i = 1 then
+        (* the answer is the head *)
+      else
+        (* same problem, smaller: rank i - 1 in l *)
+</pre>
+          <span class="lbl">4. Special cases: without a test, a rank ≤ 0 never equals 1, and the recursion goes down to the empty list:</span>
+<pre data-ml-repl>
+# let rec get i = function
+      [] -> failwith "nth: list too short"
+    | e :: l ->
+        if i = 1 then
+          e
+        else
+          get (i-1) l ;;
+val get : int -> 'a list -> 'a = &lt;fun&gt;
+# get 0 ['a'; 'b'] ;;
+Exception: Failure "nth: list too short".
+</pre>
+          <span class="lbl">5. The wrapper checks the rank once, then calls the recursive function:</span>
+<pre data-ml-repl>
+# let nth i lst =
+    if i &lt;= 0 then
+      invalid_arg "nth: i &lt;= 0"
+    else
+      let rec get i = function
+          [] -> failwith "nth: list too short"
+        | e :: l ->
+            if i = 1 then
+              e
+            else
+              get (i-1) l
+      in
+        get i lst ;;
+val nth : int -> 'a list -> 'a = &lt;fun&gt;
+# nth 3 ['a'; 'b'; 'c'; 'd'] ;;
+- : char = 'c'
+# nth 5 ['a'; 'b'] ;;
+Exception: Failure "nth: list too short".
+# nth 0 ['a'; 'b'] ;;
+Exception: Invalid_argument "nth: i &lt;= 0".
+# nth (-1) [] ;;
+Exception: Invalid_argument "nth: i &lt;= 0".
+</pre>
+        </div>
+        <div class="prose"><p>The recursive function only sees ranks ≥ 1; it goes down to 1 (found) or to <code class="ml">[]</code> (too short): each call gets closer to a base case. The test on <code class="ml">i</code> is done only once, even on a long list, and <code class="ml">nth (-1) []</code> does raise <code class="ml">Invalid_argument</code>.</p></div>
+        <div class="note why"><span class="tag">The Moodle page</span><p>It shows the wrapper on <code class="ml">fact</code>, then on <code class="ml">multiply x y</code>. This second example has a typo: <code class="ml">mult_rec (x, y-1)</code> while <code class="ml">mult_rec</code> takes a single integer. As it stands, it does not compile; it should be <code class="ml">mult_rec (y-1)</code>.</p></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-2-recursivite.html#s1">base case and recursive case</a>, <a href="cours-2-recursivite.html#s3">wrapper functions</a>, <a href="cours-2-recursivite.html#s4">extra parameters</a>. To do: <a href="entrainement.html#td-listes-1-4">lists tutorial 1.4</a>, <a href="entrainement.html#p2019-ex3">remove_nth (2019)</a>, <a href="entrainement.html#p2023-ex1">insert_mult (2023)</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 lists -->
+    <section class="sec" id="listes">
+      <div class="sec-head"><div class="kicker"><span class="mn">2</span>Method 2</div><h2>Handling one or two lists</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The Moodle page “Advice on lists” starts from a question: how many lists must be traversed, and is the head enough? The answer gives the cases of the pattern matching. Then add the cases due to the other parameters (value searched for, sorted list, property).</p></div>
+        <div class="tbl"><table class="cases">
+          <thead><tr><th>Situation</th><th>The cases</th><th>In the papers</th></tr></thead>
+          <tbody>
+            <tr><td>One list</td><td><code class="ml">[]</code> · <code class="ml">e :: lst</code></td><td><code class="ml">remove_x</code> (2023), <code class="ml">insert_post</code> (2022)</td></tr>
+            <tr><td>The head is not enough: comparing two neighbours</td><td><code class="ml">[]</code> · <code class="ml">[e]</code> · <code class="ml">e1 :: e2 :: lst</code></td><td>dominoes (2019), the April 2019 Mystery</td></tr>
+            <tr><td>Pairs</td><td><code class="ml">[]</code> · <code class="ml">(a, b) :: lst</code></td><td><code class="ml">assoc</code> (2017, April 2019)</td></tr>
+            <tr><td>A list of lists</td><td><code class="ml">[]</code> · <code class="ml">l :: others</code></td><td><code class="ml">check_list</code> (2024)</td></tr>
+            <tr><td>Two lists traversed together</td><td><code class="ml">([], [])</code> · <code class="ml">(lst, [])</code> · <code class="ml">([], lst)</code> · <code class="ml">(e1 :: l1, e2 :: l2)</code></td><td><code class="ml">for_all2</code> (2017, 2019), <code class="ml">is_image</code> (2018)</td></tr>
+            <tr><td>Two lists, only one moves at each call</td><td>the same cases, and two recursive calls depending on which list moves</td><td><code class="ml">shared</code> (lists tutorial 4.2), <code class="ml">alternate_list</code> (2021)</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>The empty list is a base case.</b> Decide what it returns from the statement: a value (<code class="ml">0</code>, <code class="ml">true</code>, <code class="ml">[]</code>) or an exception.</p></div></li>
+          <li><div><p><b>Full or partial traversal?</b> If the whole list must be seen (counting, copying), every non-empty case is recursive. Otherwise you need at least one other base case: found, property false, value passed in a sorted list.</p></div></li>
+          <li><div><p><b>Pure recursion first.</b> Express the result for <code class="ml">e :: lst</code> from the result for <code class="ml">lst</code>. Moodle warns that an accumulator is, most of the time, not needed: it only makes things more complicated and you risk getting a different result from the one asked for. In 2023, a script lost 2 points out of 8 because its accumulator had reversed the order of the sublists.</p></div></li>
+          <li><div><p><b>Two lists together: group them in a pair</b> with <code class="ml">match (l1, l2) with</code>, and check that the four cases are covered. A catch-all case <code class="ml">| _ -></code> at the end groups the different lengths.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>The head is not enough</b> <span class="src-tag">October 2019 · ex. 2 · 4 points</span> A chain of dominoes is valid if neighbouring halves have the same number of spots. Three cases, and the recursive call starts again from <code class="ml">(c, d) :: l</code>, not from <code class="ml">l</code>, otherwise a domino is lost (official answer key):</p></div>
+<pre data-ml-repl>
+# let rec is_dominoes = function
+      [] | [_] -> true
+    | (_, b) :: (c, d) :: l -> b = c &amp;&amp; is_dominoes ((c, d) :: l) ;;
+val is_dominoes : ('a * 'a) list -> bool = &lt;fun&gt;
+# is_dominoes [(1, 2); (2, 3); (3, 3); (3, 6)] ;;
+- : bool = true
+# is_dominoes [(2, 3); (2, 4); (1, 4)] ;;
+- : bool = false
+# is_dominoes [] ;;
+- : bool = true
+</pre>
+        <div class="prose"><p><b>Two lists, only one moves</b> <span class="src-tag c">lists tutorial · ex. 4.2</span> The elements shared by two increasing lists. If the heads differ, only the list with the smaller head moves on: call again with the other list <b>whole</b> (<code class="ml">l1</code> or <code class="ml">l2</code>), so as not to lose its head.</p></div>
+<pre data-ml-repl>
+# let rec shared l1 l2 = match (l1, l2) with
+      ([], _) | (_, []) -> []
+    | (e1 :: r1, e2 :: r2) ->
+        if e1 = e2 then
+          e1 :: shared r1 r2
+        else
+          if e1 &lt; e2 then
+            shared r1 l2
+          else
+            shared l1 r2 ;;
+val shared : 'a list -> 'a list -> 'a list = &lt;fun&gt;
+# shared [1; 3; 6; 6; 8; 9] [2; 5; 6; 6; 8; 9] ;;
+- : int list = [6; 6; 8; 9]
+</pre>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><code class="ml">[e; lst]</code> is a list of <b>two</b> elements, not “an element followed by a list”: the general case is written <code class="ml">e :: lst</code>.</li>
+          <li>A forgotten case does not show when you write: Caml prints <code class="ml">Warning 8</code> under your definition, then <code class="ml">Match_failure</code> at run time. In your Caml answer, a warning reveals an oversight.</li>
+        </ul></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-3-listes.html#s2">matching a list</a>, <a href="cours-3-listes.html#s7">two lists</a>, <a href="cours-3-listes.html#s8">two elements, pairs, accumulator</a>. To do: <a href="entrainement.html#p2019-ex2">dominoes</a>, <a href="entrainement.html#td-listes-4-2">shared</a>, <a href="entrainement.html#p2021-ex3">alternate lists</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 exceptions -->
+    <section class="sec" id="exceptions">
+      <div class="sec-head"><div class="kicker"><span class="mn">3</span>Method 3</div><h2>Choosing <code class="ml">failwith</code> or <code class="ml">invalid_arg</code>, and where to put the test</h2></div>
+      <div class="stack">
+        <div class="prose"><p>All nine papers require an exception. These are the only two predefined functions allowed, and the statement always says which one it expects: its examples show the constructor and the message.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><code>invalid_arg "…"</code></th><th><code>failwith "…"</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Caml answer</th><td><code data-ml-ans>Exception: Invalid_argument "…".</code></td><td><code data-ml-ans>Exception: Failure "…".</code></td></tr>
+            <tr><th scope="row">When</th><td>A parameter does not meet the calling conditions: rank ≤ 0, <var>k</var> &lt; 0, <var>i</var> &gt; <var>j</var>, list empty “from the start”.</td><td>The computation fails on the way: list too short, key not found, no element to insert after.</td></tr>
+            <tr><th scope="row">Where</th><td>In the wrapper function, <b>before</b> any traversal, once.</td><td>Where the failure shows, often the <code class="ml">[]</code> case of the recursive function.</td></tr>
+            <tr><th scope="row">Papers</th><td>9 out of 9</td><td>7 out of 9 (not in 2023 nor 2024)</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>Read the examples</b>: copy the constructor and the message. The 2018 to 2020 papers and the lists tutorial print <code>Invalid_arg "negative rank"</code>: it is a typo, the constructor is <code class="ml">Invalid_argument</code>, and you raise it with <code class="ml">invalid_arg</code>.</p></div></li>
+          <li><div><p><b>An invalid parameter is tested in the wrapper.</b> Tested in the recursive function, it would be redone at each call, and a base case met before it would give the wrong exception.</p></div></li>
+          <li><div><p><b>A failure on the way is raised in the case that reveals it</b>: end of the list reached too early, a key passed in a sorted list.</p></div></li>
+          <li><div><p><b>Follow the order set by the statement.</b> <code class="ml">for_all2</code> (2017, 2019): “If it finds a pair such that p ai bi is false, it returns false. Otherwise, it raises an exception”: the false pair comes before the exception, so the exception comes at the end of the traversal, not from a length test beforehand.</p></div></li>
+        </ol>
+        <div class="prose"><p>Both functions have type <code class="ml">string -> 'a</code>: an exception takes the type of any branch. That is what allows <code class="ml">if i &lt; 1 then invalid_arg "…" else …</code>.</p></div>
+<pre data-ml-repl>
+# invalid_arg ;;
+- : string -> 'a = &lt;fun&gt;
+# failwith ;;
+- : string -> 'a = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><b>The test in the wrong place</b> <span class="src-tag">October 2019 · ex. 3 · 5 points</span> <code class="ml">remove_nth i list</code> deletes the element at rank <code class="ml">i</code>; <code class="ml">Invalid_argument</code> if <code class="ml">i</code> is negative or zero, <code class="ml">Failure</code> if the list is too short. With the test on <code class="ml">i</code> inside the recursive function, the empty list is matched before it:</p></div>
+<pre data-ml-repl>
+# let rec remove_nth i = function
+      [] -> failwith "out of bound"
+    | e :: q ->
+        if i &lt;= 0 then
+          invalid_arg "negative rank"
+        else
+          if i = 1 then
+            q
+          else
+            e :: remove_nth (i-1) q ;;
+val remove_nth : int -> 'a list -> 'a list = &lt;fun&gt;
+# remove_nth (-2) [1; 2; 3] ;;
+Exception: Invalid_argument "negative rank".
+# remove_nth (-2) [] ;;
+Exception: Failure "out of bound".
+</pre>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let remove_nth i list =
+    if i &lt; 1 then
+      invalid_arg "negative rank"
+    else
+      let rec del i = function
+          [] -> failwith "out of bound"
+        | e :: q ->
+            if i = 1 then
+              q
+            else
+              e :: del (i-1) q
+      in
+        del i list ;;
+val remove_nth : int -> 'a list -> 'a list = &lt;fun&gt;
+# remove_nth 5 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+- : int list = [1; 2; 3; 4; 6; 7; 8; 9]
+# remove_nth 10 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+Exception: Failure "out of bound".
+# remove_nth (-2) [] ;;
+Exception: Invalid_argument "negative rank".
+</pre>
+        </div>
+        <div class="prose"><p><b>“Initially empty”</b> <span class="src-tag">October 2022 · ex. 3</span> When the starting empty list is an invalid parameter, the wrapper matches it with <code class="ml">function</code>, and the recursive function receives the first element as its starting maximum (official answer key):</p></div>
+<pre data-ml-repl>
+# let pos_max = function
+      [] -> invalid_arg "pos_max: empty list"
+    | e :: l ->
+        let rec aux_max vmax vpos cur_pos = function
+            [] -> vpos
+          | e :: l ->
+              if e > vmax then
+                aux_max e cur_pos (cur_pos + 1) l
+              else
+                aux_max vmax vpos (cur_pos + 1) l
+        in
+          aux_max e 1 2 l ;;
+val pos_max : 'a list -> int = &lt;fun&gt;
+# pos_max [] ;;
+Exception: Invalid_argument "pos_max: empty list".
+# pos_max [8.5; 9.; -4.5] ;;
+- : int = 2
+</pre>
+        <div class="note exam"><span class="tag">Wrong official answer key</span><p>The October 2019 answer key writes <code class="ml">failwith "negative rank"</code> in all three versions: it raises <code class="ml">Failure</code>, while the statement asks for <code class="ml">Invalid_argument</code>. Follow the statement.</p></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-1-bases.html#s5">failwith and invalid_arg</a>, <a href="cours-2-recursivite.html#s3">wrapper functions</a>. To do: <a href="entrainement.html#td-listes-3-3">insert_nth</a>, <a href="entrainement.html#p2021-ex2">remove_interval (2021)</a>, <a href="entrainement.html#p2022-ex3">pos_max (2022)</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 answer -->
+    <section class="sec" id="reponse">
+      <div class="sec-head"><div class="kicker"><span class="mn">4</span>Method 4</div><h2>Writing the Caml answer of a phrase</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Under every function on your script, and for every phrase of a Mystery. Since 2023, the header says it “is part of the mark”. It has a fixed form, which depends on the phrase:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Phrase</th><th>Caml answer</th></tr></thead>
+          <tbody>
+            <tr><td>Definition of a value: <code class="ml">let a = 1 + 2 ;;</code></td><td><code data-ml-ans>val a : int = 3</code></td></tr>
+            <tr><td>Definition of a function</td><td><code data-ml-ans>val nth : int -&gt; 'a list -&gt; 'a = &lt;fun&gt;</code></td></tr>
+            <tr><td>Expression: <code class="ml">nth 3 ['a'; 'b'; 'c'] ;;</code></td><td><code data-ml-ans>- : char = 'c'</code></td></tr>
+            <tr><td>Exception raised</td><td><code data-ml-ans>Exception: Failure "nth: list too short".</code></td></tr>
+            <tr><td>Phrase rejected (type, unknown name): nothing is defined</td><td><code data-ml-ans>Error: Unbound value fact</code></td></tr>
+            <tr><td>Incomplete matching: the warning, then the definition</td><td><code data-ml-ans>Warning 8 [partial-match]: this pattern-matching is not exhaustive.</code></td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>One type per parameter</b>, in order, separated by <code class="ml">-></code>, then the type of the result: <code class="ml">insert_mult n x lst</code> gives <code class="ml">int -> 'a -> 'a list -> 'a list</code>.</p></div></li>
+          <li><div><p><b>A function parameter is written in brackets</b>, with its own type: <code class="ml">('a -> bool)</code> for a predicate, <code class="ml">('a -> 'a -> bool)</code> for an order.</p></div></li>
+          <li><div><p><b><code class="ml">'a</code> when nothing forces the type.</b> Comparing (<code class="ml">=</code>, <code class="ml">&lt;</code>) or moving elements does not fix their type; <code class="ml">+</code>, <code class="ml">mod</code> or a constant <code class="ml">0</code> give <code class="ml">int</code>, <code class="ml">+.</code> gives <code class="ml">float</code>. Two unrelated types: <code class="ml">'a</code> and <code class="ml">'b</code>.</p></div></li>
+          <li><div><p><b>Compound types</b>: <code class="ml">int list</code>, <code class="ml">(int * 'a) list</code> for a list of pairs, <code class="ml">'a list list</code> for a list of lists.</p></div></li>
+          <li><div><p><b>The value as Caml writes it</b>: <code class="ml">4.</code> and not <code class="ml">4.0</code>, strings in double quotes, characters in single quotes, <code class="ml">[1; 2]</code> with semicolons; a function is <code>&lt;fun&gt;</code>.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Your turn.</b> Type the Caml answer to each phrase, then compare. An empty field simply reveals the answer.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Guess the Caml answer · empty environment">
+# let rec how_many f = function
+      [] -> 0
+    | e :: l -> (if f e then 1 else 0) + how_many f l ;;
+val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;
+# how_many (function x -> x > 0) [-1; 2; 0; 5] ;;
+- : int = 2
+# let count_even = how_many (function x -> x mod 2 = 0) ;;
+val count_even : int list -> int = &lt;fun&gt;
+# let first = function
+      [] -> failwith "first: empty list"
+    | (a, b) :: _ -> a ;;
+val first : ('a * 'b) list -> 'a = &lt;fun&gt;
+# first [(3.5, "x"); (1., "y")] ;;
+- : float = 3.5
+# first [] ;;
+Exception: Failure "first: empty list".
+# [[1; 2]; []] ;;
+- : int list list = [[1; 2]; []]
+# [] ;;
+- : 'a list = []
+# 4.0 ;;
+- : float = 4.
+</pre>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><code class="ml">count_even</code> is defined without writing its list: it is a partial application, and its type is what remains, <code class="ml">int list -> int</code>.</li>
+          <li><code class="ml">first</code> does nothing with <code class="ml">b</code>: its type stays free, <code class="ml">'b</code>.</li>
+          <li>An exception has no type in the answer: <code class="ml">Exception: …</code> and a full stop.</li>
+          <li>Caml splits a long type over two lines (<code class="ml">… list =</code> then <code>&lt;fun&gt;</code>); on your script, one line is enough.</li>
+        </ul></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-1-bases.html#s1">reading a Caml answer</a>, <a href="cours-1-bases.html#s3">the type of a function</a>, <a href="cours-4-ordre-superieur.html#s2">partial application</a>. To do: <a href="entrainement.html#sem-1-2">seminar 1.2</a>, <a href="entrainement.html#sem-2-1">2.1</a>, <a href="entrainement.html#td-os-1-1">higher-order tutorial 1.1</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 mystery -->
+    <section class="sec" id="mystery">
+      <div class="sec-head"><div class="kicker"><span class="mn">5</span>Method 5</div><h2>Reading a Mystery: the trace, then what it computes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>7 papers out of 9, worth 2 to 4 points: a function with a meaningless name, whose type you must give (2022, 2024), the results of a few phrases, sometimes what it computes (April 2019), a phrase to declare “Error” (2021) or the call that produces a given result (2022).</p></div>
+        <ol class="steps">
+          <li><div><p><b>The type first</b>, by reading the code: the patterns (list, pair), the operations (<code class="ml">*</code> forces <code class="ml">int</code>), what each case returns. If a matching misses a case, Caml prints <code class="ml">Warning 8</code> before the <code class="ml">val</code>; the April 2019 answer key accepts an answer “apart from any warnings”.</p></div></li>
+          <li><div><p><b>Unroll the smallest example</b>, call by call, writing down what each call waits for. Spot the shadowed names: a variable with the same name in a local function hides the one above.</p></div></li>
+          <li><div><p><b>Do the other phrases</b>, starting with the edge cases (empty list, one element): they often hit a base case.</p></div></li>
+          <li><div><p><b>Say in one sentence what the function computes</b>, and check it on an example you did not unroll.</p></div></li>
+          <li><div><p><b>“Error”?</b> Check the type of each argument: in 2021, a two-parameter function is passed where a one-parameter predicate is expected.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Example</b> <span class="src-tag">November 2020 · ex. 5 · 2 points</span> “The function go is defined as below. Give the results of the successive evaluations of the following phrases.”</p></div>
+<pre data-ml>
+let go = function
+    [] -> []
+  | e :: list ->
+    let rec what x = function
+          [] -> []
+       | e :: list -> ( e * x ) ::( what e list )
+    in
+    what e list ;;
+</pre>
+        <div class="prose"><p><b>The type.</b> <code class="ml">go</code> matches a list; <code class="ml">e * x</code> forces integers; each case returns a list of integers. Answer: <code data-ml-ans>val go : int list -&gt; int list = &lt;fun&gt;</code>. In <code class="ml">what</code>, the <code class="ml">e</code> and <code class="ml">list</code> of the pattern shadow those of <code class="ml">go</code>.</p>
+          <p><b>The trace</b> of <code class="ml">go [1; 2; 3; 4; 5]</code>: <code class="ml">go</code> calls <code class="ml">what</code> with the head and the rest. Each call of <code class="ml">what</code> waits for the result of the next one to put a product in front.</p></div>
+        <div id="u-go"></div>
+<pre data-ml-repl data-title="The four phrases of the paper">
+# go [1; 1; 1; 1; 1] ;;
+- : int list = [1; 1; 1; 1]
+# go [42] ;;
+- : int list = []
+# go [1; 2; 3; 4; 5] ;;
+- : int list = [2; 6; 12; 20]
+# go [2; 21; 2; 21; 2; 21] ;;
+- : int list = [42; 42; 42; 42; 42]
+</pre>
+        <div class="sheet"><span class="lbl">What go computes:</span><p>The list of the products of two neighbouring elements: <code class="ml">[a1 * a2; a2 * a3; …]</code>, one element fewer than the starting list. Hence <code class="ml">[]</code> for a one-element list.</p></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-2-recursivite.html#s2">the call stack</a>. To do, from the simplest to the longest: <a href="entrainement.html#p2020-ex5">go (2020)</a>, <a href="entrainement.html#p2019-ex5">sublist (2019)</a>, <a href="entrainement.html#p2019d-ex4">April 2019</a>, <a href="entrainement.html#p2024-ex3">2024</a>, <a href="entrainement.html#p2021-ex4">2021</a>, <a href="entrainement.html#p2022-ex5">2022</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 higher-order -->
+    <section class="sec" id="ordre-sup">
+      <div class="sec-head"><div class="kicker"><span class="mn">6</span>Method 6</div><h2>Using a higher-order function</h2></div>
+      <div class="stack">
+        <div class="prose"><p>7 papers out of 9 make you write a function that receives a function as a parameter, and 7 out of 9 go on with “Use the previous function to define…”. The functions are always written by hand: neither <code class="ml">List.map</code> nor <code class="ml">List.filter</code>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Spot the function parameter</b>: “a boolean function”, “a predicate”, “a comparison function”, “a two-argument function”. In the type, it is in brackets.</p></div></li>
+          <li><div><p><b>Call it like a function</b>, with its arguments: <code class="ml">f e</code>, <code class="ml">p e1 e2</code>, <code class="ml">order x e</code>. It is already a boolean: <code class="ml">if f e then</code>, not <code class="ml">if f e = true then</code>.</p></div></li>
+          <li><div><p><b>Pass it to every recursive call</b>: <code class="ml">how_many f l</code>, not <code class="ml">how_many l</code>.</p></div></li>
+          <li><div><p><b>To use it</b>, give it an anonymous function (<code class="ml">function x -> x mod n = 0</code>), a named local function, or an operator in brackets such as <code class="ml">(=)</code>. Question 2 can be done even if question 1 is not: in 2022, “whether it is written or not”.</p></div></li>
+          <li><div><p><b>Keep the order of the parameters of the statement</b>: the comparison is the last parameter of <code class="ml">insert x list comp</code> (April 2019), the second of <code class="ml">insert_x x order lst</code> (2024).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Example</b> <span class="src-tag">October 2018 · ex. 3 · 4 points</span> <code class="ml">how_many f l</code> counts the elements of <code class="ml">l</code> that satisfy <code class="ml">f</code>; then use it for <code class="ml">count_multiples n l</code>, the number of multiples of <code class="ml">n</code> in <code class="ml">l</code>.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let rec how_many f = function
+      [] -> 0
+    | e :: l ->
+        if f e then
+          1 + how_many f l
+        else
+          how_many f l ;;
+val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;
+# let count_multiples n l = how_many (function x -> x mod n = 0) l ;;
+val count_multiples : int -> int list -> int = &lt;fun&gt;
+# count_multiples 3 [1; 3; 6; 7; 9; 0] ;;
+- : int = 4
+</pre>
+        </div>
+        <div class="prose"><p>The predicate uses <code class="ml">n</code>, the parameter of <code class="ml">count_multiples</code>: that is why it is written inside. The official answer key also gives the form without <code class="ml">l</code>, a partial application, of the same type:</p></div>
+<pre data-ml-repl>
+# let count_multiples n = how_many (function x -> x mod n = 0) ;;
+val count_multiples : int -> int list -> int = &lt;fun&gt;
+</pre>
+        <div class="note trap"><span class="tag">Two mistakes Caml rejects</span>
+<pre data-ml-repl>
+# let rec bad f = function
+      [] -> 0
+    | e :: l -> if f e = true then 1 + bad l else bad f l ;;
+Error: This expression has type 'a list
+       but an expression was expected of type 'a -> bool
+# how_many (=) [1; 2] ;;
+Error: This expression has type 'a -> 'a -> bool
+       but an expression was expected of type 'a -> bool
+       Type 'a -> bool is not compatible with type bool
+</pre>
+          <ul><li><code class="ml">bad l</code>: the function parameter was forgotten in the recursive call.</li><li><code class="ml">(=)</code> takes two parameters, <code class="ml">how_many</code> expects a one-parameter predicate: that is the “Error” of the 2021 Mystery.</li></ul>
+        </div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-4-ordre-superieur.html#s3">a function as a parameter</a>, <a href="cours-4-ordre-superieur.html#s6">an order as a parameter</a>, <a href="cours-4-ordre-superieur.html#s7">for_all2</a>. To do: <a href="entrainement.html#p2018-ex3">how_many</a>, <a href="entrainement.html#p2019-ex4">for_all2 and almost</a>, <a href="entrainement.html#p2024-ex2">insertion sort (2024)</a>, <a href="entrainement.html#p2022-ex4">less2 and common</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 optimising -->
+    <section class="sec" id="optimiser">
+      <div class="sec-head"><div class="kicker"><span class="mn">7</span>Method 7</div><h2>Optimising: never repeat a computation, stop early</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course sheet asks you to “avoid useless computations, not repeat computations, stop as soon as an answer is found”. A function that is right but slow loses points: stopping early is expected in 8 papers out of 9.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Do not redo a recursive call</b>: if its result is used twice, name it with <code class="ml">let … in</code>.</p></div></li>
+          <li><div><p><b>Stop as soon as the answer is known</b>: element found, property false, value passed in a sorted list. <code class="ml">&amp;&amp;</code> and <code class="ml">||</code> do not evaluate their second operand when the first one is enough.</p></div></li>
+          <li><div><p><b>Test the parameters only once</b>, in the wrapper (method 3).</p></div></li>
+          <li><div><p><b>Add at the head with <code class="ml">::</code></b>. <code class="ml">l1 @ l2</code> copies the whole of <code class="ml">l1</code>: a reverse written with <code class="ml">@</code> copies <var>n</var>(<var>n</var> − 1)/2 cells, nearly 200 million for 20,000 elements, against 20,000 with an accumulator (lists tutorial 3.5).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>A call done again</b> <span class="src-tag c">lists tutorial · ex. 1.5</span> The maximum of a list. When the test is false, this version computes <code class="ml">maximum lst</code> again in full:</p></div>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> failwith "maximum: empty list"
+    | [e] -> e
+    | e :: lst ->
+        if e > maximum lst then
+          e
+        else
+          maximum lst ;;
+val maximum : 'a list -> 'a = &lt;fun&gt;
+# maximum [1; 2; 3; 4] ;;
+- : int = 4
+</pre>
+        <div id="u-max"></div>
+        <div class="prose"><p>On an increasing list, each call starts two: 7 calls for 3 elements, 15 for 4, 1,048,575 for <code class="ml">[1; …; 20]</code>. With <code class="ml">let … in</code>, one call per element:</p></div>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> failwith "maximum: empty list"
+    | [e] -> e
+    | e :: lst ->
+        let m = maximum lst in
+          if e > m then
+            e
+          else
+            m ;;
+val maximum : 'a list -> 'a = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><b>Stopping early</b> <span class="src-tag">November 2020 · ex. 2</span> In an increasing list, there is no point looking for <code class="ml">x</code> after a greater element. And <code class="ml">||</code>, <code class="ml">&amp;&amp;</code> stop at the first operand when it is enough:</p></div>
+<pre data-ml-repl>
+# let rec delete x = function
+      [] -> []
+    | e :: l ->
+        if e > x then
+          e :: l
+        else
+          if e = x then
+            l
+          else
+            e :: delete x l ;;
+val delete : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# delete 4 [1; 2; 2; 3; 4; 4; 4; 5] ;;
+- : int list = [1; 2; 2; 3; 4; 4; 5]
+# delete 0 [1; 2; 3] ;;
+- : int list = [1; 2; 3]
+# false &amp;&amp; (1 / 0 = 0) ;;
+- : bool = false
+# true &amp;&amp; (1 / 0 = 0) ;;
+Exception: Division_by_zero.
+</pre>
+        <div class="note trap"><span class="tag">Trap</span><p><code class="ml">present a list &amp;&amp; present b list</code> gives the right answer to <code class="ml">search_both</code> (2020), but goes through the list twice. The expected idea: a single traversal, which looks for the second value in the rest as soon as the first one is found.</p></div>
+        <p class="muted" style="font-size:.92rem">The course: <a href="cours-2-recursivite.html#s7">optimising</a>, <a href="cours-3-listes.html#s6">sorted lists</a>. To do: <a href="entrainement.html#td-listes-1-5">maximum</a>, <a href="entrainement.html#p2020-ex4">search_both</a>, <a href="entrainement.html#p2024-ex1">check_list (2024)</a>, <a href="entrainement.html#td-listes-3-5">reverse</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ script -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mn">✓</span>The last ten minutes</div><h2>Before handing in your script</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Reread each function with this list. It gathers the rules of the headers and the mistakes found in the answer keys and the 2023 script.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Untick all</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>The name and order of the parameters</b> are those of the statement and its examples (the 2020 answer key names the function <code class="ml">search v1 v2 l</code> instead of <code class="ml">search_both list a b</code>: do not copy it).</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>The exceptions</b> have the constructor and message of the examples; the parameters are tested once, in the wrapper, before the traversal.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Every case is handled</b>, the empty list included: no <code class="ml">Warning 8</code> in your answer.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>No predefined function</b> other than <code class="ml">failwith</code> and <code class="ml">invalid_arg</code>: no <code class="ml">List.length</code>, no <code class="ml">abs</code>, no <code class="ml">max</code>; and avoid <code class="ml">@</code>, which no official answer key uses.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b><code class="ml">let rec</code></b> for every recursive function, local ones included; <code class="ml">;;</code> at the end of each phrase.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>The brackets</b> of the calls: <code class="ml">f (n-1)</code>, <code class="ml">f (e :: l)</code>, <code class="ml">g (-1)</code>.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>The code is indented</b>: <code class="ml">then</code> and <code class="ml">else</code> under the <code class="ml">if</code>, one case per line, the <code class="ml">|</code> aligned.</label></li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>The Caml answer</b> follows each function: <code class="ml">val …</code>, the exact type, <code>&lt;fun&gt;</code>.</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>One version only</b> per function; an auxiliary function is written before, with a sentence saying what it does; the last function written answers the question.</label></li>
+          <li><input type="checkbox" id="c10"><label for="c10"><b>One example of the paper unrolled by hand</b>, and an edge case (empty list, one element).</label></li>
+          <li><input type="checkbox" id="c11"><label for="c11"><b>A polymorphic function</b> if the examples mix <code class="ml">int</code>, <code class="ml">char</code> and <code class="ml">string</code>: no <code class="ml">0</code> nor <code class="ml">+</code> on the elements.</label></li>
+          <li><input type="checkbox" id="c12"><label for="c12"><b>No computation done again</b>, a stop as soon as the answer is known; the result in the order asked for.</label></li>
+          <li><input type="checkbox" id="c13"><label for="c13"><b>In pen</b>, no pencil and no red pen, in the space provided.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ traps -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mn">!</span>To reread the night before</div><h2>The most frequent traps</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Phrases and definitions</span><ul>
+            <li><code class="ml">let rec</code> forgotten: <code data-ml-ans>Error: Unbound value fact</code>. If an older <code class="ml">fact</code> exists, the definition goes through and calls the old one.</li>
+            <li><code class="ml">;;</code> forgotten: the next phrase sticks to this one.</li>
+            <li><code class="ml">n * fact n-1</code> reads <code class="ml">n * (fact n) - 1</code>: the definition is accepted, the call never stops (<code>Stack overflow</code>).</li>
+            <li><code class="ml">succ -1</code> is a subtraction: write <code class="ml">succ (-1)</code>.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Pattern matching</span><ul>
+            <li>A name in a pattern is a new variable: <code class="ml">| y -></code> matches everything, even if a <code class="ml">y</code> already exists. To compare: <code class="ml">| z when z = y -></code>.</li>
+            <li>A <code class="ml">match</code> inside a <code class="ml">match</code> swallows the following cases: put it in brackets.</li>
+            <li>Cases all guarded by <code class="ml">when</code>: Caml does not see that they cover everything (<code class="ml">Warning 8</code>). End with <code class="ml">| _ -></code>.</li>
+            <li><code class="ml">[e; lst]</code> has two elements; <code class="ml">e :: lst</code> has at least one.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Types</span><ul>
+            <li><code class="ml">::</code> adds one element in front of a list; <code class="ml">[1; 2] :: [3]</code> is rejected.</li>
+            <li>Both branches of an <code class="ml">if</code> have the same type; no <code class="ml">if</code> without <code class="ml">else</code>.</li>
+            <li><code class="ml">not a = b</code> reads <code class="ml">(not a) = b</code>: write <code class="ml">a &lt;&gt; b</code>.</li>
+            <li><code class="ml">=</code> and <code class="ml">&lt;&gt;</code>, never <code class="ml">==</code> nor <code class="ml">!=</code>.</li>
+            <li>Caml writes <code class="ml">4.</code>, not <code class="ml">4.0</code>.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">On your script</span><ul>
+            <li>The wrong exception, or an exception tested after a base case.</li>
+            <li><code class="ml">abs</code>, <code class="ml">max</code>, <code class="ml">List.length</code>: forbidden. <code class="ml">x - y &lt;= 1 &amp;&amp; y - x &lt;= 1</code> replaces <code class="ml">abs (x - y) &lt;= 1</code>.</li>
+            <li>An accumulator that reverses the order of the result (2 points lost out of 8 in 2023).</li>
+            <li>A constant <code class="ml">0</code> for any element: the type becomes <code class="ml">int</code> and the examples on <code class="ml">char</code> fail.</li>
+          </ul></div>
+        </div>
+<pre data-ml-repl data-title="Three traps, as Caml reports them">
+# let fact n = if n = 0 then 1 else n * fact (n-1) ;;
+Error: Unbound value fact
+Hint: If this is a recursive definition,
+you should add the 'rec' keyword on line 1
+# let h x y = match x with
+      0 -> 0
+    | y -> 1
+    | _ -> -1 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val h : int -> 'a -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = 1
+# [1; 2] :: [3] ;;
+Error: This expression has type int but an expression was expected of type
+         int list
+</pre>
+        <div class="note exam"><span class="tag">Mistakes in the official documents: do not copy them</span><ul>
+          <li><code>Invalid_arg "negative rank"</code> in the examples of 2018, 2019, 2020 and of lists tutorial 3.3: the constructor is <code class="ml">Invalid_argument</code>.</li>
+          <li>October 2019 answer key: <code class="ml">Failure "negative rank"</code> instead of <code class="ml">Invalid_argument</code>. 2020 answer key: <code class="ml">search v1 v2 l</code> instead of <code class="ml">search_both list a b</code>.</li>
+          <li>2018, exercise 5: the printed code of <code class="ml">encode</code> (<code>encode-rec</code>) does not compile; the answer key evaluates another version. 2021: the message <code class="ml">"remove_internal: …"</code> is a typo.</li>
+          <li><code class="ml">- : float = 4.0</code> (April 2019 answer key, lists tutorial 1.6): Caml writes <code class="ml">4.</code>. Memo, p. 5: <code class="ml">(2, "two")</code> for a <code class="ml">float * string</code>, Caml writes <code class="ml">(2., "two")</code>.</li>
+          <li>Moodle page on recursion: <code class="ml">mult_rec (x, y-1)</code> does not compile, it should be <code class="ml">mult_rec (y-1)</code>.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var R = window.REV, C = R.caml, fmt = C.fmt;
+  /* method 5: the call stack of go [1; 2; 3; 4; 5] (tree written by hand: go, then what) */
+  function what(x, l) {
+    if (!l.length) return { label: 'what ' + x + ' []', val: '[]', res: [] };
+    var k = what(l[0], l.slice(1)), res = [l[0] * x].concat(k.res);
+    return { label: 'what ' + x + ' ' + fmt(l), val: fmt(res), res: res, e: l[0], x: x, kids: [k] };
+  }
+  var w = what(1, [2, 3, 4, 5]);
+  C.unroll(document.getElementById('u-go'), {
+    tree: { label: 'go [1; 2; 3; 4; 5]', val: w.val, go: true, kids: [w] }, mode: 'stack',
+    say: function (e) {
+      if (!e || !e.node.go) return null;
+      return e.type === 'call' ? 'Call of ' + C.code(e.node.label) + ': the list is not empty, <code class="ml">go</code> calls ' + C.code(w.label) + ' with its head and its rest, then returns its result as it is.'
+        : C.code(e.node.label) + ' returns <b class="cu-v">' + e.node.val + '</b>: this is the result. The stack is empty.';
+    },
+    wait: function (nd, v) {
+      if (nd.go) return v.length ? v[0] : nd.kids[0].label;
+      if (!nd.kids) return '';
+      return nd.e + ' * ' + nd.x + ' :: ' + (v.length ? v[0] : nd.kids[0].label);
+    }
+  });
+  /* method 7: the call tree of the maximum that redoes its recursive call */
+  C.unroll(document.getElementById('u-max'), {
+    tree: C.trace(function (self, l) {
+      if (l.length === 1) return l[0];
+      var r = l.slice(1);
+      return l[0] > self(r) ? l[0] : self(r);
+    }, [[1, 2, 3]], { name: 'maximum', show: function (l) { return 'maximum ' + fmt(l); } }),
+    mode: 'tree', dupes: true
+  });
+  /* the checklist (nothing is saved) */
+  var boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' checked'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

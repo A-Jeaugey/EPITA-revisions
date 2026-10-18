@@ -20,6 +20,7 @@ main{display:grid;gap:44px}
 .subj-sec{display:grid;gap:14px;scroll-margin-top:130px}
 .subj-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
 .subj-head .more{font-weight:700;text-decoration:none}
+.subj-head .mores{display:flex;flex-wrap:wrap;gap:6px 18px}
 .exams{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
 .ex{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 18px;padding:14px 16px;border-top:1px solid var(--line);align-items:start}
 .ex:first-child{border-top:0}
@@ -59,11 +60,23 @@ main{display:grid;gap:44px}
 <footer class="page-foot"><div class="wrap"><span class="credit">Papers hosted by <a href="https://github.com/Epidocs/Past-Exams">Epidocs · Past-Exams</a> and <a href="https://annales.hyperion.tf/">HyperAnnales</a>. The links open the original PDFs.</span><span>A class takes its S1 five years before graduating: class of 2029 = Fall 2024.</span></div></footer>
 <script src="../data/annales.js"></script>
 <script src="../data/en/annales.js"></script>
+<script src="../data/caml/exams.js"></script>
+<script src="../data/en/caml/exams.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
   var A = window.ANNALES, order = ['elec', 'maths', 'physique', 'algo', 'archi', 'prog', 'cie', 'tim', 'te'];
   var sel = 'all';
+  /* Caml: a paper has a Caml part if it is not the TAA variant and its PDFs sit in the same folder as a paper of
+     CAML_EXAMS (data/caml/exams.js): CAML variants of 2023-2024, shared papers before 2023, 2024# (= p2019d). */
+  var CAML_PAGE = 'caml/annales.html', CE = window.CAML_EXAMS || [];
+  function folder(u) { return String(u).replace(/[^\/]*$/, ''); }
+  function camlKey(m) {
+    if (String(m.variant || '').toUpperCase() === 'TAA') return null;
+    var fs = m.files.map(function (f) { return folder(f.url); });
+    for (var i = 0; i < CE.length; i++) if ((CE[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return CE[i].key;
+    return null;
+  }
   function count(s) { return A.midterms.filter(function (m) { return m.subject === s; }).length; }
   /* file and archive labels: the data keeps the French ones (Sujet, Corrigé…), translated here for display */
   var LABEL = { 'Contrôle (nov. 2017)': 'Test (Nov. 2017)', 'Partiel de fin de semestre': 'End-of-semester exam', 'TD 1 à 3, ED 1 (anciens)': 'TD 1 to 3, ED 1 (older years)' };
@@ -102,10 +115,11 @@ main{display:grid;gap:44px}
       if (!ms.length && !hy.length) return;
       var info = A.subjects[s];
       html += '<section class="subj-sec" id="' + s + '"><div class="subj-head"><h2>' + info.name + '</h2>' +
-        (info.page ? '<a class="more" href="' + R.url(info.page) + '">' + (s === 'algo' ? 'TAA part: solutions and analysis →' : 'Detailed solutions and analysis of the papers →') + '</a>' : '<span class="legend">' + ms.length + ' paper' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
+        (info.page ? (s === 'algo' ? '<span class="mores">' : '') + '<a class="more" href="' + R.url(info.page) + '">' + (s === 'algo' ? 'TAA part: solutions and analysis →' : 'Detailed solutions and analysis of the papers →') + '</a>' + (s === 'algo' ? '<a class="more" href="' + R.url(CAML_PAGE) + '">Caml part: solutions and analysis →</a></span>' : '') : '<span class="legend">' + ms.length + ' paper' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
       ms.forEach(function (m) {
         html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>Fall ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
-          (info.page && (s === 'elec' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#p' + (m.promo - 5) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') + '</div></div>';
+          (info.page && (s === 'elec' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') +
+          (s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Our solution (Caml)</a>' : '') + '</div></div>';
       });
       hy.forEach(function (h) {
         html += '<div class="ex"><div class="when"><b>Archive</b><span>' + U.esc(LABEL[h.label] || h.label) + '</span></div><div class="files">' + enFirst(h.files).map(fileLink).join('') + '</div></div>';

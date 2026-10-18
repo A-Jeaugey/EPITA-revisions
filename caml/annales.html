@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annales · Caml</title>
+<meta name="description" content="Caml et récursivité : les 9 sujets d’algo de mi-semestre retrouvés (2017 à 2024), exercice par exercice. Les notions de chaque sujet, les règles des en-têtes, les exercices retombés tels quels, les liens vers les corrigés détaillés et vers les PDF d’origine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Annales Caml : une matrice notions × sujets, les règles des en-têtes, les reprises, puis une carte par sujet. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.ann{display:grid;gap:52px;padding-block:40px 96px}
+main.ann>section{display:grid;gap:16px;min-width:0;scroll-margin-top:72px}
+.matrix td,.matrix th{text-align:center;white-space:nowrap;vertical-align:middle}
+.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:normal;min-width:11rem}
+.matrix thead a{color:inherit}
+.matrix .yr{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.68rem;color:var(--muted);letter-spacing:0}
+.matrix .tot{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;font-weight:700}
+.matrix tr.never td:first-child{color:var(--warn)}
+.matrix tr.never td.nv{color:var(--warn);font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.74rem;text-align:left}
+.dot{color:var(--camel);font-size:1.05rem}
+.rules-t td{text-align:center;vertical-align:middle;font-size:.88rem}
+.rules-t td:first-child{text-align:left;min-width:13rem;font-size:.94rem}
+.rules-t .y{color:var(--ok);font-weight:700}
+.rules-t .no{color:var(--muted)}
+.rules-t .bold{color:var(--exam);font-weight:700}
+.redo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.redo{grid-template-columns:minmax(0,1fr)}}
+.redo .card p{font-size:.93rem}
+.redo .when{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.76rem;color:var(--exam)}
+.exam-c{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;scroll-margin-top:72px;min-width:0}
+.exam-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.exam-h h3{margin:0;font-size:1.3rem}
+.exam-h .meta{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--muted)}
+.exam-b{padding:12px 16px 16px;display:grid;gap:12px}
+.exam-b>*{min-width:0}
+.pts{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--camel);border:1px solid var(--camel);border-radius:999px;padding:.08rem .6rem;justify-self:start}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:.55rem .7rem;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.parts li.taa{opacity:.68;border-style:dashed}
+.parts .n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted)}
+.parts .p{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.parts .pt{display:grid;gap:4px;min-width:0}
+.parts .pt a{font-size:.88rem}
+.parts .tg{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;margin-left:4px;white-space:nowrap}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:560px){.parts li{grid-template-columns:40px minmax(0,1fr)}.parts .p{grid-column:2}}
+</style>
+</head>
+<body data-resume="Caml · annales">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Annales</div>
+      <h1>Les 9 sujets, <span class="w">exercice par exercice.</span></h1>
+      <p class="lead">Les sujets d’algo de mi-semestre retrouvés, de novembre 2017 à octobre 2024, dont le contrôle du groupe S1# d’avril 2019. Jusqu’en 2022, un même sujet mêlait types abstraits et Caml ; depuis 2023, Caml a son épreuve à part. Seule la partie Caml est corrigée ici : la partie TAA renvoie vers sa page.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx ann">
+  <section aria-labelledby="t-mx">
+    <div><div class="eyebrow">Vue d’ensemble</div><h2 id="t-mx">Quelles notions, quel sujet</h2></div>
+    <p class="muted" style="max-width:66ch">● la notion sert dans au moins un exercice Caml du sujet (survole le point pour voir lesquels). Sous chaque année : la part de Caml dans la note. La dernière colonne compte les sujets.</p>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+
+  <section id="regles" aria-labelledby="t-rules">
+    <div><div class="eyebrow">En-têtes</div><h2 id="t-rules">Les règles, sujet par sujet</h2></div>
+    <p class="muted" style="max-width:66ch">Recopiées des « Remarques (à lire !) » de chaque sujet. ✓ : la règle est écrite ; <b style="color:var(--exam)">✓✓</b> : elle est en gras ou renforcée ; – : absente.</p>
+    <div class="tbl"><table class="rules-t">
+      <thead><tr><th>Règle</th><th>2024</th><th>2023</th><th>2022</th><th>2021</th><th>2020</th><th>2019</th><th>avr. 2019</th><th>2018</th><th>2017</th></tr></thead>
+      <tbody>
+        <tr><td>Répondre directement sur le sujet</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="no">feuilles</td><td class="y">✓</td><td class="no">feuilles</td></tr>
+        <tr><td>Code Caml non indenté : non corrigé</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Seules fonctions permises : <code class="ml">failwith</code> et <code class="ml">invalid_arg</code></td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Chaque code suivi de la réponse de Caml</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="no">–</td><td class="y">✓</td></tr>
+        <tr><td>Une seule version par fonction</td><td class="y">✓</td><td class="y">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Respecter les exemples ; documenter ses propres fonctions</td><td class="y">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Présentation notée</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td>en moins</td><td class="y">✓</td><td>en moins</td></tr>
+        <tr><td>Pas de crayon de papier (ni de stylo rouge)</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="bold">✓✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>Durée imprimée</td><td>1 h 30</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td>2 h*</td><td class="no">–</td><td>2 h*</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="font-size:.9rem;max-width:72ch">Détails : en 2024, la règle des fonctions est répétée dans l’énoncé de l’exercice 1. La réponse de Caml « fait partie de la note », en gras, en 2023 et 2024. La présentation est « notée en moins » (jusqu’à 2 points retirés) en 2017 et en avril 2019. Le stylo rouge est interdit depuis 2021. * Durée de tout le contrôle, types abstraits compris.</p>
+  </section>
+
+  <section aria-labelledby="t-redo">
+    <div><div class="eyebrow">Reprises</div><h2 id="t-redo">Les trois exercices retombés tels quels</h2></div>
+    <p class="muted" style="max-width:66ch">Même énoncé, mêmes exemples, d’un sujet à l’autre. Les trois sont aussi des exercices des TD de cette année : une seule fiche les corrige.</p>
+    <div class="redo" id="redo"></div>
+    <div class="note why"><span class="tag">Reformulé</span><p>Le tri par insertion avec une fonction de comparaison en paramètre est tombé en <a href="#p2019d">avril 2019</a> (<code class="ml">insert x list comp</code>) puis en <a href="#p2024">octobre 2024</a> (<code class="ml">insert_x x order lst</code>) : même idée, autre ordre des paramètres. Quatre autres exercices des TD de cette année reprennent un sujet : <a href="entrainement.html#td-listes-3-2">delete</a> (2020), <a href="entrainement.html#td-listes-3-4">remove_duplicates</a> (2023), <a href="entrainement.html#td-listes-1-6">second</a> (Mystery d’avril 2019), <a href="entrainement.html#td-listes-4-3">sublist</a> (Mystery de 2019).</p></div>
+  </section>
+
+  <section aria-labelledby="t-ex">
+    <div><div class="eyebrow">Sujets</div><h2 id="t-ex">Chaque sujet</h2></div>
+    <div id="exams" style="display:grid;gap:18px"></div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/qcm/caml-annales.js"></script>
+<script src="../data/caml/exams.js"></script>
+<script src="../data/caml/ex-annales.js"></script>
+<script src="../data/caml/ex-td.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, E = window.CAML_EXAMS || [], TOP = window.CAML_TOPICS || {}, EX = window.CAML_EX || [];
+  var BANK = R.quiz.bank().filter(function (q) { return q.s === 'caml'; });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  function esc(s) { return U.esc(String(s)); }
+  function pts(v) { return String(v).replace('.', ','); }
+  function yr(e) { return e.key === 'p2019d' ? 'avr. 2019' : e.key.slice(1); }
+  function camlParts(e) { return (e.parts || []).filter(function (p) { return p.caml !== false; }); }
+  var nCards = {}, nParts = 0;
+  E.forEach(function (e) { camlParts(e).forEach(function (p) { nParts++; if (p.card && BY[p.card]) nCards[p.card] = 1; }); });
+  document.getElementById('chips').innerHTML = '<span class="chip">' + E.length + ' sujets</span><span class="chip">' + nParts + ' exercices Caml, ' + Object.keys(nCards).length + ' fiches corrigées</span><a class="chip ex" href="entrainement.html#partiel" style="text-decoration:none">corrigés détaillés →</a>';
+
+  /* matrice notions × sujets */
+  var head = '<thead><tr><th>Notion</th>' + E.map(function (e) { return '<th><a href="#' + e.key + '" title="' + esc(e.title) + '">' + yr(e) + '</a>' + (e.camlPts ? '<br><span class="yr">' + esc(e.camlPts) + '</span>' : '') + '</th>'; }).join('') + '<th>Sujets</th></tr></thead>';
+  var body = Object.keys(TOP).map(function (t) {
+    var n = 0;
+    var cells = E.map(function (e) {
+      var ps = camlParts(e).filter(function (p) { return (p.topics || []).indexOf(t) >= 0; });
+      if (ps.length) n++;
+      return '<td>' + (ps.length ? '<span class="dot" title="' + esc(ps.map(function (p) { return 'Ex ' + p.ex + ' : ' + p.t; }).join(' · ')) + '">●</span>' : '') + '</td>';
+    }).join('');
+    if (!n) return '<tr class="never"><td>' + esc(TOP[t]) + '</td><td class="nv" colspan="' + (E.length + 1) + '">pas d’exercice à part · le séminaire, utilisé partout</td></tr>';
+    return '<tr><td>' + esc(TOP[t]) + '</td>' + cells + '<td class="tot">' + n + ' / ' + E.length + '</td></tr>';
+  }).join('');
+  document.getElementById('matrix').innerHTML = head + '<tbody>' + body + '</tbody>';
+
+  /* les trois exercices retombés tels quels */
+  var REDO = [
+    { card: 'p2019d-ex3', td: 'td-listes-5-1', when: 'nov. 2017 · ex. 3 → avr. 2019 · ex. 3', keys: ['p2017', 'p2019d'], txt: 'Liste de couples triée par clés, deux exceptions, arrêt dès qu’une clé dépasse <code class="ml">k</code>. 4 puis 5 points.' },
+    { card: 'p2019-ex4', td: 'td-os-2-8', when: 'nov. 2017 · ex. 4 → oct. 2019 · ex. 4', keys: ['p2017', 'p2019'], txt: 'Un prédicat à deux paramètres et deux listes, puis <code class="ml">almost</code> écrit avec <code class="ml">for_all2</code>. 5 points les deux fois.' },
+    { card: 'p2018-ex4', td: 'td-listes-3-3', when: 'oct. 2018 · ex. 4 → nov. 2020 · ex. 3', keys: ['p2018', 'p2020'], txt: 'Insérer à la i-ème place : <code class="ml">Invalid_argument</code> si le rang est négatif ou nul, <code class="ml">Failure</code> si la liste est trop courte. 5 points les deux fois.' }];
+  document.getElementById('redo').innerHTML = REDO.map(function (r) {
+    var c = BY[r.card], t = BY[r.td];
+    return '<div class="card"><span class="when">' + r.when + '</span><h4>' + (c ? c.title : r.card) + '</h4><p>' + r.txt + '</p><p><a href="entrainement.html#' + r.card + '">La fiche corrigée →</a>' + (t ? '<br><span class="muted">Au ' + esc(t.src) + '.</span>' : '') + '</p></div>';
+  }).join('');
+
+  /* une carte par sujet */
+  document.getElementById('exams').innerHTML = E.map(function (e) {
+    var nq = BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('caml-' + e.key + '-') === 0; }); }).length;
+    var files = (e.files || []).map(function (f) { return '<a class="btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.t) + ' ↗</a>'; }).join('');
+    var parts = (e.parts || []).map(function (p) {
+      var taa = p.caml === false, c = !taa && p.card && BY[p.card], links = [];
+      if (c) links.push('<a href="entrainement.html#' + c.id + '">Corrigé détaillé : ' + c.title + ' →</a>');
+      if (taa) links.push('<a href="../taa/annales.html#' + e.key + '">Partie TAA : corrigés et analyse →</a>');
+      return '<li class="' + (taa ? 'taa' : '') + '"><span class="n">Ex ' + esc(p.ex) + '</span><span class="pt"><span>' + p.t + (taa ? ' <span class="tg">types abstraits</span>' : '') + '</span>' + links.join(' ') + '</span><span class="p">' + (p.pts ? pts(p.pts) + ' pts' : '') + '</span></li>';
+    }).join('');
+    return '<article class="exam-c" id="' + e.key + '"><div class="exam-h"><h3>' + esc(e.title) + '</h3><span class="meta">' + esc(e.meta || '') + '</span></div><div class="exam-b">' +
+      (e.camlPts ? '<span class="pts">Caml : ' + esc(e.camlPts) + '</span>' : '') +
+      (e.note ? '<p>' + e.note + '</p>' : '') + '<ul class="parts">' + parts + '</ul>' +
+      '<div class="files">' + files + (nq ? '<a class="btn primary" href="../qcm/index.html#caml-' + e.key + '">Ses ' + nq + ' questions dans le QCM</a>' : '') + '</div></div></article>';
+  }).join('');
+  var h = (location.hash || '').slice(1), t = h && document.getElementById(h);
+  if (t) setTimeout(function () { t.scrollIntoView(); }, 50);
+})();
+</script>
+</body>
+</html>

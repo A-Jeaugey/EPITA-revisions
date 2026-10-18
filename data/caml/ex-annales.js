@@ -1795,7 +1795,7 @@
     'Exception: Invalid_argument "negative rank".');
   X.push({
     id: 'p2018-ex4', exam: 'p2018', kind: 'partiel', order: 4, src: 'Partiels oct. 2018 (Ex 4) et nov. 2020 (Ex 3)',
-    title: 'Insertion à la ième place : insert_nth', pts: 5, topics: ['listes', 'rangs', 'exceptions', 'construire', 'filtrage'], lvl: 2, time: 12,
+    title: 'Insertion à la ième place : insert_nth', pts: 5, topics: ['listes', 'rangs', 'exceptions', 'construire', 'filtrage', 'accumulateur'], lvl: 2, time: 12,
     intro: '<p>Énoncé d’octobre 2018 ; celui de novembre 2020 est le même, avec les mêmes exemples, sans la ligne <code class="ml">val insert_nth</code>.</p><p>Écrire la fonction <code class="ml">insert_nth x i list</code> qui insère la valeur <code class="ml">x</code> à la ième place dans la liste <code class="ml">list</code>. La fonction devra déclencher une exception <code class="ml">Invalid_argument</code> si <code class="ml">i</code> est négatif ou nul, ou une exception <code class="ml">Failure</code> si la liste est trop courte.</p><p><code data-ml-ans>val insert_nth : \'a -&gt; int -&gt; \'a list -&gt; \'a list = &lt;fun&gt;</code></p><p>Exemples d’application :</p>' + M['p2018-ex4.ex'],
     hints: [
       'Le rang se teste une fois, dans une fonction chapeau (<code class="ml">Invalid_argument</code>) ; la liste trop courte se découvre pendant le parcours (<code class="ml">Failure</code>).',

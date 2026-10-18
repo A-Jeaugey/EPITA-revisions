@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche Caml · Révisions S1</title>
+<meta name="description" content="La fiche de révision de Caml et récursivité, imprimable sur deux pages A4 : syntaxe, réponses de Caml, exceptions, motifs de listes, schémas récursifs, ordre supérieur écrit à la main avec ses types, optimisation et pièges. Tout le code est exécuté avec OCaml 4.14.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Fiche : des cases en colonnes ; chaque titre de case renvoie à la partie du cours. Le code est en boucle
+   d’interaction resserrée : la phrase, puis la réponse de Caml, comme sur la copie. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:44em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;columns:3 300px;column-gap:16px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;margin:0 0 12px;display:grid;gap:.4rem;background:var(--bg);min-width:0}
+.box>*{min-width:0}
+.box h2{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.74rem;letter-spacing:.03em;color:var(--accent);font-weight:700}
+.box h2 a{color:inherit;text-decoration:none}
+.box h2 a:hover{text-decoration:underline}
+.box.hot{border-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.88rem;line-height:1.45}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box h3{font-size:.84rem;font-weight:700;margin:.15rem 0 0}
+.box code{font-size:.86em}
+/* boucle d’interaction resserrée */
+.a4 .ml-repl{--g:1.25rem;border-radius:7px;background:var(--surface)}
+.a4 .ml-head{display:none}
+.a4 .ml-pr,.a4 .ml-code{font-size:.76rem;line-height:1.42;padding-top:.3rem;padding-bottom:.3rem}
+.a4 .ml-pr{padding-right:.35rem}
+.a4 .ml-code{padding-right:.5rem}
+.a4 .ml-ans{font-size:.74rem;line-height:1.4;padding:.22rem .5rem .26rem 0}
+.a4 .ml-out::before{margin:.25rem .4rem .25rem 0;width:2px}
+.a4 .ml-code,.a4 .ml-ans{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible}
+.pat{width:100%;border-collapse:collapse;font-size:.84rem}
+.pat td{padding:.18rem .3rem;border-bottom:1px dashed var(--line);vertical-align:top}
+.pat tr:last-child td{border-bottom:0}
+.pat td:first-child{white-space:nowrap;width:1%}
+.pat td:first-child code.ml{white-space:nowrap}
+.ans-l{display:grid;gap:.25rem;font-size:.84rem}
+.ans-l code{white-space:pre-wrap}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 2.5mm}
+  .top h1{font-size:14pt;margin:0}
+  .top p,.top .eyebrow{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:3.5mm;margin:0;background:#fff}
+  .box{padding:1.4mm 1.8mm;margin-bottom:2mm;gap:.8mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li,.pat,.ans-l{font-size:7.8pt;line-height:1.28}
+  .box h2{font-size:7.4pt}
+  .box h3{font-size:7.6pt}
+  .box ul,.box ol{gap:.2mm}
+  .a4 .ml-repl{border-color:#bbb}
+  .a4 .ml-pr,.a4 .ml-code{font-size:7pt;line-height:1.3;padding-top:.6mm;padding-bottom:.6mm}
+  .a4 .ml-ans{font-size:6.9pt;line-height:1.28;padding-top:.4mm;padding-bottom:.5mm}
+}
+</style>
+</head>
+<body data-resume="Caml · fiche de révision">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Fiche</div><h1>Caml et récursivité sur une fiche</h1><p>À relire la veille et le matin de l’examen. Deux pages A4 à l’impression. Chaque titre de case renvoie à la partie du cours ; tout le code a été exécuté avec OCaml 4.14, sa réponse de Caml est recopiée telle quelle.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="methodes.html">Méthodes détaillées</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box hot"><h2><a href="methodes.html#copie">À l’examen · 1 h 30</a></h2>
+      <ul>
+        <li>Réponses sur le sujet, au stylo (ni crayon ni stylo rouge).</li>
+        <li><b>Code non indenté : non corrigé.</b></li>
+        <li><b>Seules fonctions permises : <code class="ml">failwith</code>, <code class="ml">invalid_arg</code>.</b> Pas de <code class="ml">List.*</code>, <code class="ml">abs</code>, <code class="ml">max</code> ; évite <code class="ml">@</code>.</li>
+        <li><b>Sous chaque fonction, sa réponse de Caml</b> : elle est notée.</li>
+        <li>Une seule version ; respecter les exemples (nom, ordre des paramètres, exception) ; une fonction auxiliaire est documentée, la dernière écrite répond.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s2">Phrases et définitions</a></h2>
+<pre data-ml-repl>
+# let x = 3 ;;
+val x : int = 3
+# let y = x + 1 in y * 2 ;;
+- : int = 8
+# let average a b = float_of_int (a + b) /. 2. ;;
+val average : int -> int -> float = &lt;fun&gt;
+</pre>
+      <p>Une phrase finit par <code class="ml">;;</code>. Définition : <code class="ml">val</code> ; expression : <code class="ml">-</code>. <code class="ml">let … in</code> est local. Entiers <code class="ml">+ - * / mod</code>, flottants <code class="ml">+. -. *. /.</code></p></section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s6">Récursion, alternative, filtrage</a></h2>
+<pre data-ml-repl>
+# let rec fact n =
+    if n = 0 then
+      1
+    else
+      n * fact (n-1) ;;
+val fact : int -> int = &lt;fun&gt;
+# let sign = function
+      0 -> 0
+    | n when n > 0 -> 1
+    | _ -> -1 ;;
+val sign : int -> int = &lt;fun&gt;
+</pre>
+      <p><code class="ml">let rec</code> pour toute fonction récursive. <code class="ml">if</code> a toujours un <code class="ml">else</code>, du même type. <code class="ml">let f = function …</code> revient à <code class="ml">let f x = match x with …</code>. Motifs essayés dans l’ordre ; <code class="ml">when</code> ajoute une condition ; <code class="ml">_</code> filtre tout.</p></section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s7">N-uplets, fonctions anonymes</a></h2>
+<pre data-ml-repl>
+# let swap (a, b) = (b, a) ;;
+val swap : 'a * 'b -> 'b * 'a = &lt;fun&gt;
+# (function x -> x + 1) 5 ;;
+- : int = 6
+# let times = function x -> function y -> x * y ;;
+val times : int -> int -> int = &lt;fun&gt;
+# let times = fun x y -> x * y ;;
+val times : int -> int -> int = &lt;fun&gt;
+# times 2 ;;
+- : int -> int = &lt;fun&gt;
+</pre>
+      <p><code class="ml">swap</code> a <b>un</b> paramètre, un couple. <code class="ml">function</code> n’a qu’un paramètre ; <code class="ml">fun x y -></code> est le raccourci d’OCaml, mais les sujets écrivent <code class="ml">function</code>. <code class="ml">times 2</code> : application partielle.</p></section>
+
+    <section class="box"><h2><a href="methodes.html#reponse">Réponses de Caml</a></h2>
+      <div class="ans-l">
+        <code data-ml-ans>val nth : int -&gt; 'a list -&gt; 'a = &lt;fun&gt;</code>
+        <code data-ml-ans>- : (int * string) list = [(1, "one")]</code>
+        <code data-ml-ans>- : int list list = [[1; 2]; []]</code>
+        <code data-ml-ans>- : 'a list = []</code>
+        <code data-ml-ans>- : float = 4.</code>
+        <code data-ml-ans>Exception: Failure "not found".</code>
+        <code data-ml-ans>Exception: Invalid_argument "check_list: k &lt; 0".</code>
+        <code data-ml-ans>Error: Unbound value fact</code>
+      </div>
+      <p>Un type par paramètre, puis le résultat. Paramètre fonction entre parenthèses : <code class="ml">('a -> bool)</code>. <code class="ml">'a</code> si rien n’impose le type. <code class="ml">Warning 8</code> avant le <code class="ml">val</code> : un cas oublié.</p></section>
+
+    <section class="box"><h2><a href="methodes.html#exceptions">Exceptions</a></h2>
+      <ul>
+        <li><code class="ml">invalid_arg "…"</code> → <code class="ml">Invalid_argument</code> : un <b>paramètre</b> invalide (rang ≤ 0, <var>k</var> &lt; 0, liste vide au départ). Testé <b>une fois</b>, dans le chapeau, avant le parcours.</li>
+        <li><code class="ml">failwith "…"</code> → <code class="ml">Failure</code> : le calcul échoue en route (liste trop courte, élément absent). Dans le cas qui le révèle, souvent <code class="ml">[]</code>.</li>
+        <li>Type <code class="ml">string -> 'a</code> : va dans n’importe quelle branche. Constructeur et message : ceux des exemples (<code>Invalid_arg</code> est une coquille).</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-3-listes.html#s2">Motifs de listes</a></h2>
+      <table class="pat"><tbody>
+        <tr><td><code class="ml">[]</code></td><td>liste vide : cas d’arrêt</td></tr>
+        <tr><td><code class="ml">e :: lst</code></td><td>au moins un élément</td></tr>
+        <tr><td><code class="ml">[e]</code></td><td>exactement un (<code class="ml">e :: []</code>)</td></tr>
+        <tr><td><code class="ml">e1 :: e2 :: lst</code></td><td>au moins deux : comparer deux voisins</td></tr>
+        <tr><td><code class="ml">(a, b) :: lst</code></td><td>liste de couples</td></tr>
+        <tr><td><code class="ml">l :: others</code></td><td>liste de listes (<code class="ml">l</code> est une liste)</td></tr>
+        <tr><td><code class="ml">(e1 :: l1, e2 :: l2)</code></td><td>deux listes : 4 cas avec <code class="ml">([], [])</code>, <code class="ml">(lst, [])</code>, <code class="ml">([], lst)</code></td></tr>
+      </tbody></table>
+<pre data-ml-repl>
+# let rec is_sorted order = function
+      [] | [_] -> true
+    | e1 :: e2 :: l -> order e1 e2 &amp;&amp; is_sorted order (e2 :: l) ;;
+val is_sorted : ('a -> 'a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# let rec for_all2 p l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: l1, e2 :: l2) -> p e1 e2 &amp;&amp; for_all2 p l1 l2
+      | _ -> invalid_arg "for_all2: different lengths" ;;
+val for_all2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool = &lt;fun&gt;
+</pre></section>
+
+    <section class="box"><h2><a href="cours-3-listes.html#s3">Schémas récursifs</a></h2>
+      <h3>Parcours complet · partiel</h3>
+<pre data-ml-repl>
+# let rec count x = function
+      [] -> 0
+    | e :: l ->
+        if e = x then
+          1 + count x l
+        else
+          count x l ;;
+val count : 'a -> 'a list -> int = &lt;fun&gt;
+# let rec search x = function
+      [] -> false
+    | e :: l -> e = x || search x l ;;
+val search : 'a -> 'a list -> bool = &lt;fun&gt;
+</pre>
+      <h3>Construire · liste triée</h3>
+<pre data-ml-repl>
+# let rec remove_x x = function
+      [] -> []
+    | e :: l ->
+        if e = x then
+          remove_x x l
+        else
+          e :: remove_x x l ;;
+val remove_x : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# let rec insert x = function
+      [] -> [x]
+    | e :: l ->
+        if x &lt;= e then
+          x :: e :: l
+        else
+          e :: insert x l ;;
+val insert : 'a -> 'a list -> 'a list = &lt;fun&gt;
+</pre>
+      <h3>Chapeau · accumulateur</h3>
+<pre data-ml-repl>
+# let nth i lst =
+    if i &lt;= 0 then
+      invalid_arg "nth: i &lt;= 0"
+    else
+      let rec get i = function
+          [] -> failwith "nth: list too short"
+        | e :: l ->
+            if i = 1 then
+              e
+            else
+              get (i-1) l
+      in
+        get i lst ;;
+val nth : int -> 'a list -> 'a = &lt;fun&gt;
+# let reverse lst =
+    let rec rev acc = function
+        [] -> acc
+      | e :: l -> rev (e :: acc) l
+    in
+      rev [] lst ;;
+val reverse : 'a list -> 'a list = &lt;fun&gt;
+# reverse [1; 2; 3] ;;
+- : int list = [3; 2; 1]
+</pre>
+      <p>Récursion pure d’abord : un accumulateur renverse l’ordre, à n’utiliser que si l’énoncé s’y prête.</p></section>
+
+    <section class="box"><h2><a href="cours-4-ordre-superieur.html#s4">Ordre supérieur, écrit à la main</a></h2>
+<pre data-ml-repl>
+# let rec map f = function
+      [] -> []
+    | e :: l -> f e :: map f l ;;
+val map : ('a -> 'b) -> 'a list -> 'b list = &lt;fun&gt;
+# let rec filter p = function
+      [] -> []
+    | e :: l ->
+        if p e then
+          e :: filter p l
+        else
+          filter p l ;;
+val filter : ('a -> bool) -> 'a list -> 'a list = &lt;fun&gt;
+# let rec for_all p = function
+      [] -> true
+    | e :: l -> p e &amp;&amp; for_all p l ;;
+val for_all : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# let rec exists p = function
+      [] -> false
+    | e :: l -> p e || exists p l ;;
+val exists : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# let rec process_list f init = function
+      [] -> init
+    | e :: l -> f e (process_list f init l) ;;
+val process_list : ('a -> 'b -> 'b) -> 'b -> 'a list -> 'b = &lt;fun&gt;
+# let rec fold_left f a = function
+      [] -> a
+    | e :: l -> fold_left f (f a e) l ;;
+val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a = &lt;fun&gt;
+# filter (function x -> x > 0) [-1; 2; 0; 5] ;;
+- : int list = [2; 5]
+# fold_left (function acc -> function e -> e :: acc) [] [1; 2; 3] ;;
+- : int list = [3; 2; 1]
+</pre>
+      <p>Le paramètre fonction s’appelle (<code class="ml">p e</code>) et se passe à chaque appel récursif. <code class="ml">process_list</code> (TD) est le <i>fold_right</i>.</p></section>
+
+    <section class="box"><h2><a href="methodes.html#optimiser">Optimiser</a></h2>
+      <ul>
+        <li>Un appel récursif dont le résultat sert deux fois : <code class="ml">let m = maximum lst in</code> (sinon 2<sup><var>n</var></sup> appels).</li>
+        <li>S’arrêter dès que la réponse est connue : <code class="ml">&amp;&amp;</code> et <code class="ml">||</code> n’évaluent pas leur second membre si le premier suffit ; liste triée : s’arrêter dès qu’on dépasse.</li>
+        <li>Tester les paramètres une fois (chapeau). Ajouter avec <code class="ml">::</code> ; <code class="ml">@</code> recopie sa liste de gauche.</li>
+      </ul></section>
+
+    <section class="box trapb"><h2><a href="methodes.html#pieges">Pièges</a></h2>
+      <ul>
+        <li><code class="ml">let rec</code> oublié : <code data-ml-ans>Error: Unbound value fact</code>.</li>
+        <li><code class="ml">fact n-1</code> = <code class="ml">(fact n) - 1</code> : boucle sans fin. Écrire <code class="ml">fact (n-1)</code>, <code class="ml">f (-1)</code>.</li>
+        <li><code class="ml">[e; lst]</code> : deux éléments. Le cas général est <code class="ml">e :: lst</code>.</li>
+        <li><code class="ml">::</code> met un élément devant une liste ; <code class="ml">[1; 2] :: [3]</code> est refusé.</li>
+        <li><code class="ml">| y -></code> filtre tout : c’est une nouvelle variable. Comparer : <code class="ml">| z when z = y -></code>.</li>
+        <li><code class="ml">match</code> dans un <code class="ml">match</code> : entre parenthèses.</li>
+        <li><code class="ml">not a = b</code> = <code class="ml">(not a) = b</code> ; utiliser <code class="ml">=</code>, <code class="ml">&lt;&gt;</code>, jamais <code class="ml">==</code>.</li>
+        <li>Exemples sur <code class="ml">int</code> et <code class="ml">char</code> : pas de <code class="ml">0</code> ni de <code class="ml">+</code> sur les éléments.</li>
+        <li>Caml écrit <code class="ml">4.</code>, pas <code class="ml">4.0</code>.</li>
+      </ul></section>
+  </div>
+</div>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

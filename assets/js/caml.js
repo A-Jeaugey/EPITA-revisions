@@ -261,7 +261,7 @@
       if (p) {
         if (g === norm(p.type + ' = ' + p.value) || g === norm(': ' + p.type + ' = ' + p.value)) return 'exact';
         if (g === norm(p.value)) return 'value';
-        if (g === norm(p.type) || g === norm(p.name + ' : ' + p.type)) return 'type';
+        if (g === norm(p.type) || g === norm(p.name + ' : ' + p.type) || g === norm('val ' + p.name + ' : ' + p.type) || g === norm('- : ' + p.type)) return 'type';
       }
     }
     if (main.k === 'err' && /err/i.test(g)) return 'error';

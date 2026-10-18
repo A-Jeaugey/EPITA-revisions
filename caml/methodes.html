@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · Caml</title>
+<meta name="description" content="Caml et récursivité : les méthodes de l’examen, chacune avec un exemple exécuté. Écrire une fonction récursive, traiter une ou deux listes, choisir failwith ou invalid_arg, écrire la réponse de Caml, lire un Mystery, utiliser une fonction d’ordre supérieur, optimiser, la liste à cocher et les pièges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Méthodes : une section par geste de l’examen, numérotée ; chaque exemple est exécuté (OCaml 4.14). */
+.mn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--camel-soft);color:var(--camel);font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.82rem;font-weight:700;flex:none}
+.toc .mn{width:24px;height:24px;font-size:.76rem;justify-self:center}
+.steps>li>div>p{margin:0}
+.cases td:first-child{min-width:12rem}
+.cases td code.ml{white-space:nowrap}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Caml · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Méthodes</div>
+      <h1>Une recette par <span class="w">type de question.</span></h1>
+      <p class="lead">Les sujets reposent toujours les mêmes questions : une fonction récursive sur une liste avec une exception, une fonction en paramètre, un Mystery à lire. Chaque méthode tient en quelques étapes, avec un exemple tiré des sujets ou des TD, exécuté avec OCaml 4.14 et écrit comme sur la copie.</p>
+      <div class="chips"><span class="chip">7 méthodes, la liste à cocher, les pièges</span><span class="chip">tout le code est exécuté</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">exercices corrigés →</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li><a href="#recursive"><span class="mn">1</span><span>Écrire une fonction récursive</span></a></li>
+      <li><a href="#listes"><span class="mn">2</span><span>Traiter une ou deux listes</span></a></li>
+      <li><a href="#exceptions"><span class="mn">3</span><span>failwith ou invalid_arg</span></a></li>
+      <li><a href="#reponse"><span class="mn">4</span><span>Écrire la réponse de Caml</span></a></li>
+      <li><a href="#mystery"><span class="mn">5</span><span>Lire un Mystery</span></a></li>
+      <li><a href="#ordre-sup"><span class="mn">6</span><span>Une fonction en paramètre</span></a></li>
+      <li><a href="#optimiser"><span class="mn">7</span><span>Optimiser</span></a></li>
+      <li><a href="#copie"><span class="mn">✓</span><span>Avant de rendre la copie</span></a></li>
+      <li><a href="#pieges"><span class="mn">!</span><span>Les pièges</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Accueil Caml</a><a href="entrainement.html">Entraînement →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire des méthodes</summary><ol>
+      <li><a href="#recursive">Écrire une fonction récursive</a></li><li><a href="#listes">Traiter une ou deux listes</a></li><li><a href="#exceptions">failwith ou invalid_arg</a></li>
+      <li><a href="#reponse">Écrire la réponse de Caml</a></li><li><a href="#mystery">Lire un Mystery</a></li><li><a href="#ordre-sup">Une fonction en paramètre</a></li>
+      <li><a href="#optimiser">Optimiser</a></li><li><a href="#copie">Avant de rendre la copie</a></li><li><a href="#pieges">Les pièges</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 récursive -->
+    <section class="sec" id="recursive">
+      <div class="sec-head"><div class="kicker"><span class="mn">1</span>Méthode 1</div><h2>Écrire une fonction récursive</h2></div>
+      <div class="stack">
+        <div class="prose"><p>C’est la méthode de la page Moodle « Conseils pour la récursivité », dans son ordre. Elle sert pour presque toutes les fonctions à écrire : dans les 9 sujets, il y a une fonction récursive sur une liste, avec une exception exigée par l’énoncé.</p></div>
+        <ol class="steps">
+          <li><div><p><b>C’est quoi la question ? La spécification.</b> Ce que la fonction calcule, ses paramètres (leur sens, leur type, leur ordre), les conditions d’appel et l’exception quand elles ne sont pas remplies. Les exemples du sujet la donnent : lis-les d’abord. Écris le type attendu, ce sera ta réponse de Caml.</p></div></li>
+          <li><div><p><b>Le principe.</b> « J’ai déjà vu quelque chose de ressemblant » : un parcours complet (compter), un parcours partiel (chercher), une liste à construire, un rang à faire descendre. Il donne la structure et les cas.</p></div></li>
+          <li><div><p><b>La fonction à trous.</b> Écris la structure avec ses cas, puis la réponse de chacun : les cas d’arrêt (la réponse est connue sans nouvel appel), puis les cas récursifs (le même problème, plus petit). Vérifie que chaque appel se rapproche d’un cas d’arrêt.</p></div></li>
+          <li><div><p><b>Les cas particuliers.</b> Le cas général écrit, essaie les cas limites : liste vide, un seul élément, paramètre hors limites, élément absent. Ajoute les cas qui manquent.</p></div></li>
+          <li><div><p><b>Le chapeau, si besoin.</b> Une fonction « chapeau », non récursive, vérifie les paramètres une seule fois puis appelle la fonction récursive locale. Elle sert aussi à donner à celle-ci des paramètres supplémentaires (compteur, accumulateur) avec leur valeur de départ.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">TD listes · ex. 1.4</span> Le i-ème élément d’une liste. Même schéma que <code class="ml">remove_nth</code> (octobre 2019) et <code class="ml">insert_nth</code> (2018 et 2020).</p></div>
+        <div class="sheet">
+          <span class="lbl">1. Spécification :</span>
+          <p><code class="ml">nth i lst</code> retourne l’élément de rang <code class="ml">i</code> de la liste <code class="ml">lst</code> (le premier est au rang 1). Elle déclenche <code class="ml">Invalid_argument</code> si <code class="ml">i ≤ 0</code>, <code class="ml">Failure</code> si la liste a moins de <code class="ml">i</code> éléments. Type attendu : <code class="ml">int -> 'a list -> 'a</code>.</p>
+          <span class="lbl">2. Principe :</span>
+          <p>Un parcours partiel, comme une recherche, avec un rang qui descend : à chaque élément passé, on cherche le rang <code class="ml">i - 1</code> dans la suite. Au rang 1, c’est la tête.</p>
+          <span class="lbl">3. Fonction à trous (elle ne compile pas encore) :</span>
+<pre data-ml>
+let rec get i = function
+    [] -> (* plus d'élément : la liste est trop courte *)
+  | e :: l ->
+      if i = 1 then
+        (* la réponse est la tête *)
+      else
+        (* même problème, plus petit : rang i - 1 dans l *)
+</pre>
+          <span class="lbl">4. Cas particuliers : sans test, un rang ≤ 0 ne vaut jamais 1, et la récursion va jusqu’à la liste vide :</span>
+<pre data-ml-repl>
+# let rec get i = function
+      [] -> failwith "nth: list too short"
+    | e :: l ->
+        if i = 1 then
+          e
+        else
+          get (i-1) l ;;
+val get : int -> 'a list -> 'a = &lt;fun&gt;
+# get 0 ['a'; 'b'] ;;
+Exception: Failure "nth: list too short".
+</pre>
+          <span class="lbl">5. Le chapeau teste le rang une fois, puis appelle la fonction récursive :</span>
+<pre data-ml-repl>
+# let nth i lst =
+    if i &lt;= 0 then
+      invalid_arg "nth: i &lt;= 0"
+    else
+      let rec get i = function
+          [] -> failwith "nth: list too short"
+        | e :: l ->
+            if i = 1 then
+              e
+            else
+              get (i-1) l
+      in
+        get i lst ;;
+val nth : int -> 'a list -> 'a = &lt;fun&gt;
+# nth 3 ['a'; 'b'; 'c'; 'd'] ;;
+- : char = 'c'
+# nth 5 ['a'; 'b'] ;;
+Exception: Failure "nth: list too short".
+# nth 0 ['a'; 'b'] ;;
+Exception: Invalid_argument "nth: i &lt;= 0".
+# nth (-1) [] ;;
+Exception: Invalid_argument "nth: i &lt;= 0".
+</pre>
+        </div>
+        <div class="prose"><p>La fonction récursive ne voit que des rangs ≥ 1 ; elle descend jusqu’à 1 (trouvé) ou jusqu’à <code class="ml">[]</code> (trop courte) : chaque appel se rapproche d’un cas d’arrêt. Le test de <code class="ml">i</code> n’est fait qu’une fois, même sur une longue liste, et <code class="ml">nth (-1) []</code> déclenche bien <code class="ml">Invalid_argument</code>.</p></div>
+        <div class="note why"><span class="tag">La page Moodle</span><p>Elle montre le chapeau sur <code class="ml">fact</code>, puis sur <code class="ml">multiply x y</code>. Ce second exemple contient une coquille : <code class="ml">mult_rec (x, y-1)</code> alors que <code class="ml">mult_rec</code> prend un seul entier. Tel quel, il ne compile pas ; il faut <code class="ml">mult_rec (y-1)</code>.</p></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-2-recursivite.html#s1">cas d’arrêt et cas récursif</a>, <a href="cours-2-recursivite.html#s3">fonctions chapeau</a>, <a href="cours-2-recursivite.html#s4">paramètres supplémentaires</a>. À faire : <a href="entrainement.html#td-listes-1-4">TD listes 1.4</a>, <a href="entrainement.html#p2019-ex3">remove_nth (2019)</a>, <a href="entrainement.html#p2023-ex1">insert_mult (2023)</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 listes -->
+    <section class="sec" id="listes">
+      <div class="sec-head"><div class="kicker"><span class="mn">2</span>Méthode 2</div><h2>Traiter une ou deux listes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La page Moodle « Conseils pour les listes » part d’une question : combien de listes faut-il parcourir, et la tête suffit-elle ? La réponse donne les cas du filtrage. Ajoute ensuite les cas dus aux autres paramètres (valeur cherchée, liste triée, propriété).</p></div>
+        <div class="tbl"><table class="cases">
+          <thead><tr><th>Situation</th><th>Les cas</th><th>Dans les sujets</th></tr></thead>
+          <tbody>
+            <tr><td>Une liste</td><td><code class="ml">[]</code> · <code class="ml">e :: lst</code></td><td><code class="ml">remove_x</code> (2023), <code class="ml">insert_post</code> (2022)</td></tr>
+            <tr><td>La tête ne suffit pas : comparer deux voisins</td><td><code class="ml">[]</code> · <code class="ml">[e]</code> · <code class="ml">e1 :: e2 :: lst</code></td><td>les dominos (2019), le Mystery d’avril 2019</td></tr>
+            <tr><td>Des couples</td><td><code class="ml">[]</code> · <code class="ml">(a, b) :: lst</code></td><td><code class="ml">assoc</code> (2017, avril 2019)</td></tr>
+            <tr><td>Une liste de listes</td><td><code class="ml">[]</code> · <code class="ml">l :: others</code></td><td><code class="ml">check_list</code> (2024)</td></tr>
+            <tr><td>Deux listes parcourues ensemble</td><td><code class="ml">([], [])</code> · <code class="ml">(lst, [])</code> · <code class="ml">([], lst)</code> · <code class="ml">(e1 :: l1, e2 :: l2)</code></td><td><code class="ml">for_all2</code> (2017, 2019), <code class="ml">is_image</code> (2018)</td></tr>
+            <tr><td>Deux listes, une seule avance à chaque appel</td><td>les mêmes cas, et deux appels récursifs selon la liste qui avance</td><td><code class="ml">shared</code> (TD listes 4.2), <code class="ml">alternate_list</code> (2021)</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>La liste vide est un cas d’arrêt.</b> Décide ce qu’elle rend d’après l’énoncé : une valeur (<code class="ml">0</code>, <code class="ml">true</code>, <code class="ml">[]</code>) ou une exception.</p></div></li>
+          <li><div><p><b>Parcours complet ou partiel ?</b> Si toute la liste doit être vue (compter, recopier), tous les cas non vides sont récursifs. Sinon, il faut au moins un autre cas d’arrêt : trouvé, propriété fausse, valeur dépassée dans une liste triée.</p></div></li>
+          <li><div><p><b>Récursion pure d’abord.</b> Exprime le résultat pour <code class="ml">e :: lst</code> à partir du résultat pour <code class="ml">lst</code>. Le Moodle prévient, à propos de l’accumulateur : « la plupart du temps, cette méthode n’est pas nécessaire. Elle ne fait que compliquer les choses et vous risquez d’obtenir un résultat différent de celui demandé. » En 2023, une copie a perdu 2 points sur 8 parce que son accumulateur avait renversé l’ordre des sous-listes.</p></div></li>
+          <li><div><p><b>Deux listes ensemble : regroupe-les dans un couple</b> avec <code class="ml">match (l1, l2) with</code>, et vérifie que les quatre cas sont couverts. Un cas fourre-tout <code class="ml">| _ -></code> en dernier regroupe les longueurs différentes.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>La tête ne suffit pas</b> <span class="src-tag">octobre 2019 · ex. 2 · 4 points</span> Une chaîne de dominos est valide si les parties voisines ont le même nombre de points. Trois cas, et l’appel récursif repart de <code class="ml">(c, d) :: l</code>, pas de <code class="ml">l</code>, sinon un domino est perdu (corrigé officiel) :</p></div>
+<pre data-ml-repl>
+# let rec is_dominoes = function
+      [] | [_] -> true
+    | (_, b) :: (c, d) :: l -> b = c &amp;&amp; is_dominoes ((c, d) :: l) ;;
+val is_dominoes : ('a * 'a) list -> bool = &lt;fun&gt;
+# is_dominoes [(1, 2); (2, 3); (3, 3); (3, 6)] ;;
+- : bool = true
+# is_dominoes [(2, 3); (2, 4); (1, 4)] ;;
+- : bool = false
+# is_dominoes [] ;;
+- : bool = true
+</pre>
+        <div class="prose"><p><b>Deux listes, une seule avance</b> <span class="src-tag c">TD listes · ex. 4.2</span> Les éléments communs à deux listes croissantes. Si les têtes diffèrent, seule la liste qui a la plus petite avance : on rappelle avec l’autre liste <b>entière</b> (<code class="ml">l1</code> ou <code class="ml">l2</code>), pour ne pas perdre sa tête.</p></div>
+<pre data-ml-repl>
+# let rec shared l1 l2 = match (l1, l2) with
+      ([], _) | (_, []) -> []
+    | (e1 :: r1, e2 :: r2) ->
+        if e1 = e2 then
+          e1 :: shared r1 r2
+        else
+          if e1 &lt; e2 then
+            shared r1 l2
+          else
+            shared l1 r2 ;;
+val shared : 'a list -> 'a list -> 'a list = &lt;fun&gt;
+# shared [1; 3; 6; 6; 8; 9] [2; 5; 6; 6; 8; 9] ;;
+- : int list = [6; 6; 8; 9]
+</pre>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><code class="ml">[e; lst]</code> est une liste de <b>deux</b> éléments, pas « un élément suivi d’une liste » : le cas général s’écrit <code class="ml">e :: lst</code>.</li>
+          <li>Un cas oublié ne se voit pas à l’écriture : Caml affiche <code class="ml">Warning 8</code> sous ta définition, puis <code class="ml">Match_failure</code> à l’exécution. Dans ta réponse de Caml, un avertissement signale un oubli.</li>
+        </ul></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-3-listes.html#s2">filtrer une liste</a>, <a href="cours-3-listes.html#s7">deux listes</a>, <a href="cours-3-listes.html#s8">deux éléments, couples, accumulateur</a>. À faire : <a href="entrainement.html#p2019-ex2">les dominos</a>, <a href="entrainement.html#td-listes-4-2">shared</a>, <a href="entrainement.html#p2021-ex3">listes alternées</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 exceptions -->
+    <section class="sec" id="exceptions">
+      <div class="sec-head"><div class="kicker"><span class="mn">3</span>Méthode 3</div><h2>Choisir <code class="ml">failwith</code> ou <code class="ml">invalid_arg</code>, et où placer le test</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Les neuf sujets exigent une exception. Ce sont les deux seules fonctions prédéfinies permises, et l’énoncé dit toujours laquelle il attend : ses exemples montrent le constructeur et le message.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><code>invalid_arg "…"</code></th><th><code>failwith "…"</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Réponse de Caml</th><td><code data-ml-ans>Exception: Invalid_argument "…".</code></td><td><code data-ml-ans>Exception: Failure "…".</code></td></tr>
+            <tr><th scope="row">Quand</th><td>Un paramètre ne respecte pas les conditions d’appel : rang ≤ 0, <var>k</var> &lt; 0, <var>i</var> &gt; <var>j</var>, liste vide « initialement ».</td><td>Le calcul échoue en route : liste trop courte, clé absente, aucun élément après lequel insérer.</td></tr>
+            <tr><th scope="row">Où</th><td>Dans la fonction chapeau, <b>avant</b> tout parcours, une seule fois.</td><td>Là où l’échec se voit, souvent le cas <code class="ml">[]</code> de la fonction récursive.</td></tr>
+            <tr><th scope="row">Sujets</th><td>9 sur 9</td><td>7 sur 9 (pas en 2023 ni en 2024)</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>Lis les exemples</b> : recopie le constructeur et le message. Les sujets de 2018 à 2020 et le TD listes écrivent <code>Invalid_arg "negative rank"</code> : c’est une coquille, le constructeur est <code class="ml">Invalid_argument</code>, et on le déclenche avec <code class="ml">invalid_arg</code>.</p></div></li>
+          <li><div><p><b>Un paramètre invalide se teste dans le chapeau.</b> Testé dans la fonction récursive, il serait refait à chaque appel, et un cas d’arrêt rencontré avant lui donnerait la mauvaise exception.</p></div></li>
+          <li><div><p><b>Un échec en route se déclenche dans le cas qui le révèle</b> : la fin de liste atteinte trop tôt, une clé dépassée dans une liste triée.</p></div></li>
+          <li><div><p><b>Respecte l’ordre que fixe l’énoncé.</b> <code class="ml">for_all2</code> (2017, 2019) : « Si elle trouve une paire telle que p ai bi est faux, elle retourne faux. Sinon, elle déclenche une exception » : la paire fausse passe avant l’exception, donc l’exception vient en fin de parcours, pas dans un test de longueur préalable.</p></div></li>
+        </ol>
+        <div class="prose"><p>Les deux fonctions ont le type <code class="ml">string -> 'a</code> : une exception prend le type de n’importe quelle branche. C’est ce qui permet <code class="ml">if i &lt; 1 then invalid_arg "…" else …</code>.</p></div>
+<pre data-ml-repl>
+# invalid_arg ;;
+- : string -> 'a = &lt;fun&gt;
+# failwith ;;
+- : string -> 'a = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><b>Le test au mauvais endroit</b> <span class="src-tag">octobre 2019 · ex. 3 · 5 points</span> <code class="ml">remove_nth i list</code> supprime l’élément de rang <code class="ml">i</code> ; <code class="ml">Invalid_argument</code> si <code class="ml">i</code> est négatif ou nul, <code class="ml">Failure</code> si la liste est trop courte. Avec le test de <code class="ml">i</code> dans la fonction récursive, la liste vide est filtrée avant lui :</p></div>
+<pre data-ml-repl>
+# let rec remove_nth i = function
+      [] -> failwith "out of bound"
+    | e :: q ->
+        if i &lt;= 0 then
+          invalid_arg "negative rank"
+        else
+          if i = 1 then
+            q
+          else
+            e :: remove_nth (i-1) q ;;
+val remove_nth : int -> 'a list -> 'a list = &lt;fun&gt;
+# remove_nth (-2) [1; 2; 3] ;;
+Exception: Invalid_argument "negative rank".
+# remove_nth (-2) [] ;;
+Exception: Failure "out of bound".
+</pre>
+        <div class="sheet">
+          <span class="lbl">Fonction Caml :</span>
+<pre data-ml-repl>
+# let remove_nth i list =
+    if i &lt; 1 then
+      invalid_arg "negative rank"
+    else
+      let rec del i = function
+          [] -> failwith "out of bound"
+        | e :: q ->
+            if i = 1 then
+              q
+            else
+              e :: del (i-1) q
+      in
+        del i list ;;
+val remove_nth : int -> 'a list -> 'a list = &lt;fun&gt;
+# remove_nth 5 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+- : int list = [1; 2; 3; 4; 6; 7; 8; 9]
+# remove_nth 10 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+Exception: Failure "out of bound".
+# remove_nth (-2) [] ;;
+Exception: Invalid_argument "negative rank".
+</pre>
+        </div>
+        <div class="prose"><p><b>« Initialement vide »</b> <span class="src-tag">octobre 2022 · ex. 3</span> Quand la liste vide de départ est un paramètre invalide, le chapeau la filtre avec <code class="ml">function</code>, et la fonction récursive reçoit le premier élément comme maximum de départ (corrigé officiel) :</p></div>
+<pre data-ml-repl>
+# let pos_max = function
+      [] -> invalid_arg "pos_max: empty list"
+    | e :: l ->
+        let rec aux_max vmax vpos cur_pos = function
+            [] -> vpos
+          | e :: l ->
+              if e > vmax then
+                aux_max e cur_pos (cur_pos + 1) l
+              else
+                aux_max vmax vpos (cur_pos + 1) l
+        in
+          aux_max e 1 2 l ;;
+val pos_max : 'a list -> int = &lt;fun&gt;
+# pos_max [] ;;
+Exception: Invalid_argument "pos_max: empty list".
+# pos_max [8.5; 9.; -4.5] ;;
+- : int = 2
+</pre>
+        <div class="note exam"><span class="tag">Corrigé officiel faux</span><p>Le corrigé d’octobre 2019 écrit <code class="ml">failwith "negative rank"</code> dans ses trois versions : il déclenche <code class="ml">Failure</code>, alors que l’énoncé demande <code class="ml">Invalid_argument</code>. Suis l’énoncé.</p></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-1-bases.html#s5">failwith et invalid_arg</a>, <a href="cours-2-recursivite.html#s3">fonctions chapeau</a>. À faire : <a href="entrainement.html#td-listes-3-3">insert_nth</a>, <a href="entrainement.html#p2021-ex2">remove_interval (2021)</a>, <a href="entrainement.html#p2022-ex3">pos_max (2022)</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 réponse -->
+    <section class="sec" id="reponse">
+      <div class="sec-head"><div class="kicker"><span class="mn">4</span>Méthode 4</div><h2>Écrire la réponse de Caml d’une phrase</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Sous chaque fonction de ta copie, et pour chaque phrase d’un Mystery. Depuis 2023, l’en-tête précise qu’elle « fait partie de la note ». Elle a une forme fixe, qui dépend de la phrase :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Phrase</th><th>Réponse de Caml</th></tr></thead>
+          <tbody>
+            <tr><td>Définition d’une valeur : <code class="ml">let a = 1 + 2 ;;</code></td><td><code data-ml-ans>val a : int = 3</code></td></tr>
+            <tr><td>Définition d’une fonction</td><td><code data-ml-ans>val nth : int -&gt; 'a list -&gt; 'a = &lt;fun&gt;</code></td></tr>
+            <tr><td>Expression : <code class="ml">nth 3 ['a'; 'b'; 'c'] ;;</code></td><td><code data-ml-ans>- : char = 'c'</code></td></tr>
+            <tr><td>Exception déclenchée</td><td><code data-ml-ans>Exception: Failure "nth: list too short".</code></td></tr>
+            <tr><td>Phrase refusée (type, nom inconnu) : rien n’est défini</td><td><code data-ml-ans>Error: Unbound value fact</code></td></tr>
+            <tr><td>Filtrage incomplet : l’avertissement, puis la définition</td><td><code data-ml-ans>Warning 8 [partial-match]: this pattern-matching is not exhaustive.</code></td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>Un type par paramètre</b>, dans l’ordre, séparés par <code class="ml">-></code>, puis le type du résultat : <code class="ml">insert_mult n x lst</code> donne <code class="ml">int -> 'a -> 'a list -> 'a list</code>.</p></div></li>
+          <li><div><p><b>Un paramètre fonction s’écrit entre parenthèses</b>, avec son propre type : <code class="ml">('a -> bool)</code> pour un prédicat, <code class="ml">('a -> 'a -> bool)</code> pour un ordre.</p></div></li>
+          <li><div><p><b><code class="ml">'a</code> quand rien n’impose le type.</b> Comparer (<code class="ml">=</code>, <code class="ml">&lt;</code>) ou déplacer des éléments ne fixe pas leur type ; <code class="ml">+</code>, <code class="ml">mod</code> ou une constante <code class="ml">0</code> donnent <code class="ml">int</code>, <code class="ml">+.</code> donne <code class="ml">float</code>. Deux types qui n’ont rien à voir : <code class="ml">'a</code> et <code class="ml">'b</code>.</p></div></li>
+          <li><div><p><b>Les types composés</b> : <code class="ml">int list</code>, <code class="ml">(int * 'a) list</code> pour une liste de couples, <code class="ml">'a list list</code> pour une liste de listes.</p></div></li>
+          <li><div><p><b>La valeur comme Caml l’écrit</b> : <code class="ml">4.</code> et pas <code class="ml">4.0</code>, les chaînes entre guillemets, les caractères entre apostrophes, <code class="ml">[1; 2]</code> avec des points-virgules ; une fonction vaut <code>&lt;fun&gt;</code>.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>À toi.</b> Tape la réponse de Caml à chaque phrase, puis compare. Un champ vide dévoile simplement la réponse.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Devine la réponse de Caml · environnement vide">
+# let rec how_many f = function
+      [] -> 0
+    | e :: l -> (if f e then 1 else 0) + how_many f l ;;
+val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;
+# how_many (function x -> x > 0) [-1; 2; 0; 5] ;;
+- : int = 2
+# let count_even = how_many (function x -> x mod 2 = 0) ;;
+val count_even : int list -> int = &lt;fun&gt;
+# let first = function
+      [] -> failwith "first: empty list"
+    | (a, b) :: _ -> a ;;
+val first : ('a * 'b) list -> 'a = &lt;fun&gt;
+# first [(3.5, "x"); (1., "y")] ;;
+- : float = 3.5
+# first [] ;;
+Exception: Failure "first: empty list".
+# [[1; 2]; []] ;;
+- : int list list = [[1; 2]; []]
+# [] ;;
+- : 'a list = []
+# 4.0 ;;
+- : float = 4.
+</pre>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><code class="ml">count_even</code> est définie sans écrire sa liste : c’est une application partielle, et son type est ce qui reste, <code class="ml">int list -> int</code>.</li>
+          <li><code class="ml">first</code> ne fait rien de <code class="ml">b</code> : son type reste libre, <code class="ml">'b</code>.</li>
+          <li>Une exception n’a pas de type dans la réponse : <code class="ml">Exception: …</code> et un point final.</li>
+          <li>Un type long, Caml le coupe sur deux lignes (<code class="ml">… list =</code> puis <code>&lt;fun&gt;</code>) ; sur la copie, une ligne suffit.</li>
+        </ul></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-1-bases.html#s1">lire une réponse de Caml</a>, <a href="cours-1-bases.html#s3">le type d’une fonction</a>, <a href="cours-4-ordre-superieur.html#s2">application partielle</a>. À faire : <a href="entrainement.html#sem-1-2">séminaire 1.2</a>, <a href="entrainement.html#sem-2-1">2.1</a>, <a href="entrainement.html#td-os-1-1">TD ordre supérieur 1.1</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 mystery -->
+    <section class="sec" id="mystery">
+      <div class="sec-head"><div class="kicker"><span class="mn">5</span>Méthode 5</div><h2>Lire un Mystery : la trace, puis ce qu’il calcule</h2></div>
+      <div class="stack">
+        <div class="prose"><p>7 sujets sur 9, de 2 à 4 points : une fonction au nom muet, dont il faut donner le type (2022, 2024), les résultats de quelques phrases, parfois ce qu’elle calcule (avril 2019), une phrase à déclarer « Erreur » (2021) ou l’appel qui produit un résultat donné (2022).</p></div>
+        <ol class="steps">
+          <li><div><p><b>Le type d’abord</b>, en lisant le code : les motifs (liste, couple), les opérations (<code class="ml">*</code> impose <code class="ml">int</code>), ce que rend chaque cas. Si un filtrage oublie un cas, Caml affiche <code class="ml">Warning 8</code> avant le <code class="ml">val</code> ; le corrigé d’avril 2019 accepte une réponse « hors warning éventuels ».</p></div></li>
+          <li><div><p><b>Déroule le plus petit exemple</b>, appel par appel, en écrivant ce que chaque appel attend. Repère les noms masqués : une variable du même nom dans une fonction locale cache celle du dessus.</p></div></li>
+          <li><div><p><b>Fais les autres phrases</b>, en commençant par les cas limites (liste vide, un élément) : ils tombent souvent sur un cas d’arrêt.</p></div></li>
+          <li><div><p><b>Dis en une phrase ce que calcule la fonction</b>, et vérifie-la sur un exemple que tu n’as pas déroulé.</p></div></li>
+          <li><div><p><b>« Erreur » ?</b> Vérifie le type de chaque argument : en 2021, une fonction à deux paramètres est passée là où un prédicat à un paramètre est attendu.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag">novembre 2020 · ex. 5 · 2 points</span> « Soit la fonction go définie ci-dessous. Donner les résultats des évaluations successives des phrases suivantes. »</p></div>
+<pre data-ml>
+let go = function
+    [] -> []
+  | e :: list ->
+    let rec what x = function
+          [] -> []
+       | e :: list -> ( e * x ) ::( what e list )
+    in
+    what e list ;;
+</pre>
+        <div class="prose"><p><b>Le type.</b> <code class="ml">go</code> filtre une liste ; <code class="ml">e * x</code> impose des entiers ; chaque cas rend une liste d’entiers. Réponse : <code data-ml-ans>val go : int list -&gt; int list = &lt;fun&gt;</code>. Dans <code class="ml">what</code>, le <code class="ml">e</code> et le <code class="ml">list</code> du motif masquent ceux de <code class="ml">go</code>.</p>
+          <p><b>La trace</b> de <code class="ml">go [1; 2; 3; 4; 5]</code> : <code class="ml">go</code> appelle <code class="ml">what</code> avec la tête et la suite. Chaque appel de <code class="ml">what</code> attend le résultat du suivant pour mettre un produit devant.</p></div>
+        <div id="u-go"></div>
+<pre data-ml-repl data-title="Les quatre phrases du sujet">
+# go [1; 1; 1; 1; 1] ;;
+- : int list = [1; 1; 1; 1]
+# go [42] ;;
+- : int list = []
+# go [1; 2; 3; 4; 5] ;;
+- : int list = [2; 6; 12; 20]
+# go [2; 21; 2; 21; 2; 21] ;;
+- : int list = [42; 42; 42; 42; 42]
+</pre>
+        <div class="sheet"><span class="lbl">Ce que calcule go :</span><p>La liste des produits de deux éléments voisins : <code class="ml">[a1 * a2; a2 * a3; …]</code>, un élément de moins que la liste de départ. D’où <code class="ml">[]</code> pour une liste d’un seul élément.</p></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-2-recursivite.html#s2">la pile des appels</a>. À faire, du plus simple au plus long : <a href="entrainement.html#p2020-ex5">go (2020)</a>, <a href="entrainement.html#p2019-ex5">sous-liste (2019)</a>, <a href="entrainement.html#p2019d-ex4">avril 2019</a>, <a href="entrainement.html#p2024-ex3">2024</a>, <a href="entrainement.html#p2021-ex4">2021</a>, <a href="entrainement.html#p2022-ex5">2022</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 ordre supérieur -->
+    <section class="sec" id="ordre-sup">
+      <div class="sec-head"><div class="kicker"><span class="mn">6</span>Méthode 6</div><h2>Utiliser une fonction d’ordre supérieur</h2></div>
+      <div class="stack">
+        <div class="prose"><p>7 sujets sur 9 font écrire une fonction qui reçoit une fonction en paramètre, et 7 sur 9 enchaînent avec « Utiliser la fonction précédente pour définir… ». Les fonctions sont toujours écrites à la main : ni <code class="ml">List.map</code> ni <code class="ml">List.filter</code>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Repère le paramètre fonction</b> : « une fonction booléenne », « un prédicat », « une fonction de comparaison », « une fonction à deux paramètres ». Dans le type, il est entre parenthèses.</p></div></li>
+          <li><div><p><b>Appelle-la comme une fonction</b>, avec ses arguments : <code class="ml">f e</code>, <code class="ml">p e1 e2</code>, <code class="ml">order x e</code>. C’est déjà un booléen : <code class="ml">if f e then</code>, pas <code class="ml">if f e = true then</code>.</p></div></li>
+          <li><div><p><b>Passe-la à chaque appel récursif</b> : <code class="ml">how_many f l</code>, pas <code class="ml">how_many l</code>.</p></div></li>
+          <li><div><p><b>Pour l’utiliser</b>, donne-lui une fonction anonyme (<code class="ml">function x -> x mod n = 0</code>), une fonction locale nommée, ou un opérateur entre parenthèses comme <code class="ml">(=)</code>. La question 2 se traite même si la 1 ne l’est pas : en 2022, « qu’elle soit écrite ou pas ».</p></div></li>
+          <li><div><p><b>Garde l’ordre des paramètres de l’énoncé</b> : la comparaison est le dernier paramètre de <code class="ml">insert x list comp</code> (avril 2019), le deuxième de <code class="ml">insert_x x order lst</code> (2024).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag">octobre 2018 · ex. 3 · 4 points</span> <code class="ml">how_many f l</code> compte les éléments de <code class="ml">l</code> qui vérifient <code class="ml">f</code> ; puis l’utiliser pour <code class="ml">count_multiples n l</code>, le nombre de multiples de <code class="ml">n</code> dans <code class="ml">l</code>.</p></div>
+        <div class="sheet">
+          <span class="lbl">Fonction Caml :</span>
+<pre data-ml-repl>
+# let rec how_many f = function
+      [] -> 0
+    | e :: l ->
+        if f e then
+          1 + how_many f l
+        else
+          how_many f l ;;
+val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;
+# let count_multiples n l = how_many (function x -> x mod n = 0) l ;;
+val count_multiples : int -> int list -> int = &lt;fun&gt;
+# count_multiples 3 [1; 3; 6; 7; 9; 0] ;;
+- : int = 4
+</pre>
+        </div>
+        <div class="prose"><p>Le prédicat utilise <code class="ml">n</code>, le paramètre de <code class="ml">count_multiples</code> : c’est pour cela qu’il est écrit à l’intérieur. Le corrigé officiel donne aussi la forme sans <code class="ml">l</code>, une application partielle, de même type :</p></div>
+<pre data-ml-repl>
+# let count_multiples n = how_many (function x -> x mod n = 0) ;;
+val count_multiples : int -> int list -> int = &lt;fun&gt;
+</pre>
+        <div class="note trap"><span class="tag">Deux erreurs que Caml refuse</span>
+<pre data-ml-repl>
+# let rec bad f = function
+      [] -> 0
+    | e :: l -> if f e = true then 1 + bad l else bad f l ;;
+Error: This expression has type 'a list
+       but an expression was expected of type 'a -> bool
+# how_many (=) [1; 2] ;;
+Error: This expression has type 'a -> 'a -> bool
+       but an expression was expected of type 'a -> bool
+       Type 'a -> bool is not compatible with type bool
+</pre>
+          <ul><li><code class="ml">bad l</code> : le paramètre fonction a été oublié dans l’appel récursif.</li><li><code class="ml">(=)</code> prend deux paramètres, <code class="ml">how_many</code> attend un prédicat à un seul : c’est l’« Erreur » du Mystery de 2021.</li></ul>
+        </div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-4-ordre-superieur.html#s3">une fonction en paramètre</a>, <a href="cours-4-ordre-superieur.html#s6">un ordre en paramètre</a>, <a href="cours-4-ordre-superieur.html#s7">for_all2</a>. À faire : <a href="entrainement.html#p2018-ex3">how_many</a>, <a href="entrainement.html#p2019-ex4">for_all2 et almost</a>, <a href="entrainement.html#p2024-ex2">tri par insertion (2024)</a>, <a href="entrainement.html#p2022-ex4">less2 et common</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 optimiser -->
+    <section class="sec" id="optimiser">
+      <div class="sec-head"><div class="kicker"><span class="mn">7</span>Méthode 7</div><h2>Optimiser : ne pas répéter un calcul, s’arrêter tôt</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La fiche de cours demande d’« éviter les calculs inutiles, ne pas répéter des calculs, arrêter dès qu’une réponse est donnée ». Une fonction juste mais lente perd des points : l’arrêt anticipé est attendu dans 8 sujets sur 9.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Ne refais pas un appel récursif</b> : si son résultat sert deux fois, nomme-le avec <code class="ml">let … in</code>.</p></div></li>
+          <li><div><p><b>Arrête-toi dès que la réponse est connue</b> : élément trouvé, propriété fausse, valeur dépassée dans une liste triée. <code class="ml">&amp;&amp;</code> et <code class="ml">||</code> n’évaluent pas leur second membre quand le premier suffit.</p></div></li>
+          <li><div><p><b>Teste les paramètres une seule fois</b>, dans le chapeau (méthode 3).</p></div></li>
+          <li><div><p><b>Ajoute en tête avec <code class="ml">::</code></b>. <code class="ml">l1 @ l2</code> recopie toute <code class="ml">l1</code> : un miroir écrit avec <code class="ml">@</code> recopie <var>n</var>(<var>n</var> − 1)/2 cellules, soit près de 200 millions pour 20 000 éléments, contre 20 000 avec un accumulateur (TD listes 3.5).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Un appel refait</b> <span class="src-tag c">TD listes · ex. 1.5</span> Le maximum d’une liste. Quand le test est faux, cette version recalcule <code class="ml">maximum lst</code> en entier :</p></div>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> failwith "maximum: empty list"
+    | [e] -> e
+    | e :: lst ->
+        if e > maximum lst then
+          e
+        else
+          maximum lst ;;
+val maximum : 'a list -> 'a = &lt;fun&gt;
+# maximum [1; 2; 3; 4] ;;
+- : int = 4
+</pre>
+        <div id="u-max"></div>
+        <div class="prose"><p>Sur une liste croissante, chaque appel en lance deux : 7 appels pour 3 éléments, 15 pour 4, 1 048 575 pour <code class="ml">[1; …; 20]</code>. Avec <code class="ml">let … in</code>, un appel par élément :</p></div>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> failwith "maximum: empty list"
+    | [e] -> e
+    | e :: lst ->
+        let m = maximum lst in
+          if e > m then
+            e
+          else
+            m ;;
+val maximum : 'a list -> 'a = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><b>S’arrêter tôt</b> <span class="src-tag">novembre 2020 · ex. 2</span> Dans une liste croissante, on ne cherche plus <code class="ml">x</code> après un élément plus grand. Et <code class="ml">||</code>, <code class="ml">&amp;&amp;</code> s’arrêtent au premier membre quand il suffit :</p></div>
+<pre data-ml-repl>
+# let rec delete x = function
+      [] -> []
+    | e :: l ->
+        if e > x then
+          e :: l
+        else
+          if e = x then
+            l
+          else
+            e :: delete x l ;;
+val delete : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# delete 4 [1; 2; 2; 3; 4; 4; 4; 5] ;;
+- : int list = [1; 2; 2; 3; 4; 4; 5]
+# delete 0 [1; 2; 3] ;;
+- : int list = [1; 2; 3]
+# false &amp;&amp; (1 / 0 = 0) ;;
+- : bool = false
+# true &amp;&amp; (1 / 0 = 0) ;;
+Exception: Division_by_zero.
+</pre>
+        <div class="note trap"><span class="tag">Piège</span><p><code class="ml">present a list &amp;&amp; present b list</code> donne la bonne réponse à <code class="ml">search_both</code> (2020), mais parcourt la liste deux fois. L’idée attendue : un seul parcours, qui cherche la seconde valeur dans la suite dès que la première est trouvée.</p></div>
+        <p class="muted" style="font-size:.92rem">Le cours : <a href="cours-2-recursivite.html#s7">optimiser</a>, <a href="cours-3-listes.html#s6">listes triées</a>. À faire : <a href="entrainement.html#td-listes-1-5">maximum</a>, <a href="entrainement.html#p2020-ex4">search_both</a>, <a href="entrainement.html#p2024-ex1">check_list (2024)</a>, <a href="entrainement.html#td-listes-3-5">inverse</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mn">✓</span>Les dix dernières minutes</div><h2>Avant de rendre la copie</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Relis chaque fonction avec cette liste. Elle reprend les règles des en-têtes et les erreurs relevées dans les corrigés et la copie de 2023.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Tout décocher</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Le nom et l’ordre des paramètres</b> sont ceux de l’énoncé et de ses exemples (le corrigé de 2020 nomme <code class="ml">search v1 v2 l</code> la fonction <code class="ml">search_both list a b</code> : ne l’imite pas).</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Les exceptions</b> ont le constructeur et le message des exemples ; les paramètres sont testés une fois, dans le chapeau, avant le parcours.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Tous les cas sont traités</b>, la liste vide comprise : pas de <code class="ml">Warning 8</code> dans ta réponse.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>Aucune fonction prédéfinie</b> en dehors de <code class="ml">failwith</code> et <code class="ml">invalid_arg</code> : ni <code class="ml">List.length</code>, ni <code class="ml">abs</code>, ni <code class="ml">max</code> ; et évite <code class="ml">@</code>, qu’aucun corrigé officiel n’emploie.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b><code class="ml">let rec</code></b> pour chaque fonction récursive, locale comprise ; <code class="ml">;;</code> à la fin de chaque phrase.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Les parenthèses</b> des appels : <code class="ml">f (n-1)</code>, <code class="ml">f (e :: l)</code>, <code class="ml">g (-1)</code>.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>Le code est indenté</b> : <code class="ml">then</code> et <code class="ml">else</code> sous le <code class="ml">if</code>, un cas par ligne, les <code class="ml">|</code> alignés.</label></li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>La réponse de Caml</b> suit chaque fonction : <code class="ml">val …</code>, le type exact, <code>&lt;fun&gt;</code>.</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>Une seule version</b> par fonction ; une fonction auxiliaire est écrite avant, avec une phrase qui dit ce qu’elle fait ; la dernière fonction écrite répond à la question.</label></li>
+          <li><input type="checkbox" id="c10"><label for="c10"><b>Un exemple du sujet déroulé à la main</b>, et un cas limite (liste vide, un seul élément).</label></li>
+          <li><input type="checkbox" id="c11"><label for="c11"><b>Fonction polymorphe</b> si les exemples mélangent <code class="ml">int</code>, <code class="ml">char</code> et <code class="ml">string</code> : pas de <code class="ml">0</code> ni de <code class="ml">+</code> sur les éléments.</label></li>
+          <li><input type="checkbox" id="c12"><label for="c12"><b>Pas de calcul refait</b>, arrêt dès que la réponse est connue ; résultat dans l’ordre demandé.</label></li>
+          <li><input type="checkbox" id="c13"><label for="c13"><b>Au stylo</b>, ni crayon de papier ni stylo rouge, dans les espaces prévus.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mn">!</span>À relire la veille</div><h2>Les pièges les plus fréquents</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Phrases et définitions</span><ul>
+            <li><code class="ml">let rec</code> oublié : <code data-ml-ans>Error: Unbound value fact</code>. Si un ancien <code class="ml">fact</code> existe, la définition passe et appelle l’ancien.</li>
+            <li><code class="ml">;;</code> oublié : la phrase suivante se colle à celle-ci.</li>
+            <li><code class="ml">n * fact n-1</code> se lit <code class="ml">n * (fact n) - 1</code> : la définition passe, l’appel ne s’arrête jamais (<code>Stack overflow</code>).</li>
+            <li><code class="ml">succ -1</code> est une soustraction : écris <code class="ml">succ (-1)</code>.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Filtrage</span><ul>
+            <li>Un identifiant dans un motif est une nouvelle variable : <code class="ml">| y -></code> filtre tout, même si un <code class="ml">y</code> existe déjà. Pour comparer : <code class="ml">| z when z = y -></code>.</li>
+            <li>Un <code class="ml">match</code> dans un <code class="ml">match</code> avale les cas suivants : mets-le entre parenthèses.</li>
+            <li>Des cas tous gardés par <code class="ml">when</code> : Caml ne voit pas qu’ils couvrent tout (<code class="ml">Warning 8</code>). Termine par <code class="ml">| _ -></code>.</li>
+            <li><code class="ml">[e; lst]</code> a deux éléments ; <code class="ml">e :: lst</code> en a au moins un.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Types</span><ul>
+            <li><code class="ml">::</code> ajoute un élément devant une liste ; <code class="ml">[1; 2] :: [3]</code> est refusé.</li>
+            <li>Les deux branches d’un <code class="ml">if</code> ont le même type ; pas de <code class="ml">if</code> sans <code class="ml">else</code>.</li>
+            <li><code class="ml">not a = b</code> se lit <code class="ml">(not a) = b</code> : écris <code class="ml">a &lt;&gt; b</code>.</li>
+            <li><code class="ml">=</code> et <code class="ml">&lt;&gt;</code>, jamais <code class="ml">==</code> ni <code class="ml">!=</code>.</li>
+            <li>Caml écrit <code class="ml">4.</code>, pas <code class="ml">4.0</code>.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Sur la copie</span><ul>
+            <li>La mauvaise exception, ou une exception testée après un cas d’arrêt.</li>
+            <li><code class="ml">abs</code>, <code class="ml">max</code>, <code class="ml">List.length</code> : interdites. <code class="ml">x - y &lt;= 1 &amp;&amp; y - x &lt;= 1</code> remplace <code class="ml">abs (x - y) &lt;= 1</code>.</li>
+            <li>Un accumulateur qui renverse l’ordre du résultat (2 points perdus sur 8 en 2023).</li>
+            <li>Une constante <code class="ml">0</code> pour un élément quelconque : le type devient <code class="ml">int</code> et les exemples en <code class="ml">char</code> échouent.</li>
+          </ul></div>
+        </div>
+<pre data-ml-repl data-title="Trois pièges, tels que Caml les signale">
+# let fact n = if n = 0 then 1 else n * fact (n-1) ;;
+Error: Unbound value fact
+Hint: If this is a recursive definition,
+you should add the 'rec' keyword on line 1
+# let h x y = match x with
+      0 -> 0
+    | y -> 1
+    | _ -> -1 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val h : int -> 'a -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = 1
+# [1; 2] :: [3] ;;
+Error: This expression has type int but an expression was expected of type
+         int list
+</pre>
+        <div class="note exam"><span class="tag">Erreurs des documents officiels : ne les recopie pas</span><ul>
+          <li><code>Invalid_arg "negative rank"</code> dans les exemples de 2018, 2019, 2020 et du TD listes 3.3 : le constructeur est <code class="ml">Invalid_argument</code>.</li>
+          <li>Corrigé d’octobre 2019 : <code class="ml">Failure "negative rank"</code> au lieu de <code class="ml">Invalid_argument</code>. Corrigé de 2020 : <code class="ml">search v1 v2 l</code> au lieu de <code class="ml">search_both list a b</code>.</li>
+          <li>2018, exercice 5 : le code imprimé de <code class="ml">encode</code> (<code>encode-rec</code>) ne compile pas ; le corrigé évalue une autre version. 2021 : le message <code class="ml">"remove_internal: …"</code> est une coquille.</li>
+          <li><code class="ml">- : float = 4.0</code> (corrigé d’avril 2019, TD listes 1.6) : Caml écrit <code class="ml">4.</code>. Mémo, p. 5 : <code class="ml">(2, "two")</code> pour un <code class="ml">float * string</code>, Caml écrit <code class="ml">(2., "two")</code>.</li>
+          <li>Page Moodle « Conseils pour la récursivité » : <code class="ml">mult_rec (x, y-1)</code> ne compile pas, il faut <code class="ml">mult_rec (y-1)</code>.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var R = window.REV, C = R.caml, fmt = C.fmt;
+  /* méthode 5 : la pile des appels de go [1; 2; 3; 4; 5] (arbre écrit à la main : go, puis what) */
+  function what(x, l) {
+    if (!l.length) return { label: 'what ' + x + ' []', val: '[]', res: [] };
+    var k = what(l[0], l.slice(1)), res = [l[0] * x].concat(k.res);
+    return { label: 'what ' + x + ' ' + fmt(l), val: fmt(res), res: res, e: l[0], x: x, kids: [k] };
+  }
+  var w = what(1, [2, 3, 4, 5]);
+  C.unroll(document.getElementById('u-go'), {
+    tree: { label: 'go [1; 2; 3; 4; 5]', val: w.val, go: true, kids: [w] }, mode: 'stack',
+    say: function (e) {
+      if (!e || !e.node.go) return null;
+      return e.type === 'call' ? 'Appel de ' + C.code(e.node.label) + ' : la liste n’est pas vide, <code class="ml">go</code> appelle ' + C.code(w.label) + ' avec sa tête et sa suite, puis rend son résultat tel quel.'
+        : C.code(e.node.label) + ' renvoie <b class="cu-v">' + e.node.val + '</b> : c’est le résultat. La pile est vide.';
+    },
+    wait: function (nd, v) {
+      if (nd.go) return v.length ? v[0] : nd.kids[0].label;
+      if (!nd.kids) return '';
+      return nd.e + ' * ' + nd.x + ' :: ' + (v.length ? v[0] : nd.kids[0].label);
+    }
+  });
+  /* méthode 7 : l'arbre des appels du maximum qui refait son appel récursif */
+  C.unroll(document.getElementById('u-max'), {
+    tree: C.trace(function (self, l) {
+      if (l.length === 1) return l[0];
+      var r = l.slice(1);
+      return l[0] > self(r) ? l[0] : self(r);
+    }, [[1, 2, 3]], { name: 'maximum', show: function (l) { return 'maximum ' + fmt(l); } }),
+    mode: 'tree', dupes: true
+  });
+  /* la liste à cocher (rien n'est enregistré) */
+  var boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' vérifiés'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

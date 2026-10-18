@@ -1,0 +1,47 @@
+/* Coloration du code Caml hors des pages Caml (page QCM) : seulement les jetons posés par assets/js/caml.js,
+   sans la police ni les couleurs de fond de la section Caml. Le code garde la police mono de la page.
+   Couleurs des jetons reprises de caml.css (mots-clés prune, constructeurs pétrole, nombres bleus, chaînes vertes,
+   types et structure orange, failwith / invalid_arg en rouge), versions claire et sombre.
+   Utilise --muted, --bad et --warn de la page. */
+:root{
+  --mlx-kw:#9A1F67; --mlx-op:#3B4A54; --mlx-ar:#BF4A0B; --mlx-num:#1B5CC0; --mlx-str:#23752E; --mlx-con:#0A6A80;
+  --mlx-com:#6A7880; --mlx-ty:#B0440A; --mlx-exn:#B8322A; --mlx-def:inherit;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --mlx-kw:#F28BC6; --mlx-op:#B8C5CB; --mlx-ar:#FF9552; --mlx-num:#8EB6FF; --mlx-str:#93D58C; --mlx-con:#56C3D9;
+    --mlx-com:#7D8C93; --mlx-ty:#FFA066; --mlx-exn:#FF857C;
+  }
+}
+:root[data-theme="dark"]{
+  --mlx-kw:#F28BC6; --mlx-op:#B8C5CB; --mlx-ar:#FF9552; --mlx-num:#8EB6FF; --mlx-str:#93D58C; --mlx-con:#56C3D9;
+  --mlx-com:#7D8C93; --mlx-ty:#FFA066; --mlx-exn:#FF857C;
+}
+
+/* les jetons sont des <code> dans un <code> ou un <pre> : ils héritent de tout, sans fond ni marge propres */
+:is(code.ml,pre.ml-block,code.ml-ansin) code{font:inherit;font-size:inherit;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit}
+code.ml{white-space:pre-wrap}
+code.m-ar,code.m-op,code.m-ty,code.m-end{white-space:nowrap}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-kw{color:var(--mlx-kw);font-weight:600}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-def{color:var(--mlx-def);font-weight:700}
+:is(code.ml,pre.ml-block,code.ml-ansin) :is(code.m-con,code.m-mod){color:var(--mlx-con)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-num{color:var(--mlx-num)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-str{color:var(--mlx-str)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-com{color:var(--mlx-com);font-style:italic}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-op{color:var(--mlx-op)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-ar{color:var(--mlx-ar);font-weight:600}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-exn{color:var(--mlx-exn);font-weight:600}
+:is(code.ml,pre.ml-block,code.ml-ansin) :is(code.m-end,code.m-dash){color:var(--muted)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-ty{color:var(--mlx-ty)}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-tv{color:var(--mlx-ty);font-style:italic}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-fun{color:var(--muted);font-style:italic}
+:is(code.ml,pre.ml-block,code.ml-ansin) code.m-lbl{font-weight:700}
+
+/* bloc de code (<pre data-ml>) : sans cadre à lui, dans la figure de la question */
+pre.ml-block{margin:0;font-family:var(--font-mono,ui-monospace,monospace);font-size:.88rem;line-height:1.55;white-space:pre;tab-size:2;color:var(--ink);overflow-x:auto;min-width:0}
+/* réponse de Caml en ligne (<code data-ml-ans>) */
+code.ml-ansin{white-space:pre-wrap}
+code.ml-ansin .ml-a{display:inline}
+code.ml-ansin .ml-exn,code.ml-ansin .ml-err{color:var(--bad)}
+code.ml-ansin .ml-warn{color:var(--warn)}
+code.ml-ansin .ml-print{color:var(--muted)}

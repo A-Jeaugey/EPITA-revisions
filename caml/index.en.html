@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caml · S1 Revision</title>
+<meta name="description" content="Caml and recursion (algo S1): the 1 h 30 written exam, the rules printed on the papers, what comes up according to the 9 papers found (2017 to 2024), the path through four chapters, the methods, worked practice, past papers and the summary sheet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Caml home: the exam as the header of an exam script, the path, the rules of the papers, what comes up, a plan. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:60px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sheet.exam-card{gap:.55rem;align-self:center}
+.exam-card h2{font-size:1.3rem}
+.exam-row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;font-size:.95rem;line-height:1.5;padding-top:.5rem;border-top:1px dashed var(--line)}
+.exam-row>b{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.74rem;color:var(--muted);font-weight:500;letter-spacing:.03em;padding-top:.2rem}
+.cd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.cd input{font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.3rem .5rem;min-height:36px}
+.cd input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.cd-n{font-family:var(--font-mono);font-variation-settings:var(--fv-ans);font-weight:700;font-size:1.35rem;color:var(--camel);line-height:1}
+.cd-t{font-size:.88rem;color:var(--muted)}
+@media (max-width:480px){.exam-row{grid-template-columns:minmax(0,1fr);gap:2px}}
+.path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.path{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+.stop:hover{border-color:var(--accent)}
+.stop .k{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.76rem;letter-spacing:.03em;color:var(--muted)}
+.stop h3{margin:0;font-size:1.2rem}
+.stop p{font-size:.93rem;color:var(--muted)}
+.stop .tg{display:flex;flex-wrap:wrap;gap:6px}
+.stop .tg span{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.7rem;border:1px solid var(--line);border-radius:999px;padding:.05rem .5rem;color:var(--muted)}
+.stop .tg .hot{border-color:var(--exam);color:var(--exam)}
+.stop .tg .cold{border-color:var(--warn);color:var(--warn)}
+.stop .mono{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.8rem;color:var(--muted)}
+.bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr)}}
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.rules li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding:.6rem 0;border-top:1px dashed var(--line)}
+.rules li:first-child{border-top:0;padding-top:0}
+.rules li>*{min-width:0}
+.rules q{font-family:var(--font-mono);font-variation-settings:var(--fv-ans);font-size:.9rem;quotes:"“" "”"}
+.rules .n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--exam);white-space:nowrap}
+.rules .d{grid-column:1/-1;font-size:.92rem;color:var(--muted)}
+@media (max-width:560px){.rules li{grid-template-columns:minmax(0,1fr)}}
+.freq td,.freq th{vertical-align:middle}
+.freq .fq{white-space:nowrap;width:1%}
+.fbar{display:inline-block;vertical-align:middle;width:84px;height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-right:8px}
+.fbar i{display:block;height:100%;background:var(--camel);border-radius:0 4px 4px 0}
+.freq .n{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.82rem;font-variant-numeric:tabular-nums}
+.freq .ref{white-space:nowrap;font-size:.88rem}
+.freq tr.zero th,.freq tr.zero .n{color:var(--warn)}
+@media (max-width:560px){.fbar{width:64px}.freq thead{display:none}.freq tbody tr{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;border-bottom:1px solid var(--line)}.freq tbody tr:last-child{border-bottom:0}.freq tbody th{grid-column:1/-1;border-bottom:0;padding-bottom:.15rem}.freq tbody td{border-bottom:0;padding-top:.15rem}.freq .ref{text-align:right}}
+.reprises td:first-child{white-space:nowrap}
+.plan{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:pl}
+.plan li{counter-increment:pl;display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem}
+.plan li::before{content:"Session " counter(pl);font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.78rem;color:var(--camel);font-weight:700;padding-top:.15rem}
+.plan li>div{min-width:0}
+@media (max-width:560px){.plan li{grid-template-columns:minmax(0,1fr);gap:4px}}
+</style>
+</head>
+<body data-resume="Caml · home">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span>Algo · Caml and recursion</div>
+      <h1>A recursive function, <span class="w">then the Caml answer.</span></h1>
+      <p class="lead">The exam makes you write recursive functions on lists, by hand and without a computer, often with a function as a parameter, and read code to give what Caml answers. Here: the course in four chapters, the methods, and the exercises of the papers and tutorials with step-by-step solutions.</p>
+      <div class="chips"><span class="chip">4 chapters · 32 parts</span><span class="chip">methods · practice · summary sheet</span><span class="chip ex">exam = 70 % of the grade</span></div>
+    </div>
+    <div class="sheet exam-card" aria-label="The exam">
+      <span class="lbl">Notes (read them!)</span>
+      <h2>The Caml exam</h2>
+      <div class="exam-row"><b>When</b><span>Week of 26 October 2026, the same week as the TAA exam (algo schedule on Moodle).</span></div>
+      <div class="exam-row"><b>Format</b><span>Written, <strong>1 h 30</strong>, on paper, answers on the exam paper. In 2024: three exercises, 20 points.</span></div>
+      <div class="exam-row"><b>Grade</b><span>30 % seminar MCQs (already taken) + <strong>70 % exam</strong>.</span></div>
+      <div class="exam-row"><b>Syllabus</b><span>Seminar (basics, recursion), lab, lists tutorial, higher-order tutorial.</span></div>
+      <div class="exam-row"><b>Your date</b><span class="cd"><input type="date" id="exDate" aria-label="Date of your Caml exam"><span class="cd-n" id="cdN" aria-live="polite"></span><span class="cd-t" id="cdT">Enter the exact day for the countdown.</span></span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-path">
+    <div class="sec-title"><div><div class="eyebrow">Path</div><h2 id="t-path">The four chapters</h2></div><p>Each part ends with a few questions. Mark it as understood: your progress shows here.</p></div>
+    <div class="path" id="path"></div>
+    <div class="tools">
+      <a class="stop" href="methodes.html"><div class="k">Methods</div><h3>One recipe per question</h3><p>Writing a recursive function, handling one or two lists, choosing the exception, the Caml answer, a Mystery, higher-order functions, optimising.</p></a>
+      <a class="stop" href="entrainement.html"><div class="k">Practice</div><h3>Papers and tutorials, solved</h3><p id="nEx">The exercises of the papers and of this year’s tutorials, with hints and a step-by-step solution.</p></a>
+      <a class="stop" href="annales.html"><div class="k">Past papers</div><h3>The 9 papers</h3><p>Exercise by exercise, from 2017 to 2024, with the original PDFs and the topics of each paper.</p></a>
+      <a class="stop" href="fiche.html"><div class="k">Summary sheet</div><h3>Everything on one sheet</h3><p>Syntax, Caml answers, patterns, recursive schemes, higher-order functions and traps, printable on A4.</p></a>
+      <a class="stop" href="../qcm/index.html#caml"><div class="k">MCQ</div><h3>Course questions</h3><p id="nQ">Spaced repetition: the questions you miss come back.</p></a>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-rules">
+    <div class="sec-title"><div><div class="eyebrow">Rules of the papers</div><h2 id="t-rules">What the header of the paper says</h2></div><p>Copied from the 9 papers found (2017 to 2024), in the words of the official English versions where they exist. These rules count in the grade: read them now, not on the day.</p></div>
+    <div class="sheet">
+      <span class="lbl">Caml:</span>
+      <ul class="rules">
+        <li><q>You must answer on this subject.</q><span class="n">7 papers out of 9</span><span class="d">In the space provided, in pen: no pencil, no red pen (since 2021). In 2017 and April 2019, there were separate answer sheets.</span></li>
+        <li><q>All Caml code not indented will not be marked.</q><span class="n">9 papers out of 9</span><span class="d"><code class="ml">then</code> and <code class="ml">else</code> under the <code class="ml">if</code>, one <code class="ml">match</code> case per line, the <code class="ml">|</code> aligned. The presentation is marked.</span></li>
+        <li><q>In the absence of any indication in the document, the only functions that you can use are failwith and invalid_arg (no other predefined function of Caml).</q><span class="n">9 papers out of 9</span><span class="d">No <code class="ml">List.length</code>, no <code class="ml">abs</code>, no <code class="ml">max</code>: rewrite what you need. Operators (<code class="ml">+</code>, <code class="ml">mod</code>, <code class="ml">=</code>, <code class="ml">&amp;&amp;</code>, <code class="ml">::</code>…) are still allowed. No official answer key uses <code class="ml">@</code>: avoid it.</span></li>
+        <li><q>Any Caml code must be followed by the result of its evaluation: the Caml answer.</q><span class="n">8 papers out of 9</span><span class="d">Under each function: <code data-ml-ans>val insert_mult : int -&gt; 'a -&gt; 'a list -&gt; 'a list = &lt;fun&gt;</code>. Missing only in 2018; since 2023 the (French) paper adds, in bold, that it “is part of the mark”.</span></li>
+        <li><q>Only one version must be given for each function to write.</q><span class="n">2023 and 2024</span><span class="d">Translated from the French papers. In 2024 also: follow the application examples given, document your own functions, and the last function written is the one that answers the question.</span></li>
+      </ul>
+    </div>
+    <p class="muted" style="font-size:.92rem">Each rule, paper by paper: <a href="annales.html#regles">past papers</a>. How to apply them on your script: <a href="methodes.html#copie">the checklist</a>.</p>
+  </section>
+
+  <section aria-labelledby="t-falls">
+    <div class="sec-title"><div><div class="eyebrow">Past papers</div><h2 id="t-falls">What comes up</h2></div><p>According to the 9 papers found, from November 2017 to October 2024: 24 functions to write and 7 Mysteries. All of it is on this year’s syllabus.</p></div>
+    <div class="tbl"><table class="freq">
+      <thead><tr><th>Topic</th><th>Papers</th><th>Where to work on it</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">A recursive function on a list, with an exception required by the statement</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">9 / 9</span></td><td class="ref"><a href="methodes.html#recursive">Method 1</a></td></tr>
+        <tr><th scope="row"><code class="ml">Invalid_argument</code> for an invalid parameter (rank ≤ 0, <var>k</var> &lt; 0, list empty from the start)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">9 / 9</span></td><td class="ref"><a href="methodes.html#exceptions">Method 3</a></td></tr>
+        <tr><th scope="row">Wrapper function or extra parameter (counter, rank, current maximum)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">9 / 9</span></td><td class="ref"><a href="cours-2-recursivite.html#s3">Chapter 2</a></td></tr>
+        <tr><th scope="row">Stopping as soon as the answer is known</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:88.9%"></i></span><span class="n">8 / 9</span></td><td class="ref"><a href="methodes.html#optimiser">Method 7</a></td></tr>
+        <tr><th scope="row">A function as a parameter (higher-order), to write</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:77.8%"></i></span><span class="n">7 / 9</span></td><td class="ref"><a href="methodes.html#ordre-sup">Method 6</a></td></tr>
+        <tr><th scope="row">A Mystery: give the Caml answers, say what the function computes</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:77.8%"></i></span><span class="n">7 / 9</span></td><td class="ref"><a href="methodes.html#mystery">Method 5</a></td></tr>
+        <tr><th scope="row"><code class="ml">Failure</code>: list too short, element not found</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:77.8%"></i></span><span class="n">7 / 9</span></td><td class="ref"><a href="methodes.html#exceptions">Method 3</a></td></tr>
+        <tr><th scope="row">Using the function of the previous question</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:77.8%"></i></span><span class="n">7 / 9</span></td><td class="ref"><a href="methodes.html#ordre-sup">Method 6</a></td></tr>
+        <tr><th scope="row">A rank or a position (inserting, deleting at the rank i)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:66.7%"></i></span><span class="n">6 / 9</span></td><td class="ref"><a href="cours-3-listes.html#s4">Chapter 3</a></td></tr>
+        <tr><th scope="row">Two lists traversed together</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:55.6%"></i></span><span class="n">5 / 9</span></td><td class="ref"><a href="methodes.html#listes">Method 2</a></td></tr>
+        <tr><th scope="row">A sorted list (fixed order or order function)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:44.4%"></i></span><span class="n">4 / 9</span></td><td class="ref"><a href="cours-3-listes.html#s6">Chapter 3</a></td></tr>
+        <tr><th scope="row">Examples on several types (<code class="ml">int</code>, <code class="ml">char</code>, <code class="ml">string</code>…): polymorphic function</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:44.4%"></i></span><span class="n">4 / 9</span></td><td class="ref"><a href="methodes.html#reponse">Method 4</a></td></tr>
+        <tr class="zero"><th scope="row">Recursion on integers alone (factorial, gcd, digits)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:0"></i></span><span class="n">0 / 9</span></td><td class="ref"><a href="cours-2-recursivite.html#s5">Chapter 2</a></td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="note exam"><span class="tag">The closest format</span><p>Since 2023, Caml has its own exam, out of 20: three exercises worth 4 to 9 points. The <a href="annales.html#p2024">October 2024 paper</a> (1 h 30: a list of lists, an insertion sort with an order function, a Mystery) is the best mock exam.</p></div>
+      <div class="note why"><span class="tag">Never on its own</span><p>Recursion on integers (factorial, gcd, power) has come up in no paper: it is there to learn the reasoning, which every list exercise reuses. Strings and printing have never come up either.</p></div>
+    </div>
+    <div class="note keep"><span class="tag">7 exercises of this year’s tutorials repeat a paper</span>
+      <p>Same statement give or take the wording, same examples when there are any. Do them first. The tutorial sheets only exist in French: the titles are translated.</p>
+      <div class="tbl"><table class="reprises">
+        <thead><tr><th>This year’s tutorial</th><th>Exercise</th><th>Came up in the paper of</th></tr></thead>
+        <tbody id="reprises"></tbody>
+      </table></div>
+    </div>
+    <p><a class="btn" href="annales.html">All the papers, exercise by exercise →</a></p>
+  </section>
+
+  <section aria-labelledby="t-plan">
+    <div class="sec-title"><div><div class="eyebrow">Organisation</div><h2 id="t-plan">A plan in six sessions</h2></div><p id="planNote">About 1 h 30 per session, in order. Add ten minutes of MCQ every day.</p></div>
+    <ol class="plan">
+      <li><div><b>The language and the Caml answer.</b> <a href="cours-1-bases.html">Chapter 1</a>, above all parts 5, 6 and 8, then <a href="methodes.html#reponse">method 4</a>. Exercises: <a href="entrainement.html#sem-3-5">seminar 3.5</a> and <a href="entrainement.html#sem-3-7">3.7</a>.</div></li>
+      <li><div><b>Reasoning recursively.</b> <a href="cours-2-recursivite.html">Chapter 2</a> (parts 1 to 4 and 7) and <a href="methodes.html#recursive">method 1</a>. Exercises: <a href="entrainement.html#td-listes-1-4">lists tutorial 1.4</a> and <a href="entrainement.html#td-listes-1-5">1.5</a>.</div></li>
+      <li><div><b>Building a list, two exceptions.</b> <a href="cours-3-listes.html">Chapter 3</a>, parts 1 to 5, and <a href="methodes.html#listes">methods 2 and 3</a>. Exercises: <a href="entrainement.html#td-listes-3-3">insert_nth</a>, <a href="entrainement.html#td-listes-3-4">remove_duplicates</a>, <a href="entrainement.html#p2019-ex3">remove_nth</a>.</div></li>
+      <li><div><b>Sorted lists, two lists, pairs.</b> Chapter 3, parts 6 to 8. Exercises: <a href="entrainement.html#td-listes-3-2">delete</a>, <a href="entrainement.html#td-listes-5-1">assoc</a>, <a href="entrainement.html#p2019-ex2">dominoes</a>, <a href="entrainement.html#p2021-ex3">alternate lists</a>.</div></li>
+      <li><div><b>Higher-order functions.</b> <a href="cours-4-ordre-superieur.html">Chapter 4</a> and <a href="methodes.html#ordre-sup">method 6</a>. Exercises: <a href="entrainement.html#td-os-2-8">for_all2</a>, <a href="entrainement.html#p2018-ex3">how_many</a>, <a href="entrainement.html#p2022-ex2">insert_post</a>.</div></li>
+      <li><div><b>The mock exam.</b> <a href="methodes.html#mystery">Method 5</a>, then the <a href="annales.html#p2024">October 2024 paper</a> in 1 h 30, on paper, without the course. Mark it with the <a href="entrainement.html#p2024-ex1">practice page</a>, then reread the <a href="fiche.html">summary sheet</a> and the <a href="methodes.html#pieges">traps</a>.</div></li>
+    </ol>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../data/qcm/caml-annales.js"></script>
+<script src="../data/en/qcm/caml-annales.js"></script>
+<script src="../data/caml/exams.js"></script>
+<script src="../data/en/caml/exams.js"></script>
+<script src="../data/caml/ex-annales.js"></script>
+<script src="../data/en/caml/ex-annales.js"></script>
+<script src="../data/caml/ex-td.js"></script>
+<script src="../data/en/caml/ex-td.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, s = R.subject('caml');
+  var EX = window.CAML_EX || [], BY = {};
+  EX.forEach(function (e) { BY[e.id] = e; });
+  var DESC = ['Phrases and Caml answers, let, functions, conditionals, exceptions, pattern matching, tuples, anonymous functions.',
+    'Base case and recursive case, the call stack, wrapper functions, accumulator, never redoing a computation.',
+    '[] and e :: lst, full or partial traversal, building, sorted lists, two lists, pairs.',
+    'Functions as parameters, partial application, for_all, exists, map, filter, sorting with an order, for_all2.'];
+  var TAGS = [['seminar', '', 'the basis of everything'], ['seminar', 'hot', 'wrapper: 9 papers out of 9'], ['lists tutorial', 'hot', '9 papers out of 9'], ['higher-order tutorial', 'hot', '7 papers out of 9']];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('caml', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="calls">' + R.caml.callsSVG(i + 1) + '</span>Chapter ' + (i + 1) + '</div><h3>' + c.title + '</h3><p>' + DESC[i] + '</p><div class="tg"><span>' + TAGS[i][0] + '</span><span class="' + TAGS[i][1] + '">' + TAGS[i][2] + '</span></div><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><p class="mono">' + done + ' / ' + c.sections + ' parts understood</p></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'caml'; }), st = R.qcm.stats('caml', bank);
+    var np = EX.filter(function (e) { return e.kind === 'partiel'; }).length, ok = R.exo.stats('caml').ok;
+    if (bank.length) document.getElementById('nQ').textContent = bank.length + ' questions, ' + st.due + ' of them to review today.';
+    if (EX.length) document.getElementById('nEx').textContent = np + ' exercises from the papers and ' + (EX.length - np) + ' from the tutorials, solved step by step. Solved: ' + ok + ' / ' + EX.length + '.';
+  }
+  /* the tutorial exercises that repeat a paper: those with an “also” */
+  document.getElementById('reprises').innerHTML = EX.filter(function (e) { return e.kind === 'td' && e.also && e.also.length; }).map(function (e) {
+    return '<tr><td><a href="entrainement.html#' + e.id + '">' + U.esc(e.src) + '</a></td><td>' + e.title + '</td><td>' + e.also.map(function (id) {
+      var a = BY[id]; return a ? '<a href="entrainement.html#' + id + '">' + U.esc(a.src.replace(/^Midterms? /, '')) + '</a>' : id;
+    }).join(', ') + '</td></tr>';
+  }).join('');
+  /* countdown: the date is shared with the site home page */
+  var inp = document.getElementById('exDate');
+  function paintDate() {
+    var iso = R.exams.get('caml'), d = R.exams.daysLeft(iso), n = document.getElementById('cdN'), t = document.getElementById('cdT');
+    inp.value = iso || '';
+    if (iso && d !== null && d >= 0) {
+      n.textContent = d === 0 ? 'Today' : d + (d > 1 ? ' days' : ' day');
+      t.textContent = d === 0 ? 'The exam is today.' : d === 1 ? 'The exam is tomorrow.' : 'left before the exam.';
+      document.getElementById('planNote').textContent = (d <= 6 ? 'Less than one session a day until the exam: keep sessions 3, 5 and 6, that is where the points are. ' : 'One session a day, in order. ') + 'About 1 h 30 per session, and ten minutes of MCQ every day.';
+    } else { n.textContent = ''; t.textContent = iso ? 'This date has passed.' : 'Enter the exact day for the countdown.'; }
+  }
+  inp.addEventListener('change', function () { R.exams.set('caml', inp.value); });
+  paint(); paintDate();
+  R.store.on(function () { paint(); paintDate(); });
+})();
+</script>
+</body>
+</html>

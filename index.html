@@ -171,11 +171,14 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/physique/exams.js"></script>
 <script src="data/physique/ex-annales.js"></script>
 <script src="data/physique/ex-td.js"></script>
+<script src="data/caml/exams.js"></script>
+<script src="data/caml/ex-annales.js"></script>
+<script src="data/caml/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [] };
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [] };
   function nEx(sid) { return (EXS[sid] || []).length; }
   function nChap(s) { var n = s.chapters.length; return (['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'][n] || n) + ' chapitre' + (n > 1 ? 's' : ''); }
   /* sujets de partiel d’une matière (algo : TAA et Caml partagent les sujets d’avant 2023) */
@@ -202,7 +205,7 @@ a.tool:hover{border-color:var(--accent)}
     var html = '<span class="eyebrow">Compte à rebours</span>';
     if (dated.length) {
       var n = dated[0];
-      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'C’est aujourd’hui : partiel d’' : 'avant le partiel d’') + n.s.name.toLowerCase() + '</span></div>';
+      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'C’est aujourd’hui : partiel ' : 'avant le partiel ') + (/^[aeiouyhéèêàâîôû]/i.test(n.s.short) ? 'd’' : 'de ') + n.s.short + '</span></div>';
       html += '<div class="count-list">' + dated.map(function (x) {
         var p = x.iso.split('-');
         return '<div><span>' + x.s.name + '</span><span class="mono">' + p[2] + '/' + p[1] + '/' + p[0] + '</span></div>';
