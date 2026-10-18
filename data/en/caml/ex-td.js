@@ -585,7 +585,7 @@
     src: 'Lists tutorial · Ex 1.6 (bonus)', title: 'Second: the second smallest element',
     intro: '<p>Write a function that returns the second smallest element of a list if it exists.</p><p>Application examples:</p>' +
       ex(['# second [1; 3; 4; 2] ;;', '- : int = 2', '# second [3.5; 8.2; 9.5; 4.0];;', '- : float = 4.0', "# second ['a'];;", 'Exception: Failure "second: Not enough values"']) +
-      '<p><em>It is the `mystery` function of the April 2019 midterm (S1#, ex. 4, 2 points), to read and evaluate.</em></p>',
+      '<p><em>It is the `mystery` function of the April 2019 midterm (S1#, ex. 4, 2 points), to read and evaluate. <a href="#p2019d-ex4">See the exam exercise →</a></em></p>',
     hints: [
       'Read the list only once, keeping two values: the smallest seen so far and the second smallest.',
       'These two values are extra parameters of an auxiliary function. To initialise them, the first two elements are needed: fewer than two elements is the exception.',
@@ -671,7 +671,7 @@
   M['td-listes-3-2'] = {
     src: 'Lists tutorial · Ex 3.2', title: 'Deletion in a sorted list',
     intro: '<p>Write a function that removes the first appearance of an element `x` (if it is present) from a sorted (in increasing order) list `lst`.</p>' +
-      '<p><em>Same exercise in the Nov. 2020 midterm (ex. 2, 4 points): “Write the function `delete x list` that removes the first appearance of the value `x` (if it is present) from the sorted (in increasing order) list `list`.”</em></p>',
+      '<p><em>Same exercise in the Nov. 2020 midterm (ex. 2, 4 points): “Write the function `delete x list` that removes the first appearance of the value `x` (if it is present) from the sorted (in increasing order) list `list`.” <a href="#p2020-ex2">See the exam exercise →</a></em></p>',
     hints: [
       'Only the first appearance goes: once `x` is found, the rest of the list is returned as it is.',
       'The list is sorted: if the head is already greater than `x`, `x` is not further on. You can stop.',
@@ -695,7 +695,7 @@
     intro: '<p>Write the function `insert_nth x i lst` that inserts the value `x` at the rank `i` in the list `lst`. The function has to raise an exception `Invalid_argument` if `i` is negative or zero, or an exception `Failure` if the list is too short.</p><p>Application examples:</p>' +
       ex(['# insert_nth 0 5 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 0; 5; 6; 7; 8; 9]', '# insert_nth 0 10 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 0]',
         '# insert_nth 0 12 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Failure "out of bound".', '# insert_nth 0 (-2) [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Invalid_arg "negative rank".']) +
-      '<p><em>Word for word exercise 4 of the Oct. 2018 midterm and exercise 3 of the Nov. 2020 midterm (5 points each), same examples.</em></p>',
+      '<p><em>Word for word exercise 4 of the Oct. 2018 midterm and exercise 3 of the Nov. 2020 midterm (5 points each), same examples. <a href="#p2018-ex4">See the exam exercise →</a></em></p>',
     hints: [
       'The rank is tested once, in a wrapper function: `Invalid_argument` if `i ≤ 0`.',
       'Look at the second example: inserting at the rank 10 in a list of 9 elements is allowed (adding at the end). So the case “rank reached” must come before the case `[]`.',
@@ -725,7 +725,7 @@
         '# remove_duplicates [42; 13; 42; 7; 7; 13; 42; 42];;', '- : int list = [42; 13; 7]',
         '# remove_duplicates ["dog"; "cat"; "dog"; "rat"; "rat"; "bat"];;', '- : string list = ["dog"; "cat"; "rat"; "bat"]',
         '# remove_duplicates [true; true; false; true; false; true; false];;', '- : bool list = [true; false]']) +
-      '<p><em>Question 2 of the Oct. 2023 exam (ex. 2, 5.5 points), with the same examples. The paper first had `remove_x x lst` written, which removes all the appearances of `x`, and required using it.</em></p>',
+      '<p><em>Question 2 of the Oct. 2023 exam (ex. 2, 5.5 points), with the same examples. The paper first had `remove_x x lst` written, which removes all the appearances of `x`, and required using it. <a href="#p2023-ex2">See the exam exercise →</a></em></p>',
     hints: [
       'Look at the examples: which appearance is kept, the first or the last?',
       'The head `e` is kept. Its copies further on in the list must disappear before going on: first write a function that removes all the appearances of a value.',
@@ -836,7 +836,7 @@
     src: 'Lists tutorial · Ex 4.3 (bonus)', title: 'Sublist: number of appearances of a sublist',
     intro: '<p>Write a function that takes two lists `slst` and `lst` as parameters and returns the number of times the list `slst` is present in the list `lst`.</p>' +
       ex(['# sublist [1; 2] [1; 2] ;;', '- : int = 1', '# sublist [1; 2] [1; 1; 2; 3; 3; 1; 2; 3] ;;', '- : int = 2', '# sublist [1; 2] [2; 1] ;;', '- : int = 0', '# sublist [] [1; 2];;', '- : int = 0']) +
-      '<p><em>It is the Mystery of the Oct. 2019 midterm (ex. 5, 2 points): the `mystery` function of the paper computes this number, with the first three examples.</em></p>',
+      '<p><em>It is the Mystery of the Oct. 2019 midterm (ex. 5, 2 points): the `mystery` function of the paper computes this number, with the first three examples. <a href="#p2019-ex5">See the exam exercise →</a></em></p>',
     hints: [
       'Split the problem: first a function that tells whether `slst` is a <strong>beginning</strong> (prefix) of a list.',
       'Then count the positions of `lst` where `slst` starts: at each position, the remaining list is `e :: l`.',
@@ -861,7 +861,7 @@
     intro: '<p>Write the function `assoc k lst` where `lst` is a list of pairs (key, value) sorted in increasing order with respect to keys (key). Keys are non-zero naturals. The function returns the value (value) corresponding to the key (key) `k`. It raises an exception if `k` is not valid or if no pair has the key `k`.</p><p>Application examples:</p>' +
       ex(['# assoc 5 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', '- : string = "five"', '# assoc 4 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', 'Exception: Failure "not found".',
         '# assoc (-1) [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', 'Exception: Invalid_argument "k not a natural".']) +
-      '<p><em>Word for word exercise 3 of the Nov. 2017 midterm (4 points) and of the April 2019 midterm (S1#, 5 points), same examples.</em></p>',
+      '<p><em>Word for word exercise 3 of the Nov. 2017 midterm (4 points) and of the April 2019 midterm (S1#, 5 points), same examples. <a href="#p2019d-ex3">See the exam exercise →</a></em></p>',
     hints: [
       'Two exceptions, as in the examples: invalid `k` (`Invalid_argument`, tested once in the wrapper) and missing key (`Failure`).',
       'The elements of the list are pairs: the pattern `(key, value) :: l` opens them directly.',
@@ -1150,7 +1150,7 @@
       { t: 'The code and the Caml answer', html: R('td-os-2-8') +
         '<p>`almost [1; 9] [1; 2; 3]` returns `false` without an exception: the pair (9, 2) is false before the end of the shorter list. The last phrase shows that the two lists may have different types.</p>' },
       { t: 'If the rest is tested first', html: '<p>Writing `for_all2 p r1 r2 && p e1 e2`, the end of the lists is reached before the false pair is tested: the exception is raised whereas the statement asks for `false`.</p>' + R('td-os-2-8b') },
-      { t: 'In the papers', html: '<p>Nov. 2017 midterm (ex. 4, 5 points) and Oct. 2019 midterm (ex. 4, 5 points), same statement. The official 2019 answer key writes the predicate `let near x y = (y - 2 < x) && (x < y + 2)` and the message `"for_all2: different lengths"`.</p>' }],
+      { t: 'In the papers', html: '<p>Nov. 2017 midterm (ex. 4, 5 points) and Oct. 2019 midterm (ex. 4, 5 points), same statement. The official 2019 answer key writes the predicate `let near x y = (y - 2 < x) && (x < y + 2)` and the message `"for_all2: different lengths"`. <a href="#p2019-ex4">See the exam exercise →</a></p>' }],
     traps: [
       'Testing the lengths first (with a `length` function): the exception would be raised although a false pair exists, against the statement.',
       'Using `abs`: a predefined function, forbidden. Write `x - y <= 1 && y - x <= 1`.',

@@ -13,7 +13,9 @@
    - also : fiche d'annales du même exercice (id pAAAA-exN de data/caml/ex-annales.js, qui n'a qu'une fiche pour un
      exercice retombé), near : exercice de sujet proche. Les sept reprises : assoc (2017, 2019d → p2019d-ex3),
      insert_nth (2018, 2020 → p2018-ex4), delete (p2020-ex2), remove_duplicates (p2023-ex2), second (Mystery
-     p2019d-ex4), sublist (Mystery p2019-ex5), for_all2 et almost (2017, 2019 → p2019-ex4).
+     p2019d-ex4), sublist (Mystery p2019-ex5), for_all2 et almost (2017, 2019 → p2019-ex4) ; ces sept fiches ont un
+     lien <a href="#pAAAA-exN"> vers la fiche du sujet (même page d'entraînement). topics : ids de window.CAML_TOPICS
+     (data/caml/exams.js), les mêmes que les fiches des sujets pour les exercices retombés.
    - CODE : transcriptions exactes du toplevel OCaml 4.14 (« # phrase ;; », lignes suivantes décalées de deux
      espaces, puis la réponse de Caml, sans les lignes « Line 1, characters … »), une par clé, chaque clé exécutée
      dans un environnement vide. Pour changer un code : le relancer dans ocaml et recopier phrase ET réponse.
@@ -21,8 +23,9 @@
    Blocs : R(clé, sel, opts) → boucle d'interaction <pre data-ml-repl> (sel : '3', '0-2', '0,4-6' ; opts.mode :
    'guess' pour que l'élève tape ses réponses, 'reveal' pour les dévoiler une à une), S(clé, sel) → le code seul
    des mêmes phrases (<pre data-ml>, sans invite ni réponse), ml(lignes) → code écrit à la main, ex(lignes) →
-   exemples recopiés d'un énoncé (texte du document, pas une sortie de Caml). Le fichier anglais (data/en/caml/ex-td.js) réutilise ces
-   outils et les blocs via window.CAML_TD. */
+   exemples recopiés d'un énoncé (texte du document, pas une sortie de Caml). A(…) / AE(…) : réponse attendue
+   précédée de sa phrase d'introduction (LEAD). Le fichier anglais (data/en/caml/ex-td.js) réutilise ces outils, les
+   blocs et LEAD via window.CAML_TD : le code est le même dans les deux langues. */
 (function () {
   'use strict';
   var X = window.CAML_EX = window.CAML_EX || [];
@@ -2208,7 +2211,7 @@
 
   add({
     id: 'sem-3-9', exam: null, kind: 'td', order: 1069, src: 'Séminaire · Ex 3.9',
-    title: '« Filtrage anonyme » : function sans match', topics: ['filtrage'], lvl: 1, time: 10,
+    title: '« Filtrage anonyme » : function sans match', topics: ['filtrage', 'fonctions'], lvl: 1, time: 10,
     intro: '<p>Les fonctions à écrire doivent obligatoirement utiliser du filtrage mais sans `match` !</p>',
     questions: [
       '<b>1.</b> Écrire une fonction Caml qui compte le nombre de 0 d’un couple d’entiers.' + ex(['# count (0, 0) ;;', '- : int = 2', '# count (0, 1) ;;', '- : int = 1', '# count (4, 5) ;;', '- : int = 0']),
@@ -2281,7 +2284,7 @@
 
   add({
     id: 'sem-4-6', exam: null, kind: 'td', order: 1086, src: 'Séminaire · Ex 4.6',
-    title: 'Multiplication avec + et −, et fonction chapeau', topics: ['recursivite'], lvl: 2, time: 12,
+    title: 'Multiplication avec + et −, et fonction chapeau', topics: ['recursivite', 'accumulateur'], lvl: 2, time: 12,
     intro: '<p>Écrire une fonction qui calcule x × y ((x, y) ∈ ℕ²) en n’utilisant que les opérateurs + et -. Comment gérer les cas où (x, y) ∈ ℤ² ?</p>',
     hints: [
       'x × y = x + x × (y − 1), et x × 0 = 0 : la récursion porte sur y.',
@@ -2423,7 +2426,7 @@
 
   add({
     id: 'tp-5', exam: null, kind: 'td', order: 2005, src: 'TP · Ex 5 (Level 1)',
-    title: 'Lendemain : une date valide, deux exceptions', topics: ['exceptions', 'filtrage'], lvl: 2, time: 20,
+    title: 'Lendemain : une date valide, deux exceptions', topics: ['exceptions', 'filtrage', 'fonctions'], lvl: 2, time: 20,
     intro: '<p>Écrire une fonction qui calcule la date du lendemain à partir d’une date donnée. La fonction devra déclencher une exception si la date n’est pas valide.</p>' +
       '<p>Level 1</p><ul><li>En paramètre, une date est représentée par 3 entiers : jour mois année.</li><li>En résultat, une date est représentée par un triplet d’entiers (jour, mois, année).</li></ul>' +
       ex(['# day_after 12 9 2024 ;;', '- : int * int * int = (13, 9, 2024)', '# day_after 28 2 2024 ;;', '- : int * int * int = (29, 2, 2024)', '# day_after 28 2 2025 ;;', '- : int * int * int = (1, 3, 2025)', '# day_after 31 12 2024 ;;', '- : int * int * int = (1, 1, 2025)',
@@ -2520,7 +2523,7 @@
 
   add({
     id: 'td-listes-1-4', exam: null, kind: 'td', order: 3014, src: 'TD listes · Ex 1.4',
-    title: 'ième : le ième élément, deux exceptions', topics: ['listes', 'exceptions'], lvl: 2, time: 10, near: ['p2019-ex3'],
+    title: 'ième : le ième élément, deux exceptions', topics: ['listes', 'rangs', 'exceptions', 'accumulateur'], lvl: 2, time: 10, near: ['p2019-ex3'],
     intro: '<p>Écrire une fonction qui donne la valeur du ième élément d’une liste. La fonction devra déclencher une exception `Invalid_argument` si i est négatif ou nul, ou une exception `Failure` si la liste est trop courte.</p>',
     hints: [
       'Le test sur `i` ne dépend pas de la liste : fais-le une seule fois, dans une fonction chapeau, avant d’appeler la fonction récursive.',
@@ -2571,10 +2574,10 @@
 
   add({
     id: 'td-listes-1-6', exam: null, kind: 'td', order: 3016, src: 'TD listes · Ex 1.6 (bonus)',
-    title: 'Second : le deuxième plus petit élément', topics: ['listes', 'exceptions', 'accumulateur'], lvl: 3, time: 15, also: ['p2019d-ex4'],
+    title: 'Second : le deuxième plus petit élément', topics: ['listes', 'exceptions', 'accumulateur', 'mystery'], lvl: 3, time: 15, also: ['p2019d-ex4'],
     intro: '<p>Écrire une fonction qui retourne le deuxième plus petit élément d’une liste s’il existe.</p><p>Exemples d’application :</p>' +
       ex(['# second [1; 3; 4; 2] ;;', '- : int = 2', '# second [3.5; 8.2; 9.5; 4.0];;', '- : float = 4.0', "# second ['a'];;", 'Exception: Failure "second: Not enough values"']) +
-      '<p><em>C’est la fonction `mystery` du contrôle d’avril 2019 (S1#, ex. 4, 2 points), à lire et évaluer.</em></p>',
+      '<p><em>C’est la fonction `mystery` du contrôle d’avril 2019 (S1#, ex. 4, 2 points), à lire et évaluer. <a href="#p2019d-ex4">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Parcours la liste une seule fois en gardant deux valeurs : la plus petite vue jusqu’ici et la deuxième plus petite.',
       'Ces deux valeurs sont des paramètres supplémentaires d’une fonction auxiliaire. Pour les initialiser, il faut les deux premiers éléments : moins de deux éléments, c’est l’exception.',
@@ -2598,7 +2601,7 @@
 
   add({
     id: 'td-listes-2-1', exam: null, kind: 'td', order: 3021, src: 'TD listes · Ex 2.1',
-    title: 'Liste arithmétique', topics: ['listes', 'accumulateur'], lvl: 2, time: 8,
+    title: 'Liste arithmétique', topics: ['listes', 'construire', 'accumulateur'], lvl: 2, time: 8,
     intro: '<p>Écrire la fonction `arith_list n a1 r` qui construit la liste des n premiers termes de la suite arithmétique de premier terme `a1` et de raison `r`.</p><p>Exemples d’applications :</p>' +
       ex(['# arith_list 12 2 1;;', '- : int list = [2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13]', '# arith_list 11 0 3;;', '- : int list = [0; 3; 6; 9; 12; 15; 18; 21; 24; 27; 30]']),
     hints: [
@@ -2620,7 +2623,7 @@
 
   add({
     id: 'td-listes-2-2', exam: null, kind: 'td', order: 3022, src: 'TD listes · Ex 2.2',
-    title: 'Concaténation : append', topics: ['listes', 'deux-listes'], lvl: 1, time: 6,
+    title: 'Concaténation : append', topics: ['listes', 'construire', 'deux-listes'], lvl: 1, time: 6,
     intro: '<p>Écrire une fonction qui concatène deux listes (l’équivalent de l’opérateur `@`).</p><p>Exemples d’applications :</p>' +
       ex(['# append [3;1;2] [8;4];;', '- : int list = [3; 1; 2; 8; 4]', '# append [] [9;7;8];;', '- : int list = [9; 7; 8]']),
     hints: [
@@ -2666,9 +2669,9 @@
 
   add({
     id: 'td-listes-3-2', exam: null, kind: 'td', order: 3032, src: 'TD listes · Ex 3.2',
-    title: 'Suppression dans une liste triée', topics: ['listes', 'listes-triees'], lvl: 2, time: 8, also: ['p2020-ex2'],
+    title: 'Suppression dans une liste triée', topics: ['listes', 'listes-triees', 'construire'], lvl: 2, time: 8, also: ['p2020-ex2'],
     intro: '<p>Écrire une fonction qui supprime d’une liste `lst` triée (en ordre croissant) la première occurrence d’un élément `x` (s’il est présent).</p>' +
-      '<p><em>Même exercice au partiel de nov. 2020 (ex. 2, 4 points) : « Écrire la fonction `delete x list` qui supprime de la liste `list` triée en ordre croissant la première occurrence de la valeur `x` (si elle est présente). »</em></p>',
+      '<p><em>Même exercice au partiel de nov. 2020 (ex. 2, 4 points) : « Écrire la fonction `delete x list` qui supprime de la liste `list` triée en ordre croissant la première occurrence de la valeur `x` (si elle est présente). » <a href="#p2020-ex2">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Seule la première occurrence part : une fois `x` trouvé, le reste de la liste est rendu tel quel.',
       'La liste est triée : si la tête est déjà plus grande que `x`, `x` n’est pas plus loin. On peut s’arrêter.',
@@ -2690,11 +2693,11 @@
 
   add({
     id: 'td-listes-3-3', exam: null, kind: 'td', order: 3033, src: 'TD listes · Ex 3.3',
-    title: 'Insertion à la ième place : insert_nth', topics: ['listes', 'exceptions'], lvl: 2, time: 12, also: ['p2018-ex4'],
+    title: 'Insertion à la ième place : insert_nth', topics: ['listes', 'rangs', 'exceptions', 'construire', 'filtrage'], lvl: 2, time: 12, also: ['p2018-ex4'],
     intro: '<p>Écrire la fonction `insert_nth x i lst` qui insère la valeur `x` à la ième place dans la liste `lst`. La fonction devra déclencher une exception `Invalid_argument` si `i` est négatif ou nul, ou une exception `Failure` si la liste est trop courte.</p><p>Exemples d’applications :</p>' +
       ex(['# insert_nth 0 5 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 0; 5; 6; 7; 8; 9]', '# insert_nth 0 10 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', '- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 0]',
         '# insert_nth 0 12 [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Failure "out of bound".', '# insert_nth 0 (-2) [1; 2; 3; 4; 5; 6; 7; 8; 9];;', 'Exception: Invalid_arg "negative rank".']) +
-      '<p><em>Mot pour mot l’exercice 4 du partiel d’oct. 2018 et l’exercice 3 du partiel de nov. 2020 (5 points chacun), mêmes exemples.</em></p>',
+      '<p><em>Mot pour mot l’exercice 4 du partiel d’oct. 2018 et l’exercice 3 du partiel de nov. 2020 (5 points chacun), mêmes exemples. <a href="#p2018-ex4">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Le rang se teste une fois, dans une fonction chapeau : `Invalid_argument` si `i ≤ 0`.',
       'Regarde le deuxième exemple : insérer au rang 10 dans une liste de 9 éléments est permis (ajout à la fin). Le cas « rang atteint » doit donc passer avant le cas `[]`.',
@@ -2719,14 +2722,14 @@
 
   add({
     id: 'td-listes-3-4', exam: null, kind: 'td', order: 3034, src: 'TD listes · Ex 3.4',
-    title: 'Suppression des doublons : remove_duplicates', topics: ['listes'], lvl: 2, time: 12, also: ['p2023-ex2'],
+    title: 'Suppression des doublons : remove_duplicates', topics: ['listes', 'construire'], lvl: 2, time: 12, also: ['p2023-ex2'],
     intro: '<p>Écrire la fonction `remove_duplicates lst` qui prend en paramètre :</p><ul><li>une liste `lst`</li></ul><p>et qui supprime tous les doublons de la liste `lst`.</p>' +
       ex(['# remove_duplicates [3; 1; 2; 2; 3; 1; 4; 5; 5];;', '- : int list = [3; 1; 2; 4; 5]',
         '# remove_duplicates ["cherry"; "banana"; "apple"; "apple"; "banana"; "cherry"];;', '- : string list = ["cherry"; "banana"; "apple"]',
         '# remove_duplicates [42; 13; 42; 7; 7; 13; 42; 42];;', '- : int list = [42; 13; 7]',
         '# remove_duplicates ["dog"; "cat"; "dog"; "rat"; "rat"; "bat"];;', '- : string list = ["dog"; "cat"; "rat"; "bat"]',
         '# remove_duplicates [true; true; false; true; false; true; false];;', '- : bool list = [true; false]']) +
-      '<p><em>Question 2 de l’examen d’oct. 2023 (ex. 2, 5,5 points), avec les mêmes exemples. Le sujet faisait d’abord écrire `remove_x x lst`, qui supprime toutes les occurrences de `x`, et imposait de l’utiliser.</em></p>',
+      '<p><em>Question 2 de l’examen d’oct. 2023 (ex. 2, 5,5 points), avec les mêmes exemples. Le sujet faisait d’abord écrire `remove_x x lst`, qui supprime toutes les occurrences de `x`, et imposait de l’utiliser. <a href="#p2023-ex2">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Regarde les exemples : quelle occurrence est gardée, la première ou la dernière ?',
       'On garde la tête `e`. Ses copies plus loin dans la liste doivent disparaître avant de continuer : écris d’abord une fonction qui retire toutes les occurrences d’une valeur.',
@@ -2748,7 +2751,7 @@
 
   add({
     id: 'td-listes-3-5', exam: null, kind: 'td', order: 3035, src: 'TD listes · Ex 3.5',
-    title: 'Inverse : avec @, puis avec un accumulateur', topics: ['listes', 'accumulateur'], lvl: 2, time: 12,
+    title: 'Inverse : avec @, puis avec un accumulateur', topics: ['listes', 'construire', 'accumulateur'], lvl: 2, time: 12,
     intro: '<p>Écrire une fonction qui inverse une liste :</p>',
     questions: ['<b>1.</b> en utilisant l’opérateur `@` ;', '<b>2.</b> sans utiliser l’opérateur `@`.', 'Que pensez-vous de la complexité de ces deux fonctions ?'],
     hints: [
@@ -2773,7 +2776,7 @@
 
   add({
     id: 'td-listes-3-6', exam: null, kind: 'td', order: 3036, src: 'TD listes · Ex 3.6',
-    title: 'Positif : moins de k entiers positifs', topics: ['listes', 'exceptions', 'listes-triees'], lvl: 3, time: 15, near: ['p2022-ex4'],
+    title: 'Positif : moins de k entiers positifs', topics: ['listes', 'exceptions', 'listes-triees', 'accumulateur'], lvl: 3, time: 15, near: ['p2022-ex4'],
     questions: [
       '<b>1.</b> Écrire la fonction `count_positive lst k` qui prend en paramètre :<ul><li>une liste `lst`</li><li>un entier `k`</li></ul>et qui renvoie `true` si la list `lst` contient strictement moins de `k` entiers positifs, `false` sinon. 0 n’est pas considéré comme positif. La fonction devra déclencher une exception `Invalid_argument` si `k` est négatif ou nul ou si `lst` est vide.<p>Exemples d’application :</p>' +
         ex(['# count_positive [] 42;;', 'Exception: Invalid_argument "count_positive: k <= 0 or empty list".', '# count_positive [8; 12; -2; 6; 0] 4;;', '- : bool = true', '# count_positive [8; 12; -2; 6; 0] 3;;', '- : bool = false']),
@@ -2821,7 +2824,7 @@
 
   add({
     id: 'td-listes-4-2', exam: null, kind: 'td', order: 3042, src: 'TD listes · Ex 4.2',
-    title: 'Communs : éléments communs à deux listes croissantes', topics: ['listes', 'deux-listes', 'listes-triees'], lvl: 2, time: 12,
+    title: 'Communs : éléments communs à deux listes croissantes', topics: ['listes', 'deux-listes', 'listes-triees', 'construire'], lvl: 2, time: 12,
     intro: '<p>Soient deux listes d’éléments croissantes. Écrire une fonction qui construit la liste des éléments communs aux deux listes.</p><p>Exemples d’application :</p>' +
       ex(['# shared [1; 3; 6; 6; 8; 9] [2; 5; 6; 6; 8; 9] ;;', '- : int list = [6; 6; 8; 9]', '# shared [1; 2; 3] [3] ;;', '- : int list = [3]', '# shared [1; 6; 6; 7; 7; 7; 7; 9] [2; 5; 6; 6; 6; 8; 9];;', '- : int list = [6; 6; 9]']),
     hints: [
@@ -2847,7 +2850,7 @@
     title: 'Sublist : nombre d’apparitions d’une sous-liste', topics: ['listes', 'deux-listes', 'mystery'], lvl: 3, time: 15, also: ['p2019-ex5'],
     intro: '<p>Ecrire une fonction qui prend en paramètre deux listes `slst` et `lst` et qui retourne le nombre de fois où la liste `slst` est présente dans la liste `lst`.</p>' +
       ex(['# sublist [1; 2] [1; 2] ;;', '- : int = 1', '# sublist [1; 2] [1; 1; 2; 3; 3; 1; 2; 3] ;;', '- : int = 2', '# sublist [1; 2] [2; 1] ;;', '- : int = 0', '# sublist [] [1; 2];;', '- : int = 0']) +
-      '<p><em>C’est le Mystery du partiel d’oct. 2019 (ex. 5, 2 points) : la fonction `mystery` du sujet calcule ce nombre, avec les trois premiers exemples.</em></p>',
+      '<p><em>C’est le Mystery du partiel d’oct. 2019 (ex. 5, 2 points) : la fonction `mystery` du sujet calcule ce nombre, avec les trois premiers exemples. <a href="#p2019-ex5">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Découpe le problème : d’abord une fonction qui dit si `slst` est un <strong>début</strong> (préfixe) d’une liste.',
       'Puis compte les positions de `lst` où `slst` commence : à chaque position, la liste qui reste est `e :: l`.',
@@ -2870,11 +2873,11 @@
 
   add({
     id: 'td-listes-5-1', exam: null, kind: 'td', order: 3051, src: 'TD listes · Ex 5.1',
-    title: 'Association : assoc k lst', topics: ['listes', 'listes-triees', 'exceptions'], lvl: 2, time: 12, also: ['p2019d-ex3'],
+    title: 'Association : assoc k lst', topics: ['listes', 'listes-triees', 'exceptions', 'filtrage', 'accumulateur'], lvl: 2, time: 12, also: ['p2019d-ex3'],
     intro: '<p>Écrire la fonction `assoc k lst` où `lst` est une liste de couples (key, value) triés par clés (key) croissantes. Les clés sont des entiers naturels non nuls. Elle retourne la valeur (value) associée à la clé (key) `k`. Si `k` n’est pas valide ou si aucun couple n’a pour clé `k`, elle déclenche une exception.</p><p>Exemples d’applications :</p>' +
       ex(['# assoc 5 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', '- : string = "five"', '# assoc 4 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', 'Exception: Failure "not found".',
         '# assoc (-1) [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")];;', 'Exception: Invalid_argument "k not a natural".']) +
-      '<p><em>Mot pour mot l’exercice 3 du contrôle de nov. 2017 (4 points) et du contrôle d’avril 2019 (S1#, 5 points), mêmes exemples.</em></p>',
+      '<p><em>Mot pour mot l’exercice 3 du contrôle de nov. 2017 (4 points) et du contrôle d’avril 2019 (S1#, 5 points), mêmes exemples. <a href="#p2019d-ex3">Voir la fiche du sujet →</a></em></p>',
     hints: [
       'Deux exceptions, comme dans les exemples : `k` invalide (`Invalid_argument`, testé une fois dans le chapeau) et clé absente (`Failure`).',
       'Les éléments de la liste sont des couples : le motif `(key, value) :: l` les ouvre directement.',
@@ -2897,7 +2900,7 @@
 
   add({
     id: 'td-listes-5-2', exam: null, kind: 'td', order: 3052, src: 'TD listes · Ex 5.2',
-    title: 'Aplatie : flatten', topics: ['listes'], lvl: 2, time: 8,
+    title: 'Aplatie : flatten', topics: ['listes', 'construire'], lvl: 2, time: 8,
     intro: '<p>Écrire la fonction Caml `flatten` qui "aplatit" une liste de listes : toutes les sous-listes sont concaténées entre elles.</p><p>Exemples d’application :</p>' +
       ex(['# flatten [[1;2]; [3]; [4;5;6]];;', '- : int list = [1; 2; 3; 4; 5; 6]', "# flatten [[(1,'a'); (2,'b')]; [(3,'c'); (4,'d'); (5,'e')]; []];;", "- : (int * char) list = [(1, 'a'); (2, 'b'); (3, 'c'); (4, 'd'); (5, 'e')]"]),
     hints: [
@@ -2942,7 +2945,7 @@
 
   add({
     id: 'td-listes-6-2', exam: null, kind: 'td', order: 3062, src: 'TD listes · Ex 6.2 (bonus)',
-    title: 'Suite « look and say »', topics: ['listes'], lvl: 3, time: 20,
+    title: 'Suite « look and say »', topics: ['listes', 'construire', 'accumulateur'], lvl: 3, time: 20,
     intro: '<p>Soit la suite suivante :</p>' + ml(['ligne 0 : 1          contient 1 "1"', 'ligne 1 : 11         contient 2 "1"', 'ligne 2 : 21         contient 1 "2" suivi de 1 "1"', 'ligne 3 : 1211       contient 1 "1" suivi de 1 "2" suivi de 2 "1"', 'ligne 4 : 111221     ...', 'ligne 5 : 312211', 'ligne 6 : 13112221', '...']) +
       '<p>Écrire une fonction `sequence` qui retourne la nème ligne de cette suite, sous forme d’une liste d’entiers.</p><p>Exemples d’applications :</p>' +
       ex(['# sequence 5 ;;', '- : int list = [3; 1; 2; 2; 1; 1]', '# sequence 0 ;;', '- : int list = [1]']),
@@ -3039,7 +3042,7 @@
 
   add({
     id: 'td-os-2-1', exam: null, kind: 'td', order: 4021, src: 'TD ordre supérieur · Ex 2.1',
-    title: 'map : appliquer f à chaque élément', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6,
+    title: 'map : appliquer f à chaque élément', topics: ['ordre-superieur', 'listes', 'construire'], lvl: 1, time: 6,
     intro: '<p>Pour chaque fonction, donner plusieurs exemples d’utilisation.</p><p>Écrire la fonction `map` qui applique une fonction `f` donnée à tous les éléments d’une liste et qui construit la liste des valeurs retournées.</p><p>`map f [a1; ...; an]` retourne `[f a1; f a2; ...; f an]`</p>',
     hints: [
       'Le résultat est une liste de même longueur : un élément produit par élément lu.',
@@ -3137,7 +3140,7 @@
 
   add({
     id: 'td-os-2-6', exam: null, kind: 'td', order: 4026, src: 'TD ordre supérieur · Ex 2.6',
-    title: 'filter : garder les éléments qui vérifient p', topics: ['ordre-superieur', 'listes'], lvl: 1, time: 6, near: ['p2023-ex2'],
+    title: 'filter : garder les éléments qui vérifient p', topics: ['ordre-superieur', 'listes', 'construire'], lvl: 1, time: 6, near: ['p2023-ex2'],
     intro: '<p>Écrire une fonction qui, à partir d’une liste, construit une nouvelle liste contenant les éléments qui satisfont un prédicat `p` donné.</p>',
     hints: [
       'Parcours complet : chaque élément est gardé ou non, puis on continue.',
@@ -3156,7 +3159,7 @@
 
   add({
     id: 'td-os-2-7', exam: null, kind: 'td', order: 4027, src: 'TD ordre supérieur · Ex 2.7',
-    title: 'partition : deux listes selon un prédicat', topics: ['ordre-superieur', 'listes', 'accumulateur'], lvl: 2, time: 12, near: ['p2021-ex4'],
+    title: 'partition : deux listes selon un prédicat', topics: ['ordre-superieur', 'listes', 'construire', 'accumulateur'], lvl: 2, time: 12, near: ['p2021-ex4'],
     intro: '<p>Écrire une fonction qui, à partir d’une liste `l`, construit une paire de listes `(l1, l2)`, où `l1` est la liste contenant les éléments qui satisfont un prédicat `p` donné, et `l2` la liste des éléments ne vérifiant pas `p`.</p><p>Bonus : Préserver l’ordre initial des éléments dans chacune des deux listes résultantes.</p>',
     hints: [
       'Le résultat est un couple de listes. Pour la liste vide : `([], [])`.',
@@ -3178,7 +3181,7 @@
 
   add({
     id: 'td-os-2-8', exam: null, kind: 'td', order: 4028, src: 'TD ordre supérieur · Ex 2.8',
-    title: 'for_all2 et almost', topics: ['ordre-superieur', 'deux-listes', 'exceptions'], lvl: 2, time: 15, also: ['p2019-ex4'],
+    title: 'for_all2 et almost', topics: ['listes', 'ordre-superieur', 'deux-listes', 'exceptions'], lvl: 2, time: 15, also: ['p2019-ex4'],
     questions: [
       '<b>1.</b> Écrire la fonction Caml `for_all2` dont les spécifications sont les suivantes :<ul><li>Elle prend en paramètre une fonction booléenne (un prédicat) à deux paramètres : `p` ainsi que deux listes : [a1; a2; ⋯; an] et [b1; b2; ⋯; bn].</li><li>Elle vérifie si toutes les paires ai bi vérifient le prédicat `p`.</li><li>Si elle trouve une paire telle que `p ai bi` est faux, elle retourne faux. Sinon, elle déclenche une exception `Invalid_argument` si les deux listes sont de longueurs différentes.</li></ul>',
       '<b>2.</b> Utiliser la fonction `for_all2` pour définir une fonction qui vérifie si deux listes d’entiers sont "quasi-identiques" : la différence entre deux valeurs à la même place ne peut dépasser 1. Si aucune paire dont la différence dépasse 1 n’a été trouvée et si les deux listes sont de longueurs différentes, elle déclenche une exception.<p>Exemples d’utilisation :</p>' +
@@ -3193,7 +3196,7 @@
       { t: 'Le code et la réponse de Caml', html: R('td-os-2-8') +
         '<p>`almost [1; 9] [1; 2; 3]` rend `false` sans exception : la paire (9, 2) est fausse avant la fin de la liste courte. La dernière phrase montre que les deux listes peuvent avoir des types différents.</p>' },
       { t: 'Si on teste la suite d’abord', html: '<p>En écrivant `for_all2 p r1 r2 && p e1 e2`, la fin des listes est atteinte avant de tester la paire fausse : l’exception part alors que l’énoncé demande `false`.</p>' + R('td-os-2-8b') },
-      { t: 'Dans les sujets', html: '<p>Contrôle de nov. 2017 (ex. 4, 5 points) et partiel d’oct. 2019 (ex. 4, 5 points), même énoncé. Le corrigé officiel de 2019 écrit le prédicat `let near x y = (y - 2 < x) && (x < y + 2)` et le message `"for_all2: different lengths"`.</p>' }],
+      { t: 'Dans les sujets', html: '<p>Contrôle de nov. 2017 (ex. 4, 5 points) et partiel d’oct. 2019 (ex. 4, 5 points), même énoncé. Le corrigé officiel de 2019 écrit le prédicat `let near x y = (y - 2 < x) && (x < y + 2)` et le message `"for_all2: different lengths"`. <a href="#p2019-ex4">Voir la fiche du sujet →</a></p>' }],
     answer: A(R('td-os-2-8', '0-1')),
     traps: [
       'Tester les longueurs d’abord (avec une fonction `length`) : l’exception partirait alors qu’une paire fausse existe, contre l’énoncé.',
