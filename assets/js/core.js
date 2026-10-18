@@ -127,7 +127,18 @@
         { id: 'piles', title: 'Piles, files, ensembles', path: 'taa/cours-3-piles-files.html', sections: 8 }
       ]
     },
-    { id: 'caml', name: 'Algo · Caml', short: 'Caml', status: 'soon', annalesId: 'algo' },
+    {
+      id: 'caml', name: 'Algo · Caml', short: 'Caml', code: 'ALGO-S1 · ECUE Caml',
+      course: 'Caml et récursivité', path: 'caml/index.html', dir: 'caml/', status: 'ready',
+      exam: 'Écrit · 1 h 30 · fin octobre',
+      annalesId: 'algo', train: 'caml/entrainement.html', fiche: 'caml/fiche.html', open: 'Ouvrir Caml',
+      chapters: [
+        { id: 'bases', title: 'Les bases du langage', path: 'caml/cours-1-bases.html', sections: 8 },
+        { id: 'recursivite', title: 'La récursivité', path: 'caml/cours-2-recursivite.html', sections: 8 },
+        { id: 'listes', title: 'Les listes', path: 'caml/cours-3-listes.html', sections: 8 },
+        { id: 'ordre', title: 'L’ordre supérieur', path: 'caml/cours-4-ordre-superieur.html', sections: 8 }
+      ]
+    },
     { id: 'archi', name: 'Architecture', short: 'Archi', status: 'soon', annales: 'Archi' }
   ];
   /* textes anglais du registre */
@@ -141,7 +152,9 @@
     taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
       exam: 'Written, on the exam paper · 1 h this year according to Moodle (30 min, out of 10, in 2024)',
       chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
-    caml: { name: 'Algo · Caml', short: 'Caml' },
+    caml: { name: 'Algo · Caml', short: 'Caml', course: 'Caml and recursion', open: 'Open Caml',
+      exam: 'Written · 1 h 30 · end of October',
+      chapters: ['Language basics', 'Recursion', 'Lists', 'Higher-order functions'] },
     archi: { name: 'Architecture', short: 'Archi' }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {
