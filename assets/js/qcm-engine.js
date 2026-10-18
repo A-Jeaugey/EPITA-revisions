@@ -196,7 +196,7 @@
     var list = document.createElement('div'); list.className = 'qz-list'; host.appendChild(list);
     qs.forEach(function (q, i) {
       list.appendChild(Card(q, {
-        index: i, total: qs.length, mode: 'check', shuffle: false,
+        index: i, total: qs.length, mode: 'check', shuffle: true,
         onAnswer: function (ok) {
           answered++; if (ok) score++;
           host.querySelector('.qz-check-s').textContent = score + ' / ' + qs.length + (answered === qs.length ? T(score === qs.length ? ' · parfait' : ' · relis les explications') : '');
