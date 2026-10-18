@@ -17,9 +17,10 @@ Tout le site existe en français et en anglais (section anglophone) : bouton **F
 | `elec/` | Électronique (Outils d’analyse de circuits) : accueil, 3 chapitres de cours interactifs, méthodes, entraînement, annales commentées, fiche A4 |
 | `physique/` | Physique · Mécanique du point : accueil, 4 chapitres (cinématique cartésienne, forces et lois de Newton, travail et énergie, coordonnées polaires), méthodes de rédaction, entraînement (partiels et TD corrigés), annales commentées, fiche A4 |
 | `caml/` | Algo · Caml et récursivité : accueil, 4 chapitres (bases, récursivité, listes, ordre supérieur) avec réponses de Caml vérifiées et dérouleur d’appels, méthodes, entraînement (sujets 2017-2024, séminaire et TD corrigés), annales commentées, fiche A4 |
+| `archi/` | Architecture · Numération : accueil (test Moodle et examen), 4 chapitres (bases et conversions, opérations posées, entiers signés et non signés, IEEE 754) avec outils pas à pas, méthodes, entraînement (sujets 2016-2025, TD, générateurs), annales commentées, fiche A4 |
 | `taa/` | Algo · Types algébriques abstraits : accueil, 3 chapitres (types abstraits, listes, piles et files), méthodes, entraînement avec générateurs, annales commentées, fiche A4 |
 
-Les autres matières (maths, archi…) arrivent quand leurs cours sont ajoutés ; leurs annales
+Les autres matières (maths…) arrivent quand leurs cours sont ajoutés ; leurs annales
 sont déjà listées dans `annales/`.
 
 ## L’ouvrir
@@ -38,6 +39,8 @@ choix de langue est retenu.
 - Cours, TD 0 et TD 1 d’électronique de la promo 2031 (Moodle EPITA).
 - Séminaire, mémo, TP et TD (listes, ordre supérieur) de Caml et récursivité de la promo 2031 (Moodle EPITA) ; tout le
   code Caml du site est exécuté avec OCaml 4.14 et ses réponses recopiées telles quelles.
+- Chapitre 1, TD 1 et 2 et examen B1 2025-2026 d’Architecture · Numération (Moodle EPITA) ; tous les nombres du site
+  sont recalculés par programme.
 - Fiches de synthèse et types abstraits du cours TAA de la promo 2031 (Moodle EPITA, fiches de Nathalie Bouquet).
 - Sujets de partiels et QCM hebdomadaires des promos précédentes :
   [Epidocs · Past-Exams](https://github.com/Epidocs/Past-Exams) et [HyperAnnales](https://annales.hyperion.tf/).
@@ -48,13 +51,15 @@ choix de langue est retenu.
 ```
 assets/css/   shell.css (barre de navigation), site.css (accueil, QCM, annales), elec.css (cahier de labo élec),
               circuit.css (schémas), qcm.css (cartes de questions), taa.css (cahier de spécification TAA),
-              physique.css (plaque chronophotographique), caml.css (boucle d’interaction Caml)
+              physique.css (plaque chronophotographique), caml.css (boucle d’interaction Caml),
+              archi.css (fiche technique de processeur)
 assets/js/    core.js (stockage, thème, progression, navigation), circuit.js (schémas SVG à partir d’une description),
               qcm-engine.js (moteur de questions), elec.js (comportements des pages élec),
               spec.js (mise en forme des spécifications), taa.js (réécriture de termes, bancs TAA),
               meca.js (pages de physique, repères, trajectoires, vecteurs),
-              caml.js (coloration, boucle d’interaction, dérouleur d’appels, filtrage pas à pas)
-data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js, taa/*.js, physique/*.js, caml/*.js (sujets et exercices)
+              caml.js (coloration, boucle d’interaction, dérouleur d’appels, filtrage pas à pas),
+              archi.js (arithmétique exacte, opérations posées, registre de bits, mot IEEE 754)
+data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js, taa/*.js, physique/*.js, caml/*.js, archi/*.js (sujets et exercices)
 data/en/      textes anglais des mêmes fichiers, posés par-dessus le français (pages *.en.html)
 tools/        scripts de génération et de vérification
 ```

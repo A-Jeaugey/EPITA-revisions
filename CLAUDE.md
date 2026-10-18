@@ -32,6 +32,12 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   (`# phrase ;;` puis la réponse de Caml), `R.caml.unroll` (pile ou arbre des appels, à partir de `R.caml.trace`),
   `R.caml.matcher` (filtrage pas à pas), `R.caml.apply` (lire un type, application partielle). Tout bloc ajouté par
   script est coloré (MutationObserver). Thème `caml.css` : la boucle d’interaction, famille Recursive.
+- `archi.js` (pages d’Archi, API documentée en tête du fichier) : arithmétique exacte `R.archi` (BigInt et fractions,
+  jamais de flottants JS : `toBase`, `convert`, `packs`, `addCols`, `subCols`, `mulCols`, `divCols`, `encode`,
+  `decodeS`, `addN`, `subN`, `ieeeEncode`, `ieeeDecode`, `fmt` / `num` : virgule en français, point en anglais), et
+  outils déclaratifs `<div data-archi="posed|divs|mults|groups|converter|drill|place|register|wheel|ieee"
+  data-opts='{…}'>`, montés aussi quand ils sont ajoutés par script. Thème `archi.css` : fiche technique de
+  processeur (Intel One Mono pour les nombres).
 
 ## Deux langues
 
@@ -100,6 +106,17 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   exercices retombés tels quels (assoc, for_all2, insert_nth) n’ont qu’une fiche. Corrigés officiels fautifs :
   2019 `remove_nth` (`Failure` au lieu d’`Invalid_argument`), 2018 `encode` (ne compile pas). La page Moodle
   « Conseils pour la récursivité » écrit `mult_rec (x, y-1)` : coquille. Éviter `@` dans les corrigés.
+- **Archi** (Architecture des ordinateurs · Numération) : cours `archi/cours-1-bases`, `-2-operations`, `-3-entiers`,
+  `-4-flottants` (`data-done="archi:<chapitre>:sN"`, chapitres bases, operations, entiers, flottants) ; exercices
+  `window.ARCHI_EX` (`data/archi/ex-annales.js` : fiches des 10 sujets, ids `pAAAA-exN`, p2025 = examen B1 2025-2026
+  du Moodle ; `ex-td.js` : TD 1 et 2, `td1-ex1`…, `near` vers un sujet) ; sujets `ARCHI_EXAMS` (`prog`, `progPts`) et
+  notions `ARCHI_TOPICS` (`data/archi/exams.js`) ; QCM `data/qcm/archi.js` (`archi-cN-…`) et `archi-annales.js`
+  (`archi-pAAAA-qN`). **Tout nombre est recalculé par programme** (`data-eq` dans les pages, relus par un script).
+  Points vérifiés : « n chiffres après la virgule » = troncature, jamais d’arrondi ; IEEE 754 aux 3 derniers sujets
+  (encoder en simple : S / E / M en binaire sans espace ; décoder du double : « k × 2ⁿ », k impair, ou NaN) ; tableau
+  8 bits avec ERREUR en cas de dépassement ; extension de signe, BCD, Gray, ASCII jamais tombés. Le chapitre 2 du
+  cours (flottants) et le TD 3 n’ont pas été fournis : le cours 4 suit la norme et les corrigés, et le dit. Coquilles
+  du chapitre 1 relevées (0,4025 pour 0,40625, « 0 − 1 = 1 → on emprunte »…) : ne pas les recopier.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
