@@ -136,7 +136,7 @@
         { ex: '4', t: 'Opérations posées : soustraction binaire, addition hexadécimale, division binaire (l’addition en base 8 est hors programme)', pts: 4, topics: OPS, card: 'p2017-ex4', prog: true },
         { ex: '5', t: 'Mémoires : fils d’adresse, adresses hautes, plan mémoire', pts: 4, topics: HP, prog: false }] },
 
-    { key: 'p2016', title: 'Midterm S1 de 2016-2017', meta: 'promo 2021 · 1 h 30 · 20 points', progPts: '≈ 11 / 20',
+    { key: 'p2016', title: 'Contrôle S1 de 2016-2017 (en anglais)', meta: 'promo 2021 · 1 h 30 · 20 points', progPts: '≈ 11 / 20',
       note: 'Sujet et corrigé en anglais seulement (énoncés traduits sur le site). À l’exercice 2 (hors programme), le sujet écrit « 4³⁷ bytes » et le corrigé « 2³⁷ bytes = 128 GiB » : coquille du sujet. Hors programme cette année : les exercices 1, 2 et 4, et l’addition en base 8 de l’exercice 5. Corrigé officiel juste.',
       files: f4(2021, null, null, 'midterm-2021-s1-archi-subject-en.pdf', 'midterm-2021-s1-archi-correction-en.pdf'),
       parts: [

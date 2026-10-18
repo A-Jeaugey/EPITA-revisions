@@ -284,7 +284,7 @@
       var q2 = txt.q2 + tbl(I.h2, spec.dec.map(function (r) { return tr([td(w8(r[0].replace(/ /g, NB))), td('')]); }));
       var sol = spec.enc.map(function (r) { return encStep(r, (txt.notes || {})[r[0]]); }).concat(spec.dec.map(function (r) { return decStep(r, (txt.notes || {})[r[0]]); }));
       var a1 = tbl([I.field, I.val], spec.enc.map(function (r) {
-        return grp(pr(r[0]), 2, [tr([td('S'), td(w8(r[1]), 'r')]), tr([td('E'), td(w8(r[2]), 'r')]), tr([td('M'), td(w8(r[3]), 'r')])], { t: 'ieeeE', x: r[0] });
+        return grp(pr(r[0]), 2, [tr([td('S'), td(w8(r[1]), 'r')]), tr([td('E'), td(w8(r[2]), 'r')]), tr([td('M'), td('<span class="bn" style="white-space:normal;word-break:break-all">' + r[3] + '</span>', 'r')])], { t: 'ieeeE', x: r[0] });
       }));
       var a2 = tbl(I.h2, spec.dec.map(function (r) { return tr([td(w8(r[0], true)), td(kv(r[1]), 'r')], { t: 'ieeeD', w: r[0] }); }));
       return out(txt, { questions: [q1, q2], solution: sol, answer: P(I.a1) + a1 + P(I.a2) + a2 });
@@ -293,7 +293,6 @@
       var x = r[0], E10 = parseInt(r[2], 2), e = E10 - 127, m = r[3].replace(/0+$/, ''), I = L.ie, h = [];
       h.push(P(I.enc(pr(x, 10), bn(binOf(m, e), 2), bn('1' + (m ? ',' + m : ''), 2) + ' ' + TIMES + ' ' + pow2(e), e, E10, w8(r[2]), m ? w8(m) : '0', r[1])));
       h.push(tool('ieee', { fmt: 'single', value: canon(x).replace(',', L.sep), input: false }));
-      h.push(P(I.copy(w8(r[1]), w8(r[2]), w8(r[3]))));
       if (note) h.push(P(note));
       return { t: I.encTitle(prT(x)), html: h.join('') };
     }
@@ -385,7 +384,7 @@
       title: function (i, s) { return 'Ligne ' + i + ' · ' + s; },
       read: function (w, u, s, c) {
         return s >= 0 ? w + ' : bit de poids fort 0, il vaut ' + u + ' en non signé comme en signé.'
-          : w + ' vaut ' + u + ' en non signé ; en signé, son bit de poids fort est 1 : C2(' + w + ') = ' + c + ' = ' + (-s) + ', il vaut ' + s + '.';
+          : w + ' vaut ' + u + ' en non signé ; en signé, son bit de poids fort est 1 : C2(' + w + ') = ' + c + ' = ' + (-s) + ', il vaut ' + String(s).replace('-', '−') + '.';
       },
       addRes: function (r, carry) { return carry ? 'Le 9<sup>e</sup> bit est la retenue sortante : il est perdu, il reste ' + r + ' sur 8 bits. Cette retenue signale un dépassement non signé.' : 'Pas de retenue sortante : le résultat sur 8 bits est ' + r + '.'; },
       subRes: function (r, borrow) { return borrow ? 'Le premier nombre est le plus petit en non signé : la soustraction emprunte au-delà du bit 7 (le 1 ajouté devant, qui n’existe pas sur 8 bits). On garde les 8 bits : ' + r + '. Cet emprunt sortant signale un dépassement non signé.' : 'Pas d’emprunt au-delà du bit 7 : le résultat sur 8 bits est ' + r + '.'; },
@@ -407,7 +406,6 @@
         return x + ' = ' + bin + ' = ' + nrm + ' : on déplace la virgule derrière le premier 1, de ' + Math.abs(e) + ' rang' + (Math.abs(e) > 1 ? 's' : '') + ' vers la ' + (e >= 0 ? 'gauche' : 'droite') + (e >= 0 ? '' : ' (exposant négatif)') + '. ' +
           'S = ' + S + ' (nombre positif). E = ' + (e < 0 ? '−' + (-e) : e) + ' + 127 = ' + E10 + ' = ' + Eb + ', écrit sur 8 bits. M = les chiffres après la virgule, ' + m + ', complétés à droite par des 0 jusqu’à 23 bits (le 1 avant la virgule n’est pas stocké).';
       },
-      copy: function (S, E, M) { return 'Sur la copie : S = ' + S + ' ; E = ' + E + ' ; M = ' + M + '.'; },
       fields: function (h3, b12, S, Eb, E10, mh) { return 'Les 3 premiers chiffres hexadécimaux ' + h3 + ' donnent les 12 premiers bits ' + b12 + ' : S = ' + S + ' (premier bit), E = ' + Eb + ' (les 11 suivants) = ' + E10 + '. M = les 13 derniers chiffres hexadécimaux, ' + mh + ' (52 bits).'; },
       nan: function (S) { return 'E est rempli de 1 (2047 = 7FF<sub>16</sub>) et M n’est pas nul : ce n’est pas un nombre, la représentation est <strong>NaN</strong>' + (S === '1' ? ' (le signe d’un NaN ne compte pas : on n’écrit pas « −NaN »)' : ' (un seul bit à 1 dans M suffit)') + '.'; },
       inf: function (S) { return 'E est rempli de 1 (2047 = 7FF<sub>16</sub>) et M est nul : c’est l’infini, ' + (S === '1' ? '<strong>−∞</strong>' : '<strong>+∞</strong>') + ' puisque S = ' + S + '. Ce sujet n’a pas de corrigé : l’écriture attendue est très probablement « +∞ ».'; },
@@ -429,7 +427,7 @@
   }
 
   /* ---------- consignes (verbatim) et textes communs ---------- */
-  var K_CONV = P('Convertissez les nombres suivants de la forme de départ vers la forme d’arrivée. Ne pas écrire le résultat sous forme de fraction ou de puissance (p. ex. écrire 0,25 et non pas ¼ ou 2<sup>–2</sup>). Le résultat seul est attendu (pas de détail).');
+  var K_CONV = P('Convertissez les nombres suivants de la forme de départ vers la forme d’arrivée. Ne pas écrire le résultat sous forme de fraction ou de puissance (p. ex. écrire 0,25 et non pas ¼ ou 2<sup>−2</sup>). Le résultat seul est attendu (pas de détail).');
   var K_OP = P('Effectuez les opérations suivantes. <strong>Le détail des calculs devra apparaître.</strong>');
   var K_8 = 'Effectuez les opérations suivantes en binaire (les deux opérandes et le résultat sont codés sur 8 bits). Convertissez le résultat en une valeur décimale non signée et signée. Si un dépassement apparaît, écrire « ERREUR » à la place de la valeur décimale.';
   var K_IE1 = '1. Convertissez les nombres ci-dessous dans le format IEEE754 <strong>simple précision</strong>. Vous exprimerez le résultat final sous <strong>forme binaire</strong> en précisant les trois champs.';
@@ -452,7 +450,7 @@
   var T_N8 = ['Laisser le résultat binaire vide en cas de dépassement : on écrit toujours le mot de 8 bits ; ERREUR ne va que dans la colonne décimale concernée.',
     'Confondre retenue et dépassement signé : la retenue (ou l’emprunt) qui sort du bit 7 signale le dépassement non signé ; le dépassement signé se lit sur les signes.'];
   var H_IE = ['Encoder : écris le nombre en binaire, normalise-le en 1,… × 2<sup><i>e</i></sup>, puis E = <i>e</i> + 127 sur 8 bits et M = les chiffres après la virgule, complétés à droite jusqu’à 23 bits.',
-    'Décoder un mot double précision : les 3 premiers chiffres hexadécimaux donnent S et E (11 bits, biais 1023), les 13 derniers donnent M (52 bits).',
+    'Décoder un mot double précision (l’énoncé dit « mots binaires » mais les donne en hexadécimal) : les 3 premiers chiffres hexadécimaux donnent S et E (11 bits, biais 1023), les 13 derniers donnent M (52 bits).',
     'E rempli de 1 : infini si M = 0, NaN sinon ; E = 0 : dénormalisé, 0,M × 2<sup>−1022</sup>. Pour <i>k</i> × 2<sup><i>n</i></sup>, déplace la virgule jusqu’à obtenir un entier impair et retire autant à l’exposant.'];
   var T_IE = ['Prendre le biais 127 pour un mot double précision : c’est 1023 (11 bits d’exposant).',
     'Stocker le 1 qui précède la virgule dans M : il est implicite.'];
@@ -860,7 +858,7 @@
     src: 'Contrôle 2017-2018 · Ex 3', title: 'Opérations sur 8 bits : non signé, signé, dépassements', intro: P(K_8 + ' Le résultat seul est attendu (pas de détail).'),
     notes: { 1: 'Ici la retenue sort (non signé ERREUR) mais le signé est juste : −116 + 126 = 10.' },
     hints: H_N8,
-    traps: T_N8.concat(['Mettre ERREUR en signé à cause de la retenue de 10001100 + 01111110 : en signé, −116 + 126 = 10 est juste.']),
+    traps: T_N8.concat(['Mettre ERREUR en signé à cause de la retenue de <span class="bn">10001100 + 01111110</span> : en signé, −116 + 126 = 10 est juste.']),
     grading: '4 points pour 4 lignes de 3 cases ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK
   });
 
@@ -882,7 +880,7 @@
     rows: [['10011101,1001', 2, 10, 0, '157,5625'], ['1AD,9', 16, 10, 0, '429,5625'], ['515,3', 10, 16, 2, '203,4C'], ['78,6875', 10, 2, 0, '1001110,1011'],
       ['427,316', 8, 16, 0, '117,67'], ['9,99', 10, 7, 3, '12,663'], ['24', 9, 3, 0, '211'], ['1010101111,10101', 2, 16, 0, '2AF,A8']]
   }, {
-    src: 'Midterm 2016-2017 · Ex 3', title: 'Conversions, dont les bases 8, 7, 9 et 3', intro: K_CONV,
+    src: 'Contrôle 2016-2017 · Ex 3', title: 'Conversions, dont les bases 8, 7, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['Arrondir 515,3 : 0,3 × 16 = 4,8 (4), puis 0,8 × 16 = 12,8 (C) ; le corrigé écrit 203,4C, pas 203,4D. C’est la preuve que les corrigés tronquent.',
       'Oublier le zéro de tête d’un paquet de 2 chiffres en base 3 : 24<sub>9</sub> donne 02 et 11, soit <span class="bn">211<sub>3</sub></span>.', 'Lire 0,9<sub>16</sub> comme 0,9 : 1AD,9<sub>16</sub> = 429 + 9/16 = 429,5625.'],
@@ -892,7 +890,7 @@
   card({ id: 'p2016-ex5', exam: 'p2016', order: 5, pts: 4, topics: ['soustraction', 'addition', 'division'], lvl: 2, time: 15, official: true }, 'ops', {
     rows: [['sub', 2, ['100101010', '10111011'], '1101111'], ['add', 16, ['C3AB', '5EA9'], '12254'], ['div', 2, ['10001111', '1011'], '1101']]
   }, {
-    src: 'Midterm 2016-2017 · Ex 5', title: 'Opérations posées : soustraction, addition hexadécimale, division', intro: K_OP + base8('5633 + 7247'),
+    src: 'Contrôle 2016-2017 · Ex 5', title: 'Opérations posées : soustraction, addition hexadécimale, division', intro: K_OP + base8('5633 + 7247'),
     notes: { 2: 'Le contrôle 2019-2020 reprend cette division.' },
     hints: [H_SUB, H_HEX.replace('19 = 13<sub>16</sub>, on pose 3 et on retient 1', 'B + 9 = 20 = 14<sub>16</sub>, on pose 4 et on retient 1'),
       'Division : 1011 va une fois dans 1100 ; à chaque chiffre abaissé, écris 1 au quotient si le reste contient le diviseur, 0 sinon.'],
