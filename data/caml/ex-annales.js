@@ -2,7 +2,7 @@
    Une fiche par exercice Caml des 9 sujets retrouvés (2017 à 2024, dont le contrôle S1# d’avril 2019, noté p2019d).
    Énoncés verbatim, exemples d’application compris (coquilles d’origine gardées et signalées dans la correction :
    « Invalid_arg », « remove_internal », « encode-rec »). Trois exercices sont retombés tels quels : une seule fiche,
-   notée par le sujet qui a un corrigé officiel et une version anglaise :
+   à l’id d’un sujet qui a un corrigé officiel et une version anglaise (les deux sujets y renvoient dans exams.js) :
    - assoc (nov. 2017 ex. 3 = avr. 2019 ex. 3) : p2019d-ex3 ;
    - for_all2 et almost (nov. 2017 ex. 4 ≈ oct. 2019 ex. 4) : p2019-ex4 ;
    - insert_nth (oct. 2018 ex. 4 = nov. 2020 ex. 3) : p2018-ex4.
