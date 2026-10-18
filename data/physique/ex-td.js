@@ -432,11 +432,11 @@
       'Portée : le projectile retombe à $y = 0 avec $t ≠ 0. Sommet : la composante verticale de la vitesse s’annule, $v_y = 0.'],
     solution: [
       { t: 'Question 1 · cadre d’étude', html: '<ul><li>Référentiel : terrestre, supposé galiléen.</li><li>Système : le projectile, assimilé à un point matériel.</li><li>Système de coordonnées : cartésien, repère (O, @u_x, @u_y), @u_y vertical vers le haut ; origine des temps au lancer.</li></ul>' },
-      { t: 'Question 2 · vecteur position', html: eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
+      { t: 'Question 2 · vecteur position', html: '<p>Ses coordonnées sont les équations du mouvement données par l’énoncé :</p>' + eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
       { t: 'Question 3 · équation de la trajectoire', html: '<p>De $x($t) = $v_0 cos$α · $t on tire (pour $α ≠ 90°) :</p>' + eq('$t = ' + fr('$x', '$v_0 cos$α')) +
         '<p>On remplace dans $y($t) :</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α'), '− ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
         '<p>C’est une parabole tournée vers le bas. Il ne reste plus de $t : c’est le but.</p>' },
-      { t: 'Question 4 · vecteur vitesse', html: eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
+      { t: 'Question 4 · vecteur vitesse', html: '<p>On dérive chaque coordonnée par rapport au temps :</p>' + eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
         eq('‖@v‖ = ' + sq('$v_x² + $v_y²'), '= ' + sq('($v_0 cos$α)² + ($v_0 sin$α − $g$t)²')) },
       { t: 'Question 5 · vecteur accélération', html: eq('@a = ' + fr('d@v', 'd$t') + ' = ' + col('0', '−$g') + ' = −$g @u_y', '‖@a‖ = $g') +
         '<p>L’accélération est constante, verticale, vers le bas : c’est la chute libre (@a = @g).</p>' +
@@ -449,7 +449,7 @@
       { t: 'Question 8 · sommet', html: '<p>Au sommet S, la vitesse verticale est nulle :</p>' + eq('$v_y($t_S) = $v_0 sin$α − $g$t_S = 0', '$t_S = ' + fr('$v_0 sin$α', '$g')) +
         '<p>On remplace dans @OM($t) :</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g'), '$y_S = ' + fr('$v_0² sin²$α', '2$g')) +
         '<p>Le sommet est à mi-portée, atteint à mi-parcours ($t_S = $t_P/2) : la parabole est symétrique.</p>' }],
-    answer: '<ul><li>@OM = ($v_0 cos$α · $t ; $v_0 sin$α · $t − $g$t²/2)</li><li>$y($x) = −$g$x²/(2$v_0² cos²$α) + $x tan$α</li><li>@v = ($v_0 cos$α ; $v_0 sin$α − $g$t) ; @a = (0 ; −$g), ‖@a‖ = $g</li><li>$x_{max} = 2$v_0² sin$α cos$α/$g = $v_0² sin(2$α)/$g</li><li>$x_S = $v_0² sin$α cos$α/$g ; $y_S = $v_0² sin²$α/(2$g)</li></ul>',
+    answer: '<ul><li>Position : @OM = ($v_0 cos$α · $t ; $v_0 sin$α · $t − $g$t²/2).</li><li>Trajectoire : $y($x) = −$g$x²/(2$v_0² cos²$α) + $x tan$α.</li><li>Vitesse et accélération : @v = ($v_0 cos$α ; $v_0 sin$α − $g$t) ; @a = (0 ; −$g), ‖@a‖ = $g.</li><li>Nature : uniforme sur $x ; ralenti à la montée puis accéléré à la descente sur $y.</li><li>Portée : $x_{max} = 2$v_0² sin$α cos$α/$g = $v_0² sin(2$α)/$g.</li><li>Sommet : $x_S = $v_0² sin$α cos$α/$g ; $y_S = $v_0² sin²$α/(2$g).</li></ul>',
     traps: [
       'Laisser du $t dans $y($x) : l’équation de la trajectoire ne dépend que de $x.',
       'Dire que l’accélération est nulle au sommet : @a = −$g @u_y partout. C’est $v_y qui s’annule, pas @v (il reste $v_x = $v_0 cos$α).',
@@ -482,7 +482,7 @@
       { t: 'Question 3 · rectiligne ? uniforme ?', html: '<p><b>Rectiligne ?</b> Non. Le rapport $v_y/$v_x = −20 $t change avec le temps : la direction de @v tourne, la trajectoire est courbe (en éliminant $t : $y = −20 $x², une parabole).</p>' +
         '<p><b>Uniforme ?</b> Non. ‖@v‖ = ' + sq('0,25 + 100 $t²') + ' augmente avec $t : le mouvement est accéléré.</p>' +
         '<p>Axe par axe, comme le corrigé officiel : sur $x, mouvement rectiligne uniforme ; sur $y, mouvement rectiligne accéléré ; au total, mouvement curviligne accéléré.</p>' },
-      { t: 'Question 4 · coordonnées de l’accélération', html: eq('$a_x = ' + fr('d$v_x', 'd$t') + ' = 0', '$a_y = ' + fr('d$v_y', 'd$t') + ' = −10 m·s⁻²') },
+      { t: 'Question 4 · coordonnées de l’accélération', html: '<p>On dérive les coordonnées de la vitesse :</p>' + eq('$a_x = ' + fr('d$v_x', 'd$t') + ' = 0', '$a_y = ' + fr('d$v_y', 'd$t') + ' = −10 m·s⁻²') },
       { t: 'Question 5 · caractéristiques de @a', html: '<ul><li>Direction : verticale ($a_x = 0).</li><li>Sens : vers le bas ($a_y &lt; 0).</li><li>Valeur : ‖@a‖ = 10 m·s⁻², constante.</li></ul>' },
       { t: 'Question 6 · chute libre ?', html: '<p>Oui. @a est vertical, vers le bas, de valeur 10 m·s⁻² ≈ $g : c’est l’accélération d’un corps en chute libre (soumis à son seul poids), d’après la définition du « 1 g » donnée à l’exercice 2.</p>' +
         '<p class="sol-note">L’énoncé renvoie à un « document donné en début d’énoncé » qui ne figure pas dans le TD : on s’appuie sur cette définition.</p>' },
@@ -905,7 +905,7 @@
       { t: 'Question 4 · vecteur accélération', html: '<p>L’accélération est la dérivée de la vitesse : @a = d@v/d$t. De même, d@u_θ/d$t = ' + thd + ' (−cos$θ @u_x − sin$θ @u_y) = −' + thd + ' @u_r. On dérive chaque produit :</p>' +
         eq('@a = ' + rdd + ' @u_r + ' + rd + ' ' + thd + ' @u_θ', '+ (' + rd + ' ' + thd + ' + $r' + thdd + ') @u_θ + $r' + thd + ' (−' + thd + ' @u_r)') +
         eq('@a = ($r̈ − $r' + thd + '²) @u_r', '+ (2' + rd + thd + ' + $r' + thdd + ') @u_θ') }],
-    answer: '<ul><li>@u_r = cos$θ @u_x + sin$θ @u_y ; @u_θ = −sin$θ @u_x + cos$θ @u_y.</li><li>@OM = $r @u_r.</li><li>@v = ' + rd + ' @u_r + $r' + thd + ' @u_θ.</li><li>@a = (' + rdd + ' − $r' + thd + '²) @u_r + (2' + rd + thd + ' + $r' + thdd + ') @u_θ.</li></ul>',
+    answer: '<ul><li>Base : @u_r = cos$θ @u_x + sin$θ @u_y ; @u_θ = −sin$θ @u_x + cos$θ @u_y.</li><li>Position : @OM = $r @u_r.</li><li>Vitesse (dérivée de la position) : @v = ' + rd + ' @u_r + $r' + thd + ' @u_θ.</li><li>Accélération : @a = (' + rdd + ' − $r' + thd + '²) @u_r + (2' + rd + thd + ' + $r' + thdd + ') @u_θ.</li></ul>',
     traps: [
       'Écrire @OM = $r @u_r + $θ @u_θ : le vecteur position n’a pas de composante sur @u_θ (et $θ est un angle, pas une longueur).',
       'Oublier que @u_r et @u_θ tournent : on obtiendrait @v = ' + rd + ' @u_r, faux pour un mouvement circulaire.',

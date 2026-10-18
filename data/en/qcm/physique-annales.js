@@ -5,8 +5,8 @@
    Sources are written “Midterm 2017 · MCQ · Q1” (the French src says QCM). Same notation as the French file. */
 /* topic names (already given by data/en/qcm/physique.js; repeated in case this file is loaded alone) */
 REV.i18n.topics({ 'phys-pva': 'Position, velocity, acceleration', 'phys-mouvement': 'Nature of motion', 'phys-trajectoire': 'Trajectory equation',
-  'phys-vecteurs': 'Vectors: components, sum, scalar product', 'phys-polaires': 'Polar coordinates and basis',
-  'phys-polaires-va': 'Velocity and acceleration in polar coordinates', 'phys-circulaire': 'Circular motion', 'phys-unites': 'Units and dimensional consistency' });
+  'phys-vecteurs': 'Components and scalar product', 'phys-polaires': 'Polar coordinates and basis',
+  'phys-polaires-va': 'Polar velocity and acceleration', 'phys-circulaire': 'Circular motion', 'phys-unites': 'Units and dimensional consistency' });
 (function () {
   var FIG = window.PHYS_QFIG || {};
   function fig(base, alt) { if (!FIG.force || !base) return undefined; var o = {}; for (var k in base) o[k] = base[k]; o.alt = alt; return FIG.force(o); }

@@ -232,7 +232,7 @@
     var good = q.type === 'num' ? [String(q.a)] : correctSet(q).map(function (i) { return o[i]; });
     return [q.s, nkey(fr.q), o.slice().sort().join('|'), good.sort().join('|'), figKey(q)].join('#');
   }
-  function rank(id) { return /^[a-z]+-p20\d\d-/.test(id) ? 0 : /^[a-z]+-td/.test(id) ? 1 : /^[a-z]+-mcq/.test(id) ? 3 : 2; }
+  function rank(id) { return /^[a-z]+-p20\d\d[a-z]?-/.test(id) ? 0 : /^[a-z]+-td/.test(id) ? 1 : /^[a-z]+-mcq/.test(id) ? 3 : 2; }
   var cache = { n: -1, list: [] };
   function bank() {
     localize();

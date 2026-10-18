@@ -14,14 +14,14 @@
   T['phys-cadre'] = 'Cadre de l’étude';
   T['phys-pva'] = 'Position, vitesse, accélération';
   T['phys-mouvement'] = 'Nature du mouvement';
-  T['phys-integrer'] = 'Équations horaires et conditions initiales';
+  T['phys-integrer'] = 'Équations horaires, intégration';
   T['phys-trajectoire'] = 'Équation de la trajectoire';
   T['phys-tir'] = 'Tir et chute libre';
-  T['phys-vecteurs'] = 'Vecteurs : composantes, somme, produit scalaire';
+  T['phys-vecteurs'] = 'Composantes et produit scalaire';
   T['phys-forces'] = 'Les forces';
   T['phys-newton'] = 'Lois de Newton';
   T['phys-travail'] = 'Travail et puissance';
-  T['phys-energie'] = 'Énergies cinétique, potentielle, mécanique';
+  T['phys-energie'] = 'Énergie : Ec, Ep, EM';
   T['phys-polaires'] = 'Coordonnées et base polaires';
   T['phys-polaires-va'] = 'Vitesse et accélération en polaires';
   T['phys-circulaire'] = 'Mouvement circulaire';

@@ -16,7 +16,7 @@
   var T = window.QCM_TOPICS = window.QCM_TOPICS || {};
   /* noms des notions (déjà donnés par data/qcm/physique.js ; repris ici si ce fichier est chargé seul) */
   var NAMES = { 'phys-pva': 'Position, vitesse, accélération', 'phys-mouvement': 'Nature du mouvement', 'phys-trajectoire': 'Équation de la trajectoire',
-    'phys-vecteurs': 'Vecteurs : composantes, somme, produit scalaire', 'phys-polaires': 'Coordonnées et base polaires',
+    'phys-vecteurs': 'Composantes et produit scalaire', 'phys-polaires': 'Coordonnées et base polaires',
     'phys-polaires-va': 'Vitesse et accélération en polaires', 'phys-circulaire': 'Mouvement circulaire', 'phys-unites': 'Unités et homogénéité' };
   Object.keys(NAMES).forEach(function (k) { if (!T[k]) T[k] = NAMES[k]; });
 

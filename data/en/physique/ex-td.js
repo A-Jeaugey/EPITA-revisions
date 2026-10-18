@@ -103,11 +103,11 @@
         'Range: the projectile lands at $y = 0 with $t ≠ 0. Top: the vertical component of the velocity is zero, $v_y = 0.'],
       solution: [
         { t: 'Question 1 · study framework', html: '<ul><li>Reference frame: terrestrial, assumed Galilean.</li><li>System: the projectile, modelled as a material point.</li><li>Coordinate system: Cartesian, frame (O, @u_x, @u_y), @u_y pointing up; time origin at the launch.</li></ul>' },
-        { t: 'Question 2 · position vector', html: eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
+        { t: 'Question 2 · position vector', html: '<p>Its coordinates are the equations of motion given in the statement:</p>' + eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
         { t: 'Question 3 · trajectory equation', html: '<p>From $x($t) = $v_0 cos$α · $t we get (for $α ≠ 90°):</p>' + eq('$t = ' + fr('$x', '$v_0 cos$α')) +
           '<p>Substitute into $y($t):</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α'), '− ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
           '<p>This is a downward-opening parabola. There is no $t left: that is the goal.</p>' },
-        { t: 'Question 4 · velocity vector', html: eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
+        { t: 'Question 4 · velocity vector', html: '<p>Differentiate each coordinate with respect to time:</p>' + eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
           eq('‖@v‖ = ' + sq('$v_x² + $v_y²'), '= ' + sq('($v_0 cos$α)² + ($v_0 sin$α − $g$t)²')) },
         { t: 'Question 5 · acceleration vector', html: eq('@a = ' + fr('d@v', 'd$t') + ' = ' + col('0', '−$g') + ' = −$g @u_y', '‖@a‖ = $g') +
           '<p>The acceleration is constant, vertical and points down: this is free fall (@a = @g).</p>' +
@@ -120,6 +120,7 @@
         { t: 'Question 8 · top', html: '<p>At the top S, the vertical velocity is zero:</p>' + eq('$v_y($t_S) = $v_0 sin$α − $g$t_S = 0', '$t_S = ' + fr('$v_0 sin$α', '$g')) +
           '<p>Substitute into @OM($t):</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g'), '$y_S = ' + fr('$v_0² sin²$α', '2$g')) +
           '<p>The top is at half the range, reached halfway through the flight ($t_S = $t_P/2): the parabola is symmetric.</p>' }],
+      answer: '<ul><li>Position: @OM = ($v_0 cos$α · $t ; $v_0 sin$α · $t − $g$t²/2).</li><li>Trajectory: $y($x) = −$g$x²/(2$v_0² cos²$α) + $x tan$α.</li><li>Velocity and acceleration: @v = ($v_0 cos$α ; $v_0 sin$α − $g$t); @a = (0 ; −$g), ‖@a‖ = $g.</li><li>Nature: uniform along $x; decelerated on the way up, then accelerated on the way down along $y.</li><li>Range: $x_{max} = 2$v_0² sin$α cos$α/$g = $v_0² sin(2$α)/$g.</li><li>Top: $x_S = $v_0² sin$α cos$α/$g; $y_S = $v_0² sin²$α/(2$g).</li></ul>',
       traps: [
         'Leaving $t in $y($x): the trajectory equation depends on $x only.',
         'Saying the acceleration is zero at the top: @a = −$g @u_y everywhere. It is $v_y that vanishes, not @v ($v_x = $v_0 cos$α remains).',
@@ -150,7 +151,7 @@
         { t: 'Question 3 · rectilinear? uniform?', html: '<p><b>Rectilinear?</b> No. The ratio $v_y/$v_x = −20 $t changes with time: the direction of @v turns, the trajectory is curved (eliminating $t: $y = −20 $x², a parabola).</p>' +
           '<p><b>Uniform?</b> No. ‖@v‖ = ' + sq('0.25 + 100 $t²') + ' increases with $t: the motion is accelerated.</p>' +
           '<p>Axis by axis, as in the official answer key: along $x, uniform rectilinear motion; along $y, accelerated rectilinear motion; overall, accelerated curvilinear motion.</p>' },
-        { t: 'Question 4 · acceleration coordinates', html: eq('$a_x = ' + fr('d$v_x', 'd$t') + ' = 0', '$a_y = ' + fr('d$v_y', 'd$t') + ' = −10 m·s⁻²') },
+        { t: 'Question 4 · acceleration coordinates', html: '<p>Differentiate the velocity coordinates:</p>' + eq('$a_x = ' + fr('d$v_x', 'd$t') + ' = 0', '$a_y = ' + fr('d$v_y', 'd$t') + ' = −10 m·s⁻²') },
         { t: 'Question 5 · characteristics of @a', html: '<ul><li>Direction: vertical ($a_x = 0).</li><li>Orientation: pointing down ($a_y &lt; 0).</li><li>Magnitude: ‖@a‖ = 10 m·s⁻², constant.</li></ul>' },
         { t: 'Question 6 · free fall?', html: '<p>Yes. @a is vertical, points down and has magnitude 10 m·s⁻² ≈ $g: this is the acceleration of a body in free fall (subject to its weight only), according to the definition of “1 g” given in exercise 2.</p>' +
           '<p class="sol-note">The question refers to “the information given in the beginning”, which is not in this exercise: we use that definition.</p>' },
@@ -289,7 +290,7 @@
         { t: 'Question 1 · study framework', html: '<ul><li>Reference frame: terrestrial, assumed Galilean.</li><li>System: the parachutist, modelled as a material point of mass $m = 80 kg.</li><li>Coordinate system: Cartesian, axis (O, @u_y) vertical pointing up, O on the ground; $t = 0 at the jump.</li></ul>' },
         { t: 'Question 2 · acceleration', html: '<p>Forces involved: the weight only (air resistance neglected). Newton’s second law:</p>' + eq('Σ@F = $m @a ⇒ @W = $m @a', '$m @g = $m @a ⇒ @a = @g = −$g @u_y') + '<p>The acceleration does not depend on the mass.</p>' },
         { t: 'Question 3 · velocity', html: eq('$v_y($t) = ∫ −$g d$t = −$g$t + $c_1') + '<p>With zero initial velocity, $v_y(0) = 0, so $c_1 = 0:</p>' + eq('@v($t) = −$g$t @u_y') },
-        { t: 'Question 4 · position', html: eq('$y($t) = ∫ −$g$t d$t = −' + fr('$g$t²', '2') + ' + $c_2') + '<p>$y(0) = 3000 m, so $c_2 = 3000 m:</p>' + eq('@OM($t) = (3000 − ' + fr('$g$t²', '2') + ') @u_y') },
+        { t: 'Question 4 · position vector', html: eq('$y($t) = ∫ −$g$t d$t = −' + fr('$g$t²', '2') + ' + $c_2') + '<p>$y(0) = 3000 m, so $c_2 = 3000 m:</p>' + eq('@OM($t) = (3000 − ' + fr('$g$t²', '2') + ') @u_y') },
         { t: 'Question 5 · duration of the fall', html: '<p>The parachutist reaches the ground at the instant $T when $y($T) = 0:</p>' + eq('3000 − ' + fr('$g$T²', '2') + ' = 0 ⇒ $T = ' + sq(fr('6000', '$g')), '$T = ' + sq(fr('6000', '9.81')) + ' ≈ 24.7 s') + '<p>(24.5 s with $g = 10 m·s⁻².)</p>' },
         { t: 'Question 6 · speed at the ground', html: eq('$v_y($T) = −$g$T ≈ −242.6 m·s⁻¹') +
           '<p>The speed reached is the norm: ‖@v‖ ≈ 243 m·s⁻¹, about 873 km/h (this is ' + sq('2$g$h') + ' with $h = 3000 m).</p>' +
@@ -302,7 +303,7 @@
           '<p class="sol-note">Official answer key: its intermediate line “$m$g − $α$v = $m$a” loses the sign of the weight; the component of the weight along @u_y is −$m$g, as in its next line.</p>' },
         { t: 'Question 8 · differential equation', html: '<p>With $a_y = d$v/d$t (write $v = $v_y):</p>' + eq(fr('d$v', 'd$t') + ' = −$g − ' + fr('$α', '$m') + ' $v', '⇒ ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = −$g', '$τ = ' + fr('$m', '$α')) +
           '<p>$τ is in seconds ([$m]/[$α] = kg/(kg·s⁻¹) = s): it is a characteristic time. This is a <b>first-order linear differential equation</b>, with constant coefficients and a constant right-hand side (−$g).</p>' },
-        { t: 'Question 9 · solution', html: '<p>Solution of the homogeneous equation ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = 0: $v_h = $A e<sup>−$t/$τ</sup>.</p>' +
+        { t: 'Question 9 · solving the equation', html: '<p>Solution of the homogeneous equation ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = 0: $v_h = $A e<sup>−$t/$τ</sup>.</p>' +
           '<p>The right-hand side is constant: look for a constant particular solution $v_p. Then d$v_p/d$t = 0 and $v_p/$τ = −$g, so $v_p = −$g$τ.</p>' + eq('$v($t) = $A e<sup>−$t/$τ</sup> − $g$τ') +
           '<p>Initial condition $v(0) = 0: $A − $g$τ = 0, so $A = $g$τ.</p>' + eq('$v($t) = $g$τ (e<sup>−$t/$τ</sup> − 1)') +
           '<p>$v($t) &lt; 0 for $t &gt; 0: the parachutist goes down. Its norm is |$v($t)| = $g$τ (1 − e<sup>−$t/$τ</sup>), the function plotted in question 10.</p>' },
@@ -340,7 +341,7 @@
         { t: 'Question 1 · study framework', html: '<ul><li>Reference frame: terrestrial, assumed Galilean.</li><li>System: the ball, material point M of mass $m = 420 g.</li><li>Coordinate system: Cartesian, frame (O, @u_x, @u_y), @u_x horizontal towards the posts, @u_y vertical pointing up; $t = 0 at the kick.</li></ul>' },
         { t: 'Question 2 · acceleration', html: '<p>Air resistance neglected: the weight is the only force. Newton’s second law:</p>' + eq('@W = $m @a ⇒ $m @g = $m @a', '@a = @g = ' + col('0', '−$g')) },
         { t: 'Question 3 · velocity', html: '<p>Integrate each component; the constants are the components of the initial velocity, $v_0 cos$β and $v_0 sin$β:</p>' + eq('@v($t) = ' + col('$v_0 cos$β', '−$g$t + $v_0 sin$β')) },
-        { t: 'Question 4 · position', html: '<p>Integrate again; @OM(0) = @0 (origin at the starting point):</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
+        { t: 'Question 4 · position vector', html: '<p>Integrate again; @OM(0) = @0 (origin at the starting point):</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
         { t: 'Question 5 · trajectory', html: '<p>From $x($t): $t = ' + fr('$x', '$v_0 cos$β') + '. Substitute into $y($t):</p>' + eq('$y($x) = −' + fr('$g$x²', '2 $v_0² cos²$β') + ' + $x tan$β') + '<p>It is a <b>parabola</b> (opening downwards).</p>' },
         { t: 'Question 6 · goal?', html: '<p>At the posts, $x = $d = 40 m (with $g = 9.81 m·s⁻²):</p>' +
           eq('$y(40) = −' + fr('$g × 40²', '2 $v_0² cos²$β'), '+ 40 tan$β', '$y(40) ≈ −23.9 + 31.3 ≈ 7.36 m') +
@@ -544,6 +545,7 @@
         { t: 'Question 4 · acceleration vector', html: '<p>Acceleration is the derivative of velocity: @a = d@v/d$t. In the same way, d@u_θ/d$t = ' + thd + ' (−cos$θ @u_x − sin$θ @u_y) = −' + thd + ' @u_r. Differentiate each product:</p>' +
           eq('@a = ' + rdd + ' @u_r + ' + rd + ' ' + thd + ' @u_θ', '+ (' + rd + ' ' + thd + ' + $r' + thdd + ') @u_θ + $r' + thd + ' (−' + thd + ' @u_r)') +
           eq('@a = ($r̈ − $r' + thd + '²) @u_r', '+ (2' + rd + thd + ' + $r' + thdd + ') @u_θ') }],
+      answer: '<ul><li>Basis: @u_r = cos$θ @u_x + sin$θ @u_y; @u_θ = −sin$θ @u_x + cos$θ @u_y.</li><li>Position: @OM = $r @u_r.</li><li>Velocity (derivative of the position): @v = ' + rd + ' @u_r + $r' + thd + ' @u_θ.</li><li>Acceleration: @a = (' + rdd + ' − $r' + thd + '²) @u_r + (2' + rd + thd + ' + $r' + thdd + ') @u_θ.</li></ul>',
       traps: [
         'Writing @OM = $r @u_r + $θ @u_θ: the position vector has no component along @u_θ (and $θ is an angle, not a length).',
         'Forgetting that @u_r and @u_θ turn: you would get @v = ' + rd + ' @u_r, which is wrong for a circular motion.',

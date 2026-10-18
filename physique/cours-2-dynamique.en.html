@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forces and Newton’s laws · Physics</title>
+<meta name="description" content="Physics, chapter 2: forces and Galilean reference frames, forces involved and force diagrams, weight, surface reaction, tension, friction, gravity, Newton’s three laws, inclined plane, free fall and maximum speed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapter 2 only: inclined plane, forces involved, action-reaction pairs */
+.ro.k-frc{color:var(--frc)}
+.plate .sliders.one{grid-template-columns:minmax(0,1fr)}
+.ip-groups{display:flex;flex-wrap:wrap;gap:8px 20px}
+.mk .mk-surf{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round}
+.mk .mk-hatch{fill:none;stroke:var(--muted);stroke-width:1}
+.mk .ip-support{fill:var(--grid-2);stroke:none}
+.mk .ip-arc{fill:none;stroke:var(--muted);stroke-width:1.3}
+.plate .mk .ip-arc{stroke:var(--flash);opacity:.8}
+.mk .ip-proj{fill:none;stroke:var(--frc);stroke-width:1;stroke-dasharray:3 3;opacity:.8}
+.mk .ip-ref{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4}
+.mk .vk.comp path{stroke-dasharray:6 4;stroke-width:1.6}
+.mk .vk.ghost{opacity:.35}
+.mk .vk.missed path{stroke-dasharray:5 4}
+.mk .mk-cross{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.mk .mk-body{fill:var(--surface-2);stroke:var(--muted);stroke-width:1.2}
+.mk .mk-water{fill:var(--why-soft);stroke:none}
+.mk .mk-wline{fill:none;stroke:var(--why);stroke-width:1.6}
+.mk .mk-string{fill:none;stroke:var(--ink);stroke-width:1.4}
+.mk .mk-post{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+.fb-desc{font-size:.95rem}
+.fb-figs{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:12px;align-items:center;min-width:0}
+.fb-figs .mk-host svg{margin:0 auto}
+.fb-sum{display:grid;gap:4px;justify-items:center;border-left:1px dashed var(--line);padding-left:12px;min-width:0}
+.fb-sum-t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center}
+.fb-inset{max-width:170px}
+@media (max-width:560px){.fb-figs{grid-template-columns:minmax(0,1fr)}.fb-sum{border-left:0;border-top:1px dashed var(--line);padding:8px 0 0}}
+.fb .chip-btn .vec{font-size:1.02em}
+.fb .chip-btn .fb-res{font-family:var(--font-mono);font-size:.72rem;margin-left:.35rem}
+.fb .chip-btn.ok{background:var(--ok-soft);border-color:var(--ok)}
+.fb .chip-btn.ok .fb-res{color:var(--ok)}
+.fb .chip-btn.miss{border-color:var(--warn);border-style:dashed;background:var(--surface)}
+.fb .chip-btn.miss .fb-res{color:var(--warn)}
+.fb .chip-btn.extra{background:var(--bad-soft);border-color:var(--bad)}
+.fb .chip-btn.extra .fb-res{color:var(--bad)}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics · chapter 2: forces and Newton’s laws">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Chapter 2 of 4</div>
+      <h1>What changes a velocity <span class="w">is a force</span>.</h1>
+      <p class="lead">Dynamics looks for the causes of motion. The forces acting on a point, Newton’s three laws, then the method behind every exercise: system, reference frame, forces involved, diagram, and Newton’s second law projected on well-chosen axes.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parts</span><span class="chip">course ch. II to IV · TD 2 and 3</span><span class="chip ex">on this year’s syllabus</span></div>
+      <div class="vlegend" aria-label="Vector colours, the same across the whole site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>velocity</span><span><i class="la"></i>acceleration</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Plate: a robot on a slope whose angle you set, with its weight decomposed, the surface reaction force and friction"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Forces and Newton’s laws</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>Forces and Galilean frames</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>Forces involved and diagram</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Weight, reaction, tension</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Friction and gravity</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>First law: inertia</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Newton’s second law</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>Third law: action-reaction</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>Using the second law</span></a></li>
+    </ol>
+    <p class="toc-note">Each part adds one exposure of the same launch. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Physics home</a><a href="cours-1-cinematique.html">← Chapter 1: kinematics</a><a href="cours-3-energie.html">Chapter 3: work and energy →</a><a href="../qcm/index.html#physique">Physics MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Forces and Galilean frames</a></li><li><a href="#s2">Forces involved and diagram</a></li><li><a href="#s3">Weight, reaction, tension</a></li><li><a href="#s4">Friction and gravity</a></li>
+      <li><a href="#s5">First law: inertia</a></li><li><a href="#s6">Newton’s second law</a></li><li><a href="#s7">Third law: action-reaction</a></li><li><a href="#s8">Using the second law</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The causes of motion: forces and Galilean reference frames</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Kinematics described motion. <b>Dynamics</b> looks for its causes: <b>forces</b>. It rests on Newton’s three laws of motion, which are postulates: you do not prove them, you observe that they work.</p>
+          <p>The course starts with three definitions, and a point about the reference frame.</p>
+        </div>
+        <div class="grid4">
+          <div class="card"><span class="k">Mass <var>m</var></span><p>A measure of a body’s ability to resist being set in motion. In kg, proportional to the amount of matter in the body.</p><p class="muted">The larger the mass, the more force it takes to change the velocity: this is <b>inertia</b>.</p></div>
+          <div class="card"><span class="k">Force <var class="vec kf">F</var></span><p>A vector quantity describing an interaction and its ability to modify motion. In newtons: 1&nbsp;N = 1&nbsp;kg·m·s⁻².</p><p class="muted">A force always has an author: another object (the Earth, the ground, a string, the air, a hand).</p></div>
+          <div class="card"><span class="k">Momentum <var class="vec">p</var></span><p><span class="f"><var class="vec">p</var> = <var>m</var> <var class="vec kv">v</var></span>, in kg·m·s⁻¹. Newton’s second law is stated with it.</p><p class="muted">Same direction as <var class="vec kv">v</var>, since <var>m</var> &gt; 0.</p></div>
+          <div class="card"><span class="k">Galilean reference frame</span><p>The course: a reference frame that moves without any acceleration is called Galilean. Newton’s laws only hold in such a frame.</p><p class="muted">The terrestrial reference frame is not exactly Galilean (the Earth spins); for a short experiment, you <b>assume</b> it is Galilean.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">A force, four pieces of information</span>
+          <ul>
+            <li><b>Norm</b> (magnitude): its intensity, in newtons (N).</li>
+            <li><b>Direction</b>: the line it acts along (vertical, along the string, perpendicular to the ground…).</li>
+            <li><b>Sense</b>: up or down, left or right. The English handout folds this into “direction”.</li>
+            <li><b>Point of application</b>: on the object that is subjected to the force. In point mechanics, it is the point M itself.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p><b>Example</b> <span class="src-tag c">TD 2 · Ex 3</span> “Its motor exerts a force <var class="vec kf">F</var> of magnitude 50&nbsp;N, parallel to the ground, and directed towards increasing <var>x</var> values.” Magnitude 50&nbsp;N, horizontal, towards increasing <var>x</var>, applied to the robot. As a vector: <span class="f"><var class="vec kf">F</var> = 50 <var class="vec">u</var><sub><var>x</var></sub></span> (in N).</p>
+        </div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>This chapter is on this year’s syllabus: course chapters II to IV, TD 2 and 3. None of the 7 old midterms found (2017 to 2022) was about forces: the syllabus was different. To practise, the exercises of TD 2 and 3 are the reference, and this chapter follows their corrections.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>A velocity is not a force. “It moves forward, so a force pushes it forward” is wrong: an object can move with no force at all (part 5). It is the sum of the forces that makes the velocity <i>change</i>.</li>
+          <li>Newton’s laws assume a Galilean reference frame. Write it: “terrestrial reference frame, assumed Galilean”.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>Forces involved and the force diagram</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Before writing one of Newton’s laws, you list every force acting on the system: the <b>forces involved</b>. A force forgotten, or invented, makes the acceleration wrong, and everything after it.</p>
+        </div>
+        <div class="note keep"><span class="tag">Method: listing the forces</span><ol>
+          <li>Define the system: a single object, modelled as a material point.</li>
+          <li>Forces acting at a distance: the <b>weight</b>, always, near the Earth (and the electrostatic force if the system is charged).</li>
+          <li>Contact forces: look at everything that <b>touches</b> the system. A surface (reaction), a string (tension), a fluid (friction, buoyancy), a hand, a motor.</li>
+          <li>For each force, name its author: “force exerted by … on the system”. No author, no force.</li>
+        </ol></div>
+        <div class="prose">
+          <p><b>The diagram.</b> The TD 2 correction (in French) says it: “we do point mechanics […], so the systems studied are considered as points. We represent them with a simple cross.” Each force is an arrow starting from that cross, longer or shorter depending on its magnitude. Add the axes: you will project on them.</p>
+          <p>Your turn: pick a situation, tick the forces, then check. The diagram builds up as you go.</p>
+        </div>
+        <div id="bilan" aria-label="Exercise: choose the forces acting on the system in seven situations from the TDs"></div>
+        <div class="prose">
+          <p>The first four situations are those of exercise 1 in TD 2; the robot comes from exercise 3, the rugby ball and the parachutist from TD 3. The correction concludes: “equilibrium situations translate into a zero vector sum”. The swinging ball is not in equilibrium: its velocity changes direction.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>No “force of motion” and no “force of the kick”: once the ball has left, the foot no longer touches it. Only the weight remains (air resistance ignored).</li>
+          <li>A contact force needs contact: no surface reaction force on an object in the air.</li>
+          <li>The list only contains forces exerted <i>on</i> the system. The force of the book on the table acts on the table: it is not among the forces on the book.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>Weight, surface reaction, tension in a string</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Three forces come back in almost every exercise. The weight has a formula; the reaction and the tension do not: they are the unknowns that Newton’s second law lets you find.</p></div>
+        <h3>Weight</h3>
+        <div class="prose"><p>Near the Earth’s surface, the gravitational force exerted by the Earth on an object of mass <var>m</var> is called its <b>weight</b>. It is vertical, pointing down, applied at point M. The English course writes it <var class="vec kf">W</var> (the French handouts use <var class="vec kf">P</var>).</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">W</var> = <var>m</var> <var class="vec">g</var></span><span class="nw"><var>W</var> = <var>m</var><var>g</var></span><small><var class="vec">g</var>: gravitational acceleration of the Earth, vertical, pointing down; <var>g</var> ≈ 9.81&nbsp;m·s⁻² (10&nbsp;m·s⁻² when the paper says so)</small></div>
+        <div class="prose">
+          <p>With <var class="vec">u</var><sub><var>y</var></sub> pointing up, as in the course: <span class="f"><var class="vec kf">W</var> = −<var>m</var><var>g</var> <var class="vec">u</var><sub><var>y</var></sub></span>, that is, the column (0; −<var>m</var><var>g</var>).</p>
+          <p><b>Examples</b> <span class="src-tag c">TD 3</span> The parachutist, <var>m</var> = 80&nbsp;kg: <var>W</var> = 80 × 9.81 ≈ 785&nbsp;N. The rugby ball, <var>m</var> = 420&nbsp;g = 0.42&nbsp;kg: <var>W</var> ≈ 4.1&nbsp;N.</p>
+        </div>
+        <h3>Surface reaction force</h3>
+        <div class="prose">
+          <p>An object resting on a surface experiences the <b>surface reaction force</b> <var class="vec kf">R</var>: it is what prevents the object from passing through the surface. There is no general expression for it: it must be determined case by case. In the course, it is always <b>orthogonal to the surface</b>.</p>
+          <p>Friction with the ground, when it matters, is a separate force, <var class="vec kf">f</var>, parallel to the surface: this is the case of the robot on the slope <span class="src-tag c">TD 2 · Ex 2</span>. On the plate at the top of the page, <var class="vec kf">R</var> stays perpendicular to the slope when you change <var>α</var>, and its magnitude is <var>m</var><var>g</var> cos <var>α</var>, not <var>m</var><var>g</var>.</p>
+        </div>
+        <h3>Tension in a string</h3>
+        <div class="prose">
+          <p>A string attached to an object exerts the <b>tension</b> <var class="vec kf">T</var> on it: a contact force, applied at the point of attachment, with the direction of the string, pointing from the object towards the string. A string pulls, it never pushes. Its magnitude is determined case by case.</p>
+          <p><b>Example</b> A 50&nbsp;g ball hangs at rest at the end of a string (<var>g</var> = 10&nbsp;m·s⁻²). Forces involved: <var class="vec kf">W</var> and <var class="vec kf">T</var>. At rest, so <span class="f"><var class="vec kf">T</var> + <var class="vec kf">W</var> = <var class="vec">0</var></span> (part 5): the string is vertical and <var>T</var> = <var>m</var><var>g</var> = 0.05 × 10 = 0.5&nbsp;N.</p>
+        </div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>Mass and weight are two different quantities. Mass, in kg, does not depend on the place. Weight, in N, is <var>m</var><var>g</var> and depends on <var>g</var>: on the Moon, <var>g</var> ≈ 1.6&nbsp;m·s⁻².</li>
+          <li><var class="vec kf">R</var> and <var class="vec kf">T</var> have no formula: their magnitudes come out of Newton’s second law.</li>
+          <li>In English, W is both the weight <var class="vec kf">W</var> (a vector, with an arrow) and the work <var>W</var><sub>A→B</sub> of chapter 3 (a number, with its indices). Write the arrow and the indices.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var>R</var> = <var>m</var><var>g</var> only on a horizontal surface, with no other vertical force. Robot on horizontal ground (TD 2 · Ex 3): <var>R</var> = <var>m</var><var>g</var>. Robot on the slope (TD 2 · Ex 2): <var>R</var> = <var>m</var><var>g</var> cos <var>α</var>.</li>
+          <li>The weight is vertical, not perpendicular to the ground: on a slope, these are no longer the same direction.</li>
+          <li>The tension points from the object towards the string (towards the attachment point), never the other way.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>Friction, gravity, electrostatic force</h2></div>
+      <div class="stack">
+        <h3>Friction from a fluid</h3>
+        <div class="prose"><p>An object moving with a velocity <var class="vec kv">v</var> in a fluid (air, water) is subjected to a force of friction from the fluid:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var></span><small><var>α</var>: friction coefficient; it depends on the fluid, the shape of the body, its speed…</small></div>
+        <div class="prose">
+          <p>The minus sign says that <var class="vec kf">f</var> always points <b>opposite to the velocity</b>: it opposes the motion. Its magnitude <var>α</var><var>v</var> grows with the speed.</p>
+          <p>Friction between an object and the ground (the robot on the slope in TD 2) has no formula in the course: it is parallel to the surface, opposes sliding, and its magnitude comes out of Newton’s second law.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>The sign</b> <span class="src-tag c">TD 2 · Ex 3</span> “What is the meaning of the minus sign in the expression of the friction force?” That <var class="vec kf">f</var> and <var class="vec kv">v</var> point in opposite directions: friction opposes the motion.</p></div></li>
+          <li><div><p><b>The unit of <var>α</var></b>, by homogeneity: <var>f</var> is in newtons and <var>v</var> in m·s⁻¹, so <span class="f">[<var>α</var>] = <span class="frac"><span>kg·m·s⁻²</span><span>m·s⁻¹</span></span> = kg·s⁻¹</span>.</p></div></li>
+          <li><div><p><b>Orders of magnitude</b> with <var>α</var> = 0.5&nbsp;kg·s⁻¹: at 10&nbsp;m·s⁻¹, <var>f</var> = 5&nbsp;N; at 100&nbsp;m·s⁻¹, <var>f</var> = 50&nbsp;N, as much as the motor force. That is the robot’s maximum speed (part 5).</p></div></li>
+        </ol>
+        <h3>Gravity</h3>
+        <div class="prose"><p>Two bodies of masses <var>m</var><sub>1</sub> and <var>m</var><sub>2</sub>, whose centres are a distance <var>d</var> apart, attract each other. This force is always attractive and has infinite range.</p></div>
+        <div class="eq"><span class="nw"><var>F</var> = <var>G</var> <span class="frac"><span><var>m</var><sub>1</sub> <var>m</var><sub>2</sub></span><span><var>d</var>²</span></span></span><span class="nw"><var class="vec kf">F</var><sub>1→2</sub> = −<var>G</var> <span class="frac"><span><var>m</var><sub>1</sub> <var>m</var><sub>2</sub></span><span><var>d</var>²</span></span> <var class="vec">u</var><sub>1→2</sub></span><small><var>G</var> = 6.67 × 10⁻¹¹ N·m²·kg⁻² (universal gravitational constant); <var class="vec">u</var><sub>1→2</sub>: unit vector from 1 to 2</small></div>
+        <div class="prose">
+          <p><var class="vec kf">F</var><sub>1→2</sub> is the force exerted by 1 on 2: it pulls 2 towards 1, along −<var class="vec">u</var><sub>1→2</sub>. The English handout writes <var class="vec kf">F</var><sub>2→1</sub> = <var>G</var> <var>m</var><sub>1</sub><var>m</var><sub>2</sub>/<var>d</var>² <var class="vec">u</var><sub><var>r</var></sub>, with no minus sign and without saying where <var class="vec">u</var><sub><var>r</var></sub> points; with a unit vector going from 1 to 2, the minus sign is needed, otherwise the force would be repulsive. Above all, remember the magnitude and the direction: towards the other body.</p>
+          <p><b>The weight, recovered.</b> The course points it out: with the mass of the Earth <var>M</var><sub>E</sub> ≈ 6.0 × 10²⁴&nbsp;kg for <var>m</var><sub>1</sub> and its radius <var>R</var><sub>E</sub> ≈ 6.4 × 10⁶&nbsp;m for <var>d</var>, the force on a mass <var>m</var> at ground level is <var>m</var> × <var>G</var><var>M</var><sub>E</sub>/<var>R</var><sub>E</sub>². And that factor is <var>g</var>:</p>
+        </div>
+        <div class="eq"><span class="nw"><span class="frac"><span><var>G</var><var>M</var><sub>E</sub></span><span><var>R</var><sub>E</sub>²</span></span> ≈ <span class="frac"><span>6.67 × 10⁻¹¹ × 6.0 × 10²⁴</span><span>(6.4 × 10⁶)²</span></span></span><span class="nw">≈ 9.8&nbsp;m·s⁻²</span></div>
+        <h3>Electrostatic force (Coulomb force)</h3>
+        <div class="prose"><p>Between two charges <var>q</var><sub>1</sub> and <var>q</var><sub>2</sub> (in coulombs), a distance <var>d</var> apart:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">F</var><sub>1→2</sub> = <var>k</var> <span class="frac"><span><var>q</var><sub>1</sub> <var>q</var><sub>2</sub></span><span><var>d</var>²</span></span> <var class="vec">u</var><sub>1→2</sub></span><small><var>k</var> ≈ 8.99 × 10⁹ ≈ 9 × 10⁹ N·m²·C⁻² (Coulomb constant; the English handout prints 8.88, a typo)</small></div>
+        <div class="prose"><p>A charge can be negative. If <var>q</var><sub>1</sub><var>q</var><sub>2</sub> &gt; 0 (charges of the same sign), the force pushes 2 away from 1: repulsive. If <var>q</var><sub>1</sub><var>q</var><sub>2</sub> &lt; 0, it is attractive. No minus sign here: the sign of the product of the charges decides.</p></div>
+        <div class="note why"><span class="tag">Not in the course, but in the TDs</span><ul>
+          <li><b>The buoyant force</b> (Archimedes) <var class="vec kf">F</var><sub>A</sub>: vertical, pointing up, exerted by a fluid on an immersed body; its magnitude is the weight of the displaced fluid. It appears in the TD 2 correction (the floating ball).</li>
+          <li><b>The restoring force of a spring</b> comes with oscillators (part 2 of the course, second midterm syllabus).</li>
+        </ul></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Force</th><th>Exerted by</th><th>Direction</th><th>Magnitude</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Weight <var class="vec kf">W</var></th><td>the Earth</td><td>vertical, pointing down</td><td class="f"><var>m</var><var>g</var></td></tr>
+            <tr><th scope="row">Reaction <var class="vec kf">R</var></th><td>the surface</td><td>perpendicular to the surface, from the surface towards the object</td><td>to be found (second law)</td></tr>
+            <tr><th scope="row">Tension <var class="vec kf">T</var></th><td>the string</td><td>along the string, towards the attachment point</td><td>to be found (second law)</td></tr>
+            <tr><th scope="row">Fluid friction <var class="vec kf">f</var></th><td>the fluid</td><td>opposite to <var class="vec kv">v</var></td><td class="f"><var>α</var><var>v</var></td></tr>
+            <tr><th scope="row">Gravity</th><td>the other mass</td><td>towards the other body</td><td class="f"><var>G</var><var>m</var><sub>1</sub><var>m</var><sub>2</sub>/<var>d</var>²</td></tr>
+            <tr><th scope="row">Electrostatic</th><td>the other charge</td><td>along the line through both charges; attractive or repulsive</td><td class="f"><var>k</var>|<var>q</var><sub>1</sub><var>q</var><sub>2</sub>|/<var>d</var>²</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The sign of a component depends on the axis. Falling parachutist, axis pointing up: <var>v</var> &lt; 0, so <var>f</var> = −<var>α</var><var>v</var> &gt; 0. The force does point up.</li>
+          <li><var class="vec kf">f</var> opposes the velocity, not the weight or the motor force.</li>
+          <li><var>G</var> = 6.67 × 10⁻¹¹ (gravity) and <var>k</var> ≈ 9 × 10⁹ (Coulomb): do not swap them.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>Newton’s first law: the law of inertia</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The course states it this way: in a Galilean reference frame, a body remains in the same state of motion if no force is acting on it.</p>
+          <ul>
+            <li>If the body was at rest, it remains at rest.</li>
+            <li>If the body was in motion, it stays in motion, which is <b>uniform and rectilinear</b>: in a straight line, at constant speed.</li>
+          </ul>
+          <p>Near the Earth, an object with no force acting on it does not exist: the weight is always there. What matters is the <b>sum</b> of the forces. If they balance out, everything happens as if there were none. With the second law (part 6), you can write it both ways:</p>
+        </div>
+        <div class="eq"><span class="nw">Σ <var class="vec kf">F</var> = <var class="vec">0</var> ⟺ <var class="vec kv">v</var> constant</span><small>in a Galilean reference frame: at rest, or uniform rectilinear motion</small></div>
+        <div class="prose"><p>This is the sentence of the TD 2 correction: “equilibrium situations translate into a zero vector sum”.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The book at rest</b> <span class="src-tag c">TD 2 · Ex 1</span> At rest, so <span class="f"><var class="vec kf">W</var> + <var class="vec kf">R</var> = <var class="vec">0</var></span>: <var>R</var> = <var>W</var> = <var>m</var><var>g</var>.</p></div></li>
+          <li><div><p><b>The robot’s maximum speed</b> <span class="src-tag c">TD 2 · Ex 3</span> With the friction <var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var>, the robot accelerates more and more slowly, then moves in a straight line at a constant speed <var>v</var><sub>max</sub>. Then <var class="vec ka">a</var> = <var class="vec">0</var> and the sum of the forces is zero. Vertically, <var class="vec kf">W</var> + <var class="vec kf">R</var> = <var class="vec">0</var>; horizontally, <var class="vec kf">F</var> + <var class="vec kf">f</var> = <var class="vec">0</var>:</p>
+            <div class="eq"><span class="nw"><var>α</var> <var>v</var><sub>max</sub> = <var>F</var> ⇒ <var>v</var><sub>max</sub> = <span class="frac"><span><var>F</var></span><span><var>α</var></span></span> = <span class="frac"><span>50</span><span>0.5</span></span> = 100&nbsp;m·s⁻¹</span></div>
+            <p>The motor still pushes, but friction balances it exactly: the velocity no longer changes.</p></div></li>
+        </ol>
+        <div class="note why"><span class="tag">Why “Galilean” matters</span><p>In a braking car, your bag slides forward although nothing pushes it: the braking car is not a Galilean reference frame, and the first law does not hold in it. In the terrestrial reference frame, everything makes sense: the bag keeps going straight at the same speed, while the car slows down under it.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“It moves forward, so the sum of the forces points forward”: wrong. At constant speed in a straight line, the sum is zero (the robot at <var>v</var><sub>max</sub>).</li>
+          <li>Uniform is not enough: it must be rectilinear <i>and</i> uniform. The ball swinging round at constant speed changes direction: Σ <var class="vec kf">F</var> ≠ <var class="vec">0</var>.</li>
+          <li>At rest for one instant is not equilibrium. At the top of a vertical throw, <var>v</var> = 0 but Σ <var class="vec kf">F</var> = <var class="vec kf">W</var> ≠ <var class="vec">0</var>: it falls back down.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Part 6</div><h2>Newton’s second law</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course: in a Galilean reference frame, the derivative of a body’s momentum with respect to time is equal to the sum of all forces acting on it. The mass is constant throughout this course, so <span class="f">d<var class="vec">p</var>/d<var>t</var> = <var>m</var> d<var class="vec kv">v</var>/d<var>t</var> = <var>m</var> <var class="vec ka">a</var></span>:</p></div>
+        <div class="eq"><span class="nw">Σ<sub><var>i</var></sub> <var class="vec kf">F</var><sub><var>i</var></sub> = <span class="frac"><span>d<var class="vec">p</var></span><span>d<var>t</var></span></span> = <var>m</var> <var class="vec ka">a</var></span><small>Sometimes called the law of acceleration. The TD corrections exist only in French: there, this law is called “PFD”.</small></div>
+        <div class="prose">
+          <p><b>What it says.</b> <var class="vec ka">a</var> has the direction of the sum of the forces, not that of the velocity. Its magnitude is ‖Σ <var class="vec kf">F</var>‖ / <var>m</var>: for the same force, a mass twice as large accelerates half as much. The TD 2 correction: “for a given thrust force, the larger the robot’s mass, the harder it is to make it accelerate: that is inertia”.</p>
+          <p><b>The link with chapter 1.</b> The forces give <var class="vec ka">a</var>; you then integrate, with the initial conditions, to get <var class="vec kv">v</var> and then <var class="vec kp">OM</var> (chapter 1, part 6).</p>
+        </div>
+        <div class="eq"><span class="nw">Σ <var class="vec kf">F</var> → <var class="vec ka">a</var> = Σ <var class="vec kf">F</var> / <var>m</var> → <var class="vec kv">v</var>(<var>t</var>) → <var class="vec kp">OM</var>(<var>t</var>)</span><small>divide by <var>m</var>, then integrate twice with <var class="vec kv">v</var>(0) and <var class="vec kp">OM</var>(0)</small></div>
+        <div class="prose"><p><b>Full example</b> <span class="src-tag c">TD 2 · Ex 3</span> A robot of mass <var>m</var> = 10&nbsp;kg moves on a horizontal surface, friction neglected. Its motor exerts <var class="vec kf">F</var>, of magnitude 50&nbsp;N, towards increasing <var>x</var>; at A, at <var>t</var> = 0, its velocity is 2&nbsp;m·s⁻¹. Origin at A, <var class="vec">u</var><sub><var>x</var></sub> along <var class="vec kf">F</var>, <var class="vec">u</var><sub><var>y</var></sub> pointing up.</p></div>
+        <ol class="steps">
+          <li><div><p>Forces involved: weight <var class="vec kf">W</var>, reaction <var class="vec kf">R</var>, motor force <var class="vec kf">F</var>. Second law: <span class="f"><var class="vec kf">W</var> + <var class="vec kf">R</var> + <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var></span>.</p></div></li>
+          <li><div><p>As columns: <span class="f"><span class="col"><span>0</span><span>−<var>m</var><var>g</var></span></span> + <span class="col"><span>0</span><span><var>R</var></span></span> + <span class="col"><span><var>F</var></span><span>0</span></span> = <span class="col"><span><var>m</var><var>a</var><sub><var>x</var></sub></span><span><var>m</var><var>a</var><sub><var>y</var></sub></span></span></span></p></div></li>
+          <li><div><p>Along <var>y</var>: the robot stays on the ground, <var>a</var><sub><var>y</var></sub> = 0, so <var>R</var> = <var>m</var><var>g</var>. Along <var>x</var>: <var>F</var> = <var>m</var><var>a</var><sub><var>x</var></sub>, so <var>a</var> = <var>F</var>/<var>m</var> = 50/10 = 5&nbsp;m·s⁻².</p></div></li>
+          <li><div><p>Integrate: <var>v</var>(<var>t</var>) = 5<var>t</var> + 2, then <var>x</var>(<var>t</var>) = 2.5 <var>t</var>² + 2<var>t</var> (with <var>x</var>(0) = 0 at A).</p></div></li>
+          <li><div><p>In one minute: <var>x</var>(60) = 2.5 × 3600 + 2 × 60 = 9120&nbsp;m, that is 9.12&nbsp;km.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var> is an equality between vectors: it gives one equation per axis.</li>
+          <li>If the sum of the forces is constant, so is <var class="vec ka">a</var>: uniformly accelerated or parabolic motion, and the formulas of chapter 1 apply.</li>
+          <li>Homogeneity: <var>F</var>/<var>m</var> is in N/kg = m·s⁻². Check the unit of every result.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var class="vec ka">a</var> does not have the direction of <var class="vec kv">v</var>. The rugby ball goes up (<var class="vec kv">v</var> pointing up) while <var class="vec ka">a</var> = <var class="vec">g</var> points down.</li>
+          <li><var>m</var> <var class="vec ka">a</var> is not a force: do not add it to the forces involved, it is the other side of the equality.</li>
+          <li>The TD 2 correction projects the weight as (0; <var>P</var>): <var>P</var> there stands for the component, which equals −<var>m</var><var>g</var>. Write (0; −<var>m</var><var>g</var>) directly: the sign shows.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Part 7</div><h2>Newton’s third law: action-reaction</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course: if a body M<sub>1</sub> exerts a force <var class="vec kf">F</var><sub>1→2</sub> on body M<sub>2</sub>, then M<sub>2</sub> exerts on M<sub>1</sub> a force of the same magnitude but opposite direction:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">F</var><sub>2→1</sub> = −<var class="vec kf">F</var><sub>1→2</sub></span><small>same magnitude, same line, opposite senses</small></div>
+        <div class="prose"><p>The two forces of a pair act on <b>two different objects</b>. So they never appear among the forces on the same system, and they never cancel out.</p></div>
+        <figure class="fig"><div class="mk-host" id="figPairs"></div><figcaption>On the left, the Earth attracts the apple and the apple attracts the Earth, with the same magnitude (not to scale). On the right, the table exerts <var class="vec kf">R</var> on the book, and the book presses on the table with <var class="vec kf">F</var><sub>b→t</sub> = −<var class="vec kf">R</var>: that is the pair. The partner of the book’s weight <var class="vec kf">W</var> acts on the Earth.</figcaption></figure>
+        <ol class="steps">
+          <li><div><p><b>The apple and the Earth</b> A 100&nbsp;g apple: the Earth attracts it with its weight, 0.1 × 9.81 ≈ 0.98&nbsp;N. The apple attracts the Earth with 0.98&nbsp;N too. But <var>a</var> = <var>F</var>/<var>m</var>: the apple gets 9.81&nbsp;m·s⁻², the Earth (6.0 × 10²⁴&nbsp;kg) about 1.6 × 10⁻²⁵&nbsp;m·s⁻². Same forces, very different effects.</p></div></li>
+          <li><div><p><b>The book and the table</b> The table pushes the book up (<var class="vec kf">R</var>); the book presses down on the table with the same magnitude. Press on the book with your hand: <var>R</var> increases, and so does the force of the book on the table.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Spotting a pair</span><p>Write each force as “exerted by A on B”, then swap A and B: “Earth on apple” ↔ “apple on Earth”. If it is not the same two objects, it is not a pair.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p><var class="vec kf">W</var> and <var class="vec kf">R</var> of the book at rest are opposite, but this is <b>not</b> the third law: they act on the same object (the book) and come from two different authors (the Earth, the table). They balance because the book is at rest (first law). Press on the book: <var>R</var> increases, <var>W</var> does not change.</p></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Part 8</div><h2>Using Newton’s second law: project on well-chosen axes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>“When all forces acting on a system are known, Newton’s second law allows us to determine the equations of motion” (course, p. 6). Every exercise follows the same method: that of the course example and of the TD 2 and 3 corrections.</p></div>
+        <div class="note keep"><span class="tag">Write-up method</span><ol>
+          <li><b>System</b>: “material point M of mass <var>m</var>”. <b>Reference frame</b>: terrestrial, assumed Galilean.</li>
+          <li><b>Coordinate system</b>: origin and axes. Choose them so that as many forces as possible lie along an axis: vertical for a fall, along the slope for an inclined plane.</li>
+          <li><b>Forces involved</b> and <b>force diagram</b>.</li>
+          <li><b>Second law</b> as vectors: Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var> (Σ <var class="vec kf">F</var> = <var class="vec">0</var> at equilibrium).</li>
+          <li><b>Projection</b>: each vector as a column, then one equation per axis.</li>
+          <li><b>Solving</b>: one unknown per equation (<var>R</var>, <var>f</var>, <var>a</var>…), or integrating <var>a</var>(<var>t</var>) with the initial conditions.</li>
+          <li><b>Numerical application</b> at the end, with the unit, and a comment.</li>
+        </ol></div>
+
+        <h3>1. Free fall</h3>
+        <div class="prose"><p><span class="src-tag c">Course p. 7</span> <span class="src-tag c">TD 3 · Ex 1</span> A parachutist of mass <var>m</var> = 80&nbsp;kg jumps from a height of 3000&nbsp;m with zero initial velocity; air resistance is ignored. Axis <var class="vec">u</var><sub><var>y</var></sub> vertical, pointing up, origin on the ground, <var>t</var> = 0 at the jump.</p></div>
+        <ol class="steps">
+          <li><div><p>Forces involved: the weight alone. Second law: <span class="f"><var class="vec kf">W</var> = <var>m</var> <var class="vec ka">a</var></span>, projected: −<var>m</var><var>g</var> = <var>m</var><var>a</var><sub><var>y</var></sub>, so <var>a</var><sub><var>y</var></sub> = −<var>g</var>. The mass cancels out: the acceleration does not depend on the mass.</p></div></li>
+          <li><div><p>Integrate: <var>v</var><sub><var>y</var></sub>(<var>t</var>) = −<var>g</var><var>t</var> (zero initial velocity), then <var>y</var>(<var>t</var>) = −<var>g</var><var>t</var>²/2 + 3000.</p></div></li>
+          <li><div><p>It reaches the ground when <var>y</var>(<var>T</var>) = 0: <span class="f"><var>T</var> = √(6000/<var>g</var>) ≈ 24.7 s</span> with <var>g</var> = 9.81&nbsp;m·s⁻².</p></div></li>
+          <li><div><p>Then <var>v</var><sub><var>y</var></sub>(<var>T</var>) = −<var>g</var><var>T</var> ≈ −242.6&nbsp;m·s⁻¹: a speed of 242.6&nbsp;m·s⁻¹, about 873&nbsp;km/h. Unrealistic: the air slows the fall down, which is the rest of the exercise (case 3 below).</p></div></li>
+        </ol>
+        <div class="prose"><p>Same forces for the rugby ball <span class="src-tag c">TD 3 · Ex 2</span>: weight alone, so <var class="vec ka">a</var> = <var class="vec">g</var> = (0; −<var>g</var>), and the rest is the projectile of chapter 1. With <var>v</var><sub>0</sub> = 23&nbsp;m·s⁻¹ and <var>β</var> = 38°, the trajectory equation gives <var>y</var>(40) ≈ 7.36&nbsp;m: above the crossbar (3&nbsp;m), below the top of the posts (8&nbsp;m). The goal is scored.</p></div>
+
+        <h3>2. The inclined plane</h3>
+        <div class="prose"><p><span class="src-tag c">TD 2 · Ex 2</span> A robot of mass <var>m</var> stays stationary on a slope of angle <var>α</var> = 30°. Forces: weight, surface reaction force, friction with the surface. The TD axes: <var class="vec">u</var><sub><var>x</var></sub> along the slope, pointing down; <var class="vec">u</var><sub><var>y</var></sub> perpendicular to the slope, pointing up. With these axes, <var class="vec kf">R</var> and <var class="vec kf">f</var> each lie along an axis: only the weight needs to be decomposed.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Decompose the weight</b> along the unit vectors (the French correction says “with a Chasles relation”): <span class="f"><var class="vec kf">W</var> = <var class="vec kf">W</var><sub><var>x</var></sub> + <var class="vec kf">W</var><sub><var>y</var></sub></span>. The angle between <var class="vec kf">W</var> and the perpendicular to the slope is <var>α</var> (two angles with perpendicular sides). The side adjacent to <var>α</var> is the perpendicular component, the opposite side the component along the slope:</p>
+            <div class="eq"><span class="nw"><var class="vec kf">W</var> = <span class="col"><span><var>m</var><var>g</var> sin <var>α</var></span><span>−<var>m</var><var>g</var> cos <var>α</var></span></span></span></div></div></li>
+          <li><div><p><b>Equilibrium</b>: <span class="f"><var class="vec kf">W</var> + <var class="vec kf">R</var> + <var class="vec kf">f</var> = <var class="vec">0</var></span>, that is</p>
+            <div class="eq"><span class="nw"><span class="col"><span><var>m</var><var>g</var> sin <var>α</var></span><span>−<var>m</var><var>g</var> cos <var>α</var></span></span> + <span class="col"><span>0</span><span><var>R</var></span></span> + <span class="col"><span><var>f</var><sub><var>x</var></sub></span><span>0</span></span> = <span class="col"><span>0</span><span>0</span></span></span></div></div></li>
+          <li><div><p>Along <var>x</var>: <var>f</var><sub><var>x</var></sub> = −<var>m</var><var>g</var> sin <var>α</var>, so <span class="f"><var class="vec kf">f</var> = −<var>m</var><var>g</var> sin <var>α</var> <var class="vec">u</var><sub><var>x</var></sub></span>: pointing up the slope, of magnitude <var>m</var><var>g</var> sin <var>α</var>. Along <var>y</var>: <var>R</var> = <var>m</var><var>g</var> cos <var>α</var>.</p></div></li>
+          <li><div><p>At 30°: <var>R</var> = (√3/2) <var>m</var><var>g</var> ≈ 0.87 <var>m</var><var>g</var> and <var>f</var> = <var>m</var><var>g</var>/2. With <var>m</var> = 10&nbsp;kg and <var>g</var> = 10&nbsp;m·s⁻²: <var>R</var> ≈ 86.6&nbsp;N and <var>f</var> = 50&nbsp;N, the values on the plate at the top of the page.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Without friction</b>, the robot slides. Along <var>x</var>: <var>m</var><var>g</var> sin <var>α</var> = <var>m</var><var>a</var>, so <span class="f"><var>a</var> = <var>g</var> sin <var>α</var></span>, that is 5&nbsp;m·s⁻² at 30° with <var>g</var> = 10&nbsp;m·s⁻². Along <var>y</var>: it does not leave the slope, <var>a</var><sub><var>y</var></sub> = 0, and <var>R</var> = <var>m</var><var>g</var> cos <var>α</var> as before. On the plate, choose “No friction”, then “Horizontal and vertical axes”: you then have to decompose <var class="vec kf">R</var> (and <var class="vec kf">f</var>), and each equation contains two unknowns.</p></div>
+
+        <h3>3. With friction: the maximum speed</h3>
+        <div class="prose"><p><span class="src-tag c">TD 3 · Ex 1</span> The parachutist again, this time with air resistance: <var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var>. Axis <var class="vec">u</var><sub><var>y</var></sub> pointing up; write <var>v</var> = <var>v</var><sub><var>y</var></sub>, negative during the fall.</p></div>
+        <ol class="steps">
+          <li><div><p>Second law: <span class="f"><var class="vec kf">W</var> + <var class="vec kf">f</var> = <var>m</var> <var class="vec ka">a</var></span>, projected: <span class="f"><var>m</var> d<var>v</var>/d<var>t</var> = −<var>m</var><var>g</var> − <var>α</var><var>v</var></span>.</p></div></li>
+          <li><div><p>Divide by <var>m</var>: <span class="f">d<var>v</var>/d<var>t</var> + <var>v</var>/<var>τ</var> = −<var>g</var></span>, with <var>τ</var> = <var>m</var>/<var>α</var>, in seconds. This is a first-order linear differential equation.</p></div></li>
+          <li><div><p>Solution: that of the homogeneous equation, <var>A</var> e<sup>−<var>t</var>/<var>τ</var></sup>, plus a constant solution, −<var>g</var><var>τ</var>; then <var>v</var>(0) = 0 gives <var>A</var> = <var>g</var><var>τ</var>: <span class="f"><var>v</var>(<var>t</var>) = <var>g</var><var>τ</var> (e<sup>−<var>t</var>/<var>τ</var></sup> − 1)</span>.</p></div></li>
+          <li><div><p>When <var>t</var> becomes large compared with <var>τ</var>, e<sup>−<var>t</var>/<var>τ</var></sup> tends to 0: the speed tends to the <b>maximum speed</b> <var>v</var><sub>lim</sub> = <var>g</var><var>τ</var> = <var>m</var><var>g</var>/<var>α</var> (as a magnitude). The first law confirms it: at constant speed, <var class="vec kf">f</var> balances <var class="vec kf">W</var>, so <var>α</var><var>v</var><sub>lim</sub> = <var>m</var><var>g</var>.</p></div></li>
+          <li><div><p>The TD graph gives <var>v</var><sub>lim</sub> ≈ 69.5&nbsp;m·s⁻¹ (250&nbsp;km/h), much less than 242.6&nbsp;m·s⁻¹ without air: “this is expected, since we take the air resistance into account”, says the correction.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>On the slope, swapping sin and cos is the most frequent mistake. Test <var>α</var> = 0: the component along the slope must vanish (sin 0 = 0), and the perpendicular component must be −<var>m</var><var>g</var>.</li>
+          <li>Component or magnitude? With the axis pointing up, <var>v</var><sub><var>y</var></sub>(<var>T</var>) = −242.6&nbsp;m·s⁻¹; the speed, a magnitude, is 242.6&nbsp;m·s⁻¹. The TD 3 correction writes “<var>v</var>(<var>t</var>) = −<var>g</var><var>t</var> = 242 m/s”: it mixes the two.</li>
+          <li>Likewise, “<var>f</var> = −<var>m</var><var>g</var> sin <var>α</var>” (TD 2 correction) is the component along <var class="vec">u</var><sub><var>x</var></sub>. The magnitude of the friction is positive: <var>m</var><var>g</var> sin <var>α</var>.</li>
+          <li>Project with the signs read on the diagram: (0; −<var>m</var><var>g</var>) when <var class="vec">u</var><sub><var>y</var></sub> points up, (0; +<var>m</var><var>g</var>) when it points down.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-2-dynamique.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="physique:dynamique:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>When the forces are complicated, or when only a final speed matters, the second law gets heavy. Chapter 3, <a href="cours-3-energie.html">work and energy</a>, gives a complementary approach: linking the speed directly to the work of the forces, without going through <var>a</var>(<var>t</var>).</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+/* Chapter 2: three visuals. The inclined-plane plate (header, TD 2 · Ex 2), the force diagram to build (part 2), the
+   action-reaction pairs (part 7). Displayed text sits between “textes:start” and “textes:end”: it is the only block
+   that differs from the French page. Pure calculations sit between “calc:start” and “calc:end” (tested with node). */
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, M = R.meca, NB = ' ';
+  function V(s, k) { return '<var class="vec ' + (k == null ? 'kf' : k) + '">' + s + '</var>'; }
+  /* textes:start */
+  var MG = '<var>m</var><var>g</var>', AL = '<var>α</var>';
+  var L = {
+    W: 'W',
+    plateTitle: 'Inclined plane · TD 2 · Ex 2', plateData: 'm = 10 kg · g = 10 m·s⁻²',
+    angle: 'Slope angle', modeGroup: 'The robot', modeEq: 'At rest, with friction', modeSlide: 'No friction',
+    axesGroup: 'Projection axes', axesSlope: 'Slope axes', axesHV: 'Horizontal and vertical axes',
+    aria: 'Robot on a {a}° slope: vertical weight, reaction force perpendicular to the slope, {x}.',
+    ariaEq: 'friction pointing up the slope', ariaSl: 'acceleration pointing down the slope',
+    roT: AL + ' = {a}° · sin ' + AL + ' ≈ {s} · cos ' + AL + ' ≈ {c}',
+    bW: 'Weight', bR: 'Reaction', bF: 'Friction', bA: 'Acceleration',
+    wSlope: '<span><var>W</var> = ' + MG + ' = {P}</span><span><var>W</var><sub><var>x</var></sub> = ' + MG + ' sin ' + AL + ' = {Px}</span><span><var>W</var><sub><var>y</var></sub> = −' + MG + ' cos ' + AL + ' = {Py}</span>',
+    wHV: '<span><var>W</var> = ' + MG + ' = {P}</span><span>vertical: nothing to decompose</span>',
+    rSlope: '<span><var>R</var> = ' + MG + ' cos ' + AL + ' = {R}</span><span>perpendicular to the slope</span>',
+    rHV: '<span><var>R</var> = {R}</span><span>horizontal: −<var>R</var> sin ' + AL + ' = {Rh}</span><span>vertical: <var>R</var> cos ' + AL + ' = {Rv}</span>',
+    fSlope: '<span><var>f</var> = ' + MG + ' sin ' + AL + ' = {f}</span><span>pointing up the slope</span>',
+    fHV: '<span><var>f</var> = {f}</span><span>horizontal: <var>f</var> cos ' + AL + ' = {fh}</span><span>vertical: <var>f</var> sin ' + AL + ' = {fv}</span>',
+    aBox: '<span><var>a</var> = <var>g</var> sin ' + AL + ' = {acc}</span><span>pointing down the slope</span>',
+    eqSlopeEq: '<b>Equilibrium</b>: ' + V('W') + ' + ' + V('R') + ' + ' + V('f') + ' = ' + V('0', '') + '. Along <var>x</var>: ' + MG + ' sin ' + AL + ' + <var>f</var><sub><var>x</var></sub> = 0, so <var>f</var><sub><var>x</var></sub> = −' + MG + ' sin ' + AL + '. Along <var>y</var>: <var>R</var> − ' + MG + ' cos ' + AL + ' = 0, so <var>R</var> = ' + MG + ' cos ' + AL + '. Only one force to decompose, one unknown per equation.',
+    eqHVEq: '<b>Equilibrium</b>, horizontally: <var>f</var> cos ' + AL + ' − <var>R</var> sin ' + AL + ' = 0; vertically: <var>R</var> cos ' + AL + ' + <var>f</var> sin ' + AL + ' − ' + MG + ' = 0. Two unknowns in each equation: you have to solve a system to get back <var>R</var> = ' + MG + ' cos ' + AL + ' and <var>f</var> = ' + MG + ' sin ' + AL + '.',
+    eqSlopeSl: V('W') + ' + ' + V('R') + ' = <var>m</var> ' + V('a', 'ka') + '. Along <var>x</var>: ' + MG + ' sin ' + AL + ' = <var>m</var><var>a</var>, so <b><var>a</var> = <var>g</var> sin ' + AL + '</b>. Along <var>y</var>: the robot stays on the slope, <var>a</var><sub><var>y</var></sub> = 0, so <var>R</var> = ' + MG + ' cos ' + AL + '.',
+    eqHVSl: V('W') + ' + ' + V('R') + ' = <var>m</var> ' + V('a', 'ka') + '. Horizontally: −<var>R</var> sin ' + AL + ' = −<var>m</var><var>a</var> cos ' + AL + '; vertically: <var>R</var> cos ' + AL + ' − ' + MG + ' = −<var>m</var><var>a</var> sin ' + AL + '. Two unknowns (<var>R</var> and <var>a</var>) in each equation; with the slope axes, <var>a</var> = <var>g</var> sin ' + AL + ' comes out in one line.',
+    flatEq: 'Flat ground: ' + V('W') + ' + ' + V('R') + ' = ' + V('0', '') + ', so <var>R</var> = ' + MG + ' = 100' + NB + 'N, and no friction is needed.',
+    flatSl: 'Flat ground: ' + V('W') + ' + ' + V('R') + ' = ' + V('0', '') + ', so <var>a</var> = 0: the robot stays at rest, even without friction.',
+    noteEq: 'The angle between ' + V('W') + ' and the perpendicular to the slope is ' + AL + ': the perpendicular component takes the cosine, the one along the slope the sine. At 0°, <var>W</var><sub><var>x</var></sub> = 0; the steeper the slope, the more friction is needed.',
+    noteSl: '<var>a</var> = <var>g</var> sin ' + AL + ' does not depend on the mass. The reaction force has not changed: <var>R</var> = ' + MG + ' cos ' + AL + ', with or without friction.',
+    fbTitle: 'Forces involved: your turn', fbSub: 'pick a situation, tick the forces, then check',
+    fbSitGroup: 'Situations', fbForceGroup: 'Forces acting on the system',
+    check: 'Check my answer', reset: 'Start again', sumT: 'Sum of the forces',
+    before: 'Tick every force acting on the system, and only those. For each one, ask yourself which object exerts it.',
+    good: '<b>Correct.</b>', miss: 'Missing: {l}.', extra: 'Not acting here: {l}.',
+    resOk: 'correct', resMiss: 'missed', resExtra: 'extra',
+    zero: 'Zero sum: Σ ' + V('F') + ' = ' + V('0', '') + ', so ' + V('a', 'ka') + ' = ' + V('0', '') + '. At rest, or in uniform rectilinear motion (first law).',
+    nonzero: 'Non-zero sum: ' + V('a', 'ka') + ' has the direction of Σ ' + V('F') + ' (second law). The motion is not uniform and rectilinear.',
+    elan: 'A “force of motion” does not exist: a force always has an author, another object. With no force, the velocity stays the same (first law): it does not need to be kept up.',
+    sceneAria: 'Diagram. {s} Forces drawn: {l}.', none: 'none', insetAria: 'Sum of the forces and acceleration',
+    names: { P: 'Weight', R: 'Surface reaction', T: 'Tension in the string', A: 'Buoyant force', H: 'Force of the hand', M: 'Motor force', f: 'Air friction', E: '“Force of motion”' },
+    lnames: { P: 'the weight', R: 'the surface reaction force', T: 'the tension in the string', A: 'the buoyant force', H: 'the force of the hand', M: 'the motor force', f: 'the air friction', E: 'the “force of motion”' },
+    sym: { P: ['W'], R: ['R'], T: ['T'], A: ['F', 'A'], H: ['F', 'hand'], M: ['F'], f: ['f'], E: ['F', 'motion'] },
+    sit: {
+      livre: { n: 'Book at rest', d: 'A book at rest on a table.', src: 'TD 2 · Ex 1', w: 'Two authors, two forces: the Earth (the weight) and the table (the reaction). At rest, so <var>R</var> = <var>W</var>.' },
+      bille: { n: 'Ball on a string', d: 'A ball attached to a string, swinging along a circular path.', src: 'TD 2 · Ex 1', w: 'The tension lies along the string, from the ball towards the attachment point. No surface, so no reaction. The velocity changes direction: this is not an equilibrium.' },
+      flotte: { n: 'Floating ball', d: 'A ball floating at rest on water.', src: 'TD 2 · Ex 1', w: 'The water pushes the ball up: the buoyant force (Archimedes), not in the course but in the TD correction. At rest, so <var>F</var><sub>A</sub> = <var>W</var>.' },
+      sousleau: { n: 'Ball under water', d: 'A ball held stationary underwater by a person.', src: 'TD 2 · Ex 1', w: 'The buoyant force balances the weight <i>and</i> the hand: <var>F</var><sub>A</sub> = <var>W</var> + <var>F</var><sub>hand</sub>. That is why you have to push.' },
+      robot: { n: 'Pushed robot', d: 'A robot on a horizontal surface, pushed by its motor; friction is neglected.', src: 'TD 2 · Ex 3', w: 'Vertically, <var>R</var> = <var>W</var>. ' + V('F') + ' remains: Σ ' + V('F') + ' = ' + V('F') + ', and <var>a</var> = <var>F</var>/<var>m</var> = 5' + NB + 'm·s⁻².' },
+      rugby: { n: 'Rugby ball', d: 'The rugby ball in flight, after the kick; air resistance is ignored.', src: 'TD 3 · Ex 2', w: 'The foot no longer touches the ball: only the weight acts. ' + V('a', 'ka') + ' = ' + V('g', '') + ', pointing down, even on the way up.' },
+      para: { n: 'Parachutist', d: 'A parachutist falling, with air resistance.', src: 'TD 3 · Ex 1', w: 'Friction opposes the velocity: it points up. As long as <var>f</var> &lt; <var>W</var>, the sum points down and the parachutist accelerates less and less; at the maximum speed, <var>f</var> = <var>W</var>.' }
+    },
+    earth: 'Earth', apple: 'apple', book: 'book', table: 'table', sEa: 'E→a', saE: 'a→E', sbt: 'b→t',
+    pairsAria: 'On the left, the Earth and an apple attract each other: two opposite forces of the same magnitude. On the right, a book resting on a table: weight pointing down, reaction of the table pointing up, and force of the book on the table pointing down.'
+  };
+  /* textes:end */
+
+  /* calc:start */
+  var C = (function () {
+    function rad(d) { return d * Math.PI / 180; }
+    function mul(k, u) { return [k * u[0], k * u[1]]; }
+    function add(vs) { var s = [0, 0]; vs.forEach(function (v) { s[0] += v[0]; s[1] += v[1]; }); return s; }
+    function len(v) { return Math.sqrt(v[0] * v[0] + v[1] * v[1]); }
+    function unit(v) { var l = len(v); return l ? [v[0] / l, v[1] / l] : [0, 0]; }
+    /* Inclined plane (TD 2 · Ex 2). Drawing frame: X horizontal to the right, Y vertical, up; the slope rises to the
+       right at angle α. Slope axes as in the TD: ux down the slope, uy perpendicular to it, pointing up. Forces in
+       newtons; f is the magnitude of the friction (at equilibrium), a the magnitude of the acceleration. */
+    function incline(alpha, m, g, friction) {
+      var s = Math.sin(rad(alpha)), c = Math.cos(rad(alpha)), P = m * g, Rn = P * c, fn = friction ? P * s : 0, a = friction ? 0 : g * s;
+      var t = [c, s], ux = [-c, -s], uy = [-s, c];
+      return {
+        s: s, c: c, P: P, Rn: Rn, fn: fn, a: a, t: t, ux: ux, uy: uy,
+        vP: [0, -P], vR: mul(Rn, uy), vf: mul(fn, t), va: mul(a, ux),
+        Px: P * s, Py: -P * c, vPx: mul(P * s, ux), vPy: mul(-P * c, uy),
+        Rh: -Rn * s, Rv: Rn * c, fh: fn * c, fv: fn * s
+      };
+    }
+    /* Forces involved: situations from the TDs, vectors in drawing units. Equilibria have a zero sum. */
+    var th = rad(30), O = [-1.0, 2.25], LF = 2.9, MB = [O[0] + LF * Math.sin(th), O[1] - LF * Math.cos(th)];
+    var KP = 0.2941, XR = -1.2, YR = function (x) { return 1.4 - KP * (x - 0.6) * (x - 0.6); };
+    var SIT = [
+      { id: 'livre', ctx: 'table', at: [0, 0], ok: ['P', 'R'], F: { P: [0, -1.6], R: [0, 1.6] } },
+      { id: 'bille', ctx: 'pendule', at: MB, O: O, ok: ['P', 'T'], F: { P: [0, -1.5], T: mul(1.8, unit([O[0] - MB[0], O[1] - MB[1]])) }, v: [-Math.cos(th), -Math.sin(th)] },
+      { id: 'flotte', ctx: 'flotte', at: [0, 0.05], ok: ['P', 'A'], F: { P: [0, -1.2], A: [0, 1.2] } },
+      { id: 'sousleau', ctx: 'sousleau', at: [0, -0.4], ok: ['P', 'A', 'H'], F: { P: [0, -0.6], A: [0, 1.8], H: [0, -1.2] }, off: { P: [-7, 0], H: [7, 0] } },
+      { id: 'robot', ctx: 'sol', at: [0, 0], ok: ['P', 'R', 'M'], F: { P: [0, -1.5], R: [0, 1.5], M: [1.2, 0] }, v: [0.9, 0], voff: [0, 15] },
+      { id: 'rugby', ctx: 'rugby', at: [XR, YR(XR)], ok: ['P'], F: { P: [0, -1.5] }, v: mul(1.1, unit([1, -2 * KP * (XR - 0.6)])), yr: YR },
+      { id: 'para', ctx: 'air', at: [0, 0.6], ok: ['P', 'f'], F: { P: [0, -1.6], f: [0, 0.9] }, v: [0, -1.0], voff: [16, 0] }
+    ];
+    /* direction drawn for a ticked force: the true one if it acts, a plausible one otherwise */
+    function would(S, k) {
+      if (S.F[k]) return S.F[k];
+      var v = S.v ? unit(S.v) : null;
+      return { P: [0, -1.5], R: [0, 1.3], T: [0, 1.15], A: [0, 1.0], H: [0, -1.0], M: [1.2, 0],
+        f: v ? mul(-0.9, v) : [-0.9, 0], E: v ? mul(1.1, v) : [1.1, 0] }[k];
+    }
+    function sum(S) { return add(S.ok.map(function (k) { return S.F[k]; })); }
+    return { rad: rad, mul: mul, add: add, len: len, unit: unit, incline: incline, SIT: SIT, would: would, sum: sum };
+  })();
+  /* calc:end */
+
+  /* ---------- small drawing helpers ---------- */
+  function r1(v) { return Math.round(v * 10) / 10; }
+  function fill(s, o) { return s.replace(/\{(\w+)\}/g, function (m0, k) { return o[k] != null ? o[k] : m0; }); }
+  function num(x, d) { return U.nf(Math.abs(x) < 1e-9 ? 0 : x, d == null ? 1 : d); }
+  function chip(attr, val, on, html) { return '<button type="button" class="chip-btn" data-' + attr + '="' + val + '" aria-pressed="' + on + '">' + html + '</button>'; }
+  function slider(id, lab, min, max, step, val) {
+    return '<div class="slider"><label for="' + id + '">' + lab + '</label><output id="' + id + 'v" for="' + id + '"></output>' +
+      '<input id="' + id + '" type="range" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '"></div>';
+  }
+  function path(p, list, cls, close, clip) {
+    return '<path class="' + cls + '" d="M' + list.map(function (q) { return r1(p.X(q[0])) + ' ' + r1(p.Y(q[1])); }).join('L') + (close ? 'Z' : '') + '"' + (clip ? p.clip({}) : '') + '/>';
+  }
+  function arcPts(c, r, a0, a1) {
+    var o = [];
+    for (var i = 0; i <= 18; i++) { var a = C.rad(a0 + (a1 - a0) * i / 18); o.push([c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)]); }
+    return o;
+  }
+  function cross(p, q) {
+    var x = p.X(q[0]), y = p.Y(q[1]);
+    return '<path class="mk-cross" d="M' + r1(x - 5) + ' ' + r1(y - 5) + 'L' + r1(x + 5) + ' ' + r1(y + 5) + 'M' + r1(x - 5) + ' ' + r1(y + 5) + 'L' + r1(x + 5) + ' ' + r1(y - 5) + '"/>';
+  }
+  function circle(p, c, r, cls) { return '<circle class="' + cls + '" cx="' + r1(p.X(c[0])) + '" cy="' + r1(p.Y(c[1])) + '" r="' + r1(r * p.sx) + '"/>'; }
+  /* short slanted strokes along segment a → b, on side “side” (unit vector): a solid surface */
+  function hatch(p, a, b, side, step) {
+    var u = C.unit([b[0] - a[0], b[1] - a[1]]), l = C.len([b[0] - a[0], b[1] - a[1]]), d = '', h = 0.2;
+    for (var k = step / 2; k < l; k += step) {
+      var q = [a[0] + u[0] * k, a[1] + u[1] * k], e = [q[0] + h * (side[0] - u[0]), q[1] + h * (side[1] - u[1])];
+      d += 'M' + r1(p.X(q[0])) + ' ' + r1(p.Y(q[1])) + 'L' + r1(p.X(e[0])) + ' ' + r1(p.Y(e[1]));
+    }
+    return '<path class="mk-hatch" d="' + d + '"' + p.clip({}) + '/>';
+  }
+  function symHTML(k) { var s = L.sym[k]; return V(s[0]) + (s[1] ? '<sub>' + s[1] + '</sub>' : ''); }
+
+  /* ================= 1. The plate: the robot on the slope (TD 2 · Ex 2) ================= */
+  function incline(el) {
+    if (!el) return null;
+    var m = 10, g = 10, K = 2.2 / (m * g), KA = 0.2, st = { al: 30, fr: true, ax: 'slope' };
+    var XW = [-4, 4], YW = [-2.85, 2.8];
+    el.classList.add('plate');
+    el.innerHTML =
+      '<div class="plate-head"><span>' + L.plateTitle + '</span><span>' + L.plateData + '</span></div>' +
+      '<div class="plate-fig mk-host"></div>' +
+      '<div class="plate-ctrls">' +
+        '<div class="sliders one">' + slider('ipa', L.angle + ' <var>α</var>', 0, 60, 5, st.al) + '</div>' +
+        '<div class="ip-groups">' +
+          '<div class="row" role="group" aria-label="' + U.esc(L.modeGroup) + '">' + chip('fr', '1', true, L.modeEq) + chip('fr', '0', false, L.modeSlide) + '</div>' +
+          '<div class="row" role="group" aria-label="' + U.esc(L.axesGroup) + '">' + chip('ax', 'slope', true, L.axesSlope) + chip('ax', 'hv', false, L.axesHV) + '</div>' +
+        '</div>' +
+        '<div class="plate-read" aria-live="polite"></div>' +
+      '</div>';
+    var fig = el.querySelector('.plate-fig'), out = el.querySelector('.plate-read'), inp = document.getElementById('ipa'), view = null;
+
+    function draw(w) {
+      var p = M.plot({ x: XW, y: YW, w: w, equal: true, pad: [6, 6, 6, 6] });
+      var F = C.incline(st.al, m, g, st.fr), t = F.t, n = F.uy, ux = F.ux, flat = st.al === 0, B = [0, 0], slope = st.ax === 'slope';
+      function k(v) { return [v[0] * K, v[1] * K]; }
+      var e0 = [-7 * t[0], -7 * t[1]], e1 = [7 * t[0], 7 * t[1]];
+      p.grid({ x: [0.5, 1], y: [0.5, 1] });
+      p.add(path(p, [e0, e1, [e1[0], e1[1] - 9], [e0[0], e0[1] - 9]], 'ip-support', true, true));
+      p.add(hatch(p, e0, e1, [-n[0], -n[1]], 0.34));
+      p.add(path(p, [e0, e1], 'mk-surf', false, true));
+      if (!flat) { // the slope angle, at its foot
+        var d = Math.min(3.2, 2.5 / F.s), A = [-d * t[0], -d * t[1]], am = C.rad(st.al / 2);
+        p.line(A, [A[0] + 2.4, A[1]], { cls: 'mk-dash' });
+        p.add(path(p, arcPts(A, 0.75, 0, st.al), 'ip-arc'));
+        p.label([A[0] + 1.02 * Math.cos(am), A[1] + 1.02 * Math.sin(am)], 'α', { anchor: 'middle', dy: 5, fs: 15 });
+      }
+      if (slope) { // the projection basis of the TD
+        var O = [-2.6, 1.55], bl = 0.7;
+        [[ux, 'x'], [n, 'y']].forEach(function (b) {
+          p.vec(O, [b[0][0] * bl, b[0][1] * bl], { kind: 'ink', head: 7 });
+          p.label([O[0] + b[0][0] * (bl + 0.34), O[1] + b[0][1] * (bl + 0.34)], 'u', { sub: b[1], arrow: true, anchor: 'middle', dy: 5, fs: 15 });
+        });
+      } else { // horizontal and vertical lines through the point
+        p.line([XW[0], 0], [XW[1], 0], { cls: 'ip-ref' }).line([0, YW[0]], [0, YW[1]], { cls: 'ip-ref' });
+      }
+      var tP = k(F.vP), tR = k(F.vR), tf = k(F.vf);
+      if (!flat && slope) { // the weight decomposed: W = Wx + Wy
+        var tPx = k(F.vPx), tPy = k(F.vPy), big = st.al >= 12, a1 = C.rad(-90 + st.al / 2);
+        p.add(path(p, [tPx, tP, tPy], 'ip-proj'));
+        p.vec(B, tPx, { kind: 'frc', cls: 'comp', head: 8, label: big ? L.W : null, sub: 'x' });
+        p.vec(B, tPy, { kind: 'frc', cls: 'comp', head: 8, label: big ? L.W : null, sub: 'y' });
+        p.add(path(p, arcPts(B, 0.66, -90, -90 + st.al), 'ip-arc'));
+        if (big) p.label([0.92 * Math.cos(a1), 0.92 * Math.sin(a1)], 'α', { anchor: 'middle', dy: 5, fs: 15 });
+      }
+      if (!flat && !slope) { // R (and f) projected on the horizontal and the vertical
+        p.add(path(p, [[tR[0], 0], tR, [0, tR[1]]], 'ip-proj'));
+        if (st.fr) p.add(path(p, [[tf[0], 0], tf, [0, tf[1]]], 'ip-proj'));
+        var a2 = C.rad(90 + st.al / 2);
+        p.add(path(p, arcPts(B, 0.66, 90, 90 + st.al), 'ip-arc'));
+        if (st.al >= 12) p.label([0.92 * Math.cos(a2), 0.92 * Math.sin(a2)], 'α', { anchor: 'middle', dy: 5, fs: 15 });
+      }
+      p.vec(B, tP, { kind: 'frc', label: L.W, w: 2.6, head: 10 });
+      p.vec(B, tR, { kind: 'frc', label: 'R', w: 2.6, head: 10 });
+      if (st.fr && !flat) p.vec(B, tf, { kind: 'frc', label: 'f', w: 2.6, head: 10 });
+      if (!st.fr && !flat) { // a, shifted off the slope to stay readable
+        var o = 16 / p.sx;
+        p.vec([n[0] * o, n[1] * o], [ux[0] * F.a * KA, ux[1] * F.a * KA], { kind: 'acc', label: 'a', w: 2.4, head: 9 });
+      }
+      p.add(cross(p, B));
+      return p.svg({ cls: 'mk-plate', label: fill(L.aria, { a: st.al, x: st.fr ? L.ariaEq : L.ariaSl }) });
+    }
+    function read() {
+      var F = C.incline(st.al, m, g, st.fr), flat = st.al === 0, slope = st.ax === 'slope', N = NB + 'N';
+      var o = { a: st.al, s: num(F.s, 3), c: num(F.c, 3), P: num(F.P) + N, Px: num(F.Px) + N, Py: num(F.Py) + N, R: num(F.Rn) + N,
+        Rh: num(F.Rh) + N, Rv: num(F.Rv) + N, f: num(F.fn) + N, fh: num(F.fh) + N, fv: num(F.fv) + N, acc: num(F.a) + NB + 'm·s⁻²' };
+      var third = st.fr ? '<div class="ro k-frc"><b>' + L.bF + '</b>' + fill(slope ? L.fSlope : L.fHV, o) + '</div>'
+        : '<div class="ro k-acc"><b>' + L.bA + '</b>' + fill(L.aBox, o) + '</div>';
+      var eq = flat ? (st.fr ? L.flatEq : L.flatSl) : st.fr ? (slope ? L.eqSlopeEq : L.eqHVEq) : (slope ? L.eqSlopeSl : L.eqHVSl);
+      out.innerHTML = '<div class="ro-t">' + fill(L.roT, o) + '</div>' +
+        '<div class="ro-grid"><div class="ro k-frc"><b>' + L.bW + '</b>' + fill(slope ? L.wSlope : L.wHV, o) + '</div>' +
+        '<div class="ro k-frc"><b>' + L.bR + '</b>' + fill(slope ? L.rSlope : L.rHV, o) + '</div>' + third + '</div>' +
+        '<p class="ro-line">' + eq + '</p>' + (flat ? '' : '<p class="ro-line muted">' + (st.fr ? L.noteEq : L.noteSl) + '</p>');
+    }
+    function update() {
+      document.getElementById('ipav').textContent = st.al + '°';
+      U.$$('[data-fr]', el).forEach(function (b) { b.setAttribute('aria-pressed', String((b.getAttribute('data-fr') === '1') === st.fr)); });
+      U.$$('[data-ax]', el).forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-ax') === st.ax)); });
+      read();
+      if (view) view.redraw(); else view = M.mount(fig, draw);
+    }
+    inp.addEventListener('input', function () { st.al = +inp.value; update(); });
+    U.$$('[data-fr]', el).forEach(function (b) { b.addEventListener('click', function () { st.fr = b.getAttribute('data-fr') === '1'; update(); }); });
+    U.$$('[data-ax]', el).forEach(function (b) { b.addEventListener('click', function () { st.ax = b.getAttribute('data-ax'); update(); }); });
+    update();
+    return { state: st };
+  }
+
+  /* ================= 2. The force diagram to build (TD 2 and 3) ================= */
+  function bilan(el) {
+    if (!el) return null;
+    var KEYS = ['P', 'R', 'T', 'A', 'H', 'M', 'f', 'E'], st = { i: 0, sel: {}, done: false }, views = {};
+    el.classList.add('bench', 'fb');
+    el.innerHTML =
+      '<div class="bench-head"><span>' + L.fbTitle + '</span><span>' + L.fbSub + '</span></div>' +
+      '<div class="bench-body">' +
+        '<div class="row" role="group" aria-label="' + U.esc(L.fbSitGroup) + '">' + C.SIT.map(function (S, i) { return chip('s', i, i === 0, U.esc(L.sit[S.id].n)); }).join('') + '</div>' +
+        '<p class="fb-desc"></p>' +
+        '<div class="fb-figs"><div class="mk-host fb-scene"></div><div class="fb-sum"><div class="fb-sum-t">' + L.sumT + '</div><div class="mk-host fb-inset"></div></div></div>' +
+      '</div>' +
+      '<div class="ctrls">' +
+        '<div class="row" role="group" aria-label="' + U.esc(L.fbForceGroup) + '">' + KEYS.map(function (k) { return chip('k', k, false, L.names[k] + (k === 'E' ? '' : ' ' + symHTML(k))); }).join('') + '</div>' +
+        '<div class="row"><button type="button" class="btn primary" data-check>' + L.check + '</button><button type="button" class="btn" data-reset>' + L.reset + '</button></div>' +
+        '<div class="readout fb-read" aria-live="polite"></div>' +
+      '</div>';
+    var desc = el.querySelector('.fb-desc'), out = el.querySelector('.fb-read');
+
+    function ctx(p, S) {
+      var s = '';
+      if (S.ctx === 'table') {
+        s += path(p, [[-0.75, -0.32], [0.75, -0.32], [0.75, 0.3], [-0.75, 0.3]], 'mk-body', true);
+        s += hatch(p, [-2.6, -0.32], [2.6, -0.32], [0, -1], 0.32) + path(p, [[-2.6, -0.32], [2.6, -0.32]], 'mk-surf');
+      } else if (S.ctx === 'pendule') {
+        s += hatch(p, [S.O[0] - 0.8, S.O[1]], [S.O[0] + 0.8, S.O[1]], [0, 1], 0.26) + path(p, [[S.O[0] - 0.8, S.O[1]], [S.O[0] + 0.8, S.O[1]]], 'mk-surf');
+        var L0 = C.len([S.at[0] - S.O[0], S.at[1] - S.O[1]]);
+        s += path(p, arcPts(S.O, L0, -132, -48), 'mk-traj') + path(p, [S.O, S.at], 'mk-string') + circle(p, S.at, 0.2, 'mk-body');
+      } else if (S.ctx === 'flotte' || S.ctx === 'sousleau') {
+        var yw = S.ctx === 'flotte' ? 0 : 1.5;
+        s += path(p, [[-3, yw], [3, yw], [3, -2.6], [-3, -2.6]], 'mk-water', true) + path(p, [[-3, yw], [3, yw]], 'mk-wline');
+        s += circle(p, S.at, S.ctx === 'flotte' ? 0.5 : 0.45, 'mk-body');
+      } else if (S.ctx === 'sol') {
+        s += path(p, [[-0.7, -0.42], [0.7, -0.42], [0.7, 0.42], [-0.7, 0.42]], 'mk-body', true);
+        s += hatch(p, [-2.8, -0.42], [2.8, -0.42], [0, -1], 0.32) + path(p, [[-2.8, -0.42], [2.8, -0.42]], 'mk-surf');
+      } else if (S.ctx === 'rugby') {
+        s += hatch(p, [-3, -2.0], [3, -2.0], [0, -1], 0.32) + path(p, [[-3, -2.0], [3, -2.0]], 'mk-surf');
+        s += path(p, [[2.4, -2.0], [2.4, 1.6]], 'mk-post') + path(p, [[2.15, -0.65], [2.65, -0.65]], 'mk-post');
+        var tr = []; for (var x = -2.8; x <= 2.81; x += 0.1) tr.push([x, S.yr(x)]);
+        s += path(p, tr, 'mk-traj') + circle(p, S.at, 0.16, 'mk-body');
+      } else {
+        s += circle(p, S.at, 0.18, 'mk-body');
+      }
+      p.add(s);
+    }
+    function drawn() {
+      var S = C.SIT[st.i];
+      return KEYS.filter(function (k) { return st.sel[k] || (st.done && S.ok.indexOf(k) >= 0); });
+    }
+    function scene(w) {
+      var S = C.SIT[st.i], p = M.plot({ x: [-3, 3], y: [-2.6, 2.6], w: Math.min(w, 460), equal: true, pad: [6, 6, 6, 6] });
+      ctx(p, S);
+      if (S.v) {
+        var vo = S.voff || [0, 0], vx = p.X(S.at[0]) + vo[0], vy = p.Y(S.at[1]) - vo[1];
+        p.add(M.arrow(vx, vy, vx + S.v[0] * p.sx, vy - S.v[1] * p.sy, { kind: 'vel', label: 'v', w: 2, head: 8 }));
+      }
+      var ks = drawn();
+      ks.forEach(function (k) {
+        var v = C.would(S, k), off = (S.off && S.off[k]) || [0, 0], x0 = p.X(S.at[0]) + off[0], y0 = p.Y(S.at[1]) - off[1];
+        var cls = st.done ? (S.ok.indexOf(k) < 0 ? 'ghost' : !st.sel[k] ? 'missed' : '') : '';
+        p.add(M.arrow(x0, y0, x0 + v[0] * p.sx, y0 - v[1] * p.sy, { kind: 'frc', label: L.sym[k][0], sub: L.sym[k][1], w: 2.4, head: 9, cls: cls }));
+      });
+      p.add(cross(p, S.at));
+      return p.svg({ label: fill(L.sceneAria, { s: L.sit[S.id].d, l: ks.length ? ks.map(function (k) { return L.lnames[k]; }).join(', ') : L.none }) });
+    }
+    function inset(w) {
+      var p = M.plot({ x: [-1.7, 1.7], y: [-1.7, 1.7], w: Math.min(w, 170), equal: true, pad: [4, 4, 4, 4] }), S = C.SIT[st.i];
+      p.add(circle(p, [0, 0], 1.62, 'ip-ref'));
+      if (!st.done) { p.text([0, 0], '?', { cls: 'mk-pname', anchor: 'middle', dy: 6 }); return p.svg({ label: L.insetAria }); }
+      var s = C.sum(S), l = C.len(s);
+      if (l < 1e-9) {
+        p.add(cross(p, [0, 0]));
+        p.label([0, 0], '0', { kind: 'frc', arrow: true, anchor: 'middle', dx: 14, dy: -8, fs: 16 });
+      } else {
+        var u = C.unit(s), d = Math.min(1.3, 0.8 * l), x0 = p.X(0), y0 = p.Y(0), nx = -u[1], ny = u[0], o = 11;
+        p.add(M.arrow(x0, y0, x0 + u[0] * d * p.sx, y0 - u[1] * d * p.sy, { kind: 'frc', w: 2.8, head: 10 }));
+        p.add(M.arrow(x0 + nx * o, y0 - ny * o, x0 + nx * o + u[0] * 0.7 * d * p.sx, y0 - ny * o - u[1] * 0.7 * d * p.sy, { kind: 'acc', w: 2.2, head: 8, label: 'a' }));
+        var lx = x0 - nx * 16 + u[0] * d * 0.5 * p.sx, ly = y0 + ny * 16 - u[1] * d * 0.5 * p.sy + 5;
+        p.add('<text class="mk-math up k-frc" x="' + r1(lx - 6) + '" y="' + r1(ly) + '" font-size="16" text-anchor="end">Σ</text>' + M.label(lx - 4, ly, 'F', { kind: 'frc', arrow: true, fs: 16 }));
+        p.add(cross(p, [0, 0]));
+      }
+      return p.svg({ label: L.insetAria });
+    }
+    function read() {
+      var S = C.SIT[st.i], T = L.sit[S.id];
+      desc.innerHTML = T.d + ' <span class="src-tag c">' + T.src + '</span>';
+      U.$$('[data-k]', el).forEach(function (b) {
+        var k = b.getAttribute('data-k'), on = !!st.sel[k], good = S.ok.indexOf(k) >= 0, res = '';
+        b.setAttribute('aria-pressed', String(on));
+        b.classList.remove('ok', 'miss', 'extra');
+        var old = b.querySelector('.fb-res'); if (old) old.parentNode.removeChild(old);
+        if (st.done) {
+          if (on && good) { b.classList.add('ok'); res = L.resOk; } else if (good) { b.classList.add('miss'); res = L.resMiss; } else if (on) { b.classList.add('extra'); res = L.resExtra; }
+          if (res) b.insertAdjacentHTML('beforeend', '<span class="fb-res">' + res + '</span>');
+        }
+      });
+      U.$$('[data-s]', el).forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-s') === st.i)); });
+      if (!st.done) { out.innerHTML = '<p>' + L.before + '</p>'; return; }
+      var miss = S.ok.filter(function (k) { return !st.sel[k]; }), extra = KEYS.filter(function (k) { return st.sel[k] && S.ok.indexOf(k) < 0; });
+      function list(ks) { return ks.map(function (k) { return L.lnames[k] + (k === 'E' ? '' : ' ' + symHTML(k)); }).join(', '); }
+      var head = !miss.length && !extra.length ? L.good : (miss.length ? fill(L.miss, { l: list(miss) }) : '') + (miss.length && extra.length ? ' ' : '') + (extra.length ? fill(L.extra, { l: list(extra) }) : '');
+      out.innerHTML = '<p>' + head + '</p><p>' + T.w + '</p><p>' + (C.len(C.sum(S)) < 1e-9 ? L.zero : L.nonzero) + '</p>' + (st.sel.E ? '<p class="muted">' + L.elan + '</p>' : '');
+    }
+    function paint() {
+      read();
+      [['s', '.fb-scene', scene], ['i', '.fb-inset', inset]].forEach(function (f) {
+        if (views[f[0]]) views[f[0]].redraw(); else views[f[0]] = M.mount(el.querySelector(f[1]), f[2]);
+      });
+    }
+    U.$$('[data-s]', el).forEach(function (b) { b.addEventListener('click', function () { st.i = +b.getAttribute('data-s'); st.sel = {}; st.done = false; paint(); }); });
+    U.$$('[data-k]', el).forEach(function (b) { b.addEventListener('click', function () { var k = b.getAttribute('data-k'); st.sel[k] = !st.sel[k]; st.done = false; paint(); }); });
+    el.querySelector('[data-check]').addEventListener('click', function () { st.done = true; paint(); });
+    el.querySelector('[data-reset]').addEventListener('click', function () { st.sel = {}; st.done = false; paint(); });
+    paint();
+    return { state: st };
+  }
+
+  /* ================= 3. Action-reaction pairs (part 7) ================= */
+  function pairs(el) {
+    if (!el) return;
+    M.mount(el, function (w) {
+      var p = M.plot({ x: [-4.3, 4.3], y: [-2.45, 2.35], w: Math.min(w, 680), equal: true, pad: [8, 8, 8, 8] });
+      var E = [-2.3, -1.45], Ap = [-2.3, 1.55];
+      p.add(circle(p, E, 0.85, 'mk-body') + circle(p, Ap, 0.2, 'mk-body'));
+      p.text([E[0], E[1] - 0.45], L.earth, { anchor: 'middle' }).text([Ap[0] + 0.32, Ap[1] - 0.02], L.apple, { dy: 4 });
+      p.vec(Ap, [0, -0.95], { kind: 'frc', w: 2.4, head: 9 }).vec(E, [0, 0.95], { kind: 'frc', w: 2.4, head: 9 });
+      p.label([Ap[0] - 0.14, Ap[1] - 0.62], 'F', { sub: L.sEa, kind: 'frc', arrow: true, anchor: 'end', dy: 5 });
+      p.label([E[0] + 0.14, E[1] + 0.62], 'F', { sub: L.saE, kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
+      p.line([0, -2.35], [0, 2.25], { cls: 'mk-dash' });
+      // the book resting on the table
+      p.add(path(p, [[1.15, -0.4], [1.15, -2.25]], 'mk-post') + path(p, [[3.55, -0.4], [3.55, -2.25]], 'mk-post') + path(p, [[0.75, -0.4], [3.95, -0.4]], 'mk-surf'));
+      p.add(path(p, [[1.75, -0.4], [3.05, -0.4], [3.05, 0.3], [1.75, 0.3]], 'mk-body', true));
+      p.text([1.75, 0.42], L.book, { dy: 0 }).text([1.3, -0.72], L.table, { dy: 4 });
+      var G = [2.4, -0.05], Cp = [2.85, -0.4];
+      p.vec(G, [0, -1.25], { kind: 'frc', w: 2.4, head: 9 }).vec(Cp, [0, 1.15], { kind: 'frc', w: 2.4, head: 9 }).vec(Cp, [0, -1.15], { kind: 'frc', w: 2.4, head: 9 });
+      p.label([G[0] - 0.12, G[1] - 1.0], L.W, { kind: 'frc', arrow: true, anchor: 'end', dy: 5 });
+      p.label([Cp[0] + 0.14, Cp[1] + 0.95], 'R', { kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
+      p.label([Cp[0] + 0.14, Cp[1] - 0.95], 'F', { sub: L.sbt, kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
+      p.add(cross(p, G));
+      return p.svg({ label: L.pairsAria });
+    });
+  }
+
+  incline(document.getElementById('plate'));
+  bilan(document.getElementById('bilan'));
+  pairs(document.getElementById('figPairs'));
+})();
+</script>
+</body>
+</html>

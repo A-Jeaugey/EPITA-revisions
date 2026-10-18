@@ -156,11 +156,11 @@
   var BANK = R.quiz.bank(); /* deduplicated: see qcm-engine.js */
   var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
   var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10, srcs: null, exam: null };
-  var SRC = [{ id: 'cours', t: 'Course', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Midterms', test: /^[a-z]+-p20\d\d-/ }, { id: 'hebdo', t: 'Weekly MCQs', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
+  var SRC = [{ id: 'cours', t: 'Course', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Midterms', test: /^[a-z]+-p20\d\d[a-z]?-/ }, { id: 'hebdo', t: 'Weekly MCQs', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
   function srcOf(id) { for (var i = 0; i < SRC.length; i++) if (SRC[i].test.test(id)) return SRC[i].id; return 'cours'; }
   /* a question also used elsewhere (q.alt) counts for each of its sources */
   function hasSrc(q, src) { return R.quiz.ids(q).some(function (id) { return srcOf(id) === src; }); }
-  function fromExam(q, exam) { return R.quiz.ids(q).some(function (id) { return id.indexOf(q.s + '-' + exam + '-') === 0; }); }
+  function fromExam(q, exam) { var re = new RegExp('^[a-z]+-' + exam + '-'); return R.quiz.ids(q).some(function (id) { return re.test(id); }); } // préfixe d'id (elec-, taa-, phys-…), pas q.s
   function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
 
   function inSubj() { return BANK.filter(function (q) { return q.s === st.subj && (!st.exam || fromExam(q, st.exam)); }); }
@@ -369,13 +369,13 @@
     if (!h) return;
     if (run) backToSetup();
     /* "taa-revision", "elec-sprint", "taa-p2024"…: subject, then mode or exam paper */
-    var m = /^([a-z]+)-(sprint|revision|examen|p20\d\d)$/.exec(h);
+    var m = /^([a-z]+)-(sprint|revision|examen|p20\d\d[a-z]?)$/.exec(h);
     if (m && subjects.some(function (s) { return s.id === m[1]; })) {
       if (m[1] !== st.subj) { st.subj = m[1]; st.topics = null; st.srcs = null; st.exam = null; }
       h = m[2];
     }
     subjects.forEach(function (s) { if (h === s.id && s.id !== st.subj) { st.subj = s.id; st.topics = null; st.srcs = null; st.exam = null; } });
-    if (/^p20\d\d$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
+    if (/^p20\d\d[a-z]?$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
     if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) st.topics = [t]; }
     if (/^(sprint|revision|examen)$/.test(h)) { st.exam = null; st.topics = null; st.srcs = null; }
     if (h === 'sprint') { st.mode = 'train'; st.n = 10; }
