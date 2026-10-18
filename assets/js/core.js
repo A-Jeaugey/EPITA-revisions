@@ -139,7 +139,18 @@
         { id: 'ordre', title: 'L’ordre supérieur', path: 'caml/cours-4-ordre-superieur.html', sections: 8 }
       ]
     },
-    { id: 'archi', name: 'Architecture', short: 'Archi', status: 'soon', annales: 'Archi' }
+    {
+      id: 'archi', name: 'Architecture · Numération', short: 'Archi',
+      course: 'Architecture des ordinateurs · Numération', path: 'archi/index.html', dir: 'archi/', status: 'ready', annales: 'Archi',
+      exam: 'Examen 1 h, date non publiée · tests Moodle 10 %',
+      train: 'archi/entrainement.html', fiche: 'archi/fiche.html', open: 'Ouvrir l’archi',
+      chapters: [
+        { id: 'bases', title: 'Bases de numération', path: 'archi/cours-1-bases.html', sections: 8 },
+        { id: 'operations', title: 'Opérations en base 2 et 16', path: 'archi/cours-2-operations.html', sections: 8 },
+        { id: 'entiers', title: 'Entiers signés et non signés', path: 'archi/cours-3-entiers.html', sections: 8 },
+        { id: 'flottants', title: 'Nombres à virgule flottante', path: 'archi/cours-4-flottants.html', sections: 8 }
+      ]
+    }
   ];
   /* textes anglais du registre */
   var SUBJECTS_EN = {
@@ -155,7 +166,9 @@
     caml: { name: 'Algo · Caml', short: 'Caml', course: 'Caml and recursion', open: 'Open Caml',
       exam: 'Written · 1 h 30 · end of October',
       chapters: ['Language basics', 'Recursion', 'Lists', 'Higher-order functions'] },
-    archi: { name: 'Architecture', short: 'Archi' }
+    archi: { name: 'Architecture · Numeration', short: 'Archi', course: 'Computer architecture · Numeration', open: 'Open Archi',
+      exam: 'Exam 1 h, date not published · Moodle tests 10%',
+      chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {
     var e = SUBJECTS_EN[s.id]; if (!e) return;
