@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Floating-point numbers · Archi</title>
+<meta name="description" content="Archi, chapter 4: fixed point and floating point, the IEEE 754 standard in single and double precision (S, E, M, bias), encoding a real number, decoding a hexadecimal word, zeros, infinities, NaN, denormalized numbers, rounding, and the answer format of the exam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* the IEEE word without its steps (header, part 2) */
+.hero .ie-steps,.no-steps .ie-steps{display:none}
+/* an example line under a method step */
+.xl{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:.9rem;line-height:1.65;padding:.35rem .65rem;border-left:3px solid var(--accent);background:var(--bg);border-radius:0 4px 4px 0;overflow-x:auto}
+.xl .bn{font-size:1em}
+.xl b{font-weight:700}
+/* answers in the answer-key format: one block, no spaces */
+.cp{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.02em}
+.tbl td.cp{font-size:.9rem}
+.tbl th.yr{font-family:var(--font-mono);font-weight:600;color:var(--muted);white-space:nowrap}
+.consigne{font-style:italic}
+/* part 2: the exponent line */
+.el-axis{position:relative;padding-top:20px}
+.el-bar{display:flex;height:40px;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden;font-family:var(--font-mono);font-size:.72rem}
+.el-bar>span{display:grid;place-items:center;text-align:center;line-height:1.15;padding:0 2px;min-width:0}
+.el-cap{flex:0 0 15%;background:var(--surface-2);color:var(--muted)}
+.el-cap+.el-mid{border-left:1.5px solid var(--ink)}
+.el-mid{flex:1 1 auto;background:var(--cu-soft);color:var(--cu);font-weight:600;border-right:1.5px solid var(--ink)}
+.el-mk{position:absolute;top:0;width:0;height:62px;border-left:2.5px solid var(--accent);transform:translateX(-1px)}
+.el-mk::before{content:"";position:absolute;top:-1px;left:-7px;border:6px solid transparent;border-top:9px solid var(--accent)}
+.el-ticks{position:relative;height:2.6rem;margin-top:4px;font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
+.el-ticks span{position:absolute;top:0;white-space:nowrap;line-height:1.35}
+.el-ticks b{color:var(--cu);font-weight:700}
+.el-ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.el-ctl input[type=range]{flex:1 1 12rem;min-width:0;accent-color:var(--accent)}
+/* part 8: practice */
+.dx-enc,.dx-dec{display:grid;gap:10px;align-items:end}
+.dx-enc{grid-template-columns:4.2rem 9.5rem minmax(0,1fr)}
+.dx-dec{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:560px){.dx-enc{grid-template-columns:4.2rem minmax(0,1fr)}.dx-enc .m{grid-column:1/-1}.dx-dec{grid-template-columns:repeat(2,minmax(0,1fr))}.dx-dec .kind{grid-column:1/-1}}
+.dx-q{font-size:1.05rem}
+.dx-q .bn{font-size:1.1em;font-weight:700}
+.dx-fb{display:grid;gap:.3rem;font-size:.95rem}
+.dx-fb:empty{display:none}
+.dx-fb .ok{color:var(--ok);font-weight:700}
+.dx-fb .no{color:var(--bad);font-weight:700}
+.dx-fb .bn{white-space:normal;overflow-wrap:anywhere}
+.dx-sol:empty{display:none}
+</style>
+</head>
+<body data-resume="Archi · chapter 4: floating point (IEEE 754)">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numeration</b> — sheet 4 of 4</span><span>Source: IEEE 754 standard · 2023 to 2025 exams</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="4"></span><a href="index.html">Archi</a> · Chapter 4 of 4</div>
+      <h1>One real number, <span class="w">three fields.</span></h1>
+      <p class="lead"><span data-eq><span class="bn">67.375<sub>10</sub></span> = <span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></span>: in single precision, this number becomes a sign, an exponent and a mantissa, stored in a 32-bit word. This chapter teaches you to write a real number in IEEE 754 format and to read a word back, as in the exam.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with the color-coded IEEE word</span></li>
+        <li><span><span class="k">Moodle test 2</span> from 23 to 25 October</span></li>
+        <li class="ex"><span><span class="k">Exam</span> IEEE 754 in the last 3 exams</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="ieee" data-opts='{"fmt":"single","value":"67.375","input":false,"title":"67.375 in single precision"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — S in purple, E in copper, M in blue; below, the same word in groups of 4 bits and in hexadecimal.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 4 · Floating point</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>Fixed point, floating point</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>The single-precision format</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>Encoding a real number</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>Decoding a word</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>Double precision</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>Special values</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Precision and rounding</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>Answering as in the exam</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is written in binary on 4 bits: part 5 is <span class="bn">0101</span>. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi home</a><a href="cours-3-entiers.html">← Chapter 3: integers</a><a href="entrainement.html">Practice: the exams →</a><a href="../qcm/index.html#archi">Archi MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Fixed point, floating point</a></li><li><a href="#s2">The single-precision format</a></li><li><a href="#s3">Encoding a real number</a></li><li><a href="#s4">Decoding a word</a></li>
+      <li><a href="#s5">Double precision</a></li><li><a href="#s6">Special values</a></li><li><a href="#s7">Precision and rounding</a></li><li><a href="#s8">Answering as in the exam</a></li>
+    </ol></details>
+
+    <div class="note why" style="margin-bottom:8px"><span class="tag">Where this chapter comes from</span>
+      <p>Chapter 2 of the course (floating-point number systems) was not given to us: this page follows the IEEE 754 standard and the answer keys of the 2023 to 2025 exams. If your course says otherwise, your course is what counts.</p>
+    </div>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Part 1 <span class="ref">scientific notation</span></div><h2>Fixed point and floating point</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In Chapter 1, the point of a binary number sits at a fixed place: <span class="bn">100 0011.011<sub>2</sub></span>. A computer could store a real number this way, with a fixed number of bits before the point and a fixed number after it. This is <b>fixed point</b>.</p>
+          <p>On 8 bits, with 4 bits after the point: <span data-eq><span class="bn">0101.1000<sub>2</sub></span> = <span class="bn">5.5<sub>10</sub></span></span>. The largest number is <span data-eq><span class="bn">1111.1111<sub>2</sub></span> = <span class="bn">15.9375<sub>10</sub></span></span>, and two neighboring numbers are always <span data-eq><span class="bn">0.0001<sub>2</sub></span> = <span class="bn">0.0625<sub>10</sub></span></span> apart. There is no way to write 1,000 or 0.001: fixed point wastes its bits.</p>
+          <p><b>Floating point</b> works like scientific notation: keep the significant digits, and let a power say where the point goes. In base 10, <span data-eq>67.375 = 6.7375 × 10<sup>1</sup></span>. In base 2, the idea is the same with powers of 2:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">67.375<sub>10</sub></span> = <span class="bn">100 0011.011<sub>2</sub></span></div><div class="r">= <span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></div></div>
+        <div class="prose">
+          <p>Move the point just after the <b>first 1</b>: this is the <b>normalized form</b>, ± 1.<var>xxx</var> × 2<sup><var>e</var></sup>. Each place to the left adds 1 to the exponent <var>e</var>; each place to the right takes 1 off. The numbers from the exams:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.1 — Normalized form of four numbers from the 2023 and 2025 exams</caption>
+          <thead><tr><th>Decimal</th><th>Binary</th><th>Normalized</th><th>Point</th></tr></thead>
+          <tbody>
+            <tr data-eq-row><td><span class="bn">325<sub>10</sub></span></td><td><span class="bn">1 0100 0101<sub>2</sub></span></td><td><span class="bn">1.0100 0101<sub>2</sub></span> × 2<sup>8</sup></td><td>8 places left</td></tr>
+            <tr data-eq-row><td><span class="bn">67.375<sub>10</sub></span></td><td><span class="bn">100 0011.011<sub>2</sub></span></td><td><span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></td><td>6 places left</td></tr>
+            <tr data-eq-row><td><span class="bn">0.6875<sub>10</sub></span></td><td><span class="bn">0.1011<sub>2</sub></span></td><td><span class="bn">1.011<sub>2</sub></span> × 2<sup>−1</sup></td><td>1 place right</td></tr>
+            <tr data-eq-row><td><span class="bn">0.09375<sub>10</sub></span></td><td><span class="bn">0.0001 1<sub>2</sub></span></td><td><span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></td><td>4 places right</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Remember</span>
+          <ul>
+            <li>In base 2, the only non-zero digit is 1: a normalized number <b>always</b> starts with “1.”. The IEEE 754 standard uses this to avoid storing that 1 (part 2).</li>
+            <li>A negative number is written the same way, with a minus sign in front: <span data-eq>−12.5 = −<span class="bn">1100.1<sub>2</sub></span> = −<span class="bn">1.1001<sub>2</sub></span> × 2<sup>3</sup></span>.</li>
+            <li>“Floating”: the point goes wherever the exponent says. With the same number of significant digits, you can write 2<sup>−100</sup> as easily as 2<sup>100</sup>.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: one digit before the point, and it is a 1</span>
+          <p><span data-eq><span class="bn">10.11<sub>2</sub></span> × 2<sup>−2</sup> = <span class="bn">0.1011<sub>2</sub></span> × 2<sup>0</sup> = <span class="bn">1.011<sub>2</sub></span> × 2<sup>−1</sup></span>: three ways to write 0.6875, but only the last one is normalized. Count the places from the original point: in <span class="bn">0.1011</span>, the point moves <b>one</b> place to the right to get past the first 1, so <var>e</var> = −1.</p>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Part 2 <span class="ref">IEEE 754 standard</span></div><h2>The single-precision format: S, E, M</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The <b>IEEE 754</b> standard stores a normalized real number in a 32-bit word in <b>single precision</b> (64 bits in double precision, part 5). The word has three fields, which the exams call <b class="ie-cs">S</b>, <b class="ie-ce">E</b> and <b class="ie-cm">M</b>:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.2 — The three fields of a single-precision word (bit 31 on the left, bit 0 on the right)</caption>
+          <thead><tr><th>Field</th><th>Bits</th><th>Bit numbers</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span class="ie-cs">S</span> · sign</th><td>1</td><td>31</td><td>0: positive; 1: negative</td></tr>
+            <tr><th scope="row"><span class="ie-ce">E</span> · biased exponent</th><td>8</td><td>30 to 23</td><td><var>E</var> = <var>e</var> + 127, unsigned integer</td></tr>
+            <tr><th scope="row"><span class="ie-cm">M</span> · mantissa</th><td>23</td><td>22 to 0</td><td>the digits <b>after</b> the point of 1.M</td></tr>
+          </tbody>
+        </table></div>
+        <div class="calc"><div>value = (−1)<sup>S</sup> × 1.M × 2<sup>E − 127</sup></div><div class="muted">for a normalized number: 1 ≤ E ≤ 254</div></div>
+        <div data-archi="ieee" class="no-steps" data-opts='{"fmt":"single","value":"-12.5","input":false,"title":"−12.5: the three fields"}'></div>
+        <div class="prose">
+          <p data-ie="single" data-x="-12.5">Here <span data-eq>−12.5 = −<span class="bn">1.1001<sub>2</sub></span> × 2<sup>3</sup></span>: S = <span data-k="s">1</span> (negative), E = <span data-eq>3 + 127 = <span data-k="eb">130</span> = <span class="bn">1000 0010<sub>2</sub></span></span>, M = <span class="bn" data-k="m">1001 0000 0000 0000 0000 000</span>.</p>
+          <p><b>The hidden 1.</b> In 1.M, the leading 1 is always there, so it is not stored. M only holds the digits after the point, padded on the right with 0s up to 23 bits. One bit is gained: 24 significant digits for 23 stored bits.</p>
+          <p><b>The bias.</b> The exponent <var>e</var> can be negative (<span data-eq><span class="bn">0.09375<sub>10</sub></span> = <span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></span>). Rather than encoding it in two’s complement, 127 is added to it: E = <var>e</var> + 127 is a positive integer, stored unsigned on 8 bits. E = 0 and E = 255 are reserved (part 6): this leaves E from 1 to 254, so <var>e</var> from −126 to 127.</p>
+        </div>
+        <div class="bench" id="eline">
+          <div class="bench-head"><span class="bh-t">The exponent line</span><span class="bh-r el-fmt">single precision · bias 127</span></div>
+          <div class="bench-body">
+            <div class="row" role="group" aria-label="Format"><button type="button" class="chip-btn" data-f="single" aria-pressed="true">single (8-bit E)</button><button type="button" class="chip-btn" data-f="double" aria-pressed="false">double (11-bit E)</button></div>
+            <div class="el-axis" aria-hidden="true">
+              <div class="el-bar"><span class="el-cap el-c0">E = 0</span><span class="el-mid">normalized</span><span class="el-cap el-c1">E = 255</span></div>
+              <i class="el-mk"></i>
+              <div class="el-ticks"></div>
+            </div>
+            <div class="el-ctl">
+              <label class="lbl" for="el-range">Stored E</label>
+              <input id="el-range" type="range" min="0" max="255" value="133" aria-label="Value of E">
+              <button type="button" class="btn" data-d="-1">E − 1</button><button type="button" class="btn" data-d="1">E + 1</button>
+            </div>
+            <p class="readout el-say" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="note why"><span class="tag">Why a bias rather than two’s complement</span>
+          <p>With the bias, E grows with the exponent. For two positive numbers, the larger one therefore has the larger word, read as an unsigned integer: <span data-ie="single" data-x="1"><span class="bn" data-k="hex">3F80 0000</span> (1, E = <span data-k="eb">127</span>)</span> is smaller than <span data-ie="single" data-x="67.375"><span class="bn" data-k="hex">4286 C000</span> (67.375, E = <span data-k="eb">133</span>)</span>. Comparing two positive floats comes down to comparing two integers.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: E is not the exponent, M is not the whole mantissa</span>
+          <ul>
+            <li>E = 133 means <var>e</var> = <span data-eq>133 − 127 = 6</span>. To read the exponent, always subtract the bias.</li>
+            <li>M = <span class="bn">1001 0…</span> means 1.1001…<sub>2</sub>: the leading 1 is missing, and you must put it back to read the value.</li>
+          </ul>
+        </div>
+        <p class="muted" style="font-size:.9rem">Vocabulary: the English exams only use the letters S, E and M and the words “single-precision” and “double-precision” (“single-precision IEEE-754 representations”, “double-precision IEEE-754 words”). Sign, biased exponent, bias, mantissa and hidden bit are the usual textbook terms (the standard itself says significand rather than mantissa).</p>
+        <div data-check-ref="archi/cours-4-flottants.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Part 3 <span class="ref">exams, exercise 4.1</span></div><h2>Encoding a real number in single precision</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The method, with the example of 67.375 (2023 exam):</p>
+        </div>
+        <ol class="steps" data-ie="single">
+          <li><div><p><b>Sign.</b> S = 0 if the number is positive, 1 if it is negative.</p>
+            <p class="xl"><span data-k="x">67.375</span> &gt; 0, so <b class="ie-cs">S</b> = <b data-k="s">0</b>.</p></div></li>
+          <li><div><p><b>Binary.</b> Convert the absolute value: successive divisions for the integer part, successive multiplications for the fractional part (Chapter 1, parts 6 and 7).</p>
+            <p class="xl"><span data-eq>67 = <span class="bn">100 0011<sub>2</sub></span></span>; 0.375 × 2 = 0.75 → 0; 0.75 × 2 = 1.5 → 1; 0.5 × 2 = 1 → 1. So <span data-eq><span class="bn">67.375<sub>10</sub></span> = <span class="bn">100 0011.011<sub>2</sub></span></span>.</p></div></li>
+          <li><div><p><b>Normalization.</b> Move the point just after the first 1 and count the places: this is the exponent <var>e</var>.</p>
+            <p class="xl"><span data-eq><span class="bn">100 0011.011<sub>2</sub></span> = <span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></span>: 6 places to the left, <var>e</var> = 6.</p></div></li>
+          <li><div><p><b>Exponent.</b> E = <var>e</var> + 127, written in binary on <b>8 bits</b>, leading zeros included.</p>
+            <p class="xl"><b class="ie-ce">E</b> = <span data-eq>6 + 127 = <span data-k="eb">133</span> = <span class="bn">1000 0101<sub>2</sub></span></span>.</p></div></li>
+          <li><div><p><b>Mantissa.</b> The digits after the point of 1.xxx, without the leading 1, padded <b>on the right</b> with 0s up to 23 bits.</p>
+            <p class="xl"><b class="ie-cm">M</b> = <span class="bn">0000 1101 1</span> then 14 zeros = <span class="bn" data-k="m">0000 1101 1000 0000 0000 000</span>.</p></div></li>
+          <li><div><p><b>The word</b> (if asked). S, E and M one after the other, regrouped in groups of 4 bits, then in hexadecimal.</p>
+            <p class="xl"><span class="vi">0</span> <span class="cu">1000 0101</span> <span class="bl">0000 1101 1000 0000 0000 000</span><br>= <span class="bn" data-k="wb">0100 0010 1000 0110 1100 0000 0000 0000</span> = <b><span class="bn" data-k="hex">4286 C000</span></b></p></div></li>
+        </ol>
+        <div class="xl" data-ie="single" data-x="67.375" style="border-left-color:var(--exam)">On the exam paper: <b class="ie-cs">S</b> <span class="cp" data-k="s">0</span> · <b class="ie-ce">E</b> <span class="cp" data-k="ef">10000101</span> · <b class="ie-cm">M</b> <span class="cp" data-k="m">00001101100000000000000</span></div>
+        <div class="prose">
+          <p><b>Your turn.</b> The tool repeats these steps for any number. It starts from 0.09375 (2025-2026 exam), which is less than 1: the point moves to the right and the exponent is negative.</p>
+        </div>
+        <div data-archi="ieee" data-opts='{"fmt":"single","value":"0.09375","title":"Encoding a real number"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: common mistakes</span>
+          <ul>
+            <li data-ie="single" data-x="0.09375"><b>E on 8 bits</b>, leading zeros included: <span data-eq><span class="bn">0.09375<sub>10</sub></span> = <span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></span>, so E = <span data-eq>−4 + 127 = 123</span> = <span class="cp" data-k="ef">01111011</span>, not 1111011.</li>
+            <li data-ie="single" data-x="320"><b>The leading 1 is not written</b>: <span data-eq><span class="bn">320<sub>10</sub></span> = <span class="bn">1.01<sub>2</sub></span> × 2<sup>8</sup></span>, so M = <span class="cp" data-k="m">01000000000000000000000</span>, not 1010…</li>
+            <li><b>M is padded on the right.</b> 0s added on the left (<span class="bn">0000…0001</span>) shift the digits: that is another number.</li>
+            <li data-ie="single" data-x="-12.5"><b>Negative</b>: only S changes. −12.5 has the same E and the same M as 12.5, with S = <span data-k="s">1</span>; the word then starts with a hexadecimal digit ≥ 8: <span class="bn" data-k="hex">C148 0000</span>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Part 4 <span class="ref">the reverse path</span></div><h2>Decoding a word</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>To read a word back, take the reverse path: split the fields, subtract the bias, put the hidden 1 back. Example: <span class="bn">43A2 8000</span>, the 325 of the 2023 exam.</p>
+        </div>
+        <ol class="steps" data-ie="single">
+          <li><div><p><b>In binary</b>: 4 bits per hexadecimal digit.</p>
+            <p class="xl"><span class="bn" data-k="hex">43A2 8000</span> = <span class="bn" data-k="wb">0100 0011 1010 0010 1000 0000 0000 0000</span></p></div></li>
+          <li><div><p><b>Split</b>: S = the 1st bit, E = the next 8, M = the last 23.</p>
+            <p class="xl"><span class="vi" data-k="s">0</span> <span class="cu" data-k="ef">1000 0111</span> <span class="bl" data-k="m">0100 0101 0000 0000 0000 000</span>: <b class="ie-cs">S</b> = 0, <b class="ie-ce">E</b> = <span data-eq><span class="bn">1000 0111<sub>2</sub></span> = <span data-k="eb">135</span></span>.</p></div></li>
+          <li><div><p><b>Subtract the bias</b>: <var>e</var> = E − 127.</p>
+            <p class="xl"><var>e</var> = <span data-eq>135 − 127 = 8</span>.</p></div></li>
+          <li><div><p><b>Put the 1 back</b> before the point: the value is 1.M × 2<sup><var>e</var></sup>. The trailing 0s of M do not count.</p>
+            <p class="xl"><span data-k="norm"><span class="bn">1.0100 0101<sub>2</sub></span> × 2<sup>8</sup></span> = <span data-eq><span class="bn">1 0100 0101<sub>2</sub></span> = <span class="bn" data-k="val">325</span></span>.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Pitfall: in single precision, E straddles two hexadecimal digits</span>
+          <p>1 + 8 = 9 bits: S and E do not fill a whole number of hexadecimal digits. In <span class="bn">43A2</span>, the 4 (<span class="bn">0100</span>) holds S and the first 3 bits of E, and the last bit of E is the first bit of the A (<span class="bn">1010</span>). Always split in binary, never directly on the hexadecimal digits.</p>
+        </div>
+        <div class="prose">
+          <p data-ie="single" data-x="0.6875"><b>The k × 2<sup>n</sup> form.</b> The exams ask for the value in the form <var>k</var> × 2<sup><var>n</var></sup>, with <var>k</var> and <var>n</var> integers. Move the point of 1.M to just after its last 1: each place takes 1 off the exponent. Example: <span class="bn" data-k="hex">3F30 0000</span> (the 0.6875 of 2023) has E = <span data-eq><span class="bn">0111 1110<sub>2</sub></span> = <span data-k="eb">126</span></span>, so <var>e</var> = −1, and M = <span class="bn">0110 0…</span>:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1.011<sub>2</sub></span> × 2<sup>−1</sup> = <span class="bn">1011<sub>2</sub></span> × 2<sup>−4</sup></div><div class="r">= 11 × 2<sup>−4</sup> = <span class="bn">0.6875<sub>10</sub></span></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"single","hex":"3F30 0000","title":"Decoding a 32-bit word"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: forgetting the hidden 1</span>
+          <p>With M alone, without the leading 1, you would read <span data-eq><span class="bn">0.011<sub>2</sub></span> × 2<sup>−1</sup> = <span class="bn">0.1875<sub>10</sub></span></span> instead of 0.6875. The 1 is not in the word, but it is in the value (except for the special values of part 6).</p>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Part 5 <span class="ref">exams, exercise 4.2</span></div><h2>Double precision</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><b>Double precision</b> follows the same rules on 64 bits: S on 1 bit, E on 11 bits with a bias of 1023, M on 52 bits. The two biases are <span data-eq>127 = 2<sup>7</sup> − 1</span> and <span data-eq>1023 = 2<sup>10</sup> − 1</span>.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.3 — Single and double precision</caption>
+          <thead><tr><th></th><th>Single</th><th>Double</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Word</th><td>32 bits, 8 hexadecimal digits</td><td>64 bits, 16 hexadecimal digits</td></tr>
+            <tr><th scope="row"><span class="ie-cs">S</span> · <span class="ie-ce">E</span> · <span class="ie-cm">M</span></th><td>1 · 8 · 23 bits</td><td>1 · 11 · 52 bits</td></tr>
+            <tr><th scope="row">Bias</th><td>127</td><td>1023</td></tr>
+            <tr><th scope="row">E of normalized numbers</th><td>1 to 254</td><td>1 to 2,046</td></tr>
+            <tr><th scope="row">Exponent <var>e</var></th><td>−126 to 127</td><td>−1022 to 1023</td></tr>
+            <tr><th scope="row">Value</th><td>1.M × 2<sup>E − 127</sup></td><td>1.M × 2<sup>E − 1023</sup></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>The hexadecimal shortcut.</b> 1 + 11 = 12 bits, exactly <b>3 hexadecimal digits</b>: S and E take up the first 3 digits of the word, M the last 13. If the first digit is less than 8, S = 0 and E can be read directly from the first 3 digits. If it is 8 or more, S = 1 and you subtract <span class="bn">800<sub>16</sub></span>.</p>
+          <p>Example from the 2023 exam, <span class="bn">3548 0000 0000 0000</span>:</p>
+        </div>
+        <ol class="steps" data-ie="double">
+          <li><div><p><b>S and E</b>: the first 3 digits. 3 &lt; 8, so S = 0.</p>
+            <p class="xl"><span class="bn" data-k="hex">3548 0000 0000 0000</span> → E = <span data-eq><span class="bn">354<sub>16</sub></span> = 3 × 256 + 5 × 16 + 4 = <span data-k="eb">852</span></span></p></div></li>
+          <li><div><p><b>Exponent</b>: <var>e</var> = E − 1023.</p>
+            <p class="xl"><var>e</var> = <span data-eq>852 − 1023 = −171</span></p></div></li>
+          <li><div><p><b>M</b>: the last 13 digits. Only the first one is not zero: 8 = <span class="bn">1000</span>.</p>
+            <p class="xl">M = <span class="bn">1000 0000 …</span> → 1.M = <span class="bn">1.1<sub>2</sub></span></p></div></li>
+          <li><div><p><b>Value</b>: 1.M × 2<sup><var>e</var></sup>, then the <var>k</var> × 2<sup><var>n</var></sup> form.</p>
+            <p class="xl"><span data-eq><span data-k="norm"><span class="bn">1.1<sub>2</sub></span> × 2<sup>−171</sup></span> = <span class="bn">11<sub>2</sub></span> × 2<sup>−172</sup> = <b data-k="val">3 × 2<sup>−172</sup></b></span></p></div></li>
+        </ol>
+        <div class="prose" data-ie="double">
+          <p><b>A negative word.</b> <span class="bn" data-k="hex">C029 0000 0000 0000</span> starts with C ≥ 8: S = 1 and E = <span data-eq><span class="bn">C02<sub>16</sub></span> − <span class="bn">800<sub>16</sub></span> = <span class="bn">402<sub>16</sub></span> = <span data-k="eb">1026</span></span>, so <var>e</var> = 3. M starts with 9 = <span class="bn">1001</span>: the value is <span data-eq>−<span class="bn">1.1001<sub>2</sub></span> × 2<sup>3</sup> = −<span class="bn">1100.1<sub>2</sub></span> = <span data-k="val">−12.5</span></span>, the number from part 2.</p>
+        </div>
+        <div class="prose"><p>The tool decodes the word from the 2025-2026 exam. On a narrow screen, the 64 bits run over several lines, still in groups of 4.</p></div>
+        <div data-archi="ieee" data-opts='{"fmt":"double","hex":"2844 0000 0000 0000","title":"Decoding a 64-bit word"}'></div>
+        <div class="prose" data-ie="double" data-x="67.375">
+          <p><b>Encoding in double precision</b> (never asked in the exams): same steps, with E = <var>e</var> + 1023 on 11 bits and M on 52 bits. For 67.375: E = <span data-eq>6 + 1023 = 1029 = <span class="bn">100 0000 0101<sub>2</sub></span></span>, and the word is <span class="bn" data-k="hex">4050 D800 0000 0000</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: keeping single-precision habits</span>
+          <ul>
+            <li><b>Bias 1023</b>, not 127: with 127, <span class="bn">3548…</span> would give <var>e</var> = <span data-eq>852 − 127 = 725</span>, a huge number instead of a tiny one.</li>
+            <li><b>E on 11 bits</b>: with S = 0, these are the first 3 whole hexadecimal digits, not 8 bits.</li>
+            <li><b>M on 52 bits</b> = 13 hexadecimal digits, aligned this time: in double precision, the boundary between E and M falls between two digits.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Part 6 <span class="ref">standard · exams</span></div><h2>Zeros, infinities, NaN, denormalized numbers</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The two extreme values of E do not encode normalized numbers. E all zeros and E all ones are reserved for four families of values. <b>Look at E first</b>:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.4 — Reading a double-precision word from E and M (examples from the exams)</caption>
+          <thead><tr><th>E</th><th>M</th><th>Value</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>±0</td><td><span class="bn">0000 0000 0000 0000</span> = +0</td></tr>
+            <tr data-ie="double"><td>0</td><td>≠ 0</td><td>denormalized: ±0.M × 2<sup>−1022</sup></td><td><span class="bn" data-k="hex">000A 8000 0000 0000</span> = <span data-k="val">21 × 2<sup>−1027</sup></span> (2023)</td></tr>
+            <tr data-ie="double"><td>1 to 2,046</td><td>any</td><td>normalized: ±1.M × 2<sup>E − 1023</sup></td><td><span class="bn" data-k="hex">0015 8000 0000 0000</span> = <span data-k="val">43 × 2<sup>−1027</sup></span> (2024)</td></tr>
+            <tr data-ie="double"><td>2,047 (all ones)</td><td>0</td><td>±∞</td><td><span class="bn" data-k="hex">7FF0 0000 0000 0000</span> = <span data-k="val">+∞</span> (2024)</td></tr>
+            <tr data-ie="double"><td>2,047 (all ones)</td><td>≠ 0</td><td>NaN</td><td><span class="bn" data-k="hex">7FF0 0001 0000 0000</span> = <span data-k="val">NaN</span> (2025)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Zero.</b> 0 cannot be written 1.M × 2<sup><var>e</var></sup>: it has its own code, E = 0 and M = 0. The sign gives two zeros, +0 and −0 (<span class="bn">0000 0000</span> and <span class="bn">8000 0000</span> in single precision), equal in value.</p>
+          <p><b>Infinities.</b> E all ones and M = 0: +∞ if S = 0, −∞ if S = 1. This is the result of a calculation that goes beyond the largest representable number, or of 1 / 0. In single precision: <span class="bn">7F80 0000</span> and <span class="bn">FF80 0000</span>.</p>
+          <p><b>NaN</b> (<i>Not a Number</i>). E all ones and M ≠ 0: this is the result of 0 / 0, or of the square root of a negative number. <b>A single 1 bit in M is enough</b>: <span class="bn">7FF0 0001 0000 0000</span> is a NaN (2025-2026 exam). The sign of a NaN does not matter: the 2023 answer key writes “NaN” for <span class="bn">FFFF 0000 0000 0000</span>, which has S = 1.</p>
+          <p><b>Denormalized numbers.</b> The smallest positive normalized number is 1.0 × 2<sup>−1022</sup> (E = 1). Below it, E = 0 and M ≠ 0 encode <b>denormalized</b> numbers (also called subnormal): no hidden 1, and the exponent stays that of E = 1, i.e. −1022 (−126 in single precision). They fill the gap between 0 and the smallest normalized number.</p>
+        </div>
+        <div class="calc" data-ie="double"><div>denormalized, double: ±0.M × 2<sup>−1022</sup></div><div>denormalized, single: ±0.M × 2<sup>−126</sup></div><div><span class="bn" data-k="hex">000A 8000 0000 0000</span>: E = 0, M = <span class="bn">1010 1000 0…</span></div><div class="r"><span data-eq><span class="bn">0.1010 1<sub>2</sub></span> × 2<sup>−1022</sup> = <span class="bn">1 0101<sub>2</sub></span> × 2<sup>−1027</sup> = <span data-k="val">21 × 2<sup>−1027</sup></span></span></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"double","hex":"000A 8000 0000 0000","input":false,"title":"2023 exam: E = 0"}'></div>
+        <div class="note trap"><span class="tag">Pitfall from the 2024 exam: E = 1 is a normalized number</span>
+          <p data-ie="double"><span class="bn" data-k="hex">0015 8000 0000 0000</span> looks like a denormalized number, but E = <span data-eq><span class="bn">001<sub>16</sub></span> = <span data-k="eb">1</span></span>: it is not 0. It is a normalized number, with its hidden 1: <span data-eq><span data-k="norm"><span class="bn">1.0101 1<sub>2</sub></span> × 2<sup>−1022</sup></span> = <span class="bn">10 1011<sub>2</sub></span> × 2<sup>−1027</sup> = <span data-k="val">43 × 2<sup>−1027</sup></span></span>.</p>
+          <p>Both words have the same exponent, −1022: E = 1 gives <span data-eq>1 − 1023 = −1022</span>, and the denormalized rule keeps that exponent. Writing 0.M × 2<sup>−1023</sup> for the 2023 word would give 21 × 2<sup>−1028</sup>: wrong.</p>
+        </div>
+        <div data-archi="ieee" data-opts='{"fmt":"double","hex":"0015 8000 0000 0000","input":false,"title":"2024 exam: E = 1"}'></div>
+        <div class="tbl"><table>
+          <caption>Table 4.5 — The limits, for reference (never asked in the exams)</caption>
+          <thead><tr><th></th><th>Single</th><th>Double</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Largest number</th>
+              <td data-ie="single"><span class="bn" data-k="hex">7F7F FFFF</span><br><span data-eq="a"><span data-k="val">(2 − 2<sup>−23</sup>) × 2<sup>127</sup></span> ≈ 3.403 × 10<sup>38</sup></span></td>
+              <td data-ie="double"><span class="bn" data-k="hex">7FEF FFFF FFFF FFFF</span><br><span data-eq="a"><span data-k="val">(2 − 2<sup>−52</sup>) × 2<sup>1023</sup></span> ≈ 1.798 × 10<sup>308</sup></span></td></tr>
+            <tr><th scope="row">Smallest normalized &gt; 0</th>
+              <td data-ie="single"><span class="bn" data-k="hex">0080 0000</span><br><span data-eq="a"><span data-k="val">2<sup>−126</sup></span> ≈ 1.175 × 10<sup>−38</sup></span></td>
+              <td data-ie="double"><span class="bn" data-k="hex">0010 0000 0000 0000</span><br><span data-eq="a"><span data-k="val">2<sup>−1022</sup></span> ≈ 2.225 × 10<sup>−308</sup></span></td></tr>
+            <tr><th scope="row">Smallest denormalized &gt; 0</th>
+              <td data-ie="single"><span class="bn" data-k="hex">0000 0001</span><br><span data-eq="a"><span data-k="val">2<sup>−149</sup></span> ≈ 1.401 × 10<sup>−45</sup></span></td>
+              <td data-ie="double"><span class="bn" data-k="hex">0000 0000 0000 0001</span><br><span data-eq="a"><span data-k="val">2<sup>−1074</sup></span> ≈ 4.941 × 10<sup>−324</sup></span></td></tr>
+          </tbody>
+        </table></div>
+        <div data-check-ref="archi/cours-4-flottants.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Part 7 <span class="ref">IEEE 754 standard</span></div><h2>Precision: the numbers that cannot be written</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>M has only 23 bits. A real number is encoded <b>exactly</b> only if its normalized form fits in 24 significant digits (the 1 and the 23 of M), with an exponent within the limits. In other words, it must be <var>k</var> / 2<sup><var>n</var></sup>, a fraction whose denominator is a power of 2, with <var>k</var> not too large.</p>
+          <p>All the numbers to encode in the exams are of this kind: <span data-eq>67.375 = 539 / 8</span>, <span data-eq>0.6875 = 11 / 16</span>, <span data-eq>0.09375 = 3 / 32</span>. The longest, 67.375, has 10 significant binary digits. Their encoding is exact, without rounding.</p>
+          <p><b>0.1 is not exact.</b> Its binary expansion is infinite (Chapter 1, part 7): <span data-eq><span class="bn">0.1<sub>10</sub></span> = <span class="bn">0.0001 1001 1001 1001 1001…<sub>2</sub></span></span>, i.e. 1.1001 1001 1001…<sub>2</sub> × 2<sup>−4</sup>. It has to be cut after the 23rd bit of M.</p>
+        </div>
+        <div class="note keep"><span class="tag">The standard’s rule: round to nearest</span>
+          <p>Look at what is left after the 23rd bit of M:</p>
+          <ul>
+            <li>less than half a unit of the last bit (the next bit is 0): keep the 23 bits as they are;</li>
+            <li>more than half (the next bit is 1, and at least one other 1 follows): add 1 to the last bit;</li>
+            <li>exactly half (a 1 followed by 0s only): of the two neighbors, choose the one whose last bit is 0 (“ties to even”).</li>
+          </ul>
+        </div>
+        <div class="calc"><div>0.1 = 1.<span class="bl">1001 1001 1001 1001 1001 100</span><span class="cu">1 1001 1…</span><sub>2</sub> × 2<sup>−4</sup></div><div>what is left, <span class="cu">1 1001…</span>, is more than half: round up</div><div class="r">M = <span class="bn">1001 1001 1001 1001 1001 101</span></div></div>
+        <div class="tbl"><table>
+          <caption>Table 4.6 — 0.1 encoded with rounding (the standard’s rule) and with truncation</caption>
+          <thead><tr><th></th><th>Word</th><th>Exact encoded value</th><th>Error from 0.1</th></tr></thead>
+          <tbody>
+            <tr data-ie="single" data-x="0.1"><th scope="row">Single, rounded</th><td><span class="bn" data-k="hex">3DCC CCCD</span></td><td><span class="bn w" data-k="dv">0.100000001490116119384765625</span></td><td data-k="err">≈ +1.49 × 10<sup>−9</sup></td></tr>
+            <tr data-ie="single" data-x="0.1" data-round="trunc"><th scope="row">Single, truncated</th><td><span class="bn" data-k="hex">3DCC CCCC</span></td><td><span class="bn w" data-k="dv">0.0999999940395355224609375</span></td><td data-k="err">≈ −5.96 × 10<sup>−9</sup></td></tr>
+            <tr data-ie="double" data-x="0.1"><th scope="row">Double, rounded</th><td><span class="bn" data-k="hex">3FB9 9999 9999 999A</span></td><td><span class="bn w" data-k="dv">0.1000000000000000055511151231257827021181583404541015625</span></td><td data-k="err">≈ +5.55 × 10<sup>−18</sup></td></tr>
+            <tr data-ie="double" data-x="0.1" data-round="trunc"><th scope="row">Double, truncated</th><td><span class="bn" data-k="hex">3FB9 9999 9999 9999</span></td><td><span class="bn w" data-k="dv">0.09999999999999999167332731531132594682276248931884765625</span></td><td data-k="err">≈ −8.33 × 10<sup>−18</sup></td></tr>
+          </tbody>
+        </table></div>
+        <div data-archi="ieee" data-opts='{"fmt":"single","value":"0.1","title":"0.1 in single precision"}'></div>
+        <div class="note why"><span class="tag">Round or truncate?</span>
+          <p>We do not have Chapter 2 or Tutorial 3: we do not know whether your course rounds to nearest, as the standard does, or truncates, like the “<var>n</var> digits after the point” of Chapter 1. The exams do not settle it: all their numbers are exact. If an exercise gives you a number like 0.1, apply your course’s rule.</p>
+        </div>
+        <div class="prose">
+          <p><b>How many decimal digits?</b> 24 significant binary digits give about 7 decimal digits (<span data-eq="a">2<sup>−23</sup> ≈ 1.19 × 10<sup>−7</sup></span>); in double precision, 53 binary digits give 15 to 16 decimal digits (<span data-eq="a">2<sup>−52</sup> ≈ 2.22 × 10<sup>−16</sup></span>). Integers also run out of room: in single precision, every integer up to <span data-eq>2<sup>24</sup> = 16,777,216</span> is exact, but <span data-ie="single" data-x="16777217"><span data-eq>16,777,217 = 2<sup>24</sup> + 1</span> needs 25 significant digits. The extra bit is worth exactly half: it is a tie, so it is rounded to even, and the word <span class="bn" data-k="hex">4B80 0000</span> is worth <span data-k="dv">16,777,216</span></span>.</p>
+          <p><b>In a program.</b> The errors add up as calculations go on. In OCaml, whose <code>float</code> values are doubles, <code>0.1 +. 0.2</code> gives <code>0.300000000000000044</code> and <code>0.1 +. 0.2 = 0.3</code> is <code>false</code>. To compare two floats, check instead whether they are very close to each other.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: not every number with a fractional part is inexact</span>
+          <p>0.5, 0.375, 0.15625 or 59.75 are encoded exactly: their fractional part is a sum of negative powers of 2, and their successive multiplications by 2 stop. Only numbers whose binary expansion is infinite (0.1, 0.2, 0.3…) or too long need rounding.</p>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Part 8 <span class="ref">2023 and 2025 answer keys</span></div><h2>Answering in the exam format</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Since 2023, the last exercise of the exam has always been the same, in two questions. The instructions, word for word (English version):</p>
+        </div>
+        <div class="card"><span class="k">Exercise 4 · 2023 and 2025-2026 exams</span>
+          <p class="consigne">1. Convert the numbers below into their single-precision IEEE-754 representations. Write down the final result in its binary form and specify the three fields.</p>
+          <p class="consigne">2. Convert the double-precision IEEE-754 words below into their associated representations. If a representation is a number, use the base-10 following form: <var>k</var>×2<sup><var>n</var></sup> where <var>k</var> and <var>n</var> are integers (either positive or negative).</p>
+        </div>
+        <div class="note keep"><span class="tag">The answer-key format</span>
+          <ul>
+            <li><b>Encoding</b>: three boxes, in binary, in one block without spaces. S: 1 digit. E: <b>8 digits</b>, leading zeros included (<span class="cp">01111011</span>). M: <b>23 digits</b>, trailing zeros included. The hexadecimal word is not asked for.</li>
+            <li><b>Decoding</b>: the words are given in hexadecimal, in groups of 4 (“IEEE-754 Representation (base 16)”). The answer is written <b><var>k</var> × 2<sup><var>n</var></sup> with <var>k</var> odd</b>: 3 × 2<sup>−172</sup>, not 6 × 2<sup>−173</sup> (equal, but not the form of the answer keys).</li>
+            <li><b>Quick rule</b>: if 1.M has <var>f</var> digits after the point (up to the last 1), <var>k</var> is the binary integer 1M and <var>n</var> = <var>e</var> − <var>f</var>. For a denormalized number, <var>k</var> is the integer M without its leading 0s, and <var>n</var> = −1022 − <var>f</var>.</li>
+            <li><b>NaN</b> is written “NaN”, without a sign. Infinity was asked only once (2024), with no answer key: “+∞” is the most likely answer.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.7 — The 8 numbers to encode in the exams. 2023 and 2025 answer keys: identical. 2024: no answer key, answers worked out here.</caption>
+          <thead><tr><th>Exam</th><th>Number</th><th>Normalized</th><th>S</th><th>E</th><th>M</th></tr></thead>
+          <tbody>
+            <tr data-ie="single"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="x">325</span></td><td data-k="norm"><span class="bn">1.0100 0101<sub>2</sub></span> × 2<sup>8</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">10000111</td><td class="cp" data-k="m">01000101000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="x">67.375</span></td><td data-k="norm"><span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">10000101</td><td class="cp" data-k="m">00001101100000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="x">0.6875</span></td><td data-k="norm"><span class="bn">1.011<sub>2</sub></span> × 2<sup>−1</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">01111110</td><td class="cp" data-k="m">01100000000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="x">298</span></td><td data-k="norm"><span class="bn">1.0010 1010<sub>2</sub></span> × 2<sup>8</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">10000111</td><td class="cp" data-k="m">00101010000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="x">59.75</span></td><td data-k="norm"><span class="bn">1.1101 111<sub>2</sub></span> × 2<sup>5</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">10000100</td><td class="cp" data-k="m">11011110000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="x">0.15625</span></td><td data-k="norm"><span class="bn">1.01<sub>2</sub></span> × 2<sup>−3</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">01111100</td><td class="cp" data-k="m">01000000000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2025</th><td><span class="bn" data-k="x">320</span></td><td data-k="norm"><span class="bn">1.01<sub>2</sub></span> × 2<sup>8</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">10000111</td><td class="cp" data-k="m">01000000000000000000000</td></tr>
+            <tr data-ie="single"><th class="yr" scope="row">2025</th><td><span class="bn" data-k="x">0.09375</span></td><td data-k="norm"><span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></td><td class="cp" data-k="s">0</td><td class="cp" data-k="ef">01111011</td><td class="cp" data-k="m">10000000000000000000000</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl"><table>
+          <caption>Table 4.8 — The 8 double-precision words to decode. 2023 and 2025 answer keys: identical. 2024: no answer key, answers worked out here.</caption>
+          <thead><tr><th>Exam</th><th>Word (base 16)</th><th>Reading</th><th>Associated representation</th></tr></thead>
+          <tbody>
+            <tr data-ie="double"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="hex">3548 0000 0000 0000</span></td><td>E = <span data-k="eb">852</span>: <span data-k="norm"><span class="bn">1.1<sub>2</sub></span> × 2<sup>−171</sup></span></td><td><b data-k="val">3 × 2<sup>−172</sup></b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="hex">000A 8000 0000 0000</span></td><td>E = <span data-k="eb">0</span>, denormalized: <span data-k="norm"><span class="bn">0.1010 1<sub>2</sub></span> × 2<sup>−1022</sup></span></td><td><b data-k="val">21 × 2<sup>−1027</sup></b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2023</th><td><span class="bn" data-k="hex">FFFF 0000 0000 0000</span></td><td>E = <span data-k="eb">2047</span>, M ≠ 0</td><td><b data-k="val">NaN</b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="hex">3688 0000 0000 0000</span></td><td>E = <span data-k="eb">872</span>: <span data-k="norm"><span class="bn">1.1<sub>2</sub></span> × 2<sup>−151</sup></span></td><td><b data-k="val">3 × 2<sup>−152</sup></b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="hex">0015 8000 0000 0000</span></td><td>E = <span data-k="eb">1</span>, normalized: <span data-k="norm"><span class="bn">1.0101 1<sub>2</sub></span> × 2<sup>−1022</sup></span></td><td><b data-k="val">43 × 2<sup>−1027</sup></b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2024</th><td><span class="bn" data-k="hex">7FF0 0000 0000 0000</span></td><td>E = <span data-k="eb">2047</span>, M = 0</td><td><b data-k="val">+∞</b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2025</th><td><span class="bn" data-k="hex">2844 0000 0000 0000</span></td><td>E = <span data-k="eb">644</span>: <span data-k="norm"><span class="bn">1.01<sub>2</sub></span> × 2<sup>−379</sup></span></td><td><b data-k="val">5 × 2<sup>−381</sup></b></td></tr>
+            <tr data-ie="double"><th class="yr" scope="row">2025</th><td><span class="bn" data-k="hex">7FF0 0001 0000 0000</span></td><td>E = <span data-k="eb">2047</span>, M ≠ 0</td><td><b data-k="val">NaN</b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="bench" id="drill">
+          <div class="bench-head"><span class="bh-t">Exam-format practice</span><span class="bh-r">random numbers</span></div>
+          <div class="bench-body">
+            <div class="row" role="group" aria-label="Exercise"><button type="button" class="chip-btn" data-m="enc" aria-pressed="true">Encode in single precision</button><button type="button" class="chip-btn" data-m="dec" aria-pressed="false">Decode a double word</button></div>
+            <p class="dx-q" aria-live="polite"></p>
+            <div class="dx-enc">
+              <label class="cv-f"><span>S</span><input id="dx-s" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+              <label class="cv-f"><span>E (8 digits)</span><input id="dx-e" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+              <label class="cv-f m"><span>M (23 digits)</span><input id="dx-m" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="dx-dec" hidden>
+              <label class="cv-f kind"><span>Representation</span><select id="dx-kind"><option value="num">a number k × 2ⁿ</option><option value="nan">NaN</option><option value="pinf">+∞</option><option value="minf">−∞</option></select></label>
+              <label class="cv-f"><span>k</span><input id="dx-k" type="text" autocomplete="off" spellcheck="false"></label>
+              <label class="cv-f"><span>n</span><input id="dx-n" type="text" autocomplete="off" spellcheck="false"></label>
+            </div>
+            <div class="row"><button type="button" class="btn primary" data-a="check">Check</button><button type="button" class="btn" data-a="sol">Show the answer</button><button type="button" class="btn ghost" data-a="new">Another</button></div>
+            <div class="dx-fb" aria-live="polite"></div>
+            <div class="dx-sol"></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: what costs points</span>
+          <ul>
+            <li>An E with 7 digits or an M with 22 or 24 digits: count the digits before handing in.</li>
+            <li><var>k</var> × 2<sup><var>n</var></sup> not reduced: each digit after the point of 1.M takes 1 off <var>n</var>. <span data-eq><span class="bn">1.01<sub>2</sub></span> × 2<sup>−379</sup> = <span class="bn">101<sub>2</sub></span> × 2<sup>−381</sup> = 5 × 2<sup>−381</sup></span>.</li>
+            <li>The bias 127 in double precision, or E = 0 read as a normalized number.</li>
+            <li>A NaN taken for an infinity because M has a single 1 bit, far to the right.</li>
+          </ul>
+        </div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>IEEE 754 came up in the <b>last 3 exams</b> (2023, 2024, 2025-2026 B1 Examination), never before: always Exercise 4, for 6, 6 then 4 points out of 20.</li>
+            <li>Always two questions: encode 2 or 3 real numbers in single precision, then decode 2 or 3 double-precision words.</li>
+            <li>The 8 numbers to encode are <b>positive and exact</b>: a 9-bit integer every time (325, 298, 320: E = <span class="cp">10000111</span> all three times), a number less than 1 every time, a number greater than 1 with a fractional part in 2023 and 2024.</li>
+            <li>The words to decode: a normalized number with a very negative exponent every time, a NaN (2023, 2025), +∞ (2024), a denormalized number (2023), the E = 1 trap (2024).</li>
+            <li>Never asked: encoding in double precision, decoding in single precision, a negative number, zero, rounding.</li>
+            <li>The 2023 and 2025 answer keys are correct (all worked out again); the 2024 exam has no answer key and no English version.</li>
+            <li>Moodle test 2 (23 to 25 October 2026, 30 min, one attempt) covers Chapters 1 and 2 of the course, Tutorials 1 and 2 and exercises 1 to 4 of Tutorial 3; its exact format is not known.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-4-flottants.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You have now seen the whole numeration syllabus. To practice: Exercise 4 of the 2023 to 2025 exams on the <a href="entrainement.html">practice</a> page, and the <a href="../qcm/index.html#archi">Archi MCQs</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../data/en/qcm/archi.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  var R = window.REV, A = R && R.archi;
+  if (!A) return;
+  var esc = R.util.esc, MINUS = '−';
+  var L = {
+    single: 'single precision · bias 127', double: 'double precision · bias 1023', normal: 'normalized',
+    zero: 'E = 0 = {w}: reserved. With M = 0, it is ±0; with M ≠ 0, a denormalized number, ±0.M × {p} (part 6).',
+    full: 'E = {E} = {w} (all ones): reserved. With M = 0, it is ±∞; with M ≠ 0, NaN (part 6).',
+    norm: 'E = {E} = {w}, so e = {E} − {b} = {e}. These numbers are written ±1.M × {p}: from {lo} (included) to {hi} (excluded).',
+    bias: ' E = {b} encodes the exponent 0: this is the bias.',
+    enc: 'Encode in single precision: {x}', dec: 'Give the associated representation of the double-precision word {w}.',
+    neg: ' (negative: think of S)', fill: 'Fill in the three fields.', kn: 'Give k and n (integers).',
+    sOk: 'S is right.', sNo: 'S is wrong: the number is {p}, so S = {v}.', pos: 'positive', negw: 'negative',
+    eLen: 'E must have 8 digits, leading zeros included: {v}.', eOk: 'E is right.', eNo: 'E is wrong: e = {e}, so E = {e} + 127 = {d} = {v}.',
+    mLen: 'M must have 23 digits: pad it on the right with 0s. Answer: {v}.', mOk: 'M is right.',
+    mOne: 'M is wrong: the 1 before the point is not written in M. Answer: {v}.', mNo: 'M is wrong: the digits after the point of {n}, padded on the right: {v}.',
+    allOk: 'All right: S = {s}, E = {e}, M = {m}.', bad01: '{f} must only contain 0s and 1s.',
+    kindNo: 'No: E = {E} and M {m} 0, so it is {r}.', isZero: '=', notZero: '≠',
+    kindOk: 'Right: {r}.', numNo: 'No: the value is {r}.', numBad: 'Write k and n as integers, for example 3 and −172.',
+    numEven: 'The value is right, but the answer keys reduce it: k odd, i.e. {r}.', numOk: 'Right: {r}.',
+    nan: 'NaN', pinf: '+∞', minf: '−∞', numbr: 'a number'
+  };
+  function T(s, o) { return s.replace(/\{(\w+)\}/g, function (m, k) { return o && o[k] != null ? o[k] : m; }); }
+  function sgn(v) { return v < 0 ? MINUS + (-v) : String(v); }
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function bin(s) { return A.num(s, 2); }
+  function pow2(e) {                                 /* 2^e: in decimal when short, otherwise ≈ m × 10^x */
+    var v = A.q.powb(2, e);
+    if (e >= -10 && e <= 20) return A.num(v, 10, { sub: false });
+    var s = A.sci(v, 4);
+    return '≈ ' + esc(s.m) + ' × ' + A.pw(10, s.e);
+  }
+
+  /* ---------- part 2: the exponent line ---------- */
+  (function (el) {
+    if (!el) return;
+    var FM = { single: { e: 8, bias: 127 }, double: { e: 11, bias: 1023 } }, f = 'single', E = 133;
+    var rg = el.querySelector('input[type=range]'), mk = el.querySelector('.el-mk'), ticks = el.querySelector('.el-ticks'), say = el.querySelector('.el-say');
+    function max() { return Math.pow(2, FM[f].e) - 1; }
+    function pos(v) { var m = max(); return v <= 0 ? 7.5 : v >= m ? 92.5 : 15 + 70 * (v - 1) / (m - 2); }
+    function render() {
+      var F = FM[f], m = max(), w = bin(A.bits(E, F.e)), h;
+      el.querySelector('.el-fmt').textContent = L[f];
+      el.querySelector('.el-c1').textContent = 'E = ' + m;
+      rg.max = m; rg.value = E;
+      mk.style.left = pos(E) + '%';
+      ticks.innerHTML = '<span style="left:15%">E = 1<br>e = <b>' + sgn(1 - F.bias) + '</b></span>' +
+        '<span style="left:50%;transform:translateX(-50%);text-align:center">' + F.bias + '<br>e = <b>0</b></span>' +
+        '<span style="right:15%;text-align:right">' + (m - 1) + '<br>e = <b>' + (m - 1 - F.bias) + '</b></span>';
+      el.querySelectorAll('[data-f]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === f)); });
+      if (E === 0) h = T(L.zero, { w: w, p: A.pw(2, 1 - F.bias) });
+      else if (E === m) h = T(L.full, { E: m, w: w });
+      else {
+        var e = E - F.bias;
+        h = T(L.norm, { E: E, w: w, b: F.bias, e: sgn(e), p: A.pw(2, e), lo: pow2(e), hi: pow2(e + 1) }) + (e === 0 ? T(L.bias, { b: F.bias }) : '');
+      }
+      say.innerHTML = h;
+    }
+    rg.addEventListener('input', function () { E = +rg.value; render(); });
+    el.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-f')) {
+        var nf = b.getAttribute('data-f');
+        if (nf !== f) { var e = E === 0 || E === max() ? null : E - FM[f].bias; f = nf; E = e === null ? (E === 0 ? 0 : max()) : e + FM[f].bias; }
+      }
+      if (b.hasAttribute('data-d')) E = Math.max(0, Math.min(max(), E + +b.getAttribute('data-d')));
+      render();
+    });
+    render();
+  })(document.getElementById('eline'));
+
+  /* ---------- part 8: exam-format practice ---------- */
+  (function (el) {
+    if (!el) return;
+    var mode = 'enc', x = null, word = null, r = null;
+    var qEl = el.querySelector('.dx-q'), fEnc = el.querySelector('.dx-enc'), fDec = el.querySelector('.dx-dec'), fb = el.querySelector('.dx-fb'), sol = el.querySelector('.dx-sol');
+    var iS = el.querySelector('#dx-s'), iE = el.querySelector('#dx-e'), iM = el.querySelector('#dx-m'), iK = el.querySelector('#dx-kind'), ik = el.querySelector('#dx-k'), inn = el.querySelector('#dx-n');
+    function genEnc() {                              /* as in the exams: a 9-bit integer, a number > 1 with a fractional part, a number < 1 */
+      var t = rnd(0, 2), v, d, k;
+      if (t === 0) v = A.Q(rnd(257, 511));
+      else if (t === 1) { d = pick([2, 4, 8]); do { k = rnd(16 * d, 128 * d - 1); } while (k % 2 === 0); v = A.Q(k, d); }
+      else { d = Math.pow(2, rnd(3, 6)); do { k = rnd(1, d - 1); } while (k % 2 === 0); v = A.Q(k, d); }
+      return Math.random() < 0.15 ? A.q.neg(v) : v;
+    }
+    function genDec() {                              /* normalized (often a very negative exponent), denormalized, E = 1, NaN, infinity */
+      var t = Math.random(), s = 0, E, M = BigInt(0);
+      function mant() { var f = rnd(1, 5), k; do { k = rnd(1, Math.pow(2, f) - 1); } while (k % 2 === 0); return BigInt(k) << BigInt(52 - f); }
+      if (t < 0.5) { E = Math.random() < 0.8 ? rnd(600, 980) : rnd(1024, 1100); M = mant(); }
+      else if (t < 0.65) { E = 0; M = mant(); }
+      else if (t < 0.75) { E = 1; M = mant(); }
+      else if (t < 0.9) { E = 2047; M = BigInt(1) << BigInt(rnd(0, 51)); s = rnd(0, 1); }
+      else { E = 2047; s = rnd(0, 1); }
+      var h = ((BigInt(s) << BigInt(63)) | (BigInt(E) << BigInt(52)) | M).toString(16).toUpperCase();
+      while (h.length < 16) h = '0' + h;
+      return h.replace(/(.{4})(?=.)/g, '$1 ');
+    }
+    function fresh() {
+      fb.innerHTML = ''; sol.innerHTML = '';
+      [iS, iE, iM, ik, inn].forEach(function (i) { i.value = ''; });
+      iK.value = 'num';
+      if (mode === 'enc') {
+        x = genEnc(); r = A.ieeeEncode(x, 'single');
+        qEl.innerHTML = T(L.enc, { x: A.num(x, 10, { sub: false }) }) + (x.n < BigInt(0) ? L.neg : '') + '. ' + L.fill;
+      } else {
+        word = genDec(); r = A.ieeeDecode(word);
+        qEl.innerHTML = T(L.dec, { w: '<span class="bn">' + esc(word) + '</span>' }) + ' ' + L.kn;
+      }
+      fEnc.hidden = mode !== 'enc'; fDec.hidden = mode !== 'dec';
+      el.querySelectorAll('[data-m]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-m') === mode)); });
+    }
+    function line(ok, h) { return '<p><span class="' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓' : '✗') + '</span> ' + h + '</p>'; }
+    function cp(s) { return '<span class="bn">' + esc(s) + '</span>'; }
+    function repr(rr) { return rr.cls === 'nan' ? L.nan : rr.cls === 'inf' ? (rr.s ? L.minf : L.pinf) : (rr.k < BigInt(0) ? MINUS : '') + String(rr.k < BigInt(0) ? -rr.k : rr.k) + ' × ' + A.pw(2, rr.n); }
+    function checkEnc() {
+      var s = iS.value.replace(/\s/g, ''), e = iE.value.replace(/\s/g, ''), m = iM.value.replace(/\s/g, ''), out = '';
+      var S = String(r.s), Eb = A.bits(r.e, 8), Mb = A.bits(r.M, 23), all = true;
+      [['S', s], ['E', e], ['M', m]].forEach(function (p) { if (/[^01]/.test(p[1])) { out += line(false, T(L.bad01, { f: p[0] })); all = false; } });
+      if (!all) { fb.innerHTML = out; return; }
+      if (s === S) out += line(true, L.sOk); else { all = false; out += line(false, T(L.sNo, { p: r.s ? L.negw : L.pos, v: S })); }
+      if (e === Eb) out += line(true, L.eOk);
+      else { all = false; out += line(false, e.length !== 8 && parseInt(e || 'x', 2) === r.e ? T(L.eLen, { v: cp(Eb) }) : T(L.eNo, { e: sgn(r.e - 127), d: r.e, v: cp(Eb) })); }
+      if (m === Mb) out += line(true, L.mOk);
+      else {
+        all = false;
+        var core = Mb.replace(/0+$/, ''), mt = m.replace(/0+$/, '');
+        out += line(false, mt === core ? T(L.mLen, { v: cp(Mb) })
+          : mt === ('1' + core).replace(/0+$/, '') ? T(L.mOne, { v: cp(Mb) })
+          : T(L.mNo, { n: A.num({ int: '1', frac: core || '0' }, 2), v: cp(Mb) }));
+      }
+      fb.innerHTML = all ? line(true, T(L.allOk, { s: cp(S), e: cp(Eb), m: cp(Mb) })) : out;
+    }
+    function checkDec() {
+      var kind = iK.value, want = r.cls === 'nan' ? 'nan' : r.cls === 'inf' ? (r.s ? 'minf' : 'pinf') : 'num';
+      var nm = { num: L.numbr, nan: L.nan, pinf: L.pinf, minf: L.minf };
+      if (kind !== want) {
+        fb.innerHTML = line(false, T(L.kindNo, { E: r.e, m: r.M === BigInt(0) ? L.isZero : L.notZero, r: want === 'num' ? repr(r) : nm[want] }));
+        return;
+      }
+      if (want !== 'num') { fb.innerHTML = line(true, T(L.kindOk, { r: nm[want] })); return; }
+      var ks = ik.value.replace(/\s/g, '').replace(/−/g, '-'), ns = inn.value.replace(/\s/g, '').replace(/−/g, '-');
+      if (!/^-?\d+$/.test(ks) || !/^-?\d+$/.test(ns)) { fb.innerHTML = line(false, L.numBad); return; }
+      var red = A.k2n(BigInt(ks), +ns);
+      if (red.k !== r.k || red.n !== r.n) { fb.innerHTML = line(false, T(L.numNo, { r: repr(r) })); return; }
+      fb.innerHTML = BigInt(ks) === r.k && +ns === r.n ? line(true, T(L.numOk, { r: repr(r) })) : line(false, T(L.numEven, { r: repr(r) }));
+    }
+    el.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-m')) { var nm = b.getAttribute('data-m'); if (nm !== mode) { mode = nm; fresh(); } return; }
+      var a = b.getAttribute('data-a');
+      if (a === 'new') fresh();
+      else if (a === 'check') { if (mode === 'enc') checkEnc(); else checkDec(); }
+      else if (a === 'sol') {
+        sol.innerHTML = '';
+        var d = document.createElement('div'); sol.appendChild(d);
+        if (mode === 'enc') A.ieee(d, { fmt: 'single', value: A.fmt(x, 10), input: false });
+        else A.ieee(d, { fmt: 'double', hex: word, input: false });
+      }
+    });
+    el.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target.matches('input')) { ev.preventDefault(); if (mode === 'enc') checkEnc(); else checkDec(); } });
+    fresh();
+  })(document.getElementById('drill'));
+})();
+</script>
+</body>
+</html>
