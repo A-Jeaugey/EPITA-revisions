@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les bases du langage · Caml</title>
+<meta name="description" content="Caml, chapitre 1 : la boucle d’interaction et la réponse de Caml, types de base, définitions globales et locales, fonctions à un et plusieurs paramètres, alternative, exceptions, filtrage, n-uplets, fonctions anonymes, et la rédaction d’une fonction à l’examen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Caml · chapitre 1 : les bases du langage">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Chapitre 1 sur 4</div>
+      <h1>Tu écris une phrase, <span class="w">Caml répond.</span></h1>
+      <p class="lead">Chaque phrase se termine par <code class="ml">;;</code>. Caml l’évalue et répond par son type et sa valeur : c’est la « réponse de Caml », celle que l’examen demande sous chaque fonction. Ce chapitre pose tout le langage du séminaire, des expressions au filtrage.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parties</span><span class="chip">mémo Caml · séminaire, exercices 1 à 3</span><span class="chip ex">réponse de Caml exigée à l’examen</span></div>
+    </div>
+<pre data-ml-repl data-mode="guess" data-title="Séminaire, exercice 1.1 · environnement vide" id="heroRepl" aria-label="Boucle d’interaction : devine la réponse de Caml à chaque phrase">
+# let a = 6 + 3 * 2 ;;
+val a : int = 12
+# let b = 7 in 11 + b ;;
+- : int = 18
+# let c = let a = 3 in 2 + a ;;
+val c : int = 5
+# let c = a * b ;;
+Error: Unbound value b
+# let a = 5 and b = 2 * a in a * b ;;
+- : int = 120
+</pre>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 1 · Les bases du langage</div>
+    <ol>
+      <li><a href="#s1"><span class="calls" data-n="1"></span><span>Phrases, expressions, types</span></a></li>
+      <li><a href="#s2"><span class="calls" data-n="2"></span><span>Définitions : let, let … in</span></a></li>
+      <li><a href="#s3"><span class="calls" data-n="3"></span><span>Les fonctions</span></a></li>
+      <li><a href="#s4"><span class="calls" data-n="4"></span><span>L’alternative</span></a></li>
+      <li><a href="#s5"><span class="calls" data-n="5"></span><span>Les exceptions</span></a></li>
+      <li><a href="#s6"><span class="calls" data-n="6"></span><span>Le filtrage</span></a></li>
+      <li><a href="#s7"><span class="calls" data-n="7"></span><span>N-uplets, fonctions anonymes</span></a></li>
+      <li><a href="#s8"><span class="calls" data-n="8"></span><span>Écrire une fonction à l’examen</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque numéro de partie est dessiné comme une trace d’appels : une ligne de plus, un cran d’indentation de plus. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Caml</a><a href="cours-2-recursivite.html">Chapitre 2 : la récursivité →</a><a href="../qcm/index.html#caml">QCM de Caml</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Phrases, expressions, types</a></li><li><a href="#s2">Définitions : let, let … in</a></li><li><a href="#s3">Les fonctions</a></li><li><a href="#s4">L’alternative</a></li>
+      <li><a href="#s5">Les exceptions</a></li><li><a href="#s6">Le filtrage</a></li><li><a href="#s7">N-uplets, fonctions anonymes</a></li><li><a href="#s8">Écrire une fonction à l’examen</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="1"></span>Partie 1</div><h2>Une phrase, une réponse : expressions et types</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Caml se pratique d’abord dans la <b>boucle d’interaction</b> (le <i>toplevel</i>) : tu tapes une phrase, Caml l’évalue et répond. Une phrase se termine toujours par <code class="ml">;;</code>. Le <code>#</code> en début de ligne est l’invite de Caml : tu ne le tapes pas.</p>
+          <p>Une <b>expression</b> est un calcul : une valeur (<code class="ml">15</code>, <code class="ml">"Hello"</code>), une opération (<code class="ml">a + 15</code>), une application de fonction (<code class="ml">float_of_int 15</code>). Caml répond par son type et sa valeur :</p>
+        </div>
+<pre data-ml-repl>
+# (666 * 42 = 27972) &amp;&amp; ("Hello" &lt; "World") ;;
+- : bool = true
+</pre>
+        <div class="tbl"><table>
+          <caption class="sr-only">Lire une réponse de Caml</caption>
+          <thead><tr><th>Réponse de Caml</th><th>Ce qu’elle dit</th></tr></thead>
+          <tbody>
+            <tr><td><code data-ml-ans>- : bool = true</code></td><td>Une <b>expression</b> : le tiret dit que rien n’est nommé. Son type est <code class="ml">bool</code>, sa valeur <code class="ml">true</code>.</td></tr>
+            <tr><td><code data-ml-ans>val a : int = 3</code></td><td>Une <b>définition</b> (partie 2) : le nom <code class="ml">a</code> est désormais lié à la valeur 3, de type <code class="ml">int</code>.</td></tr>
+            <tr><td><code data-ml-ans>val succ : int -> int = &lt;fun&gt;</code></td><td>Une <b>fonction</b> (partie 3) : Caml donne son type mais n’affiche pas son code, seulement <code>&lt;fun&gt;</code>.</td></tr>
+            <tr><td><code data-ml-ans>Exception: Division_by_zero.</code></td><td>Le calcul a déclenché une <b>exception</b> (partie 5) : il n’a pas de valeur.</td></tr>
+            <tr><td><code data-ml-ans>Error: Unbound value b</code></td><td>La phrase est <b>refusée</b> (erreur de syntaxe ou de type) : rien n’est calculé, rien n’est défini.</td></tr>
+            <tr><td><code data-ml-ans>Warning 8 [partial-match]: …</code></td><td>Un <b>avertissement</b> : la phrase est acceptée, mais Caml signale un oubli probable (partie 6).</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Les cinq types de base du mémo, avec leurs opérateurs :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Type</th><th>Valeurs</th><th>Opérateurs</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code class="ml">int</code></th><td><code class="ml">1</code> <code class="ml">45</code> <code class="ml">-69</code> <code class="ml">max_int</code></td><td><code class="ml">+ - * / mod</code> : <code class="ml">/</code> est la division entière, <code class="ml">mod</code> le reste</td></tr>
+            <tr><th scope="row"><code class="ml">float</code></th><td><code class="ml">12.5</code> <code class="ml">-0.5</code> <code class="ml">3.</code> <code class="ml">3e2</code></td><td><code class="ml">+. -. *. /.</code> : les mêmes, suivis d’un point</td></tr>
+            <tr><th scope="row"><code class="ml">bool</code></th><td><code class="ml">true</code> <code class="ml">false</code></td><td><code class="ml">not</code>, <code class="ml">&amp;&amp;</code> (et), <code class="ml">||</code> (ou)</td></tr>
+            <tr><th scope="row"><code class="ml">char</code></th><td><code class="ml">'a'</code> <code class="ml">'9'</code> <code class="ml">'\n'</code></td><td>un seul caractère, entre apostrophes</td></tr>
+            <tr><th scope="row"><code class="ml">string</code></th><td><code class="ml">"a string"</code> <code class="ml">""</code></td><td><code class="ml">^</code> (concaténation), <code class="ml">s.[i]</code> (le caractère de rang <var>i</var>, à partir de 0)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Les comparaisons <code class="ml">= &lt;&gt; &lt; &gt; &lt;= &gt;=</code> marchent pour tous ces types, mais toujours entre deux valeurs du <b>même type</b>. <code class="ml">&lt;&gt;</code> veut dire « différent ». Les chaînes et les caractères se comparent dans l’ordre des codes : les majuscules avant les minuscules.</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Types et valeurs · séminaire, exercice 1.2">
+# 1. +. 2. ;;
+- : float = 3.
+# 1 / 2 ;;
+- : int = 0
+# 5 / 2 = 4 / 2 ;;
+- : bool = true
+# 10 - 2 * 2 ;;
+- : int = 6
+# 24 mod 10 * 10 ;;
+- : int = 40
+# (-7) mod 2 ;;
+- : int = -1
+# "Hello " ^ "world" ;;
+- : string = "Hello world"
+# "Caml".[1] ;;
+- : char = 'a'
+# 'Z' &lt; 'a' ;;
+- : bool = true
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><code class="ml">*</code>, <code class="ml">/</code> et <code class="ml">mod</code> passent avant <code class="ml">+</code> et <code class="ml">-</code>. À priorité égale, Caml calcule de gauche à droite : <code class="ml">24 mod 10 * 10</code> vaut <code class="ml">(24 mod 10) * 10</code>, soit 40.</li>
+          <li>Le reste d’un nombre négatif est négatif : <code class="ml">(-7) mod 2</code> vaut <code class="ml">-1</code>, pas 1.</li>
+          <li>Un flottant s’affiche avec un point et sans zéro inutile : <code class="ml">3.</code>, et <code class="ml">4.0</code> s’affiche <code class="ml">4.</code>.</li>
+        </ul></div>
+        <div class="prose">
+          <p><b><code class="ml">&amp;&amp;</code> et <code class="ml">||</code> s’arrêtent dès que le résultat est connu.</b> <code class="ml">false &amp;&amp; …</code> vaut <code class="ml">false</code> quoi qu’il y ait après : Caml n’évalue pas la suite. De même pour <code class="ml">true || …</code>.</p>
+        </div>
+<pre data-ml-repl>
+# false &amp;&amp; (1 / 0 = 0) ;;
+- : bool = false
+# true &amp;&amp; (1 / 0 = 0) ;;
+Exception: Division_by_zero.
+# true || (1 / 0 = 0) ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>La division par zéro n’a lieu que dans la deuxième phrase. Au chapitre 2, c’est ce qui permet d’écrire une fonction qui s’arrête dès que la réponse est connue.</p></div>
+        <div class="note trap"><span class="tag">Piège : aucune conversion automatique</span>
+          <p>Caml ne convertit jamais tout seul : <code class="ml">int</code> et <code class="ml">float</code> ne se mélangent pas, un caractère n’est pas une chaîne, et <code class="ml">1 &lt; 2 &lt; 3</code> se lit <code class="ml">(1 &lt; 2) &lt; 3</code>, un booléen comparé à un entier.</p>
+<pre data-ml-repl>
+# 1 + 1.5 ;;
+Error: This expression has type float but an expression was expected of type
+         int
+# 1 +. 1.5 ;;
+Error: This expression has type int but an expression was expected of type
+         float
+  Hint: Did you mean `1.'?
+# float_of_int 1 +. 1.5 ;;
+- : float = 2.5
+# "Hello Word" ^ '!' ;;
+Error: This expression has type char but an expression was expected of type
+         string
+# 1 &lt; 2 &lt; 3 ;;
+Error: This expression has type int but an expression was expected of type
+         bool
+</pre>
+          <p class="muted">Ici et dans tout le site, les messages d’erreur sont recopiés sans les lignes qui situent l’erreur (<code>Line 1, characters 4-7:</code> et le soulignement), comme dans le mémo.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="2"></span>Partie 2</div><h2>Nommer une valeur : let et let … in</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une <b>définition</b> lie un nom à la valeur d’une expression : <code class="ml">let ident = expression</code>. Caml répond par <code class="ml">val</code>, le nom, le type et la valeur. Le nom s’utilise ensuite dans toutes les phrases suivantes.</p>
+        </div>
+<pre data-ml-repl>
+# let a = 1 + 2 ;;
+val a : int = 3
+# a * 10 ;;
+- : int = 30
+# let one = 1 and two = 2. and three = '3' ;;
+val one : int = 1
+val two : float = 2.
+val three : char = '3'
+</pre>
+        <div class="prose">
+          <p>Un nom commence par une minuscule (ou par <code>_</code>), puis des lettres, des chiffres et des <code>_</code>. Caml distingue majuscules et minuscules, et un nom qui commence par une majuscule est réservé aux constructeurs : <code class="ml">let Total = 3</code> donne <code data-ml-ans>Error: Unbound constructor Total</code>. Choisis des noms explicites.</p>
+          <p><b>On ne modifie pas un nom, on le masque.</b> Un nom reste lié à la même valeur. Une nouvelle définition avec le même nom crée un nouveau nom qui cache l’ancien :</p>
+        </div>
+<pre data-ml-repl>
+# let price = 3 ;;
+val price : int = 3
+# let price = price * 2 ;;
+val price : int = 6
+</pre>
+        <div class="prose">
+          <p>La seconde phrase calcule <code class="ml">price * 2</code> avec l’ancien <code class="ml">price</code> (3), puis nomme le résultat <code class="ml">price</code>. La partie 3 montre ce que voit une fonction définie avant un masquage.</p>
+          <p><b>Une définition locale</b> : <code class="ml">let x = e1 in e2</code>. Le nom <code class="ml">x</code> n’existe que dans <code class="ml">e2</code>. Toute la phrase est une <b>expression</b> : Caml répond par <code class="ml">-</code>, pas par <code class="ml">val</code>, et <code class="ml">x</code> disparaît ensuite.</p>
+        </div>
+<pre data-ml-repl>
+# let total = 10 in total * total ;;
+- : int = 100
+# total ;;
+Error: Unbound value total
+# let a = 1 and b = 3 in
+    let x = a + b and y = a - b in
+      x * y ;;
+- : int = -8
+</pre>
+        <div class="prose"><p><b><code class="ml">and</code> ou deux <code class="ml">let … in</code> ?</b> Les deux phrases ci-dessous ne diffèrent que par là. Devine la réponse de Caml avant de comparer.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Séminaire, exercice 1.1 · environnement vide">
+# let x = 2 and y = 5 in
+    let y = x and z = y in
+      y + z ;;
+- : int = 7
+# let x = 2 and y = 5 in
+    let y = x in
+      let z = y in
+        y + z ;;
+Warning 26 [unused-var]: unused variable y.
+- : int = 4
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <p>Avec <code class="ml">and</code>, les définitions sont <b>simultanées</b> : toutes les expressions sont calculées avec les noms d’avant. Dans <code class="ml">let y = x and z = y</code>, le <code class="ml">y</code> de droite vaut encore 5 : <code class="ml">z</code> vaut 5, <code class="ml">y</code> vaut 2, résultat 7. Avec deux <code class="ml">let … in</code> imbriqués, <code class="ml">z</code> est défini après le nouveau <code class="ml">y</code> : <code class="ml">z</code> vaut 2, résultat 4. L’avertissement signale que le premier <code class="ml">y</code> (5) ne sert jamais.</p>
+          <p>C’est aussi pourquoi, dans l’en-tête, <code class="ml">let a = 5 and b = 2 * a in a * b</code> vaut 120 : le <code class="ml">a</code> de <code class="ml">2 * a</code> est l’ancien <code class="ml">a</code>, qui vaut 12.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : un let … in doit être suivi d’une expression</span>
+<pre data-ml-repl>
+# let a = 3 in let c = 2 + a ;;
+Error: Syntax error
+# let a = 2 in b = 5 in a * b ;;
+Error: Syntax error
+# let a = 2 and b = 5 in a * b ;;
+- : int = 10
+</pre>
+          <p><code class="ml">let c = 2 + a</code> seul n’est pas une expression : il lui manque son <code class="ml">in …</code>. Pour définir deux noms locaux, écris <code class="ml">let … and … in</code> ou deux <code class="ml">let … in</code> à la suite.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="3"></span>Partie 3</div><h2>Les fonctions : un paramètre, plusieurs paramètres</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><code class="ml">let f x = expression</code> définit une fonction de paramètre <code class="ml">x</code>. Son type s’écrit <code class="ml">type_de_x -> type_du_résultat</code>, et sa valeur s’affiche <code>&lt;fun&gt;</code>. Pour l’appliquer, écris son nom puis l’argument, séparés par une espace : <code class="ml">succ 3</code>, sans parenthèses ni virgule.</p>
+        </div>
+<pre data-ml-repl>
+# let succ x = x + 1 ;;
+val succ : int -> int = &lt;fun&gt;
+# succ 3 ;;
+- : int = 4
+</pre>
+        <div class="prose"><p><b>L’application passe avant tous les opérateurs</b> : <code class="ml">f x + y</code> se lit <code class="ml">(f x) + y</code>. Devine les réponses :</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Priorité de l’application · mémo, page 3">
+# succ 3 * 2 ;;
+- : int = 8
+# succ (3 * 2) ;;
+- : int = 7
+# succ -1 ;;
+Error: This expression has type int -> int
+       but an expression was expected of type int
+# succ (-1) ;;
+- : int = 0
+</pre>
+        <div class="prose"><p><code class="ml">succ -1</code> se lit <code class="ml">succ - 1</code> : une soustraction entre une fonction et un entier. Un argument qui n’est pas une valeur simple (une opération, un nombre négatif) se met entre parenthèses.</p>
+          <p><b>Plusieurs paramètres.</b> <code class="ml">let f x y = expression</code> : les paramètres se suivent, séparés par des espaces, et l’application aussi.</p></div>
+<pre data-ml-repl>
+# let average a b = float_of_int (a + b) /. 2. ;;
+val average : int -> int -> float = &lt;fun&gt;
+# average 2 3 ;;
+- : float = 2.5
+# average 2 ;;
+- : int -> float = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>Le type <code class="ml">int -> int -> float</code> se lit de gauche à droite : un premier <code class="ml">int</code>, un second <code class="ml">int</code>, et le dernier type, <code class="ml">float</code>, est celui du résultat. <code class="ml">average 2 3</code> veut dire <code class="ml">(average 2) 3</code> : <code class="ml">average 2</code> est déjà une fonction, qui attend le second entier. Applique les arguments un par un :</p></div>
+        <div id="apply"></div>
+        <div class="note trap"><span class="tag">Piège : l’application se lit de gauche à droite</span>
+<pre data-ml-repl>
+# succ succ 2 ;;
+Error: This function has type int -> int
+       It is applied to too many arguments; maybe you forgot a `;'.
+# succ (succ 2) ;;
+- : int = 4
+# let f2 x = int_of_float sqrt float_of_int x ;;
+Error: This function has type float -> int
+       It is applied to too many arguments; maybe you forgot a `;'.
+# let f2 x = int_of_float (sqrt (float_of_int x)) ;;
+val f2 : int -> int = &lt;fun&gt;
+</pre>
+          <p><code class="ml">succ succ 2</code> se lit <code class="ml">(succ succ) 2</code> : <code class="ml">succ</code> reçoit une fonction au lieu d’un entier. Pour enchaîner des fonctions, parenthèse l’appel intérieur (séminaire, exercice 2.1).</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : un couple n’est pas deux paramètres</span>
+<pre data-ml-repl>
+# let f x y = x mod y ;;
+val f : int -> int -> int = &lt;fun&gt;
+# f (2, 5) ;;
+Error: This expression has type 'a * 'b
+       but an expression was expected of type int
+# let g (x, y) = x mod y ;;
+val g : int * int -> int = &lt;fun&gt;
+# g (2, 5) ;;
+- : int = 2
+</pre>
+          <p><code class="ml">let g (x, y) = …</code> n’a qu’<b>un</b> paramètre, un couple (partie 7) : son type est <code class="ml">int * int -> int</code>. Respecte la forme des exemples d’un sujet : pour <code class="ml">check_list 2 lst</code>, écris <code class="ml">let check_list k lst</code>, pas <code class="ml">let check_list (k, lst)</code>.</p>
+        </div>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">séminaire · ex. 2.2</span> <code class="ml">mirror</code> retourne un nombre à deux chiffres non nuls ; <code class="ml">abba</code> l’utilise. Une fonction peut en appeler une autre, à condition que celle-ci soit définie avant.</p></div>
+<pre data-ml-repl>
+# let mirror n = n mod 10 * 10 + n / 10 ;;
+val mirror : int -> int = &lt;fun&gt;
+# mirror 15 ;;
+- : int = 51
+# let abba n = n * 100 + mirror n ;;
+val abba : int -> int = &lt;fun&gt;
+# abba 42 ;;
+- : int = 4224
+</pre>
+        <div class="prose"><p><b>Des définitions locales dans une fonction</b> <span class="src-tag c">séminaire · ex. 2.3</span> Calculer <var>x</var><sup>31</sup> avec le moins de multiplications possible : chaque <code class="ml">let … in</code> nomme un résultat pour le réutiliser au lieu de le recalculer.</p></div>
+<pre data-ml-repl>
+# let power31 x =
+    let x2 = x * x in
+    let x3 = x2 * x in
+    let x5 = x3 * x2 in
+    let x10 = x5 * x5 in
+    let x20 = x10 * x10 in
+      x20 * x10 * x ;;
+val power31 : int -> int = &lt;fun&gt;
+# power31 2 ;;
+- : int = 2147483648
+</pre>
+        <div class="prose"><p>7 multiplications au lieu de 30. La version par carrés successifs (<var>x</var><sup>2</sup>, <var>x</var><sup>4</sup>, <var>x</var><sup>8</sup>, <var>x</var><sup>16</sup>, puis <var>x</var><sup>16</sup> · <var>x</var><sup>8</sup> · <var>x</var><sup>4</sup> · <var>x</var><sup>2</sup> · <var>x</var>) en fait 8.</p></div>
+        <div class="note trap"><span class="tag">Piège : une fonction garde les valeurs de sa définition</span>
+<pre data-ml-repl data-mode="reveal">
+# let x = 1 ;;
+val x : int = 1
+# let add_x y = x + y ;;
+val add_x : int -> int = &lt;fun&gt;
+# let x = 100 ;;
+val x : int = 100
+# add_x 1 ;;
+- : int = 2
+</pre>
+          <p><code class="ml">add_x</code> a été définie quand <code class="ml">x</code> valait 1 : elle garde ce <code class="ml">x</code>-là. Le nouveau <code class="ml">x</code> ne fait que masquer l’ancien pour les phrases suivantes.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="4"></span>Partie 4</div><h2>L’alternative : if … then … else</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><code class="ml">if condition then e1 else e2</code> vaut <code class="ml">e1</code> si la condition vaut <code class="ml">true</code>, <code class="ml">e2</code> sinon. C’est une <b>expression</b> : elle a une valeur, et elle se place partout où une valeur est attendue.</p>
+        </div>
+<pre data-ml-repl>
+# if 2 > 1 then "higher" else "lower" ;;
+- : string = "higher"
+# let absolute_value x =
+    if x >= 0 then
+      x
+    else
+      -x ;;
+val absolute_value : int -> int = &lt;fun&gt;
+# absolute_value (-7) ;;
+- : int = 7
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>La condition est un <code class="ml">bool</code>.</li>
+          <li>Les deux branches ont le <b>même type</b> : c’est le type de toute l’alternative.</li>
+          <li>Le <code class="ml">else</code> est obligatoire : sans lui, Caml veut une branche <code class="ml">then</code> de type <code class="ml">unit</code> (rien), ce qui n’arrive qu’avec des affichages.</li>
+          <li>Indentation du mémo : <code class="ml">then</code> et <code class="ml">else</code> sous le <code class="ml">if</code>, chaque branche en retrait. Une alternative courte tient sur une ligne.</li>
+        </ul></div>
+<pre data-ml-repl>
+# let test b = if b then true else 0 ;;
+Error: This expression has type int but an expression was expected of type
+         bool
+# let pos x = if x > 0 then x ;;
+Error: This expression has type int but an expression was expected of type
+         unit
+       because it is in the result of a conditional with no else branch
+</pre>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">séminaire · ex. 3.3</span> Le maximum de deux valeurs. Regarde bien le type que donne Caml :</p></div>
+<pre data-ml-repl>
+# let max2 a b =
+    if a > b then
+      a
+    else
+      b ;;
+val max2 : 'a -> 'a -> 'a = &lt;fun&gt;
+# max2 3 8 ;;
+- : int = 8
+# max2 "caml" "algo" ;;
+- : string = "caml"
+</pre>
+        <div class="note why"><span class="tag">Pourquoi 'a ?</span>
+          <p><code class="ml">></code> compare deux valeurs de n’importe quel type, pourvu qu’elles aient le même. Rien n’oblige <code class="ml">a</code> et <code class="ml">b</code> à être des entiers : Caml donne le type le plus général, <code class="ml">'a -> 'a -> 'a</code> (lis « alpha »). <code class="ml">'a</code> désigne un type quelconque, le même partout où il apparaît. Ta réponse Caml recopie ce <code class="ml">'a</code> : écrire <code class="ml">int -> int -> int</code> serait faux.</p>
+        </div>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">séminaire · ex. 3.3 et 3.4</span> <code class="ml">min3</code> sans fonction intermédiaire, puis la somme des carrés des deux plus grands de trois entiers : c’est la somme des trois carrés, moins le carré du plus petit.</p></div>
+<pre data-ml-repl>
+# let min3 a b c =
+    if a &lt; b then
+      if a &lt; c then a else c
+    else
+      if b &lt; c then b else c ;;
+val min3 : 'a -> 'a -> 'a -> 'a = &lt;fun&gt;
+# let highest_square_sum a b c =
+    let m = min3 a b c in
+      a * a + b * b + c * c - m * m ;;
+val highest_square_sum : int -> int -> int -> int = &lt;fun&gt;
+# highest_square_sum 3 2 1 ;;
+- : int = 13
+# highest_square_sum 1 (-5) 10 ;;
+- : int = 101
+# highest_square_sum (-1) (-2) (-3) ;;
+- : int = 5
+</pre>
+        <div class="prose"><p>Ici le type est <code class="ml">int</code> : <code class="ml">*</code> n’existe que sur les entiers. <b>Une alternative booléenne se réécrit sans <code class="ml">if</code></b> (séminaire, exercices 3.1 et 3.2) :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Avec if</th><th>Sans if</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">if c then true else false</code></td><td><code class="ml">c</code></td></tr>
+            <tr><td><code class="ml">if c then false else true</code></td><td><code class="ml">not c</code></td></tr>
+            <tr><td><code class="ml">if a then b else false</code></td><td><code class="ml">a &amp;&amp; b</code></td></tr>
+            <tr><td><code class="ml">if a then true else b</code></td><td><code class="ml">a || b</code></td></tr>
+            <tr><td><code class="ml">if a then b else true</code></td><td><code class="ml">not a || b</code> (implication)</td></tr>
+            <tr><td><code class="ml">if a then not b else b</code></td><td><code class="ml">a &lt;&gt; b</code> (ou exclusif)</td></tr>
+            <tr><td><code class="ml">if a then b else not b</code></td><td><code class="ml">a = b</code> (équivalence)</td></tr>
+          </tbody>
+        </table></div>
+<pre data-ml-repl>
+# let all_even a b c d =
+    a mod 2 = 0 &amp;&amp; b mod 2 = 0 &amp;&amp; c mod 2 = 0 &amp;&amp; d mod 2 = 0 ;;
+val all_even : int -> int -> int -> int -> bool = &lt;fun&gt;
+# all_even 0 2 4 6 ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>Dans le séminaire, <code class="ml">all_even</code> s’écrit avec quatre <code class="ml">if</code> imbriqués et huit lignes de <code class="ml">true</code> et <code class="ml">false</code> : une seule ligne suffit.</p></div>
+        <div class="note trap"><span class="tag">Piège : not est une fonction</span>
+<pre data-ml-repl>
+# not true = false ;;
+- : bool = true
+</pre>
+          <p><code class="ml">not a = b</code> se lit <code class="ml">(not a) = b</code>, comme toute application. Écris <code class="ml">not (a = b)</code>, ou plus simplement <code class="ml">a &lt;&gt; b</code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="5"></span>Partie 5</div><h2>Signaler une erreur : failwith et invalid_arg</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Quand une fonction ne peut pas rendre de résultat, elle <b>déclenche une exception</b> : le calcul s’arrête net et Caml répond <code class="ml">Exception:</code> au lieu d’une valeur. Deux fonctions suffisent dans ce cours, et ce sont les deux seules fonctions prédéfinies permises à l’examen (partie 8).</p>
+        </div>
+<pre data-ml-repl>
+# invalid_arg ;;
+- : string -> 'a = &lt;fun&gt;
+# failwith ;;
+- : string -> 'a = &lt;fun&gt;
+# invalid_arg "weight has to be positive" ;;
+Exception: Invalid_argument "weight has to be positive".
+# failwith "unknown code" ;;
+Exception: Failure "unknown code".
+</pre>
+        <div class="grid2">
+          <div class="card"><span class="k">invalid_arg "message"</span><p>Déclenche <code data-ml-ans>Exception: Invalid_argument "message".</code></p><p>Un <b>paramètre</b> est en dehors du domaine : un nombre négatif, un rang nul, un nombre qui n’a pas deux chiffres…</p></div>
+          <div class="card"><span class="k">failwith "message"</span><p>Déclenche <code data-ml-ans>Exception: Failure "message".</code></p><p>Les paramètres sont valides, mais le calcul échoue : colis trop lourd, code inconnu, liste trop courte…</p></div>
+        </div>
+        <div class="prose">
+          <p>Leur type, <code class="ml">string -> 'a</code>, dit que le « résultat » peut être de n’importe quel type, puisqu’il n’arrive jamais. Une exception se place donc dans n’importe quelle branche, à côté d’un <code class="ml">int</code>, d’un <code class="ml">float</code> ou d’une chaîne.</p>
+          <p><b>Exemple</b> <span class="src-tag c">séminaire · ex. 3.7</span> Le tarif économique d’un colis, d’après son poids en grammes : 3,4 € jusqu’à 500 g, 4,6 € jusqu’à 1 000 g, 5,1 € jusqu’à 2 000 g, 6,9 € jusqu’à 3 000 g.</p>
+        </div>
+<pre data-ml-repl>
+# let rate_eco w =
+    if w &lt; 0 then
+      invalid_arg "weight has to be positive"
+    else if w &lt;= 500 then 3.4
+    else if w &lt;= 1000 then 4.6
+    else if w &lt;= 2000 then 5.1
+    else if w &lt;= 3000 then 6.9
+    else
+      failwith "too heavy" ;;
+val rate_eco : int -> float = &lt;fun&gt;
+# rate_eco 750 ;;
+- : float = 4.6
+# rate_eco (-150) ;;
+Exception: Invalid_argument "weight has to be positive".
+# rate_eco 3500 ;;
+Exception: Failure "too heavy".
+</pre>
+        <div class="prose"><p>Les branches sont des <code class="ml">float</code> ; <code class="ml">invalid_arg</code> et <code class="ml">failwith</code> s’y adaptent, d’où le type <code class="ml">int -> float</code>. Le test du paramètre vient <b>en premier</b>, avant tout calcul.</p></div>
+        <div class="prose"><p>Le séminaire laissait de côté les nombres invalides pour <code class="ml">mirror</code> (exercice 2.2). Avec <code class="ml">invalid_arg</code>, la fonction les refuse. Le message commence par le nom de la fonction, comme dans les sujets (<code class="ml">"check_list: k &lt; 0"</code>) :</p></div>
+<pre data-ml-repl>
+# let mirror n =
+    if n &lt; 10 || n > 99 || n mod 10 = 0 then
+      invalid_arg "mirror: not a two-digit number"
+    else
+      n mod 10 * 10 + n / 10 ;;
+val mirror : int -> int = &lt;fun&gt;
+# mirror 7 ;;
+Exception: Invalid_argument "mirror: not a two-digit number".
+# mirror 15 ;;
+- : int = 51
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Une exception arrête tout le calcul en cours : <code class="ml">1 + failwith "stop"</code> n’a pas de valeur, Caml répond <code data-ml-ans>Exception: Failure "stop".</code></li>
+          <li>Teste les paramètres d’abord, puis les cas d’échec, puis le cas normal. Au chapitre 2, une fonction « chapeau » fera ce test une seule fois, avant les appels récursifs.</li>
+          <li>Caml déclenche aussi ses propres exceptions : <code class="ml">1 / 0</code> donne <code data-ml-ans>Exception: Division_by_zero.</code></li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Piège : nommer une exception ne la déclenche pas</span>
+<pre data-ml-repl>
+# let check x = if x &lt; 0 then Invalid_argument "negative" else x ;;
+Error: This expression has type int but an expression was expected of type
+         exn
+# let check x = if x &lt; 0 then invalid_arg "negative" else x ;;
+val check : int -> int = &lt;fun&gt;
+# Invalid_arg "x" ;;
+Error: Unbound constructor Invalid_arg
+</pre>
+          <p><code class="ml">Invalid_argument "negative"</code> (avec une majuscule) construit une exception, une valeur de type <code class="ml">exn</code>, sans la déclencher. Écris <code class="ml">invalid_arg "…"</code> (avec une minuscule). Et <code class="ml">Invalid_arg</code> n’existe pas, même si le TD listes l’écrit dans un exemple.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="6"></span>Partie 6</div><h2>Le filtrage : match … with</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le filtrage compare une valeur à une suite de <b>motifs</b> et rend l’expression du premier motif qui lui correspond (qui la « filtre »).</p></div>
+<pre data-ml>
+match expression with
+    motif1 -> expression1
+  | motif2 -> expression2
+  | motifn -> expressionn
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Toutes les expressions de droite ont le <b>même type</b> : c’est celui du <code class="ml">match</code>. Les motifs ont le type de la valeur filtrée.</li>
+          <li>Les motifs sont essayés <b>dans l’ordre</b>, de haut en bas. Le premier qui filtre gagne, les suivants ne sont pas regardés.</li>
+          <li>Le filtrage doit être <b>exhaustif</b> : couvrir toutes les valeurs possibles.</li>
+        </ul></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Motif</th><th>Filtre</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">0</code> <code class="ml">true</code> <code class="ml">'c'</code> <code class="ml">"on"</code></td><td>cette valeur, exactement</td></tr>
+            <tr><td><code class="ml">x</code> (un nom)</td><td>n’importe quelle valeur, et la nomme <code class="ml">x</code> à droite de la flèche</td></tr>
+            <tr><td><code class="ml">_</code></td><td>n’importe quelle valeur, sans la nommer</td></tr>
+            <tr><td><code class="ml">0 | 2 | 4</code></td><td>l’une de ces valeurs</td></tr>
+            <tr><td><code class="ml">x when x > 0</code></td><td>une valeur qui vérifie la <b>garde</b> (la condition après <code class="ml">when</code>)</td></tr>
+            <tr><td><code class="ml">(0, _)</code></td><td>un couple dont le premier élément vaut 0 (partie 7)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><code class="ml">function</code> filtre directement l’unique paramètre, sans le nommer : <code class="ml">let f = function …</code> revient à <code class="ml">let f x = match x with …</code>.</p></div>
+<pre data-ml-repl>
+# let sign = function
+      0 -> 0
+    | y when y > 0 -> 1
+    | _ -> -1 ;;
+val sign : int -> int = &lt;fun&gt;
+# sign (-12) ;;
+- : int = -1
+</pre>
+        <div class="prose"><p><b>L’ordre des motifs</b> <span class="src-tag c">séminaire · ex. 3.5</span> La fonction <code class="ml">grade</code> du séminaire donne une lettre d’après la moyenne de deux notes. Suis Caml motif par motif, puis remets les cas dans le bon ordre.</p></div>
+        <div id="matcher"></div>
+<pre data-ml-repl data-mode="reveal">
+# let grade a b =
+    match (a + b) / 2 with
+        x when x > 15 -> 'A'
+      | x when x > 5 -> 'D'
+      | 8 | 9 | 10 -> 'C'
+      | x when x > 11 -> 'B'
+      | _ -> 'E' ;;
+val grade : int -> int -> char = &lt;fun&gt;
+# grade 12 14 ;;
+- : char = 'D'
+# grade 9 9 ;;
+- : char = 'D'
+</pre>
+        <div class="prose"><p>13 vérifie <code class="ml">x > 5</code> : le deuxième motif filtre, et le cas <code class="ml">x when x > 11</code> n’est jamais atteint. Caml ne signale rien, car il ne lit pas les gardes. Place les cas les plus particuliers d’abord.</p>
+          <p><b>Les avertissements.</b> Un filtrage incomplet ou un cas inutile ne bloque pas la définition, mais Caml les signale dans sa réponse :</p></div>
+<pre data-ml-repl>
+# let even x = match x with
+      0 | 2 | 4 | 6 | 8 -> true
+    | 1 | 3 | 5 | 7 | 9 -> false ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+10
+val even : int -> bool = &lt;fun&gt;
+# even 10 ;;
+Exception: Match_failure ("//toplevel//", 1, 13).
+# let even x = match x mod 2 with
+      0 -> true
+    | _ -> false ;;
+val even : int -> bool = &lt;fun&gt;
+# let f x = match x with
+      0 -> 18
+    | y -> y * y
+    | 1 -> 24 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val f : int -> int = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>La première <code class="ml">even</code> est définie malgré l’avertissement, et l’erreur arrive à l’exécution : <code class="ml">Match_failure</code>. Dans la seconde, <code class="ml">_</code> couvre aussi les restes négatifs (<code class="ml">(-3) mod 2</code> vaut <code class="ml">-1</code>). Dans <code class="ml">f</code>, <code class="ml">y</code> filtre tout ce qui reste : le cas <code class="ml">1</code> n’est jamais essayé. Dans une réponse Caml d’examen, un <code class="ml">Warning</code> trahit un cas oublié.</p></div>
+        <div class="note trap"><span class="tag">Piège : un nom dans un motif filtre tout</span>
+<pre data-ml-repl data-mode="reveal">
+# let h x y =
+    match x with
+        0 -> 0
+      | y -> 1
+      | _ -> -1 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val h : int -> 'a -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = 1
+# let h x y =
+    match x with
+        0 -> 0
+      | z when z = y -> 1
+      | _ -> -1 ;;
+val h : int -> int -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = -1
+</pre>
+          <p>Un nom dans un motif crée une <b>nouvelle</b> variable : <code class="ml">| y -></code> ne compare pas <code class="ml">x</code> au paramètre <code class="ml">y</code>, il filtre n’importe quelle valeur. Pour comparer, une garde : <code class="ml">| z when z = y -></code>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : Caml ne lit pas les gardes</span>
+<pre data-ml-repl>
+# let square x = match x with
+      x when x > 0 -> x * x
+    | x when x &lt;= 0 -> invalid_arg "x has to be positive" ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+All clauses in this pattern-matching are guarded.
+val square : int -> int = &lt;fun&gt;
+</pre>
+          <p><code class="ml">x > 0</code> et <code class="ml">x &lt;= 0</code> couvrent tout, mais Caml ne le voit pas. Termine par un cas sans garde : <code class="ml">| _ -></code> ou <code class="ml">| x -></code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="7"></span>Partie 7</div><h2>N-uplets et fonctions anonymes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un <b>n-uplet</b> (couple, triplet…) regroupe plusieurs valeurs, de types éventuellement différents, entre parenthèses et séparées par des virgules. Son type est le produit des types, écrit avec <code class="ml">*</code>.</p></div>
+<pre data-ml-repl>
+# let one = (1, "one") and two = (2., "two") ;;
+val one : int * string = (1, "one")
+val two : float * string = (2., "two")
+# let pair = (one, two) ;;
+val pair : (int * string) * (float * string) = ((1, "one"), (2., "two"))
+</pre>
+        <div class="prose"><p>Pour récupérer les éléments, un motif n-uplet dans un <code class="ml">let</code> ou un <code class="ml">match</code>. Une fonction qui doit rendre plusieurs résultats rend un n-uplet :</p></div>
+<pre data-ml-repl>
+# let (x, y) = one ;;
+val x : int = 1
+val y : string = "one"
+# let divmod x y = (x / y, x mod y) ;;
+val divmod : int -> int -> int * int = &lt;fun&gt;
+# let (q, r) = divmod 17 5 ;;
+val q : int = 3
+val r : int = 2
+</pre>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">séminaire · ex. 2.6</span> Convertir une durée en secondes, et l’inverse. Devine chaque réponse avant de comparer.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Heures, minutes, secondes · séminaire, exercice 2.6">
+# let sec_of_time h m s = h * 3600 + m * 60 + s ;;
+val sec_of_time : int -> int -> int -> int = &lt;fun&gt;
+# let time_of_sec s = (s / 3600, s mod 3600 / 60, s mod 60) ;;
+val time_of_sec : int -> int * int * int = &lt;fun&gt;
+# time_of_sec 83639 ;;
+- : int * int * int = (23, 13, 59)
+# let add_times h1 m1 s1 h2 m2 s2 =
+    time_of_sec (sec_of_time h1 m1 s1 + sec_of_time h2 m2 s2) ;;
+val add_times : int -> int -> int -> int -> int -> int -> int * int * int =
+  &lt;fun&gt;
+# add_times 12 22 15 15 13 10 ;;
+- : int * int * int = (27, 35, 25)
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><code class="ml">int -> int * int * int</code> est une fonction d’<b>un</b> entier qui rend un triplet : la flèche sépare les paramètres, l’étoile sépare les éléments du n-uplet.</li>
+          <li>Caml coupe les réponses trop longues : le <code>&lt;fun&gt;</code> de <code class="ml">add_times</code> passe à la ligne. Recopie le type en entier, sur une ou deux lignes.</li>
+        </ul></div>
+        <div class="prose"><p><b>Filtrer plusieurs valeurs à la fois</b> : on les regroupe en n-uplet. Le mémo écrit l’implication de deux façons, avec deux types différents :</p></div>
+<pre data-ml-repl>
+# let implication = function
+      (true, x) -> x
+    | _ -> true ;;
+val implication : bool * bool -> bool = &lt;fun&gt;
+# let implication a b = match (a, b) with
+      (true, x) -> x
+    | _ -> true ;;
+val implication : bool -> bool -> bool = &lt;fun&gt;
+# let count = function
+      (0, 0) -> 2
+    | (0, _) | (_, 0) -> 1
+    | _ -> 0 ;;
+val count : int * int -> int = &lt;fun&gt;
+# count (0, 1) ;;
+- : int = 1
+</pre>
+        <div class="prose"><p>La première <code class="ml">implication</code> prend un couple (un seul paramètre) ; la seconde prend deux paramètres et les regroupe pour les filtrer ensemble. <code class="ml">count</code> (séminaire, exercice 3.9) compte les zéros d’un couple, avec du filtrage mais sans <code class="ml">match</code>.</p>
+          <p><b>Les fonctions anonymes.</b> Une fonction est une valeur comme une autre : on peut l’écrire sans lui donner de nom, avec <code class="ml">function</code>.</p></div>
+<pre data-ml-repl data-mode="reveal">
+# function x -> x + 1 ;;
+- : int -> int = &lt;fun&gt;
+# (function x -> x * x) 4 ;;
+- : int = 16
+# let average = function a -> function b -> (a + b) / 2 ;;
+val average : int -> int -> int = &lt;fun&gt;
+# (function x -> function y -> x &lt; y) 3 5 ;;
+- : bool = true
+</pre>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><code class="ml">let f x = e</code> et <code class="ml">let f = function x -> e</code> définissent la même fonction.</li>
+          <li><code class="ml">function</code> n’a qu’un paramètre : pour deux, on imbrique <code class="ml">function a -> function b -> …</code>. OCaml accepte aussi le raccourci <code class="ml">fun a b -> …</code>, mais le mémo et les sujets écrivent <code class="ml">function</code>.</li>
+          <li>Au chapitre 4, ces fonctions passent en paramètre. Le sujet d’octobre 2024 donne par exemple <code class="ml">insert_x 7 (function x -> function y -> x &lt; y) [1; 3; 5; 9]</code>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span>
+<pre data-ml-repl>
+# let f = function x y -> x + y ;;
+Error: Syntax error
+# let h x y = match (x, y) with
+      (x, x) -> true
+    | _ -> false ;;
+Error: Variable x is bound several times in this matching
+# let h x y = match (x, y) with
+      (a, b) when a = b -> true
+    | _ -> false ;;
+val h : 'a -> 'a -> bool = &lt;fun&gt;
+</pre>
+          <p><code class="ml">function</code> ne prend qu’un paramètre. Un même nom ne peut pas apparaître deux fois dans un motif : pour tester l’égalité, une garde (séminaire, exercice 3.8). Ici, <code class="ml">let h x y = x = y</code> suffisait.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="8"></span>Partie 8</div><h2>Écrire une fonction à l’examen</h2></div>
+      <div class="stack">
+        <div class="prose"><p>L’examen se fait sur papier, directement sur le sujet. Ses règles sont écrites en tête de chaque sujet, et elles comptent dans la note.</p></div>
+        <div class="note exam"><span class="tag">Les règles des sujets (novembre 2020, octobre 2022, octobre 2024)</span><ul>
+          <li>Réponds dans les espaces prévus, au stylo : ni crayon de papier, ni stylo rouge (depuis 2021).</li>
+          <li>« Tout code Caml non indenté ne sera pas corrigé. »</li>
+          <li>Sauf indication de l’énoncé, les seules fonctions permises sont <code class="ml">failwith</code> et <code class="ml">invalid_arg</code> : aucune autre fonction prédéfinie, ni <code class="ml">abs</code>, ni <code class="ml">max</code>, ni <code class="ml">float_of_int</code>, ni <code class="ml">String.length</code>. Les opérateurs (<code class="ml">+ mod = &amp;&amp; not</code>…) restent permis.</li>
+          <li>« Tout code Caml doit être suivi du résultat de son évaluation : la réponse de Caml. » Depuis 2023, le sujet précise qu’elle « fait partie de la note ».</li>
+          <li>Tes fonctions doivent respecter les exemples d’application donnés. Une seule version par fonction. Tu peux écrire tes propres fonctions intermédiaires, si tu dis ce qu’elles font ; la dernière fonction écrite est celle qui répond (octobre 2024).</li>
+          <li>La présentation est notée.</li>
+        </ul></div>
+        <ol class="steps">
+          <li><div><p><b>Lis les exemples avant l’énoncé.</b> Ils donnent le nom, l’ordre et le type des paramètres, le type du résultat, et l’exception attendue avec son message.</p></div></li>
+          <li><div><p><b>Écris le type attendu.</b> Ce sera ta réponse Caml : par exemple <code data-ml-ans>val rate : int -> string -> float = &lt;fun&gt;</code>.</p></div></li>
+          <li><div><p><b>Liste les cas</b> : les paramètres invalides d’abord (<code class="ml">invalid_arg</code>), puis les échecs (<code class="ml">failwith</code>), puis le cas normal.</p></div></li>
+          <li><div><p><b>Écris le code, indenté</b> : <code class="ml">then</code> et <code class="ml">else</code> sous le <code class="ml">if</code>, un cas de <code class="ml">match</code> par ligne avec les <code class="ml">|</code> alignés, <code class="ml">;;</code> à la fin de la phrase.</p></div></li>
+          <li><div><p><b>Sous chaque définition, la réponse de Caml</b> : <code class="ml">val nom : type = …</code> pour une définition (<code>&lt;fun&gt;</code> pour une fonction), <code class="ml">- : type = valeur</code> pour une expression.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Exemple complet</b> <span class="src-tag c">séminaire · ex. 3.7, question 4</span> Le tarif d’un colis d’après son poids et le code du tarif, en une seule fonction. Les tarifs :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Poids jusqu’à</th><th><code>"eco"</code></th><th><code>"standard"</code></th><th><code>"express"</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">500 g</th><td>3,4 €</td><td>4,6 €</td><td>9,1 €</td></tr>
+            <tr><th scope="row">1 000 g</th><td>4,6 €</td><td>5,9 €</td><td>11 €</td></tr>
+            <tr><th scope="row">2 000 g</th><td>5,1 €</td><td>6,5 €</td><td>13,5 €</td></tr>
+            <tr><th scope="row">3 000 g</th><td>6,9 €</td><td>7,2 €</td><td>14,2 €</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Les exemples de l’énoncé fixent tout : <code class="ml">rate 750 "eco"</code> donne <code class="ml">4.6</code> (le poids, puis le code ; un <code class="ml">float</code>), un poids négatif déclenche <code class="ml">Invalid_argument</code>, un code inconnu ou un poids de plus de 3 000 g, <code class="ml">Failure</code>.</p></div>
+        <div class="sheet">
+          <span class="lbl">Fonction Caml :</span>
+<pre data-ml-repl>
+# let rate w code =
+    if w &lt; 0 then
+      invalid_arg "weight has to be positive"
+    else
+      let (eco, standard, express) =
+        if w &lt;= 500 then (3.4, 4.6, 9.1)
+        else if w &lt;= 1000 then (4.6, 5.9, 11.)
+        else if w &lt;= 2000 then (5.1, 6.5, 13.5)
+        else if w &lt;= 3000 then (6.9, 7.2, 14.2)
+        else failwith "too heavy"
+      in
+        match code with
+            "eco" -> eco
+          | "standard" -> standard
+          | "express" -> express
+          | _ -> failwith "unknown code" ;;
+val rate : int -> string -> float = &lt;fun&gt;
+# rate 750 "eco" ;;
+- : float = 4.6
+# rate (-150) "standard" ;;
+Exception: Invalid_argument "weight has to be positive".
+# rate 150 "drone" ;;
+Exception: Failure "unknown code".
+# rate 3500 "express" ;;
+Exception: Failure "too heavy".
+</pre>
+        </div>
+        <div class="prose"><p>Le triplet choisit la ligne du tableau une seule fois, le <code class="ml">match</code> choisit ensuite la colonne. Une seule fonction, aucune fonction prédéfinie en dehors de <code class="ml">failwith</code> et <code class="ml">invalid_arg</code>. Sur la copie, la réponse de Caml à écrire est celle de ta définition (<code class="ml">val rate : …</code>) ; les exemples de l’énoncé te servent à vérifier ta fonction.</p></div>
+        <div class="note exam"><span class="tag">Au partiel</span><ul>
+          <li>Les neuf sujets retrouvés (2017 à 2024) n’interrogent jamais ce chapitre seul : leurs exercices à écrire portent sur des listes (chapitre 3), avec une exception exigée par l’énoncé dans les neuf sujets. Tout ce qu’ils demandent s’écrit pourtant avec les outils de ce chapitre.</li>
+          <li>Sept sujets sur neuf ont un exercice « Mystery » : donner les réponses de Caml à quelques phrases, type compris (2 à 4 points). C’est ce que tu fais dans les blocs où tu tapes ta réponse.</li>
+          <li>Respecte d’abord l’exception des exemples : <code class="ml">Invalid_argument</code> ou <code class="ml">Failure</code>. Recopie aussi leur message ; les corrigés officiels ne le reproduisent pas toujours à l’identique, mais le constructeur compte.</li>
+          <li>Les exemples des sujets écrivent les nombres négatifs entre parenthèses : <code class="ml">check_list (-1) [[1]; [2]; []]</code> (octobre 2024).</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Erreurs fréquentes sur la copie</span>
+<pre data-ml-repl>
+# let f x = x + 1
+  f 2 ;;
+Error: This expression has type int
+       This is not a function; it cannot be applied.
+</pre>
+          <ul>
+            <li><b>Le <code class="ml">;;</code> oublié</b> : la phrase suivante se colle à la précédente, et Caml lit <code class="ml">x + 1 f 2</code>.</li>
+            <li><b><code class="ml">val</code> contre <code class="ml">-</code></b> : une définition répond <code class="ml">val nom : …</code>, une expression <code class="ml">- : …</code>. Pour une fonction, la valeur est <code>&lt;fun&gt;</code>, jamais un résultat.</li>
+            <li><b>Le type exact</b> : <code class="ml">'a</code> quand la fonction ne fait que comparer (<code class="ml">max2</code>), <code class="ml">int * int -> int</code> pour un couple, <code class="ml">int -> int -> int</code> pour deux paramètres.</li>
+            <li><b>Une fonction prédéfinie</b> comme <code class="ml">abs</code> ou <code class="ml">max</code> : réécris-la, comme <code class="ml">absolute_value</code> et <code class="ml">max2</code> plus haut.</li>
+          </ul>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="caml:bases:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Une fonction peut aussi s’appeler elle-même : c’est le chapitre 2, <a href="cours-2-recursivite.html">la récursivité</a>, avec <code class="ml">let rec</code>, les cas d’arrêt et la pile des appels.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var C = window.REV.caml;
+  /* partie 3 : lire le type de average, appliquer les arguments un par un */
+  C.apply(document.getElementById('apply'), {
+    name: 'average', params: [{ ty: 'int', arg: '2' }, { ty: 'int', arg: '3' }], res: 'float',
+    answers: ['- : int -> int -> float = <fun>', '- : int -> float = <fun>', '- : float = 2.5']
+  });
+  /* partie 6 : le filtrage de grade, motif par motif, dans l'ordre du sujet puis dans le bon ordre */
+  function gt(n) { return function (v) { return v > n ? true : 'guard'; }; }
+  var A = { pat: 'x when x > 15', res: "'A'", test: gt(15) }, B = { pat: 'x when x > 11', res: "'B'", test: gt(11) },
+    C8 = { pat: '8 | 9 | 10', res: "'C'", test: function (v) { return v >= 8 && v <= 10; } },
+    D = { pat: 'x when x > 5', res: "'D'", test: gt(5) }, E = { pat: '_', res: "'E'", test: function () { return true; } };
+  var head = 'let grade a b =\n  match (a + b) / 2 with';
+  C.matcher(document.getElementById('matcher'), {
+    title: 'Filtrage pas à pas · séminaire, exercice 3.5',
+    inputs: [
+      { label: 'grade 12 14', v: 13, note: '(12 + 14) / 2 = 13' }, { label: 'grade 9 9', v: 9, note: '(9 + 9) / 2 = 9' },
+      { label: 'grade 18 16', v: 17, note: '(18 + 16) / 2 = 17' }, { label: 'grade 3 1', v: 2, note: '(3 + 1) / 2 = 2' }
+    ],
+    versions: [
+      { label: 'Ordre du sujet', head: head, cases: [A, D, C8, B, E], ans: ["- : char = 'D'", "- : char = 'D'", "- : char = 'A'", "- : char = 'E'"] },
+      { label: 'Cas particuliers d’abord', head: head, cases: [A, B, C8, D, E], ans: ["- : char = 'B'", "- : char = 'C'", "- : char = 'A'", "- : char = 'E'"] }
+    ]
+  });
+})();
+</script>
+</body>
+</html>

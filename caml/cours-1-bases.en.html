@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Language basics · Caml</title>
+<meta name="description" content="Caml, chapter 1: the interactive loop and the Caml answer, basic types, global and local definitions, functions with one or several parameters, conditionals, exceptions, pattern matching, tuples, anonymous functions, and how to write a function at the exam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Caml · chapter 1: language basics">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Chapter 1 of 4</div>
+      <h1>You type a phrase, <span class="w">Caml answers.</span></h1>
+      <p class="lead">Every phrase ends with <code class="ml">;;</code>. Caml evaluates it and answers with its type and its value: this is “the Caml answer”, the one the exam asks for under every function. This chapter covers the whole language of the seminar, from expressions to pattern matching.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parts</span><span class="chip">Caml memo · seminar, exercises 1 to 3</span><span class="chip ex">Caml answer required at the exam</span></div>
+    </div>
+<pre data-ml-repl data-mode="guess" data-title="Seminar, exercise 1.1 · empty environment" id="heroRepl" aria-label="Interactive loop: guess the Caml answer to each phrase">
+# let a = 6 + 3 * 2 ;;
+val a : int = 12
+# let b = 7 in 11 + b ;;
+- : int = 18
+# let c = let a = 3 in 2 + a ;;
+val c : int = 5
+# let c = a * b ;;
+Error: Unbound value b
+# let a = 5 and b = 2 * a in a * b ;;
+- : int = 120
+</pre>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 1 · Language basics</div>
+    <ol>
+      <li><a href="#s1"><span class="calls" data-n="1"></span><span>Phrases, expressions, types</span></a></li>
+      <li><a href="#s2"><span class="calls" data-n="2"></span><span>Definitions: let, let … in</span></a></li>
+      <li><a href="#s3"><span class="calls" data-n="3"></span><span>Functions</span></a></li>
+      <li><a href="#s4"><span class="calls" data-n="4"></span><span>Conditionals</span></a></li>
+      <li><a href="#s5"><span class="calls" data-n="5"></span><span>Exceptions</span></a></li>
+      <li><a href="#s6"><span class="calls" data-n="6"></span><span>Pattern matching</span></a></li>
+      <li><a href="#s7"><span class="calls" data-n="7"></span><span>Tuples, anonymous functions</span></a></li>
+      <li><a href="#s8"><span class="calls" data-n="8"></span><span>Writing a function at the exam</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is drawn as a call trace: one more line, one more indentation step. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Caml home</a><a href="cours-2-recursivite.html">Chapter 2: recursion →</a><a href="../qcm/index.html#caml">Caml MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Phrases, expressions, types</a></li><li><a href="#s2">Definitions: let, let … in</a></li><li><a href="#s3">Functions</a></li><li><a href="#s4">Conditionals</a></li>
+      <li><a href="#s5">Exceptions</a></li><li><a href="#s6">Pattern matching</a></li><li><a href="#s7">Tuples, anonymous functions</a></li><li><a href="#s8">Writing a function at the exam</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="1"></span>Part 1</div><h2>One phrase, one answer: expressions and types</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>You first use Caml in the <b>interactive loop</b> (the <i>toplevel</i>): you type a phrase, Caml evaluates it and answers. A phrase always ends with <code class="ml">;;</code>. The <code>#</code> at the start of the line is Caml’s prompt: you do not type it.</p>
+          <p>An <b>expression</b> is a computation: a value (<code class="ml">15</code>, <code class="ml">"Hello"</code>), an operation (<code class="ml">a + 15</code>), a function application (<code class="ml">float_of_int 15</code>). Caml answers with its type and its value:</p>
+        </div>
+<pre data-ml-repl>
+# (666 * 42 = 27972) &amp;&amp; ("Hello" &lt; "World") ;;
+- : bool = true
+</pre>
+        <div class="tbl"><table>
+          <caption class="sr-only">Reading a Caml answer</caption>
+          <thead><tr><th>Caml answer</th><th>What it says</th></tr></thead>
+          <tbody>
+            <tr><td><code data-ml-ans>- : bool = true</code></td><td>An <b>expression</b>: the dash says that nothing is named. Its type is <code class="ml">bool</code>, its value <code class="ml">true</code>.</td></tr>
+            <tr><td><code data-ml-ans>val a : int = 3</code></td><td>A <b>definition</b> (part 2): the name <code class="ml">a</code> is now bound to the value 3, of type <code class="ml">int</code>.</td></tr>
+            <tr><td><code data-ml-ans>val succ : int -> int = &lt;fun&gt;</code></td><td>A <b>function</b> (part 3): Caml gives its type but does not print its code, only <code>&lt;fun&gt;</code>.</td></tr>
+            <tr><td><code data-ml-ans>Exception: Division_by_zero.</code></td><td>The computation raised an <b>exception</b> (part 5): it has no value.</td></tr>
+            <tr><td><code data-ml-ans>Error: Unbound value b</code></td><td>The phrase is <b>rejected</b> (syntax or type error): nothing is computed, nothing is defined.</td></tr>
+            <tr><td><code data-ml-ans>Warning 8 [partial-match]: …</code></td><td>A <b>warning</b>: the phrase is accepted, but Caml points out a probable oversight (part 6).</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The five basic types of the memo, with their operators:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Type</th><th>Values</th><th>Operators</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code class="ml">int</code></th><td><code class="ml">1</code> <code class="ml">45</code> <code class="ml">-69</code> <code class="ml">max_int</code></td><td><code class="ml">+ - * / mod</code>: <code class="ml">/</code> is the integer division, <code class="ml">mod</code> the remainder</td></tr>
+            <tr><th scope="row"><code class="ml">float</code></th><td><code class="ml">12.5</code> <code class="ml">-0.5</code> <code class="ml">3.</code> <code class="ml">3e2</code></td><td><code class="ml">+. -. *. /.</code>: the same ones, followed by a dot</td></tr>
+            <tr><th scope="row"><code class="ml">bool</code></th><td><code class="ml">true</code> <code class="ml">false</code></td><td><code class="ml">not</code>, <code class="ml">&amp;&amp;</code> (and), <code class="ml">||</code> (or)</td></tr>
+            <tr><th scope="row"><code class="ml">char</code></th><td><code class="ml">'a'</code> <code class="ml">'9'</code> <code class="ml">'\n'</code></td><td>a single character, between single quotes</td></tr>
+            <tr><th scope="row"><code class="ml">string</code></th><td><code class="ml">"a string"</code> <code class="ml">""</code></td><td><code class="ml">^</code> (concatenation), <code class="ml">s.[i]</code> (the character at rank <var>i</var>, starting from 0)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The comparisons <code class="ml">= &lt;&gt; &lt; &gt; &lt;= &gt;=</code> work for all these types, but always between two values of the <b>same type</b>. <code class="ml">&lt;&gt;</code> means “different”. Strings and characters compare in the order of their codes: uppercase letters before lowercase ones.</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Types and values · seminar, exercise 1.2">
+# 1. +. 2. ;;
+- : float = 3.
+# 1 / 2 ;;
+- : int = 0
+# 5 / 2 = 4 / 2 ;;
+- : bool = true
+# 10 - 2 * 2 ;;
+- : int = 6
+# 24 mod 10 * 10 ;;
+- : int = 40
+# (-7) mod 2 ;;
+- : int = -1
+# "Hello " ^ "world" ;;
+- : string = "Hello world"
+# "Caml".[1] ;;
+- : char = 'a'
+# 'Z' &lt; 'a' ;;
+- : bool = true
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">*</code>, <code class="ml">/</code> and <code class="ml">mod</code> come before <code class="ml">+</code> and <code class="ml">-</code>. With equal priority, Caml computes from left to right: <code class="ml">24 mod 10 * 10</code> means <code class="ml">(24 mod 10) * 10</code>, that is 40.</li>
+          <li>The remainder of a negative number is negative: <code class="ml">(-7) mod 2</code> is <code class="ml">-1</code>, not 1.</li>
+          <li>A float is printed with a dot and no useless zero: <code class="ml">3.</code>, and <code class="ml">4.0</code> is printed <code class="ml">4.</code>.</li>
+        </ul></div>
+        <div class="prose">
+          <p><b><code class="ml">&amp;&amp;</code> and <code class="ml">||</code> stop as soon as the result is known.</b> <code class="ml">false &amp;&amp; …</code> is <code class="ml">false</code> whatever comes next: Caml does not evaluate the rest. The same goes for <code class="ml">true || …</code>.</p>
+        </div>
+<pre data-ml-repl>
+# false &amp;&amp; (1 / 0 = 0) ;;
+- : bool = false
+# true &amp;&amp; (1 / 0 = 0) ;;
+Exception: Division_by_zero.
+# true || (1 / 0 = 0) ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>The division by zero only happens in the second phrase. In chapter 2, this is what lets you write a function that stops as soon as the answer is known.</p></div>
+        <div class="note trap"><span class="tag">Trap: no automatic conversion</span>
+          <p>Caml never converts anything by itself: <code class="ml">int</code> and <code class="ml">float</code> do not mix, a character is not a string, and <code class="ml">1 &lt; 2 &lt; 3</code> reads <code class="ml">(1 &lt; 2) &lt; 3</code>, a boolean compared with an integer.</p>
+<pre data-ml-repl>
+# 1 + 1.5 ;;
+Error: This expression has type float but an expression was expected of type
+         int
+# 1 +. 1.5 ;;
+Error: This expression has type int but an expression was expected of type
+         float
+  Hint: Did you mean `1.'?
+# float_of_int 1 +. 1.5 ;;
+- : float = 2.5
+# "Hello Word" ^ '!' ;;
+Error: This expression has type char but an expression was expected of type
+         string
+# 1 &lt; 2 &lt; 3 ;;
+Error: This expression has type int but an expression was expected of type
+         bool
+</pre>
+          <p class="muted">Here and everywhere on the site, error messages are copied without the lines that locate the error (<code>Line 1, characters 4-7:</code> and the underlining), as in the memo.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="2"></span>Part 2</div><h2>Naming a value: let and let … in</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>definition</b> binds a name to the value of an expression: <code class="ml">let ident = expression</code>. Caml answers with <code class="ml">val</code>, the name, the type and the value. The name can then be used in every following phrase.</p>
+        </div>
+<pre data-ml-repl>
+# let a = 1 + 2 ;;
+val a : int = 3
+# a * 10 ;;
+- : int = 30
+# let one = 1 and two = 2. and three = '3' ;;
+val one : int = 1
+val two : float = 2.
+val three : char = '3'
+</pre>
+        <div class="prose">
+          <p>A name starts with a lowercase letter (or with <code>_</code>), followed by letters, digits and <code>_</code>. Caml is case-sensitive, and a name starting with an uppercase letter is kept for constructors: <code class="ml">let Total = 3</code> gives <code data-ml-ans>Error: Unbound constructor Total</code>. Choose explicit names.</p>
+          <p><b>You do not modify a name, you hide it.</b> A name stays bound to the same value. A new definition with the same name creates a new name that hides the old one:</p>
+        </div>
+<pre data-ml-repl>
+# let price = 3 ;;
+val price : int = 3
+# let price = price * 2 ;;
+val price : int = 6
+</pre>
+        <div class="prose">
+          <p>The second phrase computes <code class="ml">price * 2</code> with the old <code class="ml">price</code> (3), then names the result <code class="ml">price</code>. Part 3 shows what a function defined before such a hiding sees.</p>
+          <p><b>A local definition</b>: <code class="ml">let x = e1 in e2</code>. The name <code class="ml">x</code> only exists inside <code class="ml">e2</code>. The whole phrase is an <b>expression</b>: Caml answers with <code class="ml">-</code>, not with <code class="ml">val</code>, and <code class="ml">x</code> disappears afterwards.</p>
+        </div>
+<pre data-ml-repl>
+# let total = 10 in total * total ;;
+- : int = 100
+# total ;;
+Error: Unbound value total
+# let a = 1 and b = 3 in
+    let x = a + b and y = a - b in
+      x * y ;;
+- : int = -8
+</pre>
+        <div class="prose"><p><b><code class="ml">and</code> or two <code class="ml">let … in</code>?</b> The two phrases below only differ there. Guess the Caml answer before comparing.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Seminar, exercise 1.1 · empty environment">
+# let x = 2 and y = 5 in
+    let y = x and z = y in
+      y + z ;;
+- : int = 7
+# let x = 2 and y = 5 in
+    let y = x in
+      let z = y in
+        y + z ;;
+Warning 26 [unused-var]: unused variable y.
+- : int = 4
+</pre>
+        <div class="note keep"><span class="tag">Remember</span>
+          <p>With <code class="ml">and</code>, the definitions are <b>simultaneous</b>: every expression is computed with the names from before. In <code class="ml">let y = x and z = y</code>, the <code class="ml">y</code> on the right is still 5: <code class="ml">z</code> is 5, <code class="ml">y</code> is 2, result 7. With two nested <code class="ml">let … in</code>, <code class="ml">z</code> is defined after the new <code class="ml">y</code>: <code class="ml">z</code> is 2, result 4. The warning says that the first <code class="ml">y</code> (5) is never used.</p>
+          <p>This is also why, in the header, <code class="ml">let a = 5 and b = 2 * a in a * b</code> is 120: the <code class="ml">a</code> in <code class="ml">2 * a</code> is the old <code class="ml">a</code>, which is 12.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: a let … in must be followed by an expression</span>
+<pre data-ml-repl>
+# let a = 3 in let c = 2 + a ;;
+Error: Syntax error
+# let a = 2 in b = 5 in a * b ;;
+Error: Syntax error
+# let a = 2 and b = 5 in a * b ;;
+- : int = 10
+</pre>
+          <p><code class="ml">let c = 2 + a</code> alone is not an expression: its <code class="ml">in …</code> is missing. To define two local names, write <code class="ml">let … and … in</code> or two <code class="ml">let … in</code> one after the other.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="3"></span>Part 3</div><h2>Functions: one parameter, several parameters</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><code class="ml">let f x = expression</code> defines a function with parameter <code class="ml">x</code>. Its type is written <code class="ml">type_of_x -> type_of_the_result</code>, and its value is printed <code>&lt;fun&gt;</code>. To apply it, write its name then the argument, separated by a space: <code class="ml">succ 3</code>, with no parentheses and no comma.</p>
+        </div>
+<pre data-ml-repl>
+# let succ x = x + 1 ;;
+val succ : int -> int = &lt;fun&gt;
+# succ 3 ;;
+- : int = 4
+</pre>
+        <div class="prose"><p><b>Application comes before every operator</b>: <code class="ml">f x + y</code> reads <code class="ml">(f x) + y</code>. Guess the answers:</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Priority of application · memo, page 3">
+# succ 3 * 2 ;;
+- : int = 8
+# succ (3 * 2) ;;
+- : int = 7
+# succ -1 ;;
+Error: This expression has type int -> int
+       but an expression was expected of type int
+# succ (-1) ;;
+- : int = 0
+</pre>
+        <div class="prose"><p><code class="ml">succ -1</code> reads <code class="ml">succ - 1</code>: a subtraction between a function and an integer. An argument that is not a simple value (an operation, a negative number) goes between parentheses.</p>
+          <p><b>Several parameters.</b> <code class="ml">let f x y = expression</code>: the parameters follow each other, separated by spaces, and so do the arguments.</p></div>
+<pre data-ml-repl>
+# let average a b = float_of_int (a + b) /. 2. ;;
+val average : int -> int -> float = &lt;fun&gt;
+# average 2 3 ;;
+- : float = 2.5
+# average 2 ;;
+- : int -> float = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>The type <code class="ml">int -> int -> float</code> reads from left to right: a first <code class="ml">int</code>, a second <code class="ml">int</code>, and the last type, <code class="ml">float</code>, is the type of the result. <code class="ml">average 2 3</code> means <code class="ml">(average 2) 3</code>: <code class="ml">average 2</code> is already a function, which waits for the second integer. Apply the arguments one at a time:</p></div>
+        <div id="apply"></div>
+        <div class="note trap"><span class="tag">Trap: application reads from left to right</span>
+<pre data-ml-repl>
+# succ succ 2 ;;
+Error: This function has type int -> int
+       It is applied to too many arguments; maybe you forgot a `;'.
+# succ (succ 2) ;;
+- : int = 4
+# let f2 x = int_of_float sqrt float_of_int x ;;
+Error: This function has type float -> int
+       It is applied to too many arguments; maybe you forgot a `;'.
+# let f2 x = int_of_float (sqrt (float_of_int x)) ;;
+val f2 : int -> int = &lt;fun&gt;
+</pre>
+          <p><code class="ml">succ succ 2</code> reads <code class="ml">(succ succ) 2</code>: <code class="ml">succ</code> receives a function instead of an integer. To chain functions, put the inner call between parentheses (seminar, exercise 2.1).</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: a pair is not two parameters</span>
+<pre data-ml-repl>
+# let f x y = x mod y ;;
+val f : int -> int -> int = &lt;fun&gt;
+# f (2, 5) ;;
+Error: This expression has type 'a * 'b
+       but an expression was expected of type int
+# let g (x, y) = x mod y ;;
+val g : int * int -> int = &lt;fun&gt;
+# g (2, 5) ;;
+- : int = 2
+</pre>
+          <p><code class="ml">let g (x, y) = …</code> has only <b>one</b> parameter, a pair (part 7): its type is <code class="ml">int * int -> int</code>. Follow the shape of the examples of a subject: for <code class="ml">check_list 2 lst</code>, write <code class="ml">let check_list k lst</code>, not <code class="ml">let check_list (k, lst)</code>.</p>
+        </div>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">seminar · ex. 2.2</span> <code class="ml">mirror</code> reverses a number with two non-zero digits; <code class="ml">abba</code> uses it. A function can call another one, provided that the other one is defined first.</p></div>
+<pre data-ml-repl>
+# let mirror n = n mod 10 * 10 + n / 10 ;;
+val mirror : int -> int = &lt;fun&gt;
+# mirror 15 ;;
+- : int = 51
+# let abba n = n * 100 + mirror n ;;
+val abba : int -> int = &lt;fun&gt;
+# abba 42 ;;
+- : int = 4224
+</pre>
+        <div class="prose"><p><b>Local definitions inside a function</b> <span class="src-tag c">seminar · ex. 2.3</span> Compute <var>x</var><sup>31</sup> with as few multiplications as possible: each <code class="ml">let … in</code> names a result so that it is reused instead of computed again.</p></div>
+<pre data-ml-repl>
+# let power31 x =
+    let x2 = x * x in
+    let x3 = x2 * x in
+    let x5 = x3 * x2 in
+    let x10 = x5 * x5 in
+    let x20 = x10 * x10 in
+      x20 * x10 * x ;;
+val power31 : int -> int = &lt;fun&gt;
+# power31 2 ;;
+- : int = 2147483648
+</pre>
+        <div class="prose"><p>7 multiplications instead of 30. The version with successive squares (<var>x</var><sup>2</sup>, <var>x</var><sup>4</sup>, <var>x</var><sup>8</sup>, <var>x</var><sup>16</sup>, then <var>x</var><sup>16</sup> · <var>x</var><sup>8</sup> · <var>x</var><sup>4</sup> · <var>x</var><sup>2</sup> · <var>x</var>) uses 8.</p></div>
+        <div class="note trap"><span class="tag">Trap: a function keeps the values of its definition</span>
+<pre data-ml-repl data-mode="reveal">
+# let x = 1 ;;
+val x : int = 1
+# let add_x y = x + y ;;
+val add_x : int -> int = &lt;fun&gt;
+# let x = 100 ;;
+val x : int = 100
+# add_x 1 ;;
+- : int = 2
+</pre>
+          <p><code class="ml">add_x</code> was defined when <code class="ml">x</code> was 1: it keeps that <code class="ml">x</code>. The new <code class="ml">x</code> only hides the old one for the following phrases.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="4"></span>Part 4</div><h2>Conditionals: if … then … else</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><code class="ml">if condition then e1 else e2</code> is <code class="ml">e1</code> if the condition is <code class="ml">true</code>, <code class="ml">e2</code> otherwise. It is an <b>expression</b>: it has a value, and it can go wherever a value is expected.</p>
+        </div>
+<pre data-ml-repl>
+# if 2 > 1 then "higher" else "lower" ;;
+- : string = "higher"
+# let absolute_value x =
+    if x >= 0 then
+      x
+    else
+      -x ;;
+val absolute_value : int -> int = &lt;fun&gt;
+# absolute_value (-7) ;;
+- : int = 7
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>The condition is a <code class="ml">bool</code>.</li>
+          <li>Both branches have the <b>same type</b>: it is the type of the whole conditional.</li>
+          <li>The <code class="ml">else</code> is compulsory: without it, Caml wants a <code class="ml">then</code> branch of type <code class="ml">unit</code> (nothing), which only happens with printing.</li>
+          <li>Indentation of the memo: <code class="ml">then</code> and <code class="ml">else</code> under the <code class="ml">if</code>, each branch indented. A short conditional fits on one line.</li>
+        </ul></div>
+<pre data-ml-repl>
+# let test b = if b then true else 0 ;;
+Error: This expression has type int but an expression was expected of type
+         bool
+# let pos x = if x > 0 then x ;;
+Error: This expression has type int but an expression was expected of type
+         unit
+       because it is in the result of a conditional with no else branch
+</pre>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">seminar · ex. 3.3</span> The maximum of two values. Look carefully at the type given by Caml:</p></div>
+<pre data-ml-repl>
+# let max2 a b =
+    if a > b then
+      a
+    else
+      b ;;
+val max2 : 'a -> 'a -> 'a = &lt;fun&gt;
+# max2 3 8 ;;
+- : int = 8
+# max2 "caml" "algo" ;;
+- : string = "caml"
+</pre>
+        <div class="note why"><span class="tag">Why 'a?</span>
+          <p><code class="ml">></code> compares two values of any type, as long as both have the same one. Nothing forces <code class="ml">a</code> and <code class="ml">b</code> to be integers: Caml gives the most general type, <code class="ml">'a -> 'a -> 'a</code> (read “alpha”). <code class="ml">'a</code> stands for any type, the same one everywhere it appears. Your Caml answer copies this <code class="ml">'a</code>: writing <code class="ml">int -> int -> int</code> would be wrong.</p>
+        </div>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">seminar · ex. 3.3 and 3.4</span> <code class="ml">min3</code> with no helper function, then the sum of the squares of the two largest of three integers: it is the sum of the three squares, minus the square of the smallest one.</p></div>
+<pre data-ml-repl>
+# let min3 a b c =
+    if a &lt; b then
+      if a &lt; c then a else c
+    else
+      if b &lt; c then b else c ;;
+val min3 : 'a -> 'a -> 'a -> 'a = &lt;fun&gt;
+# let highest_square_sum a b c =
+    let m = min3 a b c in
+      a * a + b * b + c * c - m * m ;;
+val highest_square_sum : int -> int -> int -> int = &lt;fun&gt;
+# highest_square_sum 3 2 1 ;;
+- : int = 13
+# highest_square_sum 1 (-5) 10 ;;
+- : int = 101
+# highest_square_sum (-1) (-2) (-3) ;;
+- : int = 5
+</pre>
+        <div class="prose"><p>Here the type is <code class="ml">int</code>: <code class="ml">*</code> only exists on integers. <b>A boolean conditional can be written without <code class="ml">if</code></b> (seminar, exercises 3.1 and 3.2):</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>With if</th><th>Without if</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">if c then true else false</code></td><td><code class="ml">c</code></td></tr>
+            <tr><td><code class="ml">if c then false else true</code></td><td><code class="ml">not c</code></td></tr>
+            <tr><td><code class="ml">if a then b else false</code></td><td><code class="ml">a &amp;&amp; b</code></td></tr>
+            <tr><td><code class="ml">if a then true else b</code></td><td><code class="ml">a || b</code></td></tr>
+            <tr><td><code class="ml">if a then b else true</code></td><td><code class="ml">not a || b</code> (implication)</td></tr>
+            <tr><td><code class="ml">if a then not b else b</code></td><td><code class="ml">a &lt;&gt; b</code> (exclusive or)</td></tr>
+            <tr><td><code class="ml">if a then b else not b</code></td><td><code class="ml">a = b</code> (equivalence)</td></tr>
+          </tbody>
+        </table></div>
+<pre data-ml-repl>
+# let all_even a b c d =
+    a mod 2 = 0 &amp;&amp; b mod 2 = 0 &amp;&amp; c mod 2 = 0 &amp;&amp; d mod 2 = 0 ;;
+val all_even : int -> int -> int -> int -> bool = &lt;fun&gt;
+# all_even 0 2 4 6 ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>In the seminar, <code class="ml">all_even</code> is written with four nested <code class="ml">if</code> and eight lines of <code class="ml">true</code> and <code class="ml">false</code>: one line is enough.</p></div>
+        <div class="note trap"><span class="tag">Trap: not is a function</span>
+<pre data-ml-repl>
+# not true = false ;;
+- : bool = true
+</pre>
+          <p><code class="ml">not a = b</code> reads <code class="ml">(not a) = b</code>, like any application. Write <code class="ml">not (a = b)</code>, or more simply <code class="ml">a &lt;&gt; b</code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="5"></span>Part 5</div><h2>Reporting an error: failwith and invalid_arg</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>When a function cannot return a result, it <b>raises an exception</b>: the computation stops at once and Caml answers <code class="ml">Exception:</code> instead of a value. Two functions are enough in this course, and they are the only two predefined functions allowed at the exam (part 8).</p>
+        </div>
+<pre data-ml-repl>
+# invalid_arg ;;
+- : string -> 'a = &lt;fun&gt;
+# failwith ;;
+- : string -> 'a = &lt;fun&gt;
+# invalid_arg "weight has to be positive" ;;
+Exception: Invalid_argument "weight has to be positive".
+# failwith "unknown code" ;;
+Exception: Failure "unknown code".
+</pre>
+        <div class="grid2">
+          <div class="card"><span class="k">invalid_arg "message"</span><p>Raises <code data-ml-ans>Exception: Invalid_argument "message".</code></p><p>A <b>parameter</b> is outside the domain: a negative number, a rank equal to zero, a number that does not have two digits…</p></div>
+          <div class="card"><span class="k">failwith "message"</span><p>Raises <code data-ml-ans>Exception: Failure "message".</code></p><p>The parameters are valid, but the computation fails: parcel too heavy, unknown code, list too short…</p></div>
+        </div>
+        <div class="prose">
+          <p>Their type, <code class="ml">string -> 'a</code>, says that the “result” can be of any type, since it never comes. An exception can therefore go in any branch, next to an <code class="ml">int</code>, a <code class="ml">float</code> or a string.</p>
+          <p><b>Example</b> <span class="src-tag c">seminar · ex. 3.7</span> The economy rate of a parcel, from its weight in grams: €3.4 up to 500 g, €4.6 up to 1,000 g, €5.1 up to 2,000 g, €6.9 up to 3,000 g.</p>
+        </div>
+<pre data-ml-repl>
+# let rate_eco w =
+    if w &lt; 0 then
+      invalid_arg "weight has to be positive"
+    else if w &lt;= 500 then 3.4
+    else if w &lt;= 1000 then 4.6
+    else if w &lt;= 2000 then 5.1
+    else if w &lt;= 3000 then 6.9
+    else
+      failwith "too heavy" ;;
+val rate_eco : int -> float = &lt;fun&gt;
+# rate_eco 750 ;;
+- : float = 4.6
+# rate_eco (-150) ;;
+Exception: Invalid_argument "weight has to be positive".
+# rate_eco 3500 ;;
+Exception: Failure "too heavy".
+</pre>
+        <div class="prose"><p>The branches are <code class="ml">float</code> values; <code class="ml">invalid_arg</code> and <code class="ml">failwith</code> adapt to them, hence the type <code class="ml">int -> float</code>. The test on the parameter comes <b>first</b>, before any computation.</p></div>
+        <div class="prose"><p>The seminar left aside invalid numbers for <code class="ml">mirror</code> (exercise 2.2). With <code class="ml">invalid_arg</code>, the function rejects them. The message starts with the name of the function, as in the subjects (<code class="ml">"check_list: k &lt; 0"</code>):</p></div>
+<pre data-ml-repl>
+# let mirror n =
+    if n &lt; 10 || n > 99 || n mod 10 = 0 then
+      invalid_arg "mirror: not a two-digit number"
+    else
+      n mod 10 * 10 + n / 10 ;;
+val mirror : int -> int = &lt;fun&gt;
+# mirror 7 ;;
+Exception: Invalid_argument "mirror: not a two-digit number".
+# mirror 15 ;;
+- : int = 51
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>An exception stops the whole current computation: <code class="ml">1 + failwith "stop"</code> has no value, Caml answers <code data-ml-ans>Exception: Failure "stop".</code></li>
+          <li>Test the parameters first, then the failure cases, then the normal case. In chapter 2, a “wrapper” function will do this test only once, before the recursive calls.</li>
+          <li>Caml also raises its own exceptions: <code class="ml">1 / 0</code> gives <code data-ml-ans>Exception: Division_by_zero.</code></li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: naming an exception does not raise it</span>
+<pre data-ml-repl>
+# let check x = if x &lt; 0 then Invalid_argument "negative" else x ;;
+Error: This expression has type int but an expression was expected of type
+         exn
+# let check x = if x &lt; 0 then invalid_arg "negative" else x ;;
+val check : int -> int = &lt;fun&gt;
+# Invalid_arg "x" ;;
+Error: Unbound constructor Invalid_arg
+</pre>
+          <p><code class="ml">Invalid_argument "negative"</code> (with an uppercase letter) builds an exception, a value of type <code class="ml">exn</code>, without raising it. Write <code class="ml">invalid_arg "…"</code> (with a lowercase letter). And <code class="ml">Invalid_arg</code> does not exist, even though the lists tutorial writes it in one example.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="6"></span>Part 6</div><h2>Pattern matching: match … with</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Pattern matching compares a value with a list of <b>patterns</b> and returns the expression of the first pattern that fits it (that “matches” it).</p></div>
+<pre data-ml>
+match expression with
+    pattern1 -> expression1
+  | pattern2 -> expression2
+  | patternn -> expressionn
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>All the expressions on the right have the <b>same type</b>: the type of the <code class="ml">match</code>. The patterns have the type of the matched value.</li>
+          <li>The patterns are tried <b>in order</b>, from top to bottom. The first one that matches wins, the following ones are not looked at.</li>
+          <li>The matching must be <b>exhaustive</b>: cover every possible value.</li>
+        </ul></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Pattern</th><th>Matches</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">0</code> <code class="ml">true</code> <code class="ml">'c'</code> <code class="ml">"on"</code></td><td>this exact value</td></tr>
+            <tr><td><code class="ml">x</code> (a name)</td><td>any value, and names it <code class="ml">x</code> on the right of the arrow</td></tr>
+            <tr><td><code class="ml">_</code></td><td>any value, without naming it</td></tr>
+            <tr><td><code class="ml">0 | 2 | 4</code></td><td>one of these values</td></tr>
+            <tr><td><code class="ml">x when x > 0</code></td><td>a value that satisfies the <b>guard</b> (the condition after <code class="ml">when</code>)</td></tr>
+            <tr><td><code class="ml">(0, _)</code></td><td>a pair whose first element is 0 (part 7)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><code class="ml">function</code> directly matches the single parameter, without naming it: <code class="ml">let f = function …</code> is the same as <code class="ml">let f x = match x with …</code>.</p></div>
+<pre data-ml-repl>
+# let sign = function
+      0 -> 0
+    | y when y > 0 -> 1
+    | _ -> -1 ;;
+val sign : int -> int = &lt;fun&gt;
+# sign (-12) ;;
+- : int = -1
+</pre>
+        <div class="prose"><p><b>The order of the patterns</b> <span class="src-tag c">seminar · ex. 3.5</span> The seminar’s <code class="ml">grade</code> function gives a letter from the average of two marks. Follow Caml pattern by pattern, then put the cases back in the right order.</p></div>
+        <div id="matcher"></div>
+<pre data-ml-repl data-mode="reveal">
+# let grade a b =
+    match (a + b) / 2 with
+        x when x > 15 -> 'A'
+      | x when x > 5 -> 'D'
+      | 8 | 9 | 10 -> 'C'
+      | x when x > 11 -> 'B'
+      | _ -> 'E' ;;
+val grade : int -> int -> char = &lt;fun&gt;
+# grade 12 14 ;;
+- : char = 'D'
+# grade 9 9 ;;
+- : char = 'D'
+</pre>
+        <div class="prose"><p>13 satisfies <code class="ml">x > 5</code>: the second pattern matches, and the case <code class="ml">x when x > 11</code> is never reached. Caml says nothing, because it does not read guards. Put the most specific cases first.</p>
+          <p><b>Warnings.</b> An incomplete matching or a useless case does not block the definition, but Caml reports them in its answer:</p></div>
+<pre data-ml-repl>
+# let even x = match x with
+      0 | 2 | 4 | 6 | 8 -> true
+    | 1 | 3 | 5 | 7 | 9 -> false ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+10
+val even : int -> bool = &lt;fun&gt;
+# even 10 ;;
+Exception: Match_failure ("//toplevel//", 1, 13).
+# let even x = match x mod 2 with
+      0 -> true
+    | _ -> false ;;
+val even : int -> bool = &lt;fun&gt;
+# let f x = match x with
+      0 -> 18
+    | y -> y * y
+    | 1 -> 24 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val f : int -> int = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>The first <code class="ml">even</code> is defined despite the warning, and the error comes at run time: <code class="ml">Match_failure</code>. In the second one, <code class="ml">_</code> also covers negative remainders (<code class="ml">(-3) mod 2</code> is <code class="ml">-1</code>). In <code class="ml">f</code>, <code class="ml">y</code> matches everything that is left: the case <code class="ml">1</code> is never tried. In a Caml answer at the exam, a <code class="ml">Warning</code> gives away a forgotten case.</p></div>
+        <div class="note trap"><span class="tag">Trap: a name in a pattern matches everything</span>
+<pre data-ml-repl data-mode="reveal">
+# let h x y =
+    match x with
+        0 -> 0
+      | y -> 1
+      | _ -> -1 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val h : int -> 'a -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = 1
+# let h x y =
+    match x with
+        0 -> 0
+      | z when z = y -> 1
+      | _ -> -1 ;;
+val h : int -> int -> int = &lt;fun&gt;
+# h 5 3 ;;
+- : int = -1
+</pre>
+          <p>A name in a pattern creates a <b>new</b> variable: <code class="ml">| y -></code> does not compare <code class="ml">x</code> with the parameter <code class="ml">y</code>, it matches any value. To compare, use a guard: <code class="ml">| z when z = y -></code>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: Caml does not read guards</span>
+<pre data-ml-repl>
+# let square x = match x with
+      x when x > 0 -> x * x
+    | x when x &lt;= 0 -> invalid_arg "x has to be positive" ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+All clauses in this pattern-matching are guarded.
+val square : int -> int = &lt;fun&gt;
+</pre>
+          <p><code class="ml">x > 0</code> and <code class="ml">x &lt;= 0</code> cover everything, but Caml does not see it. End with a case without a guard: <code class="ml">| _ -></code> or <code class="ml">| x -></code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="7"></span>Part 7</div><h2>Tuples and anonymous functions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A <b>tuple</b> (pair, triple…) groups several values, possibly of different types, between parentheses and separated by commas. Its type is the product of the types, written with <code class="ml">*</code>.</p></div>
+<pre data-ml-repl>
+# let one = (1, "one") and two = (2., "two") ;;
+val one : int * string = (1, "one")
+val two : float * string = (2., "two")
+# let pair = (one, two) ;;
+val pair : (int * string) * (float * string) = ((1, "one"), (2., "two"))
+</pre>
+        <div class="prose"><p>To get the elements back, use a tuple pattern in a <code class="ml">let</code> or a <code class="ml">match</code>. A function that must return several results returns a tuple:</p></div>
+<pre data-ml-repl>
+# let (x, y) = one ;;
+val x : int = 1
+val y : string = "one"
+# let divmod x y = (x / y, x mod y) ;;
+val divmod : int -> int -> int * int = &lt;fun&gt;
+# let (q, r) = divmod 17 5 ;;
+val q : int = 3
+val r : int = 2
+</pre>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">seminar · ex. 2.6</span> Convert a duration into seconds, and back. Guess each answer before comparing.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Hours, minutes, seconds · seminar, exercise 2.6">
+# let sec_of_time h m s = h * 3600 + m * 60 + s ;;
+val sec_of_time : int -> int -> int -> int = &lt;fun&gt;
+# let time_of_sec s = (s / 3600, s mod 3600 / 60, s mod 60) ;;
+val time_of_sec : int -> int * int * int = &lt;fun&gt;
+# time_of_sec 83639 ;;
+- : int * int * int = (23, 13, 59)
+# let add_times h1 m1 s1 h2 m2 s2 =
+    time_of_sec (sec_of_time h1 m1 s1 + sec_of_time h2 m2 s2) ;;
+val add_times : int -> int -> int -> int -> int -> int -> int * int * int =
+  &lt;fun&gt;
+# add_times 12 22 15 15 13 10 ;;
+- : int * int * int = (27, 35, 25)
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">int -> int * int * int</code> is a function of <b>one</b> integer that returns a triple: the arrow separates the parameters, the star separates the elements of the tuple.</li>
+          <li>Caml cuts answers that are too long: the <code>&lt;fun&gt;</code> of <code class="ml">add_times</code> goes to the next line. Copy the whole type, on one or two lines.</li>
+        </ul></div>
+        <div class="prose"><p><b>Matching several values at once</b>: group them in a tuple. The memo writes the implication in two ways, with two different types:</p></div>
+<pre data-ml-repl>
+# let implication = function
+      (true, x) -> x
+    | _ -> true ;;
+val implication : bool * bool -> bool = &lt;fun&gt;
+# let implication a b = match (a, b) with
+      (true, x) -> x
+    | _ -> true ;;
+val implication : bool -> bool -> bool = &lt;fun&gt;
+# let count = function
+      (0, 0) -> 2
+    | (0, _) | (_, 0) -> 1
+    | _ -> 0 ;;
+val count : int * int -> int = &lt;fun&gt;
+# count (0, 1) ;;
+- : int = 1
+</pre>
+        <div class="prose"><p>The first <code class="ml">implication</code> takes a pair (a single parameter); the second one takes two parameters and groups them to match them together. <code class="ml">count</code> (seminar, exercise 3.9) counts the zeros of a pair, with pattern matching but without <code class="ml">match</code>.</p>
+          <p><b>Anonymous functions.</b> A function is a value like any other: you can write it without giving it a name, with <code class="ml">function</code>.</p></div>
+<pre data-ml-repl data-mode="reveal">
+# function x -> x + 1 ;;
+- : int -> int = &lt;fun&gt;
+# (function x -> x * x) 4 ;;
+- : int = 16
+# let average = function a -> function b -> (a + b) / 2 ;;
+val average : int -> int -> int = &lt;fun&gt;
+# (function x -> function y -> x &lt; y) 3 5 ;;
+- : bool = true
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">let f x = e</code> and <code class="ml">let f = function x -> e</code> define the same function.</li>
+          <li><code class="ml">function</code> has only one parameter: for two, nest them, <code class="ml">function a -> function b -> …</code>. OCaml also accepts the shortcut <code class="ml">fun a b -> …</code>, but the memo and the subjects write <code class="ml">function</code>.</li>
+          <li>In chapter 4, these functions are passed as parameters. The October 2024 subject gives for instance <code class="ml">insert_x 7 (function x -> function y -> x &lt; y) [1; 3; 5; 9]</code>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span>
+<pre data-ml-repl>
+# let f = function x y -> x + y ;;
+Error: Syntax error
+# let h x y = match (x, y) with
+      (x, x) -> true
+    | _ -> false ;;
+Error: Variable x is bound several times in this matching
+# let h x y = match (x, y) with
+      (a, b) when a = b -> true
+    | _ -> false ;;
+val h : 'a -> 'a -> bool = &lt;fun&gt;
+</pre>
+          <p><code class="ml">function</code> takes only one parameter. The same name cannot appear twice in a pattern: to test equality, use a guard (seminar, exercise 3.8). Here, <code class="ml">let h x y = x = y</code> was enough.</p>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="8"></span>Part 8</div><h2>Writing a function at the exam</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The exam is on paper, directly on the subject. Its rules are written at the top of every subject, and they count in the mark.</p></div>
+        <div class="note exam"><span class="tag">The rules of the subjects (November 2020, October 2022, October 2024)</span><ul>
+          <li>Answer within the provided space, in pen: penciled answers and red-pen answers (since 2021) are not marked.</li>
+          <li>“All Caml code not indented will not be marked.”</li>
+          <li>“In the absence of any indication in the document, the only functions that you can use are <code class="ml">failwith</code> and <code class="ml">invalid_arg</code>”: no other predefined function, neither <code class="ml">abs</code>, nor <code class="ml">max</code>, nor <code class="ml">float_of_int</code>, nor <code class="ml">String.length</code>. Operators (<code class="ml">+ mod = &amp;&amp; not</code>…) are still allowed.</li>
+          <li>“Any Caml code must be followed by the result of its evaluation: the Caml answer.” Since 2023, the subject adds that it “is part of the mark”.</li>
+          <li>Your functions must follow the given application examples. Only one version per function. You may write your own helper functions, if you say what they do; the last function written is the one that answers (October 2024).</li>
+          <li>The presentation is marked.</li>
+        </ul></div>
+        <ol class="steps">
+          <li><div><p><b>Read the examples before the statement.</b> They give the name, the order and the type of the parameters, the type of the result, and the expected exception with its message.</p></div></li>
+          <li><div><p><b>Write down the expected type.</b> It will be your Caml answer: for instance <code data-ml-ans>val rate : int -> string -> float = &lt;fun&gt;</code>.</p></div></li>
+          <li><div><p><b>List the cases</b>: invalid parameters first (<code class="ml">invalid_arg</code>), then the failures (<code class="ml">failwith</code>), then the normal case.</p></div></li>
+          <li><div><p><b>Write the code, indented</b>: <code class="ml">then</code> and <code class="ml">else</code> under the <code class="ml">if</code>, one <code class="ml">match</code> case per line with the <code class="ml">|</code> aligned, <code class="ml">;;</code> at the end of the phrase.</p></div></li>
+          <li><div><p><b>Under every definition, the Caml answer</b>: <code class="ml">val name : type = …</code> for a definition (<code>&lt;fun&gt;</code> for a function), <code class="ml">- : type = value</code> for an expression.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Complete example</b> <span class="src-tag c">seminar · ex. 3.7, question 4</span> The rate of a parcel from its weight and the code of the rate, in a single function. The rates:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Weight up to</th><th><code>"eco"</code></th><th><code>"standard"</code></th><th><code>"express"</code></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">500 g</th><td>€3.4</td><td>€4.6</td><td>€9.1</td></tr>
+            <tr><th scope="row">1,000 g</th><td>€4.6</td><td>€5.9</td><td>€11</td></tr>
+            <tr><th scope="row">2,000 g</th><td>€5.1</td><td>€6.5</td><td>€13.5</td></tr>
+            <tr><th scope="row">3,000 g</th><td>€6.9</td><td>€7.2</td><td>€14.2</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The examples of the statement settle everything: <code class="ml">rate 750 "eco"</code> gives <code class="ml">4.6</code> (the weight, then the code; a <code class="ml">float</code>), a negative weight raises <code class="ml">Invalid_argument</code>, an unknown code or a weight above 3,000 g, <code class="ml">Failure</code>.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let rate w code =
+    if w &lt; 0 then
+      invalid_arg "weight has to be positive"
+    else
+      let (eco, standard, express) =
+        if w &lt;= 500 then (3.4, 4.6, 9.1)
+        else if w &lt;= 1000 then (4.6, 5.9, 11.)
+        else if w &lt;= 2000 then (5.1, 6.5, 13.5)
+        else if w &lt;= 3000 then (6.9, 7.2, 14.2)
+        else failwith "too heavy"
+      in
+        match code with
+            "eco" -> eco
+          | "standard" -> standard
+          | "express" -> express
+          | _ -> failwith "unknown code" ;;
+val rate : int -> string -> float = &lt;fun&gt;
+# rate 750 "eco" ;;
+- : float = 4.6
+# rate (-150) "standard" ;;
+Exception: Invalid_argument "weight has to be positive".
+# rate 150 "drone" ;;
+Exception: Failure "unknown code".
+# rate 3500 "express" ;;
+Exception: Failure "too heavy".
+</pre>
+        </div>
+        <div class="prose"><p>The triple picks the row of the table only once, then the <code class="ml">match</code> picks the column. A single function, no predefined function apart from <code class="ml">failwith</code> and <code class="ml">invalid_arg</code>. On the paper, the Caml answer to write is the one of your definition (<code class="ml">val rate : …</code>); the examples of the statement let you check your function.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>The nine subjects found (2017 to 2024) never test this chapter on its own: their exercises to write are about lists (chapter 3), with an exception required by the statement in all nine subjects. Yet everything they ask is written with the tools of this chapter.</li>
+          <li>Seven subjects out of nine have a “Mystery” exercise: give the Caml answers to a few phrases, type included (2 to 4 points). This is what you do in the blocks where you type your answer.</li>
+          <li>First follow the exception of the examples: <code class="ml">Invalid_argument</code> or <code class="ml">Failure</code>. Copy their message too; the official corrections do not always reproduce it word for word, but the constructor counts.</li>
+          <li>The examples of the subjects write negative numbers between parentheses: <code class="ml">check_list (-1) [[1]; [2]; []]</code> (October 2024).</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Frequent mistakes on the paper</span>
+<pre data-ml-repl>
+# let f x = x + 1
+  f 2 ;;
+Error: This expression has type int
+       This is not a function; it cannot be applied.
+</pre>
+          <ul>
+            <li><b>The forgotten <code class="ml">;;</code></b>: the next phrase sticks to the previous one, and Caml reads <code class="ml">x + 1 f 2</code>.</li>
+            <li><b><code class="ml">val</code> versus <code class="ml">-</code></b>: a definition answers <code class="ml">val name : …</code>, an expression <code class="ml">- : …</code>. For a function, the value is <code>&lt;fun&gt;</code>, never a result.</li>
+            <li><b>The exact type</b>: <code class="ml">'a</code> when the function only compares (<code class="ml">max2</code>), <code class="ml">int * int -> int</code> for a pair, <code class="ml">int -> int -> int</code> for two parameters.</li>
+            <li><b>A predefined function</b> such as <code class="ml">abs</code> or <code class="ml">max</code>: write it again yourself, like <code class="ml">absolute_value</code> and <code class="ml">max2</code> above.</li>
+          </ul>
+        </div>
+        <div data-check-ref="caml/cours-1-bases.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="caml:bases:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>A function can also call itself: this is chapter 2, <a href="cours-2-recursivite.html">recursion</a>, with <code class="ml">let rec</code>, base cases and the call stack.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var C = window.REV.caml;
+  /* part 3: read the type of average, apply the arguments one at a time */
+  C.apply(document.getElementById('apply'), {
+    name: 'average', params: [{ ty: 'int', arg: '2' }, { ty: 'int', arg: '3' }], res: 'float',
+    answers: ['- : int -> int -> float = <fun>', '- : int -> float = <fun>', '- : float = 2.5']
+  });
+  /* part 6: the matching of grade, pattern by pattern, in the order of the subject then in the right order */
+  function gt(n) { return function (v) { return v > n ? true : 'guard'; }; }
+  var A = { pat: 'x when x > 15', res: "'A'", test: gt(15) }, B = { pat: 'x when x > 11', res: "'B'", test: gt(11) },
+    C8 = { pat: '8 | 9 | 10', res: "'C'", test: function (v) { return v >= 8 && v <= 10; } },
+    D = { pat: 'x when x > 5', res: "'D'", test: gt(5) }, E = { pat: '_', res: "'E'", test: function () { return true; } };
+  var head = 'let grade a b =\n  match (a + b) / 2 with';
+  C.matcher(document.getElementById('matcher'), {
+    title: 'Pattern matching step by step · seminar, exercise 3.5',
+    inputs: [
+      { label: 'grade 12 14', v: 13, note: '(12 + 14) / 2 = 13' }, { label: 'grade 9 9', v: 9, note: '(9 + 9) / 2 = 9' },
+      { label: 'grade 18 16', v: 17, note: '(18 + 16) / 2 = 17' }, { label: 'grade 3 1', v: 2, note: '(3 + 1) / 2 = 2' }
+    ],
+    versions: [
+      { label: 'Order of the subject', head: head, cases: [A, D, C8, B, E], ans: ["- : char = 'D'", "- : char = 'D'", "- : char = 'A'", "- : char = 'E'"] },
+      { label: 'Specific cases first', head: head, cases: [A, B, C8, D, E], ans: ["- : char = 'B'", "- : char = 'C'", "- : char = 'A'", "- : char = 'E'"] }
+    ]
+  });
+})();
+</script>
+</body>
+</html>

@@ -285,7 +285,7 @@
     var mode = pre.getAttribute('data-mode') || 'show', title = pre.getAttribute('data-title');
     var items = parseRepl(pre.textContent), hide = mode === 'reveal' || mode === 'guess';
     var box = document.createElement('div');
-    box.className = 'ml-repl' + (hide ? ' ml-' + mode : '') + (pre.className ? ' ' + pre.className : '');
+    box.className = 'ml-repl' + (hide ? ' ml-mode-' + mode : '') + (pre.className ? ' ' + pre.className : '');
     if (pre.id) box.id = pre.id;
     box.setAttribute('role', 'group');
     box.setAttribute('aria-label', pre.getAttribute('aria-label') || title || T('Boucle d’interaction de Caml'));
@@ -317,7 +317,7 @@
     function show(ph, on) {
       var a = ph.querySelector('.ml-ans'), b = ph.querySelector('[data-show]');
       if (a) a.hidden = !on;
-      if (b) b.hidden = on;
+      if (b) b.parentNode.hidden = on;           /* mode reveal : le bouton laisse sa place à la réponse */
     }
     phs.forEach(function (ph, k) {
       var it = items[k], b = ph.querySelector('[data-show]'), c = ph.querySelector('[data-cmp]'), inp = ph.querySelector('.ml-guess');
