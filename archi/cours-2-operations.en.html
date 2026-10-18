@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operations in base 2 and 16 · Archi</title>
+<meta name="description" content="Archi, chapter 2: binary addition, subtraction (the course’s borrow method), multiplication and division set out in columns, division with a binary point, hexadecimal addition of several numbers, checking in decimal, with step-by-step operations and a practice exam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* part 1: two ways to write a carry of 2 (fixed tables, same classes as the posed tool) */
+.cmp .po-scroll{padding:.3rem 0}
+.cmp .po-t td.c2{background:var(--cu-soft)}
+/* part 6: column sum → digit written down and carry */
+.hx-t td,.hx-t th{text-align:center}
+.hx-t tbody td:first-child{font-weight:700}
+.hx-t td.on{background:var(--cu-soft);color:var(--cu);font-weight:700}
+/* parts 7 and 8: your operation, practice exam */
+.mine-form{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr)) auto}
+@media (max-width:640px){.mine-form{grid-template-columns:repeat(2,minmax(0,1fr)) auto}.mine-form .cv-num{grid-column:1/-1}}
+.mine-out p{margin:0}
+.mine-out p+p{margin-top:.35rem}
+.gen-list{margin:0;padding:0;list-style:none;display:grid;gap:.6rem}
+.gen-list>li{border:1px solid var(--line);border-radius:var(--radius);padding:.6rem .8rem;display:grid;gap:.45rem;min-width:0}
+.gen-q{display:flex;flex-wrap:wrap;gap:.2rem .6rem;align-items:baseline}
+.gen-q .lbl{min-width:4.6rem}
+.gen-q .bn{font-size:1.05rem;overflow-wrap:anywhere}
+.gen-list details>summary{cursor:pointer;font-weight:700;color:var(--accent);width:max-content;max-width:100%}
+.gen-list details[open]>summary{margin-bottom:.5rem}
+</style>
+</head>
+<body data-resume="Archi · chapter 2: operations in base 2 and 16">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numeration</b> — sheet 2 of 4</span><span>Source: Chapter 1, § II (D. Bouchet) · Tutorial 1, ex. 3</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="2"></span><a href="index.html">Archi</a> · Chapter 2 of 4</div>
+      <h1>Set out the operation, <span class="w">column by column.</span></h1>
+      <p class="lead"><span data-eq><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></span>: the subtraction of the 2025-2026 exam. In base 2 and base 16, operations are set out as in base 10, with carries and borrows. Only the threshold changes: you carry from 2 in binary, from 16 in hexadecimal.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with step-by-step operations</span></li>
+        <li><span><span class="k">Course</span> Chapter 1, § II · Tutorial 1, ex. 3</span></li>
+        <li class="ex"><span><span class="k">Exam</span> an exercise of operations to set out in 9 exams out of 10</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="posed" data-opts='{"op":"sub","ops":["101110110","11011011"],"base":2,"title":"2025-2026 exam: subtraction"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Press “Next”: one column at a time, with the course’s borrows (part 2).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Operations in base 2 and 16</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>Binary addition</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>Binary subtraction</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>Binary multiplication</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>Binary division</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>Division: point and remainder</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>Hexadecimal addition</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Checking a result</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>Setting it out in the exam</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is written in binary on 4 bits: part 5 is <span class="bn">0101</span>. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi home</a><a href="cours-1-bases.html">← Chapter 1: number bases</a><a href="cours-3-entiers.html">Chapter 3: integers →</a><a href="../qcm/index.html#archi">Archi MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Binary addition</a></li><li><a href="#s2">Binary subtraction</a></li><li><a href="#s3">Binary multiplication</a></li><li><a href="#s4">Binary division</a></li>
+      <li><a href="#s5">Division: point and remainder</a></li><li><a href="#s6">Hexadecimal addition</a></li><li><a href="#s7">Checking a result</a></li><li><a href="#s8">Setting it out in the exam</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Part 1 <span class="ref">course § II.1</span></div><h2>Binary addition: carry from 2</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The course says it in one sentence: binary operations “follow the same rules” as decimal ones. Line the numbers up <b>on the right</b>, ones under ones, and add <b>column by column, from right to left</b>. The carry of a column is added to the next column.</p>
+          <p>The only new thing: in base 2, two is already written <span class="bn">10</span>. As soon as a column reaches 2, write down the rightmost digit and carry the rest. With two numbers and a carry, there are only four cases:</p>
+        </div>
+        <div class="tbl" style="max-width:32rem"><table>
+          <caption>Table 2.1 — A column of two numbers, with or without a carry</caption>
+          <thead><tr><th>Column</th><th>Sum in base 2</th><th>Write down</th><th>Carry</th></tr></thead>
+          <tbody>
+            <tr><td>0 + 0</td><td><span class="bn">0</span></td><td>0</td><td>none</td></tr>
+            <tr><td>0 + 1 or 1 + 0</td><td><span class="bn">1</span></td><td>1</td><td>none</td></tr>
+            <tr><td>1 + 1</td><td><span class="bn">10</span> (two)</td><td>0</td><td>1</td></tr>
+            <tr><td>1 + 1 + 1</td><td><span class="bn">11</span> (three)</td><td>1</td><td>1</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The course’s example, in 8 steps. Carries are written small, <b>above the column that receives them</b>:</p></div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["1010110","1011101"],"base":2,"title":"Course § II.1: 1010110 + 1011101"}'></div>
+        <div class="calc" data-eq><div><span class="bn">1010110<sub>2</sub></span> + <span class="bn">1011101<sub>2</sub></span> = <span class="bn">10110011<sub>2</sub></span></div><div>= 86 + 93 = 179</div></div>
+        <div class="prose">
+          <p>The course writes each step like this: “1 + 1 = 10 (0 carry 1)”, “1 + 1 + 1 = 11 (1 carry 1)”. The last carry, on the left, creates one more digit: 7 digits to start with, 8 in the result.</p>
+          <p><b>More than two numbers</b> <span class="src-tag">Tutorial 1 · ex. 3.1</span> A column can then hold three or four 1s, plus the carry. Work out the sum of the column, write it in binary, write down its last digit and carry all the rest. The first column of <span class="bn">1100011 + 1110111 + 1001011 + 101</span> holds four 1s: <span data-eq>1 + 1 + 1 + 1 = 4 = <span class="bn">100<sub>2</sub></span></span>. Write down 0 and carry <span data-eq><span class="bn">10<sub>2</sub></span> = 2</span>.</p>
+        </div>
+        <div class="note why"><span class="tag">A carry of 2: two ways to write it</span>
+          <p>The course has no example of a carry of 2: it only adds two binary numbers at a time, and the exam keys only write the result. Both ways below are right and give the same total:</p>
+          <ul>
+            <li><b>“10” above the next column</b>: that column receives <span data-eq><span class="bn">10<sub>2</sub></span> = 2</span>. This is what the tools on this site do.</li>
+            <li><b>The split carry</b>: 0 above the next column, 1 above the one after. A 1 two columns further left is worth 2 in the next column. But the marks soon pile up.</li>
+          </ul>
+        </div>
+        <div class="grid2 cmp">
+          <div class="card"><span class="k">“10” in a single box</span>
+            <div class="po-scroll"><table class="po-t" aria-label="After two columns, carries written 10"><tbody>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">10</td><td>10</td><td></td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr class="po-last"><th class="po-o" scope="row">+</th><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td><td>1</td></tr>
+              <tr class="po-res"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td></tr>
+            </tbody></table></div>
+            <p class="muted">Column 2: <span data-eq><span class="bn">10<sub>2</sub></span> + 1 + 1 + 1 + 0 = 5 = <span class="bn">101<sub>2</sub></span></span>: write down 1, carry <span class="bn">10</span>.</p>
+          </div>
+          <div class="card"><span class="k">The split carry</span>
+            <div class="po-scroll"><table class="po-t" aria-label="After two columns, split carries"><tbody>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">1</td><td>0</td><td></td></tr>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">1</td><td></td><td></td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr class="po-last"><th class="po-o" scope="row">+</th><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td><td>1</td></tr>
+              <tr class="po-res"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td></tr>
+            </tbody></table></div>
+            <p class="muted">Column 2: <span data-eq>0 + 1 + 1 + 1 + 0 = 3 = <span class="bn">11<sub>2</sub></span></span>: write down 1, carry 1, which joins the 1 that came from column 1.</p>
+          </div>
+        </div>
+        <p class="fig-cap"><b>Figure 2</b> — The first two columns of <span class="bn">1100011 + 1110111 + 1001011 + 101</span>. Either way, column 3 receives 2 (copper boxes). Pick one way and keep it to the end.</p>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["1100011","1110111","1001011","101"],"base":2,"title":"Tutorial 1, ex. 3.1: four numbers"}'></div>
+        <div class="calc" data-eq><div><span class="bn">1100011<sub>2</sub></span> + <span class="bn">1110111<sub>2</sub></span> + <span class="bn">1001011<sub>2</sub></span> + <span class="bn">101<sub>2</sub></span> = <span class="bn">100101010<sub>2</sub></span></div><div>= 99 + 119 + 75 + 5 = 298</div></div>
+        <div class="note keep"><span class="tag">If carries of 10 bother you</span>
+          <p>Add two numbers at a time: <span data-eq><span class="bn">1100011<sub>2</sub></span> + <span class="bn">1110111<sub>2</sub></span> = <span class="bn">11011010<sub>2</sub></span></span>, then <span data-eq><span class="bn">11011010<sub>2</sub></span> + <span class="bn">1001011<sub>2</sub></span> = <span class="bn">100100101<sub>2</sub></span></span>, then <span data-eq><span class="bn">100100101<sub>2</sub></span> + <span class="bn">101<sub>2</sub></span> = <span class="bn">100101010<sub>2</sub></span></span>. Longer, but each column only has the four cases of table 2.1.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: the last carry and the alignment</span>
+          <ul>
+            <li>The carry out on the left <b>is written down</b>: <span data-eq><span class="bn">10101010<sub>2</sub></span> + <span class="bn">11001110<sub>2</sub></span> = <span class="bn">101111000<sub>2</sub></span></span> has 9 digits, not 8 (Tutorial 1).</li>
+            <li>Line up on the right, on the ones: the <span class="bn">101</span> of the tutorial goes under the last three digits, not under the first three.</li>
+          </ul>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#td1-ex3a">Tutorial 1, ex. 3.1</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Part 2 <span class="ref">course § II.2</span></div><h2>Binary subtraction: the course’s borrow method</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Subtract column by column, from right to left: 1 − 0 = 1, 1 − 1 = 0, 0 − 0 = 0. The only hard case is a top digit smaller than the bottom one: 0 − 1. You <b>borrow 1</b>. The course does it in two moves, always the same:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>The top digit <b>receives the base</b>: 0 becomes <span class="bn">10</span> (two), 1 becomes <span class="bn">11</span> (three). The course writes a small 1 in front of the digit: <span class="bn"><small class="cu">1</small>0</span>.</p></div></li>
+          <li><div><p>In return, the <b>bottom</b> digit of the next column <b>receives + 1</b>. The course writes <span class="bn"><small class="cu">1+</small>1</span> or <span class="bn"><small class="cu">1+</small>0</span>.</p></div></li>
+          <li><div><p>In the next column, you therefore subtract the bottom digit plus 1. If that digit is already 1, you subtract 1 + 1 = <span class="bn">10</span>, and you often have to borrow again.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"sub","ops":["1101001","110110"],"base":2,"title":"Course § II.2: 1101001 − 110110"}'></div>
+        <div class="prose"><p>The bottom number has one digit less: it is completed with a 0 on the left (<span class="bn">0110110</span>), which receives the last borrow. The 7 steps, in the course’s words:</p></div>
+        <div class="calc" data-chk="substeps 1101001 110110">
+          <div><b>Step 1:</b> 1 − 0 = 1</div>
+          <div><b>Step 2:</b> 0 − 1 → borrow 1 → 10 − 1 = 1</div>
+          <div><b>Step 3:</b> 0 − (1 + 1) = 0 − 10 → borrow 1 → 10 − 10 = 0</div>
+          <div><b>Step 4:</b> 1 − (1 + 0) = 1 − 1 = 0</div>
+          <div><b>Step 5:</b> 0 − 1 → borrow 1 → 10 − 1 = 1</div>
+          <div><b>Step 6:</b> 1 − (1 + 1) = 1 − 10 → borrow 1 → 11 − 10 = 1</div>
+          <div><b>Step 7:</b> 1 − (1 + 0) = 1 − 1 = 0</div>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1101001<sub>2</sub></span> − <span class="bn">110110<sub>2</sub></span> = <span class="bn">110011<sub>2</sub></span></div><div>= 105 − 54 = 51</div></div>
+        <div class="note why"><span class="tag">Why it works</span>
+          <p>In one column, the top digit gains 2 units of that column. In the next column, the bottom digit gains 1, and one unit of the next column is also worth 2 units of the first. The <b>same value</b> has been added to both numbers: their difference does not change. This is the borrow “by compensation” often taught in base 10.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: step 5 of the course, and two methods mixed up</span>
+          <ul>
+            <li>The course (French and English) prints step 5 as “0 – 1 = 1 → borrow 1 → 10 – 1 = 1”. The “= 1” should not be there: 0 − 1 is not 1. You borrow straight away, as in step 2.</li>
+            <li>You may have learnt another method: take 1 away from the <b>top</b> digit of the next column. It gives the same result, but follow only one of them. Mixing both counts the borrow twice. The course puts the borrow <b>at the bottom</b>.</li>
+            <li>A column “0 − (1 + 1)” reads 0 − <span class="bn">10</span>: borrow, <span class="bn">10</span> − <span class="bn">10</span> = 0, and the borrow goes on to the next column.</li>
+          </ul>
+        </div>
+        <div class="prose"><p>Figure 1, at the top of the page, sets out the subtraction of the 2025-2026 exam with the same method: 9 digits minus 8 digits, as in every exam.</p></div>
+        <div class="note keep"><span class="tag">If the top number is the smaller one</span>
+          <p>Then <var>a</var> − <var>b</var> = −(<var>b</var> − <var>a</var>): swap the two numbers, set out <var>b</var> − <var>a</var> and write a minus sign in front of the result. The exams never ask for it: the result is always positive. The tool in part 7 does it if you try. On 8 bits (chapter 3), it is a different story: no minus sign, and the final borrow signals an overflow.</p>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#td1-ex3b">Tutorial 1, ex. 3.2</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Part 3 <span class="ref">course § II.3</span></div><h2>Binary multiplication: copy and shift</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Write the <b>multiplicand</b> on top and the <b>multiplier</b> below it. Each digit of the multiplier gives a <b>partial product</b>. In binary, the multiplication table fits on one line: 0 × 0 = 0 × 1 = 0 and 1 × 1 = 1. So a partial product is either a row of zeros or <b>a copy of the multiplicand</b>. The course’s steps:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>The rightmost multiplier digit is 1: write down the multiplicand.</p></div></li>
+          <li><div><p>The next multiplier digit is 0: write down zeros shifted left.</p></div></li>
+          <li><div><p>The next multiplier digit is 1: write down the multiplicand shifted left.</p></div></li>
+          <li><div><p>Add the partial products.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10110","101"],"base":2,"zeros":true,"title":"Course § II.3: 10110 × 101"}'></div>
+        <div class="calc" data-eq><div><span class="bn">10110<sub>2</sub></span> × <span class="bn">101<sub>2</sub></span> = <span class="bn">1101110<sub>2</sub></span></div><div>= 22 × 5 = 110</div></div>
+        <div class="prose">
+          <p><b>The shift.</b> The multiplier digit of weight 2<sup><var>k</var></sup> gives a row shifted <var>k</var> places to the left: shifting one place multiplies by <span class="bn">10<sub>2</sub></span> = 2, just as adding a 0 on the right multiplies by 10 in base 10.</p>
+          <p><b>The exam keys skip the rows of zeros</b>: they only write the rows of the 1 digits, each one preceded by “+”. The 2023-2024 exam, reused as is in 2025-2026: the multiplier <span class="bn">101010</span> has its 1s at weights 2<sup>1</sup>, 2<sup>3</sup> and 2<sup>5</sup>, so three rows, shifted 1, 3 and 5 places.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10101010100","101010"],"base":2,"zeros":false,"title":"2023 and 2025 exams: without the rows of zeros"}'></div>
+        <div class="calc" data-eq><div><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></div><div>= 1,364 × 42 = 57,288</div></div>
+        <div class="prose"><p><b>The final addition</b> adds several numbers (part 1): with three rows, a column can hold three 1s and a carry. In 2021-2022, the multiplier <span class="bn">1010110</span> gave four partial products, and several columns a carry of <span class="bn">10</span>.</p></div>
+        <div class="note trap"><span class="tag">Pitfall: skipping a row without shifting the next one</span>
+          <p>Whether you write the rows of zeros or not, the partial product of the digit of weight 2<sup><var>k</var></sup> is shifted <var>k</var> places. With <span class="bn">101010</span>, the first row written is already shifted <b>one</b> place, because the rightmost digit is 0. Forgetting that place for every row gives a result half as big as it should be.</p>
+        </div>
+        <div class="note why"><span class="tag">Rough-work tip</span>
+          <p>The product does not change when the two numbers are swapped. Taking as multiplier the one with fewer 1s gives fewer rows: in <span class="bn">10101010100 × 101010</span>, the multiplier has three 1s and the multiplicand five.</p>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#td1-ex3c">Tutorial 1, ex. 3.3</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Part 4 <span class="ref">course § II.4</span></div><h2>Binary long division</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Set out the division as in decimal: the <b>dividend</b> on the left, the <b>divisor</b> on the right, the <b>quotient</b> under the divisor. In base 2, the divisor goes into a partial remainder <b>0 or 1 time</b>: no table to know, you only have to <b>compare</b>. The course’s steps:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Take the shortest leading part of the dividend that contains the divisor: the divisor “goes into” those digits one time. Record a ‘1’ in the quotient, then subtract the divisor.</p></div></li>
+          <li><div><p>Bring down the next digit from the dividend to the remainder.</p></div></li>
+          <li><div><p>If the new remainder is smaller than the divisor, record a ‘0’ in the quotient. Otherwise, record a ‘1’ and subtract the divisor.</p></div></li>
+          <li><div><p>Repeat until the last digit of the dividend. The final remainder is 0: the division is exact.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["101001101","1001"],"base":2,"title":"2025-2026 exam: 101001101 / 1001"}'></div>
+        <div class="calc" data-eq><div><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></div><div>= 333 / 9 = 37</div></div>
+        <div class="note keep"><span class="tag">Comparing two binary numbers</span>
+          <p>Without leading zeros, the one with more digits is the larger. With the same number of digits, compare from left to right: the first different digit decides. <span class="bn">1011</span> &gt; <span class="bn">1001</span> (third digit), <span class="bn">101</span> &lt; <span class="bn">1001</span> (fewer digits).</p>
+        </div>
+        <div class="prose"><p><b>What the key writes.</b> The 2025-2026 key only keeps the partial remainders at each subtraction: <span class="bn">1011</span>, then <span class="bn">1001</span>, then <span class="bn">0</span>, with the digits brought down in bold. The course also writes the “− divisor” rows; so do the keys from 2016 to 2021.</p></div>
+        <div class="note trap"><span class="tag">Pitfall: the 0 forgotten in the quotient</span>
+          <p>Each digit brought down gives one quotient digit, 0 or 1. Here, after <span data-eq><span class="bn">1010<sub>2</sub></span> − <span class="bn">1001<sub>2</sub></span> = <span class="bn">1<sub>2</sub></span></span>, you bring down 0 (remainder <span class="bn">10</span>) then 1 (remainder <span class="bn">101</span>): twice smaller than <span class="bn">1001</span>, so <b>two 0s</b> in the quotient. Forgetting them gives <span class="bn">1101</span> instead of <span class="bn">100101</span>.</p>
+        </div>
+        <div data-check-ref="archi/cours-2-operations.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Part 5 <span class="ref">course § II.4 · Tutorial 1, ex. 3.4</span></div><h2>Division: the binary point, the remainder, the digits asked for</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>When the last digit of the dividend has been brought down and the remainder is not 0, the course goes on (step 7): <b>record a binary point in the quotient</b>, then <b>bring down an extra 0 to the remainder</b>, and carry on with the same method. Each extra 0 gives one digit after the point. The course’s example:</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["11111001","110"],"base":2,"digits":1,"title":"Course § II.4: 11111001 / 110"}'></div>
+        <div class="calc" data-eq><div><span class="bn">11111001<sub>2</sub></span> / <span class="bn">110<sub>2</sub></span> = <span class="bn">101001.1<sub>2</sub></span></div><div>= 249 / 6 = 41.5</div></div>
+        <div class="prose">
+          <p>After the last digit (1), the remainder is <span class="bn">11</span>. Record the point, bring down an extra 0: <span class="bn">110</span>, which contains the divisor one time. The final remainder is 0, and <span data-eq><span class="bn">0.1<sub>2</sub></span> = 0.5</span>.</p>
+          <p><b>“n digits after the point”</b> <span class="src-tag">Tutorial 1 · ex. 3.4</span> Often, the division never comes out exactly. The question then sets the number of digits: bring down an extra 0 that many times, and <b>stop there, without rounding</b>, as for the conversions of chapter 1.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["1100110","101"],"base":2,"digits":6,"title":"Tutorial 1: 1100110 / 101, 6 digits after the point"}'></div>
+        <div class="calc"><div><span data-eq="t"><span class="bn">1100110<sub>2</sub></span> / <span class="bn">101<sub>2</sub></span> → <span class="bn">10100.011001<sub>2</sub></span></span></div><div><span data-eq>102 / 5 = 20.4</span></div></div>
+        <div class="prose"><p>The final remainder is <span class="bn">11</span>: the 7th digit would be 1. It is not added. Rounding would give 10100.011010, which is not what long division does.</p></div>
+        <div class="prose">
+          <p><b>The integer quotient and the remainder.</b> With no digit asked for after the point, stop at the last digit of the dividend: you get an integer quotient and a remainder, smaller than the divisor. They satisfy <b>dividend = divisor × quotient + remainder</b>. With the second division of Tutorial 1:</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1011000100<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span> × <span class="bn">110110<sub>2</sub></span> + <span class="bn">110<sub>2</sub></span></div><div>= 13 × 54 + 6 = 708</div></div>
+        <div class="prose"><p>The tutorial asks for 4 digits after the point: <span data-eq="t"><span class="bn">1011000100<sub>2</sub></span> / <span class="bn">1101<sub>2</sub></span> → <span class="bn">110110.0111<sub>2</sub></span></span>, and the final remainder is <span class="bn">101</span>.</p></div>
+        <div class="note trap"><span class="tag">Pitfall: placing the point</span>
+          <ul>
+            <li>The point goes into the quotient <b>when the first extra 0 is brought down</b>, after the last digit of the dividend, not before.</li>
+            <li>Each extra 0 gives a quotient digit, even when it is 0: in the tutorial’s division, the first digit after the point is 0 (<span class="bn">100</span> is smaller than <span class="bn">101</span>).</li>
+            <li>Stop at the number of digits asked for, without rounding the last one.</li>
+          </ul>
+        </div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <p>The 9 divisions in the 2016 to 2025 exams <b>are exact</b>: integer quotient, remainder 0, no digit after the point. A non-zero final remainder in the exam almost certainly signals a mistake. Digits after the point are still on the syllabus (course and Tutorial 1).</p>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#td1-ex3d">Tutorial 1, ex. 3.4</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Part 6 <span class="ref">course § II.5</span></div><h2>Hexadecimal addition: go through decimal</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The course’s method: “add each column with the <b>decimal values</b> of the digits. Then convert the result of a column to hexadecimal and propagate the carry if it exists”. So, for each column:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Replace each letter with its value: A = 10, B = 11, C = 12, D = 13, E = 14, F = 15.</p></div></li>
+          <li><div><p>Add in decimal, with the carry from the previous column.</p></div></li>
+          <li><div><p>Write that sum in hexadecimal: write down the right digit, carry the left one. A sum from 16 to 31 gives a carry of 1; from 32 to 47, a carry of 2.</p></div></li>
+        </ol>
+        <div class="grid2">
+          <div class="tbl nib-t hx-t" data-chk="hextable"><table>
+            <caption>Table 2.2 — Sum of a column (in decimal) → digit written down and carry</caption>
+            <thead><tr><th>Write down</th><th>carry 0</th><th>carry 1</th><th>carry 2</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>16</td><td>32</td></tr>
+              <tr><td>1</td><td>1</td><td>17</td><td>33</td></tr>
+              <tr><td>2</td><td>2</td><td>18</td><td>34</td></tr>
+              <tr><td>3</td><td>3</td><td>19</td><td>35</td></tr>
+              <tr><td>4</td><td>4</td><td>20</td><td>36</td></tr>
+              <tr><td>5</td><td>5</td><td>21</td><td>37</td></tr>
+              <tr><td>6</td><td>6</td><td>22</td><td>38</td></tr>
+              <tr><td>7</td><td>7</td><td>23</td><td>39</td></tr>
+              <tr><td>8</td><td>8</td><td>24</td><td>40</td></tr>
+              <tr><td>9</td><td>9</td><td>25</td><td>41</td></tr>
+              <tr><td>A</td><td>10</td><td>26</td><td>42</td></tr>
+              <tr><td>B</td><td>11</td><td>27</td><td>43</td></tr>
+              <tr><td>C</td><td>12</td><td>28</td><td>44</td></tr>
+              <tr><td>D</td><td>13</td><td>29</td><td>45</td></tr>
+              <tr><td>E</td><td>14</td><td class="on">30</td><td>46</td></tr>
+              <tr><td>F</td><td>15</td><td>31</td><td>47</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="note keep"><span class="tag">Reading the table</span>
+              <p>Find the sum of the column: its row gives the digit to write down, its column the carry. The course’s example: <span data-eq>5 + 10 + 15 = 30</span> → row E, column “carry 1”: write down E and carry 1, since <span data-eq>30 = <span class="bn">1E<sub>16</sub></span></span>.</p>
+              <p>Without the table: take 16 (or 32) away from the sum; what is left is the digit written down.</p>
+            </div>
+            <div class="note why"><span class="tag">A carry of 2 in hexadecimal</span>
+              <p>With three numbers, a column is at most <span data-eq>15 + 15 + 15 + 2 = 47 = <span class="bn">2F<sub>16</sub></span></span>: the carry can be 2. It is written with a single digit, above the next column: <span data-eq><span class="bn">FFF<sub>16</sub></span> + <span class="bn">FFF<sub>16</sub></span> + <span class="bn">FFF<sub>16</sub></span> = <span class="bn">2FFD<sub>16</sub></span></span>. Nothing to split as in binary (part 1).</p>
+            </div>
+          </div>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["3B5","C1A","D2F"],"base":16,"title":"Course § II.5: 3B5 + C1A + D2F"}'></div>
+        <div class="calc" data-chk="hexsteps 3B5 C1A D2F">
+          <div><b>Step 1:</b> <span data-eq><span class="bn">5<sub>16</sub></span> + <span class="bn">A<sub>16</sub></span> + <span class="bn">F<sub>16</sub></span> = <span class="bn">5<sub>10</sub></span> + <span class="bn">10<sub>10</sub></span> + <span class="bn">15<sub>10</sub></span> = <span class="bn">30<sub>10</sub></span></span>; <span data-eq><span class="bn">30<sub>10</sub></span> = <span class="bn">1E<sub>16</sub></span></span> (carry = 1)</div>
+          <div><b>Step 2:</b> <span data-eq><span class="bn">1<sub>16</sub></span> + <span class="bn">B<sub>16</sub></span> + <span class="bn">1<sub>16</sub></span> + <span class="bn">2<sub>16</sub></span> = <span class="bn">1<sub>10</sub></span> + <span class="bn">11<sub>10</sub></span> + <span class="bn">1<sub>10</sub></span> + <span class="bn">2<sub>10</sub></span> = <span class="bn">15<sub>10</sub></span></span>; <span data-eq><span class="bn">15<sub>10</sub></span> = <span class="bn">F<sub>16</sub></span></span> (no carry)</div>
+          <div><b>Step 3:</b> <span data-eq><span class="bn">3<sub>16</sub></span> + <span class="bn">C<sub>16</sub></span> + <span class="bn">D<sub>16</sub></span> = <span class="bn">3<sub>10</sub></span> + <span class="bn">12<sub>10</sub></span> + <span class="bn">13<sub>10</sub></span> = <span class="bn">28<sub>10</sub></span></span>; <span data-eq><span class="bn">28<sub>10</sub></span> = <span class="bn">1C<sub>16</sub></span></span> (carry = 1)</div>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">3B5<sub>16</sub></span> + <span class="bn">C1A<sub>16</sub></span> + <span class="bn">D2F<sub>16</sub></span> = <span class="bn">1CFE<sub>16</sub></span></div><div>= 949 + 3,098 + 3,375 = 7,422</div></div>
+        <div class="prose"><p>The last carry is written on the left: the result has one more digit than the numbers added. The 2025-2026 exam has the same shape, three numbers of three digits:</p></div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["763","FAA","5B6"],"base":16,"title":"2025-2026 exam: 763 + FAA + 5B6"}'></div>
+        <div class="calc" data-eq><div><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></div><div>= 1,891 + 4,010 + 1,462 = 7,363</div></div>
+        <div class="note trap"><span class="tag">Pitfall: writing the decimal sum</span>
+          <ul>
+            <li>The column <span data-eq>5 + 10 + 15 = 30</span> is written <b>E, carry 1</b>, not “30”, nor “0, carry 3”: the carry counts sixteens, not tens.</li>
+            <li>A letter one unit off spoils the whole column: go over A = 10 … F = 15 before you start.</li>
+            <li>The carry is added <b>once</b>, in the next column only (step 2 of the course: 1 + B + 1 + 2, the carry first).</li>
+          </ul>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#td1-ex3e">Tutorial 1, ex. 3.5</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Part 7 <span class="ref">method</span></div><h2>Checking a result</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A long operation can be checked in a minute, and the most common mistake (a forgotten carry or borrow) changes the result a lot. Three checks, from the safest to the quickest.</p>
+          <p><b>1. Go back to decimal.</b> Convert the numbers (chapter 1, part 5), redo the operation in decimal and compare with the value of the result you set out. The four operations of the 2025-2026 exam:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 2.3 — Exercise 2 of the 2025-2026 exam, checked in decimal</caption>
+          <thead><tr><th>Operation</th><th>In decimal</th><th>Result set out</th></tr></thead>
+          <tbody>
+            <tr data-eq-row><td><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span></td><td><span class="bn">374</span> − <span class="bn">219</span> = <span class="bn">155</span></td><td><span class="bn">10011011<sub>2</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span></td><td><span class="bn">1,891</span> + <span class="bn">4,010</span> + <span class="bn">1,462</span> = <span class="bn">7,363</span></td><td><span class="bn">1CC3<sub>16</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span></td><td><span class="bn">333</span> / <span class="bn">9</span> = <span class="bn">37</span></td><td><span class="bn">100101<sub>2</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span></td><td><span class="bn">1,364</span> × <span class="bn">42</span> = <span class="bn">57,288</span></td><td><span class="bn">1101111111001000<sub>2</sub></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>2. The inverse operation</b>, without leaving the base. A subtraction is checked with an addition: result + bottom number = top number. An exact division, with a multiplication: quotient × divisor = dividend.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["10011011","11011011"],"base":2,"step":false,"title":"Checking figure 1: result + bottom number"}'></div>
+        <div class="calc"><div><span data-eq><span class="bn">10011011<sub>2</sub></span> + <span class="bn">11011011<sub>2</sub></span> = <span class="bn">101110110<sub>2</sub></span></span>: the top number comes back.</div><div><span data-eq><span class="bn">100101<sub>2</sub></span> × <span class="bn">1001<sub>2</sub></span> = <span class="bn">101001101<sub>2</sub></span></span>: the dividend comes back.</div></div>
+        <div class="prose"><p><b>3. Orders of magnitude</b>, at a glance: the number of digits and the last digit.</p></div>
+        <div class="tbl"><table>
+          <caption>Table 2.4 — How many digits to expect (numbers without leading zeros, in any base)</caption>
+          <thead><tr><th>Operation</th><th>Number of digits of the result</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Addition of two numbers</td><td>that of the longer one, or one more</td><td>8 and 8 digits → 9 (Tutorial 1)</td></tr>
+            <tr><td>Subtraction</td><td>at most that of the top number</td><td>9 and 8 digits → 8 (2025-2026)</td></tr>
+            <tr><td>Multiplication, <var>n</var> and <var>m</var> digits</td><td><var>n</var> + <var>m</var> − 1 or <var>n</var> + <var>m</var></td><td>11 and 6 digits → 16 (2023, 2025)</td></tr>
+            <tr><td>Integer division, <var>n</var> and <var>m</var> digits</td><td><var>n</var> − <var>m</var> or <var>n</var> − <var>m</var> + 1</td><td>9 and 4 digits → 6 (2025-2026)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">The last digit</span>
+          <ul>
+            <li>In binary, a product ends with as many 0s as its two factors put together: <span class="bn">10101010100</span> (two 0s) × <span class="bn">101010</span> (one 0) ends with three 0s, <span class="bn">…1000</span>.</li>
+            <li>In hexadecimal, the last digit of a sum only depends on the last digits: <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span>, so <span class="bn">763 + FAA + 5B6</span> ends with 3.</li>
+          </ul>
+        </div>
+        <div class="prose"><p><b>Set out your own operation.</b> Type two numbers (or more for an addition) separated by +, −, × or /: the tool sets it out with the course’s method and checks it in decimal.</p></div>
+        <div class="bench" id="mine">
+          <div class="bench-head"><span class="bh-t">Your operation</span><span class="bh-r">set out and checked</span></div>
+          <div class="bench-body">
+            <form class="cv-form mine-form" autocomplete="off">
+              <label class="cv-f cv-num"><span>Operation</span><input data-k="op" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" value="101110110 − 11011011"></label>
+              <label class="cv-f"><span>Base</span><select data-k="b"><option value="2" selected>2</option><option value="16">16</option></select></label>
+              <label class="cv-f"><span>Digits after the point</span><input data-k="d" type="number" min="0" max="16" placeholder="0"></label>
+              <button type="submit" class="btn primary">Set out</button>
+            </form>
+            <div class="mine-out" aria-live="polite"></div>
+            <div class="mine-tool"></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: checking in the wrong base</span>
+          <p>“101” is 5 in binary, 257 in hexadecimal and 101 in decimal. Before comparing, write the base subscript of each number, especially when the same sheet mixes base 2 and base 16.</p>
+        </div>
+        <div data-check-ref="archi/cours-2-operations.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Part 8 <span class="ref">exams 2016-2025</span></div><h2>Setting it out in the exam</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The question is always the same: “Perform the operations below. <b>Show all calculations.</b>” Since 2023, it is the only exercise of the paper that asks for the working; the general instruction says “Do not show any calculation unless you are explicitly asked”. The operations are set out in grids headed “Base 2” or “Base 16”, <b>one box per digit</b>.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Addition, subtraction</span>
+            <p>Line up on the right, one digit per box. Write the carries or borrows small above the digits, then the result under the line. The keys only write the result, but the carries are the working asked for: they cost nothing.</p></div>
+          <div class="card"><span class="k">Multiplication</span>
+            <p>Multiplicand, multiplier, then one row per 1 digit of the multiplier, shifted according to its position and preceded by “+”, then the sum. The keys skip the rows of zeros; the course writes them.</p></div>
+          <div class="card"><span class="k">Division</span>
+            <p>Dividend on the left, divisor on the right, quotient under the divisor, then each partial remainder with the digit brought down. The keys from 2016 to 2021 also write the “− divisor” rows; those of 2022, 2023 and 2025, only the remainders.</p></div>
+          <div class="card"><span class="k">Everywhere</span>
+            <p>A readable result, under the line, without crossings-out. No pencil and no red ink (exam instruction since 2023). If you run out of room, the paper provides a blank frame at the end.</p></div>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 2.5 — The operations of the 10 exams, worked out again (2024: no official key)</caption>
+          <thead><tr><th>Exam</th><th>Subtraction (base 2)</th><th>Addition (base 16)</th><th>Division (base 2)</th><th>Multiplication (base 2)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">2025-2026</th><td><span data-eq><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></span></td><td><span data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></span></td><td><span data-eq><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2024-2025</th><td><span data-eq><span class="bn">110101101<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">11010010<sub>2</sub></span></span></td><td><span data-eq><span class="bn">854<sub>16</sub></span> + <span class="bn">EB9<sub>16</sub></span> + <span class="bn">6A7<sub>16</sub></span> = <span class="bn">1DB4<sub>16</sub></span></span></td><td><span data-eq><span class="bn">101101000<sub>2</sub></span> / <span class="bn">1010<sub>2</sub></span> = <span class="bn">100100<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10011001100<sub>2</sub></span> × <span class="bn">101100<sub>2</sub></span> = <span class="bn">1101001100010000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2023-2024</th><td><span data-eq><span class="bn">110011001<sub>2</sub></span> − <span class="bn">11111111<sub>2</sub></span> = <span class="bn">10011010<sub>2</sub></span></span></td><td><span data-eq><span class="bn">4854<sub>16</sub></span> + <span class="bn">CEB9<sub>16</sub></span> = <span class="bn">1170D<sub>16</sub></span></span></td><td><span data-eq><span class="bn">100101100<sub>2</sub></span> / <span class="bn">1100<sub>2</sub></span> = <span class="bn">11001<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2022-2023</th><td><span data-eq><span class="bn">110001110<sub>2</sub></span> − <span class="bn">11100111<sub>2</sub></span> = <span class="bn">10100111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">9CA8<sub>16</sub></span> + <span class="bn">BFCE<sub>16</sub></span> = <span class="bn">15C76<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10101000<sub>2</sub></span> / <span class="bn">1100<sub>2</sub></span> = <span class="bn">1110<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2021-2022</th><td><span data-eq><span class="bn">101011010<sub>2</sub></span> − <span class="bn">10100111<sub>2</sub></span> = <span class="bn">10110011<sub>2</sub></span></span></td><td><span data-eq><span class="bn">5987<sub>16</sub></span> + <span class="bn">DFA7<sub>16</sub></span> = <span class="bn">1392E<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10101000<sub>2</sub></span> / <span class="bn">1110<sub>2</sub></span> = <span class="bn">1100<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10001111100<sub>2</sub></span> × <span class="bn">1010110<sub>2</sub></span> = <span class="bn">11000000110101000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2020-2021</th><td colspan="4" class="muted">no operations to set out</td></tr>
+            <tr><th scope="row">2019-2020</th><td><span data-eq><span class="bn">100110110<sub>2</sub></span> − <span class="bn">10011111<sub>2</sub></span> = <span class="bn">10010111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">6CD9<sub>16</sub></span> + <span class="bn">8FA1<sub>16</sub></span> = <span class="bn">FC7A<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1011<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2018-2019</th><td><span data-eq><span class="bn">100011010<sub>2</sub></span> − <span class="bn">10101101<sub>2</sub></span> = <span class="bn">1101101<sub>2</sub></span></span></td><td><span data-eq><span class="bn">3C28<sub>16</sub></span> + <span class="bn">D8A4<sub>16</sub></span> = <span class="bn">114CC<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10011010<sub>2</sub></span> / <span class="bn">1110<sub>2</sub></span> = <span class="bn">1011<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2017-2018</th><td><span data-eq><span class="bn">101101101<sub>2</sub></span> − <span class="bn">10100110<sub>2</sub></span> = <span class="bn">11000111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">F8CC<sub>16</sub></span> + <span class="bn">32BB<sub>16</sub></span> = <span class="bn">12B87<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1101<sub>2</sub></span> = <span class="bn">1011<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2016-2017</th><td><span data-eq><span class="bn">100101010<sub>2</sub></span> − <span class="bn">10111011<sub>2</sub></span> = <span class="bn">1101111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">C3AB<sub>16</sub></span> + <span class="bn">5EA9<sub>16</sub></span> = <span class="bn">12254<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1011<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">The mistakes that cost points</span>
+          <ul>
+            <li><b>Subtraction</b>: the borrow carried over to the wrong digit, or twice (<a href="#s2">part 2</a>).</li>
+            <li><b>Addition</b>: the carry of <span class="bn">10</span> from a column of four 1s taken as 1; the last carry forgotten (<a href="#s1">part 1</a>).</li>
+            <li><b>Hexadecimal</b>: the decimal sum of a column copied as it is (“30” instead of E, carry 1) (<a href="#s6">part 6</a>).</li>
+            <li><b>Multiplication</b>: a row shifted wrongly after a skipped row of zeros (<a href="#s3">part 3</a>).</li>
+            <li><b>Division</b>: a 0 forgotten in the quotient; a point placed too early; a last digit rounded (<a href="#s4">parts 4</a> and <a href="#s5">5</a>).</li>
+          </ul>
+        </div>
+        <div class="note why"><span class="tag">Two typos in the course</span>
+          <ul>
+            <li>Page 13 of the French version: “effectuons la multiplication suivante : 11111001 / 110”. It is a division, as the English version says.</li>
+            <li>Page 12, step 5 (both versions): “0 – 1 = 1 → borrow 1”. The “= 1” should not be there (<a href="#s2">part 2</a>).</li>
+          </ul>
+        </div>
+        <div class="bench" id="gen">
+          <div class="bench-head"><span class="bh-t">Practice exam</span><span class="bh-r">format of the 2024 and 2025 exams</span></div>
+          <div class="bench-body">
+            <p>Four operations drawn at random, the size of those in the exams. Set them out on paper, showing all calculations, then open the answer.</p>
+            <ol class="gen-list"></ol>
+            <div class="row"><button type="button" class="btn primary" data-a="new">New exam</button></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>An exercise of operations to set out in <b>9 exams out of 10</b> (all but 2020-2021), worth 4 or 5 points until 2023, 4 points in 2024 and 6 points in 2025.</li>
+            <li><b>Binary subtraction</b>: 9 exams out of 10, always 9 digits minus 8, positive result.</li>
+            <li><b>Hexadecimal addition</b>: 9 out of 10. Two numbers of 4 digits until 2023, <b>three numbers of 3 digits in 2024 and 2025</b>, like the course’s example. The result has one more digit in 8 cases out of 9.</li>
+            <li><b>Binary division</b>: 9 out of 10, always exact, 4-digit divisor, quotient of 4 to 6 digits.</li>
+            <li><b>Binary multiplication</b>: 4 out of 10 (2021, 2023, 2024, 2025), so in every exam since 2023; the 2025 one reuses the 2023 one.</li>
+            <li>Never asked: a binary addition set out on its own, hexadecimal subtraction, multiplication or division. The base-8 additions of the 2016 to 2022 exams are not on this year’s syllabus.</li>
+            <li>Moodle test 2 (from 23 to 25 October 2026) covers chapters 1 and 2 and Tutorials 1 and 2, so these operations too.</li>
+          </ul>
+        </div>
+        <p class="muted">Practise: <a href="entrainement.html#p2025-ex2">2025-2026 exam, ex. 2</a> · <a href="entrainement.html#p2024-ex2">2024-2025, ex. 2</a> · <a href="entrainement.html#p2023-ex2">2023-2024, ex. 2</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="archi:operations:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can set out the four operations in base 2 and addition in base 16. Chapter 3, <a href="cours-3-entiers.html">signed and unsigned integers</a>, makes them fit in a fixed number of bits: the carry out on the left becomes an overflow.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../data/en/qcm/archi.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+/* Part 7: “Your operation” (set out with REV.archi.posed, checked in decimal).
+   Part 8: practice exam in the format of the 2024 and 2025 exams (subtraction 9 − 8 digits, hexadecimal addition
+   of three 3-digit numbers, exact division by a 4-digit divisor, 11-digit × 6-digit multiplication with three 1s).
+   All the arithmetic comes from REV.archi (archi.js). */
+(function () {
+  'use strict';
+  var R = window.REV, A = R && R.archi;
+  if (!A) return;
+  var L = {
+    empty: 'Type an operation: two numbers (or more for an addition) separated by +, −, × or /.',
+    digit: '“{c}” is not a base-{b} digit.',
+    syntax: 'Not recognised: “{s}”.',
+    two: 'This operation takes exactly two numbers.',
+    many: 'Six numbers at most in an addition.',
+    intOnly: 'The course’s multiplication and division work on integers: no point.',
+    long: 'Numbers too long for this grid: 24 digits at most.',
+    zero: 'Division by zero: impossible.',
+    hex: 'In base 16, the course only sets out additions. The tool still sets out the operation, with the same method.',
+    check: 'Check in decimal: {e}',
+    same: 'The result set out, {r}, is indeed {v}.',
+    neg: 'The top number is the smaller one: the tool swaps the two numbers, and the result is negative.',
+    rest: '{a} = {b} × {q} + {r}: quotient {q}, remainder {r}.',
+    trunc: 'The quotient set out, {r}, is {v}: stop at the digit asked for, without rounding.',
+    sub: 'Base 2 · subtraction', add: 'Base 16 · addition', div: 'Base 2 · division', mul: 'Base 2 · multiplication',
+    sol: 'Show the answer'
+  };
+  function T(k, o) { var s = L[k].replace(/\{(\w+)\}/g, function (m, n) { return o && o[n] != null ? o[n] : m; }); return k === 'check' && !/…(<\/span>)?$/.test(s) ? s + '.' : s; }
+  function esc(s) { return R.util.esc(String(s)); }
+  function dec(x) { return A.num(x, 10, { sub: false }); }
+
+  /* ---------------- part 7: your operation ---------------- */
+  var mine = document.getElementById('mine');
+  if (mine) {
+    var f = mine.querySelector('form'), out = mine.querySelector('.mine-out'), tool = mine.querySelector('.mine-tool');
+    var get = function (k) { return mine.querySelector('[data-k="' + k + '"]').value; };
+    var say = function (h) { out.innerHTML = h; };
+    var err = function (h) { out.innerHTML = '<p class="cv-err">' + h + '</p>'; tool.innerHTML = ''; };
+    var run = function () {
+      var s = String(get('op') || '').replace(/[\u00a0\u202f]/g, ' ').trim(), b = +get('b') || 2, d = Math.max(0, Math.min(16, parseInt(get('d'), 10) || 0));
+      var op, parts;
+      if (!s) return err(T('empty'));
+      if (/\+/.test(s)) { op = 'add'; parts = s.split('+'); }
+      else if (/[×*xX]/.test(s)) { op = 'mul'; parts = s.split(/[×*xX]/); }
+      else if (/[\/÷:]/.test(s)) { op = 'div'; parts = s.split(/[\/÷:]/); }
+      else if (/[−–-]/.test(s)) { op = 'sub'; parts = s.split(/[−–-]/); }
+      else return err(T('empty'));
+      parts = parts.map(function (p) { return A.clean(p); });
+      if (op === 'add' && parts.length > 6) return err(T('many'));
+      if (op !== 'add' && parts.length !== 2) return err(T('two'));
+      var vals = [];
+      for (var i = 0; i < parts.length; i++) {
+        var p = A.parse(parts[i], b);
+        if (p.error === 'digit') return err(T('digit', { c: esc(p.ch), b: b }));
+        if (p.error || p.neg) return err(T('syntax', { s: esc(parts[i] || ' ') }));
+        if ((op === 'mul' || op === 'div') && /[.,]/.test(parts[i])) return err(T('intOnly'));
+        if (parts[i].replace(/[.,]/, '').length > 24) return err(T('long'));
+        vals.push(p.q);
+      }
+      if (op === 'div' && A.q.isZero(vals[1])) return err(T('zero'));
+      var notes = [], e, r, rv;
+      if (op === 'add') {
+        var sum = vals.reduce(function (x, y) { return A.q.add(x, y); });
+        r = A.addCols(parts, b).result; rv = A.value(r.int + (r.frac ? ',' + r.frac : ''), b);
+        e = vals.map(dec).join(' + ') + ' = ' + dec(sum);
+        notes.push(T('check', { e: e }), T('same', { r: A.num(r, b), v: dec(rv) }));
+      } else if (op === 'sub') {
+        var S = A.subCols(parts[0], parts[1], b), diff = A.q.sub(vals[0], vals[1]);
+        r = { neg: S.swap, int: S.result.int, frac: S.result.frac }; rv = A.value((S.swap ? '-' : '') + r.int + (r.frac ? ',' + r.frac : ''), b);
+        if (S.swap) notes.push(T('neg'));
+        notes.push(T('check', { e: dec(vals[0]) + ' − ' + dec(vals[1]) + ' = ' + dec(diff) }), T('same', { r: A.num(r, b), v: dec(rv) }));
+      } else if (op === 'mul') {
+        var M = A.mulCols(parts[0], parts[1], b);
+        notes.push(T('check', { e: dec(vals[0]) + ' × ' + dec(vals[1]) + ' = ' + dec(A.q.mul(vals[0], vals[1])) }), T('same', { r: A.num(M.result, b), v: dec(A.value(M.result, b)) }));
+      } else {
+        var D = A.divCols(parts[0], parts[1], b, { digits: d }), qv = A.value(D.quotient.int + (D.quotient.frac ? ',' + D.quotient.frac : ''), b);
+        if (D.exact) notes.push(T('check', { e: dec(vals[0]) + ' / ' + dec(vals[1]) + ' = ' + dec(qv) }), T('same', { r: A.num(D.quotient, b), v: dec(qv) }));
+        else if (!d) notes.push(T('rest', { a: dec(vals[0]), b: dec(vals[1]), q: dec(qv), r: dec(A.q.make(D.rem)) }));
+        else {
+          var ex = A.q.div(vals[0], vals[1]), tb = A.toBase(ex, 10, { digits: d + 2 });
+          notes.push(T('check', { e: dec(vals[0]) + ' / ' + dec(vals[1]) + ' = ' + A.num(ex, 10, { sub: false, digits: d + 2, more: !tb.exact }) }), T('trunc', { r: A.num(D.quotient, b), v: dec(qv) }));
+        }
+      }
+      if (b === 16 && op !== 'add') notes.unshift(T('hex'));
+      say(notes.map(function (n) { return '<p>' + n + '</p>'; }).join(''));
+      tool.innerHTML = '';
+      var el = document.createElement('div'); tool.appendChild(el);
+      A.posed(el, { op: op, ops: parts, base: b, digits: op === 'div' ? d : undefined });
+    };
+    f.addEventListener('submit', function (ev) { ev.preventDefault(); run(); });
+    mine.querySelector('[data-k="b"]').addEventListener('change', run);
+    run();
+  }
+
+  /* ---------------- part 8: practice exam ---------------- */
+  var gen = document.getElementById('gen');
+  if (gen) {
+    var list = gen.querySelector('.gen-list');
+    var rnd = function (a, z) { return a + Math.floor(Math.random() * (z - a + 1)); };
+    var bin = function (n) { return n.toString(2); }, hex = function (n) { return n.toString(16).toUpperCase(); };
+    var draw = function () {
+      var a, c, x, y, z, dv, qt, m, i, j, items = [];
+      do { a = rnd(256, 511); c = rnd(128, 255); } while (a - c < 64);                          /* 9 − 8 digits, result of 7 or 8 */
+      items.push({ k: 'sub', b: 2, op: 'sub', ops: [bin(a), bin(c)], sign: ' − ' });
+      do { x = rnd(256, 4095); y = rnd(256, 4095); z = rnd(256, 4095); } while (x + y + z < 4096);   /* 3 × 3 digits, one more digit */
+      items.push({ k: 'add', b: 16, op: 'add', ops: [hex(x), hex(y), hex(z)], sign: ' + ' });
+      dv = rnd(9, 15); qt = rnd(Math.max(8, Math.ceil(128 / dv)), Math.floor(511 / dv));         /* exact, dividend of 8 or 9 digits */
+      items.push({ k: 'div', b: 2, op: 'div', ops: [bin(dv * qt), bin(dv)], sign: ' / ' });
+      m = rnd(1024, 2047); i = rnd(0, 4); do { j = rnd(0, 4); } while (j === i);                  /* 11 digits × 6 digits with three 1s */
+      items.push({ k: 'mul', b: 2, op: 'mul', ops: [bin(m), bin(32 + (1 << i) + (1 << j))], sign: ' × ', zeros: false });
+      list.innerHTML = items.map(function (it, n) {
+        return '<li><div class="gen-q"><span class="lbl">' + T(it.k) + '</span><span class="bn">' + it.ops.join(it.sign) + '</span></div>' +
+          '<details data-n="' + n + '"><summary>' + T('sol') + '</summary><div class="gen-sol"></div></details></li>';
+      }).join('');
+      Array.prototype.forEach.call(list.querySelectorAll('details'), function (dt) {
+        dt.addEventListener('toggle', function () {
+          var box = dt.querySelector('.gen-sol');
+          if (!dt.open || box.firstChild) return;
+          var it = items[+dt.getAttribute('data-n')], el = document.createElement('div');
+          box.appendChild(el);
+          A.posed(el, { op: it.op, ops: it.ops, base: it.b, zeros: it.zeros, start: 0 });
+        });
+      });
+    };
+    gen.querySelector('[data-a="new"]').addEventListener('click', draw);
+    draw();
+  }
+})();
+</script>
+</body>
+</html>
