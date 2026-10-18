@@ -719,7 +719,7 @@
      Recommencer, commentaire de l'étape dans une zone aria-live. */
   var uid = 0;
   function head(title, right) {
-    return '<div class="bench-head"><span class="bh-t">' + title + '</span>' + (right ? '<span class="bh-r">' + right + '</span>' : '') + '</div>';
+    return '<div class="bench-head"><span class="bh-t"><span>' + title + '</span></span>' + (right ? '<span class="bh-r">' + right + '</span>' : '') + '</div>';
   }
   function baseLabel(b) { return T('base {b}', { b: b }); }
   /* contrôles pas à pas : paint(k) dessine l'état après k étapes (0 ≤ k ≤ total) */
