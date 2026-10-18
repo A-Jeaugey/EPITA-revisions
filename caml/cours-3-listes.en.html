@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lists · Caml</title>
+<meta name="description" content="Caml, chapter 3: the Caml list ([], ::, 'a list), matching [] / e :: lst, full and partial traversals, building a list, sorted lists, two lists and their four cases, two-element patterns, pairs and accumulators. The chapter of every exam paper.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* part 2: the list drawn as cells, and what the pattern catches */
+.lc-ctl{display:grid;gap:.35rem}
+.lc-lbl{font-family:var(--font-mono);font-variation-settings:var(--fv-code);font-size:.74rem;letter-spacing:.03em;color:var(--muted)}
+.lc-wrap{display:flex;overflow-x:auto;padding:.7rem 0 .3rem}
+.lc-grid{display:grid;align-items:center;column-gap:4px;row-gap:10px;margin:0 auto;font-family:var(--font-mono);font-variation-settings:var(--fv-code)}
+.lc-cell{grid-row:1;justify-self:center;min-width:48px;height:48px;padding:0 .55rem;display:grid;place-items:center;border:2px solid var(--line);border-radius:10px;background:var(--code);font-size:1.1rem;font-weight:700;color:var(--ink)}
+.lc-nil{border-style:dashed;color:var(--sx-con);font-size:1rem}
+.lc-cons{grid-row:1;color:var(--sx-ar);font-weight:700;font-size:.95rem;text-align:center;padding:0 1px}
+.lc-bind{grid-row:2;align-self:start;border-top:3px solid currentColor;border-radius:2px;padding:.3rem .2rem 0;text-align:center;font-size:.82rem;font-weight:600;white-space:nowrap}
+.lc-bind b{font-weight:800}
+.lc-bind.k-e{color:var(--camel)} .lc-cell.k-e{border-color:var(--camel);background:var(--camel-soft)}
+.lc-bind.k-e2{color:var(--why)} .lc-cell.k-e2{border-color:var(--why);background:var(--why-soft)}
+.lc-bind.k-l{color:var(--accent)} .lc-cell.k-l{border-color:var(--accent);background:var(--accent-soft)}
+.lc-bind.k-bad{color:var(--bad)} .lc-cell.k-bad{border-color:var(--bad);background:var(--bad-soft)}
+.lc-cell.k-lit{border-color:var(--ok);background:var(--ok-soft)}
+.lc-no .lc-cell,.lc-no .lc-cons{opacity:.5}
+.lc-say .lc-y{color:var(--ok)} .lc-say .lc-n{color:var(--bad)}
+</style>
+</head>
+<body data-resume="Caml · chapter 3: lists">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Chapter 3 of 4</div>
+      <h1>A list is empty, <span class="w">or an element in front of a list.</span></h1>
+      <p class="lead">Every function on a list follows this definition: one case for <code class="ml">[]</code>, one case for <code class="ml">e :: lst</code>. This is the chapter that pays the most: all nine papers found (2017 to 2024) ask you to write a recursive function on a list, with an exception required by the question.</p>
+      <div class="chips"><span class="chip">≈ 60 min</span><span class="chip">8 parts</span><span class="chip">lists TD · Moodle advice</span><span class="chip ex">a list in 9 papers out of 9</span></div>
+    </div>
+<pre data-ml-repl data-mode="guess" data-title="Guess the Caml answer · empty environment" id="heroRepl" aria-label="Interactive loop: guess the Caml answer to each phrase">
+# [3; 8; 1] ;;
+- : int list = [3; 8; 1]
+# 3 :: [8; 1] ;;
+- : int list = [3; 8; 1]
+# [] ;;
+- : 'a list = []
+# [3] :: [8; 1] ;;
+Error: This expression has type int but an expression was expected of type
+         int list
+# [1, 2, 3] ;;
+- : (int * int * int) list = [(1, 2, 3)]
+</pre>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 3 · Lists</div>
+    <ol>
+      <li><a href="#s1"><span class="calls" data-n="1"></span><span>The Caml list</span></a></li>
+      <li><a href="#s2"><span class="calls" data-n="2"></span><span>Matching a list</span></a></li>
+      <li><a href="#s3"><span class="calls" data-n="3"></span><span>Full traversal</span></a></li>
+      <li><a href="#s4"><span class="calls" data-n="4"></span><span>Partial traversal</span></a></li>
+      <li><a href="#s5"><span class="calls" data-n="5"></span><span>Building a list</span></a></li>
+      <li><a href="#s6"><span class="calls" data-n="6"></span><span>Sorted lists</span></a></li>
+      <li><a href="#s7"><span class="calls" data-n="7"></span><span>Two lists</span></a></li>
+      <li><a href="#s8"><span class="calls" data-n="8"></span><span>Two elements, pairs, accumulator</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is drawn as a call trace: one more line, one more indentation step. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Caml home</a><a href="cours-2-recursivite.html">← Chapter 2: recursion</a><a href="cours-4-ordre-superieur.html">Chapter 4: higher-order functions →</a><a href="../qcm/index.html#caml">Caml MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">The Caml list</a></li><li><a href="#s2">Matching a list</a></li><li><a href="#s3">Full traversal</a></li><li><a href="#s4">Partial traversal</a></li>
+      <li><a href="#s5">Building a list</a></li><li><a href="#s6">Sorted lists</a></li><li><a href="#s7">Two lists</a></li><li><a href="#s8">Two elements, pairs, accumulator</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="1"></span>Part 1</div><h2>The Caml list: [], :: and 'a list</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>list</b> holds values <b>of the same type</b>, in an order. It is written between square brackets, with semicolons: <code class="ml">[3; 8; 1]</code>. Its type is the type of its elements followed by <code class="ml">list</code>: <code class="ml">int list</code>, <code class="ml">string list</code>…</p>
+          <p>A list is built with two constructors only:</p>
+          <ul>
+            <li><code class="ml">[]</code>, the <b>empty list</b>;</li>
+            <li><code class="ml">e :: lst</code> (read “e cons lst”), the list whose <b>first element</b> is <code class="ml">e</code> and whose <b>rest</b> is the list <code class="ml">lst</code>.</li>
+          </ul>
+          <p>Every list is one or the other: empty, or an element in front of a list. The brackets are only a shorthand: <code class="ml">[3; 8; 1]</code> is <code class="ml">3 :: 8 :: 1 :: []</code>, which Caml reads as <code class="ml">3 :: (8 :: (1 :: []))</code>.</p>
+        </div>
+<pre data-ml-repl>
+# 3 :: [8; 1] ;;
+- : int list = [3; 8; 1]
+# 3 :: 8 :: 1 :: [] ;;
+- : int list = [3; 8; 1]
+# [] ;;
+- : 'a list = []
+</pre>
+        <div class="prose"><p>Caml always answers with the brackets. The empty list has type <code class="ml">'a list</code>: it can be a list of anything. Guess the type of the following lists:</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Which type?">
+# ["one"; "two"; "three"] ;;
+- : string list = ["one"; "two"; "three"]
+# [(1, 'a'); (2, 'b')] ;;
+- : (int * char) list = [(1, 'a'); (2, 'b')]
+# [[1; 2]; []; [3]] ;;
+- : int list list = [[1; 2]; []; [3]]
+# [1; 2] = 1 :: [2] ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>A list of pairs has type <code class="ml">(int * char) list</code> (part 8). A <b>list of lists</b> has type <code class="ml">int list list</code>: each of its elements is an <code class="ml">int list</code>, and <code class="ml">[]</code> is one of them like any other. Two lists are compared with <code class="ml">=</code>, element by element.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>All the elements of a list have the same type.</li>
+          <li><code class="ml">::</code> adds <b>one</b> element <b>at the front</b>, without copying the list: it is the basic operation, and it is immediate.</li>
+          <li>A list is never modified. <code class="ml">3 :: lst</code> builds a new list, and <code class="ml">lst</code> stays the same:</li>
+        </ul>
+<pre data-ml-repl>
+# let lst = [8; 1] ;;
+val lst : int list = [8; 1]
+# let lst2 = 3 :: lst ;;
+val lst2 : int list = [3; 8; 1]
+# lst ;;
+- : int list = [8; 1]
+</pre>
+        </div>
+        <div class="note why"><span class="tag">Link with TAA</span>
+          <p>This is the <a href="../taa/cours-2-listes.html#s2">recursive list of the TAA course</a>: <code class="ml">[]</code> is called <code>emptylist</code> there and <code class="ml">e :: lst</code> is written <code>cons(e, lst)</code>, where <code class="ml">e</code> is the <code>first</code> element and <code class="ml">lst</code> the <code>tail</code> of the list.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: :: takes an element on its left and a list on its right</span>
+<pre data-ml-repl>
+# [3] :: [8; 1] ;;
+Error: This expression has type int but an expression was expected of type
+         int list
+# [8; 1] :: 3 ;;
+Error: This expression has type int but an expression was expected of type
+         int list list
+# [1; "two"] ;;
+Error: This expression has type string but an expression was expected of type
+         int
+# [1, 2, 3] ;;
+- : (int * int * int) list = [(1, 2, 3)]
+</pre>
+          <ul>
+            <li>In <code class="ml">[3] :: [8; 1]</code>, the element on the left is an <code class="ml">int list</code>: Caml expects a list of lists on the right, and rejects <code class="ml">8</code>. To put 3 in front, write <code class="ml">3 :: [8; 1]</code>.</li>
+            <li><code class="ml">[8; 1] :: 3</code> does not add 3 at the end: <code class="ml">::</code> only adds at the front. Adding at the end means rebuilding the list (part 5).</li>
+            <li>With commas, <code class="ml">[1, 2, 3]</code> is accepted, but it is a list of <b>one</b> element, a triple. Elements are separated by semicolons.</li>
+          </ul>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>All nine papers found (November 2017 to October 2024) ask you to write at least one recursive function on a list, with an exception required by the question: 15 of the 24 functions to write. Such an exercise is worth 4 to 7 points.</li>
+          <li>Seven exercises of this year’s TDs take up an exercise of a paper, with the same examples: <code class="ml">insert_nth</code> and <code class="ml">remove_duplicates</code> (part 5), the deletion in a sorted list (part 6), <code class="ml">assoc</code> and <code class="ml">second</code> (part 8), <code class="ml">sublist</code> (a 2019 Mystery) and <code class="ml">for_all2</code> (chapter 4).</li>
+          <li>Unless the question says otherwise, no predefined function: no <code class="ml">List.length</code>, no <code class="ml">List.rev</code>, no <code class="ml">List.mem</code>. This whole chapter is written with <code class="ml">[]</code>, <code class="ml">::</code> and pattern matching.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-3-listes.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="2"></span>Part 2</div><h2>Matching a list: [] and e :: lst</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A function on a list almost always starts by matching its list against two patterns, one per constructor: <code class="ml">[]</code> for the empty list, <code class="ml">e :: lst</code> for a non-empty list. The second pattern <b>names</b> the two pieces of the list: <code class="ml">e</code> is its first element, <code class="ml">lst</code> its rest.</p>
+          <p>Pick a list and a pattern: the drawing shows what each name catches.</p>
+        </div>
+        <div id="cells"></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">[]</code> matches the empty list; <code class="ml">e :: lst</code> matches any non-empty list, and <code class="ml">lst</code> may be empty.</li>
+          <li><code class="ml">[e]</code> is short for <code class="ml">e :: []</code>: a list of <b>one</b> element. <code class="ml">[e1; e2]</code> has exactly two.</li>
+          <li><code class="ml">e1 :: e2 :: lst</code> matches lists of at least two elements (part 8); <code class="ml">_ :: lst</code> a non-empty list whose first element is not named.</li>
+          <li>The names are free: the papers write <code class="ml">e :: l</code>, <code class="ml">h :: q</code> or <code class="ml">e :: list</code>.</li>
+        </ul></div>
+        <div class="prose"><p>Hence the skeleton of almost every function in this chapter, with <code class="ml">match</code>, or with <code class="ml">function</code>, which matches the last parameter directly without naming it (chapter 1):</p></div>
+        <div class="grid2">
+<pre data-ml>
+let rec f lst =
+  match lst with
+      [] -> (* base case *)
+    | e :: lst -> (* e, and f lst *)
+</pre>
+<pre data-ml>
+let rec f = function
+    [] -> (* base case *)
+  | e :: lst -> (* e, and f lst *)
+</pre>
+        </div>
+        <div class="prose"><p><b>Example.</b> The first element of a list, and the list without its first element. The empty list has neither: the parameters are valid, but the computation fails, hence <code class="ml">failwith</code> (chapter 1).</p></div>
+<pre data-ml-repl>
+# let first = function
+      [] -> failwith "first: empty list"
+    | e :: _ -> e ;;
+val first : 'a list -> 'a = &lt;fun&gt;
+# first [3; 8; 1] ;;
+- : int = 3
+# first [] ;;
+Exception: Failure "first: empty list".
+# let rest = function
+      [] -> failwith "rest: empty list"
+    | _ :: lst -> lst ;;
+val rest : 'a list -> 'a list = &lt;fun&gt;
+# rest [7] ;;
+- : int list = []
+</pre>
+        <div class="prose"><p>Read the types: <code class="ml">'a list -> 'a</code> returns an element, <code class="ml">'a list -> 'a list</code> returns a list. <code class="ml">'a</code>: the functions do not look at the elements, they work for every type.</p>
+          <p><b>The order of the patterns.</b> Patterns are tried from top to bottom (chapter 1). But <code class="ml">e :: lst</code> also matches one-element lists, since <code class="ml">[7]</code> is <code class="ml">7 :: []</code>. The function <code class="ml">last</code> returns the last element of a list: follow Caml pattern by pattern, in both orders.</p></div>
+        <div id="matcher"></div>
+<pre data-ml-repl>
+# let rec last = function
+      [] -> failwith "last: empty list"
+    | [e] -> e
+    | e :: lst -> last lst ;;
+val last : 'a list -> 'a = &lt;fun&gt;
+# last [3; 8; 1] ;;
+- : int = 1
+# let rec last = function
+      [] -> failwith "last: empty list"
+    | e :: lst -> last lst
+    | [e] -> e ;;
+Warning 11 [redundant-case]: this match case is unused.
+val last : 'a list -> 'a = &lt;fun&gt;
+# last [3; 8; 1] ;;
+Exception: Failure "last: empty list".
+</pre>
+        <div class="prose"><p>In the second version, <code class="ml">[e]</code> is never tried: each call removes one element until the empty list, and every list ends in an exception. Caml flags it with Warning 11: put the specific case before the general case.</p></div>
+        <div class="note trap"><span class="tag">Trap: [e; lst] is not e :: lst</span>
+<pre data-ml-repl>
+# let rec sum = function
+      [] -> 0
+    | [e; lst] -> e + sum lst ;;
+Error: This expression has type int but an expression was expected of type
+         int list
+</pre>
+          <p><code class="ml">[e; lst]</code> matches a list of <b>two</b> elements: <code class="ml">lst</code> is the second element there, an <code class="ml">int</code>, and <code class="ml">sum lst</code> is rejected. The general case is written <code class="ml">e :: lst</code>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: forgetting the empty list</span>
+<pre data-ml-repl>
+# let first = function
+      e :: _ -> e ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+val first : 'a list -> 'a = &lt;fun&gt;
+# first [] ;;
+Exception: Match_failure ("//toplevel//", 1, 12).
+</pre>
+          <p>Caml defines the function, but its warning gives the forgotten case: <code class="ml">[]</code>. On your paper, a Warning in the Caml answer shows something forgotten: handle <code class="ml">[]</code>, with a value or with the exception the question asks for.</p>
+        </div>
+        <div data-check-ref="caml/cours-3-listes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="3"></span>Part 3</div><h2>Full traversal: length, sum, counting</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The Moodle advice is to try <b>pure recursion</b> first: express the result for <code class="ml">e :: lst</code> from the result for <code class="ml">lst</code>. The empty list is the base case. For the length:</p>
+          <ul>
+            <li>the empty list has 0 elements;</li>
+            <li><code class="ml">e :: lst</code> has one element more than <code class="ml">lst</code>.</li>
+          </ul>
+        </div>
+<pre data-ml-repl>
+# let rec length = function
+      [] -> 0
+    | _ :: lst -> 1 + length lst ;;
+val length : 'a list -> int = &lt;fun&gt;
+# length [3; 8; 1] ;;
+- : int = 3
+</pre>
+        <div class="prose"><p>The first element is not used: the pattern <code class="ml">_ :: lst</code> does not name it. The computation, call by call:</p></div>
+<pre data-ml>
+length [3; 8; 1]
+= 1 + length [8; 1]
+= 1 + (1 + length [1])
+= 1 + (1 + (1 + length []))
+= 1 + (1 + (1 + 0))
+= 3
+</pre>
+        <div class="prose"><p>Each call waits for the result of the next one; the additions are done on the way back, once the empty list is reached (chapter 2, the call stack). The other full traversals have the same shape: only the value of <code class="ml">[]</code> and the operation change. Guess the answers:</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Full traversals · lists TD, ex. 1.1">
+# let rec sum = function
+      [] -> 0
+    | e :: lst -> e + sum lst ;;
+val sum : int list -> int = &lt;fun&gt;
+# sum [3; 8; 1] ;;
+- : int = 12
+# let rec product = function
+      [] -> 1
+    | e :: lst -> e * product lst ;;
+val product : int list -> int = &lt;fun&gt;
+# product [2; 3; 7] ;;
+- : int = 42
+# length [[1; 2]; []; [3]] ;;
+- : int = 3
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>The type tells what the function uses: <code class="ml">length</code> does not look at the elements (<code class="ml">'a list -> int</code>); <code class="ml">sum</code> adds them, and <code class="ml">+</code> only exists on integers (<code class="ml">int list -> int</code>).</li>
+          <li>The value of <code class="ml">[]</code> is the neutral element of the operation: 0 for <code class="ml">+</code>, 1 for <code class="ml">*</code>. With <code class="ml">[] -> 0</code>, <code class="ml">product</code> would be 0 for every list.</li>
+          <li>Full traversal: all the non-empty cases are recursive.</li>
+        </ul></div>
+        <div class="prose"><p><b>One more parameter</b> <span class="src-tag c">lists TD · ex. 1.2</span> <code class="ml">count x lst</code> counts the occurrences of <code class="ml">x</code> in <code class="ml">lst</code>. <code class="ml">x</code> is passed on unchanged at each call.</p></div>
+<pre data-ml-repl>
+# let rec count x = function
+      [] -> 0
+    | e :: lst ->
+        if e = x then
+          1 + count x lst
+        else
+          count x lst ;;
+val count : 'a -> 'a list -> int = &lt;fun&gt;
+# count 2 [1; 2; 3; 2; 2] ;;
+- : int = 3
+# count "a" ["a"; "b"; "a"] ;;
+- : int = 2
+</pre>
+        <div class="prose"><p><code class="ml">'a -> 'a list -> int</code>: <code class="ml">x</code> and the elements have the same type, whichever it is, since they are only compared with <code class="ml">=</code>.</p>
+          <p><b>Three cases</b> <span class="src-tag c">lists TD · ex. 1.5</span> The maximum of an empty list does not exist: an exception. The maximum of a one-element list is that element. Otherwise, compare the first element with the maximum of the rest, computed <b>only once</b> with <code class="ml">let … in</code>.</p></div>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> failwith "maximum: empty list"
+    | [e] -> e
+    | e :: lst ->
+        let m = maximum lst in
+          if e > m then
+            e
+          else
+            m ;;
+val maximum : 'a list -> 'a = &lt;fun&gt;
+# maximum [3; 9; 2; 9; 1] ;;
+- : int = 9
+# maximum ["pear"; "apple"; "plum"] ;;
+- : string = "plum"
+# maximum [] ;;
+Exception: Failure "maximum: empty list".
+</pre>
+        <div class="note why"><span class="tag">Why let … in?</span>
+          <p>Writing <code class="ml">if e > maximum lst then e else maximum lst</code> computes the maximum of the rest twice, and does so at every level: on an increasing list of 20 elements, 1,048,575 calls (2<sup>20</sup> − 1) instead of 20. It is a rule of the course outline: do not repeat a computation. And no <code class="ml">max</code>, which is a predefined function.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: a default value that freezes the type</span>
+<pre data-ml-repl>
+# let rec maximum = function
+      [] -> 0
+    | e :: lst ->
+        let m = maximum lst in
+          if e > m then
+            e
+          else
+            m ;;
+val maximum : int list -> int = &lt;fun&gt;
+# maximum [-5; -2] ;;
+- : int = 0
+</pre>
+          <p>0 is not in the list: the answer is wrong as soon as all the elements are negative. It also freezes the type <code class="ml">int list -> int</code>, and the function no longer works on strings. Four papers out of nine test the same function on several types (integers, characters, strings, floats, booleans): assume nothing about the elements, and handle the empty list with an exception.</p>
+        </div>
+        <div data-check-ref="caml/cours-3-listes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="4"></span>Part 4</div><h2>Partial traversal: searching, the element at rank i</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Often, the answer is known before the end of the list: the element searched for is found, a property is false, the rank is reached. A traversal that is not complete therefore has <b>at least one other base case</b> than <code class="ml">[]</code>. It is a rule of the course outline: stop as soon as the answer is known.</p>
+          <p><b>Searching</b> <span class="src-tag c">lists TD · ex. 1.3</span></p>
+        </div>
+<pre data-ml-repl>
+# let rec search x = function
+      [] -> false
+    | e :: lst -> e = x || search x lst ;;
+val search : 'a -> 'a list -> bool = &lt;fun&gt;
+# search 3 [1; 2; 3; 4] ;;
+- : bool = true
+# search "z" ["a"; "b"] ;;
+- : bool = false
+</pre>
+        <div class="prose"><p><code class="ml">||</code> only evaluates its right side if its left side is false (chapter 1): as soon as <code class="ml">e = x</code>, the recursive call does not happen. <code class="ml">search 3 [1; 2; 3; 4]</code> stops on 3: the 4 is never looked at. It is the same as <code class="ml">if e = x then true else search x lst</code>. Written the other way round, <code class="ml">search x lst || e = x</code> gives the same answer, but always goes through the whole list.</p>
+          <p><b>The element at rank i</b> <span class="src-tag c">lists TD · ex. 1.4</span> The question requires two exceptions: <code class="ml">Invalid_argument</code> if <code class="ml">i</code> is negative or zero, <code class="ml">Failure</code> if the list is too short.</p></div>
+<pre data-ml-repl>
+# let nth i lst =
+    if i &lt;= 0 then
+      invalid_arg "nth: i &lt;= 0"
+    else
+      let rec get i = function
+          [] -> failwith "nth: list too short"
+        | e :: lst ->
+            if i = 1 then
+              e
+            else
+              get (i-1) lst
+      in
+        get i lst ;;
+val nth : int -> 'a list -> 'a = &lt;fun&gt;
+# nth 3 ['a'; 'b'; 'c'; 'd'] ;;
+- : char = 'c'
+# nth 5 ['a'; 'b'] ;;
+Exception: Failure "nth: list too short".
+# nth 0 ['a'; 'b'] ;;
+Exception: Invalid_argument "nth: i &lt;= 0".
+</pre>
+        <ol class="steps">
+          <li><div><p><b>The parameter first.</b> A negative or zero rank is invalid whatever the list: the wrapper function tests it only once, before any traversal (chapter 2).</p></div></li>
+          <li><div><p><b>The rank goes down.</b> The element at rank i of <code class="ml">e :: lst</code> is the element at rank i − 1 of <code class="ml">lst</code>. When it reaches 1, it is <code class="ml">e</code>: a base case before the end of the list.</p></div></li>
+          <li><div><p><b>The empty list on the way.</b> If <code class="ml">[]</code> comes before rank 1, the list is too short: <code class="ml">Failure</code>. This is only known by going through the list.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Trap: testing the parameter inside the recursion</span>
+<pre data-ml-repl>
+# let rec nth i = function
+      [] -> failwith "nth: list too short"
+    | e :: lst ->
+        if i &lt;= 0 then
+          invalid_arg "nth: i &lt;= 0"
+        else
+          if i = 1 then
+            e
+          else
+            nth (i-1) lst ;;
+val nth : int -> 'a list -> 'a = &lt;fun&gt;
+# nth 0 [] ;;
+Exception: Failure "nth: list too short".
+</pre>
+          <p>Here the list is matched before the rank is tested: <code class="ml">nth 0 []</code> raises <code class="ml">Failure</code> although rank 0 is invalid, and the question expects <code class="ml">Invalid_argument</code>. On top of that, <code class="ml">i &lt;= 0</code> is tested again at every call. Test the parameters in the wrapper function, before matching the list.</p>
+        </div>
+        <div class="prose"><p><b>Exam example</b> <span class="src-tag">October 2024 · 7 points</span> <code class="ml">check_list k lst</code> checks that the list of lists <code class="ml">lst</code> only contains lists of length at most <code class="ml">k</code>, and raises <code class="ml">Invalid_argument</code> if <code class="ml">k &lt; 0</code>. No <code class="ml">List.length</code>, and no need to compute a length: count <code class="ml">k</code> down while going through each sublist, and stop as soon as it is not enough.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let check_list k lst =
+    if k &lt; 0 then
+      invalid_arg "check_list: k &lt; 0"
+    else
+      (* short_enough n l: does l have at most n elements? *)
+      let rec short_enough n = function
+          [] -> true
+        | _ :: l -> n > 0 &amp;&amp; short_enough (n-1) l
+      in
+      (* check l: does every list of l have at most k elements? *)
+      let rec check = function
+          [] -> true
+        | l :: others -> short_enough k l &amp;&amp; check others
+      in
+        check lst ;;
+val check_list : int -> 'a list list -> bool = &lt;fun&gt;
+# check_list 2 [[1; 2]; [4]; [5; 6]] ;;
+- : bool = true
+# check_list 3 [[1; 2; 3]; [4; 5; 6; 7]; [8; 9; 10]] ;;
+- : bool = false
+# check_list 1 [[]; [2]; [3]] ;;
+- : bool = true
+# check_list (-1) [[1]; [2]; []] ;;
+Exception: Invalid_argument "check_list: k &lt; 0".
+</pre>
+        </div>
+        <div class="prose"><p>Two auxiliary functions, each documented by one sentence, as the 2024 paper asks. The two <code class="ml">&amp;&amp;</code> stop the traversal as soon as the answer is <code class="ml">false</code>: in the second example, <code class="ml">[8; 9; 10]</code> is never looked at.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>Stopping as soon as the answer is known is expected in 8 papers out of 9.</li>
+          <li>A rank or a position (rank i, an interval of ranks, the position of the maximum, every n elements): 6 papers out of 9.</li>
+          <li><code class="ml">Invalid_argument</code> for an invalid parameter: 9 papers out of 9. <code class="ml">Failure</code> (list too short, element not found): 7 out of 9. Both in the same function: 6 out of 9 (<code class="ml">assoc</code>, <code class="ml">insert_nth</code>, <code class="ml">remove_nth</code>, <code class="ml">remove_interval</code>).</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-3-listes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="5"></span>Part 5</div><h2>Building a list: keeping, removing, inserting, concatenating</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>When the result is a list, each case says what happens to the first element: either you <b>keep</b> it by putting it back in front of the result of the recursive call (<code class="ml">e :: f lst</code>), or you <b>leave it out</b> (<code class="ml">f lst</code>).</p>
+          <p><b>Removing every occurrence of x</b> <span class="src-tag">October 2023 · ex. 2</span></p>
+        </div>
+<pre data-ml-repl>
+# let rec remove_x x = function
+      [] -> []
+    | e :: lst ->
+        if e = x then
+          remove_x x lst
+        else
+          e :: remove_x x lst ;;
+val remove_x : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# remove_x 5 [5; 2; 5; 1] ;;
+- : int list = [2; 1]
+# remove_x "apple" ["banana"; "apple"; "cherry"; "date"; "apple"] ;;
+- : string list = ["banana"; "cherry"; "date"]
+</pre>
+        <div class="prose"><p>The result list is built <b>on the way back</b>: a call can only put <code class="ml">e</code> in front once the next call has returned its list. Run the call step by step:</p></div>
+        <div id="unroll"></div>
+        <div class="prose"><p><b>Reusing the previous function</b> <span class="src-tag">October 2023 · ex. 2</span> <span class="src-tag c">lists TD · ex. 3.4</span> <code class="ml">remove_duplicates</code> removes the duplicates, keeping the first occurrence of each element. The paper requires using <code class="ml">remove_x</code>:</p></div>
+<pre data-ml-repl>
+# let rec remove_duplicates = function
+      [] -> []
+    | e :: lst -> e :: remove_duplicates (remove_x e lst) ;;
+val remove_duplicates : 'a list -> 'a list = &lt;fun&gt;
+# remove_duplicates [3; 1; 2; 2; 3; 1; 4; 5; 5] ;;
+- : int list = [3; 1; 2; 4; 5]
+# remove_duplicates [true; true; false; true; false; true; false] ;;
+- : bool list = [true; false]
+</pre>
+        <div class="prose"><p>Keep <code class="ml">e</code> at the front, then remove all its copies from the rest before going on: two cases are enough.</p>
+          <p><b>Inserting at rank i</b> <span class="src-tag">2018 and 2020 · 5 points</span> <span class="src-tag c">lists TD · ex. 3.3</span> <code class="ml">insert_nth x i lst</code> inserts <code class="ml">x</code> at rank <code class="ml">i</code>; <code class="ml">Invalid_argument</code> if <code class="ml">i</code> is negative or zero, <code class="ml">Failure</code> if the list is too short. The wrapper function tests the rank; the recursive function copies the elements while counting the rank down, and places <code class="ml">x</code> when it reaches 1.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let insert_nth x i lst =
+    if i &lt;= 0 then
+      invalid_arg "negative rank"
+    else
+      let rec insert i = function
+          l when i = 1 -> x :: l
+        | [] -> failwith "out of bound"
+        | e :: l -> e :: insert (i-1) l
+      in
+        insert i lst ;;
+val insert_nth : 'a -> int -> 'a list -> 'a list = &lt;fun&gt;
+# insert_nth 0 5 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+- : int list = [1; 2; 3; 4; 0; 5; 6; 7; 8; 9]
+# insert_nth 0 10 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 0]
+# insert_nth 0 12 [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+Exception: Failure "out of bound".
+# insert_nth 0 (-2) [1; 2; 3; 4; 5; 6; 7; 8; 9] ;;
+Exception: Invalid_argument "negative rank".
+</pre>
+        </div>
+        <div class="prose"><p>The “rank reached” case comes <b>before</b> <code class="ml">[]</code>: inserting at rank 10 in a list of 9 elements means adding at the end, and it must work. The question writes <code>Invalid_arg "negative rank"</code>: the constructor is <code class="ml">Invalid_argument</code>.</p>
+          <p><b>Concatenating</b> <span class="src-tag c">lists TD · ex. 2.2</span> Copy the elements of the first list in front of the second one, which is reused as it is.</p></div>
+<pre data-ml-repl>
+# let rec append l1 l2 =
+    match l1 with
+        [] -> l2
+      | e :: lst -> e :: append lst l2 ;;
+val append : 'a list -> 'a list -> 'a list = &lt;fun&gt;
+# append [3; 1; 2] [8; 4] ;;
+- : int list = [3; 1; 2; 8; 4]
+# append [] [9; 7; 8] ;;
+- : int list = [9; 7; 8]
+# [3; 1; 2] @ [8; 4] ;;
+- : int list = [3; 1; 2; 8; 4]
+</pre>
+        <div class="prose"><p>Caml provides this function as the operator <code class="ml">@</code>. Like <code class="ml">append</code>, it copies the whole left list: its cost is the length of that list.</p></div>
+        <div class="note exam"><span class="tag">Avoid @ at the exam</span><ul>
+          <li>Its status is not settled: the TD calls it “the operator @”, but it is a function of the Caml library, and no official answer key of the papers uses it. The rule “no predefined function except <code class="ml">failwith</code> and <code class="ml">invalid_arg</code>” could apply to it.</li>
+          <li>If you need to concatenate, write <code class="ml">append</code> yourself, with one sentence saying what it does.</li>
+          <li>To add an element at the front: <code class="ml">e :: lst</code>, never <code class="ml">[e] @ lst</code>.</li>
+        </ul></div>
+        <div class="note why"><span class="tag">Why reverse with @ is costly</span>
+<pre data-ml-repl>
+# let rec reverse = function
+      [] -> []
+    | e :: lst -> reverse lst @ [e] ;;
+val reverse : 'a list -> 'a list = &lt;fun&gt;
+# reverse [1; 2; 3; 4] ;;
+- : int list = [4; 3; 2; 1]
+</pre>
+          <p>The result is right, but to put each element at the end, <code class="ml">@</code> copies the whole list reversed so far: 0 cells, then 1, 2, …, up to n − 1. In total n(n − 1)/2 copies: 499,500 for 1,000 elements, nearly 200 million for 20,000, that is several seconds of computation. The accumulator version (part 8) does n <code class="ml">::</code> operations and answers at once. It is the question of the TD (ex. 3.5): “What do you think of the complexity of these two functions?”</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: every occurrence, or the first one?</span>
+<pre data-ml-repl>
+# let rec remove_first x = function
+      [] -> []
+    | e :: lst ->
+        if e = x then
+          lst
+        else
+          e :: remove_first x lst ;;
+val remove_first : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# remove_first 5 [5; 2; 5; 1] ;;
+- : int list = [2; 5; 1]
+</pre>
+          <p>Returning <code class="ml">lst</code> when <code class="ml">x</code> is found stops the removal: only the first occurrence disappears. That is what the TD (ex. 3.2) and the 2020 paper ask; the 2023 paper wanted every occurrence. Read the question and check yourself on its examples.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>Building a result list with <code class="ml">::</code>: 9 papers out of 9. Inserting an element: 6 out of 9; removing one or several elements: 4 out of 9.</li>
+          <li><code class="ml">insert_nth</code> came up as it is in 2018 and in 2020, with the examples of the TD.</li>
+          <li><code class="ml">remove_nth i lst</code> (2019, 5 points) follows the same scheme. Its official answer key raises <code>Failure "negative rank"</code> while the question requires <code class="ml">Invalid_argument</code>: follow the question.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-3-listes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="6"></span>Part 6</div><h2>Sorted lists: stop as soon as you have gone past</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In a list sorted in increasing order, everything after <code class="ml">e</code> is greater than or equal to <code class="ml">e</code>. If <code class="ml">e</code> is already past the value searched for, that value is not in the rest: no need to go further. The case <code class="ml">e :: lst</code> splits into three:</p>
+          <ul>
+            <li><code class="ml">e = x</code>: found;</li>
+            <li><code class="ml">e > x</code>: gone past, <code class="ml">x</code> is absent, stop;</li>
+            <li>otherwise, go on in <code class="ml">lst</code>.</li>
+          </ul>
+        </div>
+<pre data-ml-repl>
+# let rec search_sorted x = function
+      [] -> false
+    | e :: lst ->
+        if e = x then
+          true
+        else
+          if e > x then
+            false
+          else
+            search_sorted x lst ;;
+val search_sorted : 'a -> 'a list -> bool = &lt;fun&gt;
+# search_sorted 4 [1; 3; 5; 7; 9] ;;
+- : bool = false
+# search_sorted 7 [1; 3; 5; 7; 9] ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>Searching for 4 stops on 5: 7 and 9 are never looked at.</p>
+          <p><b>Removing the first occurrence</b> <span class="src-tag">November 2020 · 4 points</span> <span class="src-tag c">lists TD · ex. 3.2</span> Three outcomes, two of which stop the traversal.</p></div>
+<pre data-ml-repl>
+# let rec delete x = function
+      [] -> []
+    | e :: lst ->
+        if e = x then
+          lst
+        else
+          if e > x then
+            e :: lst
+          else
+            e :: delete x lst ;;
+val delete : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# delete 4 [1; 2; 2; 3; 4; 4; 4; 5] ;;
+- : int list = [1; 2; 2; 3; 4; 4; 5]
+# delete 0 [1; 2; 3] ;;
+- : int list = [1; 2; 3]
+</pre>
+        <div class="prose"><p>Found: return <code class="ml">lst</code>, the rest is not gone through. Gone past: <code class="ml">x</code> is absent, return the list as it is. The official answer key writes the same thing with guards: <code class="ml">| h::q when h > x -> h :: q</code>.</p>
+          <p><b>Inserting in its place</b> Move on while <code class="ml">x</code> is greater, and put it in front of the first element that is not smaller than it.</p></div>
+<pre data-ml-repl>
+# let rec insert x = function
+      [] -> [x]
+    | e :: lst ->
+        if x &lt;= e then
+          x :: e :: lst
+        else
+          e :: insert x lst ;;
+val insert : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# insert 7 [1; 3; 5; 9] ;;
+- : int list = [1; 3; 5; 7; 9]
+# insert 'c' ['a'; 'b'; 'd'] ;;
+- : char list = ['a'; 'b'; 'c'; 'd']
+# let rec sort = function
+      [] -> []
+    | e :: lst -> insert e (sort lst) ;;
+val sort : 'a list -> 'a list = &lt;fun&gt;
+# sort [5; 3; 8; 1; 4] ;;
+- : int list = [1; 3; 4; 5; 8]
+</pre>
+        <div class="prose"><p><code class="ml">sort</code> sorts the rest, then inserts the first element in its place: this is <b>insertion sort</b>. The papers of April 2019 (7 points) and October 2024 (9 points) ask for it with the order passed as a parameter, <code class="ml">insert_x x order lst</code>: that is chapter 4.</p></div>
+        <div class="note trap"><span class="tag">Trap: stopping assumes the list is sorted</span>
+<pre data-ml-repl>
+# delete 2 [1; 3; 2] ;;
+- : int list = [1; 3; 2]
+</pre>
+          <p>On <code class="ml">[1; 3; 2]</code>, which is not sorted, <code class="ml">delete</code> stops on 3 and does not see the 2. This is not a mistake: the question guarantees the order, and that guarantee is what allows stopping. Do not add a sortedness test, and do not forget to stop: a full traversal would be correct, but not optimised.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span>
+          <p>A sorted list is given in 4 papers out of 9: <code class="ml">assoc</code> (2017, April 2019), <code class="ml">delete</code> (2020), insertion sort (April 2019, 2024). The word “sorted” in the question is a hint: the expected answer stops as soon as it has gone past.</p>
+        </div>
+        <div data-check-ref="caml/cours-3-listes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="7"></span>Part 7</div><h2>Two lists: the four cases</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>For two lists, the Moodle advice is to match the pair <code class="ml">(l1, l2)</code>: each list is empty or not, hence <b>four cases</b>.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Pattern</th><th>Situation</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">([], [])</code></td><td>both lists are empty</td></tr>
+            <tr><td><code class="ml">([], e2 :: r2)</code></td><td>only the first one is empty</td></tr>
+            <tr><td><code class="ml">(e1 :: r1, [])</code></td><td>only the second one is empty</td></tr>
+            <tr><td><code class="ml">(e1 :: r1, e2 :: r2)</code></td><td>neither is empty: two first elements, two rests</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The two lists are gone through <b>together</b> (both move on at each call), or <b>only one moves on</b> at each call. An example of the first kind <span class="src-tag c">lists TD · ex. 4.1</span>:</p></div>
+<pre data-ml-repl>
+# let rec equals l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | ([], e2 :: r2) -> false
+      | (e1 :: r1, []) -> false
+      | (e1 :: r1, e2 :: r2) -> e1 = e2 &amp;&amp; equals r1 r2 ;;
+val equals : 'a list -> 'a list -> bool = &lt;fun&gt;
+# equals [1; 2; 3] [1; 2; 3] ;;
+- : bool = true
+# equals [1; 2] [1; 2; 3] ;;
+- : bool = false
+# let rec equals l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: r1, e2 :: r2) -> e1 = e2 &amp;&amp; equals r1 r2
+      | _ -> false ;;
+val equals : 'a list -> 'a list -> bool = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>Cases that give the same answer can be grouped: <code class="ml">_ -> false</code>, placed last, covers the two lists of different lengths.</p>
+          <p><b>Different lengths: an exception.</b> When the question requires it, the grouped case raises <code class="ml">invalid_arg</code>. Here we build the list of the pairs formed at the same places:</p></div>
+<pre data-ml-repl>
+# let rec combine l1 l2 =
+    match (l1, l2) with
+        ([], []) -> []
+      | (e1 :: r1, e2 :: r2) -> (e1, e2) :: combine r1 r2
+      | _ -> invalid_arg "combine: different lengths" ;;
+val combine : 'a list -> 'b list -> ('a * 'b) list = &lt;fun&gt;
+# combine [1; 2; 3] ["one"; "two"; "three"] ;;
+- : (int * string) list = [(1, "one"); (2, "two"); (3, "three")]
+# combine [1; 2; 3] ["one"] ;;
+Exception: Invalid_argument "combine: different lengths".
+</pre>
+        <div class="prose"><p>Two type variables, <code class="ml">'a</code> and <code class="ml">'b</code>: the two lists can have elements of different types.</p>
+          <p><b>“Otherwise”</b> <span class="src-tag">2017 and 2019 · 5 points</span> The papers specify the order: “If a pair such that p ai bi is false is found, it returns false. Otherwise, it raises Invalid_argument if the two lists have different lengths.” With <code class="ml">&amp;&amp;</code>, a false pair stops the traversal before the end of the shorter list. Two “quasi identical” lists, whose values at the same places differ by at most 1:</p></div>
+<pre data-ml-repl>
+# let rec close l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: r1, e2 :: r2) -> e1 - e2 &lt;= 1 &amp;&amp; e2 - e1 &lt;= 1 &amp;&amp; close r1 r2
+      | _ -> invalid_arg "close: different lengths" ;;
+val close : int list -> int list -> bool = &lt;fun&gt;
+# close [1; 2; 3; 4; 5] [1; 3; 2; 4; 6] ;;
+- : bool = true
+# close [1; 9; 3] [1; 2] ;;
+- : bool = false
+# close [1; 2; 3] [1; 2] ;;
+Exception: Invalid_argument "close: different lengths".
+</pre>
+        <div class="prose"><p><code class="ml">close [1; 9; 3] [1; 2]</code> answers <code class="ml">false</code> without an exception: the pair (9, 2) is false before the end of a list is reached. No <code class="ml">abs</code>, a predefined function: the gap is tested with two comparisons. In chapter 4, <code class="ml">for_all2</code> does this traversal for any test.</p>
+          <p><b>Only one list moves on</b> <span class="src-tag c">lists TD · ex. 4.2</span> The common elements of two increasing lists: compare the two first elements, and move on in the list that has the smaller one.</p></div>
+<pre data-ml-repl>
+# let rec shared l1 l2 =
+    match (l1, l2) with
+        ([], _) | (_, []) -> []
+      | (e1 :: r1, e2 :: r2) ->
+          if e1 = e2 then
+            e1 :: shared r1 r2
+          else
+            if e1 &lt; e2 then
+              shared r1 l2
+            else
+              shared l1 r2 ;;
+val shared : 'a list -> 'a list -> 'a list = &lt;fun&gt;
+# shared [1; 3; 6; 6; 8; 9] [2; 5; 6; 6; 8; 9] ;;
+- : int list = [6; 6; 8; 9]
+</pre>
+        <div class="prose"><p>As soon as one list is empty, nothing more is common: <code class="ml">([], _) | (_, [])</code> groups three of the four cases. When only one list moves on, call again with the other one <b>whole</b> (<code class="ml">l2</code> or <code class="ml">l1</code>), so as not to lose its first element.</p></div>
+        <div class="note trap"><span class="tag">Trap: a forgotten case</span>
+<pre data-ml-repl>
+# let rec equals l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: r1, e2 :: r2) -> e1 = e2 &amp;&amp; equals r1 r2 ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+([], _::_)
+val equals : 'a list -> 'a list -> bool = &lt;fun&gt;
+# equals [1; 2] [1; 2; 3] ;;
+Exception: Match_failure ("//toplevel//", 2, 2).
+</pre>
+          <p>Caml gives an example of a forgotten case: <code class="ml">([], _::_)</code>, the first list finished before the second one. Always count your cases: four, or fewer if they are grouped with <code class="ml">_</code> or <code class="ml">|</code>. The official answer key of <code class="ml">less2</code> (2022), where the lists are “supposed to have the same length”, has this Warning 8, which it does not show.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span>
+          <p>Two lists gone through together: 5 papers out of 9, plus two Mystery exercises. The “different lengths” exception: 3 out of 9 (<code class="ml">for_all2</code> in 2017 and 2019, <code class="ml">is_image</code> in 2018). The others: <code class="ml">combfilter</code> (2017), <code class="ml">alternate_list</code> (2021), <code class="ml">less2</code> (2022).</p>
+        </div>
+        <div data-check-ref="caml/cours-3-listes.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="8"></span>Part 8</div><h2>Two elements at a time, pairs, accumulator</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><b>When the first element is not enough.</b> To know whether a list is increasing, you must compare two neighbouring elements. The Moodle advice: three cases, the empty list, a single element, at least two (<code class="ml">e1 :: e2 :: lst</code>). <span class="src-tag c">lists TD · ex. 3.1</span></p>
+        </div>
+<pre data-ml-repl>
+# let rec is_increasing = function
+      [] | [_] -> true
+    | e1 :: e2 :: lst -> e1 &lt;= e2 &amp;&amp; is_increasing (e2 :: lst) ;;
+val is_increasing : 'a list -> bool = &lt;fun&gt;
+# is_increasing [1; 2; 2; 5] ;;
+- : bool = true
+# is_increasing [1; 3; 2] ;;
+- : bool = false
+</pre>
+        <div class="prose"><p>Call the function again on <code class="ml">e2 :: lst</code>: <code class="ml">e2</code> still has to be compared with the element after it.</p></div>
+        <div class="note trap"><span class="tag">Trap: calling again on lst</span>
+<pre data-ml-repl>
+# let rec is_increasing = function
+      [] | [_] -> true
+    | e1 :: e2 :: lst -> e1 &lt;= e2 &amp;&amp; is_increasing lst ;;
+val is_increasing : 'a list -> bool = &lt;fun&gt;
+# is_increasing [1; 3; 2; 5] ;;
+- : bool = true
+</pre>
+          <p>This version compares (1, 3) then (2, 5), and never (3, 2): it moves on two elements at a time and skips every other comparison.</p>
+        </div>
+        <div class="prose"><p><b>Pairs in the list.</b> The elements can be pairs: the pattern <code class="ml">(a, b) :: lst</code> names both components of the first pair at once. The two ideas combine in the dominoes paper <span class="src-tag">October 2019 · 4 points</span>: a domino is a pair, and a chain is valid if neighbouring halves have the same number of dots.</p></div>
+<pre data-ml-repl>
+# let rec is_dominoes = function
+      [] | [_] -> true
+    | (_, b) :: (c, d) :: lst -> b = c &amp;&amp; is_dominoes ((c, d) :: lst) ;;
+val is_dominoes : ('a * 'a) list -> bool = &lt;fun&gt;
+# is_dominoes [(1, 2); (2, 3); (3, 3); (3, 6)] ;;
+- : bool = true
+# is_dominoes [(2, 3); (2, 4); (1, 4)] ;;
+- : bool = false
+</pre>
+        <div class="prose"><p>Call again on <code class="ml">(c, d) :: lst</code>, to keep the second domino. The type is <code class="ml">('a * 'a) list -> bool</code>: nothing requires integers, only that <code class="ml">b</code> and <code class="ml">c</code> have the same type.</p>
+          <p><b>Exam example</b> <span class="src-tag">2017 · 4 points, April 2019 · 5 points</span> <span class="src-tag c">lists TD · ex. 5.1</span> <code class="ml">assoc k lst</code>, where <code class="ml">lst</code> is a list of (key, value) pairs sorted by increasing keys, and the keys are non-zero natural numbers: the value associated with key <code class="ml">k</code>, or an exception if <code class="ml">k</code> is not valid or if no pair has key <code class="ml">k</code>.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let assoc k lst =
+    if k &lt;= 0 then
+      invalid_arg "k not a natural"
+    else
+      let rec search = function
+          [] -> failwith "not found"
+        | (key, value) :: l ->
+            if key = k then
+              value
+            else
+              if key > k then
+                failwith "not found"
+              else
+                search l
+      in
+        search lst ;;
+val assoc : int -> (int * 'a) list -> 'a = &lt;fun&gt;
+# assoc 5 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")] ;;
+- : string = "five"
+# assoc 4 [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")] ;;
+Exception: Failure "not found".
+# assoc (-1) [(1, "one"); (2, "two"); (3, "three"); (5, "five"); (8, "eight")] ;;
+Exception: Invalid_argument "k not a natural".
+</pre>
+        </div>
+        <div class="prose"><p>The whole chapter in one function: the wrapper function tests <code class="ml">k</code> once (<code class="ml">Invalid_argument</code>), the pattern <code class="ml">(key, value) :: l</code> opens the first pair, and the sorted list allows stopping as soon as <code class="ml">key > k</code> (<code class="ml">Failure</code>, as at the end of the list). <code class="ml">assoc 4 […]</code> stops on key 5, without looking at key 8.</p>
+          <p><b>The accumulator.</b> The Moodle advice is pure recursion first. If it does not work, build the result while moving forward, in one more parameter, the <b>accumulator</b>, returned at the end: “Watch out: most of the time, this method is not needed. It only makes things more complicated, and you risk getting a result different from the one asked for.” The textbook case where it helps: reversing a list <span class="src-tag c">lists TD · ex. 3.5</span>.</p></div>
+<pre data-ml-repl>
+# let reverse2 lst =
+    let rec rev acc = function
+        [] -> acc
+      | e :: l -> rev (e :: acc) l
+    in
+      rev [] lst ;;
+val reverse2 : 'a list -> 'a list = &lt;fun&gt;
+# reverse2 [1; 2; 3; 4] ;;
+- : int list = [4; 3; 2; 1]
+</pre>
+<pre data-ml>
+reverse2 [1; 2; 3; 4]
+= rev [] [1; 2; 3; 4]
+= rev [1] [2; 3; 4]
+= rev [2; 1] [3; 4]
+= rev [3; 2; 1] [4]
+= rev [4; 3; 2; 1] []
+= [4; 3; 2; 1]
+</pre>
+        <div class="prose"><p><code class="ml">acc</code> receives the elements already seen, stacking them: the last one seen ends up in front. One <code class="ml">::</code> per element, n operations in total, instead of the n(n − 1)/2 copies of <code class="ml">reverse</code>, the version with <code class="ml">@</code> (part 5). The wrapper function <code class="ml">reverse2</code> gives the starting value of the accumulator, <code class="ml">[]</code>.</p></div>
+        <div class="note trap"><span class="tag">Trap: the accumulator reverses the order</span>
+<pre data-ml-repl>
+# let remove_x x lst =
+    let rec remove acc = function
+        [] -> acc
+      | e :: l ->
+          if e = x then
+            remove acc l
+          else
+            remove (e :: acc) l
+    in
+      remove [] lst ;;
+val remove_x : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# remove_x 5 [5; 2; 5; 1] ;;
+- : int list = [1; 2]
+</pre>
+          <p>The pure recursion of part 5 gave <code class="ml">[2; 1]</code>. In the October 2023 paper (Split, 8 points), a paper that built its pieces with an accumulator returned them in reverse order: 2 points lost, as the question had announced.</p>
+        </div>
+        <div class="prose"><p><b>At the exam: a Mystery</b> <span class="src-tag">April 2019 · 2 points</span> Give the Caml answers, then say what the function computes. The code of the paper is laid out again here; the position given by <code class="ml">Match_failure</code> depends on this layout.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Mystery · April 2019">
+# let mystery = function
+      [] -> failwith "..."
+    | e :: f :: l ->
+        let rec aux_mystery m1 m2 = function
+            [] -> m2
+          | e :: l ->
+              if e &lt; m1 then aux_mystery e m1 l
+              else if e &lt; m2 then aux_mystery m1 e l
+              else aux_mystery m1 m2 l
+        in
+          if e &lt; f then aux_mystery e f l else aux_mystery f e l ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+_::[]
+val mystery : 'a list -> 'a = &lt;fun&gt;
+# mystery [1; 3; 4; 2] ;;
+- : int = 2
+# mystery [3.5; 8.2; 9.5; 4.0] ;;
+- : float = 4.
+# mystery ['a'] ;;
+Exception: Match_failure ("//toplevel//", 1, 14).
+</pre>
+        <div class="prose"><p>A two-element pattern, then two more parameters: <code class="ml">m1</code> and <code class="ml">m2</code> are the two smallest elements seen, in order. <code class="ml">mystery</code> returns the <b>second smallest element</b> of the list; a one-element list is matched by no pattern. It is exercise 1.6 of the lists TD, <code class="ml">second</code>, with <code>Failure "second: Not enough values"</code> instead of the <code class="ml">Match_failure</code>. The official answer key accepted the answer “apart from possible warnings”.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>A list of pairs: 3 papers out of 9 (<code class="ml">assoc</code> in 2017 and in April 2019, the dominoes in 2019), plus the <code class="ml">decode</code> Mystery of 2018.</li>
+          <li>A two-element pattern: the dominoes (2019) and this Mystery (April 2019).</li>
+          <li>An accumulator is never required; it helps when the result must be reversed, or for extra parameters such as <code class="ml">m1</code> and <code class="ml">m2</code>. For a result list in order, pure recursion.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-3-listes.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="caml:listes:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Seven papers out of nine also pass a function as a parameter: <code class="ml">for_all2 p l1 l2</code>, <code class="ml">insert_x x order lst</code>, <code class="ml">how_many f lst</code>… This is chapter 4, <a href="cours-4-ordre-superieur.html">higher-order functions</a>, which takes up the traversals of this chapter with a function in place of the test.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var C = window.REV.caml, esc = window.REV.util.esc;
+  function ml(s) { return C.code(String(s)); }
+  function fmt(v) { return C.fmt(v); }
+
+  /* part 2: the list drawn as cells, and what each pattern catches */
+  var PATS = [
+    { p: '[]', m: function (a) { return a.length === 0 ? { b: [], lit: true } : null; },
+      no: 'the list is not empty.' },
+    { p: 'e :: lst', m: function (a) { return a.length ? { b: [{ n: 'e', i: 0, j: 0, k: 'e', v: a[0] }, { n: 'lst', i: 1, j: a.length - 1, nil: true, k: 'l', v: a.slice(1) }] } : null; },
+      no: 'the empty list has no first element.',
+      yes: function (a) { return ' In other words, ' + ml(fmt(a)) + ' is ' + ml(fmt(a[0]) + ' :: ' + fmt(a.slice(1))) + '.'; } },
+    { p: '[e]', m: function (a) { return a.length === 1 ? { b: [{ n: 'e', i: 0, j: 0, k: 'e', v: a[0] }], lit: true } : null; },
+      no: 'this pattern only matches one-element lists.',
+      yes: function () { return ' ' + ml('[e]') + ' is short for ' + ml('e :: []') + ': after ' + ml('e') + ', the list must be empty.'; } },
+    { p: 'e1 :: e2 :: lst', m: function (a) { return a.length >= 2 ? { b: [{ n: 'e1', i: 0, j: 0, k: 'e', v: a[0] }, { n: 'e2', i: 1, j: 1, k: 'e2', v: a[1] }, { n: 'lst', i: 2, j: a.length - 1, nil: true, k: 'l', v: a.slice(2) }] } : null; },
+      no: 'at least two elements are needed.',
+      yes: function () { return ' This pattern looks at two elements at a time (part 8).'; } },
+    { p: '[e; lst]', m: function (a) { return a.length === 2 ? { b: [{ n: 'e', i: 0, j: 0, k: 'e', v: a[0] }, { n: 'lst', i: 1, j: 1, k: 'bad', v: a[1] }], lit: true } : null; },
+      no: 'this pattern only matches lists of exactly two elements.',
+      yes: function () { return ' Watch out: here ' + ml('lst') + ' is an element, not a list. ' + ml('[e; lst]') + ' only matches lists of exactly two elements.'; } }
+  ];
+  var LISTS = [[3, 8, 1], [3, 8], [7], []];
+  (function (el) {
+    if (!el) return;
+    var li = 0, pi = 1;
+    el.classList.add('bench', 'lc');
+    el.innerHTML = '<div class="bench-head"><span class="bh-t">What the pattern catches</span></div><div class="bench-body">' +
+      '<div class="lc-ctl"><span class="lc-lbl">Matched list</span><div class="row" role="group" aria-label="Matched list">' +
+      LISTS.map(function (a, j) { return '<button type="button" class="chip-btn" data-l="' + j + '">' + ml(fmt(a)) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="lc-ctl"><span class="lc-lbl">Pattern</span><div class="row" role="group" aria-label="Pattern">' +
+      PATS.map(function (q, j) { return '<button type="button" class="chip-btn" data-p="' + j + '">' + ml(q.p) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="lc-wrap" aria-hidden="true"><div class="lc-grid"></div></div><p class="readout lc-say" aria-live="polite"></p></div>';
+    var grid = el.querySelector('.lc-grid'), say = el.querySelector('.lc-say');
+    function paint() {
+      var a = LISTS[li], q = PATS[pi], m = q.m(a), n = a.length, k = {}, h = '';
+      if (m) {
+        m.b.forEach(function (b) { for (var x = b.i; x <= b.j; x++) k[x] = b.k; if (b.nil) k.nil = b.k; });
+        if (m.lit && !k.nil) k.nil = 'lit';
+      }
+      a.forEach(function (v, i) {
+        h += '<span class="lc-cell' + (k[i] ? ' k-' + k[i] : '') + '" style="grid-column:' + (2 * i + 1) + '">' + esc(fmt(v)) + '</span>' +
+          '<span class="lc-cons" style="grid-column:' + (2 * i + 2) + '">::</span>';
+      });
+      h += '<span class="lc-cell lc-nil' + (k.nil ? ' k-' + k.nil : '') + '" style="grid-column:' + (2 * n + 1) + '">[]</span>';
+      if (m) m.b.forEach(function (b) {
+        h += '<span class="lc-bind k-' + b.k + '" style="grid-column:' + (2 * b.i + 1) + ' / ' + (b.nil ? 2 * n + 2 : 2 * b.j + 2) + '"><b>' + b.n + '</b> = ' + esc(fmt(b.v)) + '</span>';
+      });
+      grid.className = 'lc-grid' + (m ? '' : ' lc-no');
+      grid.style.gridTemplateColumns = 'repeat(' + (2 * n + 1) + ', auto)';
+      grid.innerHTML = h;
+      var L = ml(fmt(a)), P = ml(q.p);
+      say.innerHTML = !m ? '<b class="lc-n">✗</b> ' + P + ' does not match ' + L + ': ' + q.no
+        : '<b class="lc-y">✓</b> ' + P + ' matches ' + L + '. ' +
+          (m.b.length ? m.b.map(function (b) { return ml(b.n) + ' is ' + ml(fmt(b.v)); }).join(', ') + '.' : 'No name is bound.') +
+          (q.yes ? q.yes(a) : '');
+      el.querySelectorAll('[data-l]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-l') === li)); });
+      el.querySelectorAll('[data-p]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-p') === pi)); });
+    }
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-l')) li = +b.getAttribute('data-l');
+      else if (b.hasAttribute('data-p')) pi = +b.getAttribute('data-p');
+      else return;
+      paint();
+    });
+    paint();
+  })(document.getElementById('cells'));
+
+  /* part 2: the matching of last, pattern by pattern, in both orders */
+  function L(a) { return { a: a, toString: function () { return fmt(a); } }; }
+  var P0 = { pat: '[]', res: 'failwith "last: empty list"', test: function (v) { return v.a.length === 0; } },
+    P1 = { pat: '[e]', res: 'e', test: function (v) { return v.a.length === 1; } },
+    P2 = { pat: 'e :: lst', res: 'last lst', test: function (v) { return v.a.length > 0; } };
+  var EX = 'Exception: Failure "last: empty list".';
+  C.matcher(document.getElementById('matcher'), {
+    title: 'Pattern matching step by step · the function last',
+    inputs: [
+      { label: 'last [7]', v: L([7]), note: '[7] = 7 :: []' },
+      { label: 'last [3; 8; 1]', v: L([3, 8, 1]), note: '[3; 8; 1] = 3 :: [8; 1]' },
+      { label: 'last []', v: L([]) }
+    ],
+    versions: [
+      { label: 'Specific case first', head: 'let rec last = function', cases: [P0, P1, P2], ans: ['- : int = 7', '- : int = 1', EX] },
+      { label: 'General case first', head: 'let rec last = function', cases: [P0, P2, P1], ans: [EX, EX, EX] }
+    ]
+  });
+
+  /* part 5: remove_x 5 [5; 2; 5; 1], the result list is rebuilt on the way back */
+  var X = 5;
+  var tree = C.trace(function (self, x, l) {
+    if (!l.length) return [];
+    var r = self(x, l.slice(1));
+    return l[0] === x ? r : [l[0]].concat(r);
+  }, [X, [5, 2, 5, 1]], { show: function (x, l) { return 'remove_x ' + x + ' ' + fmt(l); } });
+  function V(s) { return '<b class="cu-v">' + esc(s) + '</b>'; }
+  C.unroll(document.getElementById('unroll'), {
+    tree: tree, mode: 'stack', title: 'Call stack of remove_x 5 [5; 2; 5; 1]',
+    wait: function (nd, v) {
+      var l = nd.args[1];
+      if (!l.length) return '';
+      var r = v.length ? v[0] : 'remove_x ' + X + ' ' + fmt(l.slice(1));
+      return l[0] === X ? r : l[0] + ' :: ' + r;
+    },
+    say: function (e) {
+      if (!e) return null;
+      var nd = e.node, l = nd.args[1], c = ml(nd.label);
+      if (e.type === 'call') {
+        if (!l.length) return 'Call ' + c + ': a base case, the empty list gives ' + ml('[]') + '.';
+        var k = ml(nd.kids[0].label);
+        return l[0] === X ? 'Call ' + c + '. Its first element is ' + ml(X) + ': it will not be kept. The result will be that of ' + k + ', and ' + c + ' waits in the stack.'
+          : 'Call ' + c + '. Its first element, ' + ml(l[0]) + ', will be kept, but it can only be put in front once ' + k + ' is computed: ' + c + ' waits in the stack.';
+      }
+      if (!e.parent) return c + ' returns ' + V(nd.val) + ': this is the result. The stack is empty, and the list was built on the way back: ' + ml('1') + ' was placed first, then ' + ml('2') + ' in front of it.';
+      var p = e.parent, h = p.args[1][0];
+      return h === X ? c + ' returns ' + V(nd.val) + ' to ' + ml(p.label) + ', which does not keep its first element: it returns ' + V(nd.val) + ' as it is.'
+        : c + ' returns ' + V(nd.val) + ' to ' + ml(p.label) + ', which puts its first element in front: ' + ml(h + ' :: ' + nd.val) + ' = ' + ml(p.val) + '.';
+    }
+  });
+})();
+</script>
+</body>
+</html>
