@@ -75,7 +75,7 @@ data = {
   'updated': '2026-10-16',
   'subjects': {
     'elec': {'name':'Électronique','page':'elec/annales.html'},
-    'maths': {'name':'Mathématiques'}, 'physique': {'name':'Physique'}, 'algo': {'name':'Algorithmique','page':'taa/annales.html'},
+    'maths': {'name':'Mathématiques'}, 'physique': {'name':'Physique','page':'physique/annales.html'}, 'algo': {'name':'Algorithmique','page':'taa/annales.html'},
     'archi': {'name':'Architecture'}, 'prog': {'name':'Programmation'},
     'cie': {'name':'Anglais · CIE'}, 'tim': {'name':'Anglais · TIM'}, 'te': {'name':'Techniques d’expression'}
   },

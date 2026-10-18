@@ -23,6 +23,10 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   ENSEMBLE, extensibles ; `trace` donne les étapes), bancs `stepper`, `stackBench`, `queueBench`, `ranksBench`,
   `sorter`, et `<div data-check-ref="taa/cours-1-types.html#s2" data-n="3">` (questions de la banque qui renvoient
   à cette partie). Numéros de parties : `<span class="plates" data-n="3">`.
+- `meca.js` (pages de physique) : comportements des pages, et outils de dessin documentés en tête du fichier :
+  `R.meca.plot({…})` (repère, courbes, chronophotographie, vecteurs aux couleurs fixes position / vitesse /
+  accélération / force), `R.meca.mount`, `R.meca.launcher` (tir), `R.meca.linked` (x, v, a liés), `R.meca.calc`.
+  Thème `physique.css` : « plaque chronophotographique » ; vecteurs dans le texte : `<var class="vec kv">v</var>`.
 
 ## Deux langues
 
@@ -71,6 +75,13 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `same`), `taa-hebdo.js` (QCM hebdo des promos 2021 à 2030, `also` = autres apparitions).
   Points vérifiés : une constante retourne un type défini (partiel 2023) ; la signature occupe les zones types,
   utilise, opérations ; « opération auxiliaire » = sert à écrire le domaine d’une autre.
+- **Physique** (mécanique du point) : exercices `data/physique/ex-annales.js` (partiels 2017-2022 au programme)
+  et `ex-td.js` (TD 1 à 5) dans `window.PHYS_EX` (même format, `figs: [{ svg, cap }]`), sujets `PHYS_EXAMS`
+  (parties `prog`, `progPts`) et notions `PHYS_TOPICS` (`data/physique/exams.js`), QCM `data/qcm/physique.js`
+  (`phys-cN-…`) et `physique-annales.js` (`phys-pAAAA-…`, `p2018s` pour le sujet de mai 2018). Points vérifiés :
+  les 7 anciens sujets ne portent que sur la cinématique (forces, 2e loi, énergie : jamais tombés) ; Frénet, abscisse
+  curviligne, produit vectoriel hors programme cette année ; le cours anglais dit « Newton's second law », poids W⃗,
+  énergie cinétique E_k. Programme du partiel 1 non publié : le site suppose les TD 1 à 5.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques

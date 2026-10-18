@@ -234,7 +234,7 @@
       questions: [
         '1. A motion is said uniform if' + opts(['Its trajectory is a straight line.', 'Its acceleration is constant over time.', 'Its velocity is constant over time.', 'Its velocity and acceleration vary very few over time.']),
         X('2. In polar coordinates, $(u⃗_ρ, u⃗_θ)$, position vector $r⃗(t) = OM⃗(t)$ has for expression:') + opts(['$r⃗(t) = ρ u⃗_ρ + θ u⃗_θ$', '$r⃗(t) = ρ u⃗_ρ$', '$r⃗(t) = θ u⃗_ρ + ρ u⃗_θ$', '$r⃗(t) = ρ u⃗_θ$']),
-        X('3. A moving particle has a rectilinear trajectory along the X-axis. Its trajectory equation is $x(t) = 10 − 2t²$.') + opts(['The motion is uniform.', 'The motion is uniformly circular.', 'Le mouvement est decelerated.', 'Acceleration magnitude is 2 m/s²']),
+        X('3. A moving particle has a rectilinear trajectory along the X-axis. Its trajectory equation is $x(t) = 10 − 2t²$.') + opts(['The motion is uniform.', 'The motion is uniformly circular.', 'The motion is decelerated.', 'Acceleration magnitude is 2 m/s²']),
         X('4. Consider a moving particle whose position at each instant $t$ is given by its position vector $r⃗(t) = OM⃗(t)$. Acceleration vector $a⃗(t)$ of this motion has for expression:') + opts(['$a⃗(t) = @f{dr(t)}{dt²}$', '$a⃗(t) = @f{d²r⃗(t)}{dt²}$', '$a⃗(t) = [@f{dr⃗(t)}{dt}]²$', '$a(t) = @r{r(t)}$']),
         '5. Two vectors are perpendicular if their scalar product is equal to zero.' + opts(['TRUE', 'FALSE'])],
       hints: [

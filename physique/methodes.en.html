@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Physics</title>
+<meta name="description" content="Physics S1: the methods for writing up a midterm. Study framework, differentiating and computing norms, describing the motion, integrating with the initial conditions, trajectory, apex and impact, Newton’s second law, energy, polar coordinates, dimensions, conversions, traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Methods: one section per move of the midterm, numbered like a step on the exam paper. */
+.mn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--font-mono);font-size:.8rem;font-weight:500;flex:none}
+.toc .mn{width:24px;height:24px;font-size:.74rem;justify-self:center}
+.copy{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:.85rem 1rem;display:grid;gap:.4rem;min-width:0}
+.copy>*{min-width:0}
+.copy .tag{font-family:var(--font-mono);font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.copy ul,.copy ol{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.steps>li>div>p{margin:0}
+.eq.left .nw{white-space:normal}
+@media (max-width:560px){.copy .eq,.steps .eq{padding:.6rem .4rem;font-size:1.06rem}}
+</style>
+</head>
+<body data-resume="Physics · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Methods</div>
+      <h1>One recipe per <span class="w">type of question</span>.</h1>
+      <p class="lead">In the midterm, the same moves keep coming back: set up the framework, differentiate, integrate, eliminate time, project a law on axes, switch to polar coordinates. Each method fits in a few steps, with an example taken from the TDs or the past papers, written up as on an exam paper.</p>
+      <div class="chips"><span class="chip">11 methods and the traps</span><span class="chip">no calculator</span><a class="chip ex" href="entrainement.html" style="text-decoration:none">solved exercises →</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Methods contents">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#cadre"><span class="mn">1</span><span>Set up the study framework</span></a></li>
+      <li><a href="#deriver"><span class="mn">2</span><span>Differentiate, compute the norms</span></a></li>
+      <li><a href="#nature"><span class="mn">3</span><span>Describe the motion</span></a></li>
+      <li><a href="#integrer"><span class="mn">4</span><span>Integrate with the initial conditions</span></a></li>
+      <li><a href="#trajectoire"><span class="mn">5</span><span>Trajectory equation</span></a></li>
+      <li><a href="#sommet"><span class="mn">6</span><span>Apex and point of impact</span></a></li>
+      <li><a href="#forces"><span class="mn">7</span><span>Forces and the second law</span></a></li>
+      <li><a href="#energie"><span class="mn">8</span><span>Energy theorems</span></a></li>
+      <li><a href="#polaires"><span class="mn">9</span><span>Switch to polar coordinates</span></a></li>
+      <li><a href="#homogeneite"><span class="mn">10</span><span>Dimensions, numerical value</span></a></li>
+      <li><a href="#conversions"><span class="mn">11</span><span>Conversions, mental arithmetic</span></a></li>
+      <li><a href="#pieges"><span class="mn">!</span><span>The traps</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Physics home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">One-page summary</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Methods contents</summary><ol>
+      <li><a href="#cadre">Set up the study framework</a></li><li><a href="#deriver">Differentiate, compute the norms</a></li><li><a href="#nature">Describe the motion</a></li><li><a href="#integrer">Integrate with the initial conditions</a></li>
+      <li><a href="#trajectoire">Trajectory equation</a></li><li><a href="#sommet">Apex and point of impact</a></li><li><a href="#forces">Forces and the second law</a></li><li><a href="#energie">Energy theorems</a></li>
+      <li><a href="#polaires">Switch to polar coordinates</a></li><li><a href="#homogeneite">Dimensions, numerical value</a></li><li><a href="#conversions">Conversions, mental arithmetic</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 framework -->
+    <section class="sec" id="cadre">
+      <div class="sec-head"><div class="kicker"><span class="mn">1</span>Method 1</div><h2>Set up the study framework</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The first three or four lines of your paper. The TD answer keys write them for every exercise, and TD 1 makes it a question of its own.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The system.</b> What you study, modelled as a <b>material point</b> M (of mass <span class="f"><var>m</var></span> when forces come in).</p></div></li>
+          <li><div><p><b>The reference frame.</b> Terrestrial, <b>assumed Galilean</b>, for anything moving on or near the ground. Geocentric for a satellite (TD 5 Ex 3).</p></div></li>
+          <li><div><p><b>The coordinate system.</b> The origin O (where?), the axes and their direction. Draw them: the sign of every component depends on them. The course points <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> <b>upwards</b>.</p></div></li>
+          <li><div><p><b>The origin of time.</b> <span class="f"><var>t</var> = 0</span> at the launch, the release or the start. Write the initial conditions: <span class="f"><var class="vec kp">OM</var>(0)</span> and <span class="f"><var class="vec kv">v</var>(0)</span>.</p></div></li>
+          <li><div><p><b>In dynamics, the forces involved</b> (method 7) come right after: the course writes them in the same box.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 1 Ex 3, question 1</span>
+          <p>“Describe the study framework (reference frame, system under study, coordinate system).”</p>
+          <ul>
+            <li>Reference frame: terrestrial, assumed Galilean.</li>
+            <li>System: the projectile, modelled as a material point M.</li>
+            <li>Coordinate system: Cartesian <span class="f">(<var>O</var>, <var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>)</span>, O at the launch point, <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> upwards.</li>
+            <li>Origin of time: <span class="f"><var>t</var> = 0</span> at the launch; <span class="f"><var class="vec kp">OM</var>(0) = <var class="vec up">0</var></span> and <span class="f"><var class="vec kv">v</var>(0) = <var class="vec kv">v</var><sub>0</sub></span>.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Trap</span><p>Flipping an axis flips the signs: with <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> upwards, the weight is <span class="f"><var class="vec kf">W</var> = −<var>m</var><var>g</var> <var class="vec">u</var><sub><var>y</var></sub></span> and <span class="f"><var>a</var><sub><var>y</var></sub> = −<var>g</var></span>; with <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> downwards, <span class="f"><var>a</var><sub><var>y</var></sub> = +<var>g</var></span>. Neither is wrong, but say which one you use and stick to it.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 differentiate -->
+    <section class="sec" id="deriver">
+      <div class="sec-head"><div class="kicker"><span class="mn">2</span>Method 2</div><h2>Differentiate the equations of motion, compute the norms</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Asked in all 7 papers found. You are given <span class="f"><var class="vec kp">OM</var>(<var>t</var>)</span>, or <span class="f"><var>x</var>(<var>t</var>)</span> and <span class="f"><var>y</var>(<var>t</var>)</span>; everything is done by differentiating.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Read the equations of motion</b>: <span class="f"><var>x</var>(<var>t</var>)</span> in front of <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span>, <span class="f"><var>y</var>(<var>t</var>)</span> in front of <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span>. They are numbers, with no basis vector.</p></div></li>
+          <li><div><p><b>Differentiate each component</b>: <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span> and <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> are fixed. <span class="f"><var>v</var><sub><var>x</var></sub> = ẋ</span>, <span class="f"><var>v</var><sub><var>y</var></sub> = ẏ</span>, then <span class="f"><var>a</var><sub><var>x</var></sub> = ẍ</span>, <span class="f"><var>a</var><sub><var>y</var></sub> = ÿ</span>. For <span class="f">cos(<var>ω</var><var>t</var>)</span>, do not forget the factor <span class="f"><var>ω</var></span>: <span class="f"><span class="frac"><span>d</span><span>d<var>t</var></span></span>cos(<var>ω</var><var>t</var>) = −<var>ω</var> sin(<var>ω</var><var>t</var>)</span>.</p></div></li>
+          <li><div><p><b>Compute the norm</b> with Pythagoras: <span class="f">‖<var class="vec kv">v</var>‖ = <span class="sqrt">√<span>ẋ² + ẏ²</span></span></span>. Factorise and simplify with <span class="f">cos² + sin² = 1</span>.</p></div></li>
+          <li><div><p><b>Check</b>: at <span class="f"><var>t</var> = 0</span>, do you get the initial velocity back? A norm is positive: <span class="f">|<var>R</var>|<var>ω</var></span> if <span class="f"><var>R</var></span> may be negative.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · midterm Nov. 2017 Ex 1</span>
+          <p><span class="f"><var>x</var>(<var>t</var>) = 1 + <var>R</var> sin(<var>ω</var><var>t</var>)</span> and <span class="f"><var>y</var>(<var>t</var>) = 2 + <var>R</var> cos(<var>ω</var><var>t</var>)</span>, with <span class="f"><var>R</var></span> and <span class="f"><var>ω</var></span> constant.</p>
+          <div class="eq"><span class="nw"><span class="f"><var class="vec kv">v</var> = <span class="col"><span><var>R</var><var>ω</var> cos(<var>ω</var><var>t</var>)</span><span>−<var>R</var><var>ω</var> sin(<var>ω</var><var>t</var>)</span></span></span></span><span class="nw"><span class="f"><var class="vec ka">a</var> = <span class="col"><span>−<var>R</var><var>ω</var>² sin(<var>ω</var><var>t</var>)</span><span>−<var>R</var><var>ω</var>² cos(<var>ω</var><var>t</var>)</span></span></span></span></div>
+          <p><span class="f">‖<var class="vec kv">v</var>‖ = <span class="sqrt">√<span><var>R</var>²<var>ω</var>²(cos²(<var>ω</var><var>t</var>) + sin²(<var>ω</var><var>t</var>))</span></span> = |<var>R</var>|<var>ω</var></span>: constant, so the motion is uniform. Likewise <span class="f">‖<var class="vec ka">a</var>‖ = |<var>R</var>|<var>ω</var>²</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing <span class="f">‖<var class="vec kv">v</var>‖ = ẋ + ẏ</span>: the norm goes through the squares and the square root.</li>
+          <li>Forgetting <span class="f"><var>ω</var></span> when differentiating <span class="f">cos(<var>ω</var><var>t</var>)</span>. The TD 5 sheet (Ex 2, Q6) makes this very mistake: its <span class="f"><var class="vec kv">v</var></span> is in metres, not in m·s⁻¹.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 nature -->
+    <section class="sec" id="nature">
+      <div class="sec-head"><div class="kicker"><span class="mn">3</span>Method 3</div><h2>Describe the motion</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A frequent MCQ question (“uniform? accelerated?”), and question 5 of the October 2022 projectile.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Word</th><th>What it means</th><th>How to check it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Rectilinear, circular, parabolic</th><td>The shape of the trajectory</td><td>The trajectory equation (method 5)</td></tr>
+            <tr><th scope="row">Uniform</th><td>The <b>norm</b> of the velocity is constant</td><td><span class="f">‖<var class="vec kv">v</var>‖</span> does not depend on <span class="f"><var>t</var></span></td></tr>
+            <tr><th scope="row">Accelerated</th><td>The speed increases</td><td><span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> &gt; 0</span></td></tr>
+            <tr><th scope="row">Decelerated</th><td>The speed decreases</td><td><span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> &lt; 0</span></td></tr>
+            <tr><th scope="row">Uniformly accelerated (varied)</th><td>Constant acceleration, along a line</td><td><span class="f"><var>a</var></span> does not depend on <span class="f"><var>t</var></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>If <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = 0</span> with <span class="f"><var class="vec ka">a</var> ≠ <var class="vec up">0</var></span>, only the direction of the velocity changes: this is uniform circular motion, and the apex of a projectile. You can also describe a single component: for a projectile, the motion is uniform along <span class="f">(<var>O</var><var>x</var>)</span>, not along <span class="f">(<var>O</var><var>y</var>)</span>.</p></div>
+        <div class="copy"><span class="tag">On your paper · midterm Nov. 2021, MCQ 3</span>
+          <p>“<span class="f"><var>x</var>(<var>t</var>) = 10 − 2<var>t</var>²</span>.” Differentiate: <span class="f"><var>v</var> = −4<var>t</var></span> and <span class="f"><var>a</var> = −4</span> m·s⁻². So <span class="f"><var>v</var> · <var>a</var> = 16<var>t</var> &gt; 0</span> for <span class="f"><var>t</var> &gt; 0</span>: the motion is <b>accelerated</b>, even though <span class="f"><var>x</var></span> decreases. The norm of <span class="f"><var>a</var></span> is 4 m·s⁻², not 2. None of the four options was right.</p>
+        </div>
+        <div class="copy"><span class="tag">On your paper · midterm Oct. 2022, MCQ 3</span>
+          <p><span class="f"><var>x</var> = 4<var>t</var></span>, <span class="f"><var>y</var> = 3<var>t</var>² − 6<var>t</var> + 5</span>: <span class="f"><var class="vec kv">v</var> = (4; 6<var>t</var> − 6)</span>, <span class="f"><var class="vec ka">a</var> = (0; 6)</span>, <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = 36(<var>t</var> − 1)</span>. Decelerated before <span class="f"><var>t</var> = 1</span> s, accelerated afterwards: plain “decelerated” is wrong. <span class="f"><var>v</var><sub><var>x</var></sub> = 4</span> never vanishes, so neither does the velocity.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“Uniform” means neither “constant acceleration” nor “straight trajectory”.</li>
+          <li>Uniform circular motion: <span class="f"><var class="vec ka">a</var> ≠ <var class="vec up">0</var></span> (centripetal acceleration). Uniform rectilinear motion: <span class="f"><var class="vec ka">a</var> = <var class="vec up">0</var></span>.</li>
+          <li>Judging “accelerated” from the sign of <span class="f"><var>x</var></span> or of <span class="f"><var>v</var></span> alone: what matters is the sign of the product <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var></span>.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 integrate -->
+    <section class="sec" id="integrer">
+      <div class="sec-head"><div class="kicker"><span class="mn">4</span>Method 4</div><h2>Integrate with the initial conditions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The way back: from the acceleration (given, or found with the second law) to the position. Each integration adds a constant, and the initial conditions fix it.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Write <span class="f"><var class="vec ka">a</var></span> in components</b> in your coordinate system.</p></div></li>
+          <li><div><p><b>Integrate once</b>: <span class="f"><var>v</var><sub><var>x</var></sub>(<var>t</var>) = ∫ <var>a</var><sub><var>x</var></sub> d<var>t</var> = … + <var>C</var><sub>1</sub></span>. At <span class="f"><var>t</var> = 0</span>, <span class="f"><var>v</var><sub><var>x</var></sub>(0)</span> is the initial velocity: it gives <span class="f"><var>C</var><sub>1</sub></span>.</p></div></li>
+          <li><div><p><b>Integrate again</b>: <span class="f"><var>x</var>(<var>t</var>) = ∫ <var>v</var><sub><var>x</var></sub> d<var>t</var> = … + <var>C</var><sub>2</sub></span>, and <span class="f"><var>C</var><sub>2</sub> = <var>x</var>(0)</span>, the starting position.</p></div></li>
+          <li><div><p><b>Check</b>: set <span class="f"><var>t</var></span> to 0 in your results.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 2 Ex 3, the robot</span>
+          <p>Newton’s second law gives <span class="f"><var>a</var> = <var>F</var>/<var>m</var> = 5</span> m·s⁻². The robot leaves A (<span class="f"><var>x</var> = 0</span>) at 2 m·s⁻¹ at <span class="f"><var>t</var> = 0</span>.</p>
+          <div class="eq left"><span class="nw"><span class="nw"><var>v</var>(<var>t</var>) = 5<var>t</var> + <var>C</var><sub>1</sub></span>, and <span class="f"><var>v</var>(0) = 2</span> gives <span class="f"><var>C</var><sub>1</sub> = 2</span>: <span class="f"><var>v</var>(<var>t</var>) = 5<var>t</var> + 2</span>.</span><span class="nw"><span class="nw"><var>x</var>(<var>t</var>) = <span class="frac"><span>5</span><span>2</span></span><var>t</var>² + 2<var>t</var> + <var>C</var><sub>2</sub></span>, and <span class="f"><var>x</var>(0) = 0</span> gives <span class="f"><var>C</var><sub>2</sub> = 0</span>.</span></div>
+          <p>After one minute: <span class="f"><var>x</var>(60) = 2.5 × 3600 + 2 × 60 = 9120</span> m, that is 9.12 km.</p>
+        </div>
+        <div class="note keep"><span class="tag">The model from the course (free fall)</span><p>A point released from <span class="f"><var>y</var><sub>0</sub> = 5</span> m with no initial velocity, <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> upwards: <span class="f"><var>a</var> = −<var>g</var></span>, <span class="f"><var>v</var>(<var>t</var>) = −<var>g</var><var>t</var></span> (<span class="f"><var>c</var><sub>1</sub> = 0</span>), <span class="f"><var>y</var>(<var>t</var>) = −<span class="frac"><span>1</span><span>2</span></span><var>g</var><var>t</var>² + 5</span> (<span class="f"><var>c</var><sub>2</sub> = 5</span>). It hits the ground when <span class="f"><var>y</var>(<var>T</var>) = 0</span>: <span class="f"><var>T</var> = <span class="sqrt">√<span><span class="frac"><span>10</span><span><var>g</var></span></span></span></span> ≈ 1</span> s.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Forgetting the constant: in TD 1 Ex 1, the car starts from <span class="f"><var>x</var>(0) = 7</span> m, and those 7 m stay in <span class="f"><var>x</var>(<var>t</var>)</span>.</li>
+          <li>Mixing up position and distance travelled: the distance is <span class="f"><var>x</var>(<var>t</var>) − <var>x</var>(0)</span> (the official TD 1 key gives 27 m instead of 20 m).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 trajectory -->
+    <section class="sec" id="trajectoire">
+      <div class="sec-head"><div class="kicker"><span class="mn">5</span>Method 5</div><h2>The trajectory equation</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A relation between <span class="f"><var>x</var></span> and <span class="f"><var>y</var></span> only: the path followed, without saying when. Asked in 6 papers out of 7.</p></div>
+        <ol class="steps">
+          <li><div><p><b>If <span class="f"><var>x</var>(<var>t</var>)</span> is simple</b> (projectile: <span class="f"><var>x</var> = <var>v</var><sub>0</sub> cos<var>α</var> · <var>t</var></span>), isolate <span class="f"><var>t</var></span>, then substitute it into <span class="f"><var>y</var>(<var>t</var>)</span>.</p></div></li>
+          <li><div><p><b>If <span class="f"><var>x</var></span> and <span class="f"><var>y</var></span> contain <span class="f">cos(<var>ω</var><var>t</var>)</span> and <span class="f">sin(<var>ω</var><var>t</var>)</span></b>, isolate them and use <span class="f">cos² + sin² = 1</span>: neither <span class="f"><var>t</var></span> nor <span class="f"><var>ω</var></span> is left.</p></div></li>
+          <li><div><p><b>Name the curve and give its features</b>: centre and radius of a circle, semi-axes of an ellipse, apex of a parabola, ends of a segment.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 1 Ex 3 and midterm Nov. 2021 Ex 3</span>
+          <p>From <span class="f"><var>x</var> = <var>v</var><sub>0</sub> cos<var>α</var> · <var>t</var></span> you get <span class="f"><var>t</var> = <span class="frac"><span><var>x</var></span><span><var>v</var><sub>0</sub> cos<var>α</var></span></span></span>, then in <span class="f"><var>y</var>(<var>t</var>) = <var>v</var><sub>0</sub> sin<var>α</var> · <var>t</var> − <span class="frac"><span>1</span><span>2</span></span><var>g</var><var>t</var>²</span>:</p>
+          <div class="eq"><span class="nw"><span class="nw"><var>y</var>(<var>x</var>) = −<span class="frac"><span><var>g</var></span><span>2<var>v</var><sub>0</sub>² cos²<var>α</var></span></span> <var>x</var>² + <var>x</var> tan<var>α</var></span></span></div>
+          <p>A downward parabola. With “<span class="f">5<var>t</var>²</span>” in the paper (<span class="f"><var>g</var> = 10</span> m·s⁻²), the first coefficient becomes <span class="f">−<span class="frac"><span>5</span><span><var>v</var><sub>0</sub>² cos²<var>α</var></span></span></span>.</p>
+        </div>
+        <div class="copy"><span class="tag">On your paper · midterm Nov. 2017 Ex 1</span>
+          <p><span class="f">sin(<var>ω</var><var>t</var>) = <span class="frac"><span><var>x</var> − 1</span><span><var>R</var></span></span></span> and <span class="f">cos(<var>ω</var><var>t</var>) = <span class="frac"><span><var>y</var> − 2</span><span><var>R</var></span></span></span>, so <span class="f">(<var>x</var> − 1)² + (<var>y</var> − 2)² = <var>R</var>²</span>: a <b>circle</b> with centre C(1; 2) and radius <span class="f">|<var>R</var>|</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Leaving some <span class="f"><var>t</var></span> in <span class="f"><var>y</var>(<var>x</var>)</span>.</li>
+          <li>Forgetting the starting height: launched from <span class="f">(0, <var>h</var>)</span>, <span class="f"><var>y</var>(<var>x</var>) = … + <var>x</var> tan<var>α</var> + <var>h</var></span> (Oct. 2022).</li>
+          <li>Believing that <span class="f"><var>y</var>(<var>x</var>)</span> tells you whether the motion is uniform: it no longer contains time (Oct. 2022, MCQ 2).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 apex -->
+    <section class="sec" id="sommet">
+      <div class="sec-head"><div class="kicker"><span class="mn">6</span>Method 6</div><h2>Apex and point of impact</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Projectile motion came up in the last two papers found. Each question turns into a simple condition.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The apex S</b>: the velocity there is horizontal, <span class="f"><var>v</var><sub><var>y</var></sub>(<var>t</var><sub>S</sub>) = 0</span>. You get <span class="f"><var>t</var><sub>S</sub></span>, then <span class="f"><var>x</var><sub>S</sub> = <var>x</var>(<var>t</var><sub>S</sub>)</span> and <span class="f"><var>y</var><sub>S</sub> = <var>y</var>(<var>t</var><sub>S</sub>)</span>.</p></div></li>
+          <li><div><p><b>The impact P</b>: <span class="f"><var>y</var>(<var>t</var><sub>P</sub>) = </span> landing height (0 for the ground). Keep the positive root, not the starting instant.</p></div></li>
+          <li><div><p><b>The range</b>: <span class="f"><var>x</var><sub>P</sub> = <var>x</var>(<var>t</var><sub>P</sub>)</span>. <b>The speed at impact</b>: <span class="f">‖<var class="vec kv">v</var>(<var>t</var><sub>P</sub>)‖</span>, or faster with energy (method 8).</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · midterm Oct. 2022 Ex 2, questions 8 then 7</span>
+          <p>Launched from <span class="f">(0, <var>h</var>)</span>: <span class="f"><var>v</var><sub><var>y</var></sub> = <var>v</var><sub>0</sub> sin<var>α</var> − <var>g</var><var>t</var></span> vanishes at <span class="f"><var>t</var>′ = <span class="frac"><span><var>v</var><sub>0</sub> sin<var>α</var></span><span><var>g</var></span></span></span>. Substitute into <span class="f"><var>x</var>(<var>t</var>)</span> and <span class="f"><var>y</var>(<var>t</var>)</span>:</p>
+          <div class="eq"><span class="nw"><var>x</var><sub>S</sub> = <span class="frac"><span><var>v</var><sub>0</sub>² sin<var>α</var> cos<var>α</var></span><span><var>g</var></span></span></span><span class="nw"><var>y</var><sub>S</sub> = <var>h</var> + <span class="frac"><span><var>v</var><sub>0</sub>² sin²<var>α</var></span><span>2<var>g</var></span></span></span></div>
+          <p>Question 8 (the time) is needed for question 7 (the coordinates): always read the whole exercise before you start.</p>
+        </div>
+        <div class="note keep"><span class="tag">With numbers</span><p><span class="f"><var>v</var><sub>0</sub> = 20</span> m·s⁻¹, <span class="f"><var>α</var> = 30°</span>, <span class="f"><var>g</var> = 10</span> m·s⁻², launched from the ground: <span class="f"><var>t</var><sub>S</sub> = <span class="frac"><span>20 × 0.5</span><span>10</span></span> = 1</span> s, <span class="f"><var>y</var><sub>S</sub> = <span class="frac"><span>400 × 0.25</span><span>20</span></span> = 5</span> m. <span class="f"><var>y</var> = <var>t</var>(10 − 5<var>t</var>) = 0</span> gives <span class="f"><var>t</var> = 0</span> (the launch) or <span class="f"><var>t</var><sub>P</sub> = 2</span> s, and <span class="f"><var>x</var><sub>P</sub> = 20 cos30° × 2 = 20<span class="sqrt">√<span>3</span></span> ≈ 35</span> m.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>At the apex, only <span class="f"><var>v</var><sub><var>y</var></sub></span> vanishes: <span class="f"><var class="vec kv">v</var> = <var>v</var><sub>0</sub> cos<var>α</var> <var class="vec">u</var><sub><var>x</var></sub></span>, not <span class="f"><var class="vec up">0</var></span>.</li>
+          <li><span class="f"><var>t</var><sub>P</sub> = 2<var>t</var><sub>S</sub></span> only if the launch and the landing are at the same height.</li>
+          <li>The ball in TD 3 Ex 2 clears the bar if <span class="f">3 &lt; <var>y</var>(40) &lt; 8</span> m: you compare a height, you do not look for an apex.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 forces -->
+    <section class="sec" id="forces">
+      <div class="sec-head"><div class="kicker"><span class="mn">7</span>Method 7</div><h2>Forces involved and Newton’s second law</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Never came up in the past midterms, but on the syllabus: the models are TD 2 and the free fall of the course. It is also the method behind the MCQ on the components of a force (4 papers out of 7).</p></div>
+        <ol class="steps">
+          <li><div><p><b>Framework</b> (method 1), then the <b>forces involved</b>: weight <span class="f"><var class="vec kf">W</var> = <var>m</var><var class="vec">g</var></span> (vertical, downwards), surface reaction force <span class="f"><var class="vec kf">R</var></span> (perpendicular to the surface), tension <span class="f"><var class="vec kf">T</var></span> (along the string), friction <span class="f"><var class="vec kf">f</var></span> (against the motion), driving force.</p></div></li>
+          <li><div><p><b>Force diagram</b>: the system is a point, each force is an arrow starting from it. Choose the axes: on an inclined plane, one axis along the slope.</p></div></li>
+          <li><div><p><b>Write the law with vectors</b>: <span class="f"><var>Σ</var><var class="vec kf">F</var> = <var>m</var><var class="vec ka">a</var></span>. At equilibrium, or at constant velocity on a straight line: <span class="f"><var>Σ</var><var class="vec kf">F</var> = <var class="vec up">0</var></span>.</p></div></li>
+          <li><div><p><b>Project</b> each force on each axis, in columns. For an angle, find the adjacent side: it takes the cosine.</p></div></li>
+          <li><div><p><b>Solve</b>, then integrate if you are asked for <span class="f"><var>v</var>(<var>t</var>)</span> or <span class="f"><var>x</var>(<var>t</var>)</span> (method 4).</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 2 Ex 2, a robot at rest on a slope</span>
+          <p>System: the robot, point M of mass <span class="f"><var>m</var></span>. Terrestrial reference frame, assumed Galilean. Forces: <span class="f"><var class="vec kf">W</var></span>, <span class="f"><var class="vec kf">R</var></span>, <span class="f"><var class="vec kf">f</var></span>. Axes: <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span> along the slope, downwards; <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span> perpendicular, upwards. Equilibrium: <span class="f"><var class="vec kf">W</var> + <var class="vec kf">R</var> + <var class="vec kf">f</var> = <var class="vec up">0</var></span>.</p>
+          <div class="eq"><span class="nw"><span class="f"><span class="col"><span><var>m</var><var>g</var> sin<var>α</var></span><span>−<var>m</var><var>g</var> cos<var>α</var></span></span> + <span class="col"><span>0</span><span><var>R</var></span></span> + <span class="col"><span>−<var>f</var></span><span>0</span></span> = <span class="col"><span>0</span><span>0</span></span></span></span></div>
+          <p>Along <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span>: <span class="f"><var>f</var> = <var>m</var><var>g</var> sin<var>α</var></span>. Along <span class="f"><var class="vec">u</var><sub><var>y</var></sub></span>: <span class="f"><var>R</var> = <var>m</var><var>g</var> cos<var>α</var></span>. With <span class="f"><var>α</var> = 30°</span>: <span class="f"><var>f</var> = <span class="frac"><span><var>m</var><var>g</var></span><span>2</span></span></span> and <span class="f"><var>R</var> = <span class="frac"><span><span class="sqrt">√<span>3</span></span></span><span>2</span></span><var>m</var><var>g</var></span>.</p>
+        </div>
+        <div class="copy"><span class="tag">MCQ · midterm Nov. 2017, question 2</span>
+          <p><span class="f"><var class="vec kf">F</var><sub>1</sub></span> points up and to the right, and <span class="f"><var>α</var></span> is the angle between the <span class="f"><var>O</var><var>y</var></span> axis and <span class="f"><var class="vec kf">F</var><sub>1</sub></span>. The side adjacent to <span class="f"><var>α</var></span> lies on <span class="f"><var>O</var><var>y</var></span>: <span class="f"><var class="vec kf">F</var><sub>1</sub> = (<var>F</var><sub>1</sub> sin<var>α</var>; <var>F</var><sub>1</sub> cos<var>α</var>)</span>. Were <span class="f"><var>α</var></span> measured from <span class="f"><var>O</var><var>x</var></span>, it would be <span class="f">(<var>F</var><sub>1</sub> cos<var>α</var>; <var>F</var><sub>1</sub> sin<var>α</var>)</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Swapping sine and cosine on a slope: the angle between <span class="f"><var class="vec kf">W</var></span> and the normal to the plane is <span class="f"><var>α</var></span>, so the normal component is <span class="f"><var>m</var><var>g</var> cos<var>α</var></span>.</li>
+          <li>Mixing up component and norm: in a fall, <span class="f"><var>v</var><sub><var>y</var></sub> = −<var>g</var><var>t</var></span> is negative; the speed is <span class="f"><var>g</var><var>t</var></span>.</li>
+          <li>Writing <span class="f"><var class="vec kf">f</var> = −<var>α</var><var class="vec kv">v</var></span> and forgetting that <span class="f"><var>v</var><sub><var>y</var></sub> &lt; 0</span> in a fall: projected on an upward axis, <span class="f"><var>f</var><sub><var>y</var></sub> = −<var>α</var><var>v</var><sub><var>y</var></sub> &gt; 0</span>.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 8 energy -->
+    <section class="sec" id="energie">
+      <div class="sec-head"><div class="kicker"><span class="mn">8</span>Method 8</div><h2>Work-kinetic energy theorem, mechanical energy</h2></div>
+      <div class="stack">
+        <div class="prose"><p>For a speed between two points, without time, energy is faster than the second law. If you are asked for a duration or a trajectory, go back to the second law.</p></div>
+        <ol class="steps">
+          <li><div><p><b>List the forces</b> and the work done by each one between A and B: <span class="f"><var>W</var>(<var class="vec kf">W</var>) = <var>m</var><var>g</var>(<var>z</var><sub>A</sub> − <var>z</var><sub>B</sub>)</span>, positive when the point goes down; <span class="f"><var>W</var>(<var class="vec kf">R</var>) = 0</span> if <span class="f"><var class="vec kf">R</var></span> is perpendicular to the displacement; constant friction: <span class="f"><var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> · <var>A</var><var>B</var></span>; constant force: <span class="f"><var>W</var>(<var class="vec kf">F</var>) = <var>F</var> · <var>A</var><var>B</var> · cos<var>θ</var></span>, with <span class="f"><var>θ</var></span> the angle between <span class="f"><var class="vec kf">F</var></span> and <span class="f"><var class="vec">AB</var></span>.</p></div></li>
+          <li><div><p><b>Work-kinetic energy theorem</b>: <span class="f"><span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>B</sub>² − <span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>A</sub>² = <var>Σ</var><var>W</var><sub><var>A</var>→<var>B</var></sub></span>.</p></div></li>
+          <li><div><p><b>Or, if only the weight does work</b> (no friction): <span class="f"><var>E</var><sub><var>M</var></sub> = <var>E</var><sub><var>k</var></sub> + <var>E</var><sub><var>p</var></sub></span> is conserved, with <span class="f"><var>E</var><sub><var>p</var></sub> = <var>m</var><var>g</var><var>z</var></span> (<span class="f"><var>E</var><sub><var>p</var></sub> = 0</span> on the ground). Say why it is conserved.</p></div></li>
+          <li><div><p><b>Solve</b> for <span class="f"><var>v</var><sub>B</sub></span> (positive root), then the numerical value.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 4 Ex 4, the circular arc</span>
+          <p>From A to B, with no friction, <span class="f"><var class="vec kf">R</var></span> does no work: mechanical energy is conserved. B is <span class="f"><var>h</var> = <var>R</var>(1 − cos<var>θ</var>)</span> lower than A.</p>
+          <div class="eq"><span class="nw"><span class="nw"><span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>A</sub>² + <var>m</var><var>g</var><var>h</var> = <span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>B</sub>²</span></span><span class="nw"><span class="nw"><var>v</var><sub>B</sub> = <span class="sqrt">√<span><var>v</var><sub>A</sub>² + 2<var>g</var><var>R</var>(1 − cos<var>θ</var>)</span></span></span></span><span class="nw"><span class="nw"><var>v</var><sub>B</sub> = <span class="sqrt">√<span>9 + 16</span></span> = 5.0</span> m·s⁻¹</span></div>
+          <p>Then on BC, only friction does work: <span class="f"><span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>C</sub>² − <span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>B</sub>² = −<var>f</var> · <var>B</var><var>C</var></span>, so <span class="f"><var>f</var> = <span class="frac"><span><var>m</var>(<var>v</var><sub>B</sub>² − <var>v</var><sub>C</sub>²)</span><span>2<var>B</var><var>C</var></span></span> = <span class="frac"><span>0.10 × 16</span><span>4</span></span> = 0.40</span> N.</p>
+        </div>
+        <div class="note keep"><span class="tag">The result to know</span><p>Free fall from a height <span class="f"><var>h</var></span> with no initial velocity: <span class="f"><var>m</var><var>g</var><var>h</var> = <span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var>²</span>, so <span class="f"><var>v</var> = <span class="sqrt">√<span>2<var>g</var><var>h</var></span></span></span> (TD 4 Ex 1). The mass does not matter.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Work is a number (in J), not a vector, and its sign matters: driving if positive, resisting if negative. In English, mind the letters: weight <span class="f"><var class="vec kf">W</var></span> (a vector), work <span class="f"><var>W</var><sub><var>A</var>→<var>B</var></sub></span> (a number).</li>
+          <li>The angle in the work is the one between the force and the <b>displacement</b>, not the vertical.</li>
+          <li>With friction, mechanical energy decreases: do not write <span class="f"><var>E</var><sub><var>M</var></sub> =</span> constant.</li>
+          <li>TD 4 Ex 3: with the data given, the robot never reaches C (the balance gives <span class="f"><span class="frac"><span>1</span><span>2</span></span><var>m</var><var>v</var><sub>C</sub>² &lt; 0</span>). An impossible result points to a mistake in the statement or in your work: say so.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 9 polar -->
+    <section class="sec" id="polaires">
+      <div class="sec-head"><div class="kicker"><span class="mn">9</span>Method 9</div><h2>Switch to polar coordinates: velocity and acceleration</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The most frequent chapter in the past midterms: velocity in polar coordinates (6 papers out of 7), acceleration and the circle (7 out of 7). The papers often write <span class="f"><var>ρ</var></span> and <span class="f"><var class="vec">u</var><sub><var>ρ</var></sub></span> for the course’s <span class="f"><var>r</var></span> and <span class="f"><var class="vec">u</var><sub><var>r</var></sub></span>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The basis</b>: <span class="f"><var>r</var> = <var>O</var><var>M</var> &gt; 0</span>, <span class="f"><var>θ</var></span> the angle from <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span> to <span class="f"><var class="vec kp">OM</var></span>. <span class="f"><var class="vec">u</var><sub><var>r</var></sub> = cos<var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + sin<var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></span> and <span class="f"><var class="vec">u</var><sub><var>θ</var></sub> = −sin<var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos<var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></span> (turned by +90°, anti-clockwise).</p></div></li>
+          <li><div><p><b>Its derivatives</b>: the basis turns with the point. <span class="f"><span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>t</var></span></span> = <var>θ̇</var> <var class="vec">u</var><sub><var>θ</var></sub></span> and <span class="f"><span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>t</var></span></span> = −<var>θ̇</var> <var class="vec">u</var><sub><var>r</var></sub></span>.</p></div></li>
+          <li><div><p><b>The three vectors</b>:</p><div class="eq"><span class="nw"><span class="nw"><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub></span></span><span class="nw"><span class="nw"><var class="vec kv">v</var> = ṙ <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var>θ̇</var> <var class="vec">u</var><sub><var>θ</var></sub></span></span><span class="nw"><span class="nw"><var class="vec ka">a</var> = (<var>r̈</var> − <var>r</var><var>θ̇</var>²) <var class="vec">u</var><sub><var>r</var></sub></span></span><span class="nw"><span class="nw">+ (2ṙ<var>θ̇</var> + <var>r</var><var>θ̈</var>) <var class="vec">u</var><sub><var>θ</var></sub></span></span></div></div></li>
+          <li><div><p><b>The circle</b>: <span class="f"><var>r</var> = <var>R</var></span> constant, so <span class="f">ṙ = <var>r̈</var> = 0</span>: <span class="f"><var class="vec kv">v</var> = <var>R</var><var>θ̇</var> <var class="vec">u</var><sub><var>θ</var></sub></span> and <span class="f"><var class="vec ka">a</var> = −<var>R</var><var>θ̇</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var>θ̈</var> <var class="vec">u</var><sub><var>θ</var></sub></span>. <b>Uniform</b> as well: <span class="f"><var>θ̇</var> = <var>ω</var></span> constant, <span class="f"><var>θ̈</var> = 0</span>, <span class="f"><var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>, pointing to the centre.</p></div></li>
+          <li><div><p><b>From Cartesian coordinates</b>: <span class="f"><var>r</var> = <span class="sqrt">√<span><var>x</var>² + <var>y</var>²</span></span></span>, and <span class="f"><var>x</var> = <var>r</var> cos<var>θ</var></span>, <span class="f"><var>y</var> = <var>r</var> sin<var>θ</var></span> give <span class="f"><var>θ</var></span>.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · midterm Nov. 2021 Ex 2, question 5 (2 points)</span>
+          <p>“Write the general expression of the instantaneous velocity vector and give its expression in the polar basis, explaining each step of the calculation.”</p>
+          <div class="eq left"><span class="nw"><span class="nw"><var class="vec kv">v</var> = <span class="frac"><span>d<var class="vec kp">OM</var></span><span>d<var>t</var></span></span></span> (definition of velocity)</span><span class="nw"><span class="nw">= <span class="frac"><span>d(<var>ρ</var> <var class="vec">u</var><sub><var>ρ</var></sub>)</span><span>d<var>t</var></span></span> = <var>ρ̇</var> <var class="vec">u</var><sub><var>ρ</var></sub> + <var>ρ</var> <span class="frac"><span>d<var class="vec">u</var><sub><var>ρ</var></sub></span><span>d<var>t</var></span></span></span> (derivative of a product)</span><span class="nw"><span class="nw">= <var>ρ̇</var> <var class="vec">u</var><sub><var>ρ</var></sub> + <var>ρ</var> <span class="frac"><span>d<var class="vec">u</var><sub><var>ρ</var></sub></span><span>d<var>θ</var></span></span> <span class="frac"><span>d<var>θ</var></span><span>d<var>t</var></span></span> = <var>ρ̇</var> <var class="vec">u</var><sub><var>ρ</var></sub> + <var>ρ</var><var>θ̇</var> <var class="vec">u</var><sub><var>θ</var></sub></span></span></div>
+        </div>
+        <div class="copy"><span class="tag">On your paper · TD 5 Ex 2, the merry-go-round</span>
+          <p><span class="f"><var>x</var> = <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>)</span>, <span class="f"><var>y</var> = <var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>)</span>: <span class="f"><var>r</var> = <var>r</var><sub>0</sub></span> and <span class="f"><var>θ</var> = <var>ω</var><var>t</var></span>. So <span class="f"><var class="vec kp">OM</var> = <var>r</var><sub>0</sub> <var class="vec">u</var><sub><var>r</var></sub></span>, <span class="f"><var class="vec kv">v</var> = <var>r</var><sub>0</sub><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span>, <span class="f"><var class="vec ka">a</var> = −<var>r</var><sub>0</sub><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>: uniform circular motion, centripetal acceleration of norm <span class="f"><var>r</var><sub>0</sub><var>ω</var>²</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><span class="f"><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub></span>, with no <span class="f"><var class="vec">u</var><sub><var>θ</var></sub></span> term: <span class="f"><var>θ</var></span> is an angle, not a length.</li>
+          <li>Differentiating <span class="f"><var>r</var> <var class="vec">u</var><sub><var>r</var></sub></span> as if <span class="f"><var class="vec">u</var><sub><var>r</var></sub></span> were fixed: you lose <span class="f"><var>r</var><var>θ̇</var> <var class="vec">u</var><sub><var>θ</var></sub></span> in the velocity, and <span class="f">−<var>r</var><var>θ̇</var>²</span> and <span class="f">2ṙ<var>θ̇</var></span> in the acceleration.</li>
+          <li>The minus sign of <span class="f"><var class="vec">u</var><sub><var>θ</var></sub></span> is on the <span class="f"><var class="vec">u</var><sub><var>x</var></sub></span> component: <span class="f">−sin<var>θ</var></span>.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 dimensions -->
+    <section class="sec" id="homogeneite">
+      <div class="sec-head"><div class="kicker"><span class="mn">10</span>Method 10</div><h2>Check the dimensions, then the numerical value</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>The literal result first</b>, boxed. The numerical value comes next, with its SI unit.</p></div></li>
+          <li><div><p><b>Same unit</b> for every term of a sum and for both sides of an equals sign.</p></div></li>
+          <li><div><p><b>Dimensionless</b>: whatever sits inside a cos, a sin or an exponential. <span class="f"><var>ω</var><var>t</var></span> is an angle: <span class="f"><var>ω</var></span> in rad·s⁻¹.</p></div></li>
+          <li><div><p><b>Unit of a coefficient</b>: isolate it and replace each quantity by its unit. N = kg·m·s⁻², J = N·m, W = J·s⁻¹.</p></div></li>
+        </ol>
+        <div class="copy"><span class="tag">On your paper · TD 2 Ex 3, part II, question 2</span>
+          <p><span class="f"><var>f</var> = <var>α</var><var>v</var></span>, so <span class="f">[<var>α</var>] = <span class="frac"><span>[<var>f</var>]</span><span>[<var>v</var>]</span></span> = <span class="frac"><span><var>k</var><var>g</var>·<var>m</var>·<var>s</var>⁻²</span><span><var>m</var>·<var>s</var>⁻¹</span></span></span> = kg·s⁻¹.</p>
+        </div>
+        <div class="copy"><span class="tag">Quick check</span>
+          <p><span class="f"><var>v</var> = <span class="sqrt">√<span>2<var>g</var><var>h</var></span></span></span>: <span class="f"><span class="sqrt">√<span><var>m</var>·<var>s</var>⁻² × <var>m</var></span></span></span> = m·s⁻¹, a velocity indeed. <span class="f"><var>R</var><var>ω</var>²</span>: m × s⁻² = m·s⁻², an acceleration. The TD 5 sheet (Ex 2, Q6) gives <span class="f"><var class="vec kv">v</var> = −<var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + …</span>: metres, <span class="f"><var>ω</var></span> is missing.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>A misplaced root: <span class="f"><span class="sqrt">√<span><span class="frac"><span>2<var>h</var></span><span><var>g</var></span></span></span></span></span>, not <span class="f"><span class="frac"><span><span class="sqrt">√<span>2<var>h</var></span></span></span><span><var>g</var></span></span></span>; <span class="f"><span class="sqrt">√<span>2<var>g</var><var>h</var></span></span></span>, not <span class="f">2<var>g</var><var>h</var></span>.</li>
+          <li>Giving a number with no unit, or a negative norm.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 11 conversions -->
+    <section class="sec" id="conversions">
+      <div class="sec-head"><div class="kicker"><span class="mn">11</span>Method 11</div><h2>Conversions and arithmetic without a calculator</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="card"><span class="k">Speeds</span><p>km/h → m·s⁻¹: divide by 3.6. 36 km/h = 10 m·s⁻¹, 90 km/h = 25 m·s⁻¹, 180 km/h = 50 m·s⁻¹.</p></div>
+          <div class="card"><span class="k">Durations</span><p>5 min 20 s = 320 s; 1 h = 3600 s. Always in seconds before computing.</p></div>
+          <div class="card"><span class="k">Special angles</span><p><span class="f">sin30° = cos60° = <span class="frac"><span>1</span><span>2</span></span></span>; <span class="f">cos30° = sin60° = <span class="frac"><span><span class="sqrt">√<span>3</span></span></span><span>2</span></span> ≈ 0.87</span>; <span class="f">cos45° = sin45° = <span class="frac"><span><span class="sqrt">√<span>2</span></span></span><span>2</span></span> ≈ 0.71</span>.</p></div>
+          <div class="card"><span class="k">Gravity</span><p><span class="f"><var>g</var> = 10</span> m·s⁻² when the paper says so. “<span class="f">5<var>t</var>²</span>” in a statement is <span class="f"><span class="frac"><span>1</span><span>2</span></span><var>g</var><var>t</var>²</span> with <span class="f"><var>g</var> = 10</span>.</p></div>
+        </div>
+        <div class="copy"><span class="tag">On your paper · TD 1 Ex 2, the TGV then the Formula 1</span>
+          <p>From 90 to 320 km/h in 5 min 20 s: <span class="f"><var>Δ</var><var>v</var> = 230</span> km/h ≈ 63.9 m·s⁻¹ and <span class="f"><var>Δ</var><var>t</var> = 320</span> s, so <span class="f"><var>a</var> ≈ <span class="frac"><span>63.9</span><span>320</span></span> ≈ 0.20</span> m·s⁻², about <span class="f">0.02<var>g</var></span>. The Formula 1 goes from 0 to 180 km/h = 50 m·s⁻¹ in 4 s: <span class="f"><var>a</var> = 12.5</span> m·s⁻² <span class="f">= 1.25<var>g</var></span> (the official key rounds it to 12).</p>
+        </div>
+        <div class="note keep"><span class="tag">Powers of 10 (TD 5 Ex 3)</span><p><span class="f"><var>v</var> = <span class="sqrt">√<span><span class="frac"><span><var>G</var><var>M</var><sub>T</sub></span><span><var>r</var></span></span></span></span></span> with <span class="f"><var>G</var> = 6.67 × 10<sup>−11</sup></span>, <span class="f"><var>M</var><sub>T</sub> = 6 × 10<sup>24</sup></span> kg, <span class="f"><var>r</var> = 1.28 × 10<sup>7</sup></span> m: <span class="f">6.67 × 6 ≈ 40</span>, then <span class="f"><span class="frac"><span>40 × 10<sup>13</sup></span><span>1.28 × 10<sup>7</sup></span></span> ≈ 31 × 10<sup>6</sup></span>, and <span class="f"><span class="sqrt">√<span>3.1 × 10<sup>7</sup></span></span> ≈ 5.6 × 10<sup>3</sup></span> m·s⁻¹. Group the mantissas on one side, the powers of 10 on the other.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ traps -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mn">!</span>Reread the day before</div><h2>The traps</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Vectors</span><ul>
+            <li>A vector is not a number: <span class="f"><var class="vec kp">OM</var> = <var>x</var><var class="vec">u</var><sub><var>x</var></sub> + <var>y</var><var class="vec">u</var><sub><var>y</var></sub></span>, never <span class="f"><var>x</var> + <var>y</var></span>.</li>
+            <li><span class="f"><var class="vec kv">v</var></span> is tangent to the trajectory, not collinear to <span class="f"><var class="vec kp">OM</var></span>.</li>
+            <li>Component (signed) ≠ norm (positive).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Motion</span><ul>
+            <li>Uniform = constant norm of the velocity.</li>
+            <li>Accelerated or decelerated: sign of <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var></span>, not of <span class="f"><var>x</var></span>.</li>
+            <li>Uniform circular motion: <span class="f"><var class="vec ka">a</var></span> centripetal, not zero.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Calculation</span><ul>
+            <li>Integration constants fixed at <span class="f"><var>t</var> = 0</span>.</li>
+            <li>No <span class="f"><var>t</var></span> left in <span class="f"><var>y</var>(<var>x</var>)</span>.</li>
+            <li><span class="f"><var>t</var> = 0</span> is the launch, not the impact.</li>
+            <li>Factor <span class="f"><var>ω</var></span> when differentiating <span class="f">cos(<var>ω</var><var>t</var>)</span>.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Forces and energy</span><ul>
+            <li>Sine or cosine: find the side adjacent to the angle.</li>
+            <li>Direction of the vertical axis, sign of the weight.</li>
+            <li>Work done by the weight <span class="f"><var>m</var><var>g</var>(<var>z</var><sub>A</sub> − <var>z</var><sub>B</sub>)</span>: positive going down.</li>
+            <li>Friction: mechanical energy decreases.</li>
+          </ul></div>
+        </div>
+        <div class="note exam"><span class="tag">Mistakes in the official documents</span><p>Do not copy them: TD 1 key (a position given for a distance, 12 instead of 12.5 m·s⁻²), TD 5 sheet Ex 2 Q6 (factor <span class="f"><var>ω</var></span> missing), TD 4 Ex 3 (the robot does not reach C), course p. 5 (gravity written without a minus sign: the force is attractive, <span class="f"><var class="vec kf">F</var> = −<span class="frac"><span><var>G</var><var>m</var><sub>1</sub><var>m</var><sub>2</sub></span><span><var>d</var>²</span></span><var class="vec">u</var><sub>12</sub></span> with <span class="f"><var class="vec">u</var><sub>12</sub></span> from 1 to 2, for the force exerted by 1 on 2), November 2021 key (MCQ 1: the right answer is c). The English course also says the velocity is collinear to “the position vector”: it is tangent to the trajectory.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/meca.js"></script>
+</body>
+</html>

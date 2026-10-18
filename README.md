@@ -15,9 +15,10 @@ Tout le site existe en français et en anglais (section anglophone) : bouton **F
 | `annales/` | Tous les sujets de partiels de mi-semestre S1 retrouvés (toutes matières), avec liens vers les PDF et les corrigés |
 | `fiches/` | Les fiches d’une page de chaque matière |
 | `elec/` | Électronique (Outils d’analyse de circuits) : accueil, 3 chapitres de cours interactifs, méthodes, entraînement, annales commentées, fiche A4 |
+| `physique/` | Physique · Mécanique du point : accueil, 4 chapitres (cinématique cartésienne, forces et lois de Newton, travail et énergie, coordonnées polaires), méthodes de rédaction, entraînement (partiels et TD corrigés), annales commentées, fiche A4 |
 | `taa/` | Algo · Types algébriques abstraits : accueil, 3 chapitres (types abstraits, listes, piles et files), méthodes, entraînement avec générateurs, annales commentées, fiche A4 |
 
-Les autres matières (maths, physique, Caml, archi…) arrivent quand leurs cours sont ajoutés ; leurs annales
+Les autres matières (maths, Caml, archi…) arrivent quand leurs cours sont ajoutés ; leurs annales
 sont déjà listées dans `annales/`.
 
 ## L’ouvrir
@@ -46,8 +47,9 @@ assets/css/   shell.css (barre de navigation), site.css (accueil, QCM, annales),
               circuit.css (schémas), qcm.css (cartes de questions), taa.css (cahier de spécification TAA)
 assets/js/    core.js (stockage, thème, progression, navigation), circuit.js (schémas SVG à partir d’une description),
               qcm-engine.js (moteur de questions), elec.js (comportements des pages élec),
-              spec.js (mise en forme des spécifications), taa.js (réécriture de termes, bancs TAA)
-data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js, taa/*.js (sujets et exercices)
+              spec.js (mise en forme des spécifications), taa.js (réécriture de termes, bancs TAA),
+              meca.js (pages de physique, repères, trajectoires, vecteurs)
+data/         annales.js (index des sujets), qcm/*.js (banques de questions), elec/*.js, taa/*.js, physique/*.js (sujets et exercices)
 data/en/      textes anglais des mêmes fichiers, posés par-dessus le français (pages *.en.html)
 tools/        scripts de génération et de vérification
 ```

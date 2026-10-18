@@ -186,12 +186,19 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/en/taa/ex-annales.js"></script>
 <script src="data/taa/ex-externes.js"></script>
 <script src="data/en/taa/ex-externes.js"></script>
+<script src="data/physique/exams.js"></script>
+<script src="data/en/physique/exams.js"></script>
+<script src="data/physique/ex-annales.js"></script>
+<script src="data/en/physique/ex-annales.js"></script>
+<script src="data/physique/ex-td.js"></script>
+<script src="data/en/physique/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [] };
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [] };
   function nEx(sid) { return (EXS[sid] || []).length; }
+  function nChap(s) { var n = s.chapters.length; return (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][n] || n) + ' chapter' + (n > 1 ? 's' : ''); }
   function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
   var MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
   /* midterm papers of a subject (algo: TAA and Caml share the papers from before 2023) */
@@ -288,8 +295,8 @@ a.tool:hover{border-color:var(--accent)}
       return '<article class="subj ready subj-' + s.id + '">' +
         '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
         '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">ready</span></div>' +
-        '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
-        '<p>' + s.exam + '. Three chapters, methods, ' + (NEX ? NEX + ' exercises with solutions, ' : '') + bank.length + ' MCQ questions and the ' + nAnn + ' midterm papers we found.</p>' +
+        '<span class="code">' + (s.code ? s.code + ' · ' : '') + s.course + '</span>' +
+        '<p>' + s.exam + '. ' + nChap(s) + ', methods, ' + (NEX ? NEX + ' exercises with solutions, ' : '') + bank.length + ' MCQ questions and the ' + nAnn + ' midterm papers we found.</p>' +
         '<ul class="chapters">' + chapters + '</ul>' +
         '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Open') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Practice</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Summary sheet</a>' : '') + '</div>' +
         '</div><div class="meters">' +

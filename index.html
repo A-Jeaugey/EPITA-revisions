@@ -166,12 +166,16 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/taa/exams.js"></script>
 <script src="data/taa/ex-annales.js"></script>
 <script src="data/taa/ex-externes.js"></script>
+<script src="data/physique/exams.js"></script>
+<script src="data/physique/ex-annales.js"></script>
+<script src="data/physique/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [] };
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [] };
   function nEx(sid) { return (EXS[sid] || []).length; }
+  function nChap(s) { var n = s.chapters.length; return (['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'][n] || n) + ' chapitre' + (n > 1 ? 's' : ''); }
   /* sujets de partiel d’une matière (algo : TAA et Caml partagent les sujets d’avant 2023) */
   function annOf(s) {
     var A = window.ANNALES || { midterms: [] }, id = s.annalesId || s.id;
@@ -266,8 +270,8 @@ a.tool:hover{border-color:var(--accent)}
       return '<article class="subj ready subj-' + s.id + '">' +
         '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
         '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">prêt</span></div>' +
-        '<span class="code">' + s.code + ' · ' + s.course + '</span>' +
-        '<p>' + s.exam + '. Trois chapitres, des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés.</p>' +
+        '<span class="code">' + (s.code ? s.code + ' · ' : '') + s.course + '</span>' +
+        '<p>' + s.exam + '. ' + nChap(s) + ', des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés.</p>' +
         '<ul class="chapters">' + chapters + '</ul>' +
         '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Ouvrir') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Entraînement</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Fiche</a>' : '') + '</div>' +
         '</div><div class="meters">' +
