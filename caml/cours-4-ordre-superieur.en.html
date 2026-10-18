@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Higher-order functions · Caml</title>
+<meta name="description" content="Caml, chapter 4: functions as values, anonymous functions, partial application, functions as parameters, and the schemes of the higher-order tutorial written by hand: for_all, exists, find, map, filter, partition, sorting by an order, for_all2, process_list, fold_left.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Caml · chapter 4: higher-order functions">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Chapter 4 of 4</div>
+      <h1>A function is a value <span class="w">like any other.</span></h1>
+      <p class="lead">It has a type, it can be named, passed as a parameter, returned as a result. With these ideas, a single function such as <code class="ml">for_all</code> or <code class="ml">map</code> writes a whole family of list traversals. This chapter follows the higher-order tutorial: at the exam, these functions are written by hand, without <code class="ml">List.map</code>.</p>
+      <div class="chips"><span class="chip">≈ 50 min</span><span class="chip">8 parts</span><span class="chip">higher-order tutorial (td Caml 2)</span><span class="chip ex">higher-order: 7 subjects out of 9</span></div>
+    </div>
+<pre data-ml-repl data-mode="guess" data-title="Higher-order tutorial, exercise 1.1 · empty environment" id="heroRepl" aria-label="Interactive loop: guess the Caml answer to each phrase">
+# let succ = function x -> x + 1 ;;
+val succ : int -> int = &lt;fun&gt;
+# (function x -> x + 1) 5 ;;
+- : int = 6
+# let times = function x -> function y -> x * y ;;
+val times : int -> int -> int = &lt;fun&gt;
+# let double = times 2 ;;
+val double : int -> int = &lt;fun&gt;
+# let double_fun f x = double (f x) ;;
+val double_fun : ('a -> int) -> 'a -> int = &lt;fun&gt;
+# double_fun (function x -> x + 1) ;;
+- : int -> int = &lt;fun&gt;
+</pre>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 4 · Higher-order functions</div>
+    <ol>
+      <li><a href="#s1"><span class="calls" data-n="1"></span><span>A function is a value</span></a></li>
+      <li><a href="#s2"><span class="calls" data-n="2"></span><span>Functions that return functions</span></a></li>
+      <li><a href="#s3"><span class="calls" data-n="3"></span><span>A function as a parameter</span></a></li>
+      <li><a href="#s4"><span class="calls" data-n="4"></span><span>Predicates: for_all, exists, find</span></a></li>
+      <li><a href="#s5"><span class="calls" data-n="5"></span><span>Building: map, filter, partition</span></a></li>
+      <li><a href="#s6"><span class="calls" data-n="6"></span><span>An order function: sorting</span></a></li>
+      <li><a href="#s7"><span class="calls" data-n="7"></span><span>Two lists: for_all2</span></a></li>
+      <li><a href="#s8"><span class="calls" data-n="8"></span><span>process_list and fold_left</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is drawn as a call trace: one more line, one more indentation step. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Caml home</a><a href="cours-3-listes.html">← Chapter 3: lists</a><a href="entrainement.html">Practise on past exams →</a><a href="../qcm/index.html#caml">Caml MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">A function is a value</a></li><li><a href="#s2">Functions that return functions</a></li><li><a href="#s3">A function as a parameter</a></li><li><a href="#s4">Predicates: for_all, exists, find</a></li>
+      <li><a href="#s5">Building: map, filter, partition</a></li><li><a href="#s6">An order function: sorting</a></li><li><a href="#s7">Two lists: for_all2</a></li><li><a href="#s8">process_list and fold_left</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="1"></span>Part 1</div><h2>A function is a value</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In chapter 1, a function was defined with <code class="ml">let f x = …</code>. It is in fact a <b>value</b>, like <code class="ml">3</code> or <code class="ml">"abc"</code>: it has a type, and it can be written without a name, with <code class="ml">function</code>. It is then called an <b>anonymous function</b>.</p>
+        </div>
+<pre data-ml-repl>
+# function x -> x + 1 ;;
+- : int -> int = &lt;fun&gt;
+# (function x -> x + 1) 5 ;;
+- : int = 6
+# let succ = function x -> x + 1 ;;
+val succ : int -> int = &lt;fun&gt;
+# succ ;;
+- : int -> int = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>The first phrase is an expression: Caml answers with <code>-</code>, its type <code class="ml">int -> int</code> and <code>&lt;fun&gt;</code>. The second one applies it to 5 without naming it. The third one names it: it is exactly the definition <code class="ml">let succ x = x + 1</code>.</p></div>
+        <div class="tbl"><table>
+          <caption class="sr-only">Two ways of writing the same function</caption>
+          <thead><tr><th>Parameters left of the =</th><th>With function</th><th>Caml answer</th></tr></thead>
+          <tbody>
+            <tr><td><code class="ml">let succ x = x + 1</code></td><td><code class="ml">let succ = function x -> x + 1</code></td><td><code data-ml-ans>val succ : int -> int = &lt;fun&gt;</code></td></tr>
+            <tr><td><code class="ml">let times x y = x * y</code></td><td><code class="ml">let times = function x -> function y -> x * y</code></td><td><code data-ml-ans>val times : int -> int -> int = &lt;fun&gt;</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Like any value, a function can be stored in a list or in a pair. The parentheses of the type show where the function is:</p></div>
+<pre data-ml-repl>
+# let ops = [succ; (function x -> 2 * x); (function x -> x * x)] ;;
+val ops : (int -> int) list = [&lt;fun&gt;; &lt;fun&gt;; &lt;fun&gt;]
+# (succ, "succ") ;;
+- : (int -> int) * string = (&lt;fun&gt;, "succ")
+# function x -> x ;;
+- : 'a -> 'a = &lt;fun&gt;
+</pre>
+        <div class="prose">
+          <p><code class="ml">(int -> int) list</code> is a list of functions from <code class="ml">int</code> to <code class="ml">int</code>. The last function returns its parameter without using it: the parameter can be of any type, hence <code class="ml">'a -> 'a</code>.</p>
+          <p><b>Operators are functions too</b>, with two parameters. In parentheses, they are used like an ordinary function:</p>
+        </div>
+<pre data-ml-repl>
+# (+) ;;
+- : int -> int -> int = &lt;fun&gt;
+# (+) 2 3 ;;
+- : int = 5
+# (&lt;) ;;
+- : 'a -> 'a -> bool = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><code class="ml">(&lt;)</code> computes the same thing as <code class="ml">function x -> function y -> x &lt; y</code>. The official solution of October 2022 passes <code class="ml">(=)</code> to a function this way (part 7). For multiplication, write <code class="ml">( * )</code> with spaces: <code>(*</code> opens a comment.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">function x -> e</code> is a function without a name, with a single parameter (chapter 1, part 7). For two parameters: <code class="ml">function x -> function y -> e</code>.</li>
+          <li>A function has a type and its value is <code>&lt;fun&gt;</code>. It can be named, stored in a list, passed as a parameter (part 3) and returned as a result (part 2).</li>
+          <li>The exam subjects write <code class="ml">function</code>, never the shortcut <code class="ml">fun</code>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: an anonymous function goes to the end of the phrase</span>
+<pre data-ml-repl>
+# function x -> x + 1 5 ;;
+Error: This expression has type int
+       This is not a function; it cannot be applied.
+# (function x -> x + 1) 5 ;;
+- : int = 6
+</pre>
+          <p>Everything after the arrow belongs to the function: Caml reads <code class="ml">x + (1 5)</code> and refuses to apply the integer 1 to 5. Put an anonymous function in parentheses as soon as it is not alone: to apply it, and to pass it as an argument.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: two functions cannot be compared</span>
+<pre data-ml-repl>
+# succ = (function x -> x + 1) ;;
+Exception: Invalid_argument "compare: functional value".
+# succ = succ ;;
+Exception: Invalid_argument "compare: functional value".
+</pre>
+          <p>The phrase is well typed, but <code class="ml">=</code> cannot compare two functions, even identical ones: it raises an exception (seminar, exercise 1.2). A list or a pair that contains a function cannot be compared either.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>The examples of five subjects pass an anonymous function as an argument: <code class="ml">is_image (function x -> x * 2) [1; 2; 3; 4; 5] [2; 4; 6; 8; 10]</code> (October 2018), <code class="ml">insert 12 [1;5;9;13;15;28] (function x -> function y -> x &lt;= y)</code> (April 2019), <code class="ml">insert_post 42 (function y -> y mod 2 = 0) [5; -7; 2; 4; 1]</code> (October 2022), <code class="ml">split (function x -> x = 3) [1; 2; 3; 4; 5]</code> (October 2023), <code class="ml">insert_x 7 (function x -> function y -> x &lt; y) [1; 3; 5; 9]</code> (October 2024).</li>
+          <li>Always in parentheses, always with <code class="ml">function</code>. Read them as values: the function you write receives them as a parameter.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="2"></span>Part 2</div><h2>Functions that return functions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A function with two parameters is in fact a function with one parameter that <b>returns a function</b>. Writing it with <code class="ml">function</code> shows it: <code class="ml">times</code> takes <code class="ml">x</code> and returns <code class="ml">function y -> x * y</code>.</p></div>
+<pre data-ml-repl>
+# let times = function x -> function y -> x * y ;;
+val times : int -> int -> int = &lt;fun&gt;
+# times 2 ;;
+- : int -> int = &lt;fun&gt;
+# let double = times 2 ;;
+val double : int -> int = &lt;fun&gt;
+# double 15 ;;
+- : int = 30
+</pre>
+        <div class="prose">
+          <p>The type <code class="ml">int -> int -> int</code> reads <code class="ml">int -> (int -> int)</code>: the arrow groups to the right. Giving fewer arguments than parameters is called a <b>partial application</b>: <code class="ml">times 2</code> is the function that still waits for <code class="ml">y</code>, and <code class="ml">double</code> gives it a name. Conversely, <code class="ml">times 2 15</code> reads <code class="ml">(times 2) 15</code>, like <code class="ml">average 2 3</code> in chapter 1.</p>
+          <p>Whether the parameters are written left of the <code class="ml">=</code> or after <code class="ml">function</code>, it is the same function:</p>
+        </div>
+<pre data-ml-repl>
+# let add n x = x + n ;;
+val add : int -> int -> int = &lt;fun&gt;
+# let add n = function x -> x + n ;;
+val add : int -> int -> int = &lt;fun&gt;
+# let add = function n -> function x -> x + n ;;
+val add : int -> int -> int = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><b>A function can also choose the function it returns</b> <span class="src-tag c">seminar · ex. 3.8</span> Here, from the name of a logical operator. Guess each answer before comparing.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Seminar, exercise 3.8 · functions that return functions">
+# let f = function
+      "and" -> (function (v1, v2) -> v1 &amp;&amp; v2)
+    | "or" -> (function (v1, v2) -> v1 || v2)
+    | "xor" -> (function (v1, v2) -> v1 &lt;> v2)
+    | "imply" -> (function (v1, v2) -> not v1 || v2)
+    | _ -> failwith "unknown operator" ;;
+val f : string -> bool * bool -> bool = &lt;fun&gt;
+# f "xor" ;;
+- : bool * bool -> bool = &lt;fun&gt;
+# f "xor" (true, false) ;;
+- : bool = true
+# f "nand" (true, false) ;;
+Exception: Failure "unknown operator".
+# let x = 5 in function a -> function b ->
+    let y = 2 in float_of_int (a * x) > (float_of_int y +. b) ;;
+- : int -> float -> bool = &lt;fun&gt;
+</pre>
+        <div class="note why"><span class="tag">Why string -> bool * bool -> bool?</span>
+          <p><code class="ml">f</code> takes a string and returns a function of type <code class="ml">bool * bool -> bool</code>: its answer reads <code class="ml">string -> (bool * bool -> bool)</code>. Caml does not write these parentheses, since the arrow groups to the right. It does write them when the <b>parameter</b> is a function (part 3): <code class="ml">(int -> int) -> int</code> is not <code class="ml">int -> int -> int</code>.</p>
+          <p>The last phrase is an expression (<code>-</code>) whose value is a function: it has kept <code class="ml">x</code>, which is 5, as every function keeps the values of its definition (chapter 1, part 3).</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: only the first parameters can be fixed</span>
+<pre data-ml-repl>
+# double 2 3 ;;
+Error: This function has type int -> int
+       It is applied to too many arguments; maybe you forgot a `;'.
+# let multiple n x = x mod n = 0 ;;
+val multiple : int -> int -> bool = &lt;fun&gt;
+# let multiple_of_3 = multiple 3 ;;
+val multiple_of_3 : int -> bool = &lt;fun&gt;
+# let is_multiple x n = x mod n = 0 ;;
+val is_multiple : int -> int -> bool = &lt;fun&gt;
+# let multiple_of_3 = function x -> is_multiple x 3 ;;
+val multiple_of_3 : int -> bool = &lt;fun&gt;
+</pre>
+          <p><code class="ml">double</code> only waits for one argument. A partial application always fixes the <b>first</b> parameters: with <code class="ml">multiple n x</code>, <code class="ml">multiple 3</code> is the predicate “multiple of 3”. With the reverse order, <code class="ml">is_multiple x n</code>, you need an anonymous function. Keep the parameter order of the subject, and use <code class="ml">function</code> when a partial application is not enough.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>The official solution of October 2018 defines <code class="ml">count_multiples</code> by a partial application of <code class="ml">how_many</code> (part 4). Its Caml answer still shows both parameters: <code data-ml-ans>val count_multiples : int -> int list -> int = &lt;fun&gt;</code>.</li>
+          <li>The Mystery of November 2021 (4 points) contains a phrase to mark as an “Error”: a two-parameter function passed where a one-parameter predicate is expected (part 5). A function has as many parameters as its type has arrows outside parentheses.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="3"></span>Part 3</div><h2>A function as a parameter</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A function can receive another function as a parameter: it is a <b>higher-order function</b> (or <i>functional</i>, in the title of the tutorial). The last two functions of exercise 1.1 of the tutorial, with <code class="ml">double</code> written directly (in the tutorial it is <code class="ml">times 2</code>, the same function):</p></div>
+<pre data-ml-repl>
+# let succ x = x + 1 and double x = 2 * x ;;
+val succ : int -> int = &lt;fun&gt;
+val double : int -> int = &lt;fun&gt;
+# let double_fun f x = double (f x) ;;
+val double_fun : ('a -> int) -> 'a -> int = &lt;fun&gt;
+# double_fun succ 2 ;;
+- : int = 6
+# double_fun (function x -> x + 1) ;;
+- : int -> int = &lt;fun&gt;
+# let double_succ = double_fun succ ;;
+val double_succ : int -> int = &lt;fun&gt;
+# double_succ 2 ;;
+- : int = 6
+</pre>
+        <div class="prose"><p>How Caml finds <code class="ml">('a -> int) -> 'a -> int</code>:</p></div>
+        <ol class="steps">
+          <li><div><p><code class="ml">f x</code>: <code class="ml">f</code> is applied to <code class="ml">x</code>, so it is a function, and its parameter has the type of <code class="ml">x</code>. Nothing else constrains <code class="ml">x</code>: this type is <code class="ml">'a</code>.</p></div></li>
+          <li><div><p><code class="ml">double (f x)</code>: <code class="ml">double</code> expects an <code class="ml">int</code>, so <code class="ml">f</code> returns an <code class="ml">int</code>. The type of <code class="ml">f</code> is <code class="ml">'a -> int</code>.</p></div></li>
+          <li><div><p>The result is the result of <code class="ml">double</code>, an <code class="ml">int</code>. The parentheses of <code class="ml">('a -> int)</code> say that the first parameter is the whole function.</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Generalising a computation</b> <span class="src-tag c">tutorial · ex. 1.2</span> The first two sums of the tutorial, <var>Σ i</var> and <var>Σ i²</var> for <var>i</var> from 0 to <var>n</var>, only differ by the term that is added:</p></div>
+<pre data-ml-repl>
+# let rec sigma n =
+    if n &lt;= 0 then
+      0
+    else
+      n + sigma (n-1) ;;
+val sigma : int -> int = &lt;fun&gt;
+# let rec sigma_squares n =
+    if n &lt;= 0 then
+      0
+    else
+      n * n + sigma_squares (n-1) ;;
+val sigma_squares : int -> int = &lt;fun&gt;
+# sigma 10 ;;
+- : int = 55
+# sigma_squares 3 ;;
+- : int = 14
+</pre>
+        <div class="prose"><p>This term becomes a parameter: a function <code class="ml">f</code>, applied to each <var>i</var> from 0 to <var>n</var>. A single function then computes all these sums.</p></div>
+<pre data-ml-repl>
+# let rec sum_f f n =
+    if n &lt; 0 then
+      0
+    else
+      f n + sum_f f (n-1) ;;
+val sum_f : (int -> int) -> int -> int = &lt;fun&gt;
+# sum_f (function i -> i) 10 ;;
+- : int = 55
+# sum_f (function i -> i * i) 3 ;;
+- : int = 14
+# sum_f (function i -> 1) 4 ;;
+- : int = 5
+# let sigma2 = sum_f (function i -> i * i) ;;
+val sigma2 : int -> int = &lt;fun&gt;
+# sigma2 3 ;;
+- : int = 14
+</pre>
+        <div class="prose"><p>The constant function 1 counts the terms: from 0 to 4, there are 5. <code class="ml">sigma2</code> is a partial application (part 2): it fixes the function and waits for <var>n</var>. Read the type of <code class="ml">sum_f</code> and apply its arguments one at a time:</p></div>
+        <div id="apply"></div>
+        <div class="prose"><p><b>Repeating a function</b> <span class="src-tag c">tutorial · ex. 1.3, bonus</span> A <b>predicate</b> is a “boolean function representing a property” (tutorial). <code class="ml">loop p f x</code> applies <code class="ml">f</code> to <code class="ml">x</code> again and again, until it gets a value that satisfies <code class="ml">p</code>: it returns f<sup>n</sup>(x), for the smallest <var>n</var> such that p(f<sup>n</sup>(x)) is true. Then <code class="ml">find_power x n</code> returns the first power of <var>x</var> greater than or equal to <var>n</var>, using <code class="ml">loop</code>.</p></div>
+<pre data-ml-repl data-mode="reveal">
+# let rec loop p f x =
+    if p x then
+      x
+    else
+      loop p f (f x) ;;
+val loop : ('a -> bool) -> ('a -> 'a) -> 'a -> 'a = &lt;fun&gt;
+# loop (function x -> x > 100) (function x -> 2 * x) 3 ;;
+- : int = 192
+# loop (function x -> x mod 7 = 0) (function x -> x + 1) 7 ;;
+- : int = 7
+# let find_power x n =
+    if x &lt; 2 then
+      invalid_arg "find_power: x &lt; 2"
+    else
+      loop (function p -> p >= n) (function p -> p * x) 1 ;;
+val find_power : int -> int -> int = &lt;fun&gt;
+# find_power 2 100 ;;
+- : int = 128
+# find_power 10 1 ;;
+- : int = 1
+# find_power 1 5 ;;
+Exception: Invalid_argument "find_power: x &lt; 2".
+</pre>
+        <div class="prose"><p>3, 6, 12, 24, 48, 96, 192: the first value above 100. If <code class="ml">p x</code> is true from the start, <var>n</var> is 0 and <code class="ml">loop</code> returns <code class="ml">x</code>. The type <code class="ml">('a -> bool) -> ('a -> 'a) -> 'a -> 'a</code> has two function parameters: the result of <code class="ml">f</code> goes back into <code class="ml">f</code> and into <code class="ml">p</code>, hence the same <code class="ml">'a</code> everywhere. <code class="ml">find_power</code> starts from x<sup>0</sup> = 1. For <var>x</var> = 0 or 1, the loop would never stop (1, 1, 1…): this solution therefore rejects every <var>x</var> &lt; 2 with an exception. It is a choice, the tutorial says nothing about this case.</p></div>
+        <div class="note trap"><span class="tag">Trap: the recursive call passes the function again</span>
+<pre data-ml-repl>
+# let rec sum_f f n =
+    if n &lt; 0 then
+      0
+    else
+      f n + sum_f (n-1) ;;
+Error: This expression has type int but an expression was expected of type
+         int -> int
+</pre>
+          <p><code class="ml">sum_f</code> has two parameters, the function first. <code class="ml">sum_f (n-1)</code> gives it an integer instead of the function: Caml expects <code class="ml">int -> int</code>, the type of <code class="ml">f</code>. Write <code class="ml">sum_f f (n-1)</code>: at each call, the function goes along.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>A function that receives a function as a parameter has to be written in <b>7 subjects out of 9</b>: all except November 2020 and November 2021 (where it only appears in the Mystery). It is worth 10 points out of 14 in 2017, 8 out of 16 in 2018, 7 out of 14 in April 2019, 5 out of 16 in October 2019, 8.5 out of 16 in 2022, 8 out of 20 in 2023 and 9 out of 20 in 2024.</li>
+          <li>Only the subject of October 2018 gives the type of the higher-order functions to write, for example <code data-ml-ans>val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;</code>. Elsewhere, your Caml answer gives it, parentheses included.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="4"></span>Part 4</div><h2>Predicates on a list: for_all, exists, find</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A predicate returns a boolean: its type is <code class="ml">'a -> bool</code>. With a predicate as a parameter, a single function answers “do all the elements satisfy <var>p</var>?”, another one “does at least one?” (tutorial, exercises 2.2 and 2.3).</p></div>
+<pre data-ml-repl>
+# let rec for_all p = function
+      [] -> true
+    | e :: l -> p e &amp;&amp; for_all p l ;;
+val for_all : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# for_all (function x -> x mod 2 = 0) [2; 4; 6] ;;
+- : bool = true
+# for_all (function x -> x mod 2 = 0) [2; 3; 6] ;;
+- : bool = false
+# for_all (function x -> x > 0) [] ;;
+- : bool = true
+# let rec exists p = function
+      [] -> false
+    | e :: l -> p e || exists p l ;;
+val exists : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# exists (function x -> x &lt; 0) [3; -1; 2] ;;
+- : bool = true
+# exists (function x -> x &lt; 0) [] ;;
+- : bool = false
+</pre>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><code class="ml">for_all p []</code> is <code class="ml">true</code>: no element contradicts <code class="ml">p</code>. <code class="ml">exists p []</code> is <code class="ml">false</code>: no element satisfies it.</li>
+          <li><code class="ml">&amp;&amp;</code> and <code class="ml">||</code> stop as soon as the answer is known (chapter 1, part 1): <code class="ml">for_all</code> stops at the first false element, <code class="ml">exists</code> at the first true one. The rest of the list is not traversed.</li>
+          <li>The predicate receives an element of the list: the same <code class="ml">'a</code> in <code class="ml">('a -> bool)</code> and in <code class="ml">'a list</code>.</li>
+        </ul></div>
+        <div class="prose"><p><b>Returning the element found</b> <span class="src-tag c">tutorial · ex. 2.5</span> “Modify the function exists so that it returns the first element of the list that satisfies the predicate.” If none does, there is nothing to return: an exception. The tutorial does not say which one; <code class="ml">failwith</code> fits, since the parameters are not at fault.</p></div>
+<pre data-ml-repl>
+# let rec find p = function
+      [] -> failwith "find: not found"
+    | e :: l ->
+        if p e then
+          e
+        else
+          find p l ;;
+val find : ('a -> bool) -> 'a list -> 'a = &lt;fun&gt;
+# find (function x -> x > 10) [3; 12; 40] ;;
+- : int = 12
+# find (function x -> x > 10) [3] ;;
+Exception: Failure "find: not found".
+</pre>
+        <div class="prose"><p><b>Counting</b> <span class="src-tag">October 2018 · ex. 3</span> <code class="ml">how_many f lst</code> returns the number of elements of <code class="ml">lst</code> that satisfy <code class="ml">f</code>, then <code class="ml">count_multiples n l</code> uses it. The official solution, up to spacing:</p></div>
+<pre data-ml-repl>
+# let rec how_many f = function
+      [] -> 0
+    | e :: l -> (if f e then 1 else 0) + how_many f l ;;
+val how_many : ('a -> bool) -> 'a list -> int = &lt;fun&gt;
+# let count_multiples n = how_many (function x -> x mod n = 0) ;;
+val count_multiples : int -> int list -> int = &lt;fun&gt;
+# count_multiples 3 [1; 3; 6; 7; 9; 0] ;;
+- : int = 4
+</pre>
+        <div class="prose"><p><code class="ml">count_multiples n</code> fixes the predicate and leaves the list: a partial application. The predicate <code class="ml">function x -> x mod n = 0</code> uses <code class="ml">n</code>, the parameter of <code class="ml">count_multiples</code>.</p>
+          <p><b>Exam example</b> <span class="src-tag">October 2022 · ex. 2 · 3.5 points</span> “Write the function <code class="ml">insert_post x f lst</code> that takes as parameters: an element <code class="ml">x</code>, a one-argument function <code class="ml">f</code> returning a boolean value, a list <code class="ml">lst</code>, and that inserts the element <code class="ml">x</code> in the list <code class="ml">lst</code> just after the first element <code class="ml">y</code> such that <code class="ml">f y</code> is <code class="ml">true</code>. The function has to raise an exception <code class="ml">Failure</code> if there is no element <code class="ml">y</code> after which <code class="ml">x</code> can be inserted.”</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let rec insert_post x f = function
+      [] -> failwith "insert_post: x cannot be inserted"
+    | e :: l ->
+        if f e then
+          e :: x :: l
+        else
+          e :: insert_post x f l ;;
+val insert_post : 'a -> ('a -> bool) -> 'a list -> 'a list = &lt;fun&gt;
+# insert_post 42 (function y -> y mod 2 = 0) [5; -7; 2; 4; 1] ;;
+- : int list = [5; -7; 2; 42; 4; 1]
+# insert_post "toto" (function y -> y = "one") ["one"; "two"; "three"; "four"] ;;
+- : string list = ["one"; "toto"; "two"; "three"; "four"]
+# insert_post 4.1 (function y -> y &lt; 0.) [1.1; 2.4; 2.] ;;
+Exception: Failure "insert_post: x cannot be inserted".
+</pre>
+        </div>
+        <div class="prose"><p>This is the official solution, up to layout. The traversal stops at the first element that satisfies <code class="ml">f</code>: the rest <code class="ml">l</code> is returned as it is. Reaching the empty list means nothing was found: <code class="ml">Failure</code>, as in the examples. The same code works for integers, strings and floats.</p></div>
+        <div class="note trap"><span class="tag">Trap: the recursive call first, and everything is traversed</span>
+<pre data-ml-repl>
+# let rec for_all_late p = function
+      [] -> true
+    | e :: l -> for_all_late p l &amp;&amp; p e ;;
+val for_all_late : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# for_all (function x -> 100 / x > 1) [200; 0] ;;
+- : bool = false
+# for_all_late (function x -> 100 / x > 1) [200; 0] ;;
+Exception: Division_by_zero.
+</pre>
+          <p>Same type, usually the same result, but <code class="ml">for_all_late</code> goes down to the end of the list before testing the first element. <code class="ml">for_all</code> sees that <code class="ml">100 / 200 > 1</code> is false and stops: it never divides by 0. Test the head <b>before</b> the recursive call: “stop as soon as the answer is known” is one of the optimisation rules of the course.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>A function that receives a one-parameter predicate has to be written in October 2018 (<code class="ml">how_many</code>, 4 points with <code class="ml">count_multiples</code>), October 2022 (<code class="ml">insert_post</code>, 3.5 points) and October 2023 (<code class="ml">split sep lst</code>, 8 points: cut the list at each element that satisfies <code class="ml">sep</code>).</li>
+          <li>Stopping as soon as the answer is known is expected in 8 subjects out of 9.</li>
+          <li>Seven subjects out of nine ask a question in two steps: “Use the previous function” (<code class="ml">count_multiples</code> with <code class="ml">how_many</code>, <code class="ml">almost</code> with <code class="ml">for_all2</code>…). The second one can be done even without the first one: “whether it is written or not” (October 2022).</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="5"></span>Part 5</div><h2>Building a list: map, filter, partition</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code class="ml">map</code> applies a function to each element and builds the list of the results: <code class="ml">map f [a1; …; an]</code> is <code class="ml">[f a1; …; f an]</code> (tutorial, exercise 2.1).</p></div>
+<pre data-ml-repl>
+# let rec map f = function
+      [] -> []
+    | e :: l -> f e :: map f l ;;
+val map : ('a -> 'b) -> 'a list -> 'b list = &lt;fun&gt;
+# map (function x -> x * x) [1; 2; 3] ;;
+- : int list = [1; 4; 9]
+# map (function x -> x > 0) [3; -1; 0] ;;
+- : bool list = [true; false; false]
+</pre>
+        <div class="prose"><p>The type <code class="ml">('a -> 'b) -> 'a list -> 'b list</code> allows a change of type: integers in, booleans out. The list returned always has the length of the starting list. <code class="ml">f e :: map f l</code> reads <code class="ml">(f e) :: (map f l)</code>: application comes before <code class="ml">::</code>.</p>
+          <p><code class="ml">filter p lst</code> keeps the elements that satisfy <code class="ml">p</code>, in their order (tutorial, exercise 2.6):</p></div>
+<pre data-ml-repl>
+# let rec filter p = function
+      [] -> []
+    | e :: l ->
+        if p e then
+          e :: filter p l
+        else
+          filter p l ;;
+val filter : ('a -> bool) -> 'a list -> 'a list = &lt;fun&gt;
+# filter (function x -> x mod 2 = 0) [1; 2; 3; 4; 5; 6] ;;
+- : int list = [2; 4; 6]
+# let remove_x x lst = filter (function e -> e &lt;> x) lst ;;
+val remove_x : 'a -> 'a list -> 'a list = &lt;fun&gt;
+# remove_x 5 [5; 5; 2; 3; 5; 1] ;;
+- : int list = [2; 3; 1]
+</pre>
+        <div class="prose"><p><code class="ml">remove_x x lst</code> (October 2023: remove all the occurrences of <code class="ml">x</code>) is a <code class="ml">filter</code> that keeps the elements different from <code class="ml">x</code>. At the exam, <code class="ml">filter</code> does not exist beforehand: to use it, write it first and say what it does.</p>
+          <p><code class="ml">partition p lst</code> returns a <b>pair</b> of lists: the elements that satisfy <code class="ml">p</code>, then the others (tutorial, exercise 2.7). The bonus of the tutorial asks to keep the starting order.</p></div>
+<pre data-ml-repl>
+# let rec partition p = function
+      [] -> ([], [])
+    | e :: l ->
+        let (yes, no) = partition p l in
+          if p e then
+            (e :: yes, no)
+          else
+            (yes, e :: no) ;;
+val partition : ('a -> bool) -> 'a list -> 'a list * 'a list = &lt;fun&gt;
+# partition (function x -> x mod 2 = 0) [1; 2; 3; 4; 5; 6] ;;
+- : int list * int list = ([2; 4; 6], [1; 3; 5])
+# partition (function x -> x > 0) [] ;;
+- : int list * int list = ([], [])
+</pre>
+        <div class="prose"><p><code class="ml">let (yes, no) = partition p l in</code> gets both lists of the rest, with a single call. The head then goes in front of one of them. The elements are added when the calls return, from the last one to the first one: each one lands in front of those that followed it, and the order is kept.</p></div>
+        <div class="note trap"><span class="tag">Trap: an accumulator reverses the order</span>
+<pre data-ml-repl>
+# let partition_acc p lst =
+    let rec part yes no = function
+        [] -> (yes, no)
+      | e :: l ->
+          if p e then
+            part (e :: yes) no l
+          else
+            part yes (e :: no) l
+    in
+      part [] [] lst ;;
+val partition_acc : ('a -> bool) -> 'a list -> 'a list * 'a list = &lt;fun&gt;
+# partition_acc (function x -> x mod 2 = 0) [1; 2; 3; 4; 5; 6] ;;
+- : int list * int list = ([6; 4; 2], [5; 3; 1])
+</pre>
+          <p>Same type, but each element is added at the head of an accumulator <b>on the way down</b>: the last one seen ends up in front. In October 2023 (Split), a paper lost 2 points out of 8 for sublists returned in reverse order, as the subject warned. Write the plain recursion first, without an accumulator (Moodle page “Advice for lists”).</p>
+        </div>
+        <div class="prose"><p><b>Mystery</b> <span class="src-tag">November 2021 · ex. 4 · 4 points</span> “Give the results of the successive evaluations of the following phrases if they are correct. If they are incorrect, write "Error".” Give each Caml answer, type included.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="November 2021, exercise 4 · Mystery">
+# let aux p e (r1, r2) =
+    if p e then (e::r1, r2) else (r1, e::r2) ;;
+val aux : ('a -> bool) -> 'a -> 'a list * 'a list -> 'a list * 'a list =
+  &lt;fun&gt;
+# aux (function x -> x mod 2 = 0) 10 ([0; 2], [1; 3]) ;;
+- : int list * int list = ([10; 0; 2], [1; 3])
+# let rec mystery p = function
+      ([], [])                    -> ([], [])
+    | (e1::l1, []) | ([], e1::l1) -> aux p e1 (mystery p (l1, []))
+    | (e1::l1, e2::l2)            -> aux p e1 (aux p e2 (mystery p (l1, l2))) ;;
+val mystery : ('a -> bool) -> 'a list * 'a list -> 'a list * 'a list = &lt;fun&gt;
+# let f x y = x - y = 0 in mystery f ([1; 2; 3; 4; 5; 6], [1; 2; 3; 4; 5; 6]) ;;
+Error: This expression has type int -> int -> bool
+       but an expression was expected of type int -> bool
+       Type int -> bool is not compatible with type bool
+# mystery (function x -> x mod 2 = 0) ([1; 2; 3; 4; 5; 6; 7; 8], [10; 11; 12; 13; 14]) ;;
+- : int list * int list = ([10; 2; 12; 4; 14; 6; 8], [1; 11; 3; 13; 5; 7])
+</pre>
+        <div class="prose"><p><code class="ml">aux</code> puts <code class="ml">e</code> in the first list of the pair if it satisfies <code class="ml">p</code>, in the second one otherwise. <code class="ml">mystery</code> takes the elements of both lists alternately (1, 10, 2, 11…), then the rest of the longer one, and sorts them out with <code class="ml">aux</code>: it is a <code class="ml">partition</code> of the interleaving. The fourth phrase is the “Error”: <code class="ml">f</code> has two parameters, whereas <code class="ml">p e</code> must be a boolean. The official solution gives the same answers.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li><code class="ml">map</code> and <code class="ml">filter</code> are never asked as such in the nine subjects. Their schemes are: <code class="ml">remove_x</code> (October 2023, 5.5 points with <code class="ml">remove_duplicates</code>) keeps the elements different from <code class="ml">x</code>, and the Mystery of November 2021 (4 points) is a partition.</li>
+          <li>The order of the elements matters: the examples fix it, and the 2023 subject announces fewer points for a reversed order.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="6"></span>Part 6</div><h2>An order function as a parameter: sorting</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A two-parameter comparison function, such as <code class="ml">function x -> function y -> x &lt; y</code>, describes an order. Passed as a parameter, it makes one function work for the increasing order, the decreasing order, or any other order.</p>
+          <p><b>Sorted list</b> <span class="src-tag c">tutorial · ex. 2.4</span> Two neighbouring elements have to be compared: three cases, the empty list, a single element, and <code class="ml">e1 :: e2 :: l</code> (chapter 3).</p></div>
+<pre data-ml-repl>
+# let rec is_sorted order = function
+      [] | [_] -> true
+    | e1 :: e2 :: l -> order e1 e2 &amp;&amp; is_sorted order (e2 :: l) ;;
+val is_sorted : ('a -> 'a -> bool) -> 'a list -> bool = &lt;fun&gt;
+# is_sorted (function x -> function y -> x &lt; y) [1; 2; 3; 4; 5] ;;
+- : bool = true
+# is_sorted (function x -> function y -> x > y) [5; 4; 3; 2; 1] ;;
+- : bool = true
+# is_sorted (function x -> function y -> x &lt; y) [1; 3; 2; 4; 5] ;;
+- : bool = false
+# is_sorted (function x -> function y -> x = y) [7; 7; 7; 7] ;;
+- : bool = true
+# is_sorted (&lt;=) ["Caml"; "algo"; "rec"] ;;
+- : bool = true
+</pre>
+        <div class="prose"><p>The recursive call starts again from <code class="ml">e2 :: l</code>, not from <code class="ml">l</code>: otherwise the pair made of <code class="ml">e2</code> and the next element would never be compared. The last example passes the operator <code class="ml">(&lt;=)</code> directly; capital letters come before lowercase letters.</p>
+          <p><b>Exam example</b> <span class="src-tag">October 2024 · ex. 2 · 9 points</span> “Write the function <code class="ml">insert_x x order lst</code> that takes as parameters: an element <code class="ml">x</code>, a two-parameter function <code class="ml">order</code> returning a boolean value, a list <code class="ml">lst</code> sorted according to the order induced by the function <code class="ml">order</code>, and that inserts the element <code class="ml">x</code> in the list <code class="ml">lst</code> sorted according to the order induced by the function <code class="ml">order</code>.” Then <code class="ml">insertion_sort order lst</code>, which sorts the list and “has to use the previous function”.</p></div>
+        <div class="sheet">
+          <span class="lbl">Caml function:</span>
+<pre data-ml-repl>
+# let rec insert_x x order = function
+      [] -> [x]
+    | e :: l ->
+        if order x e then
+          x :: e :: l
+        else
+          e :: insert_x x order l ;;
+val insert_x : 'a -> ('a -> 'a -> bool) -> 'a list -> 'a list = &lt;fun&gt;
+# insert_x 7 (function x -> function y -> x &lt; y) [1; 3; 5; 9] ;;
+- : int list = [1; 3; 5; 7; 9]
+# insert_x 'c' (function x -> function y -> x > y) ['e'] ;;
+- : char list = ['e'; 'c']
+# let rec insertion_sort order = function
+      [] -> []
+    | e :: l -> insert_x e order (insertion_sort order l) ;;
+val insertion_sort : ('a -> 'a -> bool) -> 'a list -> 'a list = &lt;fun&gt;
+# insertion_sort (function x -> function y -> x > y) [10; 20; 15; 5; 30] ;;
+- : int list = [30; 20; 15; 10; 5]
+# insertion_sort (function x -> function y -> x &lt; y) [1.1; 3.3; 2.2; 5.5; 4.4] ;;
+- : float list = [1.1; 2.2; 3.3; 4.4; 5.5]
+# insertion_sort (function x -> function y -> x > y) [] ;;
+- : 'a list = []
+</pre>
+        </div>
+        <div class="prose"><p>The subject has no official solution; this one gives the ten answers of the examples. <code class="ml">insert_x</code> stops as soon as <code class="ml">order x e</code> is true: <code class="ml">x</code> goes in front of <code class="ml">e</code>, and the rest <code class="ml">l</code>, already sorted, does not move. <code class="ml">insertion_sort</code> sorts the rest, then inserts the head into it. Neither of them assumes a type of elements: the examples sort integers, characters and floats, and the empty list gives <code class="ml">'a list</code>.</p></div>
+        <div class="note trap"><span class="tag">Trap: the order of the parameters changes from one subject to another</span>
+<pre data-ml-repl>
+# let rec insertion_sort order = function
+      [] -> []
+    | e :: l -> insert_x e (insertion_sort order l) order ;;
+Error: This expression has type 'a list
+       but an expression was expected of type 'b -> 'b -> bool
+</pre>
+          <p>In April 2019, the function was <code class="ml">insert x list comp</code>, the comparison last; in 2024, <code class="ml">insert_x x order lst</code>. Calling one like the other is a type error: <code class="ml">insert_x</code> expects the order function in second position. Copy the parameter order of the examples. In 2024, the bullet list of <code class="ml">insertion_sort</code> cites <code class="ml">lst</code> before <code class="ml">order</code>, but the title and all the examples put <code class="ml">order</code> first: follow the examples.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>Insertion sort with an order function came up twice: April 2019 (7 points, <code class="ml">insert</code> then <code class="ml">insertion_sort</code>) and October 2024 (9 points). It is the same scheme as <code class="ml">is_sorted order lst</code> in the tutorial.</li>
+          <li>The order function is a two-parameter anonymous function in the examples, except <code class="ml">longer</code> (April 2019), defined just before by the subject with <code class="ml">String.length</code>.</li>
+          <li>The 2024 examples sort integers, characters and floats: a function that assumes integers (a default <code class="ml">0</code>, a <code class="ml">+</code> on the elements) fails.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="7"></span>Part 7</div><h2>Two lists: for_all2</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code class="ml">for_all2</code> is the <code class="ml">for_all</code> of two lists: a predicate with <b>two</b> parameters, applied to the pairs of elements of the same rank. Exercise 2.8 of the tutorial is the October 2019 subject word for word:</p></div>
+        <div class="card"><span class="k">Tutorial · ex. 2.8 = October 2019, ex. 4 (5 points)</span>
+          <p>1. Write the Caml function <code class="ml">for_all2</code> with the following specifications: it takes a two-argument boolean function (a predicate): <code class="ml">p</code>, and two lists: [<var>a</var><sub>1</sub>; <var>a</var><sub>2</sub>; …; <var>a</var><sub>n</sub>] and [<var>b</var><sub>1</sub>; <var>b</var><sub>2</sub>; …; <var>b</var><sub>n</sub>], as parameters. It checks whether all pairs of elements <var>a</var><sub>i</sub> <var>b</var><sub>i</sub> satisfy the predicate <code class="ml">p</code>. If a pair such that <code class="ml">p</code> <var>a</var><sub>i</sub> <var>b</var><sub>i</sub> is false is found, it returns false. Otherwise, it raises <code class="ml">Invalid_argument</code> if the two lists have different lengths.</p>
+          <p>2. Use the function <code class="ml">for_all2</code> to define a function that verifies whether two integer lists are “quasi identical”: difference between the values at the same place can not exceed 1. If no pair with a difference over one has been found and if the two lists have different lengths, an exception is raised.</p>
+        </div>
+<pre data-ml-repl>
+# let rec for_all2 p l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: r1, e2 :: r2) -> p e1 e2 &amp;&amp; for_all2 p r1 r2
+      | _ -> invalid_arg "for_all2: different lengths" ;;
+val for_all2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool = &lt;fun&gt;
+# let almost l1 l2 =
+    let near x y = x - y &lt;= 1 &amp;&amp; y - x &lt;= 1 in
+      for_all2 near l1 l2 ;;
+val almost : int list -> int list -> bool = &lt;fun&gt;
+# almost [1; 2; 3; 4; 5] [1; 3; 2; 4; 6] ;;
+- : bool = true
+# almost [1; 2; 3; 4; 5] [1; 4; 3; 4; 5] ;;
+- : bool = false
+# almost [1; 2; 3] [1; 2] ;;
+Exception: Invalid_argument "for_all2: different lengths".
+# almost [1; 9; 3] [1; 2] ;;
+- : bool = false
+</pre>
+        <div class="prose"><p>The four cases of two lists (chapter 3) come down to three here: both empty, both non-empty, and <code class="ml">_</code> for the two cases where only one is empty. “If a false pair is found, it returns false. Otherwise…”: thanks to <code class="ml">&amp;&amp;</code>, a false pair stops the traversal before the end of the shorter list. <code class="ml">almost [1; 9; 3] [1; 2]</code> therefore returns <code class="ml">false</code>, without an exception.</p></div>
+        <div class="note why"><span class="tag">Why ('a -> 'b -> bool)?</span>
+          <p>Nothing forces the two lists to contain the same type: <code class="ml">p</code> receives one element from each. <code class="ml">almost</code>, on the other hand, subtracts the elements: its two lists are <code class="ml">int list</code>. The local function <code class="ml">near</code> is the predicate; an anonymous function works too.</p>
+        </div>
+        <div class="prose"><p><b>Variant</b> <span class="src-tag">October 2018 · ex. 2 · 4 points</span> <code class="ml">is_image f l1 l2</code> checks that each <var>b</var><sub>i</sub> is the image of <var>a</var><sub>i</sub> under <code class="ml">f</code>, with the same exception. The official solution, up to spacing:</p></div>
+<pre data-ml-repl>
+# let rec is_image f list1 list2 =
+    match (list1, list2) with
+        ([], []) -> true
+      | ([], _) | (_, []) -> invalid_arg "different lengths"
+      | (e1 :: l1, e2 :: l2) -> f e1 = e2 &amp;&amp; is_image f l1 l2 ;;
+val is_image : ('a -> 'b) -> 'a list -> 'b list -> bool = &lt;fun&gt;
+# is_image (function x -> x * 2) [1; 2; 3; 4; 5] [2; 4; 6; 8; 10] ;;
+- : bool = true
+# is_image (function x -> x * 2) [1; 2; 3] [2; 4] ;;
+Exception: Invalid_argument "different lengths".
+</pre>
+        <div class="note trap"><span class="tag">Trap: no abs</span>
+          <p>“The only functions that you can use are <code class="ml">failwith</code> and <code class="ml">invalid_arg</code>”: <code class="ml">abs (x - y) &lt;= 1</code> is forbidden, because <code class="ml">abs</code> is predefined. Two comparisons are enough: <code class="ml">x - y &lt;= 1 &amp;&amp; y - x &lt;= 1</code>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: the forgotten case</span>
+<pre data-ml-repl>
+# let rec for_all2 p l1 l2 =
+    match (l1, l2) with
+        ([], []) -> true
+      | (e1 :: r1, e2 :: r2) -> p e1 e2 &amp;&amp; for_all2 p r1 r2 ;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+([], _::_)
+val for_all2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool = &lt;fun&gt;
+# for_all2 (function x -> function y -> x = y) [1; 2] [1; 2; 3] ;;
+Exception: Match_failure ("//toplevel//", 2, 2).
+</pre>
+          <p>Without the third case, Caml warns you (Warning 8), and the exception is no longer the one of the subject: <code class="ml">Match_failure</code> instead of <code class="ml">Invalid_argument</code>. The official solution of <code class="ml">less2</code> (October 2022) has this same warning, which its Caml answer does not show. On your paper, handle every case.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li><code class="ml">for_all2</code> and <code class="ml">almost</code> came up twice, in November 2017 and October 2019 (5 points each time), with the examples of the tutorial.</li>
+          <li>Two lists traversed together: 5 subjects out of 9. The “different lengths” exception is required in 2017 (<code class="ml">for_all2</code>, and <code class="ml">combfilter</code>: keep the pairs <code class="ml">(a, b)</code> such that <code class="ml">f a b</code> is true), in 2018 (<code class="ml">is_image</code>) and in 2019.</li>
+          <li>In October 2022, <code class="ml">less2 p k l1 l2</code> (5 points with <code class="ml">common</code>) tells whether fewer than <code class="ml">k</code> pairs satisfy <code class="ml">p</code>. The official solution then writes <code class="ml">let common k l1 l2 = not (less2 (=) (k+1) l1 l2)</code>: the operator <code class="ml">(=)</code> is the predicate.</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="8"></span>Part 8</div><h2>The general schemes: process_list and fold_left</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Most functions of parts 4 and 5 follow the same plan: a value for the empty list, and a way to combine the head with the result of the call on the rest. The bonus of the tutorial (exercise 3.1) turns this into a single function, <code class="ml">process_list</code>:</p></div>
+<pre data-ml-repl>
+# let rec process_list f init =
+    function
+        [] -> init
+      | e :: lst -> f e (process_list f init lst) ;;
+val process_list : ('a -> 'b -> 'b) -> 'b -> 'a list -> 'b = &lt;fun&gt;
+# let length lst = process_list (function e -> function call -> 1 + call) 0 lst ;;
+val length : 'a list -> int = &lt;fun&gt;
+# length [5; 6; 7] ;;
+- : int = 3
+# let sum lst = process_list (function e -> function call -> e + call) 0 lst ;;
+val sum : int list -> int = &lt;fun&gt;
+# let concatenate lst = process_list (function s -> function call -> s ^ call) "" lst ;;
+val concatenate : string list -> string = &lt;fun&gt;
+# concatenate ["Caml"; " and "; "recursion"] ;;
+- : string = "Caml and recursion"
+# let map f lst = process_list (function e -> function call -> f e :: call) [] lst ;;
+val map : ('a -> 'b) -> 'a list -> 'b list = &lt;fun&gt;
+# let for_all p lst = process_list (function e -> function call -> p e &amp;&amp; call) true lst ;;
+val for_all : ('a -> bool) -> 'a list -> bool = &lt;fun&gt;
+</pre>
+        <div class="prose"><p><code class="ml">process_list f init [e1; …; en]</code> computes <code class="ml">f e1 (f e2 (… (f en init)))</code>. <code class="ml">init</code> is the stopping value, <code class="ml">call</code> the result of processing the rest. Each function is then written without recursion: you only say what to do with <code class="ml">e</code> and <code class="ml">call</code>.</p></div>
+        <div class="tbl"><table>
+          <caption class="sr-only">The tutorial functions written with process_list</caption>
+          <thead><tr><th>Function</th><th>init (empty list)</th><th>f e call (head and rest)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code class="ml">length</code></th><td><code class="ml">0</code></td><td><code class="ml">1 + call</code></td></tr>
+            <tr><th scope="row"><code class="ml">sum</code></th><td><code class="ml">0</code></td><td><code class="ml">e + call</code></td></tr>
+            <tr><th scope="row"><code class="ml">concatenate</code></th><td><code class="ml">""</code></td><td><code class="ml">s ^ call</code></td></tr>
+            <tr><th scope="row"><code class="ml">map f</code></th><td><code class="ml">[]</code></td><td><code class="ml">f e :: call</code></td></tr>
+            <tr><th scope="row"><code class="ml">for_all p</code></th><td><code class="ml">true</code></td><td><code class="ml">p e &amp;&amp; call</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>A function that returns a function</b> <span class="src-tag c">tutorial · ex. 3.1, bonus</span> <code class="ml">sum_list</code> takes a list of real functions and returns their sum, which is a function. Here <code class="ml">init</code> is the zero function:</p></div>
+<pre data-ml-repl data-mode="reveal">
+# let sum_list lst =
+    process_list
+      (function f -> function call -> function x -> f x +. call x)
+      (function x -> 0.)
+      lst ;;
+val sum_list : ('a -> float) list -> 'a -> float = &lt;fun&gt;
+# let g = sum_list [(function x -> x); (function x -> x *. x); (function x -> 1.)] ;;
+val g : float -> float = &lt;fun&gt;
+# g 4. ;;
+- : float = 21.
+</pre>
+        <div class="prose"><p><code class="ml">g 4.</code> is 4 + 4² + 1 = 21. The type says it: <code class="ml">sum_list</code> takes a list of functions and returns a function <code class="ml">'a -> float</code>.</p>
+          <p><b>From left to right: fold_left</b> <span class="src-tag c">tutorial · ex. 3.2</span> The tutorial gives the type, <code class="ml">('a -> 'b -> 'a) -> 'a -> 'b list -> 'a</code>, and the computation: <code class="ml">fold_left f a [b1; …; bn]</code> is <code class="ml">f (… (f (f a b1) b2) …) bn</code>. The parameter <code class="ml">a</code> is an <b>accumulator</b>: it receives the partial result at each call.</p></div>
+<pre data-ml-repl>
+# let rec fold_left f a = function
+      [] -> a
+    | b :: l -> fold_left f (f a b) l ;;
+val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a = &lt;fun&gt;
+# fold_left (function acc -> function x -> acc + x) 0 [1; 2; 3; 4] ;;
+- : int = 10
+# fold_left (function acc -> function x -> x :: acc) [] [1; 2; 3] ;;
+- : int list = [3; 2; 1]
+# fold_left (function a -> function b -> a - b) 10 [1; 2; 3] ;;
+- : int = 4
+# process_list (function a -> function b -> a - b) 10 [1; 2; 3] ;;
+- : int = -8
+</pre>
+        <div class="prose"><p>Same arguments, two different results. Unroll <code class="ml">fold_left</code>: the accumulator is the second argument of each call, and it is 10, then 9, 7 and 4.</p></div>
+        <div id="foldUnroll"></div>
+        <div class="tbl"><table>
+          <caption class="sr-only">fold_left and process_list with f a b = a − b</caption>
+          <thead><tr><th></th><th>fold_left f 10 [1; 2; 3]</th><th>process_list f 10 [1; 2; 3]</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Computes</th><td><code class="ml">f (f (f 10 1) 2) 3</code></td><td><code class="ml">f 1 (f 2 (f 3 10))</code></td></tr>
+            <tr><th scope="row">With a − b</th><td>((10 − 1) − 2) − 3 = 4</td><td>1 − (2 − (3 − 10)) = −8</td></tr>
+            <tr><th scope="row">When</th><td>from left to right, on the way down: the last call already knows the result</td><td>from right to left, when the calls return: each call combines its head with the result of the rest</td></tr>
+            <tr><th scope="row">Parameters of f</th><td>the accumulator, then the element: <code class="ml">'a -> 'b -> 'a</code></td><td>the element, then the result of the rest: <code class="ml">'a -> 'b -> 'b</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Trap: process_list always goes through everything</span>
+<pre data-ml-repl>
+# for_all (function x -> 100 / x > 1) [200; 0] ;;
+Exception: Division_by_zero.
+</pre>
+          <p>The <code class="ml">for_all</code> written with <code class="ml">process_list</code> computes <code class="ml">call</code>, the processing of the rest, before applying <code class="ml">f</code>: it goes down to the end, like <code class="ml">for_all_late</code> (part 4). To stop early, write the recursion directly. Likewise, <code class="ml">fold_left</code> with <code class="ml">x :: acc</code> reverses the list: an accumulator builds backwards (part 5).</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>None of the nine subjects (2017 to 2024) asks for <code class="ml">process_list</code>, <code class="ml">fold_left</code> or another scheme of this kind. They help you spot what changes from one traversal to another: the value for <code class="ml">[]</code> and the way the head is combined with the rest.</li>
+          <li>None of these functions is provided at the exam: <code class="ml">List.map</code>, <code class="ml">List.filter</code> or <code class="ml">List.fold_left</code> are predefined functions, so they are forbidden. An auxiliary function you write must be documented (what it does, in one sentence), and the last function written is the one that answers the question (October 2024).</li>
+        </ul></div>
+        <div data-check-ref="caml/cours-4-ordre-superieur.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="caml:ordre:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>The syllabus is complete. Practise on the exercises of the past exams: <a href="entrainement.html">practice</a> and <a href="annales.html">past exams</a>, with <a href="fiche.html">the summary sheet</a> to review everything.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var C = window.REV.caml;
+  /* part 3: read the type of sum_f, apply the arguments one at a time */
+  C.apply(document.getElementById('apply'), {
+    title: 'Read a higher-order type · sum_f',
+    name: 'sum_f', params: [{ ty: '(int -> int)', arg: '(function i -> i * i)' }, { ty: 'int', arg: '3' }], res: 'int',
+    answers: ['- : (int -> int) -> int -> int = <fun>', '- : int -> int = <fun>', '- : int = 14']
+  });
+  /* part 8: fold_left step by step, the accumulator is computed on the way down */
+  function label(a, l) { return 'fold_left f ' + (a < 0 ? '(' + a + ')' : a) + ' ' + C.fmt(l); }
+  var tree = C.trace(function (self, a, l) { return l.length ? self(a - l[0], l.slice(1)) : a; }, [10, [1, 2, 3]], { show: label });
+  var ml = C.code, v = function (x) { return '<b class="cu-v">' + x + '</b>'; };
+  C.unroll(document.getElementById('foldUnroll'), {
+    tree: tree, mode: 'stack',
+    title: 'fold_left step by step · f = function a -> function b -> a - b',
+    code: 'let rec fold_left f a = function\n    [] -> a\n  | b :: l ->\n      fold_left f (f a b) l',
+    say: function (e) {
+      if (!e) return null;
+      var nd = e.node, a = nd.args[0], l = nd.args[1];
+      if (e.type === 'call') {
+        if (!l.length) return 'Call ' + ml(nd.label) + ': the list is empty, the result is the accumulator, ' + v(a) + '. The whole computation was done on the way down.';
+        return 'Call ' + ml(nd.label) + ': the accumulator becomes ' + ml('f ' + a + ' ' + l[0]) + ' = ' + (a - l[0]) +
+          ', and the next call receives the rest: ' + ml(nd.kids[0].label) + '. Its result will be the result of this call, with nothing else to compute.';
+      }
+      if (e.parent) return ml(nd.label) + ' returns ' + v(nd.val) + ' to ' + ml(e.parent.label) + ', which returns it unchanged: it has nothing left to compute.';
+      return ml(nd.label) + ' returns ' + v(nd.val) + ': this is the result, ((10 − 1) − 2) − 3. The waiting calls only passed it on.';
+    }
+  });
+})();
+</script>
+</body>
+</html>
