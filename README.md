@@ -24,9 +24,9 @@ sont déjà listées dans `annales/`.
 ## L’ouvrir
 
 - **En local** : ouvre `index.html` dans un navigateur. Le site n’a pas de build et fonctionne aussi en `file://`.
-- **En ligne avec GitHub Pages** : dans le dépôt GitHub, *Settings → Pages → Build and deployment →
-  Deploy from a branch*, choisis la branche et le dossier `/ (root)`. Le site sera servi à
-  `https://<utilisateur>.github.io/<dépôt>/`.
+- **En ligne** : https://epita.arthurjeaugey.com (GitHub Pages, *Deploy from a branch*, dossier `/ (root)` de
+  la branche par défaut). Le fichier `CNAME` porte le domaine ; `.nojekyll` publie les fichiers tels quels.
+  Côté DNS (Porkbun) : un enregistrement `CNAME` `epita` → `a-jeaugey.github.io`.
 
 La progression (parties comprises, réponses au QCM, exercices réussis, date du partiel) est enregistrée dans le
 navigateur (`localStorage`) : elle ne suit pas d’un appareil à l’autre. Elle est commune aux deux langues, et le
