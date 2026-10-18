@@ -434,7 +434,7 @@
       { t: 'Question 1 · cadre d’étude', html: '<ul><li>Référentiel : terrestre, supposé galiléen.</li><li>Système : le projectile, assimilé à un point matériel.</li><li>Système de coordonnées : cartésien, repère (O, @u_x, @u_y), @u_y vertical vers le haut ; origine des temps au lancer.</li></ul>' },
       { t: 'Question 2 · vecteur position', html: eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
       { t: 'Question 3 · équation de la trajectoire', html: '<p>De $x($t) = $v_0 cos$α · $t on tire (pour $α ≠ 90°) :</p>' + eq('$t = ' + fr('$x', '$v_0 cos$α')) +
-        '<p>On remplace dans $y($t) :</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α') + ' − ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
+        '<p>On remplace dans $y($t) :</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α'), '− ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
         '<p>C’est une parabole tournée vers le bas. Il ne reste plus de $t : c’est le but.</p>' },
       { t: 'Question 4 · vecteur vitesse', html: eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
         eq('‖@v‖ = ' + sq('$v_x² + $v_y²'), '= ' + sq('($v_0 cos$α)² + ($v_0 sin$α − $g$t)²')) },
@@ -447,7 +447,7 @@
         '<p>Solutions : $t = 0 (le départ) ou</p>' + eq('$t_P = ' + fr('2 $v_0 sin$α', '$g')) + '<p>On remplace dans $x($t) :</p>' +
         eq('$x_{max} = $v_0 cos$α · $t_P', '= ' + fr('2 $v_0² sin$α cos$α', '$g') + ' = ' + fr('$v_0² sin(2$α)', '$g')) },
       { t: 'Question 8 · sommet', html: '<p>Au sommet S, la vitesse verticale est nulle :</p>' + eq('$v_y($t_S) = $v_0 sin$α − $g$t_S = 0', '$t_S = ' + fr('$v_0 sin$α', '$g')) +
-        '<p>On remplace dans @OM($t) :</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g') + ' = ' + fr('$v_0² sin²$α', '2$g')) +
+        '<p>On remplace dans @OM($t) :</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g'), '$y_S = ' + fr('$v_0² sin²$α', '2$g')) +
         '<p>Le sommet est à mi-portée, atteint à mi-parcours ($t_S = $t_P/2) : la parabole est symétrique.</p>' }],
     answer: '<ul><li>@OM = ($v_0 cos$α · $t ; $v_0 sin$α · $t − $g$t²/2)</li><li>$y($x) = −$g$x²/(2$v_0² cos²$α) + $x tan$α</li><li>@v = ($v_0 cos$α ; $v_0 sin$α − $g$t) ; @a = (0 ; −$g), ‖@a‖ = $g</li><li>$x_{max} = 2$v_0² sin$α cos$α/$g = $v_0² sin(2$α)/$g</li><li>$x_S = $v_0² sin$α cos$α/$g ; $y_S = $v_0² sin²$α/(2$g)</li></ul>',
     traps: [
@@ -645,7 +645,7 @@
         eq('@P + @f = $m @a', '−$m$g @u_y − $α$v_y @u_y = $m @a', '@a = (−$g − ' + fr('$α', '$m') + ' $v_y) @u_y') +
         '<p>Pendant la chute $v_y &lt; 0, donc −$α$v_y &gt; 0 : la composante du frottement est bien vers le haut.</p>' +
         '<p class="sol-note">Corrigé officiel : sa ligne intermédiaire « $m$g − $α$v = $m$a » perd le signe du poids ; la projection du poids sur @u_y vaut −$m$g, comme dans sa ligne suivante.</p>' },
-      { t: 'Question 8 · équation différentielle', html: '<p>Avec $a_y = d$v/d$t (on note $v = $v_y) :</p>' + eq(fr('d$v', 'd$t') + ' = −$g − ' + fr('$α', '$m') + ' $v ⇒ ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = −$g', '$τ = ' + fr('$m', '$α')) +
+      { t: 'Question 8 · équation différentielle', html: '<p>Avec $a_y = d$v/d$t (on note $v = $v_y) :</p>' + eq(fr('d$v', 'd$t') + ' = −$g − ' + fr('$α', '$m') + ' $v', '⇒ ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = −$g', '$τ = ' + fr('$m', '$α')) +
         '<p>$τ s’exprime en secondes ([$m]/[$α] = kg/(kg·s⁻¹) = s) : c’est un temps caractéristique. C’est une <b>équation différentielle linéaire du premier ordre</b>, à coefficients constants, avec un second membre constant (−$g).</p>' },
       { t: 'Question 9 · solution', html: '<p>Solution de l’équation homogène ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = 0 : $v_h = $A e<sup>−$t/$τ</sup>.</p>' +
         '<p>Le second membre est constant : on cherche une solution particulière constante $v_p. Alors d$v_p/d$t = 0 et $v_p/$τ = −$g, soit $v_p = −$g$τ.</p>' + eq('$v($t) = $A e<sup>−$t/$τ</sup> − $g$τ') +
@@ -691,7 +691,7 @@
       { t: 'Question 4 · position', html: '<p>On intègre encore ; @OM(0) = @0 (origine au point de départ) :</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
       { t: 'Question 5 · trajectoire', html: '<p>De $x($t) : $t = ' + fr('$x', '$v_0 cos$β') + '. On remplace dans $y($t) :</p>' + eq('$y($x) = −' + fr('$g$x²', '2 $v_0² cos²$β') + ' + $x tan$β') + '<p>C’est une <b>parabole</b> (tournée vers le bas).</p>' },
       { t: 'Question 6 · but ?', html: '<p>Au niveau des poteaux, $x = $d = 40 m (avec $g = 9,81 m·s⁻²) :</p>' +
-        eq('$y(40) = −' + fr('9,81 × 40²', '2 × 23² × cos²38°') + ' + 40 tan 38°', '$y(40) ≈ −23,9 + 31,3 ≈ 7,36 m') +
+        eq('$y(40) = −' + fr('9,81 × 40²', '2 × 23² × cos²38°') + '+ 40 tan 38°', '$y(40) ≈ −23,9 + 31,3 ≈ 7,36 m') +
         '<p>3 m &lt; 7,36 m &lt; 8 m : le ballon passe au-dessus de la barre transversale et sous le haut des poteaux, dans l’axe. <b>Le but est marqué.</b></p>' +
         fig(figRugby({ traj: true }), 'Trajectoire à l’échelle : sommet en $x_S ≈ 26,2 m, à $y_S ≈ 10,2 m ; le ballon redescend quand il passe les poteaux, à 7,36 m de haut.') +
         '<p>Avec $g = 10 m·s⁻², on trouve 6,90 m : même conclusion.</p>' +
@@ -753,7 +753,7 @@
         eq('$W_{A→B}(@F) = @F · @{AB} = $F × AB × cos 30°', '= 3 × 0,50 × ' + fr('√3', '2') + ' = 0,75 √3 ≈ 1,3 J') +
         '<p>$W &gt; 0 : le travail est <b>moteur</b> (@F a une composante dans le sens du déplacement).</p>' },
       { t: 'Question 2 · travail du poids', html: '<p><b>a.</b> Travail du poids : $W_{AB}(@P) = $m$g($y_A − $y_B) = 5,4 J &gt; 0, donc $y_A &gt; $y_B : le ballon <b>descend</b> (le poids est moteur).</p>' +
-        '<p><b>b.</b> Avec $m = 500 g = 0,500 kg et $g = 10 m·s⁻² :</p>' + eq('$y_A − $y_B = ' + fr('$W_{AB}', '$m$g') + ' = ' + fr('5,4', '0,500 × 10') + ' = 1,08 m') +
+        '<p><b>b.</b> Avec $m = 500 g = 0,500 kg et $g = 10 m·s⁻² :</p>' + eq('$y_A − $y_B = ' + fr('$W_{AB}', '$m$g'), '= ' + fr('5,4', '0,500 × 10') + ' = 1,08 m') +
         '<p>Le ballon descend d’environ 1,1 m (1,10 m avec $g = 9,81 m·s⁻² : l’exercice ne donne pas $g).</p>' },
       { t: 'Question 3 · travail de la traction', html: '<p>Le jouet se déplace horizontalement de A à B ; @T fait 40° avec le sol, donc avec @{AB} :</p>' +
         eq('$W_{AB}(@T) = $T × AB × cos 40°', '= 10 × 5,0 × 0,766 ≈ 38 J') + '<p>Travail moteur. (cos 40° ≈ 0,766 demande une calculatrice : sans elle, on laisse 50 cos 40° J.)</p>' }],
@@ -828,7 +828,7 @@
       { t: 'Question 2 · différence d’altitude', html: '<p>Axe vertical vers le haut, d’origine O. B est à la verticale de O, à la distance $R : son altitude est −$R. Le rayon OA fait l’angle $θ avec la verticale OB : la projection de OA sur la verticale vaut $R cos$θ, et l’altitude de A est −$R cos$θ.</p>' +
         eq('$h = $z_A − $z_B = −$R cos$θ − (−$R)', '$h = $R (1 − cos$θ)') + '<p>Application numérique : $h = 1,6 × (1 − 0,5) = 0,80 m.</p>' },
       { t: 'Question 3 · vitesse en B', html: '<p>Conservation de l’énergie mécanique entre A et B, origine de l’énergie potentielle au niveau de B :</p>' +
-        eq('½ $m $v_A² + $m$g$h = ½ $m $v_B² + 0', '$v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)'), '$v_B = ' + sq('9 + 2 × 10 × 1,6 × 0,5') + ' = √25 = 5,0 m·s⁻¹') },
+        eq('½ $m $v_A² + $m$g$h = ½ $m $v_B² + 0', '$v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)'), '$v_B = ' + sq('9 + 2 × 10 × 1,6 × 0,5'), '= √25 = 5,0 m·s⁻¹') },
       { t: 'Question 4 · force de frottement', html: '<p>Sur BC (horizontal) : @P et @R sont perpendiculaires au déplacement, seul le frottement travaille. Il est colinéaire à la vitesse et de sens opposé (c’est un frottement) : $W(@f) = −$f × BC. Théorème de l’énergie cinétique de B à C :</p>' +
         eq('½ $m $v_C² − ½ $m $v_B² = −$f · BC', '$f = ' + fr('$m($v_B² − $v_C²)', '2 BC'), '$f = ' + fr('0,10 × (25 − 9)', '2 × 2,0') + ' = 0,40 N') }],
     answer: '<ul><li>1. $E_c augmente, $E_p diminue, $E_M constante.</li><li>2. $h = $R(1 − cos$θ) = 0,80 m.</li><li>3. $v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)') + ' = 5,0 m·s⁻¹.</li><li>4. $f = $m($v_B² − $v_C²)/(2 BC) = 0,40 N.</li></ul>',
@@ -867,7 +867,7 @@
         eq('½ $m $v_B² + 0 = 0 + $m$g$h', '$v_B = ' + sq('2$g$h') + ' = √30 ≈ 5,5 m·s⁻¹') +
         '<p><b>b.</b> Avec $v_{A’} = $v_B (question 2) :</p>' + eq('$F = ' + fr('$m $v_B²', '2$L') + ' = ' + fr('$m$g$h', '$L'), '$F = ' + fr('5,0 × 10 × 1,5', '0,50') + ' = 150 N') },
       { t: 'Question 4 · vitesse en C', html: '<p>O est à la verticale de B, à la distance $R ; C est sur le cercle, avec l’angle $θ entre OB et OC. Comme à l’exercice 4, C est à la hauteur $R(1 − cos$θ) au-dessus de B. Conservation de l’énergie mécanique entre B et C :</p>' +
-        eq('½ $m $v_B² = ½ $m $v_C² + $m$g$R(1 − cos$θ)', '$v_C = ' + sq('$v_B² − 2$g$R(1 − cos$θ)'), '$v_C = ' + sq('2$g($h − $R(1 − cos$θ))')) }],
+        eq('½ $m $v_B² = ½ $m $v_C²', '+ $m$g$R(1 − cos$θ)', '$v_C = ' + sq('$v_B² − 2$g$R(1 − cos$θ)'), '$v_C = ' + sq('2$g($h − $R(1 − cos$θ))')) }],
     answer: '<ul><li>1. @P, @R, @F ; $F = $m $v_{A’}²/(2$L).</li><li>2. $v_B = $v_{A’} (aucune force ne travaille).</li><li>3. $v_B = ' + sq('2$g$h') + ' ≈ 5,5 m·s⁻¹ ; $F = $m$g$h/$L = 150 N.</li><li>4. $v_C = ' + sq('2$g($h − $R(1 − cos$θ))') + '.</li></ul>',
     traps: [
       'Compter le travail de la réaction : sans frottement, elle est perpendiculaire à la piste et ne travaille pas.',
@@ -942,7 +942,7 @@
       { t: 'Question 6 · en cartésien', html: '<p class="sol-note">L’expression de l’énoncé contient une erreur : il manque le facteur $ω. Telle qu’elle est écrite, $r_0 sin($ω$t) est en mètres, pas en m·s⁻¹ : elle n’est pas homogène à une vitesse. Lecture retenue : on montre l’expression corrigée.</p><p>On dérive les coordonnées :</p>' +
         eq('$v_x = ' + fr('d$x', 'd$t') + ' = −$r_0 $ω sin($ω$t)', '$v_y = ' + fr('d$y', 'd$t') + ' = $r_0 $ω cos($ω$t)') +
         eq('@v = −$r_0 $ω sin($ω$t) @u_x', '+ $r_0 $ω cos($ω$t) @u_y') + '<p>Norme :</p>' +
-        eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)') + ' = $r_0 $ω') +
+        eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)'), '= $r_0 $ω') +
         '<p>En polaire, ‖@v‖ = $r_0 |' + thd + '|. Les deux normes sont égales et $θ = $ω$t augmente : <b>' + thd + ' = $ω</b>. La vitesse angulaire est la constante $ω.</p>' +
         '<p>Remarque : @v = $r_0$ω (−sin$θ @u_x + cos$θ @u_y) = $r_0$ω @u_θ, on retrouve la question 4.</p>' },
       { t: 'Question 7 · nature du mouvement', html: '<p>$r = $r_0 est constant : la trajectoire est un cercle de centre O et de rayon $r_0. ‖@v‖ = $r_0$ω est constante : le mouvement est uniforme. C’est un <b>mouvement circulaire uniforme</b>.</p>' },
@@ -980,7 +980,7 @@
       'Projette la 2e loi de Newton sur @u_θ (la force n’a pas de composante orthoradiale), puis sur @u_r. Période : temps pour faire un tour, 2π$r, à la vitesse $v.'],
     solution: [
       { t: 'Question 1 · vecteur position', html: '<p>Cadre : référentiel géocentrique, supposé galiléen ; système : le satellite (point M de masse $m) ; coordonnées polaires de centre O, le centre de la Terre.</p>' +
-        eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km = 1,28 × 10⁷ m') },
+        eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km', '= 1,28 × 10⁷ m') },
       { t: 'Question 2 · vecteur vitesse', html: '<p>$r constant : ' + rd + ' = 0, donc</p>' + eq('@v = $r' + thd + ' @u_θ', '‖@v‖ = $r |' + thd + '|') },
       { t: 'Question 3 · vecteur accélération', html: '<p>Avec ' + rd + ' = ' + rdd + ' = 0 :</p>' + eq('@a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ') },
       { t: 'Question 4 · force gravitationnelle', html: '<p>La gravitation est attractive : la Terre attire le satellite vers son centre O, selon −@u_r.</p>' + eq('@F = −' + fr('$G $M_T $m', '$r²') + ' @u_r') +

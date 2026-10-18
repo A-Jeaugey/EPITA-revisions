@@ -105,7 +105,7 @@
         { t: 'Question 1 · study framework', html: '<ul><li>Reference frame: terrestrial, assumed Galilean.</li><li>System: the projectile, modelled as a material point.</li><li>Coordinate system: Cartesian, frame (O, @u_x, @u_y), @u_y pointing up; time origin at the launch.</li></ul>' },
         { t: 'Question 2 · position vector', html: eq('@OM($t) = $x @u_x + $y @u_y', '@OM($t) = ' + col('$v_0 cos$α · $t', '$v_0 sin$α · $t − ' + fr('$g', '2') + ' $t²')) },
         { t: 'Question 3 · trajectory equation', html: '<p>From $x($t) = $v_0 cos$α · $t we get (for $α ≠ 90°):</p>' + eq('$t = ' + fr('$x', '$v_0 cos$α')) +
-          '<p>Substitute into $y($t):</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α') + ' − ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
+          '<p>Substitute into $y($t):</p>' + eq('$y = $v_0 sin$α · ' + fr('$x', '$v_0 cos$α'), '− ' + fr('$g', '2') + ' ' + fr('$x²', '$v_0² cos²$α'), '$y($x) = −' + fr('$g', '2 $v_0² cos²$α') + ' $x² + $x tan$α') +
           '<p>This is a downward-opening parabola. There is no $t left: that is the goal.</p>' },
         { t: 'Question 4 · velocity vector', html: eq('@v = ' + fr('d@OM', 'd$t') + ' = ' + col('$v_0 cos$α', '$v_0 sin$α − $g$t')) +
           eq('‖@v‖ = ' + sq('$v_x² + $v_y²'), '= ' + sq('($v_0 cos$α)² + ($v_0 sin$α − $g$t)²')) },
@@ -118,7 +118,7 @@
           '<p>Solutions: $t = 0 (the launch) or</p>' + eq('$t_P = ' + fr('2 $v_0 sin$α', '$g')) + '<p>Substitute into $x($t):</p>' +
           eq('$x_{max} = $v_0 cos$α · $t_P', '= ' + fr('2 $v_0² sin$α cos$α', '$g') + ' = ' + fr('$v_0² sin(2$α)', '$g')) },
         { t: 'Question 8 · top', html: '<p>At the top S, the vertical velocity is zero:</p>' + eq('$v_y($t_S) = $v_0 sin$α − $g$t_S = 0', '$t_S = ' + fr('$v_0 sin$α', '$g')) +
-          '<p>Substitute into @OM($t):</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g') + ' = ' + fr('$v_0² sin²$α', '2$g')) +
+          '<p>Substitute into @OM($t):</p>' + eq('$x_S = ' + fr('$v_0² sin$α cos$α', '$g') + ' = ' + fr('$x_{max}', '2'), '$y_S = ' + fr('$v_0² sin²$α', '$g') + ' − ' + fr('$v_0² sin²$α', '2$g'), '$y_S = ' + fr('$v_0² sin²$α', '2$g')) +
           '<p>The top is at half the range, reached halfway through the flight ($t_S = $t_P/2): the parabola is symmetric.</p>' }],
       traps: [
         'Leaving $t in $y($x): the trajectory equation depends on $x only.',
@@ -300,7 +300,7 @@
           eq('@W + @f = $m @a', '−$m$g @u_y − $α$v_y @u_y = $m @a', '@a = (−$g − ' + fr('$α', '$m') + ' $v_y) @u_y') +
           '<p>During the fall $v_y &lt; 0, so −$α$v_y &gt; 0: the friction component does point up.</p>' +
           '<p class="sol-note">Official answer key: its intermediate line “$m$g − $α$v = $m$a” loses the sign of the weight; the component of the weight along @u_y is −$m$g, as in its next line.</p>' },
-        { t: 'Question 8 · differential equation', html: '<p>With $a_y = d$v/d$t (write $v = $v_y):</p>' + eq(fr('d$v', 'd$t') + ' = −$g − ' + fr('$α', '$m') + ' $v ⇒ ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = −$g', '$τ = ' + fr('$m', '$α')) +
+        { t: 'Question 8 · differential equation', html: '<p>With $a_y = d$v/d$t (write $v = $v_y):</p>' + eq(fr('d$v', 'd$t') + ' = −$g − ' + fr('$α', '$m') + ' $v', '⇒ ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = −$g', '$τ = ' + fr('$m', '$α')) +
           '<p>$τ is in seconds ([$m]/[$α] = kg/(kg·s⁻¹) = s): it is a characteristic time. This is a <b>first-order linear differential equation</b>, with constant coefficients and a constant right-hand side (−$g).</p>' },
         { t: 'Question 9 · solution', html: '<p>Solution of the homogeneous equation ' + fr('d$v', 'd$t') + ' + ' + fr('$v', '$τ') + ' = 0: $v_h = $A e<sup>−$t/$τ</sup>.</p>' +
           '<p>The right-hand side is constant: look for a constant particular solution $v_p. Then d$v_p/d$t = 0 and $v_p/$τ = −$g, so $v_p = −$g$τ.</p>' + eq('$v($t) = $A e<sup>−$t/$τ</sup> − $g$τ') +
@@ -343,7 +343,7 @@
         { t: 'Question 4 · position', html: '<p>Integrate again; @OM(0) = @0 (origin at the starting point):</p>' + eq('@OM($t) = ' + col('$v_0 $t cos$β', '−' + fr('$g$t²', '2') + ' + $v_0 $t sin$β')) },
         { t: 'Question 5 · trajectory', html: '<p>From $x($t): $t = ' + fr('$x', '$v_0 cos$β') + '. Substitute into $y($t):</p>' + eq('$y($x) = −' + fr('$g$x²', '2 $v_0² cos²$β') + ' + $x tan$β') + '<p>It is a <b>parabola</b> (opening downwards).</p>' },
         { t: 'Question 6 · goal?', html: '<p>At the posts, $x = $d = 40 m (with $g = 9.81 m·s⁻²):</p>' +
-          eq('$y(40) = −' + fr('9.81 × 40²', '2 × 23² × cos²38°') + ' + 40 tan 38°', '$y(40) ≈ −23.9 + 31.3 ≈ 7.36 m') +
+          eq('$y(40) = −' + fr('9.81 × 40²', '2 × 23² × cos²38°') + '+ 40 tan 38°', '$y(40) ≈ −23.9 + 31.3 ≈ 7.36 m') +
           '<p>3 m &lt; 7.36 m &lt; 8 m: the ball passes above the crossbar and below the top of the posts, in line with them. <b>The goal is scored.</b></p>' +
           fig(F.rugby({ en: true, traj: true }), 'Trajectory to scale: top at $x_S ≈ 26.2 m, $y_S ≈ 10.2 m; the ball is coming down when it passes the posts, at a height of 7.36 m.') +
           '<p>With $g = 10 m·s⁻², you get 6.90 m: same conclusion.</p>' +
@@ -399,15 +399,15 @@
           eq('$W_{A→B}(@F) = @F · @{AB} = $F × AB × cos 30°', '= 3 × 0.50 × ' + fr('√3', '2') + ' = 0.75 √3 ≈ 1.3 J') +
           '<p>$W &gt; 0: the force is <b>driving</b> (positive work: @F has a component in the direction of the displacement).</p>' },
         { t: 'Question 2 · work done by the weight', html: '<p><b>a.</b> Work done by the weight: $W_{AB}(@W) = $m$g($y_A − $y_B) = 5.4 J &gt; 0, so $y_A &gt; $y_B: the ball moves <b>downwards</b> (the weight is driving).</p>' +
-          '<p><b>b.</b> With $m = 500 g = 0.500 kg and $g = 10 m·s⁻²:</p>' + eq('$y_A − $y_B = ' + fr('$W_{AB}', '$m$g') + ' = ' + fr('5.4', '0.500 × 10') + ' = 1.08 m') +
+          '<p><b>b.</b> With $m = 500 g = 0.500 kg and $g = 10 m·s⁻²:</p>' + eq('$y_A − $y_B = ' + fr('$W_{AB}', '$m$g'), '= ' + fr('5.4', '0.500 × 10') + ' = 1.08 m') +
           '<p>The ball goes down by about 1.1 m (1.10 m with $g = 9.81 m·s⁻²: the exercise does not give $g).</p>' },
         { t: 'Question 3 · work done by the pulling force', html: '<p>The toy moves horizontally from A to B; @T makes 40° with the floor, hence with @{AB}:</p>' +
           eq('$W_{AB}(@T) = $T × AB × cos 40°', '= 10 × 5.0 × 0.766 ≈ 38 J') + '<p>Driving force. (cos 40° ≈ 0.766 needs a calculator: without one, leave 50 cos 40° J.)</p>' }],
-      answer: '<ul><li>1. $W_{A→B}(@F) = 3 × 0.50 × cos 30° ≈ 1.3 J (driving).</li><li>2. $W(@W) &gt; 0: the ball goes down, by 1.08 m (with $g = 10 m·s⁻²).</li><li>3. $W_{AB}(@T) = 50 cos 40° ≈ 38 J.</li></ul>',
+      answer: '<ul><li>1. $W_{A→B}(@F) = 3 × 0.50 × cos 30° ≈ 1.3 J (driving).</li><li>2. $W_{AB}(@W) &gt; 0: the ball goes down, by 1.08 m (with $g = 10 m·s⁻²).</li><li>3. $W_{AB}(@T) = 50 cos 40° ≈ 38 J.</li></ul>',
       traps: [
         'Taking the angle with the wrong direction: it is the angle between the force and the displacement @{AB} (from A to B). With 150°, you would get −1.3 J.',
         'Forgetting to convert: 50 cm = 0.50 m, 500 g = 0.500 kg.',
-        'Getting the sign of the weight’s work wrong: $W(@W) &gt; 0 when the object goes down.',
+        'Getting the sign of the weight’s work wrong: $W_{A→B}(@W) &gt; 0 when the object goes down.',
         'Writing $W = $F × AB without the cosine: only the component of the force along the displacement does work.'],
       note: NOTE
     },
@@ -434,12 +434,12 @@
         { t: 'Question 2 · path BC', html: '<p><b>a.</b> Along BC: @W (vertical), @R (perpendicular to the slope), @F_p (up the slope), @f (down the slope): figure above, on the right.</p>' +
           '<p><b>b.</b> @R does no work (perpendicular to the displacement). Driving force: @F_p. Resistive forces: @W (the robot goes up) and @f.</p>' +
           '<p><b>c.</b> Length of the slope: BC = $h/sin $α = 20/0.5 = 40 m. Work done from B to C:</p>' +
-          eq('$W(@F_p) = 250 × 40 = 10 000 J', '$W(@f) = −50 × 40 = −2000 J', '$W(@W) = −$m$g$h = −20 000 J') + '<p>Work-kinetic energy theorem from B to C:</p>' +
+          eq('$W_{B→C}(@F_p) = 250 × 40 = 10 000 J', '$W_{B→C}(@f) = −50 × 40 = −2000 J', '$W_{B→C}(@W) = −$m$g$h = −20 000 J') + '<p>Work-kinetic energy theorem from B to C:</p>' +
           eq('½ $m $v_C² = ½ $m $v_B² + Σ$W', '= 2000 + 10 000 − 2000 − 20 000', '= −10 000 J &lt; 0') +
           '<p>A kinetic energy cannot be negative: the robot <b>does not reach C</b>, its motor is not powerful enough. Along the slope, $F_p − $f − $m$g sin $α = 250 − 50 − 500 = −300 N: the robot slows down from B on and stops after 2000/300 ≈ 6.7 m of climb.</p>' +
           '<p>To reach C, it would need (same thrust on AB and BC, work-kinetic energy theorem from A to C with $v_C ≥ 0) $F_p(AB + BC) − $f(AB + BC) − $m$g$h ≥ 0, that is $F_p ≥ 50 + 20 000/50 = 450 N.</p>' },
         { t: 'Question 3 · path CD', html: '<p class="sol-note">The statement is inconsistent: with these data, the robot never reaches C (question 2c). Part 3 still assumes it does, without giving its speed at C. Reading used here: the robot leaves C with zero velocity ($v_C = 0); slope CD is also at $α = 30°, so CD = 40 m.</p>' +
-          '<p><b>a.</b> Along CD, motor off: @W is driving ($W = +$m$g$h = 20 000 J), @f is resistive ($W = −50 × 40 = −2000 J), @R does no work. Without the mechanism, the robot would gain 18 000 J of kinetic energy. The mechanism keeps it at 5 m/s: it keeps ½ × 100 × 5² = 1250 J of kinetic energy, the rest is stored.</p>' +
+          '<p><b>a.</b> Along CD, motor off: @W is driving ($W_{C→D}(@W) = +$m$g$h = 20 000 J), @f is resistive ($W_{C→D}(@f) = −50 × 40 = −2000 J), @R does no work. Without the mechanism, the robot would gain 18 000 J of kinetic energy. The mechanism keeps it at 5 m/s: it keeps ½ × 100 × 5² = 1250 J of kinetic energy, the rest is stored.</p>' +
           eq('$E_{stored} = 20 000 − 2000 − 1250', '= 16 750 J ≈ 1.7 × 10⁴ J') +
           '<p><b>b.</b> On a horizontal road, the motor pushes with $F_p = 250 N; over a distance $d it does the work $F_p × $d:</p>' + eq('$d = ' + fr('$E_{stored}', '$F_p') + ' = ' + fr('16 750', '250') + ' = 67 m') +
           '<p>Another possible reading: if the robot moves at constant speed, the motor only balances friction (50 N) and the distance is 16 750/50 = 335 m.</p>' }],
@@ -447,7 +447,7 @@
       traps: [
         'Counting work for @R: it is perpendicular to the displacement, its work is zero.',
         'Taking BC = $h = 20 m: the length of the slope is $h/sin $α = 40 m.',
-        'Forgetting the sign of the work done by the weight: on the way up, $W(@W) = −$m$g$h.',
+        'Forgetting the sign of the work done by the weight: on the way up, $W_{B→C}(@W) = −$m$g$h.',
         'Writing $v_C = √(−200) and carrying on: $v_C² &lt; 0 means the robot does not reach C.',
         'Counting as stored the kinetic energy the robot keeps at 5 m/s.'],
       note: 'No official answer key: solution written and checked. The statement is inconsistent (the robot does not reach C): part 3 is solved assuming vC = 0.'
@@ -472,8 +472,8 @@
         { t: 'Question 2 · difference in height', html: '<p>Vertical axis pointing up, origin at O. B is directly below O, at distance $R: its height is −$R. Radius OA makes the angle $θ with the vertical OB: the projection of OA on the vertical is $R cos$θ, and the height of A is −$R cos$θ.</p>' +
           eq('$h = $z_A − $z_B = −$R cos$θ − (−$R)', '$h = $R (1 − cos$θ)') + '<p>Numerical value: $h = 1.6 × (1 − 0.5) = 0.80 m.</p>' },
         { t: 'Question 3 · velocity at B', html: '<p>Conservation of mechanical energy between A and B, with zero potential energy at the level of B:</p>' +
-          eq('½ $m $v_A² + $m$g$h = ½ $m $v_B² + 0', '$v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)'), '$v_B = ' + sq('9 + 2 × 10 × 1.6 × 0.5') + ' = √25 = 5.0 m/s') },
-        { t: 'Question 4 · friction force', html: '<p>Along BC (horizontal): @W and @R are perpendicular to the displacement, only friction does work. It is collinear to the velocity and points the opposite way (it is friction): $W(@f) = −$f × BC. Work-kinetic energy theorem from B to C:</p>' +
+          eq('½ $m $v_A² + $m$g$h = ½ $m $v_B² + 0', '$v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)'), '$v_B = ' + sq('9 + 2 × 10 × 1.6 × 0.5'), '= √25 = 5.0 m/s') },
+        { t: 'Question 4 · friction force', html: '<p>Along BC (horizontal): @W and @R are perpendicular to the displacement, only friction does work. It is collinear to the velocity and points the opposite way (it is friction): $W_{B→C}(@f) = −$f × BC. Work-kinetic energy theorem from B to C:</p>' +
           eq('½ $m $v_C² − ½ $m $v_B² = −$f · BC', '$f = ' + fr('$m($v_B² − $v_C²)', '2 BC'), '$f = ' + fr('0.10 × (25 − 9)', '2 × 2.0') + ' = 0.40 N') }],
       answer: '<ul><li>1. $E_k increases, $E_p decreases, $E_M constant.</li><li>2. $h = $R(1 − cos$θ) = 0.80 m.</li><li>3. $v_B = ' + sq('$v_A² + 2$g$R(1 − cos$θ)') + ' = 5.0 m/s.</li><li>4. $f = $m($v_B² − $v_C²)/(2 BC) = 0.40 N.</li></ul>',
       traps: [
@@ -501,7 +501,7 @@
         'Between B and D, only the weight does work: mechanical energy is conserved. For C, same geometry as in exercise 4: C is $R(1 − cos$θ) above B.'],
       solution: [
         { t: 'Question 1 · section AA’', html: '<p><b>a.</b> Between A and A’: the weight @W (vertical, pointing down), the reaction force from the track @R (vertical, pointing up: no friction) and the propulsion force @F (horizontal, in the direction of motion).</p>' +
-          '<p><b>b.</b> @W and @R are perpendicular to the displacement: zero work. @F is constant and parallel to the displacement: $W(@F) = $F$L. Work-kinetic energy theorem between A ($v_A = 0) and A’:</p>' +
+          '<p><b>b.</b> @W and @R are perpendicular to the displacement: zero work. @F is constant and parallel to the displacement: $W_{A→A’}(@F) = $F$L. Work-kinetic energy theorem between A ($v_A = 0) and A’:</p>' +
           eq('½ $m $v_{A’}² − 0 = $F$L', '$F = ' + fr('$m $v_{A’}²', '2$L')) },
         { t: 'Question 2 · section A’B', html: '<p>Between A’ and B, the track is horizontal, with no propulsion and no friction: @W and @R are perpendicular to the displacement, the total work is zero. By the work-kinetic energy theorem, Δ$E_k = 0:</p>' + eq('$v_B = $v_{A’}') +
           '<p>(The forces cancel out: the puck moves in a straight line at constant speed, Newton’s first law.)</p>' },
@@ -509,7 +509,7 @@
           eq('½ $m $v_B² + 0 = 0 + $m$g$h', '$v_B = ' + sq('2$g$h') + ' = √30 ≈ 5.5 m·s⁻¹') +
           '<p><b>b.</b> With $v_{A’} = $v_B (question 2):</p>' + eq('$F = ' + fr('$m $v_B²', '2$L') + ' = ' + fr('$m$g$h', '$L'), '$F = ' + fr('5.0 × 10 × 1.5', '0.50') + ' = 150 N') },
         { t: 'Question 4 · velocity at C', html: '<p>O is directly above B, at distance $R; C is on the circle, with the angle $θ between OB and OC. As in exercise 4, C is at height $R(1 − cos$θ) above B. Conservation of mechanical energy between B and C:</p>' +
-          eq('½ $m $v_B² = ½ $m $v_C² + $m$g$R(1 − cos$θ)', '$v_C = ' + sq('$v_B² − 2$g$R(1 − cos$θ)'), '$v_C = ' + sq('2$g($h − $R(1 − cos$θ))')) }],
+          eq('½ $m $v_B² = ½ $m $v_C²', '+ $m$g$R(1 − cos$θ)', '$v_C = ' + sq('$v_B² − 2$g$R(1 − cos$θ)'), '$v_C = ' + sq('2$g($h − $R(1 − cos$θ))')) }],
       answer: '<ul><li>1. @W, @R, @F; $F = $m $v_{A’}²/(2$L).</li><li>2. $v_B = $v_{A’} (no force does work).</li><li>3. $v_B = ' + sq('2$g$h') + ' ≈ 5.5 m·s⁻¹; $F = $m$g$h/$L = 150 N.</li><li>4. $v_C = ' + sq('2$g($h − $R(1 − cos$θ))') + '.</li></ul>',
       traps: [
         'Counting work for the reaction force: with no friction, it is perpendicular to the track and does no work.',
@@ -579,7 +579,7 @@
         { t: 'Question 6 · in Cartesian coordinates', html: '<p class="sol-note">The expression in the statement contains an error: the factor $ω is missing. As written, $r_0 sin($ω$t) is in meters, not in m·s⁻¹: it is not dimensionally a velocity. Reading used here: we show the corrected expression.</p><p>Differentiate the coordinates:</p>' +
           eq('$v_x = ' + fr('d$x', 'd$t') + ' = −$r_0 $ω sin($ω$t)', '$v_y = ' + fr('d$y', 'd$t') + ' = $r_0 $ω cos($ω$t)') +
           eq('@v = −$r_0 $ω sin($ω$t) @u_x', '+ $r_0 $ω cos($ω$t) @u_y') + '<p>Norm:</p>' +
-          eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)') + ' = $r_0 $ω') +
+          eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)'), '= $r_0 $ω') +
           '<p>In polar coordinates, ‖@v‖ = $r_0 |' + thd + '|. The two norms are equal and $θ = $ω$t increases: <b>' + thd + ' = $ω</b>. The angular velocity is the constant $ω.</p>' +
           '<p>Note: @v = $r_0$ω (−sin$θ @u_x + cos$θ @u_y) = $r_0$ω @u_θ, which is question 4 again.</p>' },
         { t: 'Question 7 · nature of the motion', html: '<p>$r = $r_0 is constant: the trajectory is a circle with centre O and radius $r_0. ‖@v‖ = $r_0$ω is constant: the motion is uniform. It is a <b>uniform circular motion</b>.</p>' },
@@ -616,7 +616,7 @@
         'Project Newton’s second law on @u_θ (the force has no component along it), then on @u_r. Period: the time to go once round the orbit, 2π$r, at speed $v.'],
       solution: [
         { t: 'Question 1 · position vector', html: '<p>Framework: geocentric reference frame, assumed Galilean; system: the satellite (point M of mass $m); polar coordinates centred on O, the centre of the Earth.</p>' +
-          eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km = 1.28 × 10⁷ m') },
+          eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km', '= 1.28 × 10⁷ m') },
         { t: 'Question 2 · velocity vector', html: '<p>$r is constant: ' + rd + ' = 0, so</p>' + eq('@v = $r' + thd + ' @u_θ', '‖@v‖ = $r |' + thd + '|') },
         { t: 'Question 3 · acceleration vector', html: '<p>With ' + rd + ' = ' + rdd + ' = 0:</p>' + eq('@a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ') },
         { t: 'Question 4 · gravitational force', html: '<p>Gravity is attractive: the Earth pulls the satellite towards its centre O, along −@u_r.</p>' + eq('@F = −' + fr('$G $M_T $m', '$r²') + ' @u_r') +
