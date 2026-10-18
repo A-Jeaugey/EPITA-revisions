@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice · Physics</title>
+<meta name="description" content="Physics S1: the exercises of past midterms and of TD 1 to 5, filterable by topic, source and level, with hints, step-by-step solutions and self-assessment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Practice: a list of exercise cards, filterable by topic, source and level. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.3rem}
+.stat{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;display:grid;gap:2px;min-width:104px}
+.stat b{font-family:var(--font-display);font-weight:600;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.filters{background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px}
+.filters .wrapx{display:grid;gap:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lbl{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px;min-width:82px}
+.fchip{font:inherit;font-family:var(--font-mono);font-size:.78rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:.28rem .7rem;cursor:pointer;min-height:34px}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip .n{opacity:.7;margin-left:4px}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fnote{font-size:.9rem;color:var(--warn);max-width:70ch}
+.fnote:empty{display:none}
+.list{display:grid;gap:22px;padding-block:28px 80px}
+.empty{color:var(--muted);padding:1.5rem 0;max-width:62ch}
+.exo{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;scroll-margin-top:70px;min-width:0}
+.exo-head{display:grid;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.exo-head>*{min-width:0}
+.exo-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tagc{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:999px;padding:.08rem .55rem;color:var(--muted)}
+.tagc.src{color:var(--exam);border-color:var(--exam)}
+.tagc.src.td{color:var(--accent);border-color:var(--accent)}
+.tagc.st-ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.tagc.st-review{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.exo h3{font-size:1.35rem;margin:0}
+.exo-body{display:grid;gap:14px;padding:14px 16px}
+.exo-body>*,.exo-sol>*,.sol-step>*,.sol-step .body>*,.exo-intro>*{min-width:0}
+.exo-intro{display:grid;gap:.6rem;max-width:76ch}
+.exo-figs{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));max-width:900px}
+.exo-figs .fig-pad{padding:10px 12px}
+.exo-qs{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;max-width:76ch}
+.exo-qs li{padding-left:.9rem;border-left:3px solid var(--line);min-width:0}
+.exo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px dashed var(--line)}
+.exo-actions .grow{flex:1}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.rev[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.btn[disabled]{opacity:.55;cursor:default}
+.exo-hints{display:grid;gap:8px;padding:0 16px}
+.exo-hints:empty{display:none}
+.hint{background:var(--why-soft);border-radius:8px;padding:.6rem .8rem;font-size:.95rem}
+.hint b{color:var(--why);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.exo-sol{display:grid;gap:14px;padding:14px 16px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.sol-step{display:grid;gap:6px}
+.sol-step>b{font-family:var(--font-mono);font-size:.74rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.sol-step .body{display:grid;gap:.55rem;max-width:80ch}
+.sol-step .body ol,.sol-step .body ul{margin:0;padding-left:1.25rem;display:grid;gap:.3rem}
+.answer{background:var(--ok-soft);border-radius:8px;padding:.7rem .9rem;display:grid;gap:.5rem}
+.answer>*{min-width:0}
+.answer ul,.answer ol{margin:0;padding-left:1.25rem;display:grid;gap:.25rem}
+.answer b.t,.traps b.t{font-family:var(--font-mono);font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;display:block}
+.answer b.t{color:var(--ok)}
+.traps{background:var(--warn-soft);border-radius:8px;padding:.7rem .9rem}
+.traps b.t{color:var(--warn);margin-bottom:4px}
+.traps ul{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.sol-note{font-size:.85rem;color:var(--muted)}
+.exo .eq{font-size:1.12rem}
+</style>
+</head>
+<body data-resume="Physics · practice">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Practice</div>
+      <h1>The real exercises, <span class="w">solved step by step</span>.</h1>
+      <p class="lead">The exercises of past midterms that are still on the syllabus, and those of TD 1 to 5. Try on your own first, with no calculator, ask for a hint if you get stuck, then compare your write-up with the solution.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"><div class="wrapx">
+  <div class="frow" id="fTopic" role="group" aria-label="Filter by topic"></div>
+  <div class="frow" id="fKind" role="group" aria-label="Filter by source"></div>
+  <div class="frow" id="fLvl" role="group" aria-label="Filter by level"></div>
+  <p class="fnote" id="fnote"></p>
+</div></div>
+
+<div class="wrapx">
+  <div class="list" id="list"></div>
+</div>
+
+<script src="../data/physique/exams.js"></script>
+<script src="../data/en/physique/exams.js"></script>
+<script src="../data/physique/ex-annales.js"></script>
+<script src="../data/en/physique/ex-annales.js"></script>
+<script src="../data/physique/ex-td.js"></script>
+<script src="../data/en/physique/ex-td.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
+  var KIND_ORDER = { partiel: 1, td: 2 };
+  /* midterms from the most recent to the oldest, then the TDs in order */
+  var EX = (window.PHYS_EX || []).slice().sort(function (a, b) {
+    var ka = KIND_ORDER[a.kind] || 9, kb = KIND_ORDER[b.kind] || 9;
+    if (ka !== kb) return ka - kb;
+    if (a.exam !== b.exam) return (b.exam || '') < (a.exam || '') ? -1 : 1;
+    return (a.order || 0) - (b.order || 0);
+  });
+  var TOP = window.PHYS_TOPICS || {};
+  var KINDS = [{ id: 'partiel', t: 'Midterms' }, { id: 'td', t: 'TD' }];
+  var LVL = ['', 'easy', 'medium', 'hard'];
+  /* method to reread for each topic (methodes.html) */
+  var METH = { cinematique: ['deriver', 2], trajectoire: ['trajectoire', 5], nature: ['nature', 3], tir: ['sommet', 6], circulaire: ['polaires', 9], polaire: ['polaires', 9],
+    forces: ['forces', 7], newton: ['forces', 7], 'plan-incline': ['forces', 7], travail: ['energie', 8], energie: ['energie', 8] };
+  var st = { topic: null, kind: null, lvl: 0 };
+  function key(ex) { return 'physique-' + ex.id; }
+  function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
+  function esc(s) { return U.esc(String(s)); }
+  function has(e, t) { return (e.topics || []).indexOf(t) >= 0; }
+  function pts(v) { return String(v); }
+
+  /* ---------- stats and filters ---------- */
+  function paintStats() {
+    var ok = 0, rv = 0, np = 0;
+    EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
+    $('#stats').innerHTML = '<div class="stat"><b>' + EX.length + '</b><span>exercises with solutions</span></div><div class="stat"><b>' + np + '</b><span>from midterms</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>from TD 1 to 5</span></div><div class="stat"><b>' + ok + '</b><span>solved</span></div><div class="stat"><b>' + rv + '</b><span>to review</span></div>';
+  }
+  function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+  function paintFilters() {
+    var topics = Object.keys(TOP).filter(function (t) { return EX.some(function (e) { return has(e, t); }); });
+    $('#fTopic').innerHTML = '<span class="lbl">Topic</span>' + chip('data-t', '', !st.topic, 'All', EX.length) +
+      topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), EX.filter(function (e) { return has(e, t); }).length); }).join('');
+    $('#fKind').innerHTML = '<span class="lbl">Source</span>' + chip('data-k', '', !st.kind, 'All') +
+      KINDS.filter(function (k) { return EX.some(function (e) { return e.kind === k.id; }); }).map(function (k) { return chip('data-k', k.id, st.kind === k.id, k.t, EX.filter(function (e) { return e.kind === k.id; }).length); }).join('');
+    $('#fLvl').innerHTML = '<span class="lbl">Level</span>' + chip('data-l', 0, !st.lvl, 'All') +
+      [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), EX.filter(function (e) { return e.lvl === l; }).length); }).join('');
+    $('#fnote').textContent = st.topic && !EX.some(function (e) { return e.kind === 'partiel' && has(e, st.topic); }) ? 'No past midterm covers this topic: these exercises come from the TDs, the only models available this year.' : '';
+    $('#filters').hidden = !EX.length;
+    $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; paintFilters(); paintList(); }); });
+    $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; paintFilters(); paintList(); }); });
+    $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; paintFilters(); paintList(); }); });
+  }
+
+  /* ---------- cards ---------- */
+  function figsHTML(ex) {
+    var f = (ex.figs || []).map(function (g) {
+      var media = g.svg || (g.img ? '<img src="' + R.url(g.img) + '" alt="' + esc(g.alt || '') + '" style="display:block;max-width:100%;height:auto;margin:0 auto">' : '');
+      return '<figure class="fig"><div class="fig-pad">' + media + '</div>' + (g.cap ? '<figcaption>' + g.cap + '</figcaption>' : '') + '</figure>';
+    }).join('');
+    return f ? '<div class="exo-figs">' + f + '</div>' : '';
+  }
+  function methHTML(ex) {
+    var seen = {}, out = [];
+    (ex.topics || []).forEach(function (t) { var m = METH[t]; if (m && !seen[m[0]]) { seen[m[0]] = 1; out.push(m); } });
+    return out.length ? '<p class="sol-note">Reread: ' + out.map(function (m) { return '<a href="methodes.html#' + m[0] + '">method ' + m[1] + '</a>'; }).join(', ') + '.</p>' : '';
+  }
+  function solHTML(ex) {
+    var s = (ex.solution || []).map(function (p) { return '<div class="sol-step"><b>' + (p.t || 'Solution') + '</b><div class="body">' + (p.html || '') + '</div></div>'; }).join('');
+    if (ex.answer) s += '<div class="answer"><b class="t">Expected answer</b>' + ex.answer + '</div>';
+    if (ex.traps && ex.traps.length) s += '<div class="traps"><b class="t">Traps</b><ul>' + ex.traps.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    if (ex.grading) s += '<p class="sol-note">Marking: ' + ex.grading + '</p>';
+    s += '<p class="sol-note">' + (ex.official ? 'Matches the official answer key.' + (ex.note ? ' ' + ex.note : '') : (ex.note || 'No official answer key: solution written and checked.')) + '</p>';
+    return s + methHTML(ex);
+  }
+  function card(ex) {
+    var s = state(ex), el = document.createElement('article');
+    el.className = 'exo'; el.id = ex.id;
+    var meta = '<span class="tagc src' + (ex.kind === 'td' ? ' td' : '') + '">' + esc(ex.src) + '</span>' + (ex.pts ? '<span class="tagc">' + pts(ex.pts) + ' pts</span>' : '') + (ex.time ? '<span class="tagc">≈ ' + ex.time + ' min</span>' : '') +
+      (ex.lvl ? '<span class="tagc">' + LVL[ex.lvl] + '</span>' : '') +
+      (ex.topics || []).map(function (t) { return '<span class="tagc">' + esc(TOP[t] || t) + '</span>'; }).join('') +
+      (s ? '<span class="tagc st-' + s + '">' + (s === 'ok' ? 'solved' : 'to review') + '</span>' : '');
+    var qs = (ex.questions || []).length ? '<ul class="exo-qs">' + ex.questions.map(function (q) { return '<li>' + q + '</li>'; }).join('') + '</ul>' : '';
+    var nh = (ex.hints || []).length;
+    el.innerHTML = '<div class="exo-head"><div class="exo-meta">' + meta + '</div><h3>' + ex.title + '</h3></div>' +
+      '<div class="exo-body">' + (ex.intro ? '<div class="exo-intro">' + ex.intro + '</div>' : '') + figsHTML(ex) + qs + '</div>' +
+      '<div class="exo-hints"></div>' +
+      '<div class="exo-actions">' + (nh ? '<button type="button" class="btn" data-act="hint">Hint 1 / ' + nh + '</button>' : '') +
+      '<button type="button" class="btn primary" data-act="sol" aria-expanded="false">Show the solution</button><span class="grow"></span>' +
+      '<button type="button" class="btn ok" data-act="ok" aria-pressed="' + (s === 'ok') + '">Solved</button><button type="button" class="btn rev" data-act="review" aria-pressed="' + (s === 'review') + '">To review</button></div>' +
+      '<div class="exo-sol" hidden></div>';
+    el.querySelector('[data-act="sol"]').addEventListener('click', function (e) {
+      var box = el.querySelector('.exo-sol'), open = box.hidden;
+      if (open && !box.dataset.ready) { box.innerHTML = solHTML(ex); box.dataset.ready = '1'; }
+      box.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); e.currentTarget.textContent = open ? 'Hide the solution' : 'Show the solution';
+    });
+    var shown = 0, hb = el.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shown >= nh) return;
+      el.querySelector('.exo-hints').insertAdjacentHTML('beforeend', '<div class="hint"><b>Hint ' + (shown + 1) + '</b>' + ex.hints[shown] + '</div>');
+      shown++; hb.textContent = shown < nh ? 'Hint ' + (shown + 1) + ' / ' + nh : 'No more hints'; hb.disabled = shown >= nh;
+    });
+    ['ok', 'review'].forEach(function (k) {
+      el.querySelector('[data-act="' + k + '"]').addEventListener('click', function () {
+        R.exo.set(key(ex), state(ex) === k ? null : k);
+        var fresh = card(ex); el.replaceWith(fresh); paintStats();
+      });
+    });
+    return el;
+  }
+  function paintList() {
+    var list = EX.filter(function (e) { return (!st.topic || has(e, st.topic)) && (!st.kind || e.kind === st.kind) && (!st.lvl || e.lvl === st.lvl); });
+    var box = $('#list'); box.innerHTML = '';
+    if (!EX.length) { box.innerHTML = '<p class="empty">The solved exercises will appear here.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">No exercise for these filters.</p>'; return; }
+    list.forEach(function (e) { box.appendChild(card(e)); });
+  }
+
+  paintStats(); paintFilters(); paintList();
+  /* direct links: #<topic>, #partiel, #td, or #<exercise id> */
+  var h = (location.hash || '').slice(1);
+  if (h && TOP[h]) { st.topic = h; paintFilters(); paintList(); }
+  else if (h === 'partiel' || h === 'td') { st.kind = h; paintFilters(); paintList(); }
+  else if (h) { var t = document.getElementById(h); if (t) setTimeout(function () { t.scrollIntoView(); }, 50); }
+})();
+</script>
+</body>
+</html>

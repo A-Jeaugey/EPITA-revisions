@@ -483,7 +483,7 @@
     var KP = 0.2941, XR = -1.2, YR = function (x) { return 1.4 - KP * (x - 0.6) * (x - 0.6); };
     var SIT = [
       { id: 'livre', ctx: 'table', at: [0, 0], ok: ['P', 'R'], F: { P: [0, -1.6], R: [0, 1.6] } },
-      { id: 'bille', ctx: 'pendule', at: MB, O: O, ok: ['P', 'T'], F: { P: [0, -1.5], T: mul(1.8, unit([O[0] - MB[0], O[1] - MB[1]])) }, v: [-Math.cos(th), -Math.sin(th)] },
+      { id: 'bille', ctx: 'pendule', at: MB, O: O, ok: ['P', 'T'], F: { P: [0, -1.5], T: mul(1.8, unit([O[0] - MB[0], O[1] - MB[1]])) }, v: [-Math.cos(th), -Math.sin(th)], lab: { T: [13, -2] } },
       { id: 'flotte', ctx: 'flotte', at: [0, 0.05], ok: ['P', 'A'], F: { P: [0, -1.2], A: [0, 1.2] } },
       { id: 'sousleau', ctx: 'sousleau', at: [0, -0.4], ok: ['P', 'A', 'H'], F: { P: [0, -0.6], A: [0, 1.8], H: [0, -1.2] }, off: { P: [-7, 0], H: [7, 0] } },
       { id: 'robot', ctx: 'sol', at: [0, 0], ok: ['P', 'R', 'M'], F: { P: [0, -1.5], R: [0, 1.5], M: [1.2, 0] }, v: [0.9, 0], voff: [0, 15] },
@@ -494,8 +494,8 @@
     function would(S, k) {
       if (S.F[k]) return S.F[k];
       var v = S.v ? unit(S.v) : null;
-      return { P: [0, -1.5], R: [0, 1.3], T: [0, 1.15], A: [0, 1.0], H: [0, -1.0], M: [1.2, 0],
-        f: v ? mul(-0.9, v) : [-0.9, 0], E: v ? mul(1.1, v) : [1.1, 0] }[k];
+      return { P: [0, -1.5], R: [0, 1.3], T: [-0.55, 1.05], A: [0.55, 0.95], H: [-0.45, -1.0], M: [1.2, 0],
+        f: v ? mul(-0.9, v) : [-0.9, 0], E: v ? mul(1.9, v) : [1.0, 0.5] }[k];
     }
     function sum(S) { return add(S.ok.map(function (k) { return S.F[k]; })); }
     return { rad: rad, mul: mul, add: add, len: len, unit: unit, incline: incline, SIT: SIT, would: would, sum: sum };
@@ -564,7 +564,7 @@
       p.add(hatch(p, e0, e1, [-n[0], -n[1]], 0.34));
       p.add(path(p, [e0, e1], 'mk-surf', false, true));
       if (!flat) { // the slope angle, at its foot
-        var d = Math.min(3.2, 2.5 / F.s), A = [-d * t[0], -d * t[1]], am = C.rad(st.al / 2);
+        var d = Math.min(3.6, 2.5 / F.s), A = [-d * t[0], -d * t[1]], am = C.rad(st.al / 2);
         p.line(A, [A[0] + 2.4, A[1]], { cls: 'mk-dash' });
         p.add(path(p, arcPts(A, 0.75, 0, st.al), 'ip-arc'));
         p.label([A[0] + 1.02 * Math.cos(am), A[1] + 1.02 * Math.sin(am)], 'α', { anchor: 'middle', dy: 5, fs: 15 });
@@ -582,7 +582,7 @@
       if (!flat && slope) { // the weight decomposed: W = Wx + Wy
         var tPx = k(F.vPx), tPy = k(F.vPy), big = st.al >= 12, a1 = C.rad(-90 + st.al / 2);
         p.add(path(p, [tPx, tP, tPy], 'ip-proj'));
-        p.vec(B, tPx, { kind: 'frc', cls: 'comp', head: 8, label: big ? L.W : null, sub: 'x' });
+        p.vec(B, tPx, { kind: 'frc', cls: 'comp', head: 8, label: big ? L.W : null, sub: 'x', lab: [-n[0] * 13, n[1] * 13] });
         p.vec(B, tPy, { kind: 'frc', cls: 'comp', head: 8, label: big ? L.W : null, sub: 'y' });
         p.add(path(p, arcPts(B, 0.66, -90, -90 + st.al), 'ip-arc'));
         if (big) p.label([0.92 * Math.cos(a1), 0.92 * Math.sin(a1)], 'α', { anchor: 'middle', dy: 5, fs: 15 });
@@ -596,7 +596,7 @@
       }
       p.vec(B, tP, { kind: 'frc', label: L.W, w: 2.6, head: 10 });
       p.vec(B, tR, { kind: 'frc', label: 'R', w: 2.6, head: 10 });
-      if (st.fr && !flat) p.vec(B, tf, { kind: 'frc', label: 'f', w: 2.6, head: 10 });
+      if (st.fr && !flat) p.vec(B, tf, { kind: 'frc', label: 'f', w: 2.6, head: 10, lab: [n[0] * 12, -n[1] * 12] });
       if (!st.fr && !flat) { // a, shifted off the slope to stay readable
         var o = 16 / p.sx;
         p.vec([n[0] * o, n[1] * o], [ux[0] * F.a * KA, ux[1] * F.a * KA], { kind: 'acc', label: 'a', w: 2.4, head: 9 });
@@ -686,11 +686,19 @@
         var vo = S.voff || [0, 0], vx = p.X(S.at[0]) + vo[0], vy = p.Y(S.at[1]) - vo[1];
         p.add(M.arrow(vx, vy, vx + S.v[0] * p.sx, vy - S.v[1] * p.sy, { kind: 'vel', label: 'v', w: 2, head: 8 }));
       }
-      var ks = drawn();
+      var ks = drawn(), seen = S.v ? [[C.unit(S.v), S.voff || [0, 0]]] : [];
       ks.forEach(function (k) {
-        var v = C.would(S, k), off = (S.off && S.off[k]) || [0, 0], x0 = p.X(S.at[0]) + off[0], y0 = p.Y(S.at[1]) - off[1];
+        var v = C.would(S, k), u = C.unit(v), off = (S.off && S.off[k]) || null;
+        if (!off) { // an arrow pointing the same way as another one is shifted sideways
+          for (var n = 0; n < 4; n++) {
+            off = [-u[1] * 14 * n, -u[0] * 14 * n];
+            if (!seen.some(function (q) { return q[0][0] * u[0] + q[0][1] * u[1] > 0.97 && Math.abs(q[1][0] - off[0]) + Math.abs(q[1][1] - off[1]) < 8; })) break;
+          }
+        }
+        seen.push([u, off]);
+        var x0 = p.X(S.at[0]) + off[0], y0 = p.Y(S.at[1]) - off[1];
         var cls = st.done ? (S.ok.indexOf(k) < 0 ? 'ghost' : !st.sel[k] ? 'missed' : '') : '';
-        p.add(M.arrow(x0, y0, x0 + v[0] * p.sx, y0 - v[1] * p.sy, { kind: 'frc', label: L.sym[k][0], sub: L.sym[k][1], w: 2.4, head: 9, cls: cls }));
+        p.add(M.arrow(x0, y0, x0 + v[0] * p.sx, y0 - v[1] * p.sy, { kind: 'frc', label: L.sym[k][0], sub: L.sym[k][1], w: 2.4, head: 9, cls: cls, lab: S.lab && S.lab[k] }));
       });
       p.add(cross(p, S.at));
       return p.svg({ label: fill(L.sceneAria, { s: L.sit[S.id].d, l: ks.length ? ks.map(function (k) { return L.lnames[k]; }).join(', ') : L.none }) });
@@ -704,7 +712,7 @@
         p.add(cross(p, [0, 0]));
         p.label([0, 0], '0', { kind: 'frc', arrow: true, anchor: 'middle', dx: 14, dy: -8, fs: 16 });
       } else {
-        var u = C.unit(s), d = Math.min(1.3, 0.8 * l), x0 = p.X(0), y0 = p.Y(0), nx = -u[1], ny = u[0], o = 11;
+        var u = C.unit(s), d = 1.2, x0 = p.X(0), y0 = p.Y(0), nx = -u[1], ny = u[0], o = 11;
         p.add(M.arrow(x0, y0, x0 + u[0] * d * p.sx, y0 - u[1] * d * p.sy, { kind: 'frc', w: 2.8, head: 10 }));
         p.add(M.arrow(x0 + nx * o, y0 - ny * o, x0 + nx * o + u[0] * 0.7 * d * p.sx, y0 - ny * o - u[1] * 0.7 * d * p.sy, { kind: 'acc', w: 2.2, head: 8, label: 'a' }));
         var lx = x0 - nx * 16 + u[0] * d * 0.5 * p.sx, ly = y0 + ny * 16 - u[1] * d * 0.5 * p.sy + 5;
@@ -751,21 +759,21 @@
   function pairs(el) {
     if (!el) return;
     M.mount(el, function (w) {
-      var p = M.plot({ x: [-4.3, 4.3], y: [-2.45, 2.35], w: Math.min(w, 680), equal: true, pad: [8, 8, 8, 8] });
-      var E = [-2.3, -1.45], Ap = [-2.3, 1.55];
+      var p = M.plot({ x: [-3.45, 3.5], y: [-2.45, 2.35], w: Math.min(w, 560), equal: true, pad: [8, 8, 8, 8] });
+      var E = [-2.2, -1.45], Ap = [-2.2, 1.55];
       p.add(circle(p, E, 0.85, 'mk-body') + circle(p, Ap, 0.2, 'mk-body'));
       p.text([E[0], E[1] - 0.45], L.earth, { anchor: 'middle' }).text([Ap[0] + 0.32, Ap[1] - 0.02], L.apple, { dy: 4 });
       p.vec(Ap, [0, -0.95], { kind: 'frc', w: 2.4, head: 9 }).vec(E, [0, 0.95], { kind: 'frc', w: 2.4, head: 9 });
       p.label([Ap[0] - 0.14, Ap[1] - 0.62], 'F', { sub: L.sEa, kind: 'frc', arrow: true, anchor: 'end', dy: 5 });
       p.label([E[0] + 0.14, E[1] + 0.62], 'F', { sub: L.saE, kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
-      p.line([0, -2.35], [0, 2.25], { cls: 'mk-dash' });
+      p.line([-0.4, -2.35], [-0.4, 2.25], { cls: 'mk-dash' });
       // the book resting on the table
-      p.add(path(p, [[1.15, -0.4], [1.15, -2.25]], 'mk-post') + path(p, [[3.55, -0.4], [3.55, -2.25]], 'mk-post') + path(p, [[0.75, -0.4], [3.95, -0.4]], 'mk-surf'));
-      p.add(path(p, [[1.75, -0.4], [3.05, -0.4], [3.05, 0.3], [1.75, 0.3]], 'mk-body', true));
-      p.text([1.75, 0.42], L.book, { dy: 0 }).text([1.3, -0.72], L.table, { dy: 4 });
-      var G = [2.4, -0.05], Cp = [2.85, -0.4];
+      p.add(path(p, [[0.65, -0.4], [0.65, -2.25]], 'mk-post') + path(p, [[2.75, -0.4], [2.75, -2.25]], 'mk-post') + path(p, [[0.3, -0.4], [3.1, -0.4]], 'mk-surf'));
+      p.add(path(p, [[1.0, -0.4], [2.3, -0.4], [2.3, 0.3], [1.0, 0.3]], 'mk-body', true));
+      p.text([1.0, 0.42], L.book, { dy: 0 }).text([0.75, -0.72], L.table, { dy: 4 });
+      var G = [1.65, -0.05], Cp = [2.05, -0.4];
       p.vec(G, [0, -1.25], { kind: 'frc', w: 2.4, head: 9 }).vec(Cp, [0, 1.15], { kind: 'frc', w: 2.4, head: 9 }).vec(Cp, [0, -1.15], { kind: 'frc', w: 2.4, head: 9 });
-      p.label([G[0] - 0.12, G[1] - 1.0], L.W, { kind: 'frc', arrow: true, anchor: 'end', dy: 5 });
+      p.label([G[0] - 0.12, G[1] - 1.2], L.W, { kind: 'frc', arrow: true, anchor: 'end', dy: 5 });
       p.label([Cp[0] + 0.14, Cp[1] + 0.95], 'R', { kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
       p.label([Cp[0] + 0.14, Cp[1] - 0.95], 'F', { sub: L.sbt, kind: 'frc', arrow: true, anchor: 'start', dy: 5 });
       p.add(cross(p, G));
