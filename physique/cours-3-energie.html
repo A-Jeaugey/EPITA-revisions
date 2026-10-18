@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Travail et énergie · Physique</title>
+<meta name="description" content="Physique, chapitre 3 : travail d’une force constante, travail moteur et résistant, travail du poids, puissance, énergie cinétique et théorème de l’énergie cinétique, énergie potentielle, conservation de l’énergie mécanique, frottements, choisir entre la deuxième loi de Newton et l’énergie.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Compléments propres à cette page : barres d’énergie de la plaque, jauge du travail (partie 1), chemins (partie 5). */
+.sliders.one,.plate .sliders.one{grid-template-columns:minmax(0,1fr)}
+.vlegend .sw{display:inline-block;width:13px;height:10px;border-radius:2px}
+.sw.ec,.eb .c{background:var(--vel)} .sw.ep,.eb .p{background:var(--pos)}
+.sw.eq,.eb .q{background:repeating-linear-gradient(135deg,var(--acc) 0 2px,transparent 2px 6px);box-shadow:inset 0 0 0 1px var(--acc)}
+.en-bars{display:grid;gap:7px}
+.eb{display:grid;grid-template-columns:2.5em minmax(0,1fr) 4.6em;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+.eb-n{font-family:var(--font-math);font-size:1.05rem;line-height:1}
+.eb-t{display:flex;height:14px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.07)}
+.eb-t i{display:block;height:100%;flex:none}
+.eb output{font-family:var(--font-mono);font-size:.82rem;text-align:right;white-space:nowrap}
+.plate .mk .en-track{fill:none;stroke:var(--plate-ink);stroke-width:2.4;stroke-linecap:round;opacity:.9}
+.plate .mk .en-hatch{fill:none;stroke:var(--acc);stroke-width:1.3;opacity:.85}
+.plate .mk .en-ang{fill:none;stroke:var(--flash);stroke-width:1.2;opacity:.75}
+.mk .wk-line{stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.mk .wk-ang{fill:none;stroke:var(--accent);stroke-width:1.4}
+.mk .vk.soft{opacity:.5}
+.wg{position:relative;height:12px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.wg i{position:absolute;top:0;bottom:0}
+.wg i.pos{background:var(--ok)} .wg i.neg{background:var(--warn)}
+.wg .z{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ink)}
+.wg-sc{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.mk .pth{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mk .pth.p1{stroke:var(--accent)} .mk .pth.p2{stroke:var(--ink)} .mk .pth.p3{stroke:var(--muted);stroke-dasharray:7 4}
+.mk .pth.p2.hz{opacity:.4;stroke-dasharray:4 4}
+.mk .pth-b circle{fill:var(--surface);stroke:currentColor;stroke-width:1.6}
+.mk .pth-b text{font-family:var(--font-mono);font-size:11px;font-weight:500;fill:currentColor}
+.mk .pth-b.p1{color:var(--accent)} .mk .pth-b.p2{color:var(--ink)} .mk .pth-b.p3{color:var(--muted)}
+</style>
+</head>
+<body data-resume="Physique · chapitre 3 : travail et énergie">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physique</a> · Chapitre 3 sur 4</div>
+      <h1>La hauteur se change <span class="w">en vitesse</span>.</h1>
+      <p class="lead">Quand les forces sont compliquées, ou quand seule une vitesse compte, on passe par l’énergie : le travail des forces, l’énergie cinétique, l’énergie potentielle. Deux théorèmes, et une vitesse s’obtient en une ligne, sans intégrer.</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">8 parties</span><span class="chip">cours ch. V · TD 4</span><span class="chip">absent des 7 partiels retrouvés</span></div>
+      <div class="vlegend" aria-label="Couleurs : vitesse en vert, forces en violet, énergie cinétique en vert, énergie potentielle en bleu, énergie dissipée hachurée">
+        <span><i class="lv"></i>vitesse</span><span><i class="lf"></i>force</span><span><b class="sw ec"></b>énergie cinétique</span><span><b class="sw ep"></b>énergie potentielle</span><span><b class="sw eq"></b>énergie dissipée</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Plaque : un solide descend l’arc de cercle du TD 4 puis roule sur un segment horizontal ; tu règles sa position et les frottements, les barres montrent ses énergies"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 3 · Travail et énergie</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>Le travail d’une force</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>Moteur, résistant ; le poids</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>La puissance</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Énergie cinétique et TEC</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Énergie potentielle</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Conservation de l’énergie mécanique</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>Les frottements</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>2e loi ou énergie ?</span></a></li>
+    </ol>
+    <p class="toc-note">La plaque en haut de page sert aux parties 4, 6 et 7. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil physique</a><a href="cours-2-dynamique.html">← Chapitre 2 : forces et lois de Newton</a><a href="cours-4-polaires.html">Chapitre 4 : coordonnées polaires →</a><a href="../qcm/index.html#physique">QCM de physique</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Le travail d’une force</a></li><li><a href="#s2">Moteur, résistant ; le poids</a></li><li><a href="#s3">La puissance</a></li><li><a href="#s4">Énergie cinétique et TEC</a></li>
+      <li><a href="#s5">Énergie potentielle</a></li><li><a href="#s6">Conservation de l’énergie mécanique</a></li><li><a href="#s7">Les frottements</a></li><li><a href="#s8">2e loi ou énergie ?</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Partie 1</div><h2>Le travail d’une force constante</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le principe fondamental de la dynamique ne suffit pas toujours à obtenir les équations du mouvement : certaines forces sont difficiles à exprimer, et parfois on veut seulement une vitesse à un endroit donné. Le cours propose alors une approche complémentaire, l’<b>étude énergétique</b>. Elle commence par une grandeur : le travail.</p>
+          <p>Une force <var class="vec kf">F</var> qui s’exerce sur un système en mouvement se décompose en deux parties. <var class="vec kf">F</var><sub>⊥</sub>, perpendiculaire à la trajectoire, la courbe. <var class="vec kf">F</var><sub>∥</sub>, parallèle à la trajectoire, fait varier la vitesse. Le <b>travail</b> mesure à quel point la force accélère ou ralentit le système : seule la partie parallèle compte.</p>
+        </div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub> = ∫<sub>𝒞</sub> <var class="vec kf">F</var> · d<var class="vec">l</var></span><small>en joules (J), 1 J = 1 N·m ; d<var class="vec">l</var> : déplacement infinitésimal du point le long de la trajectoire 𝒞</small></div>
+        <div class="prose">
+          <p>C’est une intégrale curviligne : elle dépend a priori de la force et du chemin suivi. Si la force est <b>constante</b> (même norme, même direction, même sens sur tout le trajet), elle devient un simple produit scalaire avec le déplacement <var class="vec">AB</var> :</p>
+        </div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub> = <var class="vec kf">F</var> · <var class="vec">AB</var> = <var>F</var> × AB × cos <var>θ</var></span><small><var>θ</var> : angle entre la force <var class="vec kf">F</var> et le déplacement <var class="vec">AB</var></small></div>
+        <div class="prose"><p>En composantes cartésiennes, le même produit scalaire s’écrit <span class="f"><var class="vec kf">F</var> · <var class="vec">AB</var> = <var>F</var><sub><var>x</var></sub> (<var>x</var><sub>B</sub> − <var>x</var><sub>A</sub>) + <var>F</var><sub><var>y</var></sub> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span>. C’est pratique quand la force est donnée par ses composantes, comme le poids (partie 2). Fais varier l’angle : seule la projection <var>F</var> cos <var>θ</var> sur le déplacement travaille.</p></div>
+        <div id="workBench" aria-label="Banc : travail d’une force de 3 N sur un déplacement de 0,50 m, selon l’angle entre la force et le déplacement"></div>
+        <ol class="steps">
+          <li><div><p><b>Le travail d’une force</b> <span class="src-tag c">TD 4 · Ex 2</span> <var>F</var> = 3 N, le point M va de A à B, AB = 50 cm, et <var class="vec kf">F</var> fait 30° avec la droite (AB), du côté de B : l’angle entre <var class="vec kf">F</var> et <var class="vec">AB</var> vaut 30°.</p><p><span class="f"><var>W</var> = 3 × 0,50 × cos 30°</span> <span class="f">= 1,5 × √3/2</span> <span class="f">= 0,75 √3 ≈ 1,3&nbsp;J</span>, positif. C’est le réglage de départ du banc.</p></div></li>
+          <li><div><p><b>Le jouet tiré</b> <span class="src-tag c">TD 4 · Ex 2</span> Une cordelette fait 40° avec le sol, traction <var>T</var> = 10 N, déplacement AB = 5,0&nbsp;m le long du sol : <span class="f"><var>W</var>(<var class="vec kf">T</var>) = 10 × 5,0 × cos 40° ≈ 38&nbsp;J</span>. Le cosinus de 40° (≈ 0,77) demande une calculatrice : sans elle, un sujet te donnerait la valeur ou un angle remarquable.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Le travail est un nombre (un scalaire), positif, négatif ou nul. Ce n’est pas un vecteur. Unité : le joule, 1 J = 1 N·m.</li>
+          <li>Sans calculatrice : cos 0 = 1, cos 30° = √3/2 ≈ 0,87, cos 45° = √2/2 ≈ 0,71, cos 60° = 1/2, cos 90° = 0, cos 180° = −1.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><var>θ</var> est l’angle entre la force et le <b>déplacement</b>. Un angle donné par rapport à la verticale se convertit d’abord : une force à 30° de la verticale, pour un déplacement horizontal, fait 60° avec ce déplacement.</li>
+          <li>Les longueurs en mètres : 50 cm = 0,50&nbsp;m. Avec « 50 », on trouve un travail cent fois trop grand.</li>
+          <li><var>W</var> = <var class="vec kf">F</var> · <var class="vec">AB</var> suppose une force constante sur tout le trajet. Sinon, c’est l’intégrale.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Partie 2</div><h2>Travail moteur, travail résistant, travail du poids</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le signe du travail dit si la force aide ou freine le mouvement. Avec <var>W</var> = <var>F</var> × AB × cos <var>θ</var>, tout vient du signe de cos <var>θ</var>. Le cours distingue trois cas.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Signe</th><th>Angle <var>θ</var></th><th>La force</th></tr></thead>
+          <tbody>
+            <tr><td class="f"><var>W</var> &gt; 0</td><td class="f">0 ≤ <var>θ</var> &lt; 90°</td><td>travail <b>moteur</b> : elle tend à accélérer le système</td></tr>
+            <tr><td class="f"><var>W</var> = 0</td><td class="f"><var>θ</var> = 90°</td><td>perpendiculaire au déplacement : elle peut courber la trajectoire, sans changer la norme de la vitesse</td></tr>
+            <tr><td class="f"><var>W</var> &lt; 0</td><td class="f">90° &lt; <var>θ</var> ≤ 180°</td><td>travail <b>résistant</b> : elle tend à ralentir le système</td></tr>
+          </tbody>
+        </table></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Les forces qui ne travaillent pas</span><p>La <b>réaction</b> <var class="vec kf">R</var> d’un support : le cours la dit toujours perpendiculaire au support, donc au déplacement. <var>W</var>(<var class="vec kf">R</var>) = 0. Le <b>poids</b>, pendant un déplacement horizontal.</p><p class="muted">TD 4, Ex 3 et 5 : « Quelles sont les forces qui travaillent ? » Commence par écarter celles-là.</p></div>
+          <div class="card"><span class="k">Les frottements</span><p>Ils s’opposent toujours au mouvement : <var>θ</var> = 180°. Un frottement de norme constante <var>f</var>, sur un trajet de longueur <var>L</var> : <span class="f"><var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> × <var>L</var></span>. Toujours résistant.</p><p class="muted">TD 4, Ex 3 et 4 : frottements de norme constante.</p></div>
+        </div>
+        <h3>Le travail du poids</h3>
+        <div class="prose"><p>Avec l’axe <var class="vec">u</var><sub><var>y</var></sub> vers le haut, le poids s’écrit <span class="f"><var class="vec kf">P</var> = −<var>m</var><var>g</var> <var class="vec">u</var><sub><var>y</var></sub></span>, de composantes (0 ; −<var>m</var><var>g</var>). Entre A (<var>x</var><sub>A</sub>, <var>y</var><sub>A</sub>) et B (<var>x</var><sub>B</sub>, <var>y</var><sub>B</sub>), la forme en composantes donne :</p></div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub>(<var class="vec kf">P</var>) = <var>P</var><sub><var>x</var></sub> (<var>x</var><sub>B</sub> − <var>x</var><sub>A</sub>) + <var>P</var><sub><var>y</var></sub> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span><span class="nw">= 0 − <var>m</var><var>g</var> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span><span class="nw">= <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>)</span><small>seule compte la différence d’altitude ; pour une descente de hauteur <var>h</var> : <var>W</var>(<var class="vec kf">P</var>) = <var>m</var><var>g</var><var>h</var></small></div>
+        <div class="prose"><p>Ni la distance horizontale ni la forme du chemin n’interviennent (partie 5). Le poids travaille positivement quand le système descend (<var>y</var><sub>A</sub> &gt; <var>y</var><sub>B</sub>), négativement quand il monte.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Le ballon</b> <span class="src-tag c">TD 4 · Ex 2</span> <var>m</var> = 500 g = 0,500&nbsp;kg, et <var>W</var><sub>AB</sub>(<var class="vec kf">P</var>) = 5,4&nbsp;J.</p><p>a. <var>W</var> &gt; 0, donc <var>y</var><sub>A</sub> &gt; <var>y</var><sub>B</sub> : le ballon <b>descend</b>.</p><p>b. <span class="f"><var>y</var><sub>A</sub> − <var>y</var><sub>B</sub> = <var>W</var> / (<var>m</var><var>g</var>)</span> <span class="f">= 5,4 / (0,500 × 10)</span> <span class="f">= 1,08&nbsp;m</span>. L’exercice ne donne pas <var>g</var> : 10&nbsp;m·s⁻², comme dans le reste du TD (1,10&nbsp;m avec 9,81).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><p><var>W</var>(<var class="vec kf">P</var>) = <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>) : altitude de départ moins altitude d’arrivée. Il descend : positif. Il monte : négatif. Il reste à la même hauteur : nul.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>« Moteur » ne veut pas dire que le système accélère. Une force motrice peut être battue par des forces résistantes : c’est la somme de tous les travaux qui décide (partie 4).</li>
+          <li>Dans <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>), l’ordre compte. Vérifie toujours : un objet qui tombe reçoit un travail positif de son poids.</li>
+          <li>La masse en kilogrammes : 500 g = 0,500&nbsp;kg.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Partie 3</div><h2>La puissance</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le travail dit combien d’énergie une force transfère ; la <b>puissance</b> dit à quelle vitesse. C’est la même idée qu’en électricité, où la puissance électrique décrit le débit d’énergie.</p></div>
+        <div class="eq"><span class="nw"><var>P</var> = <span class="frac"><span>d<var>W</var></span><span>d<var>t</var></span></span> = <var class="vec kf">F</var> · <span class="frac"><span>d<var class="vec">l</var></span><span>d<var>t</var></span></span> = <var class="vec kf">F</var> · <var class="vec kv">v</var></span><small>en watts (W), 1 W = 1 J/s ; <var class="vec kv">v</var> : vitesse du système à cet instant</small></div>
+        <div class="prose"><p>Comme d<var class="vec">l</var>/d<var>t</var> = <var class="vec kv">v</var>, la puissance d’une force est le produit scalaire de la force et de la vitesse : <span class="f"><var>P</var> = <var>F</var> <var>v</var> cos <var>θ</var></span>, avec <var>θ</var> l’angle entre <var class="vec kf">F</var> et <var class="vec kv">v</var>. Elle a le signe du travail : positive pour une force motrice, négative pour une force résistante, nulle si <var class="vec kf">F</var> ⊥ <var class="vec kv">v</var>. Si elle reste constante pendant une durée Δ<var>t</var>, <var>W</var> = <var>P</var> × Δ<var>t</var>.</p></div>
+        <div class="prose"><p><b>Exemple</b> <span class="src-tag c">TD 2 · Ex 3</span> Le robot de 10&nbsp;kg roule sur un sol horizontal. Son moteur exerce <var>F</var> = 50 N parallèle au sol, sa vitesse initiale est 2&nbsp;m·s⁻¹. Sans frottement, la deuxième loi donne <var>v</var>(<var>t</var>) = 5<var>t</var> + 2.</p></div>
+        <ol class="steps">
+          <li><div><p><var class="vec kf">F</var> et <var class="vec kv">v</var> ont le même sens : <span class="f"><var>P</var> = <var>F</var><var>v</var> = 50 (5<var>t</var> + 2)</span>. 100 W au départ, 600 W à <var>t</var> = 2 s : à force constante, la puissance grandit avec la vitesse.</p></div></li>
+          <li><div><p>Avec le frottement <span class="f"><var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var></span> (<var>α</var> = 0,5&nbsp;kg·s⁻¹, partie II du TD) : <span class="f"><var>P</var>(<var class="vec kf">f</var>) = <var class="vec kf">f</var> · <var class="vec kv">v</var> = −<var>α</var> <var>v</var>²</span>, toujours négative.</p><p>À la vitesse maximale <var>v</var><sub>max</sub> = <var>F</var>/<var>α</var> = 100&nbsp;m·s⁻¹ : <var>P</var>(<var class="vec kf">F</var>) = 50 × 100 = 5000 W et <var>P</var>(<var class="vec kf">f</var>) = −0,5 × 100² = −5000 W. La somme est nulle : la vitesse ne change plus (partie 4).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><var>P</var> = <var class="vec kf">F</var> · <var class="vec kv">v</var>, en watts ; 1 kW = 1000 W.</li>
+          <li>Puissance constante pendant Δ<var>t</var> : <var>W</var> = <var>P</var> Δ<var>t</var>. Par exemple 1 kW pendant 1 min fournit 60&nbsp;000&nbsp;J.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>En français, la lettre P sert deux fois : <var>P</var> la puissance (un nombre, en watts) et <var class="vec kf">P</var> le poids (un vecteur, en newtons). Garde la flèche sur le poids.</li>
+          <li>La puissance utilise la vitesse à l’instant considéré : si <var>v</var> change, <var>P</var> change, même à force constante.</li>
+          <li>Le TD 4 (Ex 3) demande si un moteur est « assez puissant » pour monter une pente : la question se règle avec des travaux, en joules (partie 7), pas avec des watts.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Partie 4</div><h2>L’énergie cinétique et son théorème</h2></div>
+      <div class="stack">
+        <div class="prose"><p>L’<b>énergie cinétique</b> est l’énergie liée au mouvement. Pour un système de masse <var>m</var> qui va à la vitesse <var>v</var> (la norme de <var class="vec kv">v</var>) :</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>c</sub> = ½ <var>m</var> <var>v</var>²</span><small>en joules ; toujours positive ou nulle, nulle seulement à l’arrêt</small></div>
+        <div class="prose"><p>Le <b>théorème de l’énergie cinétique</b> (TEC) relie le travail des forces à la variation de l’énergie cinétique. Entre deux points A et B, la somme des travaux de <b>toutes</b> les forces qui s’exercent sur le système vaut :</p></div>
+        <div class="eq"><span class="nw">Σ<sub><var>i</var></sub> <var>W</var><sub><var>i</var></sub> = Δ<var>E</var><sub>c</sub> = ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>²</span><span class="nw">ou, avec les puissances : Σ<sub><var>i</var></sub> <var>P</var><sub><var>i</var></sub> = <span class="frac"><span>d<var>E</var><sub>c</sub></span><span>d<var>t</var></span></span></span></div>
+        <div class="prose"><p>Somme positive : le système va plus vite en B qu’en A. Négative : moins vite. Nulle : à la même vitesse. C’est ce qui manquait à la partie 2 : une force motrice seule ne dit pas si le système accélère, la somme le dit. Sur la plaque en haut de page, fais glisser le solide de A vers B : seul le poids travaille, positivement, et la barre verte <var>E</var><sub>c</sub> grandit.</p></div>
+        <div class="note keep"><span class="tag">Méthode</span><ol>
+          <li>Système, référentiel (terrestre, supposé galiléen).</li>
+          <li>Bilan des forces, avec un schéma.</li>
+          <li>Travail de chaque force entre A et B. Écarte celles qui ne travaillent pas (réaction sans frottement, poids sur un trajet horizontal).</li>
+          <li>TEC : somme des travaux = ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>².</li>
+          <li>Isole l’inconnue (vitesse, force, distance), puis fais l’application numérique.</li>
+        </ol></div>
+        <ol class="steps">
+          <li><div><p><b>L’exemple du cours</b> <span class="src-tag c">Cours p. 9</span> Un corps de masse <var>m</var> tombe d’une hauteur <var>H</var>, sans vitesse initiale, soumis à son seul poids. Le poids descend de <var>H</var> : <var>W</var>(<var class="vec kf">P</var>) = <var>m</var><var>g</var><var>H</var>. Le TEC donne <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² − 0 = <var>m</var><var>g</var><var>H</var></span>, donc <span class="f"><var>v</var><sub>B</sub> = √(2<var>g</var><var>H</var>)</span>. La masse se simplifie. C’est aussi la question 3 du TD 4 Ex 1, avec <var>h</var> : <var>v</var><sub>sol</sub> = √(2<var>g</var><var>h</var>).</p></div></li>
+          <li><div><p><b>Le palet</b> <span class="src-tag c">TD 4 · Ex 5</span> Sur AA’ (horizontal, longueur <var>L</var>) : <var class="vec kf">P</var> et <var class="vec kf">R</var> sont perpendiculaires au déplacement et ne travaillent pas ; la poussée <var class="vec kf">F</var>, dans le sens du mouvement, fournit <var>F</var><var>L</var>. Départ arrêté : <span class="f">½ <var>m</var> <var>v</var><sub>A’</sub>² = <var>F</var><var>L</var></span>, donc <span class="f"><var>F</var> = <var>m</var> <var>v</var><sub>A’</sub>² / (2<var>L</var>)</span>.</p><p>Sur A’B (horizontal, sans frottement, sans poussée), aucune force ne travaille : Δ<var>E</var><sub>c</sub> = 0, donc <var>v</var><sub>B</sub> = <var>v</var><sub>A’</sub>.</p></div></li>
+          <li><div><p><b>Avec les puissances</b> <span class="src-tag c">TD 2 · Ex 3</span> Le robot de la partie 3, sans frottement : <var>E</var><sub>c</sub> = ½ × 10 × (5<var>t</var> + 2)². Sa dérivée vaut 10 × 5 × (5<var>t</var> + 2) = 50 (5<var>t</var> + 2) : exactement la puissance du moteur, seule force qui travaille.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><var>v</var>² est le carré de la norme : ½ <var>m</var> <var>v</var>² ne dépend pas de la direction de <var class="vec kv">v</var>. Le TEC donne une vitesse en norme, pas un vecteur.</li>
+          <li>Δ<var>E</var><sub>c</sub> = final − initial : ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>², dans cet ordre.</li>
+          <li>N’oublie aucune force résistante dans la somme, surtout les frottements.</li>
+          <li>Le cours écrit « Σ <var class="vec">W</var><sub><var>i</var></sub> » avec une flèche (p. 9) : c’est une coquille, le travail est un nombre.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Partie 5</div><h2>Forces conservatives et énergie potentielle</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le travail du poids ne dépend que des altitudes de départ et d’arrivée (partie 2), pas du chemin. Les forces qui ont cette propriété sont dites <b>conservatives</b>.</p></div>
+        <div class="note keep"><span class="tag">Définition</span><p>Une force est <b>conservative</b> si son travail entre A et B ne dépend pas du chemin suivi, seulement des positions A et B. Elle dérive alors d’une <b>énergie potentielle</b> <var>E</var><sub>p</sub>, qui caractérise le système dans chaque position :</p><p><span class="f"><var>W</var><sub>A→B</sub> = −Δ<var>E</var><sub>p</sub></span> <span class="f">= <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B)</span></p></div>
+        <figure class="fig"><div class="mk-host" id="figPaths"></div><figcaption>Trois chemins de A à B, 3&nbsp;m plus bas (un carreau = 1&nbsp;m ; masse 1,0&nbsp;kg, <var>g</var> = 10&nbsp;m·s⁻²). Le poids est vertical : seuls les déplacements verticaux travaillent. Sur ②, les paliers horizontaux donnent 0 et chaque marche de 1&nbsp;m donne <var>m</var><var>g</var> × 1&nbsp;m = 10&nbsp;J. Sur ③, la montée de 1&nbsp;m coûte 10&nbsp;J, la descente de 4&nbsp;m en rend 40. Même total partout.</figcaption></figure>
+        <div class="tbl"><table>
+          <thead><tr><th>Chemin</th><th>Longueur <var>L</var></th><th><var>W</var>(<var class="vec kf">P</var>)</th><th><var>W</var>(<var class="vec kf">f</var>), <var>f</var> = 2 N</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">① en ligne droite</th><td>6,7&nbsp;m</td><td>30&nbsp;J</td><td>−13,4&nbsp;J</td></tr>
+            <tr><th scope="row">② en marches</th><td>9,0&nbsp;m</td><td>30&nbsp;J</td><td>−18,0&nbsp;J</td></tr>
+            <tr><th scope="row">③ par une bosse</th><td>8,0&nbsp;m</td><td>30&nbsp;J</td><td>−16,0&nbsp;J</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Le poids est conservatif : 30&nbsp;J sur les trois chemins. Un frottement de norme constante ne l’est pas : il coûte <var>f</var> × <var>L</var>, et les trois chemins n’ont pas la même longueur. Les frottements n’ont pas d’énergie potentielle.</p>
+          <p>Pour le poids, <span class="f"><var>W</var>(<var class="vec kf">P</var>) = <var>m</var><var>g</var><var>y</var><sub>A</sub> − <var>m</var><var>g</var><var>y</var><sub>B</sub></span>. Par identification avec <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B) :</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>p</sub> = <var>m</var><var>g</var><var>h</var></span><small>énergie potentielle de pesanteur ; <var>h</var> : hauteur du système au-dessus du sol, où <var>E</var><sub>p</sub> = 0</small></div>
+        <div class="prose"><p>L’endroit où <var>E</var><sub>p</sub> = 0 se choisit : le sol, le bas de la piste, le point le plus bas. Seules les différences d’énergie potentielle comptent, et elles ne dépendent pas de ce choix. Choisis-le une fois, écris-le, garde-le. (Il existe d’autres énergies potentielles, comme celle d’un ressort, vue avec les oscillateurs au partiel 2.)</p></div>
+        <ol class="steps">
+          <li><div><p><b>L’arc de cercle</b> <span class="src-tag c">TD 4 · Ex 4</span> « Montrer que <var>h</var> = <var>R</var> (1 − cos <var>θ</var>). » O est à la verticale de B, et OA = OB = <var>R</var>. Mesuré depuis O vers le bas, B est à <var>R</var> et A à <var>R</var> cos <var>θ</var> (côté adjacent à l’angle <var>θ</var>). Donc <span class="f"><var>h</var> = <var>R</var> − <var>R</var> cos <var>θ</var> = <var>R</var> (1 − cos <var>θ</var>)</span> = 1,6 × (1 − 1/2) = 0,80&nbsp;m.</p><p>Avec <var>E</var><sub>p</sub> = 0 en B, <var>m</var> = 0,10&nbsp;kg et <var>g</var> = 10&nbsp;m·s⁻² : <var>E</var><sub>p</sub>(A) = <var>m</var><var>g</var><var>h</var> = 0,80&nbsp;J. C’est la piste de la plaque en haut de page.</p></div></li>
+        </ol>
+        <div class="note why"><span class="tag">Pourquoi un signe moins</span><p>Quand le système descend, le poids travaille positivement (<var>W</var> &gt; 0) et l’énergie potentielle diminue (Δ<var>E</var><sub>p</sub> &lt; 0). Le travail fourni par le poids est puisé dans la réserve <var>E</var><sub>p</sub> : <var>W</var> = −Δ<var>E</var><sub>p</sub>.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><var>h</var> est une hauteur, pas la longueur du trajet. Sur une pente de longueur <var>L</var> inclinée de <var>α</var>, <var>h</var> = <var>L</var> sin <var>α</var>.</li>
+          <li>Le signe : <var>W</var> = −Δ<var>E</var><sub>p</sub> = <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B), départ moins arrivée, comme pour le travail du poids.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Partie 6</div><h2>L’énergie mécanique et sa conservation</h2></div>
+      <div class="stack">
+        <div class="prose"><p>L’<b>énergie mécanique</b> est la somme de l’énergie cinétique et des énergies potentielles. Le théorème de l’énergie mécanique (cours, p. 10) : pour un système conservatif, elle se conserve au cours du mouvement.</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>M</sub> = <var>E</var><sub>c</sub> + <var>E</var><sub>p</sub> = constante</span><small>donc <var>E</var><sub>M</sub>(A) = <var>E</var><sub>M</sub>(B) pour deux points quelconques du mouvement</small></div>
+        <div class="note why"><span class="tag">D’où ça vient</span><p>Si seul le poids travaille (les autres forces ne travaillent pas), le TEC donne Δ<var>E</var><sub>c</sub> = <var>W</var>(<var class="vec kf">P</var>) = −Δ<var>E</var><sub>p</sub>. Donc Δ<var>E</var><sub>c</sub> + Δ<var>E</var><sub>p</sub> = 0 : Δ<var>E</var><sub>M</sub> = 0. L’énergie passe d’une forme à l’autre, sans perte.</p></div>
+        <div class="prose"><p>Pour l’utiliser, il faut le <b>justifier</b> : montrer que les forces non conservatives ne travaillent pas (frottements négligés, réaction perpendiculaire au déplacement). C’est la question 2 du TD 4 Ex 1 : « Justifier le fait que l’on puisse utiliser ce théorème. »</p></div>
+        <div class="prose"><p><b>La chute libre</b> <span class="src-tag c">TD 4 · Ex 1</span> Une balle lâchée sans vitesse d’une hauteur <var>h</var>, frottements négligés, <var>E</var><sub>p</sub> = 0 au sol.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><var>y</var>(0) = <var>h</var></th><th><var>y</var> = 0 (sol)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><var>E</var><sub>c</sub></th><td class="f">0</td><td class="f">½ <var>m</var> <var>v</var><sub>sol</sub>²</td></tr>
+            <tr><th scope="row"><var>E</var><sub>p</sub></th><td class="f"><var>m</var><var>g</var><var>h</var></td><td class="f">0</td></tr>
+            <tr><th scope="row"><var>E</var><sub>M</sub></th><td class="f"><var>m</var><var>g</var><var>h</var></td><td class="f">½ <var>m</var> <var>v</var><sub>sol</sub>²</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Seul le poids, conservatif, agit : <var>E</var><sub>M</sub> se conserve. <span class="f"><var>m</var><var>g</var><var>h</var> = ½ <var>m</var> <var>v</var><sub>sol</sub>²</span>, donc <span class="f"><var>v</var><sub>sol</sub> = √(2<var>g</var><var>h</var>)</span> : le même résultat qu’avec le TEC (partie 4).</p></div>
+        <ol class="steps">
+          <li><div><p><b>L’arc de cercle</b> <span class="src-tag c">TD 4 · Ex 4</span> Sur AB, sans frottement, <var class="vec kf">R</var> est perpendiculaire à la trajectoire et ne travaille pas ; seul le poids travaille : <var>E</var><sub>M</sub> se conserve. En descendant, <var>E</var><sub>p</sub> diminue et <var>E</var><sub>c</sub> augmente d’autant (question 1).</p><p>Question 3, avec <var>E</var><sub>p</sub> = 0 en B : <span class="f">½ <var>m</var> <var>v</var><sub>A</sub>² + <var>m</var><var>g</var><var>h</var> = ½ <var>m</var> <var>v</var><sub>B</sub>²</span>, donc <span class="f"><var>v</var><sub>B</sub> = √(<var>v</var><sub>A</sub>² + 2<var>g</var><var>R</var> (1 − cos <var>θ</var>))</span> = √(9 + 16) = 5,0&nbsp;m·s⁻¹.</p><p>Sur la plaque, fais glisser le solide de A à B : <var>E</var><sub>c</sub> (vert) et <var>E</var><sub>p</sub> (bleu) s’échangent, leur somme reste à 0,45 + 0,80 = 1,25&nbsp;J.</p></div></li>
+          <li><div><p><b>Le palet</b> <span class="src-tag c">TD 4 · Ex 5</span> De B à D, sans frottement, il doit arriver en D avec une vitesse nulle ; <var>E</var><sub>p</sub> = 0 sur AB. <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² = <var>m</var><var>g</var><var>h</var></span>, donc <span class="f"><var>v</var><sub>B</sub> = √(2<var>g</var><var>h</var>) = √30 ≈ 5,5&nbsp;m·s⁻¹</span>.</p><p>Avec la partie 4 (<var>F</var> = <var>m</var> <var>v</var><sub>B</sub>² / (2<var>L</var>) et <var>v</var><sub>B</sub> = <var>v</var><sub>A’</sub>) : <span class="f"><var>F</var> = <var>m</var><var>g</var><var>h</var> / <var>L</var></span> <span class="f">= 5,0 × 10 × 1,5 / 0,50</span> <span class="f">= 150 N</span>. En C, à <var>R</var> (1 − cos <var>θ</var>) au-dessus de B : <var>v</var><sub>C</sub> = √(<var>v</var><sub>B</sub>² − 2<var>g</var><var>R</var> (1 − cos <var>θ</var>)).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li><var>E</var><sub>M</sub> se conserve quand seules des forces conservatives travaillent. Justifie-le à chaque fois.</li>
+          <li><var>E</var><sub>M</sub>(A) = <var>E</var><sub>M</sub>(B) donne une vitesse à partir d’une différence de hauteur, sans calculer ni la durée ni la trajectoire.</li>
+          <li>Même hauteur, même vitesse : le projectile du chapitre 1 retombe au sol avec la vitesse <var>v</var><sub>0</sub> de départ (en norme).</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Écrire « <var>E</var><sub>M</sub> = constante » quand il y a des frottements : faux (partie 7).</li>
+          <li><var>E</var><sub>c</sub> et <var>E</var><sub>p</sub> ne se conservent pas chacune : c’est leur somme qui se conserve.</li>
+          <li>Choisis l’origine de <var>E</var><sub>p</sub> et garde-la dans toute l’équation : au sol (Ex 1), en B (Ex 4), sur AB (Ex 5).</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Partie 7</div><h2>Frottements : l’énergie mécanique diminue</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Les forces de frottement ne sont pas conservatives : leur travail, toujours négatif, dépend de la longueur du chemin. Le cours le dit : elles <b>dissipent</b> l’énergie du système (en chaleur). L’énergie mécanique diminue.</p>
+          <p>Le cours ne l’écrit pas en formule, mais le TEC la donne en une ligne. Avec le poids, une réaction qui ne travaille pas et un frottement <var class="vec kf">f</var> :</p></div>
+        <div class="eq"><span class="nw"><var>W</var>(<var class="vec kf">P</var>) + <var>W</var>(<var class="vec kf">R</var>) + <var>W</var>(<var class="vec kf">f</var>) = Δ<var>E</var><sub>c</sub></span><span class="nw">−Δ<var>E</var><sub>p</sub> + 0 + <var>W</var>(<var class="vec kf">f</var>) = Δ<var>E</var><sub>c</sub></span><span class="nw">Δ<var>E</var><sub>M</sub> = <var>W</var>(<var class="vec kf">f</var>) &lt; 0</span><small>à redémontrer sur ta copie à partir du TEC ; en général, Δ<var>E</var><sub>M</sub> = somme des travaux des forces non conservatives (frottements, poussée d’un moteur…)</small></div>
+        <div class="prose"><p>Sur la plaque en haut de page, compare avec et sans « Frottements sur BC ». Sur l’arc, rien ne change. Sur BC, la part hachurée de <var>E</var><sub>M</sub> grandit de <var>f</var> × (distance parcourue) : c’est l’énergie dissipée.</p></div>
+        <ol class="steps">
+          <li><div><p><b>L’arc, suite</b> <span class="src-tag c">TD 4 · Ex 4</span> Sur BC (horizontal), <var class="vec kf">P</var> et <var class="vec kf">R</var> ne travaillent pas ; seul <var class="vec kf">f</var> travaille : <var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> × BC. Le TEC donne <span class="f">½ <var>m</var> <var>v</var><sub>C</sub>² − ½ <var>m</var> <var>v</var><sub>B</sub>² = −<var>f</var> BC</span>, donc</p><p><span class="f"><var>f</var> = <var>m</var> (<var>v</var><sub>B</sub>² − <var>v</var><sub>C</sub>²) / (2 BC)</span> <span class="f">= 0,10 × (25 − 9) / (2 × 2,0)</span> <span class="f">= 0,40 N</span></p><p>Bilan : <var>E</var><sub>M</sub> passe de 1,25&nbsp;J à 0,45&nbsp;J. Les 0,80&nbsp;J perdus valent bien <var>f</var> × BC = 0,40 × 2,0.</p></div></li>
+          <li><div><p><b>Le robot</b> <span class="src-tag c">TD 4 · Ex 3</span> <var>m</var> = 100&nbsp;kg, poussée <var>F</var><sub>p</sub> = 250 N, frottement <var>f</var> = 50 N, <var>α</var> = 30°, AB = 10&nbsp;m, <var>h</var><sub>C</sub> = 20&nbsp;m, départ arrêté en A.</p><p>Sur AB (horizontal), <var class="vec kf">P</var> et <var class="vec kf">R</var> ne travaillent pas : <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² = (<var>F</var><sub>p</sub> − <var>f</var>) × AB</span> <span class="f">= 200 × 10 = 2000&nbsp;J</span>, donc <var>v</var><sub>B</sub> = √40 ≈ 6,3&nbsp;m·s⁻¹.</p><p>Sur BC (montée, BC = <var>h</var><sub>C</sub> / sin <var>α</var> = 40&nbsp;m) : <var class="vec kf">F</var><sub>p</sub> est motrice, <var class="vec kf">P</var> et <var class="vec kf">f</var> sont résistantes, <var class="vec kf">R</var> ne travaille pas. <span class="f">½ <var>m</var> <var>v</var><sub>C</sub>² = 2000 + 250 × 40</span> <span class="f">− 50 × 40 − 100 × 10 × 20</span> <span class="f">= −10&nbsp;000&nbsp;J</span>.</p><p>Une énergie cinétique négative est impossible : le robot n’atteint pas C, le moteur n’est pas assez puissant. Chaque mètre de pente lui coûte 500 + 50 − 250 = 300&nbsp;J ; il s’arrête après 2000 / 300 ≈ 6,7&nbsp;m. Pour atteindre C, il faudrait <var>F</var><sub>p</sub> ≥ 500 N.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Énoncé du robot : à lire avec prudence</span><p>La partie 3 de cet exercice (descente CD, énergie stockée dans la batterie) suppose que le robot est arrivé en C, ce que la partie 2 vient d’exclure, et ne donne pas sa vitesse en C. L’énoncé est incohérent : si tu dois la traiter, écris l’hypothèse que tu prends (par exemple <var>v</var><sub>C</sub> = 0).</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul>
+          <li>Avec frottements, Δ<var>E</var><sub>M</sub> = <var>W</var>(<var class="vec kf">f</var>) &lt; 0. Pour une norme constante, l’énergie dissipée vaut <var>f</var> × (longueur parcourue).</li>
+          <li><var>E</var><sub>c</sub> ne peut pas être négative : un calcul qui donne <var>E</var><sub>c</sub> &lt; 0 en un point veut dire que le système n’y arrive pas.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>« Colinéaire au vecteur vitesse » (TD 4 Ex 4) : même direction que <var class="vec kv">v</var>, mais sens opposé. Le travail du frottement est négatif.</li>
+          <li>Dans <var>f</var> × <var>L</var>, <var>L</var> est la distance parcourue sur la portion avec frottements, pas une hauteur.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Partie 8</div><h2>Choisir entre la deuxième loi et l’énergie</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Deux outils pour un même problème. La deuxième loi de Newton (chapitre 2) est vectorielle et donne tout le mouvement, au prix de deux intégrations. L’énergie donne une vitesse en une ligne, sans le temps, mais seulement en norme.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>La question</th><th>L’outil</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>Une vitesse à une hauteur donnée, ou après une distance donnée</td><td>énergie : TEC, ou <var>E</var><sub>M</sub> si conservatif</td><td>ni le temps ni la trajectoire ne servent</td></tr>
+            <tr><td>Une force constante, connaissant deux vitesses et une distance</td><td>TEC</td><td>le travail <var>F</var> × <var>L</var> fait le lien (TD 4 Ex 4 et 5)</td></tr>
+            <tr><td>Une durée, une date, une position à l’instant <var>t</var></td><td>2e loi, puis intégrer</td><td>l’énergie ne contient pas le temps</td></tr>
+            <tr><td>L’équation de la trajectoire, la direction de <var class="vec kv">v</var></td><td>2e loi</td><td>l’énergie ne donne que la norme de la vitesse</td></tr>
+            <tr><td>Une réaction <var class="vec kf">R</var>, un équilibre</td><td>2e loi, projetée</td><td>une force qui ne travaille pas n’apparaît pas dans un bilan d’énergie</td></tr>
+            <tr><td>Une piste courbe (arc de cercle)</td><td>énergie</td><td>seule la hauteur compte ; la 2e loi demanderait les coordonnées polaires (chapitre 4)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>La même chute, deux fois</b> <span class="src-tag c">Cours p. 7 et p. 9</span> Un point lâché sans vitesse de 5&nbsp;m de haut, avec <var>g</var> = 10&nbsp;m·s⁻².</p></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Deuxième loi</span><p><var>a</var> = −<var>g</var> ; <var>v</var> = −<var>g</var><var>t</var> ; <var>y</var> = 5 − <var>g</var><var>t</var>²/2.</p><p><var>y</var>(<var>T</var>) = 0 donne <var>T</var> = √(10/<var>g</var>) = 1 s, puis <var>v</var>(<var>T</var>) = −<var>g</var><var>T</var> = −10&nbsp;m·s⁻¹.</p><p class="muted">Cinq lignes, mais tu as aussi la durée et le sens (vers le bas).</p></div>
+          <div class="card"><span class="k">Énergie</span><p>Seul le poids travaille : <var>E</var><sub>M</sub> se conserve.</p><p><var>m</var><var>g</var> × 5 = ½ <var>m</var> <var>v</var>², donc <var>v</var> = √(2 × 10 × 5) = 10&nbsp;m·s⁻¹.</p><p class="muted">Deux lignes, la norme seulement.</p></div>
+        </div>
+        <div class="prose"><p>Le cours prend <var>g</var> = 9,81 : il arrondit <var>T</var> = √(10/9,81) ≈ 1,01 s à 1 s et écrit <var>v</var> = −9,81&nbsp;m·s⁻¹. Sans arrondi, les deux méthodes donnent 9,90&nbsp;m·s⁻¹. De même, le parachutiste du TD 3 (Ex 1, 3000&nbsp;m sans frottement) arrive à √(2 × 9,81 × 3000) ≈ 242,6&nbsp;m·s⁻¹ par l’énergie, sans calculer la durée de chute ; le corrigé trouve 242&nbsp;m·s⁻¹ par la deuxième loi.</p></div>
+        <div class="note keep"><span class="tag">Rédaction d’une solution par l’énergie</span><ul>
+          <li><b>Système</b> et <b>référentiel</b> : terrestre, supposé galiléen.</li>
+          <li><b>Bilan des forces</b> (schéma), et pour chacune son travail entre A et B, ou « ne travaille pas : perpendiculaire au déplacement ».</li>
+          <li><b>Théorème</b> et raison : « seul le poids travaille, <var>E</var><sub>M</sub> se conserve », ou « TEC entre A et B ».</li>
+          <li>Équation, résultat littéral, <b>homogénéité</b> (√(<var>g</var><var>h</var>) : √(m·s⁻² × m) = m·s⁻¹), puis application numérique avec l’unité.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Aucun des 7 anciens sujets retrouvés (2017 à 2022) ne pose de question de travail ou d’énergie, et le programme du partiel 1 de cette année n’est pas publié. Pour t’entraîner, les exercices du TD 4 sont la meilleure base ; refais aussi une chute du TD 3 par l’énergie.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>L’énergie donne une norme. Pour le sens, il faut le repère : <var>v</var><sub><var>y</var></sub>(<var>T</var>) = −10&nbsp;m·s⁻¹ est une composante, 10&nbsp;m·s⁻¹ sa norme.</li>
+          <li>Ne mélange pas les deux méthodes dans une même équation : ou Σ <var>W</var><sub><var>i</var></sub> = Δ<var>E</var><sub>c</sub>, ou Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="physique:energie:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le chapitre 4, <a href="cours-4-polaires.html">coordonnées polaires</a>, décrit les mouvements circulaires. Il donne par exemple l’accélération du solide sur l’arc de la plaque, ce que l’énergie ne dit pas.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  var NB = '\u00a0', MS = 'm·s⁻¹';
+  /* textes affichés par les visuels (la page anglaise traduit ce bloc) */
+  var TX = {
+    weight: 'P', ek: 'c', dec: ',',
+    plateHead: 'Piste du TD 4 · Ex 4', plateData: 'm = 0,10 kg · g = 10 m·s⁻² · Δt = 0,05 s',
+    sLab: 'Distance parcourue depuis A', fric: 'Frottements sur BC', forces: 'Forces', launch: 'Lancer (ralenti × 3)',
+    plateAria: 'Piste du TD 4 : arc de cercle AB de rayon 1,6 m et d’angle 60°, puis segment horizontal BC de 2 m. Poses du solide toutes les 0,05 s, vitesse et forces au point courant.',
+    atA: 'En A', atB: 'En B', atC: 'En C', onArc: 'Sur l’arc, {h} au-dessus de B', onBC: 'Sur BC, {d} après B',
+    lineA: 'Départ en A à {va} : {ec} = {ecv} et {ep} = {epv}, donc {em} = {emv}.',
+    lineArc: 'Sur l’arc, seul le poids travaille : {R} reste perpendiculaire à la piste. {ep} se change en {ec} ; leur somme {em} reste égale à {emv}.',
+    lineB: 'En B, {ep} = 0 : toute l’énergie est cinétique, <var>v</var><sub>B</sub> = {vb}.',
+    lineBCf: '{f} s’oppose au mouvement : <var>W</var>({f}) = −<var>f</var> × {d} = {w}. {em} a perdu autant (hachures).',
+    lineBC0: 'Sans frottement, aucune force ne travaille sur BC : {P} et {R} sont perpendiculaires au déplacement. {ec} reste constante.',
+    lineCf: 'En C, <var>v</var><sub>C</sub> = {vc} : les frottements ont dissipé {q} = <var>f</var> × BC (TD 4 Ex 4, question 4).',
+    lineC0: 'En C, <var>v</var><sub>C</sub> = <var>v</var><sub>B</sub> = {vc} : sans frottement, rien n’est perdu.',
+    data: 'Données : <var>R</var> = 1,6 m, <var>θ</var> = 60°, <var>v</var><sub>A</sub> = 3,0 m·s⁻¹, BC = 2,0 m, <var>f</var> = 0,40 N. <var>E</var><sub>p</sub> = 0 en B.',
+    dissip: 'dissipée',
+    wHead: 'Travail d’une force constante', wData: 'F = 3 N · AB = 0,50 m (TD 4 · Ex 2)',
+    wAngle: 'Angle <var>θ</var> entre <var class="vec kf">F</var> et <var class="vec">AB</var>',
+    wAria: 'Force F appliquée au point M, déplacement de A vers B, angle θ, composantes parallèle et perpendiculaire au déplacement',
+    wCos: '<var>θ</var> = {a}° : cos <var>θ</var> {cos}. Projection de la force sur le déplacement : <var>F</var><sub>∥</sub> = <var>F</var> cos <var>θ</var> {eq} {par}.',
+    wW: '<var>W</var><sub>A→B</sub> = <var>F</var> × AB × cos <var>θ</var> = 3 × 0,50 × cos {a}° {eq} <b>{w}</b>.',
+    wPos: 'Travail <b>moteur</b> : la force tend à accélérer le système.',
+    wZero: 'Travail <b>nul</b> : la force est perpendiculaire au déplacement.',
+    wNeg: 'Travail <b>résistant</b> : la force tend à ralentir le système.',
+    pAria: 'Trois chemins de A à B : en ligne droite, en marches, par une bosse ; le poids est vertical'
+  };
+
+  /* nombre à d décimales fixes (virgule en français), vrai signe moins */
+  function nf(x, d) { var t = (Math.abs(x) < 1e-9 ? 0 : x).toFixed(d).replace('-', '−'); return TX.dec === ',' ? t.replace('.', ',') : t; }
+  function un(x, d, u) { return nf(x, d) + NB + u; }
+  function fill(s, o) { return s.replace(/\{(\w+)\}/g, function (m, k) { return o[k] == null ? m : o[k]; }); }
+  function vec(s, k) { return '<var class="vec ' + (k || '') + '">' + s + '</var>'; }
+  function en(s) { return '<var>E</var><sub>' + s + '</sub>'; }
+  function r1(v) { return Math.round(v * 10) / 10; }
+  function ext(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
+  function slider(id, lab, min, max, step, val) {
+    return '<div class="slider"><label for="' + id + '">' + lab + '</label><output id="' + id + 'v" for="' + id + '"></output>' +
+      '<input id="' + id + '" type="range" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '"></div>';
+  }
+
+  /* -- calculs (purs ; vérifiés sous node) -- */
+  var C = {
+    /* travail d’une force constante F (N) sur un déplacement rectiligne L (m), angle deg (degrés) */
+    work: function (F, L, deg) {
+      var a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
+      if (Math.abs(c) < 1e-12) c = 0;
+      if (Math.abs(s) < 1e-12) s = 0;
+      return { cos: c, W: F * L * c, par: F * c, perp: F * s };
+    },
+    /* piste du TD 4 Ex 4 : arc AB (centre O au-dessus de B, rayon R, angle theta), puis BC horizontal ;
+       frottement de norme constante f sur BC ; E_p = 0 en B. s = distance parcourue depuis A. */
+    track: function (o) {
+      var m = o.m, g = o.g, Rr = o.R, th = o.theta * Math.PI / 180, vA = o.vA, BC = o.BC, f = o.f || 0;
+      var La = Rr * th, L = La + BC, h = Rr * (1 - Math.cos(th));
+      var EM0 = 0.5 * m * vA * vA + m * g * h;
+      function at(s) {
+        s = Math.max(0, Math.min(L, s));
+        var arc = s < La - 1e-9, phi = arc ? th - s / Rr : 0, d = arc ? 0 : s - La;
+        var y = arc ? Rr * (1 - Math.cos(phi)) : 0;
+        var Ep = m * g * y, Q = f * d, EM = EM0 - Q, Ec = Math.max(0, EM - Ep), v = Math.sqrt(2 * Ec / m);
+        return {
+          s: s, arc: arc, phi: phi, d: d, x: arc ? -Rr * Math.sin(phi) : d, y: y,
+          tx: Math.cos(phi), ty: -Math.sin(phi), nx: Math.sin(phi), ny: Math.cos(phi), // tangente (sens du mouvement), normale vers O
+          Ep: Ep, Ec: Ec, EM: EM, Q: Q, v: v,
+          Rn: arc ? m * g * Math.cos(phi) + m * v * v / Rr : m * g // réaction : sur l’arc, elle courbe aussi la trajectoire
+        };
+      }
+      /* loi horaire : t(s) = ∫ ds / v, puis s(t) par interpolation */
+      var N = 900, ts = [0], ss = [0];
+      for (var i = 1; i <= N; i++) {
+        var s0 = L * (i - 1) / N, s1 = L * i / N, vm = at((s0 + s1) / 2).v;
+        if (vm < 1e-6) break;
+        ss.push(s1); ts.push(ts[ts.length - 1] + (s1 - s0) / vm);
+      }
+      var T = ts[ts.length - 1];
+      function sAt(t) {
+        if (t <= 0) return 0;
+        if (t >= T) return ss[ss.length - 1];
+        var lo = 0, hi = ts.length - 1;
+        while (hi - lo > 1) { var md = (lo + hi) >> 1; if (ts[md] <= t) lo = md; else hi = md; }
+        return ss[lo] + (ss[hi] - ss[lo]) * (t - ts[lo]) / (ts[hi] - ts[lo]);
+      }
+      return { La: La, L: L, h: h, EM0: EM0, T: T, at: at, sAt: sAt };
+    },
+    /* chemins de la partie 5 : A (0,5 ; 3) → B (6,5 ; 0), en mètres */
+    paths: function () {
+      var A = [0.5, 3], B = [6.5, 0], K = 12.4;
+      var hump = function (t) { return [A[0] + 6 * t, 3 * (1 - t) + K * t * (1 - t) * (1 - t)]; };
+      var stairs = [A, [0.5, 2], [2.5, 2], [2.5, 1], [4.5, 1], [4.5, 0], B];
+      function len(pts) { var l = 0; for (var i = 1; i < pts.length; i++) l += Math.sqrt(Math.pow(pts[i][0] - pts[i - 1][0], 2) + Math.pow(pts[i][1] - pts[i - 1][1], 2)); return l; }
+      var hp = [], top = 0;
+      for (var i = 0; i <= 2000; i++) { hp.push(hump(i / 2000)); top = Math.max(top, hp[i][1]); }
+      return { A: A, B: B, hump: hump, stairs: stairs, top: top, L: [len([A, B]), len(stairs), len(hp)] };
+    }
+  };
+  /* -- fin des calculs -- */
+
+  /* ------------------------------------------------ plaque : la piste du TD 4 Ex 4 */
+  function plate(el) {
+    if (!el) return;
+    var base = { m: 0.10, g: 10, R: 1.6, theta: 60, vA: 3, BC: 2.0 }, FR = 0.40, DT = 0.05, SLOW = 3;
+    var K = { 1: C.track(ext(base, { f: FR })), 0: C.track(ext(base, { f: 0 })) };
+    var st = { s: 0, fr: true, forces: true, anim: false, t: 0 }, raf = 0, view = null;
+    function k() { return K[st.fr ? 1 : 0]; }
+    el.classList.add('plate');
+    el.innerHTML =
+      '<div class="plate-head"><span>' + TX.plateHead + '</span><span>' + TX.plateData + '</span></div>' +
+      '<div class="plate-fig mk-host"></div>' +
+      '<div class="plate-ctrls">' +
+        '<div class="sliders one">' + slider('ens', TX.sLab + ' <var>s</var>', 0, (Math.ceil(k().L * 100) / 100).toFixed(2), 0.01, 0) + '</div>' +
+        '<div class="row plate-tg">' +
+          '<button type="button" class="chip-btn" data-tg="fr" aria-pressed="true">' + TX.fric + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="forces" aria-pressed="true">' + TX.forces + '</button>' +
+          '<button type="button" class="btn primary plate-go" data-go><span aria-hidden="true">▶</span> ' + TX.launch + '</button>' +
+        '</div>' +
+        '<div class="plate-read" aria-live="polite"></div>' +
+      '</div>';
+    var fig = el.querySelector('.plate-fig'), out = el.querySelector('.plate-read'), inp = document.getElementById('ens');
+
+    function draw(w) {
+      var K1 = k(), c = K1.at(st.s), Rr = base.R, th = base.theta * Math.PI / 180;
+      var A = [-Rr * Math.sin(th), Rr * (1 - Math.cos(th))], O = [0, Rr];
+      var p = M.plot({ x: [-1.95, 2.45], y: [-0.55, 1.95], w: w, equal: true, pad: [10, 8, 8, 8] });
+      p.grid({ x: [0.2, 1], y: [0.2, 1] });
+      // construction du TD : rayons, angle θ, hauteur h
+      p.line(O, A, { cls: 'mk-dash' }).line(O, [0, 0], { cls: 'mk-dash' });
+      p.param(function (u) { return [0.28 * Math.cos(u), Rr + 0.28 * Math.sin(u)]; }, -Math.PI / 2, -Math.PI / 2 - th, { cls: 'en-ang', clip: false });
+      p.label([0.44 * Math.cos(-Math.PI / 2 - th / 2), Rr + 0.44 * Math.sin(-Math.PI / 2 - th / 2)], 'θ', { fs: 14, anchor: 'middle', dy: 5 });
+      var xh = -1.72;
+      p.line([xh - 0.08, A[1]], [A[0] - 0.06, A[1]], { cls: 'mk-dash' }).line([xh - 0.08, 0], [-0.06, 0], { cls: 'mk-dash' });
+      p.add(M.arrow(p.X(xh), p.Y(A[1] / 2), p.X(xh), p.Y(A[1]), { kind: 'ink', head: 6 }) + M.arrow(p.X(xh), p.Y(A[1] / 2), p.X(xh), p.Y(0), { kind: 'ink', head: 6 }));
+      p.label([xh, A[1] / 2], 'h', { dx: 7, dy: 5, fs: 15 });
+      // la piste
+      p.param(function (u) { return [-Rr * Math.sin(u), Rr * (1 - Math.cos(u))]; }, th, 0, { cls: 'en-track' });
+      p.line([0, 0], [2.4, 0], { cls: 'en-track' });
+      if (st.fr) {
+        var hs = '';
+        for (var x = 0.1; x <= base.BC + 1e-9; x += 0.13) hs += 'M' + r1(p.X(x)) + ' ' + r1(p.Y(0) + 2) + 'l-5 6';
+        p.add('<path class="en-hatch" d="' + hs + '"/>');
+      }
+      p.point(O, { cls: 'mk-key', r: 2.6, label: 'O', dx: 7, dy: -3 });
+      p.point(A, { cls: 'mk-key', r: 3, label: 'A', dx: -7, dy: -8, anchor: 'end' });
+      p.point([0, 0], { cls: 'mk-key', r: 3, label: 'B', dx: -8, dy: 17, anchor: 'end' });
+      p.point([base.BC, 0], { cls: 'mk-key', r: 3, label: 'C', dx: 8, dy: 17, anchor: 'start' });
+      // poses toutes les Δt
+      var tmax = st.anim ? st.t : K1.T, imgs = '';
+      for (var i = 0; i * DT <= Math.min(K1.T, tmax) + 1e-9; i++) {
+        var q = K1.at(K1.sAt(i * DT));
+        imgs += '<circle class="mk-img" cx="' + r1(p.X(q.x)) + '" cy="' + r1(p.Y(q.y)) + '" r="4.2"/>';
+      }
+      p.add('<g class="mk-chrono">' + imgs + '</g>');
+      // point courant : forces (1 N → 0,25 m) et vitesse (1 m·s⁻¹ → 0,15 m)
+      var X = p.X(c.x), Y = p.Y(c.y), kf = 0.25 * p.sx, kv = 0.15 * p.sx, g = base.m * base.g;
+      p.add('<circle class="mk-now" cx="' + r1(X) + '" cy="' + r1(Y) + '" r="7.5"/>');
+      if (st.forces) {
+        p.add(M.arrow(X, Y, X, Y + g * kf, { kind: 'frc', head: 8, w: 2, label: TX.weight }));
+        p.add(M.arrow(X, Y, X + c.nx * c.Rn * kf, Y - c.ny * c.Rn * kf, { kind: 'frc', head: 8, w: 2, label: 'R' }));
+        if (st.fr && !c.arc && c.v > 1e-6) p.add(M.arrow(X, Y, X - FR * kf, Y, { kind: 'frc', head: 7, w: 2, label: 'f', lab: [0, -10] }));
+      }
+      p.add(M.arrow(X, Y, X + c.tx * c.v * kv, Y - c.ty * c.v * kv, { kind: 'vel', head: 9, w: 2.4, label: 'v' }));
+      return p.svg({ cls: 'mk-plate', label: TX.plateAria });
+    }
+    function bar(cls, name, val, scale) {
+      return '<div class="eb"><span class="eb-n">' + name + '</span><span class="eb-t">' +
+        (cls ? '<i class="' + cls + '" style="width:' + (val * scale).toFixed(1) + '%"></i>' : '') + '</span><output>' + un(val, 2, 'J') + '</output></div>';
+    }
+    function read() {
+      var K1 = k(), c = K1.at(st.s), sc = 100 / K1.EM0, where, line;
+      var o = {
+        ec: en(TX.ek), ep: en('p'), em: en('M'), R: vec('R', 'kf'), P: vec(TX.weight, 'kf'), f: vec('f', 'kf'),
+        ecv: un(c.Ec, 2, 'J'), epv: un(c.Ep, 2, 'J'), emv: un(K1.EM0, 2, 'J'), va: un(base.vA, 1, MS),
+        vb: un(K1.at(K1.La).v, 1, MS), vc: un(K1.at(K1.L).v, 1, MS), d: un(c.d, 2, 'm'), w: un(-c.Q, 2, 'J'), q: un(K1.at(K1.L).Q, 2, 'J')
+      };
+      if (c.s < 1e-9) { where = TX.atA; line = TX.lineA; }
+      else if (c.arc) { where = fill(TX.onArc, { h: un(c.y, 2, 'm') }); line = TX.lineArc; }
+      else if (c.d < 1e-9) { where = TX.atB; line = TX.lineB; }
+      else if (c.d >= base.BC - 1e-9) { where = TX.atC; line = st.fr ? TX.lineCf : TX.lineC0; }
+      else { where = fill(TX.onBC, { d: un(c.d, 2, 'm') }); line = st.fr ? TX.lineBCf : TX.lineBC0; }
+      out.innerHTML =
+        '<div class="ro-t">' + where + ' · <var>v</var> = ' + un(c.v, 2, MS) + '</div>' +
+        '<div class="en-bars">' +
+          bar('c', en(TX.ek), c.Ec, sc) + bar('p', en('p'), c.Ep, sc) +
+          '<div class="eb"><span class="eb-n">' + en('M') + '</span><span class="eb-t">' +
+            '<i class="c" style="width:' + (c.Ec * sc).toFixed(1) + '%"></i><i class="p" style="width:' + (c.Ep * sc).toFixed(1) + '%"></i>' +
+            (c.Q > 1e-9 ? '<i class="q" style="width:' + (c.Q * sc).toFixed(1) + '%" title="' + TX.dissip + '"></i>' : '') +
+          '</span><output>' + un(c.EM, 2, 'J') + '</output></div>' +
+        '</div>' +
+        '<p class="ro-line">' + fill(line, o) + '</p>' +
+        '<p class="ro-line muted">' + TX.data + '</p>';
+    }
+    function update(fromSlider) {
+      if (!fromSlider) inp.value = String(Math.round(st.s * 100) / 100);
+      document.getElementById('ensv').textContent = un(st.s, 2, 'm');
+      read();
+      if (view) view.redraw(); else view = M.mount(fig, draw);
+    }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; st.anim = false; }
+    inp.addEventListener('input', function () {
+      stop();
+      var K1 = k(), s = +inp.value;
+      if (Math.abs(s - K1.La) < 0.03) s = K1.La;
+      st.s = Math.min(s, K1.L);
+      update(true);
+    });
+    U.$$('[data-tg]', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        stop();
+        var key = b.getAttribute('data-tg'); st[key] = !st[key];
+        b.setAttribute('aria-pressed', String(st[key])); update();
+      });
+    });
+    el.querySelector('[data-go]').addEventListener('click', function () {
+      stop();
+      var K1 = k();
+      if (U.reduceMotion()) { st.s = K1.L; update(); return; }
+      var t0 = null; st.anim = true; st.t = 0;
+      function step(ts) {
+        if (t0 === null) t0 = ts;
+        st.t = Math.min(K1.T, (ts - t0) / 1000 / SLOW);
+        st.s = K1.sAt(st.t);
+        if (st.t >= K1.T) { st.anim = false; st.s = K1.L; update(); raf = 0; return; }
+        update(); raf = requestAnimationFrame(step);
+      }
+      raf = requestAnimationFrame(step);
+    });
+    document.addEventListener('rev:theme', function () { if (view) view.redraw(); });
+    update();
+  }
+
+  /* ------------------------------------------------ partie 1 : le travail selon l’angle */
+  function workBench(el) {
+    if (!el) return;
+    var F = 3, L = 0.5, st = { a: 30 }, view = null;
+    var EXACT = { 0: '1', 30: '√3/2', 45: '√2/2', 60: '1/2', 90: '0', 120: '−1/2', 135: '−√2/2', 150: '−√3/2', 180: '−1' };
+    el.classList.add('bench');
+    el.innerHTML =
+      '<div class="bench-head"><span>' + TX.wHead + '</span><span>' + TX.wData + '</span></div>' +
+      '<div class="bench-body"><div class="mk-host"></div></div>' +
+      '<div class="ctrls"><div class="sliders one">' + slider('wka', TX.wAngle, 0, 180, 5, st.a) + '</div><div class="readout" aria-live="polite"></div></div>';
+    var host = el.querySelector('.mk-host'), inp = document.getElementById('wka'), out = el.querySelector('.readout');
+    function draw(w) {
+      var r = C.work(F, L, st.a), a = st.a * Math.PI / 180, kk = 0.85, Mx = [2.6, 0];
+      var p = M.plot({ x: [-0.45, 6.85], y: [-1.05, 2.75], w: Math.min(w, 640), equal: true, pad: [8, 8, 8, 8] });
+      p.grid({ x: [0.25, 1], y: [0.25, 1] });
+      p.line([0, 0], [6.4, 0], { cls: 'wk-line' });
+      p.point([0, 0], { label: 'A', dx: 0, dy: 20, anchor: 'middle' }).point([6.4, 0], { label: 'B', dx: 0, dy: 20, anchor: 'middle' });
+      p.vec([0.1, -0.68], [6.2, 0], { kind: 'ink', head: 8, w: 1.6 });
+      p.label([3.2, -0.68], 'AB', { arrow: true, anchor: 'middle', dy: 19, fs: 15 });
+      if (st.a >= 10) p.param(function (u) { return [Mx[0] + 0.62 * Math.cos(u), 0.62 * Math.sin(u)]; }, 0, a, { cls: 'wk-ang', clip: false });
+      if (st.a >= 20) p.label([Mx[0] + 0.95 * Math.cos(a / 2), 0.95 * Math.sin(a / 2)], 'θ', { anchor: 'middle', dy: 5, fs: 15 });
+      var tip = [Mx[0] + kk * F * Math.cos(a), kk * F * Math.sin(a)];
+      if (Math.abs(r.cos) > 0.05 && Math.abs(r.perp) > 0.05 * F) p.line(tip, [tip[0], 0], { cls: 'mk-dash' }).line(tip, [Mx[0], tip[1]], { cls: 'mk-dash' });
+      if (Math.abs(r.perp) > 0.05 * F && Math.abs(r.cos) > 0.05) p.vec(Mx, [kk * r.par, 0], { kind: 'frc', head: 8, w: 1.8, cls: 'soft', label: 'F', sub: '∥', lab: [0, 14] });
+      if (Math.abs(r.cos) > 0.05 && Math.abs(r.perp) > 0.05 * F) p.vec(Mx, [0, kk * r.perp], { kind: 'frc', head: 8, w: 1.8, cls: 'soft', label: 'F', sub: '⊥', lab: [r.cos > 0 ? -16 : 16, 4], anchor: r.cos > 0 ? 'end' : 'start' });
+      p.vec(Mx, [kk * F * Math.cos(a), kk * F * Math.sin(a)], { kind: 'frc', head: 10, w: 2.6, label: 'F' });
+      p.point(Mx, { r: 4, label: 'M', dx: 0, dy: 20, anchor: 'middle' });
+      return p.svg({ label: TX.wAria });
+    }
+    function read() {
+      var r = C.work(F, L, st.a), W = r.W, pct = Math.abs(W) / (F * L) * 50;
+      var ex = EXACT[st.a], cs = ex ? '= ' + ex + (/√/.test(ex) ? ' ≈ ' + nf(r.cos, 2) : '') : '≈ ' + nf(r.cos, 2);
+      var exact = Math.abs(r.cos * 2 - Math.round(r.cos * 2)) < 1e-9;
+      var nat = W > 1e-9 ? TX.wPos : W < -1e-9 ? TX.wNeg : TX.wZero;
+      out.innerHTML =
+        '<p>' + fill(TX.wCos, { a: st.a, cos: cs, eq: exact ? '=' : '≈', par: un(r.par, 2, 'N') }) + '</p>' +
+        '<div class="wg" aria-hidden="true">' + (pct > 0.01 ? '<i class="' + (W > 0 ? 'pos' : 'neg') + '" style="left:' + (W > 0 ? 50 : 50 - pct).toFixed(1) + '%;width:' + pct.toFixed(1) + '%"></i>' : '') + '<span class="z"></span></div>' +
+        '<div class="wg-sc" aria-hidden="true"><span>' + un(-F * L, 1, 'J') + '</span><span>0</span><span>+' + un(F * L, 1, 'J') + '</span></div>' +
+        '<p>' + fill(TX.wW, { a: st.a, eq: exact ? '=' : '≈', w: un(W, 2, 'J') }) + ' ' + nat + '</p>';
+    }
+    function update() {
+      document.getElementById('wkav').textContent = st.a + '°';
+      read();
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.a = +inp.value; update(); });
+    update();
+  }
+
+  /* ------------------------------------------------ partie 5 : trois chemins, même travail du poids */
+  function pathsFig(el) {
+    if (!el) return;
+    var P = C.paths();
+    M.mount(el, function (w) {
+      var p = M.plot({ x: [-0.75, 7.45], y: [-0.6, 4.55], w: Math.min(w, 640), equal: true, pad: [12, 12, 10, 12] });
+      p.grid({ x: [0.5, 1], y: [0.5, 1] });
+      p.axes({ y: { v: 'y', u: 'm' }, tx: 1, ty: 1, ly: 1, origin: 'O' });
+      p.line([0, 3], P.A, { cls: 'mk-dash' });
+      p.line(P.A, P.B, { cls: 'pth p1' });
+      var hz = '', vt = '';
+      for (var i = 1; i < P.stairs.length; i++) {
+        var a = P.stairs[i - 1], b = P.stairs[i], d = 'M' + r1(p.X(a[0])) + ' ' + r1(p.Y(a[1])) + 'L' + r1(p.X(b[0])) + ' ' + r1(p.Y(b[1]));
+        if (a[1] === b[1]) hz += d; else vt += d;
+      }
+      p.add('<path class="pth p2 hz" d="' + hz + '"/><path class="pth p2" d="' + vt + '"/>');
+      p.param(P.hump, 0, 1, { cls: 'pth p3' });
+      function badge(at, n, cls) { p.add('<g class="pth-b ' + cls + '"><circle cx="' + r1(p.X(at[0])) + '" cy="' + r1(p.Y(at[1])) + '" r="9"/><text x="' + r1(p.X(at[0])) + '" y="' + r1(p.Y(at[1]) + 4) + '" text-anchor="middle">' + n + '</text></g>'); }
+      badge([4.05, 1.75], '1', 'p1'); badge([3.5, 0.55], '2', 'p2'); badge([3.05, 4.05], '3', 'p3');
+      // le poids, vertical, en un point de ③
+      var q = P.hump(0.35);
+      p.vec(q, [0, -0.9], { kind: 'frc', head: 8, w: 2, label: TX.weight });
+      // la hauteur descendue
+      p.add(M.arrow(p.X(7.05), p.Y(1.5), p.X(7.05), p.Y(3), { kind: 'ink', head: 6 }) + M.arrow(p.X(7.05), p.Y(1.5), p.X(7.05), p.Y(0), { kind: 'ink', head: 6 }));
+      p.line([4.2, 3], [7.2, 3], { cls: 'mk-dash' });
+      p.text([7.05, 1.5], '3 m', { cls: 'mk-t', dx: -6, anchor: 'end' });
+      p.point(P.A, { label: 'A', dx: -9, dy: -8, anchor: 'end' }).point(P.B, { label: 'B', dx: 8, dy: 16, anchor: 'start' });
+      return p.svg({ label: TX.pAria });
+    });
+  }
+
+  plate(document.getElementById('plate'));
+  workBench(document.getElementById('workBench'));
+  pathsFig(document.getElementById('figPaths'));
+})();
+</script>
+</body>
+</html>

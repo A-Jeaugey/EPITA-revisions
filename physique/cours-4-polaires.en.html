@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polar coordinates · Physics</title>
+<meta name="description" content="Physics, chapter 4: polar coordinates, the moving basis (ur, uθ), derivatives of the basis vectors, position, velocity and acceleration vectors in polar coordinates, uniform and non-uniform circular motion, centripetal acceleration, cylindrical coordinates and going between Cartesian and polar coordinates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapter 4: basis vectors in amber on paper, faint frames, grey target */
+.mk .k-amb{color:var(--accent)} .mk .k-mut{color:var(--muted)}
+.mk text.k-amb,.mk text.k-mut{fill:currentColor}
+.mk .vk.ghost{opacity:.42}
+.mk .vk.dash path{stroke-dasharray:5 4}
+.mk .vk.bold path{stroke-width:2.6}
+.mk .mk-arc{fill:none;stroke:var(--muted);stroke-width:1.2}
+.plate .mk .mk-arc{stroke:var(--flash);opacity:.8}
+.pl-polar .sliders{grid-template-columns:minmax(0,1fr)}
+.fig .ctrls .sliders{align-items:end}
+/* dotted time derivatives drawn in CSS: the dot sits right whatever font file is loaded */
+var.d1,var.d2{position:relative;display:inline-block;line-height:1}
+var.d1::after,var.d2::after{content:"";position:absolute;left:56%;bottom:.82em;width:.13em;height:.13em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+var.d2::after{transform:translateX(-105%);box-shadow:.24em 0 0 currentColor}
+var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics · chapter 4: polar coordinates">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Chapter 4 of 4</div>
+      <h1>The point turns, <span class="w">and the basis turns with it</span>.</h1>
+      <p class="lead">For circular motion, two numbers are enough: the distance <var>r</var> from the centre and the angle <var>θ</var>. The basis (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>) follows the point, and that is what produces the centripetal acceleration. This is the chapter that appears most often in past midterms.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parts</span><span class="chip">course ch. VI · TD 5</span><span class="chip ex">in all 7 midterms found</span></div>
+      <div class="vlegend" aria-label="Vector colours, the same across the whole site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>velocity</span><span><i class="la"></i>acceleration</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Plate: a point that turns, with its polar basis, its velocity and its acceleration; you set the angle θ or let it move forward"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 4 · Polar coordinates</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>Why polar coordinates</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>The polar basis</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Differentiating the basis vectors</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>The position vector</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>The velocity vector</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>The acceleration vector</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>Circular motion</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>Cartesian ↔ polar, cylindrical</span></a></li>
+    </ol>
+    <p class="toc-note">A tick appears when you mark a part as understood. The plate at the top of the page is used in parts 1, 2, 5, 6 and 7.</p>
+    <div class="toc-nav"><a href="index.html">← Physics home</a><a href="cours-3-energie.html">← Chapter 3: work and energy</a><a href="../qcm/index.html#physique">Physics MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Why polar coordinates</a></li><li><a href="#s2">The polar basis</a></li><li><a href="#s3">Differentiating the basis vectors</a></li><li><a href="#s4">The position vector</a></li>
+      <li><a href="#s5">The velocity vector</a></li><li><a href="#s6">The acceleration vector</a></li><li><a href="#s7">Circular motion</a></li><li><a href="#s8">Cartesian ↔ polar, cylindrical</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>Why polar coordinates</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In chapter 1, point M was located by <var>x</var> and <var>y</var>, on a fixed basis (<var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>). The course says so: this coordinate system is suitable for most cases of motion in a plane, <b>except circular motion</b>.</p>
+          <p>Take the merry-go-round of TD 5: the wooden horse turns at a constant distance <var>r</var><sub>0</sub> from the centre. In Cartesian coordinates, both of its coordinates oscillate. In polar coordinates, one is constant and the other increases steadily.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">In Cartesian coordinates</span><div class="eq left"><span class="nw"><var>x</var>(<var>t</var>) = <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>)</span><span class="nw"><var>y</var>(<var>t</var>) = <var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>)</span></div><p class="muted">Two functions that vary. The circle only shows up once you compute <var>x</var>² + <var>y</var>² = <var>r</var><sub>0</sub>².</p></div>
+          <div class="card"><span class="k">In polar coordinates</span><div class="eq left"><span class="nw"><var>r</var>(<var>t</var>) = <var>r</var><sub>0</sub></span><span class="nw"><var>θ</var>(<var>t</var>) = <var>ω</var><var>t</var></span></div><p class="muted">The distance from the centre is constant: you read a circle straight away, travelled while always turning at the same rate.</p></div>
+        </div>
+        <div class="prose">
+          <p>The two polar coordinates of point M (course, chapter VI):</p>
+          <ul>
+            <li><var>r</var> = OM, the distance between the origin O and point M, in metres. It is a distance: the course states that it is always positive.</li>
+            <li><var>θ</var>, the angle between the vector <var class="vec kp">OM</var> and the axis (O, <var class="vec">u</var><sub><var>x</var></sub>). It counts positively in the anti-clockwise direction.</li>
+          </ul>
+          <p>The plate at the top of the page shows such a point. In “Uniform circular”, drag <var>θ</var>: M travels around the circle and <var>r</var> stays equal to 2&nbsp;m.</p>
+        </div>
+        <div class="note keep"><span class="tag">Units</span><p><var>θ</var> is an angle, in radians (dimensionless). Its derivative <var class="d1 hi">θ</var> = d<var>θ</var>/d<var>t</var>, the <b>angular velocity</b>, is in rad·s⁻¹. In <var>θ</var> = <var>ω</var><var>t</var>, <var>ω</var> is therefore in rad·s⁻¹ and <var>r</var><sub>0</sub> in metres: that is question 1 of exercise 2 in TD 5.</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span>
+          <p>This is the chapter that pays the most. In the 7 midterm papers found (November 2017 to October 2022), circular motion comes up in all 7, the velocity in polar coordinates in 6, the acceleration in polar coordinates (general formula or circular case) in all 7. In November 2021, two polar exercises were worth 12 points out of 20: exercise 2 (8 points) and exercise 4 (4 points).</p>
+          <p>Notation: the past papers write <var>ρ</var> and <var class="vec">u</var><sub><var>ρ</var></sub> where the course writes <var>r</var> and <var class="vec">u</var><sub><var>r</var></sub>, and often <var class="vec">V</var> for the velocity. They are the same objects.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap</span><p><var>θ</var> is measured from the <var>x</var>-axis, anti-clockwise, and in radians in calculations: cos(<var>ω</var><var>t</var>) only makes sense if <var>ω</var><var>t</var> is in radians. And <var>r</var> is not <var>x</var>: <var>r</var> = √(<var>x</var>² + <var>y</var>²) (part 8).</p></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>The polar basis (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>)</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>At each point M, you attach a right-handed orthonormal basis (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>):</p>
+          <ul>
+            <li><var class="vec">u</var><sub><var>r</var></sub> is a unit vector collinear to <var class="vec kp">OM</var>, pointing from O towards M: <span class="f"><var class="vec">u</var><sub><var>r</var></sub> = <span class="frac"><span><var class="vec kp">OM</var></span><span>‖<var class="vec kp">OM</var>‖</span></span></span>.</li>
+            <li><var class="vec">u</var><sub><var>θ</var></sub> is a unit vector obtained by rotating <var class="vec">u</var><sub><var>r</var></sub> by +π/2, in the anti-clockwise direction. It is tangent to the circle of centre O through M, pointing towards increasing <var>θ</var>.</li>
+          </ul>
+          <p>This basis is a <b>moving basis</b>: when M turns, <var class="vec">u</var><sub><var>r</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> turn with it. They depend only on the angle <var>θ</var>. On the plate at the top of the page, the small basis drawn at each exposure changes direction from one exposure to the next; the axes do not move.</p>
+          <p>To write <var class="vec">u</var><sub><var>r</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> in the Cartesian basis, bring them back to O: their tips are two points of the unit circle.</p>
+        </div>
+        <figure class="fig">
+          <div class="mk-host" id="figBase"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="bth">Angle <var>θ</var></label><output id="bthv" for="bth"></output><input id="bth" type="range" min="0" max="360" step="5" value="30"></div>
+              <div class="row" role="group" aria-label="Vector to project on the axes"><button type="button" class="chip-btn" data-bw="r" aria-pressed="true">project <var class="vec">u</var><sub><var>r</var></sub></button><button type="button" class="chip-btn" data-bw="t" aria-pressed="false">project <var class="vec">u</var><sub><var>θ</var></sub></button></div>
+            </div>
+            <div class="readout" id="bread" aria-live="polite"></div>
+          </div>
+          <figcaption>The two basis vectors, brought back to O on the circle of radius 1. Their projections on the axes are their components in (<var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>). Turn <var>θ</var> through the four quadrants and watch the signs change.</figcaption>
+        </figure>
+        <div class="eq"><span class="nw"><var class="vec">u</var><sub><var>r</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span>cos <var>θ</var></span><span>sin <var>θ</var></span></span></span><span class="nw"><var class="vec">u</var><sub><var>θ</var></sub> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span>−sin <var>θ</var></span><span>cos <var>θ</var></span></span></span></div>
+        <div class="prose"><p><b>Where the minus sign comes from.</b> <var class="vec">u</var><sub><var>r</var></sub> makes the angle <var>θ</var> with <var class="vec">u</var><sub><var>x</var></sub>: its components are cos <var>θ</var> and sin <var>θ</var>. <var class="vec">u</var><sub><var>θ</var></sub> makes the angle <var>θ</var> + π/2: its components are cos(<var>θ</var> + π/2) = −sin <var>θ</var> and sin(<var>θ</var> + π/2) = cos <var>θ</var>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Two angles to know.</b> <var>θ</var> = 0: <var class="vec">u</var><sub><var>r</var></sub> = <var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> = <var class="vec">u</var><sub><var>y</var></sub>. <var>θ</var> = π/2: <var class="vec">u</var><sub><var>r</var></sub> = <var class="vec">u</var><sub><var>y</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> = −<var class="vec">u</var><sub><var>x</var></sub> (the point is at the top, <var class="vec">u</var><sub><var>θ</var></sub> points to the left). Check them on the figure.</p></div></li>
+          <li><div><p><b>Checking the basis.</b> <var class="vec">u</var><sub><var>r</var></sub> · <var class="vec">u</var><sub><var>θ</var></sub> = cos <var>θ</var> × (−sin <var>θ</var>) + sin <var>θ</var> × cos <var>θ</var> = 0: the two vectors are orthogonal. ‖<var class="vec">u</var><sub><var>r</var></sub>‖² = cos² <var>θ</var> + sin² <var>θ</var> = 1: it is a unit vector, and so is <var class="vec">u</var><sub><var>θ</var></sub>.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><ul>
+          <li>November 2021, exercise 2, question 1 (1 point): “Express <var class="vec">u</var><sub><var>ρ</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub>, the unit vectors of the polar basis, as functions of <var>θ</var> and Cartesian unit vectors <var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>y</var></sub>.”</li>
+          <li>October 2022, exercise 3: “On the diagram, draw the polar basis at point M.” <var class="vec">u</var><sub><var>r</var></sub> starts at M, in line with <var class="vec kp">OM</var>; <var class="vec">u</var><sub><var>θ</var></sub> starts at M, perpendicular, towards increasing <var>θ</var>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The “−” is on the sine of the component along <var class="vec">u</var><sub><var>x</var></sub>: <var class="vec">u</var><sub><var>θ</var></sub> = (−sin <var>θ</var>; cos <var>θ</var>). The vector (sin <var>θ</var>; −cos <var>θ</var>) is −<var class="vec">u</var><sub><var>θ</var></sub>. Test with <var>θ</var> = 0: you must get <var class="vec">u</var><sub><var>y</var></sub>.</li>
+          <li>On a diagram, the polar basis is drawn at point M, not at O, and it changes with M. Do not draw <var class="vec">u</var><sub><var>θ</var></sub> along the arc that marks the angle near O.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>Differentiating the basis vectors</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In Cartesian coordinates, differentiating a vector meant differentiating its coordinates, because <var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>y</var></sub> are fixed. Here, <var class="vec">u</var><sub><var>r</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> depend on <var>θ</var>, and <var>θ</var> depends on time: their derivative is not zero. That is what changes everything in this chapter.</p>
+          <p>The course first differentiates them with respect to <var>θ</var>, starting from their Cartesian expressions (<var class="vec">u</var><sub><var>x</var></sub> and <var class="vec">u</var><sub><var>y</var></sub>, being fixed, behave like constants):</p>
+        </div>
+        <div class="eq"><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>θ</var></span></span> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>θ</var></span></span> = −cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> − sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = −<var class="vec">u</var><sub><var>r</var></sub></span></div>
+        <div class="prose"><p>Then with respect to time, with the chain rule: <var class="vec">u</var><sub><var>r</var></sub> depends on <var>t</var> through <var>θ</var>(<var>t</var>).</p></div>
+        <div class="eq"><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>θ</var></span></span> · <span class="frac"><span>d<var>θ</var></span><span>d<var>t</var></span></span> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>θ</var></span></span> · <span class="frac"><span>d<var>θ</var></span><span>d<var>t</var></span></span> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub></span></div>
+        <figure class="fig">
+          <div class="mk-host" id="figDeriv"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="dth">Increment <var>Δθ</var></label><output id="dthv" for="dth"></output><input id="dth" type="range" min="2" max="60" step="1" value="40"></div>
+              <div class="row" role="group" aria-label="Vector to differentiate"><button type="button" class="chip-btn" data-dw="r" aria-pressed="true">differentiate <var class="vec">u</var><sub><var>r</var></sub></button><button type="button" class="chip-btn" data-dw="t" aria-pressed="false">differentiate <var class="vec">u</var><sub><var>θ</var></sub></button></div>
+            </div>
+            <div class="readout" id="dread" aria-live="polite"></div>
+          </div>
+          <figcaption>The unit vector at angle <var>θ</var> and the same vector at <var>θ</var> + Δ<var>θ</var> (faint). The thin line joins their tips; the thick arrow is that small difference divided by Δ<var>θ</var>. Shrink Δ<var>θ</var>: it joins the grey dashed arrow, which is the vector rotated by +π/2.</figcaption>
+        </figure>
+        <div class="note why"><span class="tag">What the figure shows</span><p>When <var>θ</var> increases by Δ<var>θ</var>, the tip of <var class="vec">u</var><sub><var>r</var></sub> slides along the circle of radius 1. The difference between the two vectors is almost perpendicular to <var class="vec">u</var><sub><var>r</var></sub>, so almost parallel to <var class="vec">u</var><sub><var>θ</var></sub>, and its length is almost Δ<var>θ</var> (an arc of radius 1). In the limit, the difference divided by Δ<var>θ</var> becomes exactly <var class="vec">u</var><sub><var>θ</var></sub>.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><p>Differentiating a rotating unit vector means rotating it by +π/2 and multiplying it by the rotation rate <var class="d1 hi">θ</var>. <var class="vec">u</var><sub><var>r</var></sub> rotated by +π/2 gives <var class="vec">u</var><sub><var>θ</var></sub>; <var class="vec">u</var><sub><var>θ</var></sub> rotated by +π/2 gives −<var class="vec">u</var><sub><var>r</var></sub>. Hence <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> and −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>If <var>θ</var> does not change</b> (the point moves back and forth along a straight line through O): <var class="d1 hi">θ</var> = 0, so d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="vec">0</var>. The basis does not turn.</p></div></li>
+          <li><div><p><b>The merry-go-round</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>θ</var> = <var>ω</var><var>t</var>, so <var class="d1 hi">θ</var> = <var>ω</var>, d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> and d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var>ω</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div></li>
+          <li><div><p><b>The chain rule in an MCQ</b> <span class="src-tag">Midterm 2019-2020</span> <var>f</var>(<var>t</var>) = <var>A</var> cos²(<var>θ</var>(<var>t</var>)) gives <span class="f">d<var>f</var>/d<var>t</var> = 2<var>A</var> cos <var>θ</var> × (−sin <var>θ</var>) × <var class="d1 hi">θ</var></span> <span class="f">= −2<var>A</var><var class="d1 hi">θ</var> cos <var>θ</var> sin <var>θ</var></span>. Same mechanism: differentiate with respect to <var>θ</var>, then multiply by <var class="d1 hi">θ</var>.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><ul>
+          <li>Midterms 2019-2020 (MCQ 7) and 2020-2021 (MCQ 2): “The unit vector <var class="vec">u</var><sub><var>ρ</var></sub> of polar coordinates satisfies: a) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var><var class="vec">u</var><sub><var>θ</var></sub>; b) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="vec">0</var>; c) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var><var class="vec">u</var><sub><var>ρ</var></sub>; d) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var><var class="vec">u</var><sub><var>θ</var></sub>”. Answer d.</li>
+          <li>November 2021, exercise 2, questions 2 and 3 (3 points): calculate d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>θ</var> and d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>θ</var>, then express them as functions of <var class="vec">u</var><sub><var>θ</var></sub> and <var class="vec">u</var><sub><var>ρ</var></sub>. That is exactly the course calculation above.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>d<var class="vec">u</var><sub><var>r</var></sub>/d<var>θ</var> = <var class="vec">u</var><sub><var>θ</var></sub>, but d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>: with respect to time, do not forget the factor <var class="d1 hi">θ</var>.</li>
+          <li>The minus sign is on the derivative of <var class="vec">u</var><sub><var>θ</var></sub>: d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>. The derivative of <var class="vec">u</var><sub><var>r</var></sub> has none.</li>
+          <li>“d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="vec">0</var> because <var class="vec">u</var><sub><var>r</var></sub> is a unit vector” is false: its norm stays 1, but its direction changes.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>The position vector</h2></div>
+      <div class="stack">
+        <div class="prose"><p><var class="vec">u</var><sub><var>r</var></sub> has the direction and the orientation of <var class="vec kp">OM</var>, and the length OM is <var>r</var>. So:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> = <span class="col"><span><var>r</var></span><span>0</span></span></span><small>column of components in the basis (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>)</small></div>
+        <div class="prose">
+          <p>A single component. The angle <var>θ</var> has not disappeared: it is hidden in <var class="vec">u</var><sub><var>r</var></sub>, which depends on <var>θ</var>. Replacing <var class="vec">u</var><sub><var>r</var></sub> by its Cartesian expression gives <var>x</var> and <var>y</var> back:</p>
+        </div>
+        <div class="eq"><span class="nw"><var class="vec kp">OM</var> = <var>r</var> cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var> sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></span><span class="nw"><var>x</var> = <var>r</var> cos <var>θ</var> &nbsp;and&nbsp; <var>y</var> = <var>r</var> sin <var>θ</var></span></div>
+        <ol class="steps">
+          <li><div><p><b>The merry-go-round</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>x</var> = <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>) and <var>y</var> = <var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>). Then <var>r</var> = √(<var>x</var>² + <var>y</var>²) = <var>r</var><sub>0</sub> √(cos² + sin²) = <var>r</var><sub>0</sub>, and <var>θ</var> = <var>ω</var><var>t</var>. So <span class="f"><var class="vec kp">OM</var>(<var>t</var>) = <var>r</var><sub>0</sub> <var class="vec">u</var><sub><var>r</var></sub></span>.</p></div></li>
+          <li><div><p><b>The spiral</b> <span class="src-tag">Midterm Nov. 2017 · Ex 2</span> <var>x</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> cos(<var>ω</var><var>t</var>) and <var>y</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> sin(<var>ω</var><var>t</var>). You recognise <var>r</var> cos <var>θ</var> and <var>r</var> sin <var>θ</var> with <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> and <var>θ</var> = <var>ω</var><var>t</var>: <span class="f"><var class="vec kp">OM</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> <var class="vec">u</var><sub><var>r</var></sub></span>. The distance from the centre grows: the point moves away from O while turning.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><p>For circular motion with centre O and radius <var>R</var>: <var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub>, with <var>R</var> constant. The whole motion is then in <var class="vec">u</var><sub><var>r</var></sub>, that is in <var>θ</var>(<var>t</var>).</p></div>
+        <div class="note exam"><span class="tag">In the midterm</span><ul>
+          <li>November 2021, MCQ 2: “In polar coordinates, (<var class="vec">u</var><sub><var>ρ</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>), position vector <var class="vec">r</var>(<var>t</var>) = <var class="vec kp">OM</var>(<var>t</var>) has for expression: a. <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub>; b. <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub>; c. <var>θ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>ρ</var><var class="vec">u</var><sub><var>θ</var></sub>; d. <var>ρ</var><var class="vec">u</var><sub><var>θ</var></sub>”. Answer b.</li>
+          <li>Same paper, exercise 2, question 4 (2 points): <var class="vec kp">OM</var> in the Cartesian basis (<var>x</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>y</var> <var class="vec">u</var><sub><var>y</var></sub>) and in the polar basis (<var>ρ</var> <var class="vec">u</var><sub><var>ρ</var></sub>).</li>
+          <li>October 2022, exercise 3: a point turns on a circle of radius <var>R</var> with <var>θ</var> = <var>ω</var><var>t</var>, and <var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub> is wrong: <var>θ</var> is an angle, not a length. It is not even dimensionally consistent.</li>
+          <li>The 0 in the column does not mean that M is on an axis: it is the component of <var class="vec kp">OM</var> along <var class="vec">u</var><sub><var>θ</var></sub>, and <var class="vec">u</var><sub><var>θ</var></sub> is always perpendicular to <var class="vec kp">OM</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>The velocity vector</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Same definition as in Cartesian coordinates: <var class="vec kv">v</var> = d<var class="vec kp">OM</var>/d<var>t</var>. The difference: <var class="vec">u</var><sub><var>r</var></sub> depends on time, so you must differentiate it too. Here is the derivation, with the three justifications a marker expects.</p></div>
+        <ol class="steps">
+          <li><div><p><span class="f"><var class="vec kv">v</var> = <span class="frac"><span>d<var class="vec kp">OM</var></span><span>d<var>t</var></span></span></span>: definition of the instantaneous velocity.</p></div></li>
+          <li><div><p><span class="f">= <span class="frac"><span>d(<var>r</var> <var class="vec">u</var><sub><var>r</var></sub>)</span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var>r</var></span><span>d<var>t</var></span></span> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>t</var></span></span></span>: derivative of a product, since <var>r</var> and <var class="vec">u</var><sub><var>r</var></sub> both depend on time.</p></div></li>
+          <li><div><p><span class="f">= <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span>: d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> (part 3).</p></div></li>
+        </ol>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> = <span class="col"><span><var class="d1">r</var></span><span><var>r</var><var class="d1 hi">θ</var></span></span></span><span class="nw">‖<var class="vec kv">v</var>‖ = <span class="sqrt">√<span><var class="d1">r</var>² + <var>r</var>²<var class="d1 hi">θ</var>²</span></span></span></div>
+        <div class="prose">
+          <p>Two components, two causes. <var class="d1">r</var>, the <b>radial</b> component, comes from the change in the distance from O. <var>r</var><var class="d1 hi">θ</var>, the <b>orthoradial</b> component (along <var class="vec">u</var><sub><var>θ</var></sub>), comes from the rotation. Both are in m·s⁻¹: <var>r</var> in m, <var class="d1 hi">θ</var> in rad·s⁻¹.</p>
+          <p>On the plate, in “Uniform circular”, <var class="d1">r</var> = 0: <var class="vec kv">v</var> is along <var class="vec">u</var><sub><var>θ</var></sub>, tangent to the circle. In “Spiral”, <var>r</var> increases: <var class="vec kv">v</var> leans outwards, it is no longer along <var class="vec">u</var><sub><var>θ</var></sub> alone.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>The merry-go-round</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>r</var> = <var>r</var><sub>0</sub> is constant, so <var class="d1">r</var> = 0; <var class="d1 hi">θ</var> = <var>ω</var>. Thus <span class="f"><var class="vec kv">v</var> = <var>r</var><sub>0</sub> <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span> and ‖<var class="vec kv">v</var>‖ = <var>r</var><sub>0</sub> <var>ω</var>: m × rad·s⁻¹ = m·s⁻¹, it is dimensionally consistent (questions 4 and 5).</p></div></li>
+          <li><div><p><b>Check in Cartesian coordinates</b> (question 6): <var>ẋ</var> = −<var>r</var><sub>0</sub> <var>ω</var> sin(<var>ω</var><var>t</var>) and <var>ẏ</var> = <var>r</var><sub>0</sub> <var>ω</var> cos(<var>ω</var><var>t</var>), so <span class="f"><var class="vec kv">v</var> = <var>r</var><sub>0</sub> <var>ω</var> (−sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub></span> <span class="f">+ cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub>)</span> <span class="f">= <var>r</var><sub>0</sub> <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span>. Same vector, same norm <var>r</var><sub>0</sub> <var>ω</var>; comparing with <var>r</var><sub>0</sub> <var class="d1 hi">θ</var> gives <var class="d1 hi">θ</var> = <var>ω</var>.</p></div></li>
+          <li><div><p><b>The spiral</b> <span class="src-tag">Midterm Nov. 2017 · Ex 2</span> <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> gives <var class="d1">r</var> = <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup>; <var class="d1 hi">θ</var> = <var>ω</var>. So <span class="f"><var class="vec kv">v</var> = <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup> (<var class="vec">u</var><sub><var>r</var></sub> + <var class="vec">u</var><sub><var>θ</var></sub>)</span> and ‖<var class="vec kv">v</var>‖ = √2 <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup>.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The formula comes up in 6 of the 7 papers found: as an MCQ (November 2017, 2018-2019, May 2018, 2020-2021, October 2022) or as a derivation (November 2021, exercise 2, question 5, 2 points: “Detail your calculations”). The 7th paper (2019-2020) asks for it in cylindrical coordinates (part 8). The wrong options in the MCQs: <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, or only one of the two components.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Forgetting the derivative of <var class="vec">u</var><sub><var>r</var></sub> gives <var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub>. For a circle, that would be <var class="vec kv">v</var> = <var class="vec">0</var>: a point at rest. Absurd.</li>
+          <li><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> alone is not a velocity: it is in rad·s⁻¹, not m·s⁻¹. You need <var>r</var><var class="d1 hi">θ</var>.</li>
+          <li>The TD 5 statement (exercise 2, question 6) writes <var class="vec kv">v</var> = −<var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub>: the factor <var>ω</var> is missing (<var>r</var><sub>0</sub> alone is in metres). The derivative gives −<var>r</var><sub>0</sub> <var>ω</var> sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var><sub>0</sub> <var>ω</var> cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Part 6</div><h2>The acceleration vector</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Differentiate again: <var class="vec ka">a</var> = d<var class="vec kv">v</var>/d<var>t</var>, with <var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>. The first term is a product of two factors that depend on time (<var class="d1">r</var> and <var class="vec">u</var><sub><var>r</var></sub>), the second of three (<var>r</var>, <var class="d1 hi">θ</var> and <var class="vec">u</var><sub><var>θ</var></sub>): five terms in all.</p></div>
+        <ol class="steps">
+          <li><div><p><span class="f">d(<var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub>)/d<var>t</var> = <var class="d2">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var class="d1">r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span></p></div></li>
+          <li><div><p><span class="f">d(<var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>)/d<var>t</var></span> <span class="f">= <var class="d1">r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>r</var> <var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>r</var> <var class="d1 hi">θ</var> (−<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>)</span></p></div></li>
+          <li><div><p>Group what is along <var class="vec">u</var><sub><var>r</var></sub> and what is along <var class="vec">u</var><sub><var>θ</var></sub>. The two terms <var class="d1">r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> add up: hence the 2.</p></div></li>
+        </ol>
+        <div class="eq"><span class="nw"><var class="vec ka">a</var> = (<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²) <var class="vec">u</var><sub><var>r</var></sub> + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>) <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw">‖<var class="vec ka">a</var>‖ = <span class="sqrt">√<span>(<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²)² + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>)²</span></span></span></div>
+        <div class="prose">
+          <p>Radial component: <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>². Orthoradial component: 2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>. Each term is in m·s⁻²: <var>r</var><var class="d1 hi">θ</var>² in m × (rad·s⁻¹)², <var class="d1">r</var><var class="d1 hi">θ</var> in m·s⁻¹ × rad·s⁻¹.</p>
+          <p>The term −<var>r</var><var class="d1 hi">θ</var>² is negative as soon as the point turns: it points towards O. It exists even when <var>r</var> is constant; it is the term that turns <var class="vec kv">v</var> (part 7).</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>The midterm spiral</b> <span class="src-tag">Midterm Nov. 2017 · Ex 2</span> <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> and <var>θ</var> = <var>ω</var><var>t</var>. Along <var class="vec">u</var><sub><var>r</var></sub>: <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>² = <var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup> − <var>a</var>e<sup><var>ω</var><var>t</var></sup> <var>ω</var>² = 0. Along <var class="vec">u</var><sub><var>θ</var></sub>: 2 × <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup> × <var>ω</var> + 0. So <span class="f"><var class="vec ka">a</var> = 2<var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup> <var class="vec">u</var><sub><var>θ</var></sub></span> and ‖<var class="vec ka">a</var>‖ = 2<var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup>: no radial component at all.</p></div></li>
+          <li><div><p><b>The plate’s spiral</b> <var>r</var> = <var>r</var><sub>0</sub> + <var>b</var><var>t</var> and <var>θ</var> = <var>ω</var><var>t</var>: <var class="d1">r</var> = <var>b</var>, <var class="d2">r</var> = 0, <var class="d2 hi">θ</var> = 0. Then <span class="f"><var class="vec ka">a</var> = −(<var>r</var><sub>0</sub> + <var>b</var><var>t</var>) <var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> + 2<var>b</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span>. The term 2<var class="d1">r</var><var class="d1 hi">θ</var> is there even though <var class="d2 hi">θ</var> = 0: choose “Spiral” on the plate and turn on “components of <var class="vec ka">a</var>”.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><p>The paper often gives the formula and asks you to apply it: 5 papers out of 7 (2018-2019, May 2018, 2019-2020, 2020-2021, November 2021). But in November 2017 (spiral) and October 2022 (exercise 3), you had to calculate the acceleration yourself: know how to derive it. That is question 4 of exercise 1 in TD 5.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The 2 in 2<var class="d1">r</var><var class="d1 hi">θ</var>: two identical terms, one in each derivative. If you find only one <var class="d1">r</var><var class="d1 hi">θ</var>, the derivative of <var class="vec">u</var><sub><var>r</var></sub> is missing from the first one.</li>
+          <li>The “−” in −<var>r</var><var class="d1 hi">θ</var>² comes from d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>. Without it, the acceleration of a merry-go-round would point outwards.</li>
+          <li>The radial component of <var class="vec ka">a</var> is not the derivative of the radial component of <var class="vec kv">v</var>: <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>², not <var class="d2">r</var> alone. The basis turns, so you must differentiate the vectors too.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Part 7</div><h2>Circular motion: uniform or not, centripetal acceleration</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The motion is <b>circular</b> with centre O when <var>r</var> stays equal to the radius <var>R</var>. Then <var class="d1">r</var> = 0 and <var class="d2">r</var> = 0, and the formulas simplify:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var>R</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> &nbsp;&nbsp; ‖<var class="vec kv">v</var>‖ = <var>R</var> |<var class="d1 hi">θ</var>|</span><span class="nw"><var class="vec ka">a</var> = −<var>R</var> <var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var> <var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span></div>
+        <div class="prose"><p><var class="vec kv">v</var> is along <var class="vec">u</var><sub><var>θ</var></sub>: tangent to the circle. <var class="vec ka">a</var> has two parts: −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub>, pointing towards the centre, which turns <var class="vec kv">v</var>; <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, tangent, which changes the norm of <var class="vec kv">v</var>. The scalar product <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = <var>R</var>² <var class="d1 hi">θ</var> <var class="d2 hi">θ</var></span> tells you whether it speeds up (chapter 1, part 4).</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Circular…</th><th>Condition</th><th>Acceleration</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">uniform</th><td><var class="d1 hi">θ</var> = <var>ω</var> constant, so <var class="d2 hi">θ</var> = 0</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> = −<span class="frac"><span><var>v</var>²</span><span><var>R</var></span></span> <var class="vec">u</var><sub><var>r</var></sub></td></tr>
+            <tr><th scope="row">accelerated</th><td><var class="d1 hi">θ</var> and <var class="d2 hi">θ</var> have the same sign</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+            <tr><th scope="row">decelerated</th><td><var class="d1 hi">θ</var> and <var class="d2 hi">θ</var> have opposite signs</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note why"><span class="tag">Constant speed: so why does it accelerate?</span><p>“Uniform” refers to the norm of the velocity. In uniform circular motion, ‖<var class="vec kv">v</var>‖ = <var>R</var><var>ω</var> does not change, but the direction of <var class="vec kv">v</var> turns with <var class="vec">u</var><sub><var>θ</var></sub>. Since <var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub>, <span class="f"><var class="vec ka">a</var> = <var>R</var><var>ω</var> d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>: that is the figure of part 3, with <var class="vec">u</var><sub><var>θ</var></sub> instead of <var class="vec">u</var><sub><var>r</var></sub>. The acceleration points towards the centre: it is <b>centripetal</b>, of norm <var>R</var><var>ω</var>² = <var>v</var>²/<var>R</var>. On the plate, in “Uniform circular”, <var class="vec ka">a</var> aims at O at every position; in “Accelerated circular”, it leans forward.</p></div>
+        <div class="prose"><p><b>Without a calculator</b>: the “Uniform circular” setting of the plate, <var>R</var> = 2&nbsp;m and <var>ω</var> = 1.5&nbsp;rad·s⁻¹.</p></div>
+        <ol class="steps">
+          <li><div><p><var>v</var> = <var>R</var><var>ω</var> = 2 × 1.5 = 3&nbsp;m·s⁻¹.</p></div></li>
+          <li><div><p><var>a</var> = <var>R</var><var>ω</var>² = 2 × 2.25 = 4.5&nbsp;m·s⁻², and <var>v</var>²/<var>R</var> = 9/2 = 4.5&nbsp;m·s⁻²: both formulas give the same value.</p></div></li>
+          <li><div><p>One turn lasts <var>T</var> = 2π/<var>ω</var> = 2π/1.5 ≈ 4.2 s.</p></div></li>
+        </ol>
+        <ol class="steps">
+          <li><div><p><b>The merry-go-round</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>r</var> = <var>r</var><sub>0</sub> and <var class="d1 hi">θ</var> = <var>ω</var> are constant: the motion is uniform circular (question 7). <span class="f"><var class="vec ka">a</var> = −<var>r</var><sub>0</sub><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>: norm <var>r</var><sub>0</sub><var>ω</var>², pointing towards the centre of the merry-go-round (question 8).</p></div></li>
+          <li><div><p><b>The satellite</b> <span class="src-tag c">TD 5 · Ex 3</span> Going a step further, with Newton’s second law (chapter 2). Circular orbit of radius <var>r</var> = <var>R</var><sub>T</sub> + <var>h</var> = 12&nbsp;800 km around the centre O of the Earth, in the geocentric reference frame, assumed Galilean. Only force, gravity: <span class="f"><var class="vec kf">F</var> = −(<var>G</var><var>M</var><sub>T</sub><var>m</var>/<var>r</var>²) <var class="vec">u</var><sub><var>r</var></sub></span>, so <var class="vec ka">a</var> = −(<var>G</var><var>M</var><sub>T</sub>/<var>r</var>²) <var class="vec">u</var><sub><var>r</var></sub>.</p><p>Along <var class="vec">u</var><sub><var>θ</var></sub>: <var>r</var><var class="d2 hi">θ</var> = 0, so <var class="d1 hi">θ</var> = <var>ω</var> is constant, the motion is uniform and <var>v</var> = <var>r</var><var>ω</var>. Along <var class="vec">u</var><sub><var>r</var></sub>: <var>r</var><var>ω</var>² = <var>v</var>²/<var>r</var> = <var>G</var><var>M</var><sub>T</sub>/<var>r</var>², hence <span class="f"><var>v</var> = √(<var>G</var><var>M</var><sub>T</sub>/<var>r</var>) ≈ 5.6 × 10³&nbsp;m·s⁻¹</span> and a period <var>T</var> = 2π<var>r</var>/<var>v</var> ≈ 1.4 × 10⁴ s, about 4 h. The mass of the satellite plays no part.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm: 7 papers out of 7</span><ul>
+          <li>November 2021, exercise 4 (4 points): the general formula is given. “Circular”: <var>ρ</var> = <var>R</var> constant, so <var class="d1">ρ</var> = <var class="d2">ρ</var> = 0 and <var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>ρ</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>. “In addition uniform”: <var class="d1 hi">θ</var> constant, <var class="d2 hi">θ</var> = 0, <var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>ρ</var></sub>. Each time: “Justify your answer.”</li>
+          <li>MCQs of May 2018 and 2020-2021, uniform circular: (−<var>R</var><var class="d1 hi">θ</var>²; 0). MCQs of 2018-2019 (accelerated) and 2019-2020 (decelerated): (−<var>R</var><var class="d1 hi">θ</var>²; <var>R</var><var class="d2 hi">θ</var>), the same expression.</li>
+          <li>October 2022: “in uniform circular motion, the acceleration is zero” is false. “For uniform circular motion: <var class="d1 hi">θ</var> = constant; <var class="d1 hi">θ</var> = 0; <var class="d2 hi">θ</var> = 0; <var class="d1">ρ</var> = 0”: three right answers (all except <var class="d1 hi">θ</var> = 0). In exercise 3, <var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> and <var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub>.</li>
+          <li>The circle also comes up in Cartesian coordinates (November 2017, 2018-2019, helices of May 2018 and 2019-2020): ‖<var class="vec kv">v</var>‖ = <var>R</var><var>ω</var>, ‖<var class="vec ka">a</var>‖ = <var>R</var><var>ω</var>², and <var class="vec ka">a</var> = −<var>ω</var>² <var class="vec kp">OM</var> when the centre is O.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“Uniform” does not mean <var class="vec ka">a</var> = <var class="vec">0</var>. In uniform circular motion, <var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> ≠ <var class="vec">0</var>; only uniform rectilinear motion has zero acceleration.</li>
+          <li>Accelerated or decelerated does not change the expression (−<var>R</var><var class="d1 hi">θ</var>²; <var>R</var><var class="d2 hi">θ</var>): only the sign of <var class="d2 hi">θ</var> relative to <var class="d1 hi">θ</var> changes.</li>
+          <li><var class="vec ka">a</var> = −<var>ω</var>² <var class="vec kp">OM</var> assumes the centre is at O. In the November 2017 midterm, the circle was centred at C(1; 2): <var class="vec ka">a</var> = −<var>ω</var>² <var class="vec">CM</var>.</li>
+          <li>A norm is positive: ‖<var class="vec kv">v</var>‖ = <var>R</var> |<var class="d1 hi">θ</var>|, which is not <var>R</var><var class="d1 hi">θ</var> if the point turns clockwise (<var class="d1 hi">θ</var> &lt; 0).</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Part 8</div><h2>From Cartesian to polar coordinates; cylindrical coordinates</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Both systems describe the same point and the same vectors. Going from one to the other is asked in 5 of the 7 papers found.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Direction</th><th>Coordinates</th><th>Basis vectors</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Polar → Cartesian</th><td class="f"><var>x</var> = <var>r</var> cos <var>θ</var>; <var>y</var> = <var>r</var> sin <var>θ</var></td><td class="f"><var class="vec">u</var><sub><var>r</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub><br><var class="vec">u</var><sub><var>θ</var></sub> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></td></tr>
+            <tr><th scope="row">Cartesian → polar</th><td class="f"><var>r</var> = √(<var>x</var>² + <var>y</var>²)<br>cos <var>θ</var> = <var>x</var>/<var>r</var>; sin <var>θ</var> = <var>y</var>/<var>r</var></td><td class="f"><var class="vec">u</var><sub><var>x</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>r</var></sub> − sin <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub><br><var class="vec">u</var><sub><var>y</var></sub> = sin <var>θ</var> <var class="vec">u</var><sub><var>r</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The last column of the second row is not in the course: you can check it by replacing <var class="vec">u</var><sub><var>r</var></sub> and <var class="vec">u</var><sub><var>θ</var></sub> by their expressions.</p></div>
+        <div class="note keep"><span class="tag">Method: recognise <var>r</var> and <var>θ</var></span><ol>
+          <li>If <var>x</var>(<var>t</var>) and <var>y</var>(<var>t</var>) are written <var>f</var>(<var>t</var>) cos(<var>g</var>(<var>t</var>)) and <var>f</var>(<var>t</var>) sin(<var>g</var>(<var>t</var>)), with <var>f</var> &gt; 0, then <var>r</var> = <var>f</var>(<var>t</var>) and <var>θ</var> = <var>g</var>(<var>t</var>).</li>
+          <li>Otherwise, calculate <var>r</var> = √(<var>x</var>² + <var>y</var>²), simplifying with cos² + sin² = 1.</li>
+          <li>Write <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub>, then differentiate with the formulas of parts 5 and 6.</li>
+        </ol></div>
+        <ol class="steps">
+          <li><div><p><b>Polar → Cartesian</b> <span class="src-tag">Midterm 2019-2020 · MCQ 8</span> <var>ρ</var>(<var>t</var>) = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> and <var>θ</var>(<var>t</var>) = <var>ω</var><var>t</var> give <var>x</var> = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> cos(<var>ω</var><var>t</var>) and <var>y</var> = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> sin(<var>ω</var><var>t</var>). The other options swapped cos and sin, or forgot e<sup><var>ω</var><var>t</var></sup>.</p></div></li>
+          <li><div><p><b>Cartesian → polar</b> <span class="src-tag c">TD 5</span> <span class="src-tag">Midterm Nov. 2017</span> These are the merry-go-round and the spiral of part 4: recognise <var>r</var>(<var>t</var>) and <var>θ</var>(<var>t</var>), then write <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div></li>
+        </ol>
+        <h3>Cylindrical coordinates</h3>
+        <div class="prose"><p>For motion in space, you add the height <var>z</var>. The help sheet on coordinate systems, on Moodle, presents them this way: project M onto the plane (O, <var>x</var>, <var>y</var>) at H, locate H in polar coordinates, then go up by <var>z</var> along <var class="vec">u</var><sub><var>z</var></sub>, which is fixed.</p></div>
+        <div class="eq"><span class="nw"><var class="vec">OH</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> &nbsp;&nbsp; <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>z</var> <var class="vec">u</var><sub><var>z</var></sub> = <span class="col"><span><var>r</var></span><span>0</span><span><var>z</var></span></span></span></div>
+        <div class="prose"><p><var class="vec">u</var><sub><var>z</var></sub> is fixed, its derivative is zero: you add one line to the polar formulas.</p></div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var class="d1">z</var> <var class="vec">u</var><sub><var>z</var></sub></span><span class="nw"><var class="vec ka">a</var> = (<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²) <var class="vec">u</var><sub><var>r</var></sub> + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>) <var class="vec">u</var><sub><var>θ</var></sub> + <var class="d2">z</var> <var class="vec">u</var><sub><var>z</var></sub></span></div>
+        <ol class="steps">
+          <li><div><p><b>The helix</b> <span class="src-tag">Midterms May 2018 and 2019-2020</span> <var>x</var> = <var>R</var> cos(<var>ω</var><var>t</var>), <var>y</var> = <var>R</var> sin(<var>ω</var><var>t</var>), <var>z</var> = <var>H</var><var>ω</var><var>t</var>. In cylindrical coordinates: <var>r</var> = <var>R</var> and <var>θ</var> = <var>ω</var><var>t</var>, so <span class="f"><var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>H</var><var>ω</var><var>t</var> <var class="vec">u</var><sub><var>z</var></sub></span>; <span class="f"><var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>H</var><var>ω</var> <var class="vec">u</var><sub><var>z</var></sub></span>, of norm <var>ω</var>√(<var>R</var>² + <var>H</var>²); <span class="f"><var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>. A circle travelled uniformly, plus a climb at constant speed.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the midterm</span><p>Cylindrical coordinates came up in 5 of the 7 past papers (helices, a spiral on a cone, MCQs). They are not in the text of this year’s course, only in the help sheet: at least know how to write <var class="vec kp">OM</var> and <var class="vec kv">v</var>. October 2022, MCQ 4: “In cylindrical coordinates, the position vector is: a- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub>; b- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub>; c- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub> + <var>z</var><var class="vec">u</var><sub><var>z</var></sub>; d- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>z</var><var class="vec">u</var><sub><var>z</var></sub>”. Answer d.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var>r</var> = √(<var>x</var>² + <var>y</var>²), never <var>x</var> + <var>y</var>. And tan <var>θ</var> = <var>y</var>/<var>x</var> is not enough: <var>θ</var> and <var>θ</var> + π have the same tangent. Look at the signs of <var>x</var> and <var>y</var>.</li>
+          <li>No term along <var class="vec">u</var><sub><var>θ</var></sub> in <var class="vec kp">OM</var>, neither in polar nor in cylindrical coordinates.</li>
+          <li>In cylindrical coordinates, <var>r</var> is the distance OH from the axis (O, <var>z</var>), not the distance OM.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="physique:polaires:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>This is the last chapter for midterm 1. To practise on the corrected papers and the TDs, go to <a href="entrainement.html">practice</a>; the formulas are gathered in <a href="fiche.html">the summary sheet</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../assets/js/meca.js"></script>
+<!--INLINE-SCRIPT-->
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coordonnées polaires · Physique</title>
+<meta name="description" content="Physique, chapitre 4 : coordonnées polaires, base mobile (ur, uθ), dérivées des vecteurs de la base, vecteurs position, vitesse et accélération en polaire, mouvement circulaire uniforme et non uniforme, accélération centripète, coordonnées cylindriques et passage cartésien ↔ polaire.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapitre 4 : vecteurs de base en ambre sur papier, repères pâles, cible en gris */
+.mk .k-amb{color:var(--accent)} .mk .k-mut{color:var(--muted)}
+.mk text.k-amb,.mk text.k-mut{fill:currentColor}
+.mk .vk.ghost{opacity:.42}
+.mk .vk.dash path{stroke-dasharray:5 4}
+.mk .vk.bold path{stroke-width:2.6}
+.mk .mk-arc{fill:none;stroke:var(--muted);stroke-width:1.2}
+.plate .mk .mk-arc{stroke:var(--flash);opacity:.8}
+.pl-polar .sliders{grid-template-columns:minmax(0,1fr)}
+.fig .ctrls .sliders{align-items:end}
+/* dérivées pointées dessinées en CSS : le point se place bien quelle que soit la police chargée */
+var.d1,var.d2{position:relative;display:inline-block;line-height:1}
+var.d1::after,var.d2::after{content:"";position:absolute;left:56%;bottom:.82em;width:.13em;height:.13em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+var.d2::after{transform:translateX(-105%);box-shadow:.24em 0 0 currentColor}
+var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physique · chapitre 4 : coordonnées polaires">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physique</a> · Chapitre 4 sur 4</div>
+      <h1>Le point tourne, <span class="w">la base tourne avec lui</span>.</h1>
+      <p class="lead">Pour un mouvement circulaire, deux nombres suffisent : la distance <var>r</var> au centre et l’angle <var>θ</var>. La base (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>) suit le point, et c’est elle qui fait apparaître l’accélération centripète. C’est le chapitre le plus présent aux anciens partiels.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parties</span><span class="chip">cours ch. VI · TD 5</span><span class="chip ex">aux 7 partiels retrouvés</span></div>
+      <div class="vlegend" aria-label="Couleurs des vecteurs, les mêmes dans tout le site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>vitesse</span><span><i class="la"></i>accélération</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Plaque : un point qui tourne, avec sa base polaire, sa vitesse et son accélération ; tu règles l’angle θ ou tu le fais avancer"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 4 · Coordonnées polaires</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>Pourquoi les polaires</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>La base polaire</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Dériver les vecteurs de la base</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Le vecteur position</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Le vecteur vitesse</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Le vecteur accélération</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>Mouvement circulaire</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>Cartésien ↔ polaire, cylindriques</span></a></li>
+    </ol>
+    <p class="toc-note">Une coche apparaît quand tu marques une partie comme comprise. La plaque en haut de page sert dans les parties 1, 2, 5, 6 et 7.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil physique</a><a href="cours-3-energie.html">← Chapitre 3 : travail et énergie</a><a href="../qcm/index.html#physique">QCM de physique</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Pourquoi les polaires</a></li><li><a href="#s2">La base polaire</a></li><li><a href="#s3">Dériver les vecteurs de la base</a></li><li><a href="#s4">Le vecteur position</a></li>
+      <li><a href="#s5">Le vecteur vitesse</a></li><li><a href="#s6">Le vecteur accélération</a></li><li><a href="#s7">Mouvement circulaire</a></li><li><a href="#s8">Cartésien ↔ polaire, cylindriques</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Partie 1</div><h2>Pourquoi les coordonnées polaires</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Au chapitre 1, le point M était repéré par <var>x</var> et <var>y</var>, sur une base fixe (<var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>). Le cours le dit : ce repère convient à la majorité des mouvements plans, <b>sauf aux mouvements circulaires</b>.</p>
+          <p>Prends le manège du TD 5 : le cheval de bois tourne à une distance constante <var>r</var><sub>0</sub> du centre. En cartésien, ses deux coordonnées oscillent. En polaire, l’une est constante et l’autre augmente régulièrement.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">En cartésien</span><div class="eq left"><span class="nw"><var>x</var>(<var>t</var>) = <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>)</span><span class="nw"><var>y</var>(<var>t</var>) = <var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>)</span></div><p class="muted">Deux fonctions qui varient. Le cercle n’apparaît qu’en calculant <var>x</var>² + <var>y</var>² = <var>r</var><sub>0</sub>².</p></div>
+          <div class="card"><span class="k">En polaire</span><div class="eq left"><span class="nw"><var>r</var>(<var>t</var>) = <var>r</var><sub>0</sub></span><span class="nw"><var>θ</var>(<var>t</var>) = <var>ω</var><var>t</var></span></div><p class="muted">La distance au centre est constante : on lit tout de suite un cercle, parcouru en tournant toujours au même rythme.</p></div>
+        </div>
+        <div class="prose">
+          <p>Les deux coordonnées polaires du point M (cours, chapitre VI) :</p>
+          <ul>
+            <li><var>r</var> = OM, la distance de l’origine O au point M, en mètres. C’est une distance : le cours précise qu’elle est toujours strictement positive.</li>
+            <li><var>θ</var>, l’angle orienté que fait le vecteur <var class="vec kp">OM</var> avec l’axe <var class="vec">u</var><sub><var>x</var></sub>. Il compte positivement dans le sens direct, le sens inverse des aiguilles d’une montre.</li>
+          </ul>
+          <p>La plaque en haut de page montre un tel point. En « Circulaire uniforme », fais glisser <var>θ</var> : M parcourt le cercle et <var>r</var> reste égal à 2&nbsp;m.</p>
+        </div>
+        <div class="note keep"><span class="tag">Unités</span><p><var>θ</var> est un angle, en radians (sans dimension). Sa dérivée <var class="d1 hi">θ</var> = d<var>θ</var>/d<var>t</var>, la <b>vitesse angulaire</b>, est en rad·s⁻¹. Dans <var>θ</var> = <var>ω</var><var>t</var>, <var>ω</var> est donc en rad·s⁻¹ et <var>r</var><sub>0</sub> en mètres : c’est la question 1 de l’exercice 2 du TD 5.</p></div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <p>C’est le chapitre qui rapporte le plus. Sur les 7 sujets de partiel retrouvés (novembre 2017 à octobre 2022), le mouvement circulaire tombe dans les 7, la vitesse en polaire dans 6, l’accélération en polaire (formule générale ou cas circulaire) dans les 7. En novembre 2021, deux exercices de polaire valaient 12 points sur 20 : l’exercice 2 (8 points) et l’exercice 4 (4 points).</p>
+          <p>Notations : les anciens sujets écrivent <var>ρ</var> et <var class="vec">u</var><sub><var>ρ</var></sub> là où le cours écrit <var>r</var> et <var class="vec">u</var><sub><var>r</var></sub>, et souvent <var class="vec">V</var> pour la vitesse. Ce sont les mêmes objets.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège</span><p><var>θ</var> se mesure depuis l’axe des <var>x</var>, dans le sens direct, et en radians dans les calculs : cos(<var>ω</var><var>t</var>) n’a de sens que si <var>ω</var><var>t</var> est en radians. Et <var>r</var> n’est pas <var>x</var> : <var>r</var> = √(<var>x</var>² + <var>y</var>²) (partie 8).</p></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Partie 2</div><h2>La base polaire (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>)</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>En chaque point M, on attache une base orthonormée directe (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>) :</p>
+          <ul>
+            <li><var class="vec">u</var><sub><var>r</var></sub> est unitaire et colinéaire à <var class="vec kp">OM</var>, dans le sens de O vers M : <span class="f"><var class="vec">u</var><sub><var>r</var></sub> = <span class="frac"><span><var class="vec kp">OM</var></span><span>‖<var class="vec kp">OM</var>‖</span></span></span>.</li>
+            <li><var class="vec">u</var><sub><var>θ</var></sub> est unitaire, obtenu en tournant <var class="vec">u</var><sub><var>r</var></sub> de +π/2, dans le sens direct. Il est tangent au cercle de centre O qui passe par M, orienté vers les <var>θ</var> croissants.</li>
+          </ul>
+          <p>Cette base est <b>mobile</b> : quand M tourne, <var class="vec">u</var><sub><var>r</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> tournent avec lui. Ils ne dépendent que de l’angle <var>θ</var>. Sur la plaque en haut de page, la petite base dessinée à chaque pose change de direction d’une pose à l’autre ; les axes, eux, ne bougent pas.</p>
+          <p>Pour écrire <var class="vec">u</var><sub><var>r</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> dans la base cartésienne, ramène-les en O : leurs pointes sont deux points du cercle trigonométrique.</p>
+        </div>
+        <figure class="fig">
+          <div class="mk-host" id="figBase"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="bth">Angle <var>θ</var></label><output id="bthv" for="bth"></output><input id="bth" type="range" min="0" max="360" step="5" value="30"></div>
+              <div class="row" role="group" aria-label="Vecteur à projeter sur les axes"><button type="button" class="chip-btn" data-bw="r" aria-pressed="true">projeter <var class="vec">u</var><sub><var>r</var></sub></button><button type="button" class="chip-btn" data-bw="t" aria-pressed="false">projeter <var class="vec">u</var><sub><var>θ</var></sub></button></div>
+            </div>
+            <div class="readout" id="bread" aria-live="polite"></div>
+          </div>
+          <figcaption>Les deux vecteurs de la base, ramenés en O sur le cercle de rayon 1. Leurs projections sur les axes sont leurs composantes dans (<var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>). Fais tourner <var>θ</var> dans les quatre quadrants et regarde les signes changer.</figcaption>
+        </figure>
+        <div class="eq"><span class="nw"><var class="vec">u</var><sub><var>r</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span>cos <var>θ</var></span><span>sin <var>θ</var></span></span></span><span class="nw"><var class="vec">u</var><sub><var>θ</var></sub> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <span class="col"><span>−sin <var>θ</var></span><span>cos <var>θ</var></span></span></span></div>
+        <div class="prose"><p><b>D’où vient le signe moins.</b> <var class="vec">u</var><sub><var>r</var></sub> fait l’angle <var>θ</var> avec <var class="vec">u</var><sub><var>x</var></sub> : ses composantes sont cos <var>θ</var> et sin <var>θ</var>. <var class="vec">u</var><sub><var>θ</var></sub> fait l’angle <var>θ</var> + π/2 : ses composantes sont cos(<var>θ</var> + π/2) = −sin <var>θ</var> et sin(<var>θ</var> + π/2) = cos <var>θ</var>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Deux angles à connaître.</b> <var>θ</var> = 0 : <var class="vec">u</var><sub><var>r</var></sub> = <var class="vec">u</var><sub><var>x</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> = <var class="vec">u</var><sub><var>y</var></sub>. <var>θ</var> = π/2 : <var class="vec">u</var><sub><var>r</var></sub> = <var class="vec">u</var><sub><var>y</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> = −<var class="vec">u</var><sub><var>x</var></sub> (le point est en haut, <var class="vec">u</var><sub><var>θ</var></sub> pointe vers la gauche). Vérifie-les sur la figure.</p></div></li>
+          <li><div><p><b>Vérifier la base.</b> <var class="vec">u</var><sub><var>r</var></sub> · <var class="vec">u</var><sub><var>θ</var></sub> = cos <var>θ</var> × (−sin <var>θ</var>) + sin <var>θ</var> × cos <var>θ</var> = 0 : les deux vecteurs sont orthogonaux. ‖<var class="vec">u</var><sub><var>r</var></sub>‖² = cos² <var>θ</var> + sin² <var>θ</var> = 1 : il est unitaire, et <var class="vec">u</var><sub><var>θ</var></sub> aussi.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><ul>
+          <li>Novembre 2021, exercice 2, question 1 (1 point) : « Exprimer les vecteurs unitaires <var class="vec">u</var><sub><var>ρ</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> de la base polaire en fonction de l’angle <var>θ</var> et des vecteurs unitaires <var class="vec">u</var><sub><var>x</var></sub> et <var class="vec">u</var><sub><var>y</var></sub> de la base cartésienne. »</li>
+          <li>Octobre 2022, exercice 3 : « Sur le schéma, représenter la base polaire au point M. » <var class="vec">u</var><sub><var>r</var></sub> part de M dans le prolongement de <var class="vec kp">OM</var> ; <var class="vec">u</var><sub><var>θ</var></sub> part de M, perpendiculaire, vers les <var>θ</var> croissants.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Le « − » est sur le sinus de la composante selon <var class="vec">u</var><sub><var>x</var></sub> : <var class="vec">u</var><sub><var>θ</var></sub> = (−sin <var>θ</var> ; cos <var>θ</var>). Le vecteur (sin <var>θ</var> ; −cos <var>θ</var>), c’est −<var class="vec">u</var><sub><var>θ</var></sub>. Teste avec <var>θ</var> = 0 : tu dois trouver <var class="vec">u</var><sub><var>y</var></sub>.</li>
+          <li>Sur un schéma, la base polaire se dessine au point M, pas en O, et elle change avec M. Ne dessine pas <var class="vec">u</var><sub><var>θ</var></sub> le long de l’arc qui marque l’angle près de O.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Partie 3</div><h2>Dériver les vecteurs de la base</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>En cartésien, dériver un vecteur revenait à dériver ses coordonnées, car <var class="vec">u</var><sub><var>x</var></sub> et <var class="vec">u</var><sub><var>y</var></sub> sont fixes. Ici, <var class="vec">u</var><sub><var>r</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> dépendent de <var>θ</var>, et <var>θ</var> dépend du temps : leur dérivée n’est pas nulle. C’est ce qui change tout dans ce chapitre.</p>
+          <p>Le cours les dérive d’abord par rapport à <var>θ</var>, à partir de leur écriture cartésienne (<var class="vec">u</var><sub><var>x</var></sub> et <var class="vec">u</var><sub><var>y</var></sub>, fixes, se comportent comme des constantes) :</p>
+        </div>
+        <div class="eq"><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>θ</var></span></span> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>θ</var></span></span> = −cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> − sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub> = −<var class="vec">u</var><sub><var>r</var></sub></span></div>
+        <div class="prose"><p>Puis par rapport au temps, avec la dérivée d’une fonction composée : <var class="vec">u</var><sub><var>r</var></sub> dépend de <var>t</var> à travers <var>θ</var>(<var>t</var>).</p></div>
+        <div class="eq"><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>θ</var></span></span> · <span class="frac"><span>d<var>θ</var></span><span>d<var>t</var></span></span> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw"><span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var class="vec">u</var><sub><var>θ</var></sub></span><span>d<var>θ</var></span></span> · <span class="frac"><span>d<var>θ</var></span><span>d<var>t</var></span></span> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub></span></div>
+        <figure class="fig">
+          <div class="mk-host" id="figDeriv"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="dth">Écart <var>Δθ</var></label><output id="dthv" for="dth"></output><input id="dth" type="range" min="2" max="60" step="1" value="40"></div>
+              <div class="row" role="group" aria-label="Vecteur à dériver"><button type="button" class="chip-btn" data-dw="r" aria-pressed="true">dériver <var class="vec">u</var><sub><var>r</var></sub></button><button type="button" class="chip-btn" data-dw="t" aria-pressed="false">dériver <var class="vec">u</var><sub><var>θ</var></sub></button></div>
+            </div>
+            <div class="readout" id="dread" aria-live="polite"></div>
+          </div>
+          <figcaption>Le vecteur unitaire à l’angle <var>θ</var> et le même à <var>θ</var> + Δ<var>θ</var> (pâle). Le trait fin relie leurs pointes ; la flèche épaisse est ce petit écart divisé par Δ<var>θ</var>. Réduis Δ<var>θ</var> : elle rejoint la flèche grise en tirets, qui est le vecteur tourné de +π/2.</figcaption>
+        </figure>
+        <div class="note why"><span class="tag">Ce que montre la figure</span><p>Quand <var>θ</var> augmente de Δ<var>θ</var>, la pointe de <var class="vec">u</var><sub><var>r</var></sub> glisse sur le cercle de rayon 1. L’écart entre les deux vecteurs est presque perpendiculaire à <var class="vec">u</var><sub><var>r</var></sub>, donc presque parallèle à <var class="vec">u</var><sub><var>θ</var></sub>, et sa longueur vaut presque Δ<var>θ</var> (un arc de rayon 1). À la limite, l’écart divisé par Δ<var>θ</var> devient exactement <var class="vec">u</var><sub><var>θ</var></sub>.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><p>Dériver un vecteur unitaire qui tourne, c’est le tourner de +π/2 et le multiplier par la vitesse de rotation <var class="d1 hi">θ</var>. <var class="vec">u</var><sub><var>r</var></sub> tourné de +π/2 donne <var class="vec">u</var><sub><var>θ</var></sub> ; <var class="vec">u</var><sub><var>θ</var></sub> tourné de +π/2 donne −<var class="vec">u</var><sub><var>r</var></sub>. D’où <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> et −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Si <var>θ</var> ne varie pas</b> (le point va et vient sur une droite qui passe par O) : <var class="d1 hi">θ</var> = 0, donc d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="vec">0</var>. La base ne tourne pas.</p></div></li>
+          <li><div><p><b>Le manège</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>θ</var> = <var>ω</var><var>t</var>, donc <var class="d1 hi">θ</var> = <var>ω</var>, d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> et d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var>ω</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div></li>
+          <li><div><p><b>La dérivée composée en QCM</b> <span class="src-tag">Partiel 2019-2020</span> <var>f</var>(<var>t</var>) = <var>A</var> cos²(<var>θ</var>(<var>t</var>)) donne <span class="f">d<var>f</var>/d<var>t</var> = 2<var>A</var> cos <var>θ</var> × (−sin <var>θ</var>) × <var class="d1 hi">θ</var></span> <span class="f">= −2<var>A</var><var class="d1 hi">θ</var> cos <var>θ</var> sin <var>θ</var></span>. Même mécanisme : on dérive par rapport à <var>θ</var>, puis on multiplie par <var class="d1 hi">θ</var>.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><ul>
+          <li>Partiels 2019-2020 (QCM 7) et 2020-2021 (QCM 2) : « Le vecteur unitaire <var class="vec">u</var><sub><var>ρ</var></sub> des coordonnées polaires vérifie : a) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var><var class="vec">u</var><sub><var>θ</var></sub> ; b) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="vec">0</var> ; c) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var><var class="vec">u</var><sub><var>ρ</var></sub> ; d) d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var><var class="vec">u</var><sub><var>θ</var></sub> ». Réponse d.</li>
+          <li>Novembre 2021, exercice 2, questions 2 et 3 (3 points) : calculer d<var class="vec">u</var><sub><var>ρ</var></sub>/d<var>θ</var> et d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>θ</var>, puis les exprimer en fonction de <var class="vec">u</var><sub><var>θ</var></sub> et de <var class="vec">u</var><sub><var>ρ</var></sub>. C’est exactement le calcul du cours, ci-dessus.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>d<var class="vec">u</var><sub><var>r</var></sub>/d<var>θ</var> = <var class="vec">u</var><sub><var>θ</var></sub>, mais d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> : par rapport au temps, n’oublie pas le facteur <var class="d1 hi">θ</var>.</li>
+          <li>Le signe moins est sur la dérivée de <var class="vec">u</var><sub><var>θ</var></sub> : d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>. Celle de <var class="vec">u</var><sub><var>r</var></sub> n’en a pas.</li>
+          <li>« d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="vec">0</var> parce que <var class="vec">u</var><sub><var>r</var></sub> est unitaire » est faux : sa norme reste 1, mais sa direction change.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Partie 4</div><h2>Le vecteur position</h2></div>
+      <div class="stack">
+        <div class="prose"><p><var class="vec">u</var><sub><var>r</var></sub> a la direction et le sens de <var class="vec kp">OM</var>, et la longueur OM vaut <var>r</var>. Donc :</p></div>
+        <div class="eq"><span class="nw"><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> = <span class="col"><span><var>r</var></span><span>0</span></span></span><small>colonne des composantes dans la base (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>)</small></div>
+        <div class="prose">
+          <p>Une seule composante. L’angle <var>θ</var> n’a pas disparu : il est caché dans <var class="vec">u</var><sub><var>r</var></sub>, qui dépend de <var>θ</var>. En remplaçant <var class="vec">u</var><sub><var>r</var></sub> par son écriture cartésienne, on retrouve <var>x</var> et <var>y</var> :</p>
+        </div>
+        <div class="eq"><span class="nw"><var class="vec kp">OM</var> = <var>r</var> cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var> sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></span><span class="nw"><var>x</var> = <var>r</var> cos <var>θ</var> &nbsp;et&nbsp; <var>y</var> = <var>r</var> sin <var>θ</var></span></div>
+        <ol class="steps">
+          <li><div><p><b>Le manège</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>x</var> = <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>) et <var>y</var> = <var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>). Alors <var>r</var> = √(<var>x</var>² + <var>y</var>²) = <var>r</var><sub>0</sub> √(cos² + sin²) = <var>r</var><sub>0</sub>, et <var>θ</var> = <var>ω</var><var>t</var>. Donc <span class="f"><var class="vec kp">OM</var>(<var>t</var>) = <var>r</var><sub>0</sub> <var class="vec">u</var><sub><var>r</var></sub></span>.</p></div></li>
+          <li><div><p><b>La spirale</b> <span class="src-tag">Partiel nov. 2017 · Ex 2</span> <var>x</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> cos(<var>ω</var><var>t</var>) et <var>y</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> sin(<var>ω</var><var>t</var>). On reconnaît <var>r</var> cos <var>θ</var> et <var>r</var> sin <var>θ</var> avec <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> et <var>θ</var> = <var>ω</var><var>t</var> : <span class="f"><var class="vec kp">OM</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> <var class="vec">u</var><sub><var>r</var></sub></span>. La distance au centre grandit : le point s’éloigne de O en tournant.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">À retenir</span><p>Pour un mouvement circulaire de centre O et de rayon <var>R</var> : <var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub>, avec <var>R</var> constant. Tout le mouvement est alors dans <var class="vec">u</var><sub><var>r</var></sub>, c’est-à-dire dans <var>θ</var>(<var>t</var>).</p></div>
+        <div class="note exam"><span class="tag">Au partiel</span><ul>
+          <li>Novembre 2021, QCM 2 : « En coordonnées polaires, le vecteur position <var class="vec kp">OM</var>(<var>t</var>) est donné par a. <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub> ; b. <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> ; c. <var>θ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>ρ</var><var class="vec">u</var><sub><var>θ</var></sub> ; d. <var>ρ</var><var class="vec">u</var><sub><var>θ</var></sub> ». Réponse b.</li>
+          <li>Même sujet, exercice 2, question 4 (2 points) : <var class="vec kp">OM</var> dans la base cartésienne (<var>x</var> <var class="vec">u</var><sub><var>x</var></sub> + <var>y</var> <var class="vec">u</var><sub><var>y</var></sub>) et dans la base polaire (<var>ρ</var> <var class="vec">u</var><sub><var>ρ</var></sub>).</li>
+          <li>Octobre 2022, exercice 3 : un point tourne sur un cercle de rayon <var>R</var> avec <var>θ</var> = <var>ω</var><var>t</var>, et <var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub>.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub> est faux : <var>θ</var> est un angle, pas une longueur. Ce n’est même pas homogène.</li>
+          <li>Le 0 de la colonne ne veut pas dire que M est sur un axe : c’est la composante de <var class="vec kp">OM</var> sur <var class="vec">u</var><sub><var>θ</var></sub>, et <var class="vec">u</var><sub><var>θ</var></sub> est toujours perpendiculaire à <var class="vec kp">OM</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Partie 5</div><h2>Le vecteur vitesse</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Même définition qu’en cartésien : <var class="vec kv">v</var> = d<var class="vec kp">OM</var>/d<var>t</var>. La différence : <var class="vec">u</var><sub><var>r</var></sub> dépend du temps, il faut le dériver lui aussi. Voici la démonstration, avec les trois justifications qu’attend un correcteur.</p></div>
+        <ol class="steps">
+          <li><div><p><span class="f"><var class="vec kv">v</var> = <span class="frac"><span>d<var class="vec kp">OM</var></span><span>d<var>t</var></span></span></span> : définition de la vitesse instantanée.</p></div></li>
+          <li><div><p><span class="f">= <span class="frac"><span>d(<var>r</var> <var class="vec">u</var><sub><var>r</var></sub>)</span><span>d<var>t</var></span></span> = <span class="frac"><span>d<var>r</var></span><span>d<var>t</var></span></span> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <span class="frac"><span>d<var class="vec">u</var><sub><var>r</var></sub></span><span>d<var>t</var></span></span></span> : dérivée d’un produit, car <var>r</var> et <var class="vec">u</var><sub><var>r</var></sub> dépendent tous deux du temps.</p></div></li>
+          <li><div><p><span class="f">= <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span> : d<var class="vec">u</var><sub><var>r</var></sub>/d<var>t</var> = <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> (partie 3).</p></div></li>
+        </ol>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> = <span class="col"><span><var class="d1">r</var></span><span><var>r</var><var class="d1 hi">θ</var></span></span></span><span class="nw">‖<var class="vec kv">v</var>‖ = <span class="sqrt">√<span><var class="d1">r</var>² + <var>r</var>²<var class="d1 hi">θ</var>²</span></span></span></div>
+        <div class="prose">
+          <p>Deux composantes, deux causes. <var class="d1">r</var>, la composante <b>radiale</b>, vient de la variation de la distance à O. <var>r</var><var class="d1 hi">θ</var>, la composante <b>orthoradiale</b> (sur <var class="vec">u</var><sub><var>θ</var></sub>), vient de la rotation. Les deux sont en m·s⁻¹ : <var>r</var> en m, <var class="d1 hi">θ</var> en rad·s⁻¹.</p>
+          <p>Sur la plaque, en « Circulaire uniforme », <var class="d1">r</var> = 0 : <var class="vec kv">v</var> est porté par <var class="vec">u</var><sub><var>θ</var></sub>, tangent au cercle. En « Spirale », <var>r</var> augmente : <var class="vec kv">v</var> penche vers l’extérieur, il n’est plus porté par <var class="vec">u</var><sub><var>θ</var></sub> seul.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Le manège</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>r</var> = <var>r</var><sub>0</sub> constant, donc <var class="d1">r</var> = 0 ; <var class="d1 hi">θ</var> = <var>ω</var>. Ainsi <span class="f"><var class="vec kv">v</var> = <var>r</var><sub>0</sub> <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span> et ‖<var class="vec kv">v</var>‖ = <var>r</var><sub>0</sub> <var>ω</var> : des m × rad·s⁻¹ = m·s⁻¹, c’est homogène (questions 4 et 5).</p></div></li>
+          <li><div><p><b>Vérification en cartésien</b> (question 6) : <var>ẋ</var> = −<var>r</var><sub>0</sub> <var>ω</var> sin(<var>ω</var><var>t</var>) et <var>ẏ</var> = <var>r</var><sub>0</sub> <var>ω</var> cos(<var>ω</var><var>t</var>), donc <span class="f"><var class="vec kv">v</var> = <var>r</var><sub>0</sub> <var>ω</var> (−sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub></span> <span class="f">+ cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub>)</span> <span class="f">= <var>r</var><sub>0</sub> <var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span>. Même vecteur, même norme <var>r</var><sub>0</sub> <var>ω</var> ; en comparant avec <var>r</var><sub>0</sub> <var class="d1 hi">θ</var>, on trouve <var class="d1 hi">θ</var> = <var>ω</var>.</p></div></li>
+          <li><div><p><b>La spirale</b> <span class="src-tag">Partiel nov. 2017 · Ex 2</span> <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> donne <var class="d1">r</var> = <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup> ; <var class="d1 hi">θ</var> = <var>ω</var>. Donc <span class="f"><var class="vec kv">v</var> = <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup> (<var class="vec">u</var><sub><var>r</var></sub> + <var class="vec">u</var><sub><var>θ</var></sub>)</span> et ‖<var class="vec kv">v</var>‖ = √2 <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup>.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><p>La formule tombe dans 6 des 7 sujets retrouvés : en QCM (novembre 2017, 2018-2019, mai 2018, 2020-2021, octobre 2022) ou en démonstration (novembre 2021, exercice 2, question 5, 2 points : « en expliquant chaque étape de calcul »). Le 7e sujet (2019-2020) la demande en coordonnées cylindriques (partie 8). Les propositions fausses des QCM : <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, ou une seule des deux composantes.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Oublier la dérivée de <var class="vec">u</var><sub><var>r</var></sub> donne <var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub>. Pour un cercle, ce serait <var class="vec kv">v</var> = <var class="vec">0</var> : un point immobile. Absurde.</li>
+          <li><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> seul n’est pas une vitesse : ce sont des rad·s⁻¹, pas des m·s⁻¹. Il faut <var>r</var><var class="d1 hi">θ</var>.</li>
+          <li>L’énoncé du TD 5 (exercice 2, question 6) écrit <var class="vec kv">v</var> = −<var>r</var><sub>0</sub> sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var><sub>0</sub> cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub> : il manque le facteur <var>ω</var> (<var>r</var><sub>0</sub> seul est en mètres). La dérivée donne −<var>r</var><sub>0</sub> <var>ω</var> sin(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>x</var></sub> + <var>r</var><sub>0</sub> <var>ω</var> cos(<var>ω</var><var>t</var>) <var class="vec">u</var><sub><var>y</var></sub>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Partie 6</div><h2>Le vecteur accélération</h2></div>
+      <div class="stack">
+        <div class="prose"><p>On dérive encore : <var class="vec ka">a</var> = d<var class="vec kv">v</var>/d<var>t</var>, avec <var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>. Le premier terme est un produit de deux facteurs qui dépendent du temps (<var class="d1">r</var> et <var class="vec">u</var><sub><var>r</var></sub>), le second de trois (<var>r</var>, <var class="d1 hi">θ</var> et <var class="vec">u</var><sub><var>θ</var></sub>) : cinq termes en tout.</p></div>
+        <ol class="steps">
+          <li><div><p><span class="f">d(<var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub>)/d<var>t</var> = <var class="d2">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var class="d1">r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span></p></div></li>
+          <li><div><p><span class="f">d(<var>r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>)/d<var>t</var></span> <span class="f">= <var class="d1">r</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>r</var> <var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>r</var> <var class="d1 hi">θ</var> (−<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>)</span></p></div></li>
+          <li><div><p>On regroupe ce qui est sur <var class="vec">u</var><sub><var>r</var></sub> et ce qui est sur <var class="vec">u</var><sub><var>θ</var></sub>. Les deux termes <var class="d1">r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> s’ajoutent : d’où le 2.</p></div></li>
+        </ol>
+        <div class="eq"><span class="nw"><var class="vec ka">a</var> = (<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²) <var class="vec">u</var><sub><var>r</var></sub> + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>) <var class="vec">u</var><sub><var>θ</var></sub></span><span class="nw">‖<var class="vec ka">a</var>‖ = <span class="sqrt">√<span>(<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²)² + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>)²</span></span></span></div>
+        <div class="prose">
+          <p>Composante radiale : <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>². Composante orthoradiale : 2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>. Chaque terme est en m·s⁻² : <var>r</var><var class="d1 hi">θ</var>² en m × (rad·s⁻¹)², <var class="d1">r</var><var class="d1 hi">θ</var> en m·s⁻¹ × rad·s⁻¹.</p>
+          <p>Le terme −<var>r</var><var class="d1 hi">θ</var>² est négatif dès que le point tourne : il pointe vers O. Il existe même quand <var>r</var> est constant ; c’est lui qui fait tourner <var class="vec kv">v</var> (partie 7).</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>La spirale du partiel</b> <span class="src-tag">Partiel nov. 2017 · Ex 2</span> <var>r</var> = <var>a</var> e<sup><var>ω</var><var>t</var></sup> et <var>θ</var> = <var>ω</var><var>t</var>. Sur <var class="vec">u</var><sub><var>r</var></sub> : <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>² = <var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup> − <var>a</var>e<sup><var>ω</var><var>t</var></sup> <var>ω</var>² = 0. Sur <var class="vec">u</var><sub><var>θ</var></sub> : 2 × <var>a</var><var>ω</var> e<sup><var>ω</var><var>t</var></sup> × <var>ω</var> + 0. Donc <span class="f"><var class="vec ka">a</var> = 2<var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup> <var class="vec">u</var><sub><var>θ</var></sub></span> et ‖<var class="vec ka">a</var>‖ = 2<var>a</var><var>ω</var>² e<sup><var>ω</var><var>t</var></sup> : pas de composante radiale du tout.</p></div></li>
+          <li><div><p><b>La spirale de la plaque</b> <var>r</var> = <var>r</var><sub>0</sub> + <var>b</var><var>t</var> et <var>θ</var> = <var>ω</var><var>t</var> : <var class="d1">r</var> = <var>b</var>, <var class="d2">r</var> = 0, <var class="d2 hi">θ</var> = 0. Alors <span class="f"><var class="vec ka">a</var> = −(<var>r</var><sub>0</sub> + <var>b</var><var>t</var>) <var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> + 2<var>b</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub></span>. Le terme 2<var class="d1">r</var><var class="d1 hi">θ</var> existe alors que <var class="d2 hi">θ</var> = 0 : choisis « Spirale » sur la plaque et active « composantes de <var class="vec ka">a</var> ».</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><p>L’énoncé donne souvent la formule et demande de l’appliquer : 5 sujets sur 7 (2018-2019, mai 2018, 2019-2020, 2020-2021, novembre 2021). Mais en novembre 2017 (spirale) et en octobre 2022 (exercice 3), il fallait calculer l’accélération soi-même : sache la retrouver. C’est la question 4 de l’exercice 1 du TD 5.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Le 2 de 2<var class="d1">r</var><var class="d1 hi">θ</var> : deux termes identiques, un dans chaque dérivée. Si tu ne trouves qu’un <var class="d1">r</var><var class="d1 hi">θ</var>, il manque la dérivée de <var class="vec">u</var><sub><var>r</var></sub> dans la première.</li>
+          <li>Le « − » de −<var>r</var><var class="d1 hi">θ</var>² vient de d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>r</var></sub>. Sans lui, l’accélération d’un manège pointerait vers l’extérieur.</li>
+          <li>La composante radiale de <var class="vec ka">a</var> n’est pas la dérivée de la composante radiale de <var class="vec kv">v</var> : <var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>², pas <var class="d2">r</var> seul. La base tourne, il faut dériver les vecteurs aussi.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Partie 7</div><h2>Mouvement circulaire : uniforme ou non, accélération centripète</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le mouvement est <b>circulaire</b> de centre O quand <var>r</var> reste égal au rayon <var>R</var>. Alors <var class="d1">r</var> = 0 et <var class="d2">r</var> = 0, et les formules se simplifient :</p></div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var>R</var> <var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> &nbsp;&nbsp; ‖<var class="vec kv">v</var>‖ = <var>R</var> |<var class="d1 hi">θ</var>|</span><span class="nw"><var class="vec ka">a</var> = −<var>R</var> <var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var> <var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span></div>
+        <div class="prose"><p><var class="vec kv">v</var> est porté par <var class="vec">u</var><sub><var>θ</var></sub> : tangent au cercle. <var class="vec ka">a</var> a deux parties : −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub>, dirigée vers le centre, qui fait tourner <var class="vec kv">v</var> ; <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>, tangente, qui change la norme de <var class="vec kv">v</var>. Le produit scalaire <span class="f"><var class="vec kv">v</var> · <var class="vec ka">a</var> = <var>R</var>² <var class="d1 hi">θ</var> <var class="d2 hi">θ</var></span> dit si ça accélère (chapitre 1, partie 4).</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Circulaire…</th><th>Condition</th><th>Accélération</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">uniforme</th><td><var class="d1 hi">θ</var> = <var>ω</var> constante, donc <var class="d2 hi">θ</var> = 0</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> = −<span class="frac"><span><var>v</var>²</span><span><var>R</var></span></span> <var class="vec">u</var><sub><var>r</var></sub></td></tr>
+            <tr><th scope="row">accéléré</th><td><var class="d1 hi">θ</var> et <var class="d2 hi">θ</var> de même signe</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+            <tr><th scope="row">décéléré</th><td><var class="d1 hi">θ</var> et <var class="d2 hi">θ</var> de signes opposés</td><td class="f"><var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note why"><span class="tag">Il va à vitesse constante : pourquoi accélère-t-il ?</span><p>« Uniforme » porte sur la norme de la vitesse. En mouvement circulaire uniforme, ‖<var class="vec kv">v</var>‖ = <var>R</var><var>ω</var> ne change pas, mais la direction de <var class="vec kv">v</var> tourne avec <var class="vec">u</var><sub><var>θ</var></sub>. Comme <var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub>, on a <span class="f"><var class="vec ka">a</var> = <var>R</var><var>ω</var> d<var class="vec">u</var><sub><var>θ</var></sub>/d<var>t</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span> : c’est la figure de la partie 3, avec <var class="vec">u</var><sub><var>θ</var></sub> à la place de <var class="vec">u</var><sub><var>r</var></sub>. L’accélération pointe vers le centre : elle est <b>centripète</b>, de norme <var>R</var><var>ω</var>² = <var>v</var>²/<var>R</var>. Sur la plaque, en « Circulaire uniforme », <var class="vec ka">a</var> vise O à chaque position ; en « Circulaire accéléré », elle penche vers l’avant.</p></div>
+        <div class="prose"><p><b>Sans calculatrice</b> : le réglage « Circulaire uniforme » de la plaque, <var>R</var> = 2&nbsp;m et <var>ω</var> = 1,5&nbsp;rad·s⁻¹.</p></div>
+        <ol class="steps">
+          <li><div><p><var>v</var> = <var>R</var><var>ω</var> = 2 × 1,5 = 3&nbsp;m·s⁻¹.</p></div></li>
+          <li><div><p><var>a</var> = <var>R</var><var>ω</var>² = 2 × 2,25 = 4,5&nbsp;m·s⁻², et <var>v</var>²/<var>R</var> = 9/2 = 4,5&nbsp;m·s⁻² : les deux formules donnent la même valeur.</p></div></li>
+          <li><div><p>Un tour dure <var>T</var> = 2π/<var>ω</var> = 2π/1,5 ≈ 4,2 s.</p></div></li>
+        </ol>
+        <ol class="steps">
+          <li><div><p><b>Le manège</b> <span class="src-tag c">TD 5 · Ex 2</span> <var>r</var> = <var>r</var><sub>0</sub> et <var class="d1 hi">θ</var> = <var>ω</var> constants : le mouvement est circulaire uniforme (question 7). <span class="f"><var class="vec ka">a</var> = −<var>r</var><sub>0</sub><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span> : norme <var>r</var><sub>0</sub><var>ω</var>², dirigée vers le centre du manège (question 8).</p></div></li>
+          <li><div><p><b>Le satellite</b> <span class="src-tag c">TD 5 · Ex 3</span> Pour aller plus loin, avec le principe fondamental de la dynamique (chapitre 2). Orbite circulaire de rayon <var>r</var> = <var>R</var><sub>T</sub> + <var>h</var> = 12&nbsp;800 km autour du centre O de la Terre, dans le référentiel géocentrique supposé galiléen. Seule force, la gravitation : <span class="f"><var class="vec kf">F</var> = −(<var>G</var><var>M</var><sub>T</sub><var>m</var>/<var>r</var>²) <var class="vec">u</var><sub><var>r</var></sub></span>, donc <var class="vec ka">a</var> = −(<var>G</var><var>M</var><sub>T</sub>/<var>r</var>²) <var class="vec">u</var><sub><var>r</var></sub>.</p><p>Sur <var class="vec">u</var><sub><var>θ</var></sub> : <var>r</var><var class="d2 hi">θ</var> = 0, donc <var class="d1 hi">θ</var> = <var>ω</var> est constant, le mouvement est uniforme et <var>v</var> = <var>r</var><var>ω</var>. Sur <var class="vec">u</var><sub><var>r</var></sub> : <var>r</var><var>ω</var>² = <var>v</var>²/<var>r</var> = <var>G</var><var>M</var><sub>T</sub>/<var>r</var>², d’où <span class="f"><var>v</var> = √(<var>G</var><var>M</var><sub>T</sub>/<var>r</var>) ≈ 5,6 × 10³&nbsp;m·s⁻¹</span> et une période <var>T</var> = 2π<var>r</var>/<var>v</var> ≈ 1,4 × 10⁴ s, soit environ 4 h. La masse du satellite n’intervient pas.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel : 7 sujets sur 7</span><ul>
+          <li>Novembre 2021, exercice 4 (4 points) : la formule générale est donnée. « Circulaire » : <var>ρ</var> = <var>R</var> constant, donc <var class="d1">ρ</var> = <var class="d2">ρ</var> = 0 et <var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>ρ</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub>. « En plus uniforme » : <var class="d1 hi">θ</var> constante, <var class="d2 hi">θ</var> = 0, <var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>ρ</var></sub>. Chaque fois, il faut justifier.</li>
+          <li>QCM de mai 2018 et de 2020-2021, circulaire uniforme : (−<var>R</var><var class="d1 hi">θ</var>² ; 0). QCM de 2018-2019 (accéléré) et de 2019-2020 (décéléré) : (−<var>R</var><var class="d1 hi">θ</var>² ; <var>R</var><var class="d2 hi">θ</var>), la même expression.</li>
+          <li>Octobre 2022 : « lors d’un mouvement circulaire uniforme, l’accélération est nulle » est faux. « Pour un mouvement circulaire uniforme : <var class="d1 hi">θ</var> = constante ; <var class="d1 hi">θ</var> = 0 ; <var class="d2 hi">θ</var> = 0 ; <var class="d1">ρ</var> = 0 » : trois bonnes réponses (toutes sauf <var class="d1 hi">θ</var> = 0). À l’exercice 3, <var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> et <var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub>.</li>
+          <li>Le cercle tombe aussi en cartésien (novembre 2017, 2018-2019, hélices de mai 2018 et 2019-2020) : ‖<var class="vec kv">v</var>‖ = <var>R</var><var>ω</var>, ‖<var class="vec ka">a</var>‖ = <var>R</var><var>ω</var>², et <var class="vec ka">a</var> = −<var>ω</var>² <var class="vec kp">OM</var> quand le centre est O.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>« Uniforme » ne veut pas dire <var class="vec ka">a</var> = <var class="vec">0</var>. En circulaire uniforme, <var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub> ≠ <var class="vec">0</var> ; seul le mouvement rectiligne uniforme a une accélération nulle.</li>
+          <li>Accéléré ou décéléré ne change pas l’expression (−<var>R</var><var class="d1 hi">θ</var>² ; <var>R</var><var class="d2 hi">θ</var>) : seul le signe de <var class="d2 hi">θ</var> par rapport à <var class="d1 hi">θ</var> change.</li>
+          <li><var class="vec ka">a</var> = −<var>ω</var>² <var class="vec kp">OM</var> suppose le centre en O. Au partiel de novembre 2017, le cercle était centré en C(1 ; 2) : <var class="vec ka">a</var> = −<var>ω</var>² <var class="vec">CM</var>.</li>
+          <li>Une norme est positive : ‖<var class="vec kv">v</var>‖ = <var>R</var> |<var class="d1 hi">θ</var>|, qui n’est pas <var>R</var><var class="d1 hi">θ</var> si le point tourne dans le sens indirect (<var class="d1 hi">θ</var> &lt; 0).</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Partie 8</div><h2>Passer du cartésien au polaire ; coordonnées cylindriques</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Les deux systèmes décrivent le même point et les mêmes vecteurs. Passer de l’un à l’autre est demandé dans 5 des 7 sujets retrouvés.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sens</th><th>Coordonnées</th><th>Vecteurs de base</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Polaire → cartésien</th><td class="f"><var>x</var> = <var>r</var> cos <var>θ</var> ; <var>y</var> = <var>r</var> sin <var>θ</var></td><td class="f"><var class="vec">u</var><sub><var>r</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + sin <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub><br><var class="vec">u</var><sub><var>θ</var></sub> = −sin <var>θ</var> <var class="vec">u</var><sub><var>x</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>y</var></sub></td></tr>
+            <tr><th scope="row">Cartésien → polaire</th><td class="f"><var>r</var> = √(<var>x</var>² + <var>y</var>²)<br>cos <var>θ</var> = <var>x</var>/<var>r</var> ; sin <var>θ</var> = <var>y</var>/<var>r</var></td><td class="f"><var class="vec">u</var><sub><var>x</var></sub> = cos <var>θ</var> <var class="vec">u</var><sub><var>r</var></sub> − sin <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub><br><var class="vec">u</var><sub><var>y</var></sub> = sin <var>θ</var> <var class="vec">u</var><sub><var>r</var></sub> + cos <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>La dernière colonne de la deuxième ligne n’est pas dans le cours : elle se vérifie en remplaçant <var class="vec">u</var><sub><var>r</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub> par leurs expressions.</p></div>
+        <div class="note keep"><span class="tag">Méthode : reconnaître <var>r</var> et <var>θ</var></span><ol>
+          <li>Si <var>x</var>(<var>t</var>) et <var>y</var>(<var>t</var>) s’écrivent <var>f</var>(<var>t</var>) cos(<var>g</var>(<var>t</var>)) et <var>f</var>(<var>t</var>) sin(<var>g</var>(<var>t</var>)), avec <var>f</var> &gt; 0, alors <var>r</var> = <var>f</var>(<var>t</var>) et <var>θ</var> = <var>g</var>(<var>t</var>).</li>
+          <li>Sinon, calcule <var>r</var> = √(<var>x</var>² + <var>y</var>²) en simplifiant avec cos² + sin² = 1.</li>
+          <li>Écris <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub>, puis dérive avec les formules des parties 5 et 6.</li>
+        </ol></div>
+        <ol class="steps">
+          <li><div><p><b>Polaire → cartésien</b> <span class="src-tag">Partiel 2019-2020 · QCM 8</span> <var>ρ</var>(<var>t</var>) = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> et <var>θ</var>(<var>t</var>) = <var>ω</var><var>t</var> donnent <var>x</var> = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> cos(<var>ω</var><var>t</var>) et <var>y</var> = <var>ρ</var><sub>0</sub> e<sup><var>ω</var><var>t</var></sup> sin(<var>ω</var><var>t</var>). Les autres propositions échangeaient cos et sin, ou oubliaient e<sup><var>ω</var><var>t</var></sup>.</p></div></li>
+          <li><div><p><b>Cartésien → polaire</b> <span class="src-tag c">TD 5</span> <span class="src-tag">Partiel nov. 2017</span> Ce sont le manège et la spirale de la partie 4 : on reconnaît <var>r</var>(<var>t</var>) et <var>θ</var>(<var>t</var>), puis on écrit <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub>.</p></div></li>
+        </ol>
+        <h3>Les coordonnées cylindriques</h3>
+        <div class="prose"><p>Pour un mouvement dans l’espace, on ajoute la cote <var>z</var>. La fiche d’aide sur les coordonnées, sur le Moodle, les présente ainsi : on projette M en H sur le plan (O, <var>x</var>, <var>y</var>), on repère H en polaire, puis on monte de <var>z</var> le long de <var class="vec">u</var><sub><var>z</var></sub>, qui est fixe.</p></div>
+        <div class="eq"><span class="nw"><var class="vec">OH</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> &nbsp;&nbsp; <var class="vec kp">OM</var> = <var>r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>z</var> <var class="vec">u</var><sub><var>z</var></sub> = <span class="col"><span><var>r</var></span><span>0</span><span><var>z</var></span></span></span></div>
+        <div class="prose"><p><var class="vec">u</var><sub><var>z</var></sub> est fixe, sa dérivée est nulle : on ajoute une ligne aux formules polaires.</p></div>
+        <div class="eq"><span class="nw"><var class="vec kv">v</var> = <var class="d1">r</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>r</var><var class="d1 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var class="d1">z</var> <var class="vec">u</var><sub><var>z</var></sub></span><span class="nw"><var class="vec ka">a</var> = (<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²) <var class="vec">u</var><sub><var>r</var></sub> + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>) <var class="vec">u</var><sub><var>θ</var></sub> + <var class="d2">z</var> <var class="vec">u</var><sub><var>z</var></sub></span></div>
+        <ol class="steps">
+          <li><div><p><b>L’hélice</b> <span class="src-tag">Partiels mai 2018 et 2019-2020</span> <var>x</var> = <var>R</var> cos(<var>ω</var><var>t</var>), <var>y</var> = <var>R</var> sin(<var>ω</var><var>t</var>), <var>z</var> = <var>H</var><var>ω</var><var>t</var>. En cylindriques : <var>r</var> = <var>R</var> et <var>θ</var> = <var>ω</var><var>t</var>, donc <span class="f"><var class="vec kp">OM</var> = <var>R</var> <var class="vec">u</var><sub><var>r</var></sub> + <var>H</var><var>ω</var><var>t</var> <var class="vec">u</var><sub><var>z</var></sub></span> ; <span class="f"><var class="vec kv">v</var> = <var>R</var><var>ω</var> <var class="vec">u</var><sub><var>θ</var></sub> + <var>H</var><var>ω</var> <var class="vec">u</var><sub><var>z</var></sub></span>, de norme <var>ω</var>√(<var>R</var>² + <var>H</var>²) ; <span class="f"><var class="vec ka">a</var> = −<var>R</var><var>ω</var>² <var class="vec">u</var><sub><var>r</var></sub></span>. Un cercle parcouru uniformément, plus une montée à vitesse constante.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Les cylindriques sont tombées dans 5 des 7 anciens sujets (hélices, spirale sur un cône, QCM). Elles ne sont pas dans le texte du cours de cette année, seulement dans la fiche d’aide : sache au moins écrire <var class="vec kp">OM</var> et <var class="vec kv">v</var>. Octobre 2022, QCM 4 : « En coordonnées cylindriques, le vecteur position a pour expression : a- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> ; b- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub> ; c- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>θ</var><var class="vec">u</var><sub><var>θ</var></sub> + <var>z</var><var class="vec">u</var><sub><var>z</var></sub> ; d- <var>ρ</var><var class="vec">u</var><sub><var>ρ</var></sub> + <var>z</var><var class="vec">u</var><sub><var>z</var></sub> ». Réponse d.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li><var>r</var> = √(<var>x</var>² + <var>y</var>²), jamais <var>x</var> + <var>y</var>. Et tan <var>θ</var> = <var>y</var>/<var>x</var> ne suffit pas : <var>θ</var> et <var>θ</var> + π ont la même tangente. Regarde les signes de <var>x</var> et de <var>y</var>.</li>
+          <li>Pas de terme en <var class="vec">u</var><sub><var>θ</var></sub> dans <var class="vec kp">OM</var>, ni en polaire ni en cylindriques.</li>
+          <li>En cylindriques, <var>r</var> est la distance OH à l’axe (O, <var>z</var>), pas la distance OM.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-4-polaires.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="physique:polaires:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>C’est le dernier chapitre du partiel 1. Pour t’entraîner sur les sujets corrigés et les TD, passe à <a href="entrainement.html">l’entraînement</a> ; les formules sont réunies dans <a href="fiche.html">la fiche</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util, NB = ' ';
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  function un(x, d, u) { return nf(x, d) + NB + u; }
+  function deg(a) { return Math.round(a * 180 / Math.PI); }
+  var MS = 'm·s⁻¹', MS2 = 'm·s⁻²';
+  var UR = '<var class="vec">u</var><sub><var>r</var></sub>', UT = '<var class="vec">u</var><sub><var>θ</var></sub>';
+  var VV = '<var class="vec kv">v</var>', VA = '<var class="vec ka">a</var>';
+  /* textes de la page (traduits dans la page anglaise) */
+  var L = {
+    head: 'Plaque chronophotographique · base mobile', presets: 'Mouvements',
+    modes: { u: 'Circulaire uniforme', a: 'Circulaire accéléré', s: 'Spirale' },
+    angle: 'Angle', base: 'base à chaque pose', comp: 'composantes de ' + VA, go: 'Faire avancer',
+    pos: 'Position', vel: 'Vitesse', acc: 'Accélération', onr: 'sur ' + UR + ' : ', ont: 'sur ' + UT + ' : ',
+    svg: function (m, th) { return 'Plaque : ' + m + ', point M à θ = ' + th + '°, avec sa base polaire, sa vitesse et son accélération'; },
+    line: {
+      u: 'Circulaire uniforme : ‖' + VV + '‖ reste égale à <var>R</var><var>ω</var>, mais ' + VV + ' tourne avec ' + UT + '. Ce changement de direction, c’est ' + VA + ' = −<var>R</var><var>ω</var>² ' + UR + ' : dirigée vers O, <b>centripète</b>.',
+      a: 'Circulaire accéléré : <var class="d1 hi">θ</var> et <var class="d2 hi">θ</var> ont le même signe, ‖' + VV + '‖ = <var>R</var><var class="d1 hi">θ</var> augmente. La partie −<var>R</var><var class="d1 hi">θ</var>² ' + UR + ' fait tourner ' + VV + ', la partie <var>R</var><var class="d2 hi">θ</var> ' + UT + ' l’allonge.',
+      s: 'Spirale : <var>r</var> augmente, donc ' + VV + ' a une composante <var class="d1">r</var> sur ' + UR + ', et ' + VA + ' a une composante 2<var class="d1">r</var><var class="d1 hi">θ</var> sur ' + UT + ' alors que <var class="d2 hi">θ</var> = 0.'
+    },
+    par: {
+      u: '<var>r</var> = <var>R</var> = 2&nbsp;m (<var class="d1">r</var> = <var class="d2">r</var> = 0) · <var class="d1 hi">θ</var> = <var>ω</var> = 1,5&nbsp;rad·s⁻¹ (<var class="d2 hi">θ</var> = 0)',
+      a: '<var>r</var> = <var>R</var> = 2&nbsp;m · <var class="d1 hi">θ</var> = 0,6 + 0,2 <var>t</var> (rad·s⁻¹) · <var class="d2 hi">θ</var> = 0,2&nbsp;rad·s⁻²',
+      s: '<var>r</var> = 1 + 0,4 <var>t</var> (m) · <var>θ</var> = <var>ω</var><var>t</var>, <var>ω</var> = 1&nbsp;rad·s⁻¹'
+    },
+    proj: 'projeter', bsvg: 'Cercle de rayon 1 : vecteurs ur et uθ ramenés en O, angle θ, projections sur les axes',
+    bread: function (t, c, s) {
+      return '<p><var>θ</var> = ' + t + '° : ' + UR + ' = (cos <var>θ</var> ; sin <var>θ</var>) = (' + nf(c, 2) + ' ; ' + nf(s, 2) + ') et ' + UT + ' = (−sin <var>θ</var> ; cos <var>θ</var>) = (' + nf(-s, 2) + ' ; ' + nf(c, 2) + ').</p>';
+    },
+    dsvg: 'Dériver un vecteur unitaire qui tourne : écart entre le vecteur à θ et à θ + Δθ, divisé par Δθ, comparé au vecteur tourné de +π/2',
+    dread: function (w, d, c) {
+      var V = w === 'r' ? UR : UT, T = w === 'r' ? UT : '−' + UR;
+      return '<p>Δ<var>θ</var> = ' + deg(d) + '° = ' + nf(d, 2) + '&nbsp;rad · longueur de l’écart Δ' + V + ' : 2 sin(Δ<var>θ</var>/2) = ' + nf(c.len, 3) + ' · divisée par Δ<var>θ</var> : <b>' + nf(c.ratio, 3) + '</b> · angle avec ' + T + ' : Δ<var>θ</var>/2 = <b>' + nf(deg(d) / 2, deg(d) % 2 ? 1 : 0) + '°</b>.</p>' +
+        '<p class="muted">Quand Δ<var>θ</var> tend vers 0, le rapport tend vers 1 et l’angle vers 0 : Δ' + V + '/Δ<var>θ</var> tend vers ' + T + '. C’est d' + V + '/d<var>θ</var> = ' + T + '.</p>';
+    }
+  };
+
+  /* calc:start — calculs purs (testés sous node) */
+  var MODES = {
+    u: { R: 2, w: 1.5 },           // circulaire uniforme : r = R, θ = ω t
+    a: { R: 2, w0: 0.6, al: 0.2 }, // circulaire accéléré : θ̇ = ω0 + α t
+    s: { r0: 1, b: 0.4, w: 1 }     // spirale : r = r0 + b t, θ = ω t
+  };
+  function motion(k) {
+    var p = MODES[k], st, tOf;
+    if (k === 'u') {
+      st = function (t) { return { r: p.R, rd: 0, rdd: 0, th: p.w * t, thd: p.w, thdd: 0 }; };
+      tOf = function (th) { return th / p.w; };
+    } else if (k === 'a') {
+      st = function (t) { return { r: p.R, rd: 0, rdd: 0, th: p.w0 * t + p.al * t * t / 2, thd: p.w0 + p.al * t, thdd: p.al }; };
+      tOf = function (th) { return (-p.w0 + Math.sqrt(p.w0 * p.w0 + 2 * p.al * th)) / p.al; };
+    } else {
+      st = function (t) { return { r: p.r0 + p.b * t, rd: p.b, rdd: 0, th: p.w * t, thd: p.w, thdd: 0 }; };
+      tOf = function (th) { return th / p.w; };
+    }
+    function at(t) {
+      var s = st(t), c = Math.cos(s.th), n = Math.sin(s.th);
+      s.t = t;
+      s.vr = s.rd; s.vt = s.r * s.thd;                                     // v = ṙ ur + r θ̇ uθ
+      s.ar = s.rdd - s.r * s.thd * s.thd; s.at = 2 * s.rd * s.thd + s.r * s.thdd; // a = (r̈ − r θ̇²) ur + (2 ṙ θ̇ + r θ̈) uθ
+      s.ur = [c, n]; s.ut = [-n, c];
+      s.x = s.r * c; s.y = s.r * n;
+      s.vx = s.vr * c - s.vt * n; s.vy = s.vr * n + s.vt * c;
+      s.ax = s.ar * c - s.at * n; s.ay = s.ar * n + s.at * c;
+      s.v = Math.sqrt(s.vr * s.vr + s.vt * s.vt); s.a = Math.sqrt(s.ar * s.ar + s.at * s.at);
+      return s;
+    }
+    return { k: k, p: p, at: at, tOf: tOf, T: tOf(2 * Math.PI) };
+  }
+  /* écart entre un vecteur unitaire à l’angle e et le même à e + d : longueur 2 sin(d/2), angle d/2 avec le vecteur tourné de +π/2 */
+  function chord(e, d) {
+    var A0 = [Math.cos(e), Math.sin(e)], A1 = [Math.cos(e + d), Math.sin(e + d)], D = [A1[0] - A0[0], A1[1] - A0[1]];
+    var len = Math.sqrt(D[0] * D[0] + D[1] * D[1]);
+    return { A0: A0, A1: A1, D: D, len: len, ratio: len / d, gap: d / 2, Q: [D[0] / d, D[1] / d], T: [-A0[1], A0[0]] };
+  }
+  /* calc:end */
+
+  function arc(p, rad, a0, a1) {
+    var b = Math.min(a1, a0 + 2 * Math.PI - 1e-3), R0 = rad * p.sx;
+    return 'M' + p.X(rad * Math.cos(a0)).toFixed(1) + ' ' + p.Y(rad * Math.sin(a0)).toFixed(1) + 'A' + R0.toFixed(1) + ' ' + R0.toFixed(1) + ' 0 ' + (b - a0 > Math.PI ? 1 : 0) + ' 0 ' + p.X(rad * Math.cos(b)).toFixed(1) + ' ' + p.Y(rad * Math.sin(b)).toFixed(1);
+  }
+  /* flèche entre deux points du monde */
+  function W(p, a, d, o) { return M.arrow(p.X(a[0]), p.Y(a[1]), p.X(a[0] + d[0]), p.Y(a[1] + d[1]), o); }
+  /* étiquette composée : morceaux droits ('Δ'), vecteurs ({ v: 'u', s: 'r' }) ou italiques ({ i: 'θ' }) */
+  function tag(x, y, parts, kind, anchor, fs) {
+    fs = fs || 15;
+    function sw(q) { return q.split('').reduce(function (a, ch) { return a + (ch === ' ' ? 0.28 : ch === '/' ? 0.4 : 0.66) * fs; }, 0); }
+    var w = parts.reduce(function (a, q) { return a + (typeof q === 'string' ? sw(q) : q.v ? 0.95 * fs : 0.55 * fs); }, 0);
+    var cx = anchor === 'end' ? x - w : anchor === 'middle' ? x - w / 2 : x, s = '';
+    parts.forEach(function (q) {
+      if (typeof q === 'string') { s += M.label(cx, y, q, { kind: kind, it: false, fs: fs }); cx += sw(q); }
+      else if (q.v) { s += M.label(cx, y, q.v, { sub: q.s, kind: kind, arrow: true, fs: fs }); cx += 0.95 * fs; }
+      else { s += M.label(cx, y, q.i, { kind: kind, fs: fs }); cx += 0.55 * fs; }
+    });
+    return s;
+  }
+  function chips(el, attr, cb) {
+    U.$$('[' + attr + ']', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        U.$$('[' + attr + ']', el).forEach(function (c) { c.setAttribute('aria-pressed', String(c === b)); });
+        cb(b.getAttribute(attr));
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------- la plaque : un point qui tourne */
+  function plate(el) {
+    if (!el) return;
+    var dt = 0.5, st = { k: 'u', th: Math.PI / 3, base: true, v: true, a: true, comp: false, anim: false };
+    var mo = motion(st.k), view = null, raf = 0;
+    function vec(s, k) { return '<var class="vec ' + k + '">' + s + '</var>'; }
+    el.classList.add('plate', 'pl-polar');
+    el.innerHTML =
+      '<div class="plate-head"><span>' + L.head + '</span><span>Δt = ' + un(dt, 1, 's') + '</span></div>' +
+      '<div class="plate-fig mk-host"></div>' +
+      '<div class="plate-ctrls">' +
+        '<div class="row" role="group" aria-label="' + L.presets + '">' + ['u', 'a', 's'].map(function (k) { return '<button type="button" class="chip-btn" data-pm="' + k + '" aria-pressed="' + (k === st.k) + '">' + L.modes[k] + '</button>'; }).join('') + '</div>' +
+        '<div class="sliders"><div class="slider"><label for="pth">' + L.angle + ' <var>θ</var></label><output id="pthv" for="pth"></output><input id="pth" type="range" min="0" max="360" step="1" value="60"></div></div>' +
+        '<div class="row">' +
+          '<button type="button" class="chip-btn" data-tg="base" aria-pressed="true">' + L.base + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="v" aria-pressed="true">' + vec('v', 'kv') + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="a" aria-pressed="true">' + vec('a', 'ka') + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="comp" aria-pressed="false">' + L.comp + '</button>' +
+          '<button type="button" class="btn primary plate-go" data-go><span aria-hidden="true">▶</span> ' + L.go + '</button>' +
+        '</div>' +
+        '<div class="plate-read" aria-live="polite"></div>' +
+      '</div>';
+    var fig = el.querySelector('.plate-fig'), out = el.querySelector('.plate-read');
+    var inp = document.getElementById('pth'), outv = document.getElementById('pthv');
+
+    function draw(w) {
+      var XW = w < 480 ? [-4.1, 4.1] : [-5.2, 5.2], YW = [-3.6, 3.6];
+      var p = M.plot({ x: XW, y: YW, w: w, equal: true, pad: [8, 8, 8, 8] });
+      var kv = 0.4, ka = 0.25, Lb = 0.75, Lg = 0.42, k, s;
+      p.grid({ x: [0.5, 1], y: [0.5, 1] });
+      p.axes({ x: { v: 'x', u: 'm' }, y: { v: 'y', u: 'm' }, tx: 1, ty: 1, lx: 2, ly: 2, origin: 'O' });
+      p.param(function (t) { var q = mo.at(t); return [q.x, q.y]; }, 0, mo.T, { cls: 'mk-traj', n: 240 });
+      var t = mo.tOf(st.th), m = mo.at(t), tmax = st.anim ? t : mo.T, imgs = '', ghosts = '';
+      for (k = 0; k * dt < mo.T - 1e-6; k++) {
+        if (k * dt > tmax + 1e-9) break;
+        s = mo.at(k * dt);
+        imgs += '<circle class="mk-img" cx="' + p.X(s.x).toFixed(1) + '" cy="' + p.Y(s.y).toFixed(1) + '" r="4.2"/>';
+        if (st.base) ghosts += W(p, [s.x, s.y], [s.ur[0] * Lg, s.ur[1] * Lg], { kind: 'ink', head: 5, cls: 'thin ghost' }) + W(p, [s.x, s.y], [s.ut[0] * Lg, s.ut[1] * Lg], { kind: 'ink', head: 5, cls: 'thin ghost' });
+      }
+      p.add('<g class="mk-chrono">' + imgs + '</g>' + ghosts);
+      var X = p.X(m.x), Y = p.Y(m.y), ur = m.ur, ut = m.ut;
+      // l’angle θ, depuis l’axe des x
+      if (st.th > 0.12) {
+        p.add('<path class="mk-arc" d="' + arc(p, 0.5, 0, st.th) + '"/>');
+        var hm = Math.min(st.th, 2 * Math.PI) / 2;
+        p.add(M.label(p.X(0.8 * Math.cos(hm)), p.Y(0.8 * Math.sin(hm)) + 5, 'θ', { anchor: 'middle', fs: 15 }));
+      }
+      // vecteur position, étiquette du côté −uθ
+      p.add(M.arrow(p.X(0), p.Y(0), X, Y, { kind: 'pos', head: 9, cls: 'bold' }));
+      if (m.r > 1.1) p.add(M.label(p.X(0.6 * m.x) - ut[0] * 15, p.Y(0.6 * m.y) + ut[1] * 15 + 5, 'OM', { kind: 'pos', arrow: true, fs: 15, anchor: 'middle' }));
+      p.add('<circle class="mk-now" cx="' + X.toFixed(1) + '" cy="' + Y.toFixed(1) + '" r="7.5"/>');
+      // base polaire au point M
+      p.add(W(p, [m.x, m.y], [ur[0] * Lb, ur[1] * Lb], { kind: 'ink', head: 7, label: 'u', sub: 'r' }));
+      p.add(W(p, [m.x, m.y], [ut[0] * Lb, ut[1] * Lb], { kind: 'ink', head: 7, label: 'u', sub: 'θ', anchor: 'middle', lab: [-ur[0] * 17 - ut[0] * 7, ur[1] * 17 + ut[1] * 7] }));
+      // vitesse et accélération
+      if (st.v) p.add(W(p, [m.x, m.y], [m.vx * kv, m.vy * kv], { kind: 'vel', head: 9, cls: 'bold', label: 'v', zero: true }));
+      if (st.a) {
+        if (st.comp) {
+          var ar = [ur[0] * m.ar * ka, ur[1] * m.ar * ka], at = [ut[0] * m.at * ka, ut[1] * m.at * ka], tip = [m.x + m.ax * ka, m.y + m.ay * ka];
+          p.line([m.x + ar[0], m.y + ar[1]], tip, { cls: 'mk-dash' }).line([m.x + at[0], m.y + at[1]], tip, { cls: 'mk-dash' });
+          p.add(W(p, [m.x, m.y], ar, { kind: 'acc', head: 7, cls: 'thin dash' }) + W(p, [m.x, m.y], at, { kind: 'acc', head: 7, cls: 'thin dash' }));
+        }
+        var ua = m.a > 1e-9 ? [m.ax / m.a, m.ay / m.a] : [0, 0];
+        p.add(W(p, [m.x, m.y], [m.ax * ka, m.ay * ka], { kind: 'acc', head: 9, cls: 'bold', label: 'a', anchor: 'middle', lab: [ut[0] * 14 - ua[0] * 4, -ut[1] * 14 + ua[1] * 4] }));
+      }
+      return p.svg({ cls: 'mk-plate', label: L.svg(L.modes[st.k], deg(st.th)) });
+    }
+    function read() {
+      var m = mo.at(mo.tOf(st.th));
+      out.innerHTML =
+        '<div class="ro-t"><var>t</var> = ' + un(m.t, 2, 's') + ' · <var>θ</var> = ' + deg(st.th) + '° = ' + un(st.th, 2, 'rad') + ' · <var class="d1 hi">θ</var> = ' + un(m.thd, 2, 'rad·s⁻¹') + '</div>' +
+        '<div class="ro-grid">' +
+          '<div class="ro k-pos"><b>' + L.pos + '</b><span><var>r</var> = ' + un(m.r, 2, 'm') + '</span><span>' + vec('OM', 'kp') + ' = <var>r</var> ' + UR + '</span></div>' +
+          '<div class="ro k-vel"><b>' + L.vel + '</b><span>' + L.onr + '<var class="d1">r</var> = ' + un(m.vr, 2, MS) + '</span><span>' + L.ont + '<var>r</var><var class="d1 hi">θ</var> = ' + un(m.vt, 2, MS) + '</span><span>‖' + VV + '‖ = ' + un(m.v, 2, MS) + '</span></div>' +
+          '<div class="ro k-acc"><b>' + L.acc + '</b><span>' + L.onr + '<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>² = ' + un(m.ar, 2, MS2) + '</span><span>' + L.ont + '2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var> = ' + un(m.at, 2, MS2) + '</span><span>‖' + VA + '‖ = ' + un(m.a, 2, MS2) + '</span></div>' +
+        '</div>' +
+        '<p class="ro-line">' + L.line[st.k] + '</p>' +
+        '<p class="ro-line muted">' + L.par[st.k] + '</p>';
+    }
+    function update() {
+      inp.value = String(deg(st.th)); outv.textContent = deg(st.th) + '°';
+      read();
+      if (view) view.redraw(); else view = M.mount(fig, draw);
+    }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (st.anim) { st.anim = false; out.setAttribute('aria-live', 'polite'); } }
+    chips(el, 'data-pm', function (k) { stop(); st.k = k; mo = motion(k); update(); });
+    inp.addEventListener('input', function () { stop(); st.th = +inp.value * Math.PI / 180; update(); });
+    U.$$('[data-tg]', el).forEach(function (b) {
+      b.addEventListener('click', function () { var k = b.getAttribute('data-tg'); st[k] = !st[k]; b.setAttribute('aria-pressed', String(st[k])); update(); });
+    });
+    el.querySelector('[data-go]').addEventListener('click', function () {
+      stop();
+      if (U.reduceMotion()) { st.th = st.th >= 2 * Math.PI - 1e-6 ? Math.PI / 4 : Math.min(2 * Math.PI, st.th + Math.PI / 4); update(); return; }
+      var th0 = st.th >= 2 * Math.PI - 0.02 ? 0 : st.th, t0 = mo.tOf(th0), start = null;
+      st.anim = true; out.setAttribute('aria-live', 'off');
+      function step(ts) {
+        if (start === null) start = ts;
+        var t = Math.min(mo.T, t0 + (ts - start) / 1000); // temps réel : 1 s du mouvement = 1 s à l’écran
+        st.th = t >= mo.T ? 2 * Math.PI : mo.at(t).th;
+        if (t >= mo.T) { raf = 0; st.anim = false; out.setAttribute('aria-live', 'polite'); update(); return; }
+        update(); raf = requestAnimationFrame(step);
+      }
+      raf = requestAnimationFrame(step);
+    });
+    update();
+  }
+
+  /* ---------------------------------------------------------- partie 2 : la base sur le cercle trigonométrique */
+  function baseFig() {
+    var host = document.getElementById('figBase'); if (!host) return;
+    var box = host.parentNode, inp = document.getElementById('bth'), outv = document.getElementById('bthv'), rd = document.getElementById('bread');
+    var st = { th: 30 * Math.PI / 180, w: 'r' }, view;
+    function draw(w) {
+      var p = M.plot({ x: [-1.5, 1.5], y: [-1.32, 1.32], w: Math.min(w, 440), equal: true, pad: [10, 10, 10, 10] });
+      var c = Math.cos(st.th), n = Math.sin(st.th), V = st.w === 'r' ? [c, n] : [-n, c];
+      p.grid({ x: [0.25, 0.5], y: [0.25, 0.5] });
+      p.axes({ x: { v: 'x' }, y: { v: 'y' }, origin: 'O' });
+      p.add('<circle class="mk-dash" cx="' + p.X(0).toFixed(1) + '" cy="' + p.Y(0).toFixed(1) + '" r="' + p.sx.toFixed(1) + '"/>');
+      p.add(W(p, [0, 0], [1, 0], { kind: 'ink', head: 8, label: 'u', sub: 'x', lab: [-12, 18], anchor: 'middle' }));
+      p.add(W(p, [0, 0], [0, 1], { kind: 'ink', head: 8, label: 'u', sub: 'y', lab: [-14, 12], anchor: 'end' }));
+      if (st.th > 0.05) {
+        p.add('<path class="mk-arc" d="' + arc(p, 0.24, 0, st.th) + '"/>');
+        p.add(M.label(p.X(0.36 * Math.cos(st.th / 2)), p.Y(0.36 * Math.sin(st.th / 2)) + 5, 'θ', { anchor: 'middle', fs: 15 }));
+      }
+      // angle droit entre ur et uθ
+      var q = 0.1, a1 = [q * c, q * n], a2 = [q * (c - n), q * (n + c)], a3 = [-q * n, q * c];
+      p.add('<path class="mk-line" fill="none" d="M' + p.X(a1[0]).toFixed(1) + ' ' + p.Y(a1[1]).toFixed(1) + 'L' + p.X(a2[0]).toFixed(1) + ' ' + p.Y(a2[1]).toFixed(1) + 'L' + p.X(a3[0]).toFixed(1) + ' ' + p.Y(a3[1]).toFixed(1) + '"/>');
+      // projections du vecteur choisi
+      p.line([V[0], 0], V, { cls: 'mk-dash' }).line([0, V[1]], V, { cls: 'mk-dash' });
+      var nx = st.w === 'r' ? ['cos ', 'θ'] : ['−sin ', 'θ'], ny = st.w === 'r' ? ['sin ', 'θ'] : ['cos ', 'θ'];
+      if (Math.abs(V[0]) > 0.14) {
+        p.add(W(p, [0, 0], [V[0], 0], { kind: 'amb', head: 7, cls: 'thin' }));
+        p.add('<text class="mk-name k-amb" x="' + p.X(V[0] / 2).toFixed(1) + '" y="' + (p.Y(0) + (V[1] >= 0 ? 17 : -8)).toFixed(1) + '" text-anchor="middle">' + nx[0] + '<tspan class="mk-it">' + nx[1] + '</tspan></text>');
+      }
+      if (Math.abs(V[1]) > 0.14) {
+        p.add(W(p, [0, 0], [0, V[1]], { kind: 'amb', head: 7, cls: 'thin' }));
+        p.add('<text class="mk-name k-amb" x="' + (p.X(0) + (V[0] >= 0 ? -7 : 7)).toFixed(1) + '" y="' + (p.Y(V[1] / 2) + 4).toFixed(1) + '" text-anchor="' + (V[0] >= 0 ? 'end' : 'start') + '">' + ny[0] + '<tspan class="mk-it">' + ny[1] + '</tspan></text>');
+      }
+      p.add(W(p, [0, 0], [c, n], { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: 'r' }));
+      p.add(W(p, [0, 0], [-n, c], { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: 'θ' }));
+      return p.svg({ label: L.bsvg });
+    }
+    function update() {
+      outv.textContent = deg(st.th) + '°';
+      rd.innerHTML = L.bread(deg(st.th), Math.cos(st.th), Math.sin(st.th));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.th = +inp.value * Math.PI / 180; update(); });
+    chips(box, 'data-bw', function (w) { st.w = w; update(); });
+    update();
+  }
+
+  /* ---------------------------------------------------------- partie 3 : dériver un vecteur unitaire qui tourne */
+  function derivFig() {
+    var host = document.getElementById('figDeriv'); if (!host) return;
+    var box = host.parentNode, inp = document.getElementById('dth'), outv = document.getElementById('dthv'), rd = document.getElementById('dread');
+    var th = 30 * Math.PI / 180, st = { d: 40 * Math.PI / 180, w: 'r' }, view;
+    function draw(w) {
+      var p = M.plot({ x: [-1.62, 1.3], y: [-0.4, 1.58], w: Math.min(w, 560), equal: true, pad: [8, 8, 8, 8] });
+      var e = st.w === 'r' ? th : th + Math.PI / 2, C = chord(e, st.d), A0 = C.A0, sub = st.w === 'r' ? 'r' : 'θ';
+      p.grid({ x: [0.25, 0.5], y: [0.25, 0.5] });
+      p.axes({ x: { v: 'x' }, y: { v: 'y' }, origin: 'O' });
+      p.add('<circle class="mk-dash" cx="' + p.X(0).toFixed(1) + '" cy="' + p.Y(0).toFixed(1) + '" r="' + p.sx.toFixed(1) + '"' + p.clip({}) + '/>');
+      p.add('<path class="mk-arc" d="' + arc(p, 0.3, e, e + st.d) + '"/>');
+      p.add(tag(p.X(0.44 * Math.cos(e + st.d / 2)), p.Y(0.44 * Math.sin(e + st.d / 2)) + 5, ['Δ', { i: 'θ' }], 'ink', 'middle', 14));
+      // le vecteur à θ + Δθ (pâle), puis le vecteur à θ
+      p.add(W(p, [0, 0], C.A1, { kind: 'amb', head: 9, cls: 'ghost' }));
+      p.add(W(p, [0, 0], A0, { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: sub, lab: [-C.T[0] * 10, C.T[1] * 10] }));
+      // cible : le vecteur tourné de +π/2, en tirets gris, posé à la pointe
+      var out = [A0[0] * 15, -A0[1] * 15];
+      p.add(W(p, A0, C.T, { kind: 'mut', head: 9, cls: 'dash' }));
+      var Tt = [p.X(A0[0] + C.T[0]) + C.T[0] * 10 + out[0], p.Y(A0[1] + C.T[1]) - C.T[1] * 10 + out[1] + 5];
+      p.add(tag(Tt[0], Tt[1], st.w === 'r' ? [{ v: 'u', s: 'θ' }] : ['−', { v: 'u', s: 'r' }], 'mut', 'middle', 15));
+      // l’écart, puis l’écart divisé par Δθ
+      p.add(W(p, A0, C.D, { kind: 'ink', head: 6, cls: 'thin' }));
+      p.add(W(p, A0, C.Q, { kind: 'ink', head: 10, cls: 'bold' }));
+      var Qt = [p.X(A0[0] + C.Q[0]) + C.Q[0] * 8 - out[0] * 1.2, p.Y(A0[1] + C.Q[1]) - C.Q[1] * 8 - out[1] * 1.2 + 5];
+      p.add(tag(Qt[0], Qt[1], ['Δ', { v: 'u', s: sub }, ' / Δ', { i: 'θ' }], 'ink', 'middle', 15));
+      return p.svg({ label: L.dsvg });
+    }
+    function update() {
+      outv.textContent = deg(st.d) + '°';
+      rd.innerHTML = L.dread(st.w, st.d, chord(0, st.d));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.d = +inp.value * Math.PI / 180; update(); });
+    chips(box, 'data-dw', function (w) { st.w = w; update(); });
+    update();
+  }
+
+  plate(document.getElementById('plate'));
+  baseFig();
+  derivFig();
+})();
+</script>
+</body>
+</html>
