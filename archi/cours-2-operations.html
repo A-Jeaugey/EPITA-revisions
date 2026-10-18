@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opérations en base 2 et 16 · Archi</title>
+<meta name="description" content="Archi, chapitre 2 : addition, soustraction (emprunts du cours), multiplication et division binaires posées, division avec virgule, addition hexadécimale à plusieurs termes, vérification en décimal, avec des opérations posées pas à pas et un sujet d’entraînement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* partie 1 : deux façons d'écrire une retenue de 2 (tableaux fixes, mêmes classes que l'outil posed) */
+.cmp .po-scroll{padding:.3rem 0}
+.cmp .po-t td.c2{background:var(--cu-soft)}
+/* partie 6 : somme d'une colonne → chiffre posé et retenue */
+.hx-t td,.hx-t th{text-align:center}
+.hx-t tbody td:first-child{font-weight:700}
+.hx-t td.on{background:var(--cu-soft);color:var(--cu);font-weight:700}
+/* parties 7 et 8 : ton opération, sujet d'entraînement */
+.mine-form{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr)) auto}
+@media (max-width:640px){.mine-form{grid-template-columns:repeat(2,minmax(0,1fr)) auto}.mine-form .cv-num{grid-column:1/-1}}
+.mine-out p{margin:0}
+.mine-out p+p{margin-top:.35rem}
+.gen-list{margin:0;padding:0;list-style:none;display:grid;gap:.6rem}
+.gen-list>li{border:1px solid var(--line);border-radius:var(--radius);padding:.6rem .8rem;display:grid;gap:.45rem;min-width:0}
+.gen-q{display:flex;flex-wrap:wrap;gap:.2rem .6rem;align-items:baseline}
+.gen-q .lbl{min-width:4.6rem}
+.gen-q .bn{font-size:1.05rem;overflow-wrap:anywhere}
+.gen-list details>summary{cursor:pointer;font-weight:700;color:var(--accent);width:max-content;max-width:100%}
+.gen-list details[open]>summary{margin-bottom:.5rem}
+</style>
+</head>
+<body data-resume="Archi · chapitre 2 : opérations en base 2 et 16">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — fiche 2 sur 4</span><span>Source : chapitre 1, § II (D. Bouchet) · TD 1, ex. 3</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="2"></span><a href="index.html">Archi</a> · Chapitre 2 sur 4</div>
+      <h1>Poser l’opération, <span class="w">colonne par colonne.</span></h1>
+      <p class="lead"><span data-eq><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></span> : la soustraction de l’examen 2025-2026. En base 2 et en base 16, on pose les opérations comme en base 10, avec des retenues et des emprunts. Seul le seuil change : on retient à partir de 2 en binaire, à partir de 16 en hexadécimal.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec opérations posées pas à pas</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § II · TD 1, ex. 3</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un exercice d’opérations posées dans 9 sujets sur 10</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="posed" data-opts='{"op":"sub","ops":["101110110","11011011"],"base":2,"title":"Examen 2025-2026 : soustraction"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Appuie sur « Suivant » : une colonne à la fois, avec les emprunts du cours (partie 2).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 2 · Opérations en base 2 et 16</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>L’addition binaire</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>La soustraction binaire</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>La multiplication binaire</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>La division binaire</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>Division : virgule et reste</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>L’addition hexadécimale</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Vérifier un résultat</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>Poser proprement à l’examen</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque numéro de partie est écrit en binaire sur 4 bits : la partie 5 est <span class="bn">0101</span>. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi</a><a href="cours-1-bases.html">← Chapitre 1 : les bases</a><a href="cours-3-entiers.html">Chapitre 3 : les entiers →</a><a href="../qcm/index.html#archi">QCM d’archi</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">L’addition binaire</a></li><li><a href="#s2">La soustraction binaire</a></li><li><a href="#s3">La multiplication binaire</a></li><li><a href="#s4">La division binaire</a></li>
+      <li><a href="#s5">Division : virgule et reste</a></li><li><a href="#s6">L’addition hexadécimale</a></li><li><a href="#s7">Vérifier un résultat</a></li><li><a href="#s8">Poser proprement à l’examen</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Partie 1 <span class="ref">cours § II.1</span></div><h2>L’addition binaire : retenir dès 2</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le cours le dit en une phrase : les opérations en binaire « suivent les mêmes règles » qu’en décimal. On aligne les nombres <b>à droite</b>, unités sous unités, et on additionne <b>colonne par colonne, de droite à gauche</b>. La retenue d’une colonne s’ajoute à la colonne suivante.</p>
+          <p>La seule nouveauté : en base 2, deux s’écrit déjà <span class="bn">10</span>. Dès qu’une colonne atteint 2, on pose le chiffre de droite et on retient le reste. Avec deux nombres et une retenue, il n’y a que quatre cas :</p>
+        </div>
+        <div class="tbl" style="max-width:32rem"><table>
+          <caption>Tableau 2.1 — Une colonne de deux nombres, avec ou sans retenue</caption>
+          <thead><tr><th>Colonne</th><th>Somme en base 2</th><th>On pose</th><th>On retient</th></tr></thead>
+          <tbody>
+            <tr><td>0 + 0</td><td><span class="bn">0</span></td><td>0</td><td>rien</td></tr>
+            <tr><td>0 + 1 ou 1 + 0</td><td><span class="bn">1</span></td><td>1</td><td>rien</td></tr>
+            <tr><td>1 + 1</td><td><span class="bn">10</span> (deux)</td><td>0</td><td>1</td></tr>
+            <tr><td>1 + 1 + 1</td><td><span class="bn">11</span> (trois)</td><td>1</td><td>1</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>L’exemple du cours, posé en 8 étapes. Les retenues s’écrivent en petit, <b>au-dessus de la colonne qui les reçoit</b> :</p></div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["1010110","1011101"],"base":2,"title":"Cours § II.1 : 1010110 + 1011101"}'></div>
+        <div class="calc" data-eq><div><span class="bn">1010110<sub>2</sub></span> + <span class="bn">1011101<sub>2</sub></span> = <span class="bn">10110011<sub>2</sub></span></div><div>= 86 + 93 = 179</div></div>
+        <div class="prose">
+          <p>Le cours écrit chaque étape ainsi : « 1 + 1 = 10 (= 0 avec une retenue de 1) », « 1 + 1 + 1 = 11 (= 1 avec une retenue de 1) ». La dernière retenue, à gauche, crée un chiffre de plus : 7 chiffres au départ, 8 à l’arrivée.</p>
+          <p><b>Plus de deux nombres</b> <span class="src-tag">TD 1 · ex. 3.1</span> Une colonne peut alors contenir trois ou quatre 1, plus la retenue. On calcule la somme de la colonne, on l’écrit en binaire, on pose son dernier chiffre et on retient tout le reste. Dans la première colonne de <span class="bn">1100011 + 1110111 + 1001011 + 101</span>, il y a quatre 1 : <span data-eq>1 + 1 + 1 + 1 = 4 = <span class="bn">100<sub>2</sub></span></span>. On pose 0 et on retient <span data-eq><span class="bn">10<sub>2</sub></span> = 2</span>.</p>
+        </div>
+        <div class="note why"><span class="tag">Une retenue de 2 : deux écritures</span>
+          <p>Le cours n’a pas d’exemple de retenue 2 : il n’additionne que deux nombres binaires à la fois, et les corrigés des sujets n’écrivent que le résultat. Deux écritures sont justes, et donnent le même total :</p>
+          <ul>
+            <li><b>« 10 » au-dessus de la colonne suivante</b> : cette colonne reçoit <span data-eq><span class="bn">10<sub>2</sub></span> = 2</span>. C’est ce que font les outils de ce site.</li>
+            <li><b>Le report réparti</b> : 0 au-dessus de la colonne suivante, 1 au-dessus de celle d’après. Un 1 deux colonnes plus à gauche vaut 2 dans la colonne suivante. Mais les marques s’empilent vite.</li>
+          </ul>
+        </div>
+        <div class="grid2 cmp">
+          <div class="card"><span class="k">« 10 » dans une seule case</span>
+            <div class="po-scroll"><table class="po-t" aria-label="Après deux colonnes, retenues écrites 10"><tbody>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">10</td><td>10</td><td></td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr class="po-last"><th class="po-o" scope="row">+</th><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td><td>1</td></tr>
+              <tr class="po-res"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td></tr>
+            </tbody></table></div>
+            <p class="muted">Colonne 2 : <span data-eq><span class="bn">10<sub>2</sub></span> + 1 + 1 + 1 + 0 = 5 = <span class="bn">101<sub>2</sub></span></span> : on pose 1, on retient <span class="bn">10</span>.</p>
+          </div>
+          <div class="card"><span class="k">Le report réparti</span>
+            <div class="po-scroll"><table class="po-t" aria-label="Après deux colonnes, retenues réparties"><tbody>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">1</td><td>0</td><td></td></tr>
+              <tr class="po-carry"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td class="c2">1</td><td></td><td></td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><th class="po-o" scope="row"></th><td></td><td></td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr class="po-last"><th class="po-o" scope="row">+</th><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td><td>1</td></tr>
+              <tr class="po-res"><th class="po-o" scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td>0</td></tr>
+            </tbody></table></div>
+            <p class="muted">Colonne 2 : <span data-eq>0 + 1 + 1 + 1 + 0 = 3 = <span class="bn">11<sub>2</sub></span></span> : on pose 1, on retient 1, qui rejoint le 1 venu de la colonne 1.</p>
+          </div>
+        </div>
+        <p class="fig-cap"><b>Figure 2</b> — Les deux premières colonnes de <span class="bn">1100011 + 1110111 + 1001011 + 101</span>. Dans les deux écritures, la colonne 3 reçoit 2 (cases cuivre). Choisis-en une et garde-la jusqu’au bout.</p>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["1100011","1110111","1001011","101"],"base":2,"title":"TD 1, ex. 3.1 : quatre nombres"}'></div>
+        <div class="calc" data-eq><div><span class="bn">1100011<sub>2</sub></span> + <span class="bn">1110111<sub>2</sub></span> + <span class="bn">1001011<sub>2</sub></span> + <span class="bn">101<sub>2</sub></span> = <span class="bn">100101010<sub>2</sub></span></div><div>= 99 + 119 + 75 + 5 = 298</div></div>
+        <div class="note keep"><span class="tag">Si les retenues de 10 te gênent</span>
+          <p>Additionne deux nombres à la fois : <span data-eq><span class="bn">1100011<sub>2</sub></span> + <span class="bn">1110111<sub>2</sub></span> = <span class="bn">11011010<sub>2</sub></span></span>, puis <span data-eq><span class="bn">11011010<sub>2</sub></span> + <span class="bn">1001011<sub>2</sub></span> = <span class="bn">100100101<sub>2</sub></span></span>, puis <span data-eq><span class="bn">100100101<sub>2</sub></span> + <span class="bn">101<sub>2</sub></span> = <span class="bn">100101010<sub>2</sub></span></span>. Plus long, mais chaque colonne n’a que les quatre cas du tableau 2.1.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : la dernière retenue et l’alignement</span>
+          <ul>
+            <li>La retenue qui sort à gauche <b>s’écrit</b> : <span data-eq><span class="bn">10101010<sub>2</sub></span> + <span class="bn">11001110<sub>2</sub></span> = <span class="bn">101111000<sub>2</sub></span></span> a 9 chiffres, pas 8 (TD 1).</li>
+            <li>On aligne à droite, sur les unités : le <span class="bn">101</span> du TD se place sous les trois derniers chiffres, pas sous les trois premiers.</li>
+          </ul>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#td1-ex3a">TD 1, ex. 3.1</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Partie 2 <span class="ref">cours § II.2</span></div><h2>La soustraction binaire : la méthode d’emprunt du cours</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On soustrait colonne par colonne, de droite à gauche : 1 − 0 = 1, 1 − 1 = 0, 0 − 0 = 0. Le seul cas difficile est un chiffre du haut plus petit que celui du bas : 0 − 1. On <b>emprunte 1</b>. Le cours le fait en deux gestes, toujours les mêmes :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Le chiffre du haut <b>reçoit la base</b> : 0 devient <span class="bn">10</span> (deux), 1 devient <span class="bn">11</span> (trois). Le cours l’écrit avec un petit 1 devant le chiffre : <span class="bn"><small class="cu">1</small>0</span>.</p></div></li>
+          <li><div><p>En échange, le chiffre <b>du bas</b> de la colonne suivante <b>reçoit + 1</b>. Le cours écrit <span class="bn"><small class="cu">1+</small>1</span> ou <span class="bn"><small class="cu">1+</small>0</span>.</p></div></li>
+          <li><div><p>Dans la colonne suivante, on soustrait donc le chiffre du bas plus 1. Si ce chiffre vaut déjà 1, on soustrait 1 + 1 = <span class="bn">10</span>, et il faut souvent emprunter encore.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"sub","ops":["1101001","110110"],"base":2,"title":"Cours § II.2 : 1101001 − 110110"}'></div>
+        <div class="prose"><p>Le nombre du bas a un chiffre de moins : on le complète par un 0 à gauche (<span class="bn">0110110</span>), qui recevra le dernier emprunt. Les 7 étapes, dans les mots du cours :</p></div>
+        <div class="calc" data-chk="substeps 1101001 110110">
+          <div><b>Étape 1 :</b> 1 − 0 = 1</div>
+          <div><b>Étape 2 :</b> 0 − 1 → on emprunte 1 → 10 − 1 = 1</div>
+          <div><b>Étape 3 :</b> 0 − (1 + 1) = 0 − 10 → on emprunte 1 → 10 − 10 = 0</div>
+          <div><b>Étape 4 :</b> 1 − (1 + 0) = 1 − 1 = 0</div>
+          <div><b>Étape 5 :</b> 0 − 1 → on emprunte 1 → 10 − 1 = 1</div>
+          <div><b>Étape 6 :</b> 1 − (1 + 1) = 1 − 10 → on emprunte 1 → 11 − 10 = 1</div>
+          <div><b>Étape 7 :</b> 1 − (1 + 0) = 1 − 1 = 0</div>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1101001<sub>2</sub></span> − <span class="bn">110110<sub>2</sub></span> = <span class="bn">110011<sub>2</sub></span></div><div>= 105 − 54 = 51</div></div>
+        <div class="note why"><span class="tag">Pourquoi c’est juste</span>
+          <p>Dans une colonne, le chiffre du haut gagne 2 unités de cette colonne. Dans la colonne suivante, le chiffre du bas gagne 1, et une unité de la colonne suivante vaut aussi 2 unités de la première. On a ajouté <b>la même valeur</b> aux deux nombres : leur différence ne change pas. C’est l’emprunt « par compensation » qu’on apprend souvent en base 10.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : l’étape 5 du cours, et deux méthodes mélangées</span>
+          <ul>
+            <li>Le cours (français et anglais) imprime l’étape 5 « 0 – 1 = 1 → on emprunte 1 → 10 – 1 = 1 ». Le « = 1 » est en trop : 0 − 1 ne vaut pas 1. On emprunte tout de suite, comme à l’étape 2.</li>
+            <li>Tu as peut-être appris une autre méthode : retirer 1 au chiffre <b>du haut</b> de la colonne suivante. Elle donne le même résultat, mais n’en suis qu’une. Mélanger les deux compte l’emprunt deux fois. Le cours met l’emprunt <b>en bas</b>.</li>
+            <li>Une colonne « 0 − (1 + 1) » se lit 0 − <span class="bn">10</span> : on emprunte, <span class="bn">10</span> − <span class="bn">10</span> = 0, et l’emprunt continue sur la colonne d’après.</li>
+          </ul>
+        </div>
+        <div class="prose"><p>La figure 1, en haut de la page, pose la soustraction de l’examen 2025-2026 avec la même méthode : 9 chiffres moins 8 chiffres, comme dans tous les sujets.</p></div>
+        <div class="note keep"><span class="tag">Si le nombre du haut est le plus petit</span>
+          <p>Alors <var>a</var> − <var>b</var> = −(<var>b</var> − <var>a</var>) : on échange les deux nombres, on pose <var>b</var> − <var>a</var> et on écrit un signe moins devant le résultat. Les sujets ne le demandent jamais : le résultat est toujours positif. L’outil de la partie 7 le fait si tu essaies. Sur 8 bits (chapitre 3), c’est autre chose : pas de signe moins, et l’emprunt final signale un dépassement.</p>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#td1-ex3b">TD 1, ex. 3.2</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Partie 3 <span class="ref">cours § II.3</span></div><h2>La multiplication binaire : recopier et décaler</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On pose le <b>multiplicande</b> en haut et le <b>multiplicateur</b> en dessous. Chaque chiffre du multiplicateur donne un <b>produit partiel</b>. En binaire, la table de multiplication tient en une ligne : 0 × 0 = 0 × 1 = 0 et 1 × 1 = 1. Un produit partiel est donc soit une ligne de 0, soit <b>le multiplicande recopié</b>. Les étapes du cours :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Le chiffre le plus à droite du multiplicateur vaut 1 : écrire le multiplicande.</p></div></li>
+          <li><div><p>Le chiffre suivant vaut 0 : écrire des 0 décalés à gauche.</p></div></li>
+          <li><div><p>Le chiffre suivant vaut 1 : écrire le multiplicande décalé à gauche.</p></div></li>
+          <li><div><p>Additionner les produits partiels.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10110","101"],"base":2,"zeros":true,"title":"Cours § II.3 : 10110 × 101"}'></div>
+        <div class="calc" data-eq><div><span class="bn">10110<sub>2</sub></span> × <span class="bn">101<sub>2</sub></span> = <span class="bn">1101110<sub>2</sub></span></div><div>= 22 × 5 = 110</div></div>
+        <div class="prose">
+          <p><b>Le décalage.</b> Le chiffre de poids 2<sup><var>k</var></sup> du multiplicateur donne une ligne décalée de <var>k</var> rangs vers la gauche : décaler d’un rang, c’est multiplier par <span class="bn">10<sub>2</sub></span> = 2, comme ajouter un 0 à droite en base 10 multiplie par 10.</p>
+          <p><b>Les corrigés des sujets sautent les lignes de 0</b> : ils n’écrivent que les lignes des chiffres 1, chacune précédée de « + ». L’examen 2023-2024, repris tel quel en 2025-2026 : le multiplicateur <span class="bn">101010</span> a ses 1 aux poids 2<sup>1</sup>, 2<sup>3</sup> et 2<sup>5</sup>, donc trois lignes, décalées de 1, 3 et 5 rangs.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10101010100","101010"],"base":2,"zeros":false,"title":"Examens 2023 et 2025 : sans les lignes de 0"}'></div>
+        <div class="calc" data-eq><div><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></div><div>= 1 364 × 42 = 57 288</div></div>
+        <div class="prose"><p><b>L’addition finale</b> est une addition à plusieurs nombres (partie 1) : avec trois lignes, une colonne peut contenir trois 1 et une retenue. En 2021-2022, le multiplicateur <span class="bn">1010110</span> donnait quatre produits partiels, et plusieurs colonnes une retenue de <span class="bn">10</span>.</p></div>
+        <div class="note trap"><span class="tag">Piège : sauter une ligne sans décaler la suivante</span>
+          <p>Qu’on écrive les lignes de 0 ou non, le produit partiel du chiffre de poids 2<sup><var>k</var></sup> est décalé de <var>k</var> rangs. Avec <span class="bn">101010</span>, la première ligne écrite est déjà décalée d’<b>un</b> rang, parce que le chiffre de droite vaut 0. Oublier ce rang pour toutes les lignes donne un résultat deux fois trop petit.</p>
+        </div>
+        <div class="note why"><span class="tag">Astuce de brouillon</span>
+          <p>Le produit ne change pas quand on échange les deux nombres. Prendre comme multiplicateur celui qui a le moins de 1 donne le moins de lignes : dans <span class="bn">10101010100 × 101010</span>, le multiplicateur a trois 1 et le multiplicande cinq.</p>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#td1-ex3c">TD 1, ex. 3.3</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Partie 4 <span class="ref">cours § II.4</span></div><h2>La division binaire posée</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On pose la division comme en décimal : le <b>dividende</b> à gauche, le <b>diviseur</b> à droite, le <b>quotient</b> sous le diviseur. En base 2, le diviseur va <b>0 ou 1 fois</b> dans un reste partiel : pas de table à connaître, il suffit de <b>comparer</b>. Les étapes du cours :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Prendre le plus petit début du dividende qui contient le diviseur : le diviseur « va une fois » dans ces chiffres. Inscrire 1 dans le quotient, puis soustraire le diviseur.</p></div></li>
+          <li><div><p>Descendre le prochain chiffre du dividende jusqu’au reste.</p></div></li>
+          <li><div><p>Si le nouveau reste est plus petit que le diviseur, inscrire 0 dans le quotient. Sinon, inscrire 1 et soustraire le diviseur.</p></div></li>
+          <li><div><p>Recommencer jusqu’au dernier chiffre du dividende. Le dernier reste vaut 0 : la division tombe juste.</p></div></li>
+        </ol>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["101001101","1001"],"base":2,"title":"Examen 2025-2026 : 101001101 / 1001"}'></div>
+        <div class="calc" data-eq><div><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></div><div>= 333 / 9 = 37</div></div>
+        <div class="note keep"><span class="tag">Comparer deux nombres binaires</span>
+          <p>Sans zéros en tête, celui qui a le plus de chiffres est le plus grand. À longueur égale, on compare de gauche à droite et le premier chiffre différent décide : <span class="bn">1011</span> &gt; <span class="bn">1001</span> (troisième chiffre), <span class="bn">101</span> &lt; <span class="bn">1001</span> (moins de chiffres).</p>
+        </div>
+        <div class="prose"><p><b>Ce qu’écrit le corrigé.</b> Le corrigé de 2025-2026 ne garde que les restes partiels au moment de chaque soustraction : <span class="bn">1011</span>, puis <span class="bn">1001</span>, puis <span class="bn">0</span>, avec les chiffres descendus en gras. Le cours écrit aussi les lignes « − diviseur » ; les corrigés de 2016 à 2021 aussi.</p></div>
+        <div class="note trap"><span class="tag">Piège : le 0 oublié dans le quotient</span>
+          <p>Chaque chiffre descendu donne un chiffre au quotient, 0 ou 1. Ici, après <span data-eq><span class="bn">1010<sub>2</sub></span> − <span class="bn">1001<sub>2</sub></span> = <span class="bn">1<sub>2</sub></span></span>, on descend 0 (reste <span class="bn">10</span>) puis 1 (reste <span class="bn">101</span>) : deux fois plus petit que <span class="bn">1001</span>, donc <b>deux 0</b> au quotient. Les oublier donne <span class="bn">1101</span> au lieu de <span class="bn">100101</span>.</p>
+        </div>
+        <div data-check-ref="archi/cours-2-operations.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Partie 5 <span class="ref">cours § II.4 · TD 1, ex. 3.4</span></div><h2>Division : la virgule, le reste, les chiffres demandés</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Quand le dernier chiffre du dividende est descendu et que le reste n’est pas nul, le cours continue (étape 7) : <b>ajouter une virgule au quotient</b>, puis <b>ajouter un 0 au reste</b>, et reprendre la même méthode. Chaque 0 ajouté donne un chiffre après la virgule. L’exemple du cours :</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["11111001","110"],"base":2,"digits":1,"title":"Cours § II.4 : 11111001 / 110"}'></div>
+        <div class="calc" data-eq><div><span class="bn">11111001<sub>2</sub></span> / <span class="bn">110<sub>2</sub></span> = <span class="bn">101001,1<sub>2</sub></span></div><div>= 249 / 6 = 41,5</div></div>
+        <div class="prose">
+          <p>Après le dernier chiffre (1), le reste vaut <span class="bn">11</span>. On écrit la virgule, on ajoute un 0 : <span class="bn">110</span>, qui contient le diviseur une fois. Le dernier reste vaut 0, et <span data-eq><span class="bn">0,1<sub>2</sub></span> = 0,5</span>.</p>
+          <p><b>« n chiffres après la virgule »</b> <span class="src-tag">TD 1 · ex. 3.4</span> Souvent, la division ne tombe jamais juste. L’énoncé fixe alors le nombre de chiffres : on ajoute un 0 au reste autant de fois, et on <b>s’arrête là, sans arrondir</b>, comme pour les conversions du chapitre 1.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["1100110","101"],"base":2,"digits":6,"title":"TD 1 : 1100110 / 101, 6 chiffres après la virgule"}'></div>
+        <div class="calc"><div><span data-eq="t"><span class="bn">1100110<sub>2</sub></span> / <span class="bn">101<sub>2</sub></span> → <span class="bn">10100,011001<sub>2</sub></span></span></div><div><span data-eq>102 / 5 = 20,4</span></div></div>
+        <div class="prose"><p>Le reste final vaut <span class="bn">11</span> : le 7e chiffre serait 1. On ne l’ajoute pas. Arrondir donnerait 10100,011010, qui n’est pas ce que fait la division posée.</p></div>
+        <div class="prose">
+          <p><b>Le quotient entier et le reste.</b> Sans chiffre demandé après la virgule, on s’arrête au dernier chiffre du dividende : on obtient un quotient entier et un reste, plus petit que le diviseur. Ils vérifient <b>dividende = diviseur × quotient + reste</b>. Avec la seconde division du TD 1 :</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1011000100<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span> × <span class="bn">110110<sub>2</sub></span> + <span class="bn">110<sub>2</sub></span></div><div>= 13 × 54 + 6 = 708</div></div>
+        <div class="prose"><p>Le TD demande 4 chiffres après la virgule : <span data-eq="t"><span class="bn">1011000100<sub>2</sub></span> / <span class="bn">1101<sub>2</sub></span> → <span class="bn">110110,0111<sub>2</sub></span></span>, et le reste final vaut <span class="bn">101</span>.</p></div>
+        <div class="note trap"><span class="tag">Piège : placer la virgule</span>
+          <ul>
+            <li>La virgule s’écrit au quotient <b>quand on ajoute le premier 0</b>, après le dernier chiffre du dividende, pas avant.</li>
+            <li>Chaque 0 ajouté donne un chiffre au quotient, même quand c’est 0 : dans la division du TD, le premier chiffre après la virgule est 0 (<span class="bn">100</span> est plus petit que <span class="bn">101</span>).</li>
+            <li>On s’arrête au nombre de chiffres demandé, sans arrondir le dernier.</li>
+          </ul>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <p>Les 9 divisions des sujets de 2016 à 2025 <b>tombent juste</b> : quotient entier, reste 0, aucun chiffre après la virgule. Un reste final non nul à l’examen signale presque sûrement une erreur. Les chiffres après la virgule restent au programme (cours et TD 1).</p>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#td1-ex3d">TD 1, ex. 3.4</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Partie 6 <span class="ref">cours § II.5</span></div><h2>L’addition hexadécimale : passer par le décimal</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La méthode du cours : « additionnez chaque colonne avec les <b>valeurs décimales</b> des chiffres. Ensuite, convertissez le résultat d’une colonne en hexadécimal et propagez la retenue ». Donc, pour chaque colonne :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Remplacer chaque lettre par sa valeur : A = 10, B = 11, C = 12, D = 13, E = 14, F = 15.</p></div></li>
+          <li><div><p>Additionner en décimal, avec la retenue de la colonne précédente.</p></div></li>
+          <li><div><p>Écrire cette somme en hexadécimal : on pose le chiffre de droite, on retient celui de gauche. Une somme de 16 à 31 donne une retenue de 1 ; de 32 à 47, une retenue de 2.</p></div></li>
+        </ol>
+        <div class="grid2">
+          <div class="tbl nib-t hx-t" data-chk="hextable"><table>
+            <caption>Tableau 2.2 — Somme d’une colonne (en décimal) → chiffre posé et retenue</caption>
+            <thead><tr><th>On pose</th><th>retenue 0</th><th>retenue 1</th><th>retenue 2</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>16</td><td>32</td></tr>
+              <tr><td>1</td><td>1</td><td>17</td><td>33</td></tr>
+              <tr><td>2</td><td>2</td><td>18</td><td>34</td></tr>
+              <tr><td>3</td><td>3</td><td>19</td><td>35</td></tr>
+              <tr><td>4</td><td>4</td><td>20</td><td>36</td></tr>
+              <tr><td>5</td><td>5</td><td>21</td><td>37</td></tr>
+              <tr><td>6</td><td>6</td><td>22</td><td>38</td></tr>
+              <tr><td>7</td><td>7</td><td>23</td><td>39</td></tr>
+              <tr><td>8</td><td>8</td><td>24</td><td>40</td></tr>
+              <tr><td>9</td><td>9</td><td>25</td><td>41</td></tr>
+              <tr><td>A</td><td>10</td><td>26</td><td>42</td></tr>
+              <tr><td>B</td><td>11</td><td>27</td><td>43</td></tr>
+              <tr><td>C</td><td>12</td><td>28</td><td>44</td></tr>
+              <tr><td>D</td><td>13</td><td>29</td><td>45</td></tr>
+              <tr><td>E</td><td>14</td><td class="on">30</td><td>46</td></tr>
+              <tr><td>F</td><td>15</td><td>31</td><td>47</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="note keep"><span class="tag">Lire le tableau</span>
+              <p>Cherche la somme de la colonne : sa ligne donne le chiffre à poser, sa colonne la retenue. Exemple du cours : <span data-eq>5 + 10 + 15 = 30</span> → ligne E, colonne « retenue 1 » : on pose E et on retient 1, car <span data-eq>30 = <span class="bn">1E<sub>16</sub></span></span>.</p>
+              <p>Sans le tableau : retire 16 (ou 32) à la somme, le reste est le chiffre posé.</p>
+            </div>
+            <div class="note why"><span class="tag">Une retenue de 2 en hexadécimal</span>
+              <p>Avec trois nombres, une colonne vaut au plus <span data-eq>15 + 15 + 15 + 2 = 47 = <span class="bn">2F<sub>16</sub></span></span> : la retenue peut valoir 2. Elle s’écrit avec un seul chiffre, au-dessus de la colonne suivante : <span data-eq><span class="bn">FFF<sub>16</sub></span> + <span class="bn">FFF<sub>16</sub></span> + <span class="bn">FFF<sub>16</sub></span> = <span class="bn">2FFD<sub>16</sub></span></span>. Pas de report à répartir comme en binaire (partie 1).</p>
+            </div>
+          </div>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["3B5","C1A","D2F"],"base":16,"title":"Cours § II.5 : 3B5 + C1A + D2F"}'></div>
+        <div class="calc" data-chk="hexsteps 3B5 C1A D2F">
+          <div><b>Étape 1 :</b> <span data-eq><span class="bn">5<sub>16</sub></span> + <span class="bn">A<sub>16</sub></span> + <span class="bn">F<sub>16</sub></span> = <span class="bn">5<sub>10</sub></span> + <span class="bn">10<sub>10</sub></span> + <span class="bn">15<sub>10</sub></span> = <span class="bn">30<sub>10</sub></span></span> ; <span data-eq><span class="bn">30<sub>10</sub></span> = <span class="bn">1E<sub>16</sub></span></span> (retenue = 1)</div>
+          <div><b>Étape 2 :</b> <span data-eq><span class="bn">1<sub>16</sub></span> + <span class="bn">B<sub>16</sub></span> + <span class="bn">1<sub>16</sub></span> + <span class="bn">2<sub>16</sub></span> = <span class="bn">1<sub>10</sub></span> + <span class="bn">11<sub>10</sub></span> + <span class="bn">1<sub>10</sub></span> + <span class="bn">2<sub>10</sub></span> = <span class="bn">15<sub>10</sub></span></span> ; <span data-eq><span class="bn">15<sub>10</sub></span> = <span class="bn">F<sub>16</sub></span></span> (pas de retenue)</div>
+          <div><b>Étape 3 :</b> <span data-eq><span class="bn">3<sub>16</sub></span> + <span class="bn">C<sub>16</sub></span> + <span class="bn">D<sub>16</sub></span> = <span class="bn">3<sub>10</sub></span> + <span class="bn">12<sub>10</sub></span> + <span class="bn">13<sub>10</sub></span> = <span class="bn">28<sub>10</sub></span></span> ; <span data-eq><span class="bn">28<sub>10</sub></span> = <span class="bn">1C<sub>16</sub></span></span> (retenue = 1)</div>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">3B5<sub>16</sub></span> + <span class="bn">C1A<sub>16</sub></span> + <span class="bn">D2F<sub>16</sub></span> = <span class="bn">1CFE<sub>16</sub></span></div><div>= 949 + 3 098 + 3 375 = 7 422</div></div>
+        <div class="prose"><p>La dernière retenue s’écrit à gauche : le résultat a un chiffre de plus que les nombres additionnés. L’examen 2025-2026 a la même forme, trois nombres de trois chiffres :</p></div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["763","FAA","5B6"],"base":16,"title":"Examen 2025-2026 : 763 + FAA + 5B6"}'></div>
+        <div class="calc" data-eq><div><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></div><div>= 1 891 + 4 010 + 1 462 = 7 363</div></div>
+        <div class="note trap"><span class="tag">Piège : écrire la somme décimale</span>
+          <ul>
+            <li>La colonne <span data-eq>5 + 10 + 15 = 30</span> s’écrit <b>E, retenue 1</b>, pas « 30 », ni « 0, retenue 3 » : la retenue se compte en seizaines, pas en dizaines.</li>
+            <li>Une lettre décalée d’une unité fausse toute la colonne : relis A = 10 … F = 15 avant de commencer.</li>
+            <li>La retenue s’ajoute <b>une fois</b>, dans la colonne suivante seulement (étape 2 du cours : 1 + B + 1 + 2, la retenue d’abord).</li>
+          </ul>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#td1-ex3e">TD 1, ex. 3.5</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Partie 7 <span class="ref">méthode</span></div><h2>Vérifier un résultat</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une opération posée se vérifie en une minute, et l’erreur la plus fréquente (une retenue ou un emprunt oublié) change beaucoup le résultat. Trois contrôles, du plus sûr au plus rapide.</p>
+          <p><b>1. Repasser en décimal.</b> Convertis les nombres (chapitre 1, partie 5), refais l’opération en décimal et compare avec la valeur du résultat posé. Les quatre opérations de l’examen 2025-2026 :</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 2.3 — L’exercice 2 de l’examen 2025-2026, vérifié en décimal</caption>
+          <thead><tr><th>Opération</th><th>En décimal</th><th>Résultat posé</th></tr></thead>
+          <tbody>
+            <tr data-eq-row><td><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span></td><td><span class="bn">374</span> − <span class="bn">219</span> = <span class="bn">155</span></td><td><span class="bn">10011011<sub>2</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span></td><td><span class="bn">1 891</span> + <span class="bn">4 010</span> + <span class="bn">1 462</span> = <span class="bn">7 363</span></td><td><span class="bn">1CC3<sub>16</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span></td><td><span class="bn">333</span> / <span class="bn">9</span> = <span class="bn">37</span></td><td><span class="bn">100101<sub>2</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span></td><td><span class="bn">1 364</span> × <span class="bn">42</span> = <span class="bn">57 288</span></td><td><span class="bn">1101111111001000<sub>2</sub></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>2. L’opération inverse</b>, sans quitter la base. Une soustraction se vérifie par une addition : résultat + nombre du bas = nombre du haut. Une division exacte, par une multiplication : quotient × diviseur = dividende.</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["10011011","11011011"],"base":2,"step":false,"title":"Contrôle de la figure 1 : résultat + nombre du bas"}'></div>
+        <div class="calc"><div><span data-eq><span class="bn">10011011<sub>2</sub></span> + <span class="bn">11011011<sub>2</sub></span> = <span class="bn">101110110<sub>2</sub></span></span> : on retrouve le nombre du haut.</div><div><span data-eq><span class="bn">100101<sub>2</sub></span> × <span class="bn">1001<sub>2</sub></span> = <span class="bn">101001101<sub>2</sub></span></span> : on retrouve le dividende.</div></div>
+        <div class="prose"><p><b>3. Les ordres de grandeur</b>, d’un coup d’œil : le nombre de chiffres et le dernier chiffre.</p></div>
+        <div class="tbl"><table>
+          <caption>Tableau 2.4 — Combien de chiffres attendre (nombres sans zéros en tête, dans n’importe quelle base)</caption>
+          <thead><tr><th>Opération</th><th>Nombre de chiffres du résultat</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>Addition de deux nombres</td><td>celui du plus long, ou un de plus</td><td>8 et 8 chiffres → 9 (TD 1)</td></tr>
+            <tr><td>Soustraction</td><td>au plus celui du nombre du haut</td><td>9 et 8 chiffres → 8 (2025-2026)</td></tr>
+            <tr><td>Multiplication, <var>n</var> et <var>m</var> chiffres</td><td><var>n</var> + <var>m</var> − 1 ou <var>n</var> + <var>m</var></td><td>11 et 6 chiffres → 16 (2023, 2025)</td></tr>
+            <tr><td>Division entière, <var>n</var> et <var>m</var> chiffres</td><td><var>n</var> − <var>m</var> ou <var>n</var> − <var>m</var> + 1</td><td>9 et 4 chiffres → 6 (2025-2026)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Le dernier chiffre</span>
+          <ul>
+            <li>En binaire, un produit finit par autant de 0 que ses deux facteurs réunis : <span class="bn">10101010100</span> (deux 0) × <span class="bn">101010</span> (un 0) finit par trois 0, <span class="bn">…1000</span>.</li>
+            <li>En hexadécimal, le dernier chiffre d’une somme ne dépend que des derniers chiffres : <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span>, donc <span class="bn">763 + FAA + 5B6</span> finit par 3.</li>
+          </ul>
+        </div>
+        <div class="prose"><p><b>Pose ta propre opération.</b> Tape deux nombres (ou plus pour une addition) séparés par +, −, × ou / : l’outil la pose avec la méthode du cours et la vérifie en décimal.</p></div>
+        <div class="bench" id="mine">
+          <div class="bench-head"><span class="bh-t">Ton opération</span><span class="bh-r">posée et vérifiée</span></div>
+          <div class="bench-body">
+            <form class="cv-form mine-form" autocomplete="off">
+              <label class="cv-f cv-num"><span>Opération</span><input data-k="op" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" value="101110110 − 11011011"></label>
+              <label class="cv-f"><span>Base</span><select data-k="b"><option value="2" selected>2</option><option value="16">16</option></select></label>
+              <label class="cv-f"><span>Chiffres après la virgule</span><input data-k="d" type="number" min="0" max="16" placeholder="0"></label>
+              <button type="submit" class="btn primary">Poser</button>
+            </form>
+            <div class="mine-out" aria-live="polite"></div>
+            <div class="mine-tool"></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Piège : vérifier avec la mauvaise base</span>
+          <p>« 101 » vaut 5 en binaire, 257 en hexadécimal et 101 en décimal. Avant de comparer, écris l’indice de base de chaque nombre, surtout quand une même feuille mélange les bases 2 et 16.</p>
+        </div>
+        <div data-check-ref="archi/cours-2-operations.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Partie 8 <span class="ref">sujets 2016-2025</span></div><h2>Poser proprement à l’examen</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>L’énoncé est toujours le même : « Effectuez les opérations suivantes. <b>Le détail des calculs devra apparaître.</b> » Depuis 2023, c’est le seul exercice du sujet où le détail est demandé ; la consigne générale dit « Ne pas détailler les calculs sauf si cela est explicitement demandé ». Les opérations se posent dans des grilles titrées « Base 2 » ou « Base 16 », <b>une case par chiffre</b>.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Addition, soustraction</span>
+            <p>Aligne à droite, un chiffre par case. Écris les retenues ou les emprunts en petit au-dessus des chiffres, puis le résultat sous le trait. Les corrigés n’écrivent que le résultat, mais les retenues sont le détail demandé : elles ne coûtent rien.</p></div>
+          <div class="card"><span class="k">Multiplication</span>
+            <p>Multiplicande, multiplicateur, puis une ligne par chiffre 1 du multiplicateur, décalée selon sa position et précédée de « + », puis la somme. Les corrigés sautent les lignes de 0 ; le cours les écrit.</p></div>
+          <div class="card"><span class="k">Division</span>
+            <p>Dividende à gauche, diviseur à droite, quotient sous le diviseur, puis chaque reste partiel avec le chiffre descendu. Les corrigés de 2016 à 2021 écrivent aussi les lignes « − diviseur » ; ceux de 2022, 2023 et 2025, seulement les restes.</p></div>
+          <div class="card"><span class="k">Partout</span>
+            <p>Le résultat lisible, sous le trait, sans rature. Ni crayon à papier ni encre rouge (consigne des sujets depuis 2023). Si la place manque, le sujet prévoit un cadre libre à la fin.</p></div>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 2.5 — Les opérations posées des 10 sujets, recalculées (2024 : sujet sans corrigé)</caption>
+          <thead><tr><th>Sujet</th><th>Soustraction (base 2)</th><th>Addition (base 16)</th><th>Division (base 2)</th><th>Multiplication (base 2)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">2025-2026</th><td><span data-eq><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></span></td><td><span data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></span></td><td><span data-eq><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2024-2025</th><td><span data-eq><span class="bn">110101101<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">11010010<sub>2</sub></span></span></td><td><span data-eq><span class="bn">854<sub>16</sub></span> + <span class="bn">EB9<sub>16</sub></span> + <span class="bn">6A7<sub>16</sub></span> = <span class="bn">1DB4<sub>16</sub></span></span></td><td><span data-eq><span class="bn">101101000<sub>2</sub></span> / <span class="bn">1010<sub>2</sub></span> = <span class="bn">100100<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10011001100<sub>2</sub></span> × <span class="bn">101100<sub>2</sub></span> = <span class="bn">1101001100010000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2023-2024</th><td><span data-eq><span class="bn">110011001<sub>2</sub></span> − <span class="bn">11111111<sub>2</sub></span> = <span class="bn">10011010<sub>2</sub></span></span></td><td><span data-eq><span class="bn">4854<sub>16</sub></span> + <span class="bn">CEB9<sub>16</sub></span> = <span class="bn">1170D<sub>16</sub></span></span></td><td><span data-eq><span class="bn">100101100<sub>2</sub></span> / <span class="bn">1100<sub>2</sub></span> = <span class="bn">11001<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2022-2023</th><td><span data-eq><span class="bn">110001110<sub>2</sub></span> − <span class="bn">11100111<sub>2</sub></span> = <span class="bn">10100111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">9CA8<sub>16</sub></span> + <span class="bn">BFCE<sub>16</sub></span> = <span class="bn">15C76<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10101000<sub>2</sub></span> / <span class="bn">1100<sub>2</sub></span> = <span class="bn">1110<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2021-2022</th><td><span data-eq><span class="bn">101011010<sub>2</sub></span> − <span class="bn">10100111<sub>2</sub></span> = <span class="bn">10110011<sub>2</sub></span></span></td><td><span data-eq><span class="bn">5987<sub>16</sub></span> + <span class="bn">DFA7<sub>16</sub></span> = <span class="bn">1392E<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10101000<sub>2</sub></span> / <span class="bn">1110<sub>2</sub></span> = <span class="bn">1100<sub>2</sub></span></span></td><td><span data-eq><span class="bn">10001111100<sub>2</sub></span> × <span class="bn">1010110<sub>2</sub></span> = <span class="bn">11000000110101000<sub>2</sub></span></span></td></tr>
+            <tr><th scope="row">2020-2021</th><td colspan="4" class="muted">pas d’opérations posées</td></tr>
+            <tr><th scope="row">2019-2020</th><td><span data-eq><span class="bn">100110110<sub>2</sub></span> − <span class="bn">10011111<sub>2</sub></span> = <span class="bn">10010111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">6CD9<sub>16</sub></span> + <span class="bn">8FA1<sub>16</sub></span> = <span class="bn">FC7A<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1011<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2018-2019</th><td><span data-eq><span class="bn">100011010<sub>2</sub></span> − <span class="bn">10101101<sub>2</sub></span> = <span class="bn">1101101<sub>2</sub></span></span></td><td><span data-eq><span class="bn">3C28<sub>16</sub></span> + <span class="bn">D8A4<sub>16</sub></span> = <span class="bn">114CC<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10011010<sub>2</sub></span> / <span class="bn">1110<sub>2</sub></span> = <span class="bn">1011<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2017-2018</th><td><span data-eq><span class="bn">101101101<sub>2</sub></span> − <span class="bn">10100110<sub>2</sub></span> = <span class="bn">11000111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">F8CC<sub>16</sub></span> + <span class="bn">32BB<sub>16</sub></span> = <span class="bn">12B87<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1101<sub>2</sub></span> = <span class="bn">1011<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+            <tr><th scope="row">2016-2017</th><td><span data-eq><span class="bn">100101010<sub>2</sub></span> − <span class="bn">10111011<sub>2</sub></span> = <span class="bn">1101111<sub>2</sub></span></span></td><td><span data-eq><span class="bn">C3AB<sub>16</sub></span> + <span class="bn">5EA9<sub>16</sub></span> = <span class="bn">12254<sub>16</sub></span></span></td><td><span data-eq><span class="bn">10001111<sub>2</sub></span> / <span class="bn">1011<sub>2</sub></span> = <span class="bn">1101<sub>2</sub></span></span></td><td class="muted">—</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Les erreurs qui coûtent des points</span>
+          <ul>
+            <li><b>Soustraction</b> : l’emprunt reporté sur le mauvais chiffre, ou deux fois (<a href="#s2">partie 2</a>).</li>
+            <li><b>Addition</b> : la retenue de <span class="bn">10</span> d’une colonne de quatre 1 prise pour 1 ; la dernière retenue oubliée (<a href="#s1">partie 1</a>).</li>
+            <li><b>Hexadécimal</b> : la somme décimale d’une colonne recopiée telle quelle (« 30 » au lieu de E, retenue 1) (<a href="#s6">partie 6</a>).</li>
+            <li><b>Multiplication</b> : une ligne mal décalée après une ligne de 0 sautée (<a href="#s3">partie 3</a>).</li>
+            <li><b>Division</b> : un 0 oublié au quotient ; une virgule placée trop tôt ; un dernier chiffre arrondi (<a href="#s4">parties 4</a> et <a href="#s5">5</a>).</li>
+          </ul>
+        </div>
+        <div class="note why"><span class="tag">Deux coquilles du cours</span>
+          <ul>
+            <li>Page 13 (version française) : « effectuons la multiplication suivante : 11111001 / 110 ». C’est une division, comme le dit la version anglaise.</li>
+            <li>Page 12, étape 5 (les deux versions) : « 0 – 1 = 1 → on emprunte 1 ». Le « = 1 » est en trop (<a href="#s2">partie 2</a>).</li>
+          </ul>
+        </div>
+        <div class="bench" id="gen">
+          <div class="bench-head"><span class="bh-t">Sujet d’entraînement</span><span class="bh-r">format des examens 2024 et 2025</span></div>
+          <div class="bench-body">
+            <p>Quatre opérations tirées au hasard, de la taille de celles des sujets. Pose-les sur papier, avec le détail, puis ouvre la correction.</p>
+            <ol class="gen-list"></ol>
+            <div class="row"><button type="button" class="btn primary" data-a="new">Nouveau sujet</button></div>
+          </div>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Un exercice d’opérations posées dans <b>9 sujets sur 10</b> (tous sauf 2020-2021), sur 4 ou 5 points jusqu’en 2023, 4 points en 2024 et 6 points en 2025.</li>
+            <li><b>Soustraction binaire</b> : 9 sujets sur 10, toujours 9 chiffres moins 8, résultat positif.</li>
+            <li><b>Addition hexadécimale</b> : 9 sur 10. Deux nombres de 4 chiffres jusqu’en 2023, <b>trois nombres de 3 chiffres en 2024 et 2025</b>, comme l’exemple du cours. Le résultat a un chiffre de plus dans 8 cas sur 9.</li>
+            <li><b>Division binaire</b> : 9 sur 10, toujours exacte, diviseur de 4 chiffres, quotient de 4 à 6 chiffres.</li>
+            <li><b>Multiplication binaire</b> : 4 sur 10 (2021, 2023, 2024, 2025), donc à chaque sujet depuis 2023 ; celle de 2025 reprend celle de 2023.</li>
+            <li>Jamais tombés : l’addition binaire posée seule, les soustraction, multiplication et division hexadécimales. Les additions en base 8 des sujets de 2016 à 2022 sont hors programme cette année.</li>
+            <li>Le test Moodle 2 (du 23 au 25 octobre 2026) porte sur les chapitres 1 et 2 et les TD 1 et 2, donc aussi sur ces opérations.</li>
+          </ul>
+        </div>
+        <p class="muted">Entraîne-toi : <a href="entrainement.html#p2025-ex2">examen 2025-2026, ex. 2</a> · <a href="entrainement.html#p2024-ex2">2024-2025, ex. 2</a> · <a href="entrainement.html#p2023-ex2">2023-2024, ex. 2</a>.</p>
+        <div data-check-ref="archi/cours-2-operations.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="archi:operations:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais poser les quatre opérations en base 2 et l’addition en base 16. Le chapitre 3, <a href="cours-3-entiers.html">les entiers signés et non signés</a>, les fait tenir sur un nombre fixe de bits : la retenue qui sort à gauche y devient un dépassement.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+/* Partie 7 : « Ton opération » (posée avec REV.archi.posed, vérifiée en décimal).
+   Partie 8 : sujet d'entraînement au format des examens 2024 et 2025 (soustraction 9 − 8 chiffres, addition
+   hexadécimale à trois termes de 3 chiffres, division exacte par un diviseur de 4 chiffres, multiplication
+   11 chiffres × 6 chiffres à trois 1). Tous les calculs viennent de REV.archi (archi.js). */
+(function () {
+  'use strict';
+  var R = window.REV, A = R && R.archi;
+  if (!A) return;
+  var L = {
+    empty: 'Écris une opération : deux nombres (ou plus pour une addition) séparés par +, −, × ou /.',
+    digit: '« {c} » n’est pas un chiffre de la base {b}.',
+    syntax: 'Écriture non reconnue : « {s} ».',
+    two: 'Cette opération prend exactement deux nombres.',
+    many: 'Six nombres au plus dans une addition.',
+    intOnly: 'La multiplication et la division du cours portent sur des entiers : pas de virgule.',
+    long: 'Nombres trop longs pour cette grille : 24 chiffres au plus.',
+    zero: 'Division par zéro : impossible.',
+    hex: 'En base 16, le cours ne pose que l’addition. L’outil pose quand même l’opération, avec la même méthode.',
+    check: 'Vérification en décimal : {e}.',
+    same: 'Le résultat posé {r} vaut bien {v}.',
+    neg: 'Le nombre du haut est le plus petit : l’outil échange les deux nombres, le résultat est négatif.',
+    rest: '{a} = {b} × {q} + {r} : quotient {q}, reste {r}.',
+    trunc: 'Le quotient posé {r} vaut {v} : on s’arrête au chiffre demandé, sans arrondir.',
+    sub: 'Base 2 · soustraction', add: 'Base 16 · addition', div: 'Base 2 · division', mul: 'Base 2 · multiplication',
+    sol: 'Voir la correction', res: 'Résultat : {r}'
+  };
+  function T(k, o) { return L[k].replace(/\{(\w+)\}/g, function (m, n) { return o && o[n] != null ? o[n] : m; }); }
+  function esc(s) { return R.util.esc(String(s)); }
+  function dec(x) { return A.num(x, 10, { sub: false }); }
+
+  /* ---------------- partie 7 : ton opération ---------------- */
+  var mine = document.getElementById('mine');
+  if (mine) {
+    var f = mine.querySelector('form'), out = mine.querySelector('.mine-out'), tool = mine.querySelector('.mine-tool');
+    var get = function (k) { return mine.querySelector('[data-k="' + k + '"]').value; };
+    var say = function (h) { out.innerHTML = h; };
+    var err = function (h) { out.innerHTML = '<p class="cv-err">' + h + '</p>'; tool.innerHTML = ''; };
+    var run = function () {
+      var s = String(get('op') || '').replace(/[  ]/g, ' ').trim(), b = +get('b') || 2, d = Math.max(0, Math.min(16, parseInt(get('d'), 10) || 0));
+      var op, parts;
+      if (!s) return err(T('empty'));
+      if (/\+/.test(s)) { op = 'add'; parts = s.split('+'); }
+      else if (/[×*xX]/.test(s)) { op = 'mul'; parts = s.split(/[×*xX]/); }
+      else if (/[\/÷:]/.test(s)) { op = 'div'; parts = s.split(/[\/÷:]/); }
+      else if (/[−–-]/.test(s)) { op = 'sub'; parts = s.split(/[−–-]/); }
+      else return err(T('empty'));
+      parts = parts.map(function (p) { return A.clean(p); });
+      if (op === 'add' && parts.length > 6) return err(T('many'));
+      if (op !== 'add' && parts.length !== 2) return err(T('two'));
+      var vals = [];
+      for (var i = 0; i < parts.length; i++) {
+        var p = A.parse(parts[i], b);
+        if (p.error === 'digit') return err(T('digit', { c: esc(p.ch), b: b }));
+        if (p.error || p.neg) return err(T('syntax', { s: esc(parts[i] || ' ') }));
+        if ((op === 'mul' || op === 'div') && /[.,]/.test(parts[i])) return err(T('intOnly'));
+        if (parts[i].replace(/[.,]/, '').length > 24) return err(T('long'));
+        vals.push(p.q);
+      }
+      if (op === 'div' && A.q.isZero(vals[1])) return err(T('zero'));
+      var notes = [], e, r, rv;
+      if (op === 'add') {
+        var sum = vals.reduce(function (x, y) { return A.q.add(x, y); });
+        r = A.addCols(parts, b).result; rv = A.value(r.int + (r.frac ? ',' + r.frac : ''), b);
+        e = vals.map(dec).join(' + ') + ' = ' + dec(sum);
+        notes.push(T('check', { e: e }), T('same', { r: A.num(r, b), v: dec(rv) }));
+      } else if (op === 'sub') {
+        var S = A.subCols(parts[0], parts[1], b), diff = A.q.sub(vals[0], vals[1]);
+        r = { neg: S.swap, int: S.result.int, frac: S.result.frac }; rv = A.value((S.swap ? '-' : '') + r.int + (r.frac ? ',' + r.frac : ''), b);
+        if (S.swap) notes.push(T('neg'));
+        notes.push(T('check', { e: dec(vals[0]) + ' − ' + dec(vals[1]) + ' = ' + dec(diff) }), T('same', { r: A.num(r, b), v: dec(rv) }));
+      } else if (op === 'mul') {
+        var M = A.mulCols(parts[0], parts[1], b);
+        notes.push(T('check', { e: dec(vals[0]) + ' × ' + dec(vals[1]) + ' = ' + dec(A.q.mul(vals[0], vals[1])) }), T('same', { r: A.num(M.result, b), v: dec(A.value(M.result, b)) }));
+      } else {
+        var D = A.divCols(parts[0], parts[1], b, { digits: d }), qv = A.value(D.quotient.int + (D.quotient.frac ? ',' + D.quotient.frac : ''), b);
+        if (D.exact) notes.push(T('check', { e: dec(vals[0]) + ' / ' + dec(vals[1]) + ' = ' + dec(qv) }), T('same', { r: A.num(D.quotient, b), v: dec(qv) }));
+        else if (!d) notes.push(T('rest', { a: dec(vals[0]), b: dec(vals[1]), q: dec(qv), r: dec(A.q.make(D.rem)) }));
+        else {
+          var ex = A.q.div(vals[0], vals[1]), tb = A.toBase(ex, 10, { digits: d + 2 });
+          notes.push(T('check', { e: dec(vals[0]) + ' / ' + dec(vals[1]) + ' = ' + A.num(ex, 10, { sub: false, digits: d + 2, more: !tb.exact }) }), T('trunc', { r: A.num(D.quotient, b), v: dec(qv) }));
+        }
+      }
+      if (b === 16 && op !== 'add') notes.unshift(T('hex'));
+      say(notes.map(function (n) { return '<p>' + n + '</p>'; }).join(''));
+      tool.innerHTML = '';
+      var el = document.createElement('div'); tool.appendChild(el);
+      A.posed(el, { op: op, ops: parts, base: b, digits: op === 'div' ? d : undefined });
+    };
+    f.addEventListener('submit', function (ev) { ev.preventDefault(); run(); });
+    mine.querySelector('[data-k="b"]').addEventListener('change', run);
+    run();
+  }
+
+  /* ---------------- partie 8 : sujet d'entraînement ---------------- */
+  var gen = document.getElementById('gen');
+  if (gen) {
+    var list = gen.querySelector('.gen-list');
+    var rnd = function (a, z) { return a + Math.floor(Math.random() * (z - a + 1)); };
+    var bin = function (n) { return n.toString(2); }, hex = function (n) { return n.toString(16).toUpperCase(); };
+    var draw = function () {
+      var a, c, x, y, z, dv, qt, m, i, j, items = [];
+      do { a = rnd(256, 511); c = rnd(128, 255); } while (a - c < 64);                          /* 9 − 8 chiffres, résultat de 7 ou 8 */
+      items.push({ k: 'sub', b: 2, op: 'sub', ops: [bin(a), bin(c)], sign: ' − ' });
+      do { x = rnd(256, 4095); y = rnd(256, 4095); z = rnd(256, 4095); } while (x + y + z < 4096);   /* 3 × 3 chiffres, un chiffre de plus */
+      items.push({ k: 'add', b: 16, op: 'add', ops: [hex(x), hex(y), hex(z)], sign: ' + ' });
+      dv = rnd(9, 15); qt = rnd(Math.max(8, Math.ceil(128 / dv)), Math.floor(511 / dv));         /* exacte, dividende de 8 ou 9 chiffres */
+      items.push({ k: 'div', b: 2, op: 'div', ops: [bin(dv * qt), bin(dv)], sign: ' / ' });
+      m = rnd(1024, 2047); i = rnd(0, 4); do { j = rnd(0, 4); } while (j === i);                  /* 11 chiffres × 6 chiffres à trois 1 */
+      items.push({ k: 'mul', b: 2, op: 'mul', ops: [bin(m), bin(32 + (1 << i) + (1 << j))], sign: ' × ', zeros: false });
+      list.innerHTML = items.map(function (it, n) {
+        return '<li><div class="gen-q"><span class="lbl">' + T(it.k) + '</span><span class="bn">' + it.ops.join(it.sign) + '</span></div>' +
+          '<details data-n="' + n + '"><summary>' + T('sol') + '</summary><div class="gen-sol"></div></details></li>';
+      }).join('');
+      Array.prototype.forEach.call(list.querySelectorAll('details'), function (dt) {
+        dt.addEventListener('toggle', function () {
+          var box = dt.querySelector('.gen-sol');
+          if (!dt.open || box.firstChild) return;
+          var it = items[+dt.getAttribute('data-n')], el = document.createElement('div');
+          box.appendChild(el);
+          A.posed(el, { op: it.op, ops: it.ops, base: it.b, zeros: it.zeros, start: 0 });
+        });
+      });
+    };
+    gen.querySelector('[data-a="new"]').addEventListener('click', draw);
+    draw();
+  }
+})();
+</script>
+</body>
+</html>
