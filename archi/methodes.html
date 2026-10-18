@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · Archi</title>
+<meta name="description" content="Archi : une méthode par type d’exercice des sujets, chacune avec un exemple calculé et l’outil qui le montre. Conversions et troncature, soustraction, addition hexadécimale, division et multiplication posées, tableau sur 8 bits, IEEE 754 en simple et en double précision, vérifications, liste à cocher et pièges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Méthodes : une section par type d’exercice des sujets, numérotée en binaire comme les parties du cours ; chaque
+   exemple vient d’un sujet et se rejoue avec l’outil d’archi.js. */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;width:34px;height:15px;font-family:var(--font-mono);font-size:.8rem;font-weight:700;color:var(--accent);flex:none}
+.kicker .mk{width:auto;height:auto;font-size:.9rem}
+.copy{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:0 var(--radius) var(--radius) 0;padding:.8rem 1rem;display:grid;gap:.45rem;min-width:0}
+.copy>*{min-width:0}
+.copy .tag{font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.copy .tbl{border-top-width:1px}
+.ex-src{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;color:var(--exam)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check h3{font-size:1rem;margin:.6rem 0 0;font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.signs td,.signs th{text-align:center}
+.signs td.y{color:var(--bad);font-weight:700}
+.n8 td{white-space:nowrap}
+.n8 td.e{color:var(--bad);font-weight:700}
+.ie-t td{white-space:nowrap}
+.ie-t td.m{white-space:normal;word-break:break-all;min-width:9rem}
+.vf td:first-child{min-width:9rem}
+</style>
+</head>
+<body data-resume="Archi · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — méthodes d’examen</span><span>Exemples : examen B1 2025-2026 et sujets 2023, 2024</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="10"></span><a href="index.html">Archi</a> · Méthodes</div>
+      <h1>Une méthode par <span class="w">type d’exercice.</span></h1>
+      <p class="lead">Les sujets reposent les mêmes questions d’une année à l’autre : un tableau de conversions, quatre opérations posées, un tableau sur 8 bits, IEEE 754. Chaque méthode tient en quelques étapes, avec un exemple tiré d’un sujet, l’outil qui le refait pas à pas et ce qu’il faut écrire sur la copie.</p>
+      <ul class="feats">
+        <li><span><span class="k">Méthodes</span> 10, dans l’ordre du sujet</span></li>
+        <li><span><span class="k">Puis</span> vérifier, la liste à cocher, les pièges</span></li>
+        <li class="ex"><span><span class="k">Exemples</span> tous tirés des sujets</span></li>
+        <li><span><span class="k">S’entraîner</span> <a href="entrainement.html#infini">générateurs</a></span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li><a href="#vers-10"><span class="nib" data-n="1"></span><span>Vers la base 10</span></a></li>
+      <li><a href="#depuis-10"><span class="nib" data-n="2"></span><span>Depuis la base 10, la troncature</span></a></li>
+      <li><a href="#paquets"><span class="nib" data-n="3"></span><span>Base 2 ↔ base 16</span></a></li>
+      <li><a href="#soustraction"><span class="nib" data-n="4"></span><span>Soustraction binaire</span></a></li>
+      <li><a href="#addition"><span class="nib" data-n="5"></span><span>Addition hexadécimale</span></a></li>
+      <li><a href="#division"><span class="nib" data-n="6"></span><span>Division binaire</span></a></li>
+      <li><a href="#multiplication"><span class="nib" data-n="7"></span><span>Multiplication binaire</span></a></li>
+      <li><a href="#huit-bits"><span class="nib" data-n="8"></span><span>Le tableau sur 8 bits</span></a></li>
+      <li><a href="#ieee-encoder"><span class="nib" data-n="9"></span><span>IEEE 754 : encoder</span></a></li>
+      <li><a href="#ieee-decoder"><span class="nib" data-n="10"></span><span>IEEE 754 : décoder</span></a></li>
+      <li><a href="#verifier"><span class="mk">=</span><span>Vérifier vite</span></a></li>
+      <li><a href="#copie"><span class="mk">✓</span><span>Avant de rendre</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>Les pièges</span></a></li>
+    </ol>
+    <p class="toc-note">Les numéros sont écrits en binaire sur 4 bits, comme les parties du cours : la méthode 10 est <span class="bn">1010</span>.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi</a><a href="entrainement.html">Entraînement →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire des méthodes</summary><ol>
+      <li><a href="#vers-10">Vers la base 10</a></li><li><a href="#depuis-10">Depuis la base 10, la troncature</a></li><li><a href="#paquets">Base 2 ↔ base 16</a></li>
+      <li><a href="#soustraction">Soustraction binaire</a></li><li><a href="#addition">Addition hexadécimale</a></li><li><a href="#division">Division binaire</a></li><li><a href="#multiplication">Multiplication binaire</a></li>
+      <li><a href="#huit-bits">Le tableau sur 8 bits</a></li><li><a href="#ieee-encoder">IEEE 754 : encoder</a></li><li><a href="#ieee-decoder">IEEE 754 : décoder</a></li>
+      <li><a href="#verifier">Vérifier vite</a></li><li><a href="#copie">Avant de rendre</a></li><li><a href="#pieges">Les pièges</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="vers-10">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Méthode 1 <span class="ref">exercice 1 · <a href="cours-1-bases.html#s5">fiche 1, partie 5</a></span></div><h2>Vers la base 10 : la somme des produits</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Numérote les positions</b> à partir de la virgule : 0 pour le chiffre juste à gauche, puis 1, 2, 3… vers la gauche, −1, −2… vers la droite.</p></div></li>
+          <li><div><p><b>Écris chaque chiffre × son poids</b> : la base à la puissance de la position. En hexadécimal, A = 10 … F = 15.</p></div></li>
+          <li><div><p><b>Additionne.</b> En binaire, il suffit d’ajouter les poids des bits à 1. Après la virgule : 2<sup>−1</sup> = 0,5 ; 2<sup>−2</sup> = 0,25 ; 2<sup>−3</sup> = 0,125 ; 2<sup>−4</sup> = 0,0625 ; 2<sup>−5</sup> = 0,03125 ; et en base 16 : 16<sup>−1</sup> = 0,0625 ; 16<sup>−2</sup> = 0,00390625.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026, exercice 1</p>
+        <div class="calc" data-eq><div><span class="bn">1101,1000 1<sub>2</sub></span> = 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>0</sup> + 2<sup>−1</sup> + 2<sup>−5</sup></div><div>= 8 + 4 + 1 + 0,5 + 0,03125</div><div class="r">= <span class="bn">13,53125<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">28,28<sub>16</sub></span> = 2×16<sup>1</sup> + 8×16<sup>0</sup> + 2×16<sup>−1</sup> + 8×16<sup>−2</sup></div><div>= 32 + 8 + 0,125 + 0,03125</div><div class="r">= <span class="bn">40,15625<sub>10</sub></span></div></div>
+        <div data-archi="place" data-opts='{"base":16,"value":"28,28","edit":false,"also":[2],"title":"28,28 en base 16 : positions et poids"}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Le résultat seul, en décimal : <b>40,15625</b>. Ni fraction ni puissance (« écrire 0,25 et non pas ¼ ou 2<sup>−2</sup> »). Sans consigne de chiffres, le résultat est toujours fini dans les sujets : écris tous ses chiffres.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Lire la partie fractionnaire hexadécimale comme du décimal : <span class="bn">28,28<sub>16</sub></span> ne vaut ni 40,28 ni 40,175. Et d’une ligne à l’autre, les nombres se ressemblent exprès : <span data-eq><span class="bn">1A5<sub>16</sub></span> = 421</span>, mais <span data-eq><span class="bn">1BA<sub>16</sub></span> = 442</span> l’année d’avant.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="depuis-10">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Méthode 2 <span class="ref">exercice 1 · <a href="cours-1-bases.html#s6">fiche 1, parties 6 et 7</a></span></div><h2>Depuis la base 10 : divisions, multiplications, troncature</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Sépare</b> la partie entière et la partie fractionnaire : elles se convertissent chacune de leur côté.</p></div></li>
+          <li><div><p><b>Partie entière : divisions successives</b> par la base, jusqu’à un quotient nul. Les restes se lisent <b>du dernier au premier</b>. En base 16, un reste de 10 à 15 s’écrit A à F.</p></div></li>
+          <li><div><p><b>Partie fractionnaire : multiplications successives</b> par la base. La partie entière du produit donne le chiffre ; on continue avec la partie fractionnaire <b>seule</b>. Les chiffres se lisent <b>du premier au dernier</b>.</p></div></li>
+          <li><div><p><b>Arrête-toi au nombre de chiffres demandé, sans arrondir</b> : on tronque, comme le cours et tous les corrigés.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026 : 40,35 en binaire, 5 chiffres après la virgule</p>
+        <div class="grid2">
+          <div data-archi="divs" data-opts='{"n":"40","base":2}'></div>
+          <div data-archi="mults" data-opts='{"x":"0,35","base":2,"digits":5}'></div>
+        </div>
+        <div class="calc"><div data-eq="t"><span class="bn">40,35<sub>10</sub></span> → <span class="bn">10 1000,0101 1<sub>2</sub></span></div></div>
+        <p class="ex-src">Même sujet : 22,84 en hexadécimal, 2 chiffres après la virgule</p>
+        <div class="calc"><div><span data-eq>22 = 1 × 16 + 6</span> ; <span data-eq>0,84 × 16 = 13,44</span> → D ; <span data-eq>0,44 × 16 = 7,04</span> → 7</div><div class="r" data-eq="t"><span class="bn">22,84<sub>10</sub></span> → <span class="bn">16,D7<sub>16</sub></span></div></div>
+        <div class="note keep"><span class="tag">Tronquer, pas arrondir</span><p>Sujet 2024 : 28,35 en hexadécimal avec 4 chiffres. Les multiplications donnent 5, 9, 9, 9 et il reste encore 0,6. On s’arrête : <span data-eq="t"><span class="bn">28,35<sub>10</sub></span> → <span class="bn">1C,5999<sub>16</sub></span></span>. L’arrondi donnerait 1C,599A : ce n’est pas la convention des corrigés, qui ont tronqué les cinq fois où les deux différaient.</p></div>
+        <div data-archi="mults" data-opts='{"x":"0,35","base":16,"digits":4}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Le résultat seul, avec exactement le nombre de chiffres demandé, zéros de queue compris : <b>10 1000,0101 1</b> (ou 101000,01011 : les corrigés emploient les deux écritures). Chiffres hexadécimaux en majuscules : <b>16,D7</b>.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Multiplier tout le produit : après 0,84 × 16 = 13,44, on continue avec 0,44, pas avec 13,44.</li>
+          <li>Écrire un chiffre en décimal : le 13 donne D. « 16,137 » est faux.</li>
+          <li>Un nombre « qui a l’air décimal » : <span data-eq><span class="bn">528<sub>10</sub></span> = <span class="bn">210<sub>16</sub></span></span> (examen B1).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="paquets">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Méthode 3 <span class="ref">exercice 1 · <a href="cours-1-bases.html#s8">fiche 1, partie 8</a></span></div><h2>Base 2 ↔ base 16 : des paquets de 4 bits</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Pars de la virgule</b> : paquets de 4 bits vers la gauche pour la partie entière, vers la droite pour la partie fractionnaire.</p></div></li>
+          <li><div><p><b>Complète les paquets incomplets avec des 0</b> : à gauche de la partie entière, <b>à droite</b> de la partie fractionnaire.</p></div></li>
+          <li><div><p><b>Un paquet = un chiffre hexadécimal</b> (table de 0 à 15). Dans l’autre sens, chaque chiffre hexadécimal donne exactement 4 bits, zéros compris.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026 : 1011 1011,1011 01 en hexadécimal</p>
+        <div data-archi="groups" data-opts='{"value":"10111011,101101","from":2,"to":16}'></div>
+        <div class="calc"><div data-eq><span class="bn">1011 1011,1011 01<sub>2</sub></span> = <span class="bn">1011 1011,1011 0100<sub>2</sub></span> = <span class="bn">BB,B4<sub>16</sub></span></div></div>
+        <p class="ex-src">Dans l’autre sens · sujet 2023 : DC,81 en binaire</p>
+        <div data-archi="groups" data-opts='{"value":"DC,81","from":16,"to":2}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p><b>BB,B4</b> ; <b>1101 1100,1000 0001</b>. Les zéros de tête de la partie entière et de queue de la partie fractionnaire peuvent disparaître ; ceux du milieu, jamais.</p></div>
+        <div class="note trap"><span class="tag">Piège : compléter du mauvais côté</span><p>Grouper la partie fractionnaire en partant de la droite donne <span class="bn">0010 1101</span>, soit BB,2D : faux. La partie fractionnaire se groupe <b>depuis la virgule</b> et se complète à droite. Ce cas tombe dans chacun des 10 sujets.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="soustraction">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Méthode 4 <span class="ref">exercice 2 · <a href="cours-2-operations.html#s2">fiche 2, partie 2</a></span></div><h2>La soustraction binaire, avec emprunts</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Aligne à droite</b> et complète le nombre du bas par des 0 à gauche.</p></div></li>
+          <li><div><p><b>Colonne par colonne, de droite à gauche</b> : 1 − 0 = 1, 1 − 1 = 0, 0 − 0 = 0.</p></div></li>
+          <li><div><p><b>Chiffre du haut trop petit : on emprunte 1.</b> Le chiffre du haut gagne <span class="bn">10<sub>2</sub></span> (deux) et le chiffre <b>du bas</b> de la colonne suivante gagne 1 (méthode du cours). Si ce chiffre du bas vaut déjà 1, il devient <span class="bn">10<sub>2</sub></span> et on empruntera encore.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026, exercice 2</p>
+        <div data-archi="posed" data-opts='{"op":"sub","ops":["101110110","11011011"],"base":2,"pad":true}'></div>
+        <div class="calc" data-eq><div><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></div><div>= 374 − 219 = 155</div></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>« Le détail des calculs devra apparaître » : pose l’opération dans la grille, une case par chiffre, et note les emprunts. Résultat sans zéros de tête : <b>10011011</b>. Dans les sujets, le premier nombre est toujours le plus grand.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Reporter l’emprunt sur le chiffre du haut de la colonne suivante tout en ajoutant aussi 1 en bas : l’emprunt ne se compte qu’une fois. Avec la méthode du cours, c’est le chiffre du bas qui gagne 1.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="addition">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Méthode 5 <span class="ref">exercice 2 · <a href="cours-2-operations.html#s6">fiche 2, partie 6</a></span></div><h2>L’addition hexadécimale, à deux ou trois termes</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Colonne par colonne, de droite à gauche</b>, additionne les chiffres <b>en décimal</b> (A = 10 … F = 15), avec la retenue.</p></div></li>
+          <li><div><p><b>Réécris le total de la colonne en base 16</b> : on pose le chiffre de droite, on retient celui de gauche. De 16 à 31, la retenue vaut 1 ; à trois termes, une colonne peut atteindre 15 × 3 + 2 = 47 = <span class="bn">2F<sub>16</sub></span> : retenue 2.</p></div></li>
+          <li><div><p><b>La dernière retenue</b> devient le chiffre de tête : 8 sujets sur 9 créent ainsi un chiffre de plus.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026, exercice 2 (trois termes, comme en 2024)</p>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["763","FAA","5B6"],"base":16}'></div>
+        <div class="calc"><div>3 + A + 6 = <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span> : on pose 3, retenue 1</div><div>1 + 6 + A + B = <span data-eq>1 + 6 + 10 + 11 = 28 = <span class="bn">1C<sub>16</sub></span></span> : on pose C, retenue 1</div><div>1 + 7 + F + 5 = <span data-eq>1 + 7 + 15 + 5 = 28 = <span class="bn">1C<sub>16</sub></span></span> : on pose C, retenue 1</div><div class="r" data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span> = 7 363</div></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>L’opération posée, les retenues au-dessus, le résultat <b>1CC3</b>. Vérifie en décimal si tu as le temps : <span data-eq>1 891 + 4 010 + 1 462 = 7 363</span>.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Laisser un total en décimal : 28 s’écrit <span class="bn">1C<sub>16</sub></span>, on pose C (pas « 28 », ni « 8 retenue 2 »).</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="division">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Méthode 6 <span class="ref">exercice 2 · <a href="cours-2-operations.html#s4">fiche 2, partie 4</a></span></div><h2>La division binaire posée</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Dividende à gauche, diviseur à droite</b>, le quotient sous le diviseur.</p></div></li>
+          <li><div><p><b>Prends le plus petit début du dividende qui contient le diviseur</b> : écris 1 au quotient, soustrais le diviseur.</p></div></li>
+          <li><div><p><b>Abaisse le chiffre suivant.</b> Si le reste est plus petit que le diviseur, écris <b>0</b> au quotient ; sinon écris 1 et soustrais. Recommence jusqu’au dernier chiffre.</p></div></li>
+          <li><div><p><b>Le dernier reste vaut 0</b> dans tous les sujets : sinon, reprends tes soustractions. (Une division avec des chiffres après la virgule n’existe qu’au TD 1.)</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026, exercice 2</p>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["101001101","1001"],"base":2}'></div>
+        <div class="calc" data-eq><div><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></div><div>= 333 / 9 = 37</div></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Les restes partiels successifs, chacun sous le précédent, et le quotient <b>100101</b>. Les corrigés de 2022, 2023 et 2025 ne gardent que les restes ; les plus anciens écrivent aussi les lignes « − diviseur ».</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Oublier un 0 au quotient quand le reste est trop petit : le quotient perd un chiffre et ne vaut plus rien. Contrôle : <span data-eq>37 × 9 = 333</span>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="multiplication">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Méthode 7 <span class="ref">exercice 2 · <a href="cours-2-operations.html#s3">fiche 2, partie 3</a></span></div><h2>La multiplication binaire posée</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Repère les 1 du multiplicateur</b> et leur position (0 à droite).</p></div></li>
+          <li><div><p><b>Un produit partiel par 1</b> : le multiplicande, décalé vers la gauche de la position de ce 1. Les 0 du multiplicateur ne donnent que des lignes de zéros, que les corrigés sautent.</p></div></li>
+          <li><div><p><b>Additionne les produits partiels</b>, colonne par colonne : avec trois 1 dans une colonne, 1 + 1 + 1 = <span class="bn">11<sub>2</sub></span> ; avec quatre, <span class="bn">100<sub>2</sub></span>, la retenue part deux colonnes plus loin.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026 et sujet 2023, exercice 2 (la même multiplication)</p>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10101010100","101010"],"base":2,"zeros":false}'></div>
+        <div class="calc" data-eq><div><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></div><div>= 1 364 × 42 = 57 288</div></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Une ligne par 1 du multiplicateur (ici trois, décalées de 1, 3 et 5 rangs), précédée de « + », puis la somme : <b>1101111111001000</b>.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Décaler chaque ligne d’un rang de plus que la précédente alors qu’on a sauté des 0 : le décalage est la position du 1, pas le numéro de la ligne.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="huit-bits">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Méthode 8 <span class="ref">exercice 3 · <a href="cours-3-entiers.html#s6">fiche 3, partie 6</a></span></div><h2>Le tableau sur 8 bits : non signé, signé, ERREUR</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Le mot de 8 bits.</b> Pose l’addition ou la soustraction et garde les 8 bits de droite, même s’il sort une retenue ou un emprunt au-delà du bit 7.</p></div></li>
+          <li><div><p><b>Non signé</b> : chaque opérande vaut de 0 à 255. Refais l’opération en décimal ; hors de 0 … 255, écris <b>ERREUR</b>. Pour une addition, c’est le cas quand une retenue sort ; pour une soustraction, quand le premier nombre est le plus petit.</p></div></li>
+          <li><div><p><b>Signé (complément à deux)</b> : un mot qui commence par 1 est négatif, sa valeur absolue est son complément à deux. Refais l’opération ; hors de −128 … 127, écris <b>ERREUR</b>. Sinon, lis le mot résultat en signé.</p></div></li>
+          <li><div><p><b>Contrôle par les signes</b> (TD 2) : il n’y a dépassement signé que pour positif + positif = négatif, négatif + négatif = positif, positif − négatif = négatif, négatif − positif = positif.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B1 2025-2026, exercice 3 (le corrigé officiel, recalculé)</p>
+        <div class="tbl"><table class="n8">
+          <thead><tr><th>Opération</th><th>Résultat binaire</th><th>Non signée</th><th>Signée</th></tr></thead>
+          <tbody>
+            <tr data-n8="01010100-10011100"><td><span class="bn">01010100 − 10011100</span></td><td><span class="bn">10111000</span></td><td class="e">ERREUR</td><td class="e">ERREUR</td></tr>
+            <tr data-n8="01110110+00011001"><td><span class="bn">01110110 + 00011001</span></td><td><span class="bn">10001111</span></td><td>143</td><td class="e">ERREUR</td></tr>
+            <tr data-n8="11010011-00010110"><td><span class="bn">11010011 − 00010110</span></td><td><span class="bn">10111101</span></td><td>189</td><td>−67</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Ligne 1 : en non signé, <span data-eq>84 − 156 = −72</span> &lt; 0 ; en signé, <span class="bn">10011100</span> vaut −100 et <span data-eq>84 − (−100) = 184</span> &gt; 127 : deux fois ERREUR. Ligne 3 : <span class="bn">10111101</span> vaut 189 en non signé et −67 en signé ; clique sur ses bits pour le voir.</p></div>
+        <div data-archi="register" data-opts='{"n":8,"value":"10111101","sizes":[8]}'></div>
+        <div class="tbl" style="max-width:34rem"><table class="signs">
+          <caption>Dépassement signé selon les signes (TD 2, ex. 3 ; P = positif, N = négatif)</caption>
+          <thead><tr><th>Opération</th><th>Résultat P</th><th>Résultat N</th></tr></thead>
+          <tbody>
+            <tr><td>P + P</td><td>non</td><td class="y">oui</td></tr>
+            <tr><td>N + N</td><td class="y">oui</td><td>non</td></tr>
+            <tr><td>P + N, N + P</td><td>non</td><td>non</td></tr>
+            <tr><td>P − N</td><td>non</td><td class="y">oui</td></tr>
+            <tr><td>N − P</td><td class="y">oui</td><td>non</td></tr>
+            <tr><td>P − P, N − N</td><td>non</td><td>non</td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Le résultat binaire sur 8 bits, <b>toujours</b> ; puis un nombre ou <b>ERREUR</b> dans chacune des deux colonnes. Pas de détail : « Le résultat seul est attendu ».</p></div>
+        <div class="note exam"><span class="tag">Au sujet</span><p>Chacun des 4 tableaux des sujets contient une soustraction « positif − négatif » qui donne ERREUR dans les deux colonnes, et les trois derniers une addition « positif + positif » qui déborde en signé seulement.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Confondre retenue et dépassement signé : la retenue sortante d’une addition signale le dépassement <b>non signé</b>. <span class="bn">10001100 + 01111110</span> sort une retenue (ERREUR en non signé), mais en signé <span data-eq>−116 + 126 = 10</span> est juste (sujet 2017).</li>
+          <li>Laisser la case binaire vide quand il y a dépassement.</li>
+          <li>Lire un mot négatif en non signé dans la colonne « Signée » : <span class="bn">10111101</span> donne −67, pas 189.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="ieee-encoder">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="9"></span>Méthode 9 <span class="ref">exercice 4 · <a href="cours-4-flottants.html#s3">fiche 4, partie 3</a></span></div><h2>IEEE 754 : encoder un réel en simple précision</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Signe</b> : S = 0 pour un positif (tous les nombres des sujets), 1 pour un négatif.</p></div></li>
+          <li><div><p><b>En binaire</b> : partie entière par divisions, partie fractionnaire par multiplications (méthode 2). Dans les sujets, le développement est toujours fini.</p></div></li>
+          <li><div><p><b>Normalise</b> : déplace la virgule juste derrière le premier 1, on obtient 1,… × 2<sup><var>e</var></sup>. Vers la gauche, <var>e</var> est positif ; vers la droite (nombre plus petit que 1), négatif.</p></div></li>
+          <li><div><p><b>Exposant</b> : E = <var>e</var> + 127, écrit <b>sur 8 bits</b>, zéros de tête compris.</p></div></li>
+          <li><div><p><b>Mantisse</b> : M = les chiffres <b>après</b> la virgule (le 1 de tête n’est pas stocké), complétés <b>à droite</b> par des 0 jusqu’à 23 bits.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · sujet 2023, exercice 4</p>
+        <div class="calc"><div data-eq><span class="bn">67,375<sub>10</sub></span> = <span class="bn">100 0011,011<sub>2</sub></span> = <span class="bn">1,0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></div><div>S = 0 ; E = 6 + 127 = 133 = <span class="bn">10000101</span> ; M = <span class="bn">0000 1101 1000 0000 0000 000</span></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"single","value":"67,375","input":false}'></div>
+        <div class="tbl"><table class="ie-t">
+          <caption>Les trois cases à remplir (examen B1 2025-2026 et sujet 2023), mot hexadécimal en plus</caption>
+          <thead><tr><th>Nombre</th><th>S</th><th>E</th><th>M</th><th>Mot (non demandé)</th></tr></thead>
+          <tbody>
+            <tr data-ieee-enc="320"><td>320</td><td><span class="bn">0</span></td><td><span class="bn">10000111</span></td><td class="m"><span class="bn w">01000000000000000000000</span></td><td><span class="bn">43A0 0000</span></td></tr>
+            <tr data-ieee-enc="0,09375"><td>0,09375</td><td><span class="bn">0</span></td><td><span class="bn">01111011</span></td><td class="m"><span class="bn w">10000000000000000000000</span></td><td><span class="bn">3DC0 0000</span></td></tr>
+            <tr data-ieee-enc="67,375"><td>67,375</td><td><span class="bn">0</span></td><td><span class="bn">10000101</span></td><td class="m"><span class="bn w">00001101100000000000000</span></td><td><span class="bn">4286 C000</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Trois cases, en binaire, sans espace : S = <b>0</b>, E = <b>10000101</b>, M = <b>00001101100000000000000</b> (23 chiffres). Le mot hexadécimal n’a jamais été demandé.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Écrire E sans ses zéros de tête : <span data-eq><span class="bn">0,09375<sub>10</sub></span> = <span class="bn">1,1<sub>2</sub></span> × 2<sup>−4</sup></span>, E = 123 = <span class="bn">01111011</span>.</li>
+          <li>Stocker le 1 avant la virgule : <span data-eq>320 = <span class="bn">1,01<sub>2</sub></span> × 2<sup>8</sup></span> donne M = <span class="bn">0100…</span>, pas <span class="bn">1010…</span>.</li>
+          <li>Compléter M à gauche : les zéros vont à droite.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 -->
+    <section class="sec" id="ieee-decoder">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="10"></span>Méthode 10 <span class="ref">exercice 4 · <a href="cours-4-flottants.html#s4">fiche 4, parties 4 à 6</a></span></div><h2>IEEE 754 : décoder un mot double précision en <var>k</var> × 2<sup><var>n</var></sup></h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>S et E</b> : les 3 premiers chiffres hexadécimaux donnent 12 bits, S (1 bit) puis E (11 bits). Si le premier chiffre est inférieur à 8, S = 0 et E se lit directement : les trois chiffres en hexadécimal.</p></div></li>
+          <li><div><p><b>M</b> : les 13 derniers chiffres hexadécimaux (52 bits).</p></div></li>
+          <li><div><p><b>Le cas</b> : E = <span class="bn">7FF<sub>16</sub></span> (tout à 1) : infini si M = 0, NaN sinon. E = 0 : zéro si M = 0, sinon dénormalisé, 0,M × 2<sup>−1022</sup>. Sinon : 1,M × 2<sup>E − 1023</sup>.</p></div></li>
+          <li><div><p><b><var>k</var> × 2<sup><var>n</var></sup></b> : déplace la virgule vers la droite jusqu’au dernier 1, pour obtenir un entier <var>k</var> impair ; retire à l’exposant le nombre de rangs déplacés.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · sujet 2023, exercice 4</p>
+        <div class="calc"><div><span class="bn">3548 0000 0000 0000</span> : 354 = <span class="bn">0011 0101 0100<sub>2</sub></span> → S = 0, E = <span data-eq><span class="bn">354<sub>16</sub></span> = 852</span></div><div>M = <span class="bn">8 0000 0000 0000<sub>16</sub></span> = <span class="bn">1000 0…<sub>2</sub></span> ; exposant <span data-eq>852 − 1023 = −171</span></div><div class="r" data-eq><span class="bn">1,1<sub>2</sub></span> × 2<sup>−171</sup> = <span class="bn">11<sub>2</sub></span> × 2<sup>−172</sup> = 3 × 2<sup>−172</sup></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"double","hex":"3548 0000 0000 0000","input":false}'></div>
+        <div class="tbl"><table class="ie-t">
+          <caption>Tous les mots des sujets 2023 à 2025 (2024 : sans corrigé, réponses calculées)</caption>
+          <thead><tr><th>Mot (base 16)</th><th>Sujet</th><th>Cas</th><th>Représentation</th></tr></thead>
+          <tbody>
+            <tr data-ieee-dec><td><span class="bn">3548 0000 0000 0000</span></td><td>2023</td><td>normalisé</td><td>3 × 2<sup>−172</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">000A 8000 0000 0000</span></td><td>2023</td><td>dénormalisé</td><td>21 × 2<sup>−1027</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">FFFF 0000 0000 0000</span></td><td>2023</td><td>E = 7FF, M ≠ 0</td><td>NaN</td></tr>
+            <tr data-ieee-dec><td><span class="bn">3688 0000 0000 0000</span></td><td>2024</td><td>normalisé</td><td>3 × 2<sup>−152</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">0015 8000 0000 0000</span></td><td>2024</td><td>normalisé, E = 1</td><td>43 × 2<sup>−1027</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">7FF0 0000 0000 0000</span></td><td>2024</td><td>E = 7FF, M = 0</td><td>+∞</td></tr>
+            <tr data-ieee-dec><td><span class="bn">2844 0000 0000 0000</span></td><td>2025</td><td>normalisé</td><td>5 × 2<sup>−381</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">7FF0 0001 0000 0000</span></td><td>2025</td><td>E = 7FF, M ≠ 0</td><td>NaN</td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p><b>3 × 2<sup>−172</sup></b>, avec <var>k</var> impair comme dans tous les corrigés ; <b>NaN</b> pour un NaN, sans signe. L’infini n’a jamais été corrigé : <b>+∞</b> est l’écriture la plus probable.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Prendre le biais 127 : en double précision, c’est 1023.</li>
+          <li>Dénormalisé : l’exposant vaut −1022, pas −1023, et il n’y a pas de 1 avant la virgule : <span data-eq><span class="bn">0,10101<sub>2</sub></span> × 2<sup>−1022</sup> = 21 × 2<sup>−1027</sup></span>.</li>
+          <li>Faux dénormalisé : <span class="bn">0015 8000 0000 0000</span> a E = 1, il est normalisé : <span data-eq><span class="bn">1,01011<sub>2</sub></span> × 2<sup>−1022</sup> = 43 × 2<sup>−1027</sup></span>.</li>
+          <li>Un seul bit à 1 dans M suffit pour un NaN : <span class="bn">7FF0 0001 0000 0000</span>.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ vérifier -->
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="mk">=</span>Contrôles</div><h2>Vérifier vite un résultat</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une minute de contrôle par exercice suffit à rattraper la plupart des erreurs. Chaque contrôle ci-dessous refait le calcul par un autre chemin.</p></div>
+        <div class="tbl"><table class="vf">
+          <thead><tr><th>Exercice</th><th>Contrôle</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>Conversion vers la base 10</td><td>L’ordre de grandeur : le chiffre de tête × son poids</td><td><span class="bn">1 0110 1101<sub>2</sub></span> : au moins 256, moins de 512 ; <span data-eq><span class="bn">1 0110 1101<sub>2</sub></span> = 365</span></td></tr>
+            <tr><td>Conversion depuis la base 10</td><td>Reconvertir la partie entière ; compter les bits (2<sup>5</sup> ≤ 40 &lt; 2<sup>6</sup> : 6 bits)</td><td><span data-eq><span class="bn">10 1000<sub>2</sub></span> = 32 + 8 = 40</span></td></tr>
+            <tr><td>Soustraction</td><td>Résultat + nombre du bas = nombre du haut</td><td><span data-eq><span class="bn">10011011<sub>2</sub></span> + <span class="bn">11011011<sub>2</sub></span> = <span class="bn">101110110<sub>2</sub></span></span></td></tr>
+            <tr><td>Addition hexadécimale</td><td>Repasser en décimal</td><td><span data-eq>1 891 + 4 010 + 1 462 = 7 363 = <span class="bn">1CC3<sub>16</sub></span></span></td></tr>
+            <tr><td>Division</td><td>Quotient × diviseur = dividende (reste 0)</td><td><span data-eq><span class="bn">100101<sub>2</sub></span> × <span class="bn">1001<sub>2</sub></span> = <span class="bn">101001101<sub>2</sub></span></span></td></tr>
+            <tr><td>Multiplication</td><td>Repasser en décimal ; nombre de chiffres : 11 + 6 bits donnent 16 ou 17 bits</td><td><span data-eq>1 364 × 42 = 57 288 = <span class="bn">1101 1111 1100 1000<sub>2</sub></span></span></td></tr>
+            <tr><td>Tableau 8 bits</td><td>La règle des signes ; retenue sortante ⇒ ERREUR non signée (addition) ; premier &lt; second ⇒ ERREUR non signée (soustraction)</td><td><span class="bn">01110110 + 00011001</span> : P + P = N, ERREUR en signé seulement</td></tr>
+            <tr><td>IEEE 754, encoder</td><td>Nombre ≥ 2 : E commence par 1 ; nombre &lt; 1 : E &lt; 127, commence par 0 ; nombre exact : M finit par des 0</td><td>0,09375 → E = <span class="bn">01111011</span> = 123</td></tr>
+            <tr><td>IEEE 754, décoder</td><td>Recompose : <var>k</var> × 2<sup><var>n</var></sup> doit redonner 1,M × 2<sup>E − 1023</sup></td><td><span data-eq>5 × 2<sup>−381</sup> = <span class="bn">1,01<sub>2</sub></span> × 2<sup>−379</sup></span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>Les dernières minutes</div><h2>Avant de rendre la copie</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Relis chaque exercice avec cette liste. Elle reprend les consignes des sujets et les erreurs que les corrigés font éviter. Rien n’est enregistré.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Tout décocher</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Conversions</b> : le résultat seul, ni fraction ni puissance ; exactement le nombre de chiffres demandé, tronqué (zéros de queue compris).</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Hexadécimal</b> : chiffres en majuscules, aucun chiffre écrit en décimal (13 → D).</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Binaire ↔ hexadécimal</b> : paquets depuis la virgule, partie fractionnaire complétée à droite.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>Opérations</b> : posées dans la grille, le détail visible (emprunts, retenues, restes partiels, produits partiels) ; résultat sans zéros de tête.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Division</b> : le dernier reste vaut 0 et quotient × diviseur redonne le dividende.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Tableau 8 bits</b> : chaque résultat binaire écrit sur 8 bits, même en cas de dépassement ; ERREUR en capitales, dans la bonne colonne ; le signe moins des valeurs signées.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>IEEE, encoder</b> : S, E et M en binaire dans trois cases ; E sur 8 bits avec ses zéros de tête ; M sur 23 bits complétée à droite, sans le 1 de tête.</label></li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>IEEE, décoder</b> : biais 1023 ; les cas E = 0 et E = <span class="bn">7FF</span> traités ; <var>k</var> impair et <var>n</var> avec son signe ; NaN écrit « NaN ».</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>Au stylo</b>, ni encre rouge ni crayon à papier ; toutes les cases remplies.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>À relire la veille</div><h2>Les pièges, exercice par exercice</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Conversions</span><ul>
+            <li>Arrondir au lieu de tronquer : <span data-eq="t"><span class="bn">141,3<sub>10</sub></span> → <span class="bn">8D,4C<sub>16</sub></span></span> (pas 8D,4D) ; <span data-eq="t"><span class="bn">92,47<sub>10</sub></span> → <span class="bn">5C,7851<sub>16</sub></span></span> au TD 1.</li>
+            <li>Lire les restes dans le mauvais sens : divisions du dernier au premier, multiplications du premier au dernier.</li>
+            <li>Perdre les zéros internes : <span data-eq><span class="bn">DC,81<sub>16</sub></span> = <span class="bn">1101 1100,1000 0001<sub>2</sub></span></span>, pas …,11.</li>
+            <li>Grouper la partie fractionnaire depuis la droite : <span data-eq><span class="bn">10 0101,1100 11<sub>2</sub></span> = <span class="bn">25,CC<sub>16</sub></span></span> (TD 1), pas 25,33.</li>
+            <li>Même écriture, autre base : 151,32 en base 8 et en base 16 dans le même tableau (2022).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Opérations posées</span><ul>
+            <li>Emprunt compté deux fois ou mal reporté (méthode du cours : le chiffre du bas de la colonne suivante gagne 1).</li>
+            <li>Retenue de deux colonnes : quatre 1 dans une colonne font <span class="bn">100<sub>2</sub></span> (TD 1, addition à quatre termes).</li>
+            <li>Total de colonne hexadécimale laissé en décimal : <span data-eq>5 + 10 + 15 = 30 = <span class="bn">1E<sub>16</sub></span></span>, on pose E.</li>
+            <li>Zéro oublié au quotient ; produits partiels mal décalés.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Entiers sur 8 bits</span><ul>
+            <li>Retenue prise pour un dépassement signé (et l’inverse).</li>
+            <li>Soustraction non signée qui passe sous 0 : <span class="bn">11001000 − 11100010</span> donne ERREUR en non signé, mais <span data-eq>−56 − (−30) = −26</span> en signé (2023).</li>
+            <li>−128 s’écrit <span class="bn">10000000</span> : son opposé ne tient pas sur 8 bits signés. Et <span class="bn">0111 1111 + 0000 0001</span> = <span class="bn">1000 0000</span> : 128 en non signé, ERREUR en signé (2024).</li>
+            <li>Plages asymétriques : de −2<sup><var>n</var>−1</sup> à 2<sup><var>n</var>−1</sup> − 1 en signé ; le plus grand non signé est 2<sup><var>n</var></sup> − 1, pas 2<sup><var>n</var></sup>.</li>
+            <li>Complément à deux rapide : on garde les bits jusqu’au premier 1 <b>inclus</b> en partant de la droite, on inverse les autres.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">IEEE 754</span><ul>
+            <li>Biais oublié, ou biais 127 en double précision.</li>
+            <li>E sans zéros de tête, M sans zéros de queue, 1 implicite stocké.</li>
+            <li>Exposant d’un nombre plus petit que 1 : négatif. <span data-eq><span class="bn">0,1011<sub>2</sub></span> = <span class="bn">1,011<sub>2</sub></span> × 2<sup>−1</sup></span>, E = 126.</li>
+            <li><var>k</var> non réduit : 6 × 2<sup>−173</sup> vaut bien 3 × 2<sup>−172</sup>, mais les corrigés donnent <var>k</var> impair.</li>
+            <li>La règle de troncature des conversions ne vaut pas pour IEEE 754 : la norme arrondit au plus proche (<span class="bn">0,1<sub>10</sub></span> → <span class="bn">3DCC CCCD</span>). Aucun sujet ne l’a demandé.</li>
+          </ul></div>
+        </div>
+        <div class="note exam"><span class="tag">Coquilles du chapitre 1 : ne les recopie pas</span><ul>
+          <li>p. 9 : « 0,4025<sub>10</sub> = 0,01101<sub>2</sub> » : il faut lire <span data-eq><span class="bn">0,40625<sub>10</sub></span> = <span class="bn">0,01101<sub>2</sub></span></span>.</li>
+          <li>p. 9 : « 0.C8<sub>16</sub> » écrit avec un point dans la version française.</li>
+          <li>p. 12, étape 5 : « 0 – 1 = 1 → on emprunte 1 » : le « = 1 » est en trop.</li>
+          <li>p. 13 : « effectuons la multiplication suivante : 11111001 / 110 » : c’est une division.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  /* la liste à cocher (rien n’est enregistré) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' vérifiés'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

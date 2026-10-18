@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Archi · Révisions S1</title>
+<meta name="description" content="Architecture des ordinateurs · Numération : le test Moodle 2 (23-25 octobre) et ce qu’il faut réviser, l’examen d’1 h, les consignes des sujets, ce qui tombe d’après les 10 sujets (2016 à 2025), les quatre fiches de cours, les méthodes, l’entraînement corrigé, les annales et la fiche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Accueil Archi : la fiche technique de la matière. Le test Moodle 2 en tête (l’échéance la plus proche), puis le
+   parcours, l’évaluation et les consignes des sujets, ce qui tombe. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:64px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap;padding-top:.8rem;border-top:2px solid var(--rule)}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+/* le test Moodle 2 : l’encadré de l’échéance */
+.t2{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--exam);border-radius:0 0 var(--radius) var(--radius);display:grid;align-self:center;min-width:0}
+.t2-top{display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:.55rem 1rem;border-bottom:1px solid var(--line);background:var(--exam-soft);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--exam);font-weight:700}
+.t2-st{font-size:.78rem;letter-spacing:.02em;text-transform:none;color:var(--ink);background:var(--surface);border:1px solid var(--exam);border-radius:999px;padding:.1rem .6rem}
+.t2-st:empty{display:none}
+.t2-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.8rem}
+.t2-b>*{min-width:0}
+.t2 h2{font-size:2rem}
+.t2-dl{margin:0;display:grid;gap:0}
+.t2-dl>div{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:.45rem 0;border-top:1px dashed var(--line)}
+.t2-dl dt{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
+.t2-dl dd{margin:0;font-size:.97rem;line-height:1.45}
+@media (max-width:480px){.t2-dl>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+/* que réviser */
+.rev{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.rev{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.rev{grid-template-columns:minmax(0,1fr)}}
+.rev .card p{font-size:.93rem}
+.rev .card ul{margin:0;padding-left:1.1rem;display:grid;gap:.25rem;font-size:.93rem}
+.rev .card.qcm{border-top-color:var(--exam)}
+.rev .card.qcm .k{color:var(--exam)}
+.rev .card.miss .k{color:var(--warn)}
+/* parcours */
+.path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.path{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);padding:.95rem 1.05rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+.stop:hover{border-color:var(--accent)}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stop h3{margin:0;font-size:1.25rem}
+.stop p{font-size:.93rem;color:var(--muted)}
+.stop .tg{display:flex;flex-wrap:wrap;gap:6px}
+.stop .tg span{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:3px;padding:.05rem .45rem;color:var(--muted)}
+.stop .tg .hot{border-color:var(--exam);color:var(--exam)}
+.stop .mono{font-size:.8rem;color:var(--muted)}
+.bar{height:6px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tools .stop{border-top-width:1px;border-radius:var(--radius)}
+/* évaluation */
+.eval{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .card{gap:.55rem}
+.eval .w{font-family:var(--font-display);font-weight:800;font-size:2.6rem;line-height:1;color:var(--accent)}
+.eval .card.ex .w{color:var(--exam)}
+.cd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-top:.5rem;border-top:1px dashed var(--line)}
+.cd label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cd input{font:inherit;font-family:var(--font-mono);font-size:.92rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-bottom:2px solid var(--ink);border-radius:3px;padding:.3rem .5rem;min-height:38px}
+.cd input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.cd-n{font-family:var(--font-mono);font-weight:700;font-size:1.35rem;color:var(--exam);line-height:1}
+.cd-t{font-size:.88rem;color:var(--muted)}
+/* consignes : recopiées des sujets */
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule)}
+.rules li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding:.75rem 1rem;border-top:1px solid var(--line)}
+.rules li:first-child{border-top:0}
+.rules li>*{min-width:0}
+.rules q{font-family:var(--font-mono);font-size:.9rem;quotes:"« " " »"}
+.rules .n{font-family:var(--font-mono);font-size:.76rem;color:var(--exam);white-space:nowrap}
+.rules .d{grid-column:1/-1;font-size:.93rem;color:var(--muted)}
+@media (max-width:560px){.rules li{grid-template-columns:minmax(0,1fr)}}
+/* fréquences */
+.freq td,.freq th{vertical-align:middle}
+.freq .fq{white-space:nowrap;width:1%}
+.fbar{display:inline-block;vertical-align:middle;width:84px;height:8px;border-radius:1px;background:var(--surface-2);overflow:hidden;margin-right:8px}
+.fbar i{display:block;height:100%;background:var(--accent)}
+.freq .n{font-family:var(--font-mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+.freq .ref{white-space:nowrap;font-size:.88rem}
+.freq tr.sub th{font-weight:500;padding-left:1.6rem}
+.freq tr.zero th,.freq tr.zero .n{color:var(--warn)}
+@media (max-width:560px){.fbar{width:60px}.freq thead{display:none}.freq tbody tr{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;border-bottom:1px solid var(--line)}.freq tbody tr:last-child{border-bottom:0}.freq tbody th{grid-column:1/-1;border-bottom:0;padding-bottom:.15rem}.freq tbody td{border-bottom:0;padding-top:.15rem}.freq .ref{text-align:right}.freq tr.sub th{padding-left:.75rem}}
+.fmt td,.fmt th{text-align:center}
+.fmt td:first-child,.fmt th:first-child{text-align:left}
+.fmt .mono{font-size:.9rem}
+</style>
+</head>
+<body data-resume="Archi · accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — accueil de la matière</span><span>Architecture des ordinateurs · cours de D. Bouchet</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="15"></span>Archi · Architecture des ordinateurs · Numération</div>
+      <h1>Les nombres, <span class="w">tels que la machine les écrit.</span></h1>
+      <p class="lead">Bases 2, 10 et 16, opérations posées, entiers sur 8 bits signés et non signés, virgule flottante IEEE 754. Depuis 2023, l’examen tient en quatre exercices, toujours les mêmes. Ici : le cours en quatre fiches, les méthodes, les exercices des sujets et des TD corrigés, et des générateurs d’exercices sans fin.</p>
+      <ul class="feats">
+        <li><span><span class="k">Cours</span> 4 fiches · 32 parties</span></li>
+        <li><span><span class="k">Sujets</span> 10, de 2016 à 2025</span></li>
+        <li><span><span class="k">Exercices</span> <span id="nEx0">41 corrigés</span> + générateurs</span></li>
+        <li class="ex"><span><span class="k">Note</span> tests Moodle 10 % · examen 90 %</span></li>
+      </ul>
+    </div>
+    <aside class="t2" aria-labelledby="t2-h">
+      <div class="t2-top"><span>L’échéance la plus proche</span><span class="t2-st" id="t2St" aria-live="polite"></span></div>
+      <div class="t2-b">
+        <h2 id="t2-h">Test Moodle 2</h2>
+        <dl class="t2-dl">
+          <div><dt>Ouvert</dt><dd>du <b>vendredi 23 octobre, 8 h</b>, au <b>dimanche 25 octobre, 23 h</b></dd></div>
+          <div><dt>Durée</dt><dd>30 min, <b>une seule tentative</b></dd></div>
+          <div><dt>Programme</dt><dd>chapitres 1 et 2 du cours (arithmétique des ordinateurs, virgule flottante), TD 1 et 2, TD 3 exercices 1 à 4</dd></div>
+          <div><dt>Note</dt><dd>les tests Moodle comptent pour 10 % de la note d’archi</dd></div>
+        </dl>
+        <div class="row"><a class="btn primary" href="#test2">Que réviser</a><a class="btn" href="../qcm/index.html#archi">QCM d’archi</a></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section id="test2" aria-labelledby="t-test2">
+    <div class="sec-title"><div><div class="eyebrow">Test Moodle 2 · 23-25 octobre</div><h2 id="t-test2">Que réviser pour le test 2</h2></div><p>Le programme couvre tout le cours vu jusqu’ici : les deux chapitres et les trois TD. Le test 1 portait sur le chapitre 1 et le TD 1 ; le neuf, c’est le TD 2 (les entiers sur <var>n</var> bits) et toute la virgule flottante (chapitre 2, TD 3).</p></div>
+    <div class="rev">
+      <div class="card"><span class="k">Chapitre 1 · § I · TD 1 ex. 1-2</span><h4>Bases et conversions</h4>
+        <p>Déjà au test 1. Revois ce qui coûte des points : la troncature et les paquets autour de la virgule.</p>
+        <ul><li><a href="cours-1-bases.html#s4">De 0 à 15 par cœur</a>, <a href="cours-1-bases.html#s7">multiplications successives</a>, <a href="cours-1-bases.html#s8">paquets de 4</a></li>
+          <li>TD 1 : <a href="entrainement.html#td1-ex1">puissances de 2</a>, <a href="entrainement.html#td1-ex2a">conversions 2.1</a>, <a href="entrainement.html#td1-ex2b">2.2</a></li>
+          <li><a href="entrainement.html#gen-conv">Générateur de conversions</a></li></ul></div>
+      <div class="card"><span class="k">Chapitre 1 · § II · TD 1 ex. 3</span><h4>Opérations en base 2 et 16</h4>
+        <p>Déjà au test 1. Addition, soustraction avec emprunts, multiplication et division binaires, addition hexadécimale.</p>
+        <ul><li><a href="cours-2-operations.html">Fiche 2, les opérations</a></li>
+          <li>TD 1 : <a href="entrainement.html#td1-ex3a">additions</a>, <a href="entrainement.html#td1-ex3b">soustractions</a>, <a href="entrainement.html#td1-ex3c">multiplications</a>, <a href="entrainement.html#td1-ex3d">divisions</a>, <a href="entrainement.html#td1-ex3e">additions hexadécimales</a></li>
+          <li><a href="entrainement.html#gen-ops">Générateur d’opérations posées</a></li></ul></div>
+      <div class="card"><span class="k">Chapitre 1 · § III-IV · TD 2</span><h4>Mots et entiers sur <var>n</var> bits</h4>
+        <p>Nouveau : le TD 2. Complément à un et à deux, plages, encoder et décoder, dépassements signé et non signé, extension de signe.</p>
+        <ul><li><a href="cours-3-entiers.html">Fiche 3, les entiers</a> (parties 1 à 7)</li>
+          <li>TD 2 : <a href="entrainement.html#td2-ex1">plages</a>, <a href="entrainement.html#td2-ex2">encoder des négatifs</a>, <a href="entrainement.html#td2-ex3">signe et dépassement</a>, <a href="entrainement.html#td2-ex4">tableau 8 bits</a></li>
+          <li><a href="entrainement.html#gen-n8">Générateur de lignes du tableau 8 bits</a></li></ul></div>
+      <div class="card"><span class="k">Chapitre 1 · § V</span><h4>BCD, Gray, ASCII</h4>
+        <p>Jamais demandés dans les 10 sujets d’examen, mais ils font partie du chapitre 1, donc du test. Le cours n’en donne que les définitions et un tableau : quelques questions de QCM suffisent.</p>
+        <ul><li><a href="cours-3-entiers.html#s8">Fiche 3, partie 8</a></li></ul></div>
+      <div class="card miss"><span class="k">Chapitre 2 · TD 3 ex. 1-4</span><h4>Virgule flottante, IEEE 754</h4>
+        <p>Ni le chapitre 2 ni le TD 3 ne nous ont été fournis : cette partie du site suit la norme IEEE 754 et les corrigés des sujets 2023 à 2025, les seuls qui en contiennent.</p>
+        <ul><li><a href="cours-4-flottants.html">Fiche 4, les flottants</a></li>
+          <li>Sujets : <a href="entrainement.html#p2025-ex4">2025</a>, <a href="entrainement.html#p2024-ex4">2024</a>, <a href="entrainement.html#p2023-ex4">2023</a></li>
+          <li>Générateurs : <a href="entrainement.html#gen-enc">encoder</a>, <a href="entrainement.html#gen-dec">décoder</a></li></ul></div>
+      <div class="card qcm"><span class="k">QCM · tout le programme</span><h4>Les questions de cours</h4>
+        <p id="nQ">Toutes les questions d’archi portent sur les chapitres 1 et 2 : le QCM entier est le programme du test.</p>
+        <div class="row"><a class="btn primary" href="../qcm/index.html#archi">S’entraîner</a><a class="btn" href="../qcm/index.html#archi-examen">Examen blanc chronométré</a></div></div>
+    </div>
+    <div class="note why"><span class="tag">Ce qu’on ne sait pas</span><p>La forme des questions du test (choix multiples, réponses à taper) n’est pas publiée. En 30 min pour tout le programme, la vitesse compte : la table de 0 à 15, les puissances de 2 et le découpage d’un mot IEEE doivent venir sans réfléchir.</p></div>
+  </section>
+
+  <section id="parcours" aria-labelledby="t-path">
+    <div class="sec-title"><div><div class="eyebrow">Parcours</div><h2 id="t-path">Les quatre fiches de cours</h2></div><p>Chaque partie se termine par quelques questions. Marque-la comme comprise : ta progression s’affiche ici.</p></div>
+    <div class="path" id="path"></div>
+    <div class="tools">
+      <a class="stop" href="methodes.html"><div class="k">Méthodes</div><h3>Une méthode par exercice</h3><p>Conversions, opérations posées, tableau 8 bits, IEEE 754 : les étapes, un exemple calculé, ce qu’on écrit sur la copie.</p></a>
+      <a class="stop" href="entrainement.html"><div class="k">Entraînement</div><h3>Sujets, TD, générateurs</h3><p id="nEx">Les exercices des sujets et des TD, corrigés pas à pas, et des générateurs d’exercices sans fin.</p></a>
+      <a class="stop" href="annales.html"><div class="k">Annales</div><h3>Les 10 sujets</h3><p>De 2016 à 2025, exercice par exercice : ce qui est encore au programme, les PDF, l’évolution du format.</p></a>
+      <a class="stop" href="fiche.html"><div class="k">Fiche</div><h3>Tout sur une page</h3><p>Tables, méthodes, plages, complément à deux, IEEE 754 et pièges, imprimable en A4.</p></a>
+      <a class="stop" href="../qcm/index.html#archi"><div class="k">QCM</div><h3>Questions de cours</h3><p id="nQ2">Répétition espacée : les questions ratées reviennent.</p></a>
+    </div>
+  </section>
+
+  <section id="evaluation" aria-labelledby="t-eval">
+    <div class="sec-title"><div><div class="eyebrow">Évaluation</div><h2 id="t-eval">Comment l’archi est notée</h2></div><p>D’après le Moodle de la matière et l’examen de l’an dernier, fourni avec son corrigé.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">10 %</span><h4>Les tests Moodle</h4><p>En ligne, 30 min, une seule tentative. Test 1 : chapitre 1 et TD 1 (passé). Test 2 : du 23 au 25 octobre, sur les chapitres 1 et 2, les TD 1 et 2 et le TD 3 (exercices 1 à 4).</p></div>
+      <div class="card ex"><span class="w">90 %</span><h4>L’examen</h4><p>Sur papier, réponses sur le sujet. <b>1 h</b> en 2025-2026 (examen B1, quatre exercices sur 20 points) ; 1 h 30 les années précédentes. La date de cette année n’est pas publiée : saisis-la dès que tu la connais.</p>
+        <div class="cd"><label for="exDate">Ta date</label><input type="date" id="exDate" aria-label="Date de ton examen d’archi"><span class="cd-n" id="cdN" aria-live="polite"></span><span class="cd-t" id="cdT">Saisis le jour exact pour le compte à rebours.</span></div></div>
+    </div>
+    <h3>Les consignes des sujets</h3>
+    <ul class="rules">
+      <li><q>Répondre exclusivement sur le sujet.</q><span class="n">10 sujets sur 10</span><span class="d">Les réponses vont dans les cases du sujet. Un cadre libre en fin de sujet sert si tu manques de place.</span></li>
+      <li><q>Ne pas détailler les calculs sauf si cela est explicitement demandé.</q><span class="n">2023, 2024, 2025</span><span class="d">Conversions, tableau sur 8 bits, IEEE 754 : seul le résultat compte (« Le résultat seul est attendu (pas de détail) »). Fais tes calculs au brouillon.</span></li>
+      <li><q>Le détail des calculs devra apparaître.</q><span class="n">9 sujets sur 10</span><span class="d">La seule exception : les opérations posées. On pose chaque opération dans la grille, chiffre par chiffre ; pour la division, les restes partiels ; pour la multiplication, un produit partiel par 1 du multiplicateur. Voir les <a href="methodes.html#soustraction">méthodes 4 à 7</a>.</span></li>
+      <li><q>Si un dépassement apparaît, écrire « ERREUR » à la place de la valeur décimale.</q><span class="n">tableau 8 bits</span><span class="d">Le résultat binaire s’écrit toujours ; ERREUR ne va que dans la colonne décimale concernée (<a href="methodes.html#huit-bits">méthode 8</a>).</span></li>
+      <li><q>Ne pas écrire à l’encre rouge ni au crayon à papier.</q><span class="n">2023, 2024, 2025</span><span class="d">Au stylo, comme pour les autres matières.</span></li>
+    </ul>
+  </section>
+
+  <section id="tombe" aria-labelledby="t-falls">
+    <div class="sec-title"><div><div class="eyebrow">Annales</div><h2 id="t-falls">Ce qui tombe</h2></div><p>D’après les 10 sujets retrouvés, de 2016-2017 à l’examen B1 de 2025-2026. Toutes les réponses officielles ont été recalculées : aucune n’est fausse.</p></div>
+    <div class="grid2">
+      <div class="note exam"><span class="tag">Format fixe depuis 2023</span><p>Quatre exercices, dans cet ordre, les trois dernières années. Avant 2023, les sujets mêlaient puissances de deux, préfixes binaires, base 8 et plans mémoire, hors programme cette année.</p>
+        <div class="tbl"><table class="fmt">
+          <thead><tr><th>Exercice</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+          <tbody>
+            <tr><td>1. Conversions entre les bases 2, 10 et 16</td><td class="mono">5 pts</td><td class="mono">5 pts</td><td class="mono">4 pts</td></tr>
+            <tr><td>2. Opérations posées</td><td class="mono">4 pts</td><td class="mono">4 pts</td><td class="mono">6 pts</td></tr>
+            <tr><td>3. Opérations sur 8 bits</td><td class="mono">5 pts</td><td class="mono">5 pts</td><td class="mono">6 pts</td></tr>
+            <tr><td>4. IEEE 754</td><td class="mono">6 pts</td><td class="mono">6 pts</td><td class="mono">4 pts</td></tr>
+          </tbody>
+        </table></div></div>
+      <div class="note keep"><span class="tag">« n chiffres après la virgule » : on tronque</span><p>Les multiplications successives s’arrêtent au nombre de chiffres demandé, sans arrondir. Les cinq fois où l’arrondi aurait donné autre chose, le corrigé a tronqué : <span data-eq="t"><span class="bn">141,3<sub>10</sub></span> → <span class="bn">8D,4C<sub>16</sub></span></span> en 2018, pas 8D,4D. Ce n’est pas la règle d’IEEE 754, qui arrondit au plus proche.</p></div>
+    </div>
+    <div class="tbl"><table class="freq">
+      <thead><tr><th>Type d’exercice</th><th>Sujets</th><th>Méthode</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Conversions entre les bases 2, 10 et 16, avec partie fractionnaire</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">10 / 10</span></td><td class="ref"><a href="methodes.html#vers-10">Méthodes 1 à 3</a></td></tr>
+        <tr class="sub"><th scope="row">dont binaire → hexadécimal à compléter à droite de la virgule</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">10 / 10</span></td><td class="ref"><a href="methodes.html#paquets">Méthode 3</a></td></tr>
+        <tr class="sub"><th scope="row">dont décimal → hexadécimal, « n chiffres après la virgule »</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:90%"></i></span><span class="n">9 / 10</span></td><td class="ref"><a href="methodes.html#depuis-10">Méthode 2</a></td></tr>
+        <tr class="sub"><th scope="row">dont décimal → binaire, « 5 chiffres après la virgule » (chaque sujet depuis 2023)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:30%"></i></span><span class="n">3 / 10</span></td><td class="ref"><a href="methodes.html#depuis-10">Méthode 2</a></td></tr>
+        <tr><th scope="row">Soustraction binaire posée</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:90%"></i></span><span class="n">9 / 10</span></td><td class="ref"><a href="methodes.html#soustraction">Méthode 4</a></td></tr>
+        <tr><th scope="row">Addition hexadécimale posée (à trois termes en 2024 et 2025)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:90%"></i></span><span class="n">9 / 10</span></td><td class="ref"><a href="methodes.html#addition">Méthode 5</a></td></tr>
+        <tr><th scope="row">Division binaire posée, toujours exacte</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:90%"></i></span><span class="n">9 / 10</span></td><td class="ref"><a href="methodes.html#division">Méthode 6</a></td></tr>
+        <tr><th scope="row">Multiplication binaire posée (chaque sujet depuis 2023)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:40%"></i></span><span class="n">4 / 10</span></td><td class="ref"><a href="methodes.html#multiplication">Méthode 7</a></td></tr>
+        <tr><th scope="row">Tableau sur 8 bits : résultat, non signé, signé, ERREUR</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:40%"></i></span><span class="n">4 / 10</span></td><td class="ref"><a href="methodes.html#huit-bits">Méthode 8</a></td></tr>
+        <tr><th scope="row">Plages et nombre de valeurs sur <var>n</var> bits</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:40%"></i></span><span class="n">4 / 10</span></td><td class="ref"><a href="cours-3-entiers.html#s4">Fiche 3</a></td></tr>
+        <tr><th scope="row">IEEE 754 : encoder en simple précision, décoder des mots double précision</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:30%"></i></span><span class="n">3 / 10</span></td><td class="ref"><a href="methodes.html#ieee-encoder">Méthodes 9 et 10</a></td></tr>
+        <tr class="zero"><th scope="row">Extension de signe, BCD, Gray, ASCII</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:0"></i></span><span class="n">0 / 10</span></td><td class="ref"><a href="cours-3-entiers.html#s7">Fiche 3</a></td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="note trap"><span class="tag">Jamais tombé</span><ul>
+        <li>Soustraction, multiplication ou division en hexadécimal ; addition binaire posée seule (elle ne sert que dans le tableau 8 bits).</li>
+        <li>Division avec un reste non nul ou des chiffres après la virgule (le TD 1 en a deux).</li>
+        <li>IEEE 754 : encoder en double précision, décoder un mot simple précision, un nombre négatif, un nombre qui demande d’arrondir.</li>
+      </ul></div>
+      <div class="note exam"><span class="tag">Le sujet blanc</span><p>L’<a href="annales.html#p2025">examen B1 de 2025-2026</a> (1 h, fourni sur le Moodle avec son corrigé) est le plus proche de ce qui t’attend. Fais-le en temps réel, sans calculatrice, puis corrige-toi avec l’<a href="entrainement.html#p2025-ex1">entraînement</a>.</p></div>
+    </div>
+    <p><a class="btn" href="annales.html">Les 10 sujets, exercice par exercice →</a></p>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../data/qcm/archi-annales.js"></script>
+<script src="../data/archi/exams.js"></script>
+<script src="../data/archi/ex-annales.js"></script>
+<script src="../data/archi/ex-td.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('archi'), EX = window.ARCHI_EX || [];
+  var DESC = ['Numération de position, bases 2 et 16, de 0 à 15 par cœur, vers et depuis la base 10, troncature, paquets de 4 bits.',
+    'Addition, soustraction avec emprunts, multiplication et division binaires, addition hexadécimale, vérifier un résultat.',
+    'Mots et octets, compléments à un et à deux, entiers non signés et signés, dépassements, extension de signe, BCD, Gray, ASCII.',
+    'Virgule flottante, simple et double précision, encoder un réel, décoder un mot en k × 2ⁿ, valeurs particulières.'];
+  var TAGS = [['chap. 1 § I · TD 1', 'hot', '10 sujets sur 10'], ['chap. 1 § II · TD 1', 'hot', '9 sujets sur 10'], ['chap. 1 § III-V · TD 2', 'hot', '10 sujets sur 10'], ['chap. 2 · TD 3', 'hot', '3 derniers sujets']];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('archi', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="nib" data-n="' + (i + 1) + '"></span>Fiche ' + (i + 1) + '</div><h3>' + c.title + '</h3><p>' + DESC[i] + '</p><div class="tg"><span>' + TAGS[i][0] + '</span><span class="' + TAGS[i][1] + '">' + TAGS[i][2] + '</span></div><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><p class="mono">' + done + ' / ' + c.sections + ' parties comprises</p></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'archi'; }), st = R.qcm.stats('archi', bank);
+    var np = EX.filter(function (e) { return e.kind === 'partiel'; }).length, ok = R.exo.stats('archi').ok;
+    if (bank.length) {
+      document.getElementById('nQ').textContent = bank.length + ' questions, toutes sur les chapitres 1 et 2 : le QCM entier est le programme du test. ' + (st.due ? st.due + ' à revoir aujourd’hui.' : '');
+      document.getElementById('nQ2').textContent = bank.length + ' questions, dont ' + st.due + ' à revoir aujourd’hui.';
+    }
+    if (EX.length) {
+      document.getElementById('nEx').textContent = np + ' exercices de sujets et ' + (EX.length - np) + ' des TD, corrigés pas à pas, et cinq générateurs. Réussis : ' + ok + ' / ' + EX.length + '.';
+      document.getElementById('nEx0').textContent = EX.length + ' corrigés';
+    }
+  }
+  /* test Moodle 2 : dates fixées par le Moodle (heure locale) */
+  var OPEN = new Date(2026, 9, 23, 8, 0, 0), CLOSE = new Date(2026, 9, 25, 23, 0, 0);
+  function paintTest() {
+    var now = new Date(), el = document.getElementById('t2St'), d = R.exams.daysLeft('2026-10-23');
+    if (now >= CLOSE) el.textContent = 'Terminé';
+    else if (now >= OPEN) el.textContent = 'Ouvert jusqu’à dimanche 23 h';
+    else if (d === 0) el.textContent = 'Ouvre aujourd’hui à 8 h';
+    else if (d === 1) el.textContent = 'Ouvre demain à 8 h';
+    else el.textContent = 'Ouvre dans ' + d + ' jours';
+  }
+  /* compte à rebours de l’examen : la date saisie est partagée avec l’accueil du site */
+  var inp = document.getElementById('exDate');
+  function paintDate() {
+    var iso = R.exams.get('archi'), d = R.exams.daysLeft(iso), n = document.getElementById('cdN'), t = document.getElementById('cdT');
+    inp.value = iso || '';
+    if (iso && d !== null && d >= 0) {
+      n.textContent = d === 0 ? 'Jour J' : 'J−' + d;
+      t.textContent = d === 0 ? 'C’est aujourd’hui.' : d === 1 ? 'L’examen est demain.' : 'Il reste ' + d + ' jours.';
+    } else { n.textContent = ''; t.textContent = iso ? 'Cette date est passée.' : 'Saisis le jour exact pour le compte à rebours.'; }
+  }
+  inp.addEventListener('change', function () { R.exams.set('archi', inp.value); });
+  paint(); paintTest(); paintDate();
+  R.store.on(function () { paint(); paintDate(); });
+})();
+</script>
+</body>
+</html>
