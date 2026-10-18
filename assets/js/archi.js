@@ -80,7 +80,148 @@
 (function () {
   'use strict';
   var R = window.REV, U = R.util, T = R.t, EN = R.lang === 'en';
-  /*@@I18N@@*/
+  R.i18n.add({
+    'base {b}': 'base {b}', 'Précédent': 'Previous', 'Suivant': 'Next', 'Tout afficher': 'Show all', 'Recommencer': 'Start again',
+    'étape {i} / {n}': 'step {i} / {n}', 'Étape {i} : ': 'Step {i}: ', 'Résultat : {r}.': 'Result: {r}.',
+    /* positions et poids */
+    'Positions et poids': 'Positions and weights',
+    'Clique sur un chiffre pour l’augmenter de 1 (flèches haut et bas au clavier).': 'Click a digit to add 1 to it (up and down arrow keys too).',
+    'position {k}, chiffre {c}': 'position {k}, digit {c}', 'position': 'position', 'poids': 'weight', 'chiffre': 'digit', 'reste': 'remainder',
+    /* divisions successives */
+    'Divisions successives': 'Successive divisions',
+    'Appuie sur « Suivant » : on divise {n} par {b}.': 'Press “Next”: {n} is divided by {b}.',
+    '{n} = {b} × {q} + {r} : le reste {r} est le chiffre de poids {p}.': '{n} = {b} × {q} + {r}: the remainder {r} is the digit of weight {p}.',
+    'En base {b}, {r} s’écrit {d}.': 'In base {b}, {r} is written {d}.',
+    'Le quotient vaut 0 : c’est la dernière division.': 'The quotient is 0: this is the last division.',
+    'On lit les restes de bas en haut : le dernier reste est le chiffre de gauche.': 'Read the remainders from bottom to top: the last remainder is the leftmost digit.',
+    /* multiplications successives */
+    'déjà vu': 'already seen', 'Multiplications successives': 'Successive multiplications',
+    'La partie fractionnaire est nulle : il n’y a rien à convertir.': 'The fractional part is 0: there is nothing to convert.',
+    'La partie fractionnaire est nulle : la conversion est exacte. On lit les chiffres de haut en bas.': 'The fractional part is 0: the conversion is exact. Read the digits from top to bottom.',
+    'La partie fractionnaire {x} est déjà apparue : les mêmes chiffres reviennent sans fin. Le développement en base {b} est infini (les chiffres soulignés se répètent).':
+      'The fractional part {x} has already appeared: the same digits come back endlessly. The base-{b} expansion is infinite (the overlined digits repeat).',
+    'On a les {n} chiffres demandés : on s’arrête là, sans arrondir. On lit les chiffres de haut en bas.': 'We have the {n} digits asked for: stop here, without rounding. Read the digits from top to bottom.',
+    'On s’arrête ici : le développement continue ({p}).': 'We stop here: the expansion goes on ({p}).',
+    'il est infini': 'it is infinite', 'il s’arrête après {n} chiffres': 'it ends after {n} digits', 'très long': 'very long',
+    'Appuie sur « Suivant » : on multiplie {x} par {b}.': 'Press “Next”: {x} is multiplied by {b}.',
+    '{x} × {b} = {p} : la partie entière {v} donne le chiffre de poids {w}, on garde {r} pour la ligne suivante.':
+      '{x} × {b} = {p}: the integer part {v} gives the digit of weight {w}, and {r} is kept for the next line.',
+    /* paquets */
+    'Un chiffre → {k} bits': 'One digit → {k} bits', 'Paquets de {k} bits': 'Groups of {k} bits',
+    'Chaque chiffre donne exactement {k} bits ; les zéros en tête de la partie entière et en fin de partie fractionnaire peuvent ensuite disparaître.':
+      'Each digit gives exactly {k} bits; the leading zeros of the integer part and the trailing zeros of the fractional part can then be dropped.',
+    'On part de la virgule : vers la gauche pour la partie entière, vers la droite pour la partie fractionnaire. Les zéros en pointillés complètent un paquet.':
+      'Start from the point: leftwards for the integer part, rightwards for the fractional part. The dashed zeros complete a group.',
+    /* convertisseur */
+    'Convertisseur': 'Converter', 'ton nombre, avec les étapes': 'your number, with the steps', 'Nombre': 'Number', 'de la base': 'from base',
+    'vers la base': 'to base', 'chiffres après la virgule': 'digits after the point', 'auto': 'auto',
+    'Tape un nombre (virgule ou point).': 'Type a number (point or comma).',
+    '« {c} » n’est pas un chiffre de la base {b} : ses chiffres vont de 0 à {m}.': '“{c}” is not a base-{b} digit: its digits go from 0 to {m}.',
+    'Écriture non reconnue : des chiffres, au plus une virgule ou un point.': 'Not recognised: digits, with at most one point or comma.',
+    '1. Vers la base 2': '1. To base 2', '2. De la base 2 vers la base {b}': '2. From base 2 to base {b}',
+    '1. Vers la base 10 : la somme des produits': '1. To base 10: the sum of products', 'La somme des produits': 'The sum of products',
+    'Partie entière : divisions successives': 'Integer part: successive divisions', 'Partie fractionnaire : multiplications successives': 'Fractional part: successive multiplications',
+    'Même base : rien à faire.': 'Same base: nothing to do.',
+    '{t} = 2<sup>{k}</sup> : des paquets de {k} bits, à partir de la virgule.': '{t} = 2<sup>{k}</sup>: groups of {k} bits, starting from the point.',
+    '{f} = 2<sup>{k}</sup> : chaque chiffre donne {k} bits.': '{f} = 2<sup>{k}</sup>: each digit gives {k} bits.',
+    '{f} et {t} sont deux puissances de 2 : on passe par la base 2.': '{f} and {t} are both powers of 2: go through base 2.',
+    '{n} chiffres après la virgule demandés : on s’arrête là, sans arrondir.': '{n} digits after the point asked for: stop there, without rounding.',
+    'Le développement est infini : les chiffres soulignés se répètent.': 'The expansion is infinite: the overlined digits repeat.',
+    'Vers la base 10 : la somme des produits, chiffre × poids.': 'To base 10: the sum of products, digit × weight.',
+    'Partie entière : divisions successives. Partie fractionnaire : multiplications successives.': 'Integer part: successive divisions. Fractional part: successive multiplications.',
+    'Ni {f} ni {t} ne sont des puissances d’une même base : on passe par la base 10.': '{f} and {t} are not powers of the same base: go through base 10.',
+    /* entraînement */
+    'Puissances de 2 · entraînement': 'Powers of two · drill', 'De 0 à 15 · entraînement': '0 to 15 · drill', 'Vérifier': 'Check', 'Autre': 'Another',
+    'Exact.': 'Right.', 'Non : la réponse est {r}.': 'No: the answer is {r}.', '({v} = {b})': '({v} = {b})', '{ok} / {n} justes': '{ok} / {n} right',
+    /* opérations posées */
+    'Addition posée': 'Addition', 'Soustraction posée': 'Subtraction', 'Multiplication posée': 'Multiplication', 'Division posée': 'Division',
+    'On additionne colonne par colonne, de droite à gauche, en reportant les retenues.': 'Add column by column, from right to left, carrying over.',
+    'Il reste la retenue {c} : on l’écrit.': 'The carry {c} is left: write it down.',
+    'on pose {d}, on retient {c}.': 'write down {d}, carry {c}.', 'on pose {d}.': 'write down {d}.',
+    'Le premier nombre est plus petit : on calcule l’inverse, et le résultat sera négatif.': 'The first number is smaller: compute the reverse subtraction; the result will be negative.',
+    'On soustrait colonne par colonne, de droite à gauche. Quand le chiffre du haut est trop petit, on emprunte 1 : il gagne {b} et le chiffre du bas de la colonne suivante gagne 1.':
+      'Subtract column by column, from right to left. When the top digit is too small, borrow 1: it gains {b}, and the bottom digit of the next column gains 1.',
+    'on emprunte 1': 'borrow 1',
+    'Un produit partiel par chiffre du multiplicateur, en partant de la droite, chacun décalé d’un rang de plus vers la gauche ; puis on les additionne.':
+      'One partial product for each digit of the multiplier, starting from the right, each one shifted one more place to the left; then add the partial products.',
+    'le chiffre de poids {p} du multiplicateur vaut 1 : on écrit le multiplicande, décalé de {j} rang(s).': 'the digit of weight {p} of the multiplier is 1: write down the multiplicand, shifted {j} place(s) left.',
+    'le chiffre de poids {p} du multiplicateur vaut 0 : une ligne de zéros, décalée de {j} rang(s).': 'the digit of weight {p} of the multiplier is 0: write down zeros, shifted {j} place(s) left.',
+    'chiffre de poids {p} : {a} × {d} = {r}, décalé de {j} rang(s).': 'digit of weight {p}: {a} × {d} = {r}, shifted {j} place(s) left.',
+    'on additionne les produits partiels, colonne par colonne avec les retenues.': 'add the partial products, column by column with the carries.',
+    'Division par zéro.': 'Division by zero.',
+    'Le dividende à gauche, le diviseur à droite, le quotient sous le diviseur.': 'The dividend on the left, the divisor on the right, the quotient under the divisor.',
+    'Le diviseur ({d}) est plus grand que le dividende : le quotient commence par 0.': 'The divisor ({d}) is greater than the dividend: the quotient starts with 0.',
+    'Le diviseur ({d}) va {q} fois dans {c}, le plus petit début du dividende qui le contient. On écrit {q} au quotient et on soustrait : {c} − {s} = {r}.':
+      'The divisor ({d}) goes into {c} (the shortest leading part of the dividend that contains it) {q} time(s). Record {q} in the quotient and subtract: {c} − {s} = {r}.',
+    'Tous les chiffres du dividende sont abaissés et le reste n’est pas nul : on écrit une virgule au quotient, puis on ajoute un 0 au reste.':
+      'All the digits of the dividend have been brought down and the remainder is not 0: record a point in the quotient, then bring down an extra 0 to the remainder.',
+    'On ajoute un 0 au reste : {c}.': 'Bring down an extra 0 to the remainder: {c}.',
+    'On abaisse le chiffre suivant ({x}) : {c}.': 'Bring down the next digit ({x}): {c}.',
+    'C’est plus petit que le diviseur : on écrit 0 au quotient.': 'It is smaller than the divisor: record a 0 in the quotient.',
+    'Le diviseur y va {q} fois : on écrit {q} au quotient et on soustrait : {c} − {s} = {r}.': 'The divisor goes into it {q} time(s): record {q} in the quotient and subtract: {c} − {s} = {r}.',
+    'Le reste est nul : {a} / {d} = {q}.': 'The final remainder is 0: {a} / {d} = {q}.',
+    'On a les chiffres demandés après la virgule : on s’arrête. {a} / {d} ≈ {q} (reste {r}).': 'We have the digits asked for after the point: stop. {a} / {d} ≈ {q} (remainder {r}).',
+    'Quotient {q}, reste {r}.': 'Quotient {q}, remainder {r}.',
+    /* registre */
+    'Registre de {n} bits': '{n}-bit register', 'Taille du mot': 'Word size', 'Complément à un': 'One’s complement', 'Complément à deux': 'Two’s complement',
+    'Effacer': 'Clear', 'bit {k}': 'bit {k}', 'binaire': 'binary', 'hexadécimal': 'hexadecimal', 'non signé': 'unsigned', 'signé': 'signed',
+    'Le bit {k} vaut {p} en non signé ; le bit de poids fort ({m}) compte pour {s} en signé.': 'Bit {k} is worth {p} unsigned; the most significant bit ({m}) counts for {s} signed.',
+    'Extension de signe : on recopie le bit de poids fort à gauche, la valeur signée ne change pas.': 'Sign extension: the sign bit is replicated to the left, the signed value does not change.',
+    'Les bits de gauche retirés étaient des copies du bit de signe : la valeur signée ne change pas.': 'The bits removed on the left were copies of the sign bit: the signed value does not change.',
+    'Des bits utiles sont perdus : la valeur change.': 'Useful bits are lost: the value changes.',
+    'mot': 'word', 'tous les bits inversés': 'each bit inverted', 'Complément à un : chaque 0 devient 1, chaque 1 devient 0.': 'One’s complement: each 0 becomes 1, each 1 becomes 0.',
+    '1. inverser (complément à un)': '1. invert each bit (one’s complement)', '2. ajouter 1': '2. add one', 'complément à deux': 'two’s complement',
+    '{a} est la plus petite valeur signée sur {n} bits : son opposé ne tient pas sur {n} bits, le complément à deux redonne le même mot.':
+      '{a} is the smallest {n}-bit signed value: its opposite does not fit in {n} bits, and the two’s complement gives the same word back.',
+    'En signé, {a} devient {b} : le complément à deux donne l’opposé.': 'Signed, {a} becomes {b}: the two’s complement gives the opposite.',
+    'La retenue qui sort à gauche est perdue.': 'The carry out on the left is left out.',
+    'Dépassement non signé : {a} {o} 1 ne tient pas sur {n} bits, le mot repart à {r}.': 'Unsigned overflow: {a} {o} 1 does not fit in {n} bits, the word cycles back to {r}.',
+    'Dépassement signé : {a} {o} 1 sort de l’intervalle, le mot vaut {r} en signé.': 'Signed overflow: {a} {o} 1 is out of range, the word is {r} signed.',
+    'la retenue sortante est perdue': 'the carry out is left out', 'Pas de dépassement.': 'No overflow.',
+    /* roue */
+    'La roue des mots de 4 bits': 'The wheel of 4-bit words', 'non signé dedans, signé dehors': 'unsigned inside, signed outside',
+    'Roue des 16 mots de 4 bits ; mot courant {w}': 'Wheel of the 16 four-bit words; current word {w}',
+    'dépassement non signé': 'unsigned overflow', 'dépassement signé': 'signed overflow',
+    'Non signé : {a} {o} = {r}': 'Unsigned: {a} {o} = {r}', 'hors de 0 … 15 : dépassement non signé, le mot vaut {v}.': 'out of 0 … 15: unsigned overflow, the word is {v}.',
+    'Signé : {a} {o} = {r}': 'Signed: {a} {o} = {r}', 'hors de −8 … 7 : dépassement signé, le mot vaut {v}.': 'out of −8 … 7: signed overflow, the word is {v}.',
+    'Le mot {w} : {u} en non signé, {s} en signé. Tourne la roue avec les boutons.': 'The word {w}: {u} unsigned, {s} signed. Turn the wheel with the buttons.',
+    /* IEEE 754 */
+    'Le mot en paquets de 4 bits, et son écriture hexadécimale': 'The word in groups of 4 bits, and its hexadecimal form',
+    'NaN (« pas un nombre ») : {e} rempli de 1 et {m} non nul.': 'NaN (“not a number”): {e} all ones and {m} not zero.',
+    'La valeur dépasse le plus grand nombre représentable : on obtient l’infini.': 'The value is above the largest representable number: the result is infinity.',
+    'L’infini : {e} rempli de 1, {m} nul.': 'Infinity: {e} all ones, {m} zero.', '{s} = {v} : le signe.': '{s} = {v}: the sign.',
+    'Zéro : {e} et {m} nuls ; seul {s} distingue +0 de −0.': 'Zero: {e} and {m} are zero; only {s} tells +0 from −0.',
+    'Signe : le nombre est {p}, donc {s} = {v}.': 'Sign: the number is {p}, so {s} = {v}.', 'négatif': 'negative', 'positif': 'positive',
+    'En binaire : {a} = {b}.': 'In binary: {a} = {b}.',
+    'Le nombre est trop petit, même pour un dénormalisé : il est arrondi à 0.': 'The number is too small, even for a denormalized number: it is rounded to 0.',
+    'Normalisé, il s’écrirait 1,… × {p} : l’exposant est plus petit que {m}. C’est un nombre dénormalisé : {e} = 0 et on écrit 0,{mm} × {q}.':
+      'Normalized, it would be 1.… × {p}: the exponent is less than {m}. It is a denormalized number: {e} = 0 and it is written 0.{mm} × {q}.',
+    'Normalisation : on déplace la virgule derrière le premier 1, de {k} rang(s) vers la {d} : {v}.': 'Normalization: move the point just after the first 1, {k} place(s) to the {d}: {v}.',
+    'gauche': 'left', 'droite': 'right',
+    'Exposant : {e} = {E} + {b} = {v} = {w}.': 'Exponent: {e} = {E} + {b} = {v} = {w}.',
+    'Mantisse : les chiffres après la virgule, complétés à droite par des 0 jusqu’à {n} bits : {m} = {v}.': 'Mantissa: the digits after the point, padded on the right with 0s up to {n} bits: {m} = {v}.',
+    'Il faudrait plus de {n} bits : on garde les {n} premiers, arrondis au plus proche (la valeur codée n’est pas exactement la valeur de départ).':
+      'More than {n} bits would be needed: the first {n} are kept, rounded to nearest (the encoded value is not exactly the starting value).',
+    'Il faudrait plus de {n} bits : on garde les {n} premiers, sans arrondir (la valeur codée n’est pas exactement la valeur de départ).':
+      'More than {n} bits would be needed: the first {n} are kept, without rounding (the encoded value is not exactly the starting value).',
+    'Le mot : {w}.': 'The word: {w}.', 'Valeur codée : {v}.': 'Encoded value: {v}.', 'Sur la copie (sans espace)': 'On the exam paper (no spaces)',
+    '{s} = {v} : le nombre est {p}.': '{s} = {v}: the number is {p}.',
+    '{e} = {w} (rempli de 1) et {m} = 0 : c’est l’infini.': '{e} = {w} (all ones) and {m} = 0: this is infinity.', 'Représentation : {r}.': 'Associated representation: {r}.',
+    '{e} = {w} (rempli de 1) et {m} ≠ 0 : ce n’est pas un nombre.': '{e} = {w} (all ones) and {m} ≠ 0: this is not a number.',
+    '{e} = 0 et {m} = 0 : c’est zéro.': '{e} = 0 and {m} = 0: this is zero.',
+    '{e} = 0 et {m} ≠ 0 : nombre dénormalisé. Pas de 1 avant la virgule, et l’exposant vaut {m0}.': '{e} = 0 and {m} ≠ 0: denormalized number. No 1 before the point, and the exponent is {m0}.',
+    '{m} = {v} : la valeur est 0,{t} × {p}.': '{m} = {v}: the value is 0.{t} × {p}.',
+    '{e} = {w} = {v} : l’exposant vaut {v} − {b} = {E}.': '{e} = {w} = {v}: the exponent is {v} − {b} = {E}.',
+    '{m} = {v} : la valeur est 1,{t} × {p}.': '{m} = {v}: the value is 1.{t} × {p}.',
+    'On déplace la virgule de {f} rang(s) vers la droite pour obtenir un entier (impair), et on retire {f} à l’exposant.': 'Move the point {f} place(s) to the right to get an (odd) integer, and take {f} off the exponent.',
+    'En décimal : {v}.': 'In decimal: {v}.', 'IEEE 754': 'IEEE 754', 'Sens': 'Direction', 'Nombre → mot': 'Number → word', 'Mot → nombre': 'Word → number',
+    'Format': 'Format', 'simple (32 bits)': 'single (32 bits)', 'double (64 bits)': 'double (64 bits)',
+    'simple précision · 1 + 8 + 23 bits, biais 127': 'single precision · 1 + 8 + 23 bits, bias 127', 'double précision · 1 + 11 + 52 bits, biais 1023': 'double precision · 1 + 11 + 52 bits, bias 1023',
+    'Nombre (décimal)': 'Number (decimal)', 'Mot en hexadécimal ({n} chiffres)': 'Hexadecimal word ({n} digits)',
+    'Tape un nombre décimal (virgule ou point), ou inf, −inf, nan.': 'Type a decimal number (point or comma), or inf, −inf, nan.',
+    'Tape un mot de {n} chiffres hexadécimaux (espaces permis) ou de {b} bits.': 'Type a word of {n} hexadecimal digits (spaces allowed) or of {b} bits.',
+    'Outil indisponible : {m}': 'Tool unavailable: {m}'
+  });
 
   /* ================================================================== 1. ARITHMÉTIQUE EXACTE
      Rien ne passe par les flottants de JavaScript : entiers BigInt et fractions exactes { n, d } (d > 0,
@@ -423,7 +564,7 @@
     var F = FMT[fmt] || FMT.single, round = (o && o.round) || 'nearest', s = 0, a, m = F.m, Emax = F.bias, Emin = 1 - F.bias;
     var allE = Math.pow(2, F.e) - 1;
     function out(cls, s, e, M, extra) {
-      var w = String(s) + bits(e, F.e) + bits(M, m), r = { fmt: F.name, s: s, e: e, M: big(M), cls: cls, bits: w, hex: hexOf(w), E: e - F.bias };
+      var w = String(s) + bits(e, F.e) + bits(M, m), r = { fmt: F.name, s: s, e: e, M: big(M), cls: cls, bits: w, hex: hexOf(w), E: e - F.bias, round: round };
       for (var k in extra) r[k] = extra[k];
       return r;
     }
@@ -555,7 +696,7 @@
       h += sepChar() + fr.replace(/<\/span><span class="per">/g, '');
     }
     if (p.more || o.more || (per && o.period !== false)) h += '…';
-    return '<span class="bn' + (o.cls ? ' ' + o.cls : '') + '">' + h + (o.sub === false ? '' : '<sub>' + base + '</sub>') + '</span>';
+    return '<span class="bn' + (n > 12 && !o.nbsp ? ' w' : '') + (o.cls ? ' ' + o.cls : '') + '">' + h + (o.sub === false ? '' : '<sub>' + base + '</sub>') + '</span>';
   }
   /* une fraction en décimal (texte) : 157,625 ; 0,333… ; 1/3 → '0,(3)…' souligné en HTML */
   function dec(v, o) { return fmt(v, 10, Object.assign({ max: 30 }, o || {})); }
@@ -689,7 +830,7 @@
         say.innerHTML = T('{n} = {b} × {q} + {r} : le reste {r} est le chiffre de poids {p}.', { n: esc(fmt(s.n, 10)), b: b, q: esc(fmt(s.q, 10)), r: esc(fmt(s.r, 10)), p: pw(b, rows - 1) }) +
           (Number(s.r) >= 10 ? ' ' + T('En base {b}, {r} s’écrit {d}.', { b: b, r: esc(fmt(s.r, 10)), d: s.d }) : '') +
           (s.q === Z ? ' ' + T('Le quotient vaut 0 : c’est la dernière division.') : '');
-      } else say.innerHTML = T('On lit les restes de bas en haut : le dernier reste est le chiffre de gauche.') + ' ' + num(n, 10) + ' = ' + num(res, b) + '.';
+      } else say.innerHTML = T('On lit les restes de bas en haut : le dernier reste est le chiffre de gauche.');
     }
     if (o.step === false) { paint(total); return { result: res }; }
     stepper(el, total, paint, o.start == null ? 0 : o.start);
@@ -720,6 +861,7 @@
     var b = +o.base || 2, v = o.x && o.x.n != null && o.x.d != null ? o.x : value(String(o.x), 10) || Q(0), f = q.sub(q.abs(v), Q(q.floor(q.abs(v))));
     var want = o.digits != null && o.digits !== '' ? +o.digits : null;
     var r = toBase(f, b, want != null ? { digits: want } : { max: o.max || 16 }), n = r.mults.length, total = n + 1;
+    if (want != null) r.period = null;
     var stopRep = want == null && r.period, stopMax = want == null && !r.exact && !r.period;
     el.classList.add('bench', 'mu');
     el.innerHTML = head(o.title || T('Multiplications successives'), esc(dec(f)) + ' → ' + baseLabel(b)) +
@@ -733,7 +875,7 @@
       wrap.classList.toggle('done', k >= total);
       var s = r.mults[rows - 1];
       if (k >= total) {
-        resEl.innerHTML = num(f, 10, { max: 30 }) + ' = ' + (stopRep ? num(fr, b, { period: r.period }) : num(fr, b, { more: !r.exact }));
+        resEl.innerHTML = num(f, 10, { max: 30 }) + ' = ' + (stopRep ? num(fr, b, { period: r.period }) : num(fr, b, { more: !r.exact && want == null }));
         if (!n) say.innerHTML = T('La partie fractionnaire est nulle : il n’y a rien à convertir.');
         else if (r.exact) say.innerHTML = T('La partie fractionnaire est nulle : la conversion est exacte. On lit les chiffres de haut en bas.');
         else if (stopRep) say.innerHTML = T('La partie fractionnaire {x} est déjà apparue : les mêmes chiffres reviennent sans fin. Le développement en base {b} est infini (les chiffres soulignés se répètent).', { x: esc(dec(r.mults[r.period.start].x)), b: b });
@@ -820,7 +962,7 @@
       var res = r.res, per = d === '' && res.period;
       var shown = { neg: res.neg, int: res.int, frac: res.frac };
       out.innerHTML = '<p class="cv-r">' + num(parts(r.src.int + (r.src.frac ? ',' + r.src.frac : ''), f), f) + ' = ' +
-        (r.src.neg ? MINUS : '') + num(shown, t, per ? { period: res.period } : { more: !res.exact }) + '</p>' +
+        (r.src.neg ? MINUS : '') + num(shown, t, per ? { period: res.period } : { more: !res.exact && d === '' }) + '</p>' +
         '<p class="muted cv-note">' + routeNote(r, d) + '</p>';
       var parts2 = [];
       var absq = q.abs(r.src.q), ip = q.floor(absq), fq = q.sub(absq, Q(ip));
@@ -1292,7 +1434,8 @@
         L(T('Exposant : {e} = {E} + {b} = {v} = {w}.', { e: eB, E: r.E < 0 ? MINUS + (-r.E) : r.E, b: F.bias, v: r.e, w: num(bits(r.e, F.e), 2) }));
       }
       L(T('Mantisse : les chiffres après la virgule, complétés à droite par des 0 jusqu’à {n} bits : {m} = {v}.', { n: F.m, m: mB, v: num(bits(r.M, F.m), 2, { sub: false }) }) +
-        (r.exact ? '' : ' ' + T('Il faudrait plus de {n} bits : on garde les {n} premiers, arrondis au plus proche (la valeur codée n’est pas exactement la valeur de départ).', { n: F.m })));
+        (r.exact ? '' : ' ' + (r.round === 'trunc' ? T('Il faudrait plus de {n} bits : on garde les {n} premiers, sans arrondir (la valeur codée n’est pas exactement la valeur de départ).', { n: F.m })
+          : T('Il faudrait plus de {n} bits : on garde les {n} premiers, arrondis au plus proche (la valeur codée n’est pas exactement la valeur de départ).', { n: F.m }))));
       L(T('Le mot : {w}.', { w: num(grp(r.hex, 4), 16, { group: 0 }) }) + (r.exact ? '' : ' ' + T('Valeur codée : {v}.', { v: valueHTML(r.value) })) +
         '<span class="ie-copy">' + T('Sur la copie (sans espace)') + ' : ' + sB + ' <span class="bn">' + r.s + '</span> · ' + eB + ' <span class="bn">' + bits(r.e, F.e) + '</span> · ' + mB + ' <span class="bn">' + bits(r.M, F.m) + '</span></span>');
       return li;

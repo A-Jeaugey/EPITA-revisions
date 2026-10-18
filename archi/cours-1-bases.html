@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bases de numération · Archi</title>
+<meta name="description" content="Archi, chapitre 1 : numération de position, bases 2, 16 et quelconque, les entiers de 0 à 15, conversion vers la base 10, divisions et multiplications successives, paquets de 4 bits, avec des outils pas à pas et un convertisseur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi · chapitre 1 : bases de numération">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — fiche 1 sur 4</span><span>Source : chapitre 1, § I (D. Bouchet) · TD 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="1"></span><a href="index.html">Archi</a> · Chapitre 1 sur 4</div>
+      <h1>Un nombre, <span class="w">plusieurs écritures.</span></h1>
+      <p class="lead"><span data-eq><span class="bn">157,625<sub>10</sub></span> = <span class="bn">1001 1101,101<sub>2</sub></span> = <span class="bn">9D,A<sub>16</sub></span></span> : trois écritures d’une même valeur. Ce chapitre t’apprend à passer de l’une à l’autre, dans les deux sens, avec ou sans virgule.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec outils pas à pas</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § I · TD 1</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un tableau de conversions dans les 10 sujets</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="place" data-opts='{"base":2,"value":"10011101,101","title":"Une écriture binaire et ses poids"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Clique sur les bits : la valeur se recalcule dans les trois bases.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 1 · Bases de numération</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>La numération de position</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>La base 2</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>La base 16, une base quelconque</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>De 0 à 15, par cœur</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>Vers la base 10</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>Partie entière : divisions</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Partie fractionnaire : multiplications</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>Paquets de 4, toutes les bases</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque numéro de partie est écrit en binaire sur 4 bits : la partie 5 est <span class="bn">0101</span>. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi</a><a href="cours-2-operations.html">Chapitre 2 : les opérations →</a><a href="../qcm/index.html#archi">QCM d’archi</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">La numération de position</a></li><li><a href="#s2">La base 2</a></li><li><a href="#s3">La base 16, une base quelconque</a></li><li><a href="#s4">De 0 à 15, par cœur</a></li>
+      <li><a href="#s5">Vers la base 10</a></li><li><a href="#s6">Partie entière : divisions</a></li><li><a href="#s7">Partie fractionnaire : multiplications</a></li><li><a href="#s8">Paquets de 4, toutes les bases</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Partie 1 <span class="ref">cours § I.1.1</span></div><h2>La numération de position</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>En base 10, on écrit avec dix <b>chiffres</b> : 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. Ce qui donne sa valeur à un chiffre, c’est sa <b>position</b> : dans 157,625, le 1 vaut cent et le 5 vaut cinquante. C’est la <b>notation positionnelle</b>.</p>
+          <p>Les positions se numérotent à partir de la virgule. La position 0 est celle <b>juste à gauche de la virgule</b> ; les positions augmentent vers la gauche et deviennent négatives à droite de la virgule. Chaque chiffre est multiplié par un <b>poids</b> : 10 à la puissance de sa position.</p>
+        </div>
+        <div data-archi="place" data-opts='{"base":10,"value":"157,625","title":"157,625 : positions et poids"}'></div>
+        <div class="prose"><p>Le nombre est la <b>somme des produits</b> chiffre × poids :</p></div>
+        <div class="calc" data-eq><div>157,625 = 1×10<sup>2</sup> + 5×10<sup>1</sup> + 7×10<sup>0</sup> + 6×10<sup>−1</sup> + 2×10<sup>−2</sup> + 5×10<sup>−3</sup></div><div>= 100 + 50 + 7 + 0,6 + 0,02 + 0,005</div></div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.1 — Les colonnes de part et d’autre de la virgule (cours, p. 3)</caption>
+          <thead><tr><th>Position</th><th>2</th><th>1</th><th>0</th><th>−1</th><th>−2</th><th>−3</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Poids</th><td>10<sup>2</sup></td><td>10<sup>1</sup></td><td>10<sup>0</sup></td><td>10<sup>−1</sup></td><td>10<sup>−2</sup></td><td>10<sup>−3</sup></td></tr>
+            <tr><th scope="row">Colonne</th><td>centaines</td><td>dizaines</td><td>unités</td><td>dixièmes</td><td>centièmes</td><td>millièmes</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <p>La virgule sépare la <b>partie entière</b> (157) de la <b>partie fractionnaire</b> (0,625). Toutes les bases de ce chapitre suivent la même règle : seul le nombre qu’on élève à la puissance change.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : la position 0</span>
+          <p>La position 0 n’est pas celle du premier chiffre écrit, c’est celle du chiffre <b>juste avant la virgule</b>. Dans 157,625, le 1 est en position 2 (poids 100) et le 6, juste après la virgule, en position −1 (poids 0,1).</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Partie 2 <span class="ref">cours § I.1.2</span></div><h2>La base 2 : des 0 et des 1</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un ordinateur ne mémorise et ne manipule que des 0 et des 1. La <b>base 2</b> (le système <b>binaire</b>) utilise donc deux chiffres : 0 et 1. Un chiffre binaire s’appelle un <b>bit</b>. La règle ne change pas : le poids d’un chiffre est 2 à la puissance de sa position.</p>
+          <p>Comme chaque chiffre vaut 0 ou 1, il suffit d’<b>additionner les poids des bits à 1</b> :</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">1001 1101,101<sub>2</sub></span> = 1×2<sup>7</sup> + 1×2<sup>4</sup> + 1×2<sup>3</sup> + 1×2<sup>2</sup> + 1×2<sup>0</sup> + 1×2<sup>−1</sup> + 1×2<sup>−3</sup></div><div>= 128 + 16 + 8 + 4 + 1 + 0,5 + 0,125</div><div class="r">= <span class="bn">157,625<sub>10</sub></span></div></div>
+        <div class="prose">
+          <p>Sur ce site, comme dans les sujets récents, les nombres binaires sont écrits <b>par paquets de 4 chiffres</b> à partir de la virgule : <span class="bn">1001 1101,101</span> plutôt que 10011101,101. C’est plus lisible, et c’est la clé de la partie 8.</p>
+          <p><b>L’indice de base.</b> Quand plusieurs bases se côtoient, on écrit la base en indice, à droite du nombre : <span data-eq><span class="bn">10<sub>2</sub></span> = <span class="bn">2<sub>10</sub></span></span>, alors que 10<sub>10</sub> vaut dix. Sans indice, le contexte doit dire clairement de quelle base il s’agit.</p>
+          <p>Pour calculer vite, il faut connaître <b>par cœur</b> les premières puissances de 2 (TD 1, exercice 1 : de 2<sup>0</sup> à 2<sup>16</sup> et de 2<sup>−1</sup> à 2<sup>−5</sup>).</p>
+        </div>
+        <div class="grid2">
+          <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+            <caption>Tableau 1.2 — Puissances de 2 positives</caption>
+            <thead><tr><th>Puissance</th><th class="n">Valeur</th><th>Puissance</th><th class="n">Valeur</th></tr></thead>
+            <tbody>
+              <tr><td>2<sup>0</sup></td><td>1</td><td>2<sup>9</sup></td><td>512</td></tr><tr><td>2<sup>1</sup></td><td>2</td><td>2<sup>10</sup></td><td>1 024</td></tr><tr><td>2<sup>2</sup></td><td>4</td><td>2<sup>11</sup></td><td>2 048</td></tr><tr><td>2<sup>3</sup></td><td>8</td><td>2<sup>12</sup></td><td>4 096</td></tr><tr><td>2<sup>4</sup></td><td>16</td><td>2<sup>13</sup></td><td>8 192</td></tr><tr><td>2<sup>5</sup></td><td>32</td><td>2<sup>14</sup></td><td>16 384</td></tr><tr><td>2<sup>6</sup></td><td>64</td><td>2<sup>15</sup></td><td>32 768</td></tr><tr><td>2<sup>7</sup></td><td>128</td><td>2<sup>16</sup></td><td>65 536</td></tr><tr><td>2<sup>8</sup></td><td>256</td><td></td><td></td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+              <caption>Tableau 1.3 — Puissances de 2 négatives</caption>
+              <thead><tr><th>Puissance</th><th class="n">Valeur</th></tr></thead>
+              <tbody>
+                <tr><td>2<sup>−1</sup></td><td>0,5</td></tr><tr><td>2<sup>−2</sup></td><td>0,25</td></tr><tr><td>2<sup>−3</sup></td><td>0,125</td></tr>
+                <tr><td>2<sup>−4</sup></td><td>0,0625</td></tr><tr><td>2<sup>−5</sup></td><td>0,03125</td></tr>
+              </tbody>
+            </table></div>
+            <div data-archi="drill" data-opts='{"kind":"pow2"}'></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Piège : après la virgule, le poids est divisé par 2</span>
+          <p>Le premier chiffre après la virgule pèse 2<sup>−1</sup> = 0,5 : <span data-eq><span class="bn">0,1<sub>2</sub></span> = <span class="bn">0,5<sub>10</sub></span></span>, pas 0,1. De même <span data-eq><span class="bn">0,01<sub>2</sub></span> = <span class="bn">0,25<sub>10</sub></span></span>. Chaque rang vers la droite divise le poids par 2, comme chaque rang vers la gauche le multiplie par 2.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Partie 3 <span class="ref">cours § I.1.3 et I.1.4</span></div><h2>La base 16, puis une base quelconque</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le binaire est indispensable à l’ordinateur, mais long à lire pour nous : 157,625 demande déjà 11 bits. La <b>base 16</b> (le système <b>hexadécimal</b>) est beaucoup plus compacte, et se convertit très facilement en binaire (partie 8).</p>
+          <p>Elle utilise seize chiffres : 0 à 9, puis les lettres <b>A, B, C, D, E, F</b> pour les valeurs 10, 11, 12, 13, 14 et 15. Les lettres s’écrivent en majuscules. Le poids d’un chiffre est 16 à la puissance de sa position :</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">9D,A<sub>16</sub></span> = 9×16<sup>1</sup> + 13×16<sup>0</sup> + 10×16<sup>−1</sup></div><div>= 144 + 13 + 0,625</div><div class="r">= <span class="bn">157,625<sub>10</sub></span></div></div>
+        <div data-archi="place" data-opts='{"base":16,"value":"9D,A","title":"9D,A : un chiffre hexadécimal par position"}'></div>
+        <div class="tbl"><table class="pw-t" data-eq-rows="pairs">
+          <caption>Tableau 1.4 — Puissances de 16 à connaître</caption>
+          <thead><tr><th>Puissance</th><th class="n">Valeur</th><th>Puissance</th><th class="n">Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>16<sup>0</sup></td><td>1</td><td>16<sup>3</sup></td><td>4 096</td></tr>
+            <tr><td>16<sup>1</sup></td><td>16</td><td>16<sup>4</sup></td><td>65 536</td></tr>
+            <tr><td>16<sup>2</sup></td><td>256</td><td>16<sup>−1</sup></td><td>0,0625</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Une base quelconque.</b> La base <var>b</var> peut être n’importe quel entier supérieur ou égal à 2. Elle utilise <var>b</var> chiffres, de 0 à <var>b</var> − 1 ; au-delà de 9, on prend les lettres à partir de A. Un nombre de partie entière <var>a</var><sub><var>n</var></sub> … <var>a</var><sub>0</sub> et de partie fractionnaire <var>a</var><sub>−1</sub> … <var>a</var><sub>−<var>m</var></sub> vaut :</p>
+        </div>
+        <div class="calc" style="font-size:1.05rem"><div><var>N</var> = <var>a</var><sub><var>n</var></sub>×<var>b</var><sup><var>n</var></sup> + … + <var>a</var><sub>1</sub>×<var>b</var><sup>1</sup> + <var>a</var><sub>0</sub>×<var>b</var><sup>0</sup> + <var>a</var><sub>−1</sub>×<var>b</var><sup>−1</sup> + … + <var>a</var><sub>−<var>m</var></sub>×<var>b</var><sup>−<var>m</var></sup></div></div>
+        <div class="note trap"><span class="tag">Piège : un chiffre est toujours plus petit que la base</span>
+          <ul>
+            <li>En base 8, les chiffres vont de 0 à 7 : « 8 » n’existe pas. En base 16, le plus grand chiffre est F (15), et 16 s’écrit <span data-eq><span class="bn">10<sub>16</sub></span> = <span class="bn">16<sub>10</sub></span></span>.</li>
+            <li>Après la virgule, les poids hexadécimaux sont 16<sup>−1</sup> = 0,0625 et 16<sup>−2</sup> = 0,00390625. Ainsi <span data-eq><span class="bn">28,28<sub>16</sub></span> = 40 + 2×16<sup>−1</sup> + 8×16<sup>−2</sup> = <span class="bn">40,15625<sub>10</sub></span></span>, et pas 40,28 (examen 2025-2026).</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Partie 4 <span class="ref">cours § I.2.1</span></div><h2>Les entiers de 0 à 15, par cœur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Toutes les conversions entre binaire et hexadécimal reposent sur ce tableau : le cours demande de le <b>connaître par cœur</b>. Quatre bits suffisent pour écrire 0 à 15, avec les poids 8, 4, 2 et 1. Exemple : <span data-eq><span class="bn">1101<sub>2</sub></span> = 8 + 4 + 1 = <span class="bn">13<sub>10</sub></span> = <span class="bn">D<sub>16</sub></span></span>.</p>
+        </div>
+        <div class="grid2">
+          <div class="tbl nib-t"><table data-eq-rows="b">
+            <caption>Tableau 1.5 — Décimal, hexadécimal, binaire</caption>
+            <thead><tr><th>Décimal</th><th>Hexa</th><th>Binaire</th></tr></thead>
+            <tbody>
+              <tr><td data-b="10">0</td><td data-b="16"><span class="bn">0</span></td><td data-b="2"><span class="bn">0000</span></td></tr>
+              <tr><td data-b="10">1</td><td data-b="16"><span class="bn">1</span></td><td data-b="2"><span class="bn">0001</span></td></tr>
+              <tr><td data-b="10">2</td><td data-b="16"><span class="bn">2</span></td><td data-b="2"><span class="bn">0010</span></td></tr>
+              <tr><td data-b="10">3</td><td data-b="16"><span class="bn">3</span></td><td data-b="2"><span class="bn">0011</span></td></tr>
+              <tr><td data-b="10">4</td><td data-b="16"><span class="bn">4</span></td><td data-b="2"><span class="bn">0100</span></td></tr>
+              <tr><td data-b="10">5</td><td data-b="16"><span class="bn">5</span></td><td data-b="2"><span class="bn">0101</span></td></tr>
+              <tr><td data-b="10">6</td><td data-b="16"><span class="bn">6</span></td><td data-b="2"><span class="bn">0110</span></td></tr>
+              <tr><td data-b="10">7</td><td data-b="16"><span class="bn">7</span></td><td data-b="2"><span class="bn">0111</span></td></tr>
+              <tr><td data-b="10">8</td><td data-b="16"><span class="bn">8</span></td><td data-b="2"><span class="bn">1000</span></td></tr>
+              <tr><td data-b="10">9</td><td data-b="16"><span class="bn">9</span></td><td data-b="2"><span class="bn">1001</span></td></tr>
+              <tr><td data-b="10">10</td><td data-b="16"><span class="bn">A</span></td><td data-b="2"><span class="bn">1010</span></td></tr>
+              <tr><td data-b="10">11</td><td data-b="16"><span class="bn">B</span></td><td data-b="2"><span class="bn">1011</span></td></tr>
+              <tr><td data-b="10">12</td><td data-b="16"><span class="bn">C</span></td><td data-b="2"><span class="bn">1100</span></td></tr>
+              <tr><td data-b="10">13</td><td data-b="16"><span class="bn">D</span></td><td data-b="2"><span class="bn">1101</span></td></tr>
+              <tr><td data-b="10">14</td><td data-b="16"><span class="bn">E</span></td><td data-b="2"><span class="bn">1110</span></td></tr>
+              <tr><td data-b="10">15</td><td data-b="16"><span class="bn">F</span></td><td data-b="2"><span class="bn">1111</span></td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack">
+            <div class="note keep"><span class="tag">Pour le retrouver vite</span>
+              <ul>
+                <li>De haut en bas, le bit de droite alterne 0, 1, 0, 1 ; le suivant 00, 11 ; puis 0000, 1111 ; le bit de gauche passe à 1 à partir de 8.</li>
+                <li>Un mot de 4 bits se lit avec les poids 8, 4, 2, 1 : <span data-eq><span class="bn">1011<sub>2</sub></span> = 8 + 2 + 1 = <span class="bn">11<sub>10</sub></span> = <span class="bn">B<sub>16</sub></span></span>.</li>
+                <li>Les lettres : A = 10, et chaque lettre suivante ajoute 1, jusqu’à F = 15.</li>
+              </ul>
+            </div>
+            <div data-archi="drill" data-opts='{"kind":"nibble"}'></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Piège : C et D, B et D</span>
+          <p>Les erreurs viennent surtout des lettres voisines : C = 12 = <span class="bn">1100</span> et D = 13 = <span class="bn">1101</span> ; B = <span class="bn">1011</span> et D = <span class="bn">1101</span> ont les mêmes bits dans un autre ordre. Relis toujours avec les poids 8, 4, 2, 1, de gauche à droite.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Partie 5 <span class="ref">cours § I.2.2</span></div><h2>D’une base quelconque vers la base 10</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La méthode est celle des parties 1 à 3 : écrire le nombre comme une <b>somme de produits</b> chiffre × poids, puis calculer. Elle marche aussi bien pour la partie entière que pour la partie fractionnaire. Les trois exemples du cours :</p>
+        </div>
+        <div class="calc" data-eq><div><span class="bn">4213,04<sub>5</sub></span> = 4×5<sup>3</sup> + 2×5<sup>2</sup> + 1×5<sup>1</sup> + 3×5<sup>0</sup> + 0×5<sup>−1</sup> + 4×5<sup>−2</sup></div><div>= 4×125 + 2×25 + 1×5 + 3×1 + 4×0,04</div><div>= 500 + 50 + 5 + 3 + 0,16</div><div class="r">= <span class="bn">558,16<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">1 0110 1001,0101<sub>2</sub></span> = 1×2<sup>8</sup> + 1×2<sup>6</sup> + 1×2<sup>5</sup> + 1×2<sup>3</sup> + 1×2<sup>0</sup> + 1×2<sup>−2</sup> + 1×2<sup>−4</sup></div><div>= 256 + 64 + 32 + 8 + 1 + 0,25 + 0,0625</div><div class="r">= <span class="bn">361,3125<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">B3C,A<sub>16</sub></span> = 11×16<sup>2</sup> + 3×16<sup>1</sup> + 12×16<sup>0</sup> + 10×16<sup>−1</sup></div><div>= 11×256 + 3×16 + 12 + 10×0,0625</div><div>= 2 816 + 48 + 12 + 0,625</div><div class="r">= <span class="bn">2 876,625<sub>10</sub></span></div></div>
+        <div class="note why"><span class="tag">Astuce : la partie fractionnaire d’un coup</span>
+          <p><var>k</var> chiffres après la virgule, c’est l’entier formé par ces chiffres divisé par <var>b</var><sup><var>k</var></sup>. Pratique sans calculatrice :</p>
+          <ul>
+            <li><span data-eq><span class="bn">0,1000 1<sub>2</sub></span> = 17 / 2<sup>5</sup> = 17 / 32 = <span class="bn">0,53125<sub>10</sub></span></span> (car <span data-eq><span class="bn">1 0001<sub>2</sub></span> = <span class="bn">17<sub>10</sub></span></span>) ;</li>
+            <li><span data-eq><span class="bn">0,28<sub>16</sub></span> = 40 / 16<sup>2</sup> = 40 / 256 = <span class="bn">0,15625<sub>10</sub></span></span> (car <span data-eq><span class="bn">28<sub>16</sub></span> = <span class="bn">40<sub>10</sub></span></span>).</li>
+          </ul>
+          <p>La réponse s’écrit ensuite en décimal : les sujets demandent « 0,25 et non pas ¼ ou 2<sup>−2</sup> ».</p>
+        </div>
+        <div class="prose"><p><b>À l’examen 2025-2026</b> (« le résultat seul est attendu ») :</p></div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.6 — Les lignes « vers la décimale » de l’examen B1 2025-2026, recalculées</caption>
+          <thead><tr><th>Nombre à convertir</th><th>Départ</th><th>Résultat</th></tr></thead>
+          <tbody>
+            <tr data-eq-row><td><span class="bn">1 0110 1101<sub>2</sub></span></td><td>binaire</td><td><span class="bn">365<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">1A5<sub>16</sub></span></td><td>hexadécimale</td><td><span class="bn">421<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">1101,1000 1<sub>2</sub></span></td><td>binaire</td><td><span class="bn">13,53125<sub>10</sub></span></td></tr>
+            <tr data-eq-row><td><span class="bn">28,28<sub>16</sub></span></td><td>hexadécimale</td><td><span class="bn">40,15625<sub>10</sub></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Piège : les poids qui changent de base</span>
+          <p>Le poids dépend de la base de départ, pas de 10 : le chiffre 4 de <span class="bn">4213,04<sub>5</sub></span> placé en position −2 vaut 4 × 5<sup>−2</sup> = 4 × 0,04 = 0,16, et non 0,04. Écris la ligne des poids avant de calculer.</p>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Partie 6 <span class="ref">cours § I.2.3</span></div><h2>De la base 10 vers une base : la partie entière</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour aller de la base 10 vers une base <var>b</var>, on convertit <b>séparément</b> la partie entière et la partie fractionnaire. Pour la partie entière, on fait des <b>divisions successives</b> :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Diviser la partie entière par <var>b</var>, puis le quotient obtenu par <var>b</var>, et ainsi de suite <b>jusqu’à un quotient égal à 0</b>.</p></div></li>
+          <li><div><p>Les <b>restes</b> forment le nombre en base <var>b</var>, lus <b>du dernier au premier</b> : le dernier reste est le chiffre le plus à gauche.</p></div></li>
+          <li><div><p>Si <var>b</var> est plus grand que 10, un reste de 10 à 15 s’écrit avec une lettre (A à F en base 16).</p></div></li>
+        </ol>
+        <div data-archi="divs" data-opts='{"n":"715","base":2}'></div>
+        <div class="prose"><p>Chaque reste est le chiffre d’une position : la première division donne le chiffre de poids 2<sup>0</sup>, la deuxième celui de poids 2<sup>1</sup>, et ainsi de suite. D’où la lecture de bas en haut : <span data-eq><span class="bn">715<sub>10</sub></span> = <span class="bn">10 1100 1011<sub>2</sub></span></span>. Même méthode en base 16, avec des restes qui deviennent des lettres :</p></div>
+        <div data-archi="divs" data-opts='{"n":"41695","base":16}'></div>
+        <div class="note why"><span class="tag">Pour vérifier en binaire</span>
+          <p>Retrouve les puissances de 2 qui composent le nombre, de la plus grande à la plus petite : <span data-eq>715 = 512 + 128 + 64 + 8 + 2 + 1 = 2<sup>9</sup> + 2<sup>7</sup> + 2<sup>6</sup> + 2<sup>3</sup> + 2<sup>1</sup> + 2<sup>0</sup></span>. Des 1 aux positions 9, 7, 6, 3, 1 et 0 : <span class="bn">10 1100 1011</span>. Ce n’est pas la méthode du cours, mais c’est un bon contrôle.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : l’ordre de lecture et le dernier quotient</span>
+          <ul>
+            <li>On lit les restes <b>de bas en haut</b>. Les lire de haut en bas donne <span class="bn">11 0100 1101</span> au lieu de <span class="bn">10 1100 1011</span> pour 715.</li>
+            <li>On s’arrête quand le <b>quotient</b> vaut 0, pas quand il vaut 1 : la dernière division (1 / 2 = 0, reste 1) donne le chiffre de gauche.</li>
+            <li>En base 16, un reste de 15 s’écrit F : <span data-eq><span class="bn">41 695<sub>10</sub></span> = <span class="bn">A2DF<sub>16</sub></span></span>, pas « 10 2 13 15 ». À l’examen 2025-2026 : <span data-eq><span class="bn">528<sub>10</sub></span> = <span class="bn">210<sub>16</sub></span></span>, un résultat qui « a l’air décimal » mais qui est juste.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Partie 7 <span class="ref">cours § I.2.3</span></div><h2>La partie fractionnaire : multiplications successives</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour la partie fractionnaire, on fait l’inverse : des <b>multiplications successives</b>.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Multiplier la partie fractionnaire par <var>b</var>. La <b>partie entière</b> du produit est le chiffre suivant.</p></div></li>
+          <li><div><p>Recommencer avec la <b>partie fractionnaire du produit seulement</b>, jusqu’à une partie fractionnaire nulle ou jusqu’au nombre de chiffres demandé.</p></div></li>
+          <li><div><p>Lire les chiffres <b>du premier au dernier</b> produit, de haut en bas : le premier chiffre obtenu est juste après la virgule.</p></div></li>
+        </ol>
+        <div data-archi="mults" data-opts='{"x":"0,40625","base":2}'></div>
+        <div class="prose"><p>Avec la partie 6 : <span data-eq><span class="bn">715,40625<sub>10</sub></span> = <span class="bn">10 1100 1011,0110 1<sub>2</sub></span></span>. En base 16, une partie entière de 12 donne le chiffre C :</p></div>
+        <div data-archi="mults" data-opts='{"x":"0,78125","base":16}'></div>
+        <div class="prose"><p>D’où <span data-eq><span class="bn">41 695,78125<sub>10</sub></span> = <span class="bn">A2DF,C8<sub>16</sub></span></span>.</p></div>
+        <div class="prose">
+          <p><b>Un développement qui ne s’arrête jamais.</b> Une partie fractionnaire nulle n’arrive pas toujours. Avec 0,1, la partie fractionnaire 0,2 obtenue à la première multiplication revient à la cinquième : à partir de là, les mêmes chiffres se répètent sans fin.</p>
+        </div>
+        <div data-archi="mults" data-opts='{"x":"0,1","base":2}'></div>
+        <div class="note why"><span class="tag">Pourquoi 0,1 ne s’arrête pas</span>
+          <p>Le développement en base 2 est fini seulement quand la partie fractionnaire s’écrit <var>k</var> / 2<sup><var>n</var></sup> : <span data-eq>0,40625 = 13 / 32</span> s’arrête au bout de 5 chiffres. Or 0,1 = 1 / 10, et le facteur 5 du dénominateur ne disparaît jamais en multipliant par 2. Un ordinateur ne peut donc pas stocker 0,1 exactement en binaire : c’est l’objet du chapitre 4.</p>
+        </div>
+        <div class="prose">
+          <p><b>Le nombre de chiffres demandé.</b> Quand l’énoncé fixe le nombre de chiffres après la virgule, on fait exactement ce nombre de multiplications et on garde les chiffres obtenus, <b>sans arrondir</b>. Examen 2025-2026 : <span data-eq="t"><span class="bn">40,35<sub>10</sub></span> → <span class="bn">10 1000,0101 1<sub>2</sub></span></span> (5 chiffres) et <span data-eq="t"><span class="bn">22,84<sub>10</sub></span> → <span class="bn">16,D7<sub>16</sub></span></span> (2 chiffres).</p>
+        </div>
+        <div data-archi="mults" data-opts='{"x":"0,35","base":2,"digits":5,"title":"40,35 : 5 chiffres après la virgule"}'></div>
+        <div class="note trap"><span class="tag">Piège : arrondir, ou multiplier tout le produit</span>
+          <ul>
+            <li><b>On tronque, on n’arrondit pas.</b> Corrigé de 2018 : <span data-eq="t"><span class="bn">141,3<sub>10</sub></span> → <span class="bn">8D,4C<sub>16</sub></span></span> avec 2 chiffres, alors que le chiffre suivant (encore C, donc 12 ≥ 8) ferait arrondir à 8D,4D. Dans les cinq lignes de corrigés où arrondir et tronquer donnent des résultats différents, le corrigé tronque.</li>
+            <li>On ne multiplie que la partie fractionnaire : <span data-eq>0,42 × 16 = 6,72</span> donne le chiffre 6, puis on continue avec <span data-eq>0,72 × 16 = 11,52</span> (chiffre B), et pas avec 6,72 × 16.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Partie 8 <span class="ref">cours § I.2.4 et I.2.5</span></div><h2>Base 2 et base 16 par paquets de 4, puis toutes les bases</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Comme 16 = 2<sup>4</sup>, chaque chiffre hexadécimal correspond à exactement <b>4 bits</b> (le tableau de la partie 4). Pour passer du binaire à l’hexadécimal, on découpe le nombre en <b>paquets de 4 bits à partir de la virgule</b> : vers la gauche pour la partie entière, vers la droite pour la partie fractionnaire. On complète le dernier paquet par des zéros : <b>à gauche</b> de la partie entière, <b>à droite</b> de la partie fractionnaire.</p>
+        </div>
+        <div data-archi="groups" data-opts='{"value":"10010110110011111,11100101001","from":2,"to":16,"title":"Exemple du cours"}'></div>
+        <div class="prose"><p>Ici <span data-eq><span class="bn w">1 0010 1101 1001 1111,1110 0101 001<sub>2</sub></span> = <span class="bn">12D9F,E52<sub>16</sub></span></span> : le dernier paquet <span class="bn">001</span> devient <span class="bn">0010</span>, donc 2. Dans l’autre sens, chaque chiffre hexadécimal donne ses 4 bits, zéros compris :</p></div>
+        <div data-archi="groups" data-opts='{"value":"DC,81","from":16,"to":2,"title":"Examen 2023 : DC,81 vers la base 2"}'></div>
+        <div class="prose">
+          <p>Même idée pour la base 8 = 2<sup>3</sup>, avec des paquets de <b>3</b> bits : <span data-eq><span class="bn">4270,634<sub>8</sub></span> = <span class="bn">1000 1011 1000,1100 111<sub>2</sub></span></span> (100 010 111 000,110 011 100 avant de retirer le zéro de fin).</p>
+          <p><b>D’une base quelconque vers une base quelconque.</b> Si les deux bases sont des puissances d’un même entier, on passe par cet entier ; sinon, on passe par la base 10.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Puissances de 2 : par la base 2</span>
+            <p><span data-eq><span class="bn">3D7,5<sub>16</sub></span> = <span class="bn">0011 1101 0111,0101<sub>2</sub></span> = <span class="bn">1727,24<sub>8</sub></span></span></p>
+            <p class="muted">Paquets de 4 pour lire le binaire, puis paquets de 3 pour l’écrire en base 8 : 001 111 010 111,010 100.</p></div>
+          <div class="card"><span class="k">Sinon : par la base 10</span>
+            <p><span data-eq><span class="bn">23<sub>5</sub></span> = 2×5 + 3 = <span class="bn">13<sub>10</sub></span> = <span class="bn">15<sub>8</sub></span></span></p>
+            <p class="muted">Somme des produits vers la base 10 (partie 5), puis divisions successives par 8 (partie 6).</p></div>
+        </div>
+        <div class="prose"><p><b>Convertisseur.</b> Tape ton propre nombre : l’outil choisit la méthode du cours et montre les étapes (tableaux de divisions et de multiplications, paquets, somme des produits).</p></div>
+        <div data-archi="converter" data-opts='{"value":"22,84","from":10,"to":16,"digits":"2"}'></div>
+        <div class="note trap"><span class="tag">Piège : compléter du bon côté</span>
+          <p>Examen 2025-2026 : <span data-eq><span class="bn">1011 1011,1011 01<sub>2</sub></span> = <span class="bn">BB,B4<sub>16</sub></span></span>. Le dernier paquet <span class="bn">01</span> se complète <b>à droite</b> : <span class="bn">0100</span> = 4. Le compléter à gauche (<span class="bn">0001</span> = 1) donne BB,B1 ; grouper la partie fractionnaire en partant de la droite donne BB,2D. Les deux sont faux.</p>
+          <p>Dans l’autre sens, garde les zéros à l’intérieur : <span data-eq><span class="bn">DC,81<sub>16</sub></span> = <span class="bn">1101 1100,1000 0001<sub>2</sub></span></span>, pas 1101 1100,11.</p>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Les <b>10 sujets</b> connus (2016 à 2025) ont tous un tableau de conversions : 8 à 10 lignes, <b>4 ou 5 points sur 20</b>, « le résultat seul est attendu ». Depuis 2023, c’est l’exercice 1.</li>
+            <li>Depuis 2023, seulement les bases 2, 10 et 16. Chaque fois : binaire → décimal et hexadécimal → décimal avec une virgule, décimal → binaire avec <b>5 chiffres après la virgule</b>, décimal → hexadécimal avec 2 à 4 chiffres, binaire → hexadécimal avec une virgule.</li>
+            <li>Binaire → hexadécimal avec une partie fractionnaire : <b>10 sujets sur 10</b>, et dans les 10 il faut compléter le dernier paquet à droite.</li>
+            <li>Les autres bases (3, 4, 5, 7, 8, 9, 13) sont tombées dans les 7 sujets de 2016 à 2022, plus jamais depuis : elles ne sont pas non plus dans le TD 1 de cette année. La méthode reste la même.</li>
+            <li>Le test Moodle 2 (du 23 au 25 octobre 2026) porte sur les chapitres 1 et 2, les TD 1 et 2 et les exercices 1 à 4 du TD 3.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-1-bases.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="archi:bases:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais écrire un nombre dans n’importe quelle base. Le chapitre 2, <a href="cours-2-operations.html">les opérations</a>, pose les additions, soustractions, multiplications et divisions directement en base 2 et en base 16.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../assets/js/archi.js"></script>
+</body>
+</html>
