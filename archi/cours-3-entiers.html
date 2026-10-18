@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entiers signés et non signés · Archi</title>
+<meta name="description" content="Archi, chapitre 3 : bits, mots et octets, compléments à un et à deux, entiers non signés et signés sur n bits, plages de valeurs, dépassements, extension de signe, codes BCD, Gray et ASCII, avec un registre cliquable, la roue des mots de 4 bits et le tableau sur 8 bits des sujets pas à pas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* partie 1 : un mot de 16 bits et ses numéros de bits */
+.w16{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:.8rem .6rem .6rem}
+.w16-t{border-collapse:collapse;margin:0 auto;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.w16-t td{text-align:center;padding:0 .1em;min-width:1.3em}
+.w16-t .num td{font-size:.66rem;color:var(--muted)}
+.w16-t .bit td{font-size:1.2rem;font-weight:600;line-height:1.6}
+.w16-t td.nb{padding-left:.65em}
+.w16-t .lab td{font-size:.74rem;font-weight:700;color:var(--vi);letter-spacing:.04em;padding-top:.1rem}
+.w16-t .lab td.r{text-align:right}
+.w16-t .lab td.l{text-align:left}
+.w16-t .bit td.msb{color:var(--vi)}
+@media (max-width:520px){.w16-t td{min-width:1.05em}.w16-t .bit td{font-size:.98rem}.w16-t td.nb{padding-left:.4em}}
+/* partie 2 : la méthode rapide du complément à deux */
+.qm{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:.8rem .6rem .7rem}
+.qm-t{border-collapse:collapse;margin:0 auto;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.qm-t td,.qm-t th{text-align:center;padding:.05em .25em;min-width:1.35em}
+.qm-t th{font-family:var(--font-mono);font-size:.68rem;font-weight:500;color:var(--muted);text-align:right;padding-right:.7em;white-space:nowrap}
+.qm-t .bit td{font-size:1.2rem;font-weight:600}
+.qm-t td.inv{color:var(--cu)}
+.qm-t td.keep{background:var(--accent-soft);color:var(--accent)}
+.qm-t .first td{font-size:.68rem;color:var(--accent);font-weight:700;line-height:1.2}
+.qm-t .br td{font-size:.72rem;padding-top:.35rem}
+.qm-t .br td.inv{border-top:2px solid var(--cu)}
+.qm-t .br td.keep{border-top:2px solid var(--accent);background:none}
+@media (max-width:520px){.qm-t .bit td{font-size:1rem}.qm-t td,.qm-t th{min-width:1.1em;padding:.05em .15em}}
+/* tableaux : lignes de dépassement, axes du code Gray */
+.tbl tr.yes td{background:var(--bad-soft)}
+.tbl td.yes,.tbl .err{color:var(--bad);font-weight:700}
+.tbl .neg{color:var(--vi)}
+.gray-t td,.gray-t th{text-align:center}
+.gray-t tr.ax1 td{border-bottom:2px dashed var(--accent)}
+.gray-t tr.ax2 td{border-bottom:2px dashed var(--cu)}
+.gray-t tr.ax3 td{border-bottom:2px dashed var(--vi)}
+.gray-t td.ax{font-family:var(--font-body);font-size:.78rem;text-align:left;white-space:nowrap}
+.gray-t tr.ax1 td.ax{color:var(--accent)} .gray-t tr.ax2 td.ax{color:var(--cu)} .gray-t tr.ax3 td.ax{color:var(--vi)}
+.bcd{display:grid;grid-template-columns:auto repeat(4,minmax(0,max-content));gap:.2rem 1.1rem;justify-content:center;align-items:baseline;font-family:var(--font-mono);background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:.8rem 1rem;overflow-x:auto}
+.bcd span{text-align:center}
+.bcd .h{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:right}
+.bcd .d{font-size:1.25rem;font-weight:700}
+.bcd .w{font-size:1.05rem;color:var(--accent);font-weight:600}
+/* partie 6 : le banc des opérations sur 8 bits */
+.b8-form{display:grid;grid-template-columns:minmax(0,1fr) 5.4rem minmax(0,1fr);gap:10px;align-items:end}
+.b8-form .b8-pick{grid-column:1/-1}
+.b8-t td.o{font-size:.7em;color:var(--cu);font-weight:700;height:1.3em;vertical-align:bottom}
+.b8-t td.out{color:var(--cu);font-weight:700}
+.b8-t td.out.x{text-decoration:line-through;text-decoration-thickness:2px}
+.b8-t td.nb{padding-left:.45em}
+.b8-t th.lb{font-family:var(--font-body);font-size:.8rem;font-weight:500;color:var(--muted);text-align:left;padding-left:.8em;white-space:nowrap;width:auto}
+.b8-t th.lb b{color:var(--ink)} .b8-t th.lb b.err{color:var(--bad)}
+.b8-t td.sg{box-shadow:inset 0 -3px 0 var(--vi)}
+.b8-steps>li.later{display:none}
+.b8-steps>li.now{border-color:var(--accent)}
+.b8-ans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;background:var(--line);border:1px solid var(--line)}
+.b8-ans>div{background:var(--surface);padding:.45rem .6rem;min-width:0}
+.b8-ans dt{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.b8-ans dd{margin:0;font-family:var(--font-mono);font-size:1.02rem;font-weight:700;overflow-wrap:anywhere}
+.b8-ans dd.err{color:var(--bad)}
+.b8-ans[hidden]{display:none}
+@media (max-width:520px){.b8-form{grid-template-columns:minmax(0,1fr) 4.4rem minmax(0,1fr);gap:8px}.b8-ans{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-resume="Archi · chapitre 3 : entiers signés et non signés">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — fiche 3 sur 4</span><span>Source : chapitre 1, § III à V (D. Bouchet) · TD 2</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="3"></span><a href="index.html">Archi</a> · Chapitre 3 sur 4</div>
+      <h1>Un mot, <span class="w">deux lectures.</span></h1>
+      <p class="lead">Pour un entier non signé, <span data-eq><span class="bn">1111 1111<sub>2</sub></span> = <span class="bn">FF<sub>16</sub></span> = 255</span>. Pour un entier signé, le même octet vaut <span data-eq="s"><span class="bn">1111 1111<sub>2</sub></span> = −1</span>. Ce chapitre t’apprend à encoder et à décoder les entiers sur <var>n</var> bits, et à repérer les dépassements dans les deux lectures.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec outils pas à pas</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § III à V · TD 2</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un tableau d’opérations sur 8 bits dans 4 sujets sur 10</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-archi="register" data-opts='{"n":8,"value":"11111111","sizes":[4,8,16]}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Clique sur les bits : le mot se lit en binaire, en hexadécimal, en non signé et en signé. Essaie aussi les compléments, + 1 et − 1, et les tailles 4, 8 et 16 bits.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 3 · Entiers signés et non signés</div>
+    <ol>
+      <li><a href="#s1"><span class="nib" data-n="1"></span><span>Bits, mots et octets</span></a></li>
+      <li><a href="#s2"><span class="nib" data-n="2"></span><span>Compléments à un et à deux</span></a></li>
+      <li><a href="#s3"><span class="nib" data-n="3"></span><span>Entiers non signés</span></a></li>
+      <li><a href="#s4"><span class="nib" data-n="4"></span><span>Entiers signés : plage, encodage</span></a></li>
+      <li><a href="#s5"><span class="nib" data-n="5"></span><span>Décoder un mot signé</span></a></li>
+      <li><a href="#s6"><span class="nib" data-n="6"></span><span>Dépassement signé, tableau sur 8 bits</span></a></li>
+      <li><a href="#s7"><span class="nib" data-n="7"></span><span>Extension de signe</span></a></li>
+      <li><a href="#s8"><span class="nib" data-n="8"></span><span>BCD, Gray, ASCII</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque numéro de partie est un mot de 4 bits : la partie 6 est <span class="bn">0110</span>. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi</a><a href="cours-2-operations.html">← Chapitre 2 : les opérations</a><a href="cours-4-flottants.html">Chapitre 4 : les flottants →</a><a href="../qcm/index.html#archi">QCM d’archi</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Bits, mots et octets</a></li><li><a href="#s2">Compléments à un et à deux</a></li><li><a href="#s3">Entiers non signés</a></li><li><a href="#s4">Entiers signés : plage, encodage</a></li>
+      <li><a href="#s5">Décoder un mot signé</a></li><li><a href="#s6">Dépassement signé, tableau sur 8 bits</a></li><li><a href="#s7">Extension de signe</a></li><li><a href="#s8">BCD, Gray, ASCII</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Partie 1 <span class="ref">cours § III.1</span></div><h2>Bits, mots et octets</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>bit</b> (contraction de <i>binary digit</i>) est la plus petite unité d’information qu’un ordinateur peut manipuler : il vaut 0 ou 1. Un <b>mot</b> est un groupe d’un ou plusieurs bits manipulé comme un tout. Sa taille, son nombre de bits, est fixe.</p>
+          <p>Chaque bit ajouté double le nombre de possibilités : un mot de <var>n</var> bits possède <b>2<sup><var>n</var></sup> combinaisons</b>.</p>
+        </div>
+        <div class="tbl"><table data-chk="combi">
+          <caption>Tableau 3.1 — Nombre de combinaisons d’un mot (cours, p. 17)</caption>
+          <thead><tr><th>Taille du mot</th><th>Combinaisons</th></tr></thead>
+          <tbody>
+            <tr><td>1 bit</td><td>2 : <span class="bn">0</span> et <span class="bn">1</span></td></tr>
+            <tr><td>2 bits</td><td>4 : <span class="bn">00</span>, <span class="bn">01</span>, <span class="bn">10</span>, <span class="bn">11</span></td></tr>
+            <tr><td>3 bits</td><td>8 : <span class="bn">000</span>, <span class="bn">001</span>, …, <span class="bn">110</span>, <span class="bn">111</span></td></tr>
+            <tr><td>4 bits</td><td>16 : <span class="bn">0000</span>, <span class="bn">0001</span>, …, <span class="bn">1111</span></td></tr>
+            <tr><td>8 bits (un octet)</td><td>256</td></tr>
+            <tr><td>16 bits</td><td>65 536</td></tr>
+            <tr><td><var>n</var> bits</td><td>2<sup><var>n</var></sup></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Un <b>octet</b> est un mot de 8 bits : 256 combinaisons. Les microprocesseurs actuels manipulent des octets ou des groupes d’octets. La taille d’un « mot » dépend du contexte : pour un microprocesseur 68000, un mot fait 16 bits et un <b>mot long</b> 32 bits ; pour un ARM 32 bits, un mot fait 32 bits et un <b>demi-mot</b> 16 bits. Hors contexte, la taille d’un mot doit être précisée.</p>
+          <p>Le bit le plus à gauche est le <b>bit de poids fort</b>, ou <b>MSB</b> (<i>Most Significant Bit</i>). Le bit le plus à droite est le <b>bit de poids faible</b>, ou <b>LSB</b> (<i>Least Significant Bit</i>). Les bits d’un mot de <var>n</var> bits sont numérotés de 0 (le LSB) à <var>n</var> − 1 (le MSB).</p>
+        </div>
+        <figure style="margin:0">
+          <div class="w16" data-chk="w16"><table class="w16-t" aria-label="Un mot de 16 bits et les numéros de ses bits">
+            <tbody>
+              <tr class="num"><td>15</td><td>14</td><td>13</td><td>12</td><td class="nb">11</td><td>10</td><td>9</td><td>8</td><td class="nb">7</td><td>6</td><td>5</td><td>4</td><td class="nb">3</td><td>2</td><td>1</td><td>0</td></tr>
+              <tr class="bit"><td class="msb">1</td><td>0</td><td>1</td><td>1</td><td class="nb">0</td><td>0</td><td>1</td><td>1</td><td class="nb">1</td><td>0</td><td>0</td><td>1</td><td class="nb">0</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr class="lab"><td colspan="4" class="l">↑ MSB</td><td colspan="8"></td><td colspan="4" class="r">LSB ↑</td></tr>
+            </tbody>
+          </table></div>
+          <figcaption class="fig-cap"><b>Figure 2</b> — L’exemple du cours (p. 17) : un mot de 16 bits. Le bit 15 est le MSB, le bit 0 le LSB.</figcaption>
+        </figure>
+        <div class="prose">
+          <p><b>Un mot en lui-même ne représente rien.</b> Que vaut l’octet <span class="bn">1111 1111</span> ? Le nombre 255, le nombre −1, le nombre 0,72, le caractère ‘X’, une instruction, une couleur : tout dépend du contexte, c’est-à-dire de l’encodage choisi. Ce chapitre étudie deux encodages des entiers, <b>non signé</b> (partie 3) et <b>signé</b> (parties 4 à 6), puis trois autres codes (partie 8).</p>
+          <p>Par commodité, on écrit souvent un mot sous sa forme hexadécimale, un chiffre par paquet de 4 bits (chapitre 1, partie 8) : <span data-eq><span class="bn">1111 1111<sub>2</sub></span> = <span class="bn">FF<sub>16</sub></span></span>. Un paquet de 4 bits s’appelle un <b>quartet</b> (en anglais <i>nibble</i>) ; le cours n’emploie pas ce mot, mais tu le croiseras ailleurs.</p>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <ul>
+            <li>Un mot de <var>n</var> bits : 2<sup><var>n</var></sup> combinaisons, bits numérotés de 0 (LSB, à droite) à <var>n</var> − 1 (MSB, à gauche).</li>
+            <li>Un octet : 8 bits, 256 combinaisons, deux chiffres hexadécimaux.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : on compte à partir de 0</span>
+          <p>Dans un octet, le MSB est le bit 7, pas le bit 8 : la numérotation commence à 0. Pour la même raison, 8 bits donnent 256 combinaisons mais la plus grande valeur non signée est <span data-eq>2<sup>8</sup> − 1 = 255</span> : la première combinaison, <span class="bn">0000 0000</span>, code 0.</p>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Partie 2 <span class="ref">cours § III.2 et III.3</span></div><h2>Complément à un et complément à deux</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le <b>complément à un</b> d’un mot s’obtient en <b>inversant chacun de ses bits</b> : chaque 0 devient 1, chaque 1 devient 0.</p>
+          <p>Le <b>complément à deux</b> s’obtient en inversant chacun de ses bits, <b>puis en additionnant 1</b> : c’est le complément à un plus un. Le cours le note C2 (…). Le résultat garde la taille du mot : une retenue qui sortirait à gauche est perdue. L’exemple du cours, un mot de 10 bits :</p>
+        </div>
+        <div class="calc">
+          <div data-chk="c1"><span class="bn">11 1001 1000<sub>2</sub></span> → complément à un : <span class="bn">00 0110 0111<sub>2</sub></span></div>
+          <div data-eq><span class="bn">00 0110 0111<sub>2</sub></span> + <span class="bn">1<sub>2</sub></span> = <span class="bn">00 0110 1000<sub>2</sub></span></div>
+          <div class="r" data-chk="c2">C2 (<span class="bn">11 1001 1000<sub>2</sub></span>) = <span class="bn">00 0110 1000<sub>2</sub></span></div>
+        </div>
+        <div class="prose"><p>Dans le registre ci-dessous, appuie sur « Complément à deux » : il pose les deux étapes. Appuie une seconde fois : tu retrouves le mot de départ, car le complément à deux du complément à deux redonne le mot.</p></div>
+        <div data-archi="register" data-opts='{"n":10,"value":"1110011000","sizes":[10]}'></div>
+        <div class="prose">
+          <p><b>La méthode rapide du cours.</b> On <b>conserve</b> les bits de poids faible, du LSB <b>jusqu’au premier 1 inclus</b>, et on <b>inverse</b> tous les autres.</p>
+        </div>
+        <figure style="margin:0">
+          <div class="qm" data-chk="qm"><table class="qm-t" aria-label="Méthode rapide : 11 1001 1000 devient 00 0110 1000">
+            <tbody>
+              <tr class="first"><th scope="row"></th><td></td><td></td><td></td><td></td><td></td><td></td><td>1<sup>er</sup> un ↓</td><td></td><td></td><td></td></tr>
+              <tr class="bit"><th scope="row">mot</th><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td class="keep">1</td><td class="keep">0</td><td class="keep">0</td><td class="keep">0</td></tr>
+              <tr class="bit"><th scope="row">C2</th><td class="inv">0</td><td class="inv">0</td><td class="inv">0</td><td class="inv">1</td><td class="inv">1</td><td class="inv">0</td><td class="keep">1</td><td class="keep">0</td><td class="keep">0</td><td class="keep">0</td></tr>
+              <tr class="br"><th scope="row"></th><td colspan="6" class="inv">inversion</td><td colspan="4" class="keep">identique</td></tr>
+            </tbody>
+          </table></div>
+          <figcaption class="fig-cap"><b>Figure 3</b> — La méthode rapide sur l’exemple du cours (p. 19) : même résultat que « inverser, puis ajouter 1 ».</figcaption>
+        </figure>
+        <div class="note why"><span class="tag">Pourquoi ça marche</span>
+          <p>Dans le complément à un, les 0 situés à droite du premier 1 sont devenus des 1, et ce premier 1 est devenu un 0. Ajouter 1 remet ces 1 à 0 en propageant une retenue, qui s’arrête sur ce 0 et le remet à 1. Les bits situés à gauche ne bougent pas : ils restent inversés.</p>
+        </div>
+        <div class="tbl"><table data-chk="cpl">
+          <caption>Tableau 3.2 — Compléments à un et à deux (exemples du cours, p. 18 et 19)</caption>
+          <thead><tr><th>Mot</th><th>Hexa</th><th>Complément à un</th><th>Hexa</th><th>Complément à deux</th><th>Hexa</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td><td><span class="bn">1111 1111</span></td><td><span class="bn">FF</span></td><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td></tr>
+            <tr><td><span class="bn">0011 0110</span></td><td><span class="bn">36</span></td><td><span class="bn">1100 1001</span></td><td><span class="bn">C9</span></td><td><span class="bn">1100 1010</span></td><td><span class="bn">CA</span></td></tr>
+            <tr><td><span class="bn">1001 1000</span></td><td><span class="bn">98</span></td><td><span class="bn">0110 0111</span></td><td><span class="bn">67</span></td><td><span class="bn">0110 1000</span></td><td><span class="bn">68</span></td></tr>
+            <tr><td><span class="bn">1011 1100</span></td><td><span class="bn">BC</span></td><td><span class="bn">0100 0011</span></td><td><span class="bn">43</span></td><td><span class="bn">0100 0100</span></td><td><span class="bn">44</span></td></tr>
+            <tr><td><span class="bn">1111 1111</span></td><td><span class="bn">FF</span></td><td><span class="bn">0000 0000</span></td><td><span class="bn">00</span></td><td><span class="bn">0000 0001</span></td><td><span class="bn">01</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Piège : le premier 1 est conservé</span>
+          <ul>
+            <li data-chk="c2">Le premier 1 en partant de la droite reste un 1 : C2 (<span class="bn">1011 1100</span>) = <span class="bn">0100 0100</span>. Inverser aussi ce 1 donne <span class="bn">0100 0011</span>, qui est le complément à un.</li>
+            <li data-chk="c2">Le complément à deux de <span class="bn">0000 0000</span> est <span class="bn">0000 0000</span> : <span class="bn">1111 1111</span> + 1 = <span class="bn">1 0000 0000</span>, et la retenue sortante est perdue.</li>
+          </ul>
+        </div>
+        <div class="prose"><p>Le complément à deux sert surtout à encoder les entiers signés : c’est la partie 4.</p></div>
+        <div data-check-ref="archi/cours-3-entiers.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Partie 3 <span class="ref">cours § IV.1</span></div><h2>Les entiers non signés</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>C’est l’encodage le plus naturel : le mot est <b>l’écriture binaire du nombre</b>, complétée à gauche par des 0 jusqu’à la taille du mot. Le nombre <span class="bn">101<sub>2</sub></span> sur 8 bits non signés donne le mot <span class="bn">0000 0101</span>.</p>
+          <p>Un mot de <var>n</var> bits possède 2<sup><var>n</var></sup> combinaisons, et la première code 0 : il représente les entiers <b>de 0 à 2<sup><var>n</var></sup> − 1</b>. Sur 8 bits, de 0 à 255.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Encoder : divisions successives</span>
+            <p>Les restes des divisions successives par 2 (chapitre 1, partie 6), lus de bas en haut, donnent <span class="bn">11 0010</span>. On complète à gauche jusqu’à 8 bits :</p>
+            <p data-eq><span class="bn">50<sub>10</sub></span> = <span class="bn">0011 0010<sub>2</sub></span></p></div>
+          <div class="card"><span class="k">Décoder : la somme des poids</span>
+            <p>On additionne les poids des bits à 1 (chapitre 1, partie 5). Le mot de 6 bits du cours :</p>
+            <p data-eq><span class="bn">10 0110<sub>2</sub></span> = 32 + 4 + 2 = <span class="bn">38<sub>10</sub></span></p></div>
+        </div>
+        <div class="prose">
+          <p><b>Le dépassement non signé.</b> Les opérations se font sur des mots de taille fixe. Quand le résultat exact sort de l’intervalle 0 … 2<sup><var>n</var></sup> − 1, il ne peut pas être encodé correctement : c’est un <b>dépassement non signé</b>. L’exemple du cours, une addition sur 8 bits (les deux opérandes et le résultat sont sur 8 bits) :</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["11111010","00001010"],"base":2,"title":"250 + 10 sur 8 bits"}'></div>
+        <div class="prose">
+          <p>Le résultat exact demande 9 bits : <span data-eq><span class="bn">1 0000 0100<sub>2</sub></span> = 260</span>. Ce neuvième bit est la <b>retenue</b> : il ne tient pas dans le mot, il est ignoré. Le mot résultat est <span data-eq><span class="bn">0000 0100<sub>2</sub></span> = 4</span>. Un programme C qui additionne deux variables <code>unsigned char</code> valant 250 et 10 affiche d’ailleurs <code>250 + 10 = 4</code>.</p>
+          <p><b>L’incrémentation est cyclique.</b> Ajouter 1 à <span class="bn">1111 1111</span> (255) donne <span class="bn">0000 0000</span> (0) : on repart au début. Retirer 1 à 0 donne 255. Sur 8 bits non signés :</p>
+        </div>
+        <div class="calc">
+          <div data-eq="m8">255 + 1 = 0</div>
+          <div data-eq="m8">0 − 1 = 255</div>
+          <div data-eq="m8">250 + 10 = 4</div>
+          <div data-eq="m8">4 − 10 = 250</div>
+        </div>
+        <div class="prose"><p>La roue de la <a href="#s4">partie 4</a> montre ce cycle sur 4 bits. Le cours remarque aussi que le dépassement non signé s’appelle souvent <b>retenue</b> (<i>carry</i>) pour une addition et <b>emprunt</b> (<i>borrow</i>) pour une soustraction.</p></div>
+        <div class="note keep"><span class="tag">À retenir : repérer un dépassement non signé</span>
+          <ul>
+            <li><b>Addition</b> : dépassement non signé si et seulement si l’addition posée produit une <b>retenue sortante</b>, un (<var>n</var> + 1)<sup>e</sup> bit.</li>
+            <li><b>Soustraction</b> <var>a</var> − <var>b</var> : dépassement non signé si et seulement si <b><var>a</var> &lt; <var>b</var></b> en non signé. Le résultat exact serait négatif : la soustraction posée emprunte au-delà du MSB.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : le mot s’écrit quand même</span>
+          <p>Après un dépassement, les 8 bits du résultat existent : <span class="bn">0000 0100</span>. À l’examen, on écrit ce mot dans la colonne « Résultat binaire », et « ERREUR » seulement dans la colonne de la valeur décimale concernée.</p>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Partie 4 <span class="ref">cours § IV.2.1 et IV.2.3</span></div><h2>Les entiers signés : plage et encodage</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour les entiers signés, le cours étudie l’encodage le plus utilisé : le <b>complément à deux</b>. Les 2<sup><var>n</var></sup> combinaisons sont partagées en deux moitiés. Les mots dont le MSB vaut 0 codent les entiers positifs, ceux dont le MSB vaut 1 codent les entiers négatifs : le MSB s’appelle donc le <b>bit de signe</b>.</p>
+          <p>Un mot de <var>n</var> bits représente les entiers <b>de −2<sup><var>n</var>−1</sup> à 2<sup><var>n</var>−1</sup> − 1</b> : de −8 à 7 sur 4 bits, de −128 à 127 sur un octet. La roue montre les 16 mots de 4 bits, avec la valeur non signée à l’intérieur et la valeur signée à l’extérieur.</p>
+        </div>
+        <figure style="margin:0">
+          <div data-archi="wheel" data-opts='{"value":7}'></div>
+          <figcaption class="fig-cap"><b>Figure 4</b> — Les mots de gauche (MSB = 1) codent les négatifs. Depuis <span class="bn">0111</span>, + 1 franchit le trait violet : de 7 à −8, c’est un dépassement signé. Depuis <span class="bn">1111</span>, + 1 franchit le trait cuivre : de 15 à 0, c’est un dépassement non signé.</figcaption>
+        </figure>
+        <div class="prose">
+          <p>Dans ce système, <b>le complément à deux d’un mot représente l’opposé du nombre</b>. Exemple du cours : <span data-eq="s"><span class="bn">3<sub>10</sub></span> = <span class="bn">0011<sub>2</sub></span></span> et <span data-eq="s">C2 (<span class="bn">0011<sub>2</sub></span>) = <span class="bn">1101<sub>2</sub></span> = <span class="bn">−3<sub>10</sub></span></span>.</p>
+          <p><b>Encoder un entier signé.</b> Un entier positif s’encode comme un non signé. Pour un entier négatif :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Convertir sa <b>valeur absolue</b> en binaire, sur <var>n</var> bits.</p></div></li>
+          <li><div><p>Prendre le <b>complément à deux</b> de ce mot.</p></div></li>
+        </ol>
+        <div class="calc">
+          <div>−17 sur 8 bits :</div>
+          <div data-eq><span class="bn">17<sub>10</sub></span> = <span class="bn">0001 0001<sub>2</sub></span></div>
+          <div class="r" data-eq="s">−17 = C2 (<span class="bn">0001 0001<sub>2</sub></span>) = <span class="bn">1110 1111<sub>2</sub></span></div>
+        </div>
+        <div class="tbl"><table data-chk="enc8">
+          <caption>Tableau 3.3 — TD 2, exercice 2 : encoder des entiers négatifs sur 8 bits signés</caption>
+          <thead><tr><th>Entier</th><th>Valeur absolue sur 8 bits</th><th>Complément à deux</th><th>Hexa</th></tr></thead>
+          <tbody>
+            <tr><td>−1</td><td><span class="bn">0000 0001</span></td><td><span class="bn">1111 1111</span></td><td><span class="bn">FF</span></td></tr>
+            <tr><td>−33</td><td><span class="bn">0010 0001</span></td><td><span class="bn">1101 1111</span></td><td><span class="bn">DF</span></td></tr>
+            <tr><td>−60</td><td><span class="bn">0011 1100</span></td><td><span class="bn">1100 0100</span></td><td><span class="bn">C4</span></td></tr>
+            <tr><td>−127</td><td><span class="bn">0111 1111</span></td><td><span class="bn">1000 0001</span></td><td><span class="bn">81</span></td></tr>
+            <tr><td>−128</td><td>128 ne tient pas sur 8 bits signés</td><td><span class="bn">1000 0000</span></td><td><span class="bn">80</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl"><table data-chk="ranges">
+          <caption>Tableau 3.4 — TD 2, exercice 1 : plages de valeurs sur n bits</caption>
+          <thead><tr><th>Bits</th><th class="n">Non signé min</th><th class="n">Non signé max</th><th class="n">Signé min</th><th class="n">Signé max</th></tr></thead>
+          <tbody>
+            <tr><td>4</td><td class="n">0</td><td class="n">15</td><td class="n">−8</td><td class="n">7</td></tr>
+            <tr><td>8</td><td class="n">0</td><td class="n">255</td><td class="n">−128</td><td class="n">127</td></tr>
+            <tr><td>16</td><td class="n">0</td><td class="n">65 535</td><td class="n">−32 768</td><td class="n">32 767</td></tr>
+            <tr><td>32</td><td class="n">0</td><td class="n">2<sup>32</sup> − 1 = 4 294 967 295</td><td class="n">−2<sup>31</sup> = −2 147 483 648</td><td class="n">2<sup>31</sup> − 1 = 2 147 483 647</td></tr>
+            <tr><td><var>n</var></td><td class="n">0</td><td class="n">2<sup><var>n</var></sup> − 1</td><td class="n">−2<sup><var>n</var>−1</sup></td><td class="n">2<sup><var>n</var>−1</sup> − 1</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <ul>
+            <li>Sur <var>n</var> bits, on code 2<sup><var>n</var></sup> entiers non signés, et autant d’entiers signés.</li>
+            <li>Plus grand non signé : 2<sup><var>n</var></sup> − 1. Plus grand signé : 2<sup><var>n</var>−1</sup> − 1. Plus petit signé : −2<sup><var>n</var>−1</sup>.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : la plage n’est pas symétrique</span>
+          <ul>
+            <li>−128 tient sur 8 bits signés (<span class="bn">1000 0000</span>), +128 non. On ne peut donc pas encoder −128 par « valeur absolue, puis complément à deux » : 128 n’est pas un positif sur 8 bits signés. Le calcul mécanique C2 (<span class="bn">1000 0000</span>) = <span class="bn">1000 0000</span> redonne quand même le bon mot.</li>
+            <li>Sujet 2021 : 8 192 = 2<sup>13</sup> demande 15 bits en signé, car 14 bits vont jusqu’à <span data-eq>2<sup>13</sup> − 1 = 8 191</span>. Mais −8 192 = −2<sup>13</sup> tient sur 14 bits : c’est la plus petite valeur.</li>
+            <li data-chk="c2">Complète à <var>n</var> bits <b>avant</b> le complément à deux. Sur 5 bits, C2 (<span class="bn">1 0001</span>) = <span class="bn">0 1111</span>, et compléter ensuite par des 0 donnerait <span class="bn">0000 1111</span>, c’est-à-dire 15. Sur 8 bits, il faut C2 (<span class="bn">0001 0001</span>) = <span class="bn">1110 1111</span>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Partie 5 <span class="ref">cours § IV.2.4 · TD 2, ex. 3</span></div><h2>Décoder un mot signé</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La méthode dépend du bit de signe, le MSB :</p></div>
+        <ol class="steps">
+          <li><div><p><b>Bit de signe à 0</b> : l’entier est positif. On le décode comme un non signé, par la somme des poids.</p></div></li>
+          <li><div><p><b>Bit de signe à 1</b> : l’entier est négatif. On prend le complément à deux du mot, on le convertit en décimal, et on place le signe moins devant.</p></div></li>
+        </ol>
+        <div class="calc">
+          <div>Le mot de 6 bits du cours, <span class="bn">10 0110<sub>2</sub></span> : le bit de signe vaut 1.</div>
+          <div data-eq="s">C2 (<span class="bn">10 0110<sub>2</sub></span>) = <span class="bn">01 1010<sub>2</sub></span></div>
+          <div data-eq><span class="bn">01 1010<sub>2</sub></span> = 16 + 8 + 2 = <span class="bn">26<sub>10</sub></span></div>
+          <div class="r" data-eq="s"><span class="bn">10 0110<sub>2</sub></span> = <span class="bn">−26<sub>10</sub></span></div>
+        </div>
+        <div class="prose"><p>Le même mot vaut <span data-eq><span class="bn">10 0110<sub>2</sub></span> = <span class="bn">38<sub>10</sub></span></span> en non signé (partie 3) : le cours oppose exprès les deux lectures.</p></div>
+        <div class="note why"><span class="tag">Pour contrôler (hors méthode du cours)</span>
+          <ul>
+            <li>Un mot négatif de <var>n</var> bits vaut sa valeur non signée moins 2<sup><var>n</var></sup> : <span data-eq>38 − 2<sup>6</sup> = −26</span>.</li>
+            <li>Autrement dit, le MSB pèse −2<sup><var>n</var>−1</sup> au lieu de +2<sup><var>n</var>−1</sup> : <span data-eq>−32 + 4 + 2 = −26</span>. Le registre de la figure 1 le rappelle quand tu cliques sur un bit.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p><b>En hexadécimal (TD 2, exercice 3).</b> Le premier chiffre hexadécimal contient le bit de signe : un mot de 8 bits est négatif quand son premier chiffre vaut 8 ou plus (de 8 à F). Les mots qui codent les entiers positifs vont de <span class="bn">00</span> à <span class="bn">7F</span>, ceux qui codent les négatifs de <span class="bn">80</span> à <span class="bn">FF</span>.</p>
+        </div>
+        <div class="tbl"><table data-chk="hexsign">
+          <caption>Tableau 3.5 — TD 2, exercice 3, question 1 : signe et valeur de mots de 8 bits</caption>
+          <thead><tr><th>Mot</th><th>Binaire</th><th>Signe</th><th class="n">Valeur signée</th><th class="n">Non signée</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bn">FF</span></td><td><span class="bn">1111 1111</span></td><td class="neg">négatif</td><td class="n">−1</td><td class="n">255</td></tr>
+            <tr><td><span class="bn">27</span></td><td><span class="bn">0010 0111</span></td><td>positif</td><td class="n">39</td><td class="n">39</td></tr>
+            <tr><td><span class="bn">7E</span></td><td><span class="bn">0111 1110</span></td><td>positif</td><td class="n">126</td><td class="n">126</td></tr>
+            <tr><td><span class="bn">9A</span></td><td><span class="bn">1001 1010</span></td><td class="neg">négatif</td><td class="n">−102</td><td class="n">154</td></tr>
+            <tr><td><span class="bn">B7</span></td><td><span class="bn">1011 0111</span></td><td class="neg">négatif</td><td class="n">−73</td><td class="n">183</td></tr>
+            <tr><td><span class="bn">6D</span></td><td><span class="bn">0110 1101</span></td><td>positif</td><td class="n">109</td><td class="n">109</td></tr>
+            <tr><td><span class="bn">81</span></td><td><span class="bn">1000 0001</span></td><td class="neg">négatif</td><td class="n">−127</td><td class="n">129</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Piège : lire un négatif comme un non signé</span>
+          <ul>
+            <li>Examen 2025-2026 : <span data-eq><span class="bn">1011 1101<sub>2</sub></span> = 189</span> en non signé, mais <span data-eq="s"><span class="bn">1011 1101<sub>2</sub></span> = −67</span> en signé, car C2 (<span class="bn">1011 1101</span>) = <span class="bn">0100 0011</span> = 67. Écrire 189 dans la colonne « Signée » est faux.</li>
+            <li data-chk="c2">Le signe moins se place devant la valeur du complément : pour <span class="bn">1000 0000</span>, C2 (<span class="bn">1000 0000</span>) = <span class="bn">1000 0000</span>, qui vaut 128 en non signé, donc le mot vaut −128.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Partie 6 <span class="ref">cours § IV.2.2 et IV.2.5 · TD 2, ex. 3 et 4</span></div><h2>Soustraction par le complément à deux, dépassement signé</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Puisque le complément à deux représente l’opposé, une soustraction peut être remplacée par une addition : <b><var>a</var> − <var>b</var> = <var>a</var> + C2 (<var>b</var>)</b>, à condition d’<b>ignorer la retenue</b>. L’exemple du cours, 115 − 62 sur 8 bits : <span data-eq><span class="bn">115<sub>10</sub></span> = <span class="bn">0111 0011<sub>2</sub></span></span>, <span data-eq><span class="bn">62<sub>10</sub></span> = <span class="bn">0011 1110<sub>2</sub></span></span> et <span data-eq="s">C2 (<span class="bn">62<sub>10</sub></span>) = <span class="bn">1100 0010<sub>2</sub></span></span>.</p>
+        </div>
+        <div class="grid2">
+          <div data-archi="posed" data-opts='{"op":"sub","ops":["01110011","00111110"],"base":2,"title":"Soustraction directe","step":false}'></div>
+          <div data-archi="posed" data-opts='{"op":"add","ops":["01110011","11000010"],"base":2,"title":"115 + C2 (62)","step":false}'></div>
+        </div>
+        <div class="prose">
+          <p>Les deux calculs donnent le même mot de 8 bits, <span data-eq><span class="bn">0011 0101<sub>2</sub></span> = <span class="bn">53<sub>10</sub></span></span>. L’addition produit une retenue, un neuvième bit : on l’ignore. Ainsi <span data-eq>115 − 62 = 115 + (−62) = 53</span>.</p>
+          <p><b>Le dépassement signé.</b> Comme pour les non signés, un résultat peut sortir de la plage −2<sup><var>n</var>−1</sup> … 2<sup><var>n</var>−1</sup> − 1 : c’est un <b>dépassement signé</b>. L’exemple du cours :</p>
+        </div>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["01111000","00001010"],"base":2,"title":"120 + 10 sur 8 bits signés"}'></div>
+        <div class="prose">
+          <p>Le mot obtenu, <span class="bn">1000 0010</span>, a un bit de signe à 1 : <span data-eq="s"><span class="bn">1000 0010<sub>2</sub></span> = −126</span>, alors que le résultat attendu, 130, est trop grand pour un octet signé (127 au plus). <b>Le résultat erroné est négatif</b>, alors que les deux opérandes sont positifs. Un programme C avec des variables <code>signed char</code> affiche <code>120 + 10 = -126</code>. L’incrémentation reste cyclique, mais la coupure est entre 127 et −128 (le trait violet de la roue) :</p>
+        </div>
+        <div class="calc">
+          <div data-eq="m8">127 + 1 = −128</div>
+          <div data-eq="m8">120 + 10 = −126</div>
+          <div data-eq="m8">−126 − 10 = 120</div>
+        </div>
+        <div class="prose">
+          <p><b>La règle des signes (TD 2, exercice 3).</b> Le cours ne donne pas de règle pour repérer un dépassement signé ; le TD la fait construire, en comparant les signes des opérandes et du résultat. « Positif » veut dire MSB à 0, « négatif » MSB à 1.</p>
+        </div>
+        <div class="tbl"><table data-chk="rule" data-op="+">
+          <caption>Tableau 3.6 — TD 2, exercice 3, question 4 : l’addition (règle vérifiée sur les 65 536 couples de mots de 8 bits)</caption>
+          <thead><tr><th>1<sup>er</sup> opérande + 2<sup>e</sup> = résultat</th><th>Dépassement signé</th><th>Exemple sur 8 bits</th></tr></thead>
+          <tbody>
+            <tr><td>Positif + Positif = Positif</td><td>Non</td><td><span class="bn">0010 0101</span> + <span class="bn">0010 1010</span> = <span class="bn">0100 1111</span> <span class="muted">(37 + 42 = 79)</span></td></tr>
+            <tr class="yes"><td>Positif + Positif = Négatif</td><td class="yes">Oui</td><td><span class="bn">0111 1000</span> + <span class="bn">0000 1010</span> = <span class="bn">1000 0010</span> <span class="muted">(120 + 10 = 130 &gt; 127)</span></td></tr>
+            <tr><td>Positif + Négatif = Positif</td><td>Non</td><td><span class="bn">0111 1110</span> + <span class="bn">1000 1100</span> = <span class="bn">0000 1010</span> <span class="muted">(126 + (−116) = 10)</span></td></tr>
+            <tr><td>Positif + Négatif = Négatif</td><td>Non</td><td><span class="bn">0111 1011</span> + <span class="bn">1000 0011</span> = <span class="bn">1111 1110</span> <span class="muted">(123 + (−125) = −2)</span></td></tr>
+            <tr class="yes"><td>Négatif + Négatif = Positif</td><td class="yes">Oui</td><td><span class="bn">1000 0000</span> + <span class="bn">1111 0010</span> = <span class="bn">0111 0010</span> <span class="muted">(−128 + (−14) = −142 &lt; −128)</span></td></tr>
+            <tr><td>Négatif + Négatif = Négatif</td><td>Non</td><td><span class="bn">1110 1111</span> + <span class="bn">1111 1010</span> = <span class="bn">1110 1001</span> <span class="muted">(−17 + (−6) = −23)</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl"><table data-chk="rule" data-op="-">
+          <caption>Tableau 3.7 — TD 2, exercice 3, question 5 : la soustraction (même vérification)</caption>
+          <thead><tr><th>1<sup>er</sup> opérande − 2<sup>e</sup> = résultat</th><th>Dépassement signé</th><th>Exemple sur 8 bits</th></tr></thead>
+          <tbody>
+            <tr><td>Positif − Positif = Positif</td><td>Non</td><td><span class="bn">0111 0110</span> − <span class="bn">0001 1001</span> = <span class="bn">0101 1101</span> <span class="muted">(118 − 25 = 93)</span></td></tr>
+            <tr><td>Positif − Positif = Négatif</td><td>Non</td><td><span class="bn">0001 1001</span> − <span class="bn">0111 0110</span> = <span class="bn">1010 0011</span> <span class="muted">(25 − 118 = −93)</span></td></tr>
+            <tr><td>Positif − Négatif = Positif</td><td>Non</td><td><span class="bn">0001 0100</span> − <span class="bn">1111 0110</span> = <span class="bn">0001 1110</span> <span class="muted">(20 − (−10) = 30)</span></td></tr>
+            <tr class="yes"><td>Positif − Négatif = Négatif</td><td class="yes">Oui</td><td><span class="bn">0101 0100</span> − <span class="bn">1001 1100</span> = <span class="bn">1011 1000</span> <span class="muted">(84 − (−100) = 184 &gt; 127)</span></td></tr>
+            <tr class="yes"><td>Négatif − Positif = Positif</td><td class="yes">Oui</td><td><span class="bn">1000 0010</span> − <span class="bn">0000 1010</span> = <span class="bn">0111 1000</span> <span class="muted">(−126 − 10 = −136 &lt; −128)</span></td></tr>
+            <tr><td>Négatif − Positif = Négatif</td><td>Non</td><td><span class="bn">1101 0011</span> − <span class="bn">0001 0110</span> = <span class="bn">1011 1101</span> <span class="muted">(−45 − 22 = −67)</span></td></tr>
+            <tr><td>Négatif − Négatif = Positif</td><td>Non</td><td><span class="bn">1110 1000</span> − <span class="bn">1100 1011</span> = <span class="bn">0001 1101</span> <span class="muted">(−24 − (−53) = 29)</span></td></tr>
+            <tr><td>Négatif − Négatif = Négatif</td><td>Non</td><td><span class="bn">1100 1000</span> − <span class="bn">1110 0010</span> = <span class="bn">1110 0110</span> <span class="muted">(−56 − (−30) = −26)</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">La règle à retenir</span>
+          <ul>
+            <li><b>Addition</b> : dépassement signé seulement si les deux opérandes ont le <b>même signe</b> et que le résultat a <b>l’autre signe</b> (P + P = N, N + N = P). Deux opérandes de signes contraires ne dépassent jamais.</li>
+            <li><b>Soustraction</b> <var>a</var> − <var>b</var> = <var>a</var> + (−<var>b</var>) : dépassement signé seulement si <var>a</var> et <var>b</var> ont des <b>signes contraires</b> et que le résultat n’a pas le signe de <var>a</var> (P − N = N, N − P = P).</li>
+          </ul>
+        </div>
+        <div class="grid2">
+          <div class="card" data-chk="cmp"><span class="k">Retenue sans dépassement signé · sujet 2017</span>
+            <p><span class="bn">1000 1100</span> + <span class="bn">0111 1110</span> = <span class="bn">1 0000 1010</span></p>
+            <p>Retenue sortante : en non signé, <span data-eq>140 + 126 = 266</span> &gt; 255, <b>ERREUR</b>. En signé, <span data-eq>−116 + 126 = 10</span> : juste, le mot <span class="bn">0000 1010</span> vaut 10.</p></div>
+          <div class="card" data-chk="cmp"><span class="k">Dépassement signé sans retenue · sujet 2023</span>
+            <p><span class="bn">0110 1001</span> + <span class="bn">0110 1110</span> = <span class="bn">1101 0111</span></p>
+            <p>Pas de retenue : en non signé, <span data-eq>105 + 110 = 215</span>, juste. En signé, P + P = N : 215 &gt; 127, <b>ERREUR</b>.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Piège principal : la retenue ne dit rien du signé</span>
+          <ul>
+            <li>La retenue sortante signale le dépassement <b>non signé</b> d’une addition, et seulement lui. Pour le signé, regarde les signes.</li>
+            <li data-chk="c2sub">Dans une soustraction faite par <var>a</var> + C2 (<var>b</var>), la retenue ne signale même pas le dépassement non signé. Sujet 2023 : <span class="bn">1101 0011</span> − <span class="bn">1001 1111</span> devient <span class="bn">1101 0011</span> + <span class="bn">0110 0001</span> = <span class="bn">1 0011 0100</span>, avec une retenue, alors que <span data-eq>211 − 159 = 52</span> est juste. Le dépassement non signé d’une soustraction, c’est <var>a</var> &lt; <var>b</var>.</li>
+          </ul>
+        </div>
+        <h3>Le tableau sur 8 bits des sujets</h3>
+        <div class="prose">
+          <p>La consigne, la même dans les sujets et dans le TD 2 (exercice 4) : « Effectuez les opérations suivantes en binaire (les deux opérandes et le résultat sont codés sur 8 bits). Convertissez le résultat en une valeur décimale non signée et signée. Si un dépassement apparaît, écrire « ERREUR » à la place de la valeur décimale. » Ligne par ligne :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Pose l’opération sur 8 bits</b> : l’addition avec ses retenues, la soustraction avec ses emprunts (ou <var>a</var> + C2 (<var>b</var>)). Écris les 8 bits du résultat dans « Résultat binaire », même s’il y a un dépassement.</p></div></li>
+          <li><div><p><b>Colonne « Non signée »</b>. Addition : ERREUR s’il y a une retenue sortante. Soustraction : ERREUR si <var>a</var> &lt; <var>b</var> (compare les mots depuis la gauche). Sinon, décode le résultat comme un non signé.</p></div></li>
+          <li><div><p><b>Colonne « Signée »</b>. Regarde les bits de signe des opérandes et du résultat : P + P = N, N + N = P, P − N = N ou N − P = P donne ERREUR. Sinon, décode le résultat en signé (complément à deux s’il commence par 1).</p></div></li>
+          <li><div><p><b>Contrôle en décimal</b> : refais l’opération avec les valeurs des opérandes. Le résultat exact doit être entre 0 et 255 pour la colonne non signée, entre −128 et 127 pour la colonne signée.</p></div></li>
+        </ol>
+        <figure style="margin:0">
+          <div id="b8" class="bench"></div>
+          <figcaption class="fig-cap"><b>Figure 5</b> — Choisis une ligne du TD 2 ou d’un sujet, ou tape tes propres mots. Cherche d’abord sur papier, puis avance étape par étape.</figcaption>
+        </figure>
+        <div class="tbl"><table data-chk="ops8">
+          <caption>Tableau 3.8 — TD 2, exercice 4, corrigé (recalculé)</caption>
+          <thead><tr><th>Opération</th><th>Résultat binaire</th><th>Non signée</th><th>Signée</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bn">1110 1111</span> + <span class="bn">1111 1010</span></td><td><span class="bn">1110 1001</span></td><td class="err">ERREUR</td><td>−23</td></tr>
+            <tr><td><span class="bn">1110 1000</span> − <span class="bn">1100 1011</span></td><td><span class="bn">0001 1101</span></td><td>29</td><td>29</td></tr>
+            <tr><td><span class="bn">0101 1010</span> − <span class="bn">1001 1010</span></td><td><span class="bn">1100 0000</span></td><td class="err">ERREUR</td><td class="err">ERREUR</td></tr>
+            <tr><td><span class="bn">0111 1010</span> + <span class="bn">0000 1001</span></td><td><span class="bn">1000 0011</span></td><td>131</td><td class="err">ERREUR</td></tr>
+            <tr><td><span class="bn">1101 1011</span> − <span class="bn">0001 1001</span></td><td><span class="bn">1100 0010</span></td><td>194</td><td>−62</td></tr>
+            <tr><td><span class="bn">1000 0000</span> + <span class="bn">1111 0010</span></td><td><span class="bn">0111 0010</span></td><td class="err">ERREUR</td><td class="err">ERREUR</td></tr>
+            <tr><td><span class="bn">1001 0011</span> − <span class="bn">0000 1110</span></td><td><span class="bn">1000 0101</span></td><td>133</td><td>−123</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note why"><span class="tag">Le « positif − négatif » des sujets</span>
+          <p>Chaque tableau des sujets contient une soustraction d’un positif moins un négatif qui donne ERREUR dans les deux colonnes. En non signé, c’est forcé : le premier mot commence par 0 et le second par 1, donc <var>a</var> &lt; <var>b</var>. En signé, <var>a</var> − <var>b</var> est un grand positif : dès qu’il dépasse 127, le résultat tombe chez les négatifs. Examen 2025-2026 : <span class="bn">0101 0100</span> − <span class="bn">1001 1100</span>, avec <span data-eq>84 − 156 = −72</span> &lt; 0 en non signé et <span data-eq>84 − (−100) = 184</span> &gt; 127 en signé.</p>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Le tableau « Opération / Résultat binaire / Valeur décimale non signée et signée » est tombé dans <b>4 sujets sur 10</b> (2017, 2023, 2024 et 2025), toujours en exercice 3, pour 4 à 6 points sur 20. Le TD 2, exercice 4, est le même exercice.</li>
+            <li>Ses 17 lignes : 8 additions et 9 soustractions. ERREUR dans les deux colonnes : 4 lignes, toutes des « positif − négatif », une par sujet. ERREUR en non signé seulement : 3 lignes. ERREUR en signé seulement : 3 lignes, toutes des « positif + positif = négatif ». Aucun dépassement : 7 lignes.</li>
+            <li>Les exemples cycliques du cours (250 + 10, 4 − 10, 120 + 10, −126 − 10) sont tombés dans 2 sujets (2019 et 2022). Les questions « en fonction de <var>n</var> » (nombre d’entiers, plus grand, plus petit) dans 3 sujets (2016, 2018 et 2020) ; le nombre minimal de bits pour 8 192 et −8 192 dans 1 sujet (2021) ; la définition du complément à un, en vrai ou faux, dans 1 sujet (2020).</li>
+            <li>Jamais tombés dans les 10 sujets : l’extension de signe, le BCD, le code Gray, l’ASCII, le complément à deux ou l’encodage d’un entier en dehors du tableau, les mots de 16 bits.</li>
+            <li>Le test Moodle 2 (du 23 au 25 octobre 2026) couvre les chapitres 1 et 2 du cours, les TD 1 et 2 et les exercices 1 à 4 du TD 3 : les parties jamais tombées à l’examen peuvent y être interrogées.</li>
+          </ul>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Partie 7 <span class="ref">cours § IV.2.6</span></div><h2>L’extension de signe</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>L’extension de signe augmente le nombre de bits d’un entier signé <b>sans changer sa valeur</b> : on <b>recopie le bit de signe vers la gauche</b>. Pour passer de 8 à 16 bits, le bit de signe du mot de 8 bits (le bit 7) est recopié dans tous les nouveaux bits, du bit 8 au bit 15.</p>
+        </div>
+        <div class="tbl"><table data-chk="ext">
+          <caption>Tableau 3.9 — Extension de signe de 8 à 16 bits (exemples du cours, p. 28)</caption>
+          <thead><tr><th>Représentation décimale</th><th>Mot binaire sur 8 bits</th><th>Mot binaire sur 16 bits</th></tr></thead>
+          <tbody>
+            <tr><td>104</td><td><span class="bn">0110 1000</span></td><td><span class="bn"><b>0000 0000</b> 0110 1000</span></td></tr>
+            <tr><td>−115</td><td><span class="bn">1000 1101</span></td><td><span class="bn"><b>1111 1111</b> 1000 1101</span></td></tr>
+          </tbody>
+        </table></div>
+        <figure style="margin:0">
+          <div data-archi="register" data-opts='{"n":8,"value":"10001101","sizes":[8,16]}'></div>
+          <figcaption class="fig-cap"><b>Figure 6</b> — −115 sur 8 bits. Passe à 16 bits : le bit de signe est recopié et la valeur signée reste −115. Reviens à 8 bits : les bits retirés étaient des copies du bit de signe.</figcaption>
+        </figure>
+        <div class="note trap"><span class="tag">Piège : compléter avec des 0</span>
+          <p>Compléter un négatif avec des 0 change sa valeur : <span data-eq><span class="bn">0000 0000 1000 1101<sub>2</sub></span> = 141</span>, alors que <span data-eq="s"><span class="bn">1111 1111 1000 1101<sub>2</sub></span> = −115</span>. Les 0 à gauche conviennent à un non signé (partie 3) ou à un positif, dont le bit de signe vaut justement 0.</p>
+        </div>
+        <div class="prose"><p class="muted">L’extension de signe n’est tombée dans aucun des 10 sujets. Elle est au programme du chapitre 1, donc du test Moodle 2.</p></div>
+        <div data-check-ref="archi/cours-3-entiers.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Partie 8 <span class="ref">cours § V</span></div><h2>Autres codes : BCD, Gray, ASCII</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Il existe beaucoup d’autres encodages, chacun pour un usage. Le cours en présente trois.</p>
+          <h3>BCD</h3>
+          <p>Le <b>BCD</b> (<i>Binary-Coded Decimal</i>, décimal codé en binaire) sert surtout à afficher des nombres en décimal. Chaque <b>chiffre décimal</b> est encodé séparément sur 4 bits : <span data-chk="bcd"><span class="bn">3 768<sub>10</sub></span> = <span class="bn">0011 0111 0110 1000<sub>BCD</sub></span></span>.</p>
+        </div>
+        <div class="bcd" aria-label="3 768 en BCD : un paquet de 4 bits par chiffre décimal">
+          <span class="h">Décimal</span><span class="d">3</span><span class="d">7</span><span class="d">6</span><span class="d">8</span>
+          <span class="h">BCD</span><span class="w">0011</span><span class="w">0111</span><span class="w">0110</span><span class="w">1000</span>
+        </div>
+        <div class="note trap"><span class="tag">Piège : le BCD n’est pas le binaire</span>
+          <p>En binaire naturel, <span data-eq><span class="bn">3 768<sub>10</sub></span> = <span class="bn">1110 1011 1000<sub>2</sub></span></span> : rien à voir. En BCD, un paquet ne dépasse jamais <span class="bn">1001</span> (9) : les paquets <span class="bn">1010</span> à <span class="bn">1111</span> n’y sont pas utilisés.</p>
+        </div>
+        <div class="prose">
+          <h3>Code Gray ou binaire réfléchi</h3>
+          <p>Le <b>code Gray</b> est une autre façon d’encoder les entiers non signés. Sa propriété principale : <b>un seul bit change</b> d’une représentation à la suivante. C’est pourquoi on l’utilise dans certains algorithmes et applications particulières, dans la correction d’erreurs et dans les tableaux de Karnaugh, que le cours étudiera plus tard.</p>
+        </div>
+        <div class="tbl"><table class="gray-t" data-chk="gray">
+          <caption>Tableau 3.10 — Les 16 premières valeurs du code Gray (cours, p. 29), avec ses axes de symétrie</caption>
+          <thead><tr><th>Décimal</th><th>Binaire naturel</th><th>Code Gray</th><th>Axe de symétrie</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td><span class="bn">0000</span></td><td><span class="bn">0000</span></td><td class="ax"></td></tr>
+            <tr class="ax1"><td>1</td><td><span class="bn">0001</span></td><td><span class="bn">0001</span></td><td class="ax">pour le LSB</td></tr>
+            <tr><td>2</td><td><span class="bn">0010</span></td><td><span class="bn">0011</span></td><td class="ax"></td></tr>
+            <tr class="ax2"><td>3</td><td><span class="bn">0011</span></td><td><span class="bn">0010</span></td><td class="ax">pour les deux LSB</td></tr>
+            <tr><td>4</td><td><span class="bn">0100</span></td><td><span class="bn">0110</span></td><td class="ax"></td></tr>
+            <tr><td>5</td><td><span class="bn">0101</span></td><td><span class="bn">0111</span></td><td class="ax"></td></tr>
+            <tr><td>6</td><td><span class="bn">0110</span></td><td><span class="bn">0101</span></td><td class="ax"></td></tr>
+            <tr class="ax3"><td>7</td><td><span class="bn">0111</span></td><td><span class="bn">0100</span></td><td class="ax">pour les trois LSB</td></tr>
+            <tr><td>8</td><td><span class="bn">1000</span></td><td><span class="bn">1100</span></td><td class="ax"></td></tr>
+            <tr><td>9</td><td><span class="bn">1001</span></td><td><span class="bn">1101</span></td><td class="ax"></td></tr>
+            <tr><td>10</td><td><span class="bn">1010</span></td><td><span class="bn">1111</span></td><td class="ax"></td></tr>
+            <tr><td>11</td><td><span class="bn">1011</span></td><td><span class="bn">1110</span></td><td class="ax"></td></tr>
+            <tr><td>12</td><td><span class="bn">1100</span></td><td><span class="bn">1010</span></td><td class="ax"></td></tr>
+            <tr><td>13</td><td><span class="bn">1101</span></td><td><span class="bn">1011</span></td><td class="ax"></td></tr>
+            <tr><td>14</td><td><span class="bn">1110</span></td><td><span class="bn">1001</span></td><td class="ax"></td></tr>
+            <tr><td>15</td><td><span class="bn">1111</span></td><td><span class="bn">1000</span></td><td class="ax"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>On l’appelle aussi <b>binaire réfléchi</b> : ses bits de poids faible sont symétriques par rapport aux axes tracés dans le tableau. Pour construire la liste, on recopie la liste précédente <b>en miroir</b> à sa suite, puis on met un 0 devant la première moitié et un 1 devant la seconde :</p>
+        </div>
+        <div class="calc" data-chk="grayseq">
+          <div>1 bit : <span class="bn">0</span>, <span class="bn">1</span></div>
+          <div>2 bits : <span class="bn">00</span>, <span class="bn">01</span>, <span class="bn">11</span>, <span class="bn">10</span></div>
+          <div>3 bits : <span class="bn">000</span>, <span class="bn">001</span>, <span class="bn">011</span>, <span class="bn">010</span>, <span class="bn">110</span>, <span class="bn">111</span>, <span class="bn">101</span>, <span class="bn">100</span></div>
+        </div>
+        <div class="prose"><p>Le code Gray est un code <b>non pondéré</b> : contrairement au binaire naturel, ses chiffres n’ont pas de poids, et on ne le décode pas par une somme de poids.</p></div>
+        <div class="note why"><span class="tag">Pour vérifier une ligne (hors cours)</span>
+          <p data-chk="graybit">Le bit de gauche du code Gray est celui du binaire naturel ; chaque bit suivant vaut 1 quand le bit binaire de même rang diffère de son voisin de gauche. Pour 11 = <span class="bn">1011<sub>2</sub></span> : 1, puis 1 ≠ 0 donne 1, 0 ≠ 1 donne 1, 1 = 1 donne 0. On obtient <span class="bn">1110</span>, comme dans le tableau.</p>
+        </div>
+        <div class="prose">
+          <h3>ASCII</h3>
+          <p>L’<b>ASCII</b> (<i>American Standard Code for Information Interchange</i>) encode des caractères. Les trois exemples du cours :</p>
+          <ul>
+            <li data-chk="ascii">‘0’ = <span class="bn">30<sub>16</sub></span> = <span class="bn">0011 0000<sub>2</sub></span></li>
+            <li data-chk="ascii">‘A’ = <span class="bn">41<sub>16</sub></span> = <span class="bn">0100 0001<sub>2</sub></span></li>
+            <li data-chk="ascii">‘a’ = <span class="bn">61<sub>16</sub></span> = <span class="bn">0110 0001<sub>2</sub></span></li>
+          </ul>
+          <p>Le cours ne donne pas la table. Les chiffres s’y suivent dans l’ordre, de <span data-chk="ascii">‘1’ = <span class="bn">31<sub>16</sub></span></span> à <span data-chk="ascii">‘9’ = <span class="bn">39<sub>16</sub></span></span>, de même que les majuscules (<span data-chk="ascii">‘B’ = <span class="bn">42<sub>16</sub></span></span>) et les minuscules (<span data-chk="ascii">‘b’ = <span class="bn">62<sub>16</sub></span></span>).</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : le caractère ‘0’ n’est pas l’entier 0</span>
+          <p>Le caractère ‘0’ est le mot <span class="bn">0011 0000</span>, soit <span data-eq><span class="bn">30<sub>16</sub></span> = 48</span> ; l’entier 0 sur 8 bits est <span class="bn">0000 0000</span>. De même, ‘A’ et ‘a’ diffèrent de <span data-eq><span class="bn">61<sub>16</sub></span> − <span class="bn">41<sub>16</sub></span> = <span class="bn">20<sub>16</sub></span> = 32</span>.</p>
+        </div>
+        <div class="note exam"><span class="tag">Au partiel</span>
+          <p>BCD, Gray et ASCII ne sont tombés dans aucun des 10 sujets, et ni le TD 1 ni le TD 2 ne les exercent. Ils sont au programme du chapitre 1 : le test Moodle 2 peut les interroger, sur les définitions et les exemples du cours.</p>
+        </div>
+        <div data-check-ref="archi/cours-3-entiers.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="archi:entiers:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais encoder et décoder un entier sur <var>n</var> bits. Le chapitre 4, <a href="cours-4-flottants.html">les nombres à virgule flottante</a>, encode les réels avec la norme IEEE 754 : le bit de signe y revient, et l’exposant s’y écrit avec un biais.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+/* Partie 6 : le banc des opérations sur 8 bits (tableau des sujets), étape par étape.
+   Lignes : TD 2, exercice 4, et les 4 sujets qui ont ce tableau (2017, 2023, 2024, 2025), plus les exemples du cours. */
+(function () {
+  'use strict';
+  var R = window.REV, el = document.getElementById('b8');
+  if (!R || !R.archi || !el) return;
+  var M = '−';
+  var TXT = {
+    title: 'Opération sur 8 bits', right: 'non signé · signé',
+    pick: 'Ligne du TD 2 ou d’un sujet', own: 'Ta propre opération', a: '1er mot', op: 'Opération', b: '2e mot',
+    bad: 'Tape deux mots de 8 bits exactement : des 0 et des 1, espaces permis.',
+    prev: 'Précédent', next: 'Suivant', all: 'Tout afficher', reset: 'Recommencer', cnt: 'étape {i} / {n}',
+    carries: 'retenues', borrows: 'emprunts', pos: 'positif', neg: 'négatif',
+    rb: 'Résultat binaire', ru: 'Non signée', rs: 'Signée', ERR: 'ERREUR',
+    s0: 'Cherche d’abord le résultat sur papier, puis avance étape par étape.',
+    s1: 'Les opérandes : {a} vaut {au} en non signé et {as} en signé ({sa}) ; {b} vaut {bu} en non signé et {bs} en signé ({sb}).',
+    s2add: 'Addition posée colonne par colonne : on garde les 8 bits de droite, {w}. Retenue sortante : {c}.',
+    s2sub: 'Soustraction posée colonne par colonne, avec les emprunts : on garde les 8 bits, {w}. Emprunt sortant : {c}.',
+    s2c2: 'Avec le complément à deux : {a} + C2 ({b}) = {a} + {t} = {raw}.',
+    s2c2c: 'On ignore la retenue et on retrouve {w}, le même mot. Cette retenue ne sert ni pour la colonne non signée, ni pour la colonne signée.',
+    s2c2n: 'C’est le même mot.',
+    s3ok: 'Non signé : {x} = {r}, entre 0 et 255 : pas de dépassement. Le mot {w} vaut bien {r}.',
+    s3addko: 'Non signé : {x} = {r}, plus grand que 255 : dépassement non signé, que signale la retenue sortante. On écrit ERREUR.',
+    s3subko: 'Non signé : {x} = {r}, négatif : dépassement non signé, car {a} &lt; {b} (l’emprunt sortant). On écrit ERREUR.',
+    s4ok: 'Signé : {x} = {r}, entre −128 et 127 : pas de dépassement (signes {g}).',
+    s4ko: 'Signé : {x} = {r}, hors de −128 … 127 : dépassement signé (signes {g}). On écrit ERREUR.',
+    s4pos: 'Le mot {w} commence par 0 : il vaut {r}.',
+    s4neg: 'Le mot {w} commence par 1 : C2 ({w}) = {c} = {v}, donc {w} vaut {r}.',
+    s5: 'Sur la copie : {w} | {u} | {s}.',
+    groups: { td2: 'TD 2, exercice 4', p2017: 'Sujet 2017', p2023: 'Sujet 2023', p2024: 'Sujet 2024', p2025: 'Examen 2025-2026', cours: 'Exemples du cours' }
+  };
+  var LINES = [
+    ['td2', '11101111', '+', '11111010'], ['td2', '11101000', '-', '11001011'], ['td2', '01011010', '-', '10011010'], ['td2', '01111010', '+', '00001001'],
+    ['td2', '11011011', '-', '00011001'], ['td2', '10000000', '+', '11110010'], ['td2', '10010011', '-', '00001110'],
+    ['p2017', '01100110', '-', '10011011'], ['p2017', '10001100', '+', '01111110'], ['p2017', '01111011', '+', '10000011'], ['p2017', '10010011', '-', '10001101'],
+    ['p2023', '11010011', '-', '10011111'], ['p2023', '01101001', '+', '01101110'], ['p2023', '01011010', '-', '10101110'], ['p2023', '11001000', '-', '11100010'], ['p2023', '01101111', '+', '10000001'],
+    ['p2024', '01010011', '-', '10010111'], ['p2024', '00100101', '+', '00101010'], ['p2024', '11010110', '-', '00101110'], ['p2024', '01111111', '+', '00000001'], ['p2024', '11111111', '+', '00000001'],
+    ['p2025', '01010100', '-', '10011100'], ['p2025', '01110110', '+', '00011001'], ['p2025', '11010011', '-', '00010110'],
+    ['cours', '11111010', '+', '00001010'], ['cours', '01111000', '+', '00001010'], ['cours', '01110011', '-', '00111110']
+  ];
+  var esc = R.util.esc, A = R.archi;
+  function t(k, o) { return String(TXT[k]).replace(/\{(\w+)\}/g, function (m, x) { return o && o[x] != null ? o[x] : m; }); }
+  function g4(w) { return w.slice(0, 4) + ' ' + w.slice(4); }
+  function bn(w) { return '<span class="bn">' + esc(w.length === 8 ? g4(w) : w.length === 9 ? w.charAt(0) + ' ' + g4(w.slice(1)) : w) + '</span>'; }
+  function n(v) { v = Number(v); return v < 0 ? M + (-v) : String(v); }
+  function np(v) { v = Number(v); return v < 0 ? '(' + M + (-v) + ')' : String(v); }
+  function opS(o) { return o === '+' ? '+' : M; }
+  function calc(a, o, b) {
+    var cols = [], c = 0, i, da, db, d, w = '';
+    for (i = 7; i >= 0; i--) {
+      da = +a.charAt(i); db = +b.charAt(i);
+      if (o === '+') { d = da + db + c; c = d >> 1; d &= 1; }
+      else { d = da - db - c; if (d < 0) { d += 2; c = 1; } else c = 0; }
+      w = d + w; cols[7 - i] = c;          /* cols[k] : retenue ou emprunt qui part de la colonne k vers la colonne k + 1 */
+    }
+    var r = o === '+' ? A.addN(a, b) : A.subN(a, b);
+    var res = { a: a, b: b, o: o, w: w, out: c, cols: cols, r: r };
+    if (o === '-') { res.t = A.twos(b).bits; var sum = parseInt(a, 2) + parseInt(res.t, 2); res.raw = sum.toString(2); }
+    return res;
+  }
+  var STEPS = 5, k = 0, cur = null;
+  var opts = '<option value="own">' + esc(TXT.own) + '</option>', last = '';
+  LINES.forEach(function (L, i) {
+    if (L[0] !== last) { opts += (last ? '</optgroup>' : '') + '<optgroup label="' + esc(TXT.groups[L[0]]) + '">'; last = L[0]; }
+    opts += '<option value="' + i + '">' + esc(g4(L[1]) + ' ' + opS(L[2]) + ' ' + g4(L[3])) + '</option>';
+  });
+  opts += '</optgroup>';
+  el.innerHTML = '<div class="bench-head"><span class="bh-t">' + esc(TXT.title) + '</span><span class="bh-r">' + esc(TXT.right) + '</span></div>' +
+    '<div class="bench-body"><div class="b8-form">' +
+    '<label class="cv-f b8-pick"><span>' + esc(TXT.pick) + '</span><select data-f="pick">' + opts + '</select></label>' +
+    '<label class="cv-f"><span>' + esc(TXT.a) + '</span><input data-f="a" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="12"></label>' +
+    '<label class="cv-f"><span>' + esc(TXT.op) + '</span><select data-f="op"><option value="+">+</option><option value="-">' + M + '</option></select></label>' +
+    '<label class="cv-f"><span>' + esc(TXT.b) + '</span><input data-f="b" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="12"></label>' +
+    '</div><div class="po-scroll"><table class="po-t b8-t"><tbody></tbody></table></div>' +
+    '<p class="readout b8-say" aria-live="polite"></p><ol class="steps b8-steps"></ol>' +
+    '<dl class="b8-ans" hidden></dl></div>' +
+    '<div class="ctrls"><div class="row">' +
+    '<button type="button" class="btn" data-a="prev">' + esc(TXT.prev) + '</button>' +
+    '<button type="button" class="btn primary" data-a="next">' + esc(TXT.next) + '</button>' +
+    '<button type="button" class="btn" data-a="end">' + esc(TXT.all) + '</button>' +
+    '<button type="button" class="btn ghost" data-a="reset">' + esc(TXT.reset) + '</button>' +
+    '<span class="cnt"></span></div></div>';
+  var pick = el.querySelector('[data-f="pick"]'), ia = el.querySelector('[data-f="a"]'), io = el.querySelector('[data-f="op"]'), ib = el.querySelector('[data-f="b"]');
+  var tb = el.querySelector('.b8-t tbody'), say = el.querySelector('.b8-say'), ol = el.querySelector('.b8-steps'), ans = el.querySelector('.b8-ans');
+  function clean(s) { return String(s || '').replace(/[\s _]/g, ''); }
+  function row(cls, op, cells, lab, outCell) {
+    var h = '<tr class="' + cls + '"><th class="po-o" scope="row">' + (op || '') + '</th>' + (outCell || '<td></td>');
+    for (var i = 0; i < 8; i++) h += '<td class="' + (i === 4 ? 'nb' : '') + (cells.sg && i === 0 ? ' sg' : '') + (cells.cls ? ' ' + cells.cls : '') + '">' + (cells[i] == null ? '' : cells[i]) + '</td>';
+    return h + '<th class="lb" scope="row">' + (lab || '') + '</th></tr>';
+  }
+  function paint() {
+    var a = clean(ia.value), b = clean(ib.value), o = io.value;
+    if (!/^[01]{8}$/.test(a) || !/^[01]{8}$/.test(b)) {
+      tb.innerHTML = ''; ol.innerHTML = ''; ans.hidden = true; say.innerHTML = '<span class="cv-err">' + esc(TXT.bad) + '</span>';
+      el.querySelector('.cnt').textContent = ''; return;
+    }
+    var c = cur = calc(a, o, b), r = c.r, add = o === '+';
+    var uErr = r.u.overflow, sErr = r.s.overflow;
+    var sg = function (w) { return w.charAt(0) === '1' ? 'N' : 'P'; }, G = sg(a) + ' ' + opS(o) + ' ' + sg(b) + ' = ' + sg(c.w);
+    /* la grille posée */
+    var aux = {}, ca = a.split(''), cb = b.split(''), cw = c.w.split('');
+    ca.sg = cb.sg = cw.sg = true;
+    for (var j = 0; j < 7; j++) if (c.cols[j]) aux[7 - (j + 1)] = '1';
+    aux.cls = 'o';
+    var labA = k >= 1 ? r.u.a + ' · ' + n(r.s.a) : '', labB = k >= 1 ? r.u.b + ' · ' + n(r.s.b) : '';
+    var labW = '';
+    if (k >= 3) labW = (uErr ? '<b class="err">' + TXT.ERR + '</b>' : '<b>' + r.u.r + '</b>') + (k >= 4 ? ' · ' + (sErr ? '<b class="err">' + TXT.ERR + '</b>' : '<b>' + n(r.s.r) + '</b>') : '');
+    var outAux = k >= 2 && c.out ? '<td class="o">1</td>' : '<td class="o"></td>';
+    var outRes = k >= 2 && c.out && add ? '<td class="out x" title="' + esc(TXT.carries) + '">1</td>' : '<td></td>';
+    tb.innerHTML = row('po-carry', '', k >= 2 ? aux : { cls: 'o' }, k >= 2 ? '<span class="cu">' + esc(add ? TXT.carries : TXT.borrows) + '</span>' : '', outAux) +
+      row('', '', ca, labA) + row('po-last', opS(o), cb, labB) + row('po-res', '', k >= 2 ? cw : {}, labW, outRes);
+    /* les étapes */
+    var li = [], x;
+    li.push(t('s1', { a: bn(a), au: r.u.a, as: n(r.s.a), sa: r.s.a < 0 ? TXT.neg : TXT.pos, b: bn(b), bu: r.u.b, bs: n(r.s.b), sb: r.s.b < 0 ? TXT.neg : TXT.pos }));
+    li.push(add ? t('s2add', { w: bn(c.w), c: c.out }) : t('s2sub', { w: bn(c.w), c: c.out }) + ' ' + t('s2c2', { a: bn(a), b: bn(b), t: bn(c.t), raw: bn(c.raw.length > 8 ? c.raw : ('00000000' + c.raw).slice(-8)) }) + ' ' + t(c.raw.length > 8 ? 's2c2c' : 's2c2n', { w: bn(c.w) }));
+    x = r.u.a + ' ' + opS(o) + ' ' + r.u.b;
+    li.push(uErr ? t(add ? 's3addko' : 's3subko', { x: x, r: n(add ? r.u.a + r.u.b : r.u.a - r.u.b), a: bn(a), b: bn(b) }) : t('s3ok', { x: x, r: r.u.r, w: bn(c.w) }));
+    x = n(r.s.a) + ' ' + opS(o) + ' ' + np(r.s.b);
+    var exact = add ? r.s.a + r.s.b : r.s.a - r.s.b;
+    li.push(sErr ? t('s4ko', { x: x, r: n(exact), g: G }) : t('s4ok', { x: x, r: n(exact), g: G }) + ' ' + (c.w.charAt(0) === '1' ? t('s4neg', { w: bn(c.w), c: bn(A.twos(c.w).bits), v: -r.s.r, r: n(r.s.r) }) : t('s4pos', { w: bn(c.w), r: r.s.r })));
+    li.push(t('s5', { w: bn(c.w), u: uErr ? TXT.ERR : r.u.r, s: sErr ? TXT.ERR : n(r.s.r) }));
+    ol.innerHTML = li.map(function (h, i) { return '<li class="' + (i >= k ? 'later' : i === k - 1 ? 'now' : '') + '"><div><p>' + h + '</p></div></li>'; }).join('');
+    say.innerHTML = k === 0 ? esc(TXT.s0) : '';
+    say.hidden = k > 0;
+    ans.hidden = k < STEPS;
+    ans.innerHTML = '<div><dt>' + esc(TXT.rb) + '</dt><dd>' + esc(g4(c.w)) + '</dd></div>' +
+      '<div><dt>' + esc(TXT.ru) + '</dt><dd' + (uErr ? ' class="err"' : '') + '>' + (uErr ? TXT.ERR : r.u.r) + '</dd></div>' +
+      '<div><dt>' + esc(TXT.rs) + '</dt><dd' + (sErr ? ' class="err"' : '') + '>' + (sErr ? TXT.ERR : n(r.s.r)) + '</dd></div>';
+    el.querySelector('[data-a="prev"]').disabled = k <= 0;
+    el.querySelector('[data-a="next"]').disabled = el.querySelector('[data-a="end"]').disabled = k >= STEPS;
+    el.querySelector('.cnt').textContent = t('cnt', { i: k, n: STEPS });
+  }
+  function load(i) { var L = LINES[i]; ia.value = g4(L[1]); io.value = L[2]; ib.value = g4(L[3]); k = 0; paint(); }
+  pick.addEventListener('change', function () { if (pick.value !== 'own') load(+pick.value); });
+  [ia, ib, io].forEach(function (f) {
+    f.addEventListener(f.tagName === 'SELECT' ? 'change' : 'input', function () {
+      var a = clean(ia.value), b = clean(ib.value), o = io.value, m = 'own';
+      LINES.forEach(function (L, i) { if (m === 'own' && L[1] === a && L[3] === b && L[2] === o) m = String(i); });
+      pick.value = m; paint();
+    });
+  });
+  el.querySelector('.ctrls').addEventListener('click', function (e) {
+    var bt = e.target.closest('[data-a]'); if (!bt) return;
+    var a = bt.getAttribute('data-a');
+    k = a === 'prev' ? Math.max(0, k - 1) : a === 'next' ? Math.min(STEPS, k + 1) : a === 'end' ? STEPS : 0;
+    paint();
+  });
+  pick.value = '0'; load(0);
+})();
+</script>
+</body>
+</html>
