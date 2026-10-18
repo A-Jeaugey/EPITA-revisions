@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Work and energy · Physics</title>
+<meta name="description" content="Physics, chapter 3: work done by a constant force, driving and resisting forces, work done by the weight, power, kinetic energy and the work-kinetic energy theorem, potential energy, conservation of mechanical energy, friction, choosing between Newton’s second law and energy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Additions specific to this page: energy bars of the plate, work gauge (part 1), paths (part 5). */
+.sliders.one,.plate .sliders.one{grid-template-columns:minmax(0,1fr)}
+.vlegend .sw{display:inline-block;width:13px;height:10px;border-radius:2px}
+.sw.ec,.eb .c{background:var(--vel)} .sw.ep,.eb .p{background:var(--pos)}
+.sw.eq,.eb .q{background:repeating-linear-gradient(135deg,var(--acc) 0 2px,transparent 2px 6px);box-shadow:inset 0 0 0 1px var(--acc)}
+.en-bars{display:grid;gap:7px}
+.eb{display:grid;grid-template-columns:2.5em minmax(0,1fr) 4.6em;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+.eb-n{font-family:var(--font-math);font-size:1.05rem;line-height:1}
+.eb-t{display:flex;height:14px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.07)}
+.eb-t i{display:block;height:100%;flex:none}
+.eb output{font-family:var(--font-mono);font-size:.82rem;text-align:right;white-space:nowrap}
+.plate .mk .en-track{fill:none;stroke:var(--plate-ink);stroke-width:2.4;stroke-linecap:round;opacity:.9}
+.plate .mk .en-hatch{fill:none;stroke:var(--acc);stroke-width:1.3;opacity:.85}
+.plate .mk .en-ang{fill:none;stroke:var(--flash);stroke-width:1.2;opacity:.75}
+.mk .wk-line{stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.mk .wk-ang{fill:none;stroke:var(--accent);stroke-width:1.4}
+.mk .vk.soft{opacity:.5}
+.wg{position:relative;height:12px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.wg i{position:absolute;top:0;bottom:0}
+.wg i.pos{background:var(--ok)} .wg i.neg{background:var(--warn)}
+.wg .z{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ink)}
+.wg-sc{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.mk .pth{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mk .pth.p1{stroke:var(--accent)} .mk .pth.p2{stroke:var(--ink)} .mk .pth.p3{stroke:var(--muted);stroke-dasharray:7 4}
+.mk .pth.p2.hz{opacity:.4;stroke-dasharray:4 4}
+.mk .pth-b circle{fill:var(--surface);stroke:currentColor;stroke-width:1.6}
+.mk .pth-b text{font-family:var(--font-mono);font-size:11px;font-weight:500;fill:currentColor}
+.mk .pth-b.p1{color:var(--accent)} .mk .pth-b.p2{color:var(--ink)} .mk .pth-b.p3{color:var(--muted)}
+</style>
+</head>
+<body data-resume="Physics · chapter 3: work and energy">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics</a> · Chapter 3 of 4</div>
+      <h1>Height turns <span class="w">into speed</span>.</h1>
+      <p class="lead">When the forces are complicated, or when only a speed matters, you go through energy: the work done by the forces, kinetic energy, potential energy. Two theorems, and a speed comes out in one line, without integrating.</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">8 parts</span><span class="chip">course ch. V · TD 4</span><span class="chip">absent from the 7 midterms found</span></div>
+      <div class="vlegend" aria-label="Colours: velocity in green, forces in purple, kinetic energy in green, potential energy in blue, dissipated energy hatched">
+        <span><i class="lv"></i>velocity</span><span><i class="lf"></i>force</span><span><b class="sw ec"></b>kinetic energy</span><span><b class="sw ep"></b>potential energy</span><span><b class="sw eq"></b>dissipated energy</span>
+      </div>
+    </div>
+    <div id="plate" aria-label="Plate: a solid slides down the circular arc of TD 4, then along a horizontal segment; you set its position and the friction, the bars show its energies"></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 3 · Work and energy</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>The work done by a force</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>Driving, resisting; the weight</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Power</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Kinetic energy and its theorem</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Potential energy</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Conservation of mechanical energy</span></a></li>
+      <li><a href="#s7"><span class="frames" data-n="7"></span><span>Friction</span></a></li>
+      <li><a href="#s8"><span class="frames" data-n="8"></span><span>Second law or energy?</span></a></li>
+    </ol>
+    <p class="toc-note">The plate at the top of the page is used in parts 4, 6 and 7. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Physics home</a><a href="cours-2-dynamique.html">← Chapter 2: forces and Newton’s laws</a><a href="cours-4-polaires.html">Chapter 4: polar coordinates →</a><a href="../qcm/index.html#physique">Physics MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">The work done by a force</a></li><li><a href="#s2">Driving, resisting; the weight</a></li><li><a href="#s3">Power</a></li><li><a href="#s4">Kinetic energy and its theorem</a></li>
+      <li><a href="#s5">Potential energy</a></li><li><a href="#s6">Conservation of mechanical energy</a></li><li><a href="#s7">Friction</a></li><li><a href="#s8">Second law or energy?</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The work done by a constant force</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Newton’s second law is not always enough to derive the equations of motion: some forces are hard to express, and sometimes you only want a speed at a given place. The course then uses a different approach, based on <b>energy</b>. It starts with one quantity: work.</p>
+          <p>A force <var class="vec kf">F</var> acting on a moving system splits into two components. <var class="vec kf">F</var><sub>⊥</sub>, perpendicular to the trajectory, curves it. <var class="vec kf">F</var><sub>∥</sub>, parallel to the trajectory, changes the speed. <b>Work</b> measures how much the force accelerates or decelerates the system: only the parallel component counts.</p>
+        </div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub> = ∫<sub>𝒞</sub> <var class="vec kf">F</var> · d<var class="vec">l</var></span><small>in Joules (J), 1 J = 1 N·m; d<var class="vec">l</var>: infinitesimal displacement of the point along the trajectory 𝒞</small></div>
+        <div class="prose">
+          <p>It is a line integral: a priori it depends on both the force and the path. If the force is <b>constant</b> (same magnitude, same direction all along the path), it becomes a simple scalar product with the displacement <var class="vec">AB</var>:</p>
+        </div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub> = <var class="vec kf">F</var> · <var class="vec">AB</var> = <var>F</var> × AB × cos <var>θ</var></span><small><var>θ</var>: angle between the force <var class="vec kf">F</var> and the displacement <var class="vec">AB</var></small></div>
+        <div class="prose"><p>In Cartesian components, the same scalar product reads <span class="f"><var class="vec kf">F</var> · <var class="vec">AB</var> = <var>F</var><sub><var>x</var></sub> (<var>x</var><sub>B</sub> − <var>x</var><sub>A</sub>) + <var>F</var><sub><var>y</var></sub> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span>. This is handy when the force is given by its components, like the weight (part 2). Change the angle: only the projection <var>F</var> cos <var>θ</var> on the displacement does work.</p></div>
+        <div id="workBench" aria-label="Bench: work done by a 3 N force over a 0.50 m displacement, depending on the angle between the force and the displacement"></div>
+        <ol class="steps">
+          <li><div><p><b>Work done by a force</b> <span class="src-tag c">TD 4 · Ex 2</span> <var>F</var> = 3 N, point M moves from A to B, AB = 50 cm, and <var class="vec kf">F</var> makes 30° with the line (AB), on the side of B: the angle between <var class="vec kf">F</var> and <var class="vec">AB</var> is 30°.</p><p><span class="f"><var>W</var> = 3 × 0.50 × cos 30°</span> <span class="f">= 1.5 × √3/2</span> <span class="f">= 0.75 √3 ≈ 1.3&nbsp;J</span>, positive. This is the starting setting of the bench.</p></div></li>
+          <li><div><p><b>The toy</b> <span class="src-tag c">TD 4 · Ex 2</span> A string makes 40° with the floor, pulling force <var>T</var> = 10 N, displacement AB = 5.0&nbsp;m along the floor: <span class="f"><var>W</var><sub>AB</sub>(<var class="vec kf">T</var>) = 10 × 5.0 × cos 40° ≈ 38&nbsp;J</span>. The cosine of 40° (≈ 0.77) needs a calculator: without one, a test would give you the value or use a standard angle.</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>Work is a number (a scalar), positive, negative or zero. It is not a vector. Unit: the Joule, 1 J = 1 N·m.</li>
+          <li>Without a calculator: cos 0 = 1, cos 30° = √3/2 ≈ 0.87, cos 45° = √2/2 ≈ 0.71, cos 60° = 1/2, cos 90° = 0, cos 180° = −1.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var>θ</var> is the angle between the force and the <b>displacement</b>. An angle given from the vertical must be converted first: a force at 30° from the vertical, for a horizontal displacement, makes 60° with that displacement.</li>
+          <li>Lengths in metres: 50 cm = 0.50&nbsp;m. With “50”, the work comes out a hundred times too large.</li>
+          <li><var>W</var> = <var class="vec kf">F</var> · <var class="vec">AB</var> assumes a force that is constant along the whole path. Otherwise, use the integral.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>Driving force, resisting force, work done by the weight</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The sign of the work tells you whether the force helps or hinders the motion. With <var>W</var> = <var>F</var> × AB × cos <var>θ</var>, it all comes from the sign of cos <var>θ</var>. The course distinguishes three cases.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sign</th><th>Angle <var>θ</var></th><th>The force</th></tr></thead>
+          <tbody>
+            <tr><td class="f"><var>W</var> &gt; 0</td><td class="f">0 ≤ <var>θ</var> &lt; 90°</td><td>is <b>driving</b> (positive work): it tends to accelerate the system</td></tr>
+            <tr><td class="f"><var>W</var> = 0</td><td class="f"><var>θ</var> = 90°</td><td>is perpendicular to the displacement: it can curve the trajectory, without changing the speed</td></tr>
+            <tr><td class="f"><var>W</var> &lt; 0</td><td class="f">90° &lt; <var>θ</var> ≤ 180°</td><td>is <b>resisting</b> (negative work): it tends to slow the system down</td></tr>
+          </tbody>
+        </table></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Forces that do no work</span><p>The <b>surface reaction force</b> <var class="vec kf">R</var>: the course says it is always perpendicular to the surface, hence to the displacement. <var>W</var>(<var class="vec kf">R</var>) = 0. The <b>weight</b>, during a horizontal displacement.</p><p class="muted">TD 4, Ex 3 and 5: “Which forces do work?” Start by ruling these out.</p></div>
+          <div class="card"><span class="k">Friction</span><p>It always opposes the motion: <var>θ</var> = 180°. A friction force of constant magnitude <var>f</var>, over a path of length <var>L</var>: <span class="f"><var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> × <var>L</var></span>. Always resisting.</p><p class="muted">TD 4, Ex 3 and 4: friction of constant magnitude.</p></div>
+        </div>
+        <h3>The work done by the weight</h3>
+        <div class="prose"><p>With <var class="vec">u</var><sub><var>y</var></sub> pointing upwards, the weight is <span class="f"><var class="vec kf">W</var> = −<var>m</var><var>g</var> <var class="vec">u</var><sub><var>y</var></sub></span>, with components (0, −<var>m</var><var>g</var>). Between A (<var>x</var><sub>A</sub>, <var>y</var><sub>A</sub>) and B (<var>x</var><sub>B</sub>, <var>y</var><sub>B</sub>), the component form gives:</p></div>
+        <div class="eq"><span class="nw"><var>W</var><sub>A→B</sub>(<var class="vec kf">W</var>) = <var>W</var><sub><var>x</var></sub> (<var>x</var><sub>B</sub> − <var>x</var><sub>A</sub>)</span><span class="nw">+ <var>W</var><sub><var>y</var></sub> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span><span class="nw">= 0 − <var>m</var><var>g</var> (<var>y</var><sub>B</sub> − <var>y</var><sub>A</sub>)</span><span class="nw">= <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>)</span><small>only the difference in height counts; for a descent of height <var>h</var>: <var>W</var>(<var class="vec kf">W</var>) = <var>m</var><var>g</var><var>h</var></small></div>
+        <div class="prose"><p>Neither the horizontal distance nor the shape of the path matters (part 5). The weight does positive work when the system moves downwards (<var>y</var><sub>A</sub> &gt; <var>y</var><sub>B</sub>), negative work when it moves upwards.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The ball</b> <span class="src-tag c">TD 4 · Ex 2</span> <var>m</var> = 500 g = 0.500&nbsp;kg, and <var>W</var><sub>AB</sub> = 5.4&nbsp;J for its weight.</p><p>a. <var>W</var> &gt; 0, so <var>y</var><sub>A</sub> &gt; <var>y</var><sub>B</sub>: the ball moves <b>downwards</b>.</p><p>b. <span class="f"><var>y</var><sub>A</sub> − <var>y</var><sub>B</sub> = <var>W</var><sub>AB</sub> / (<var>m</var><var>g</var>)</span> <span class="f">= 5.4 / (0.500 × 10)</span> <span class="f">= 1.08&nbsp;m</span>. The exercise does not give <var>g</var>: 10&nbsp;m·s⁻², as in the rest of the TD (1.10&nbsp;m with 9.81).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><p><var>W</var><sub>A→B</sub>(<var class="vec kf">W</var>) = <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>): starting height minus final height. Moving down: positive. Moving up: negative. Staying at the same height: zero.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“Driving” does not mean the system speeds up. A driving force can be beaten by resisting forces: the sum of all the works decides (part 4).</li>
+          <li>In <var>m</var><var>g</var> (<var>y</var><sub>A</sub> − <var>y</var><sub>B</sub>), the order matters. Always check: a falling object receives positive work from its weight.</li>
+          <li>In the English course, the letter W is used twice: <var class="vec kf">W</var> with an arrow is the weight (a vector, in Newtons), <var>W</var><sub>A→B</sub> is the work (a number, in Joules). Keep the arrow and the indices.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>Power</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Work says how much energy a force transfers; <b>power</b> says how fast. It is the same idea as in electricity, where electric power describes how fast electric energy is delivered.</p></div>
+        <div class="eq"><span class="nw"><var>P</var> = <span class="frac"><span>d<var>W</var></span><span>d<var>t</var></span></span> = <var class="vec kf">F</var> · <span class="frac"><span>d<var class="vec">l</var></span><span>d<var>t</var></span></span> = <var class="vec kf">F</var> · <var class="vec kv">v</var></span><small>in Watts (W), 1 W = 1 J/s; <var class="vec kv">v</var>: velocity of the system at that instant</small></div>
+        <div class="prose"><p>Since d<var class="vec">l</var>/d<var>t</var> = <var class="vec kv">v</var>, the power of a force is the scalar product of the force and the velocity: <span class="f"><var>P</var> = <var>F</var> <var>v</var> cos <var>θ</var></span>, with <var>θ</var> the angle between <var class="vec kf">F</var> and <var class="vec kv">v</var>. It has the sign of the work: positive for a driving force, negative for a resisting force, zero if <var class="vec kf">F</var> ⊥ <var class="vec kv">v</var>. If it stays constant for a duration Δ<var>t</var>, <var>W</var> = <var>P</var> × Δ<var>t</var>.</p></div>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">TD 2 · Ex 3</span> The 10&nbsp;kg robot moves on horizontal ground. Its motor exerts <var>F</var> = 50 N parallel to the ground, its initial speed is 2&nbsp;m·s⁻¹. Without friction, Newton’s second law gives <var>v</var>(<var>t</var>) = 5<var>t</var> + 2.</p></div>
+        <ol class="steps">
+          <li><div><p><var class="vec kf">F</var> and <var class="vec kv">v</var> point the same way: <span class="f"><var>P</var> = <var>F</var><var>v</var> = 50 (5<var>t</var> + 2)</span>. 100 W at the start, 600 W at <var>t</var> = 2 s: with a constant force, the power grows with the speed.</p></div></li>
+          <li><div><p>With the friction <span class="f"><var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var></span> (<var>α</var> = 0.5&nbsp;kg·s⁻¹, part II of the TD): <span class="f"><var>P</var>(<var class="vec kf">f</var>) = <var class="vec kf">f</var> · <var class="vec kv">v</var> = −<var>α</var> <var>v</var>²</span>, always negative.</p><p>At the maximum speed <var>v</var><sub>max</sub> = <var>F</var>/<var>α</var> = 100&nbsp;m·s⁻¹: <var>P</var>(<var class="vec kf">F</var>) = 50 × 100 = 5000 W and <var>P</var>(<var class="vec kf">f</var>) = −0.5 × 100² = −5000 W. The sum is zero: the speed no longer changes (part 4).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><var>P</var> = <var class="vec kf">F</var> · <var class="vec kv">v</var>, in Watts; 1 kW = 1000 W.</li>
+          <li>Constant power during Δ<var>t</var>: <var>W</var> = <var>P</var> Δ<var>t</var>. For instance 1 kW for 1 min delivers 60,000&nbsp;J.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Three W’s in the English course: <var class="vec kf">W</var> the weight (Newtons), <var>W</var><sub>A→B</sub> the work (Joules), and W the unit Watt for power. Write the arrow on the weight, the indices on the work.</li>
+          <li>Power uses the velocity at the instant considered: if <var>v</var> changes, <var>P</var> changes, even with a constant force.</li>
+          <li>TD 4 (Ex 3) asks whether a motor is “powerful enough” to climb a slope: the question is settled with works, in Joules (part 7), not with Watts.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>Kinetic energy and the work-kinetic energy theorem</h2></div>
+      <div class="stack">
+        <div class="prose"><p><b>Kinetic energy</b> is the energy an object has due to its motion. For a system of mass <var>m</var> moving at speed <var>v</var> (the norm of <var class="vec kv">v</var>):</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>k</sub> = ½ <var>m</var> <var>v</var>²</span><small>in Joules; always positive or zero, zero only at rest</small></div>
+        <div class="prose"><p>The <b>work-kinetic energy theorem</b> connects the work done by the forces with the change in kinetic energy. Between two points A and B, the sum of the works done by <b>all</b> the forces acting on the system is:</p></div>
+        <div class="eq"><span class="nw">Σ<sub><var>i</var></sub> <var>W</var><sub><var>i</var></sub> = Δ<var>E</var><sub>k</sub> = ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>²</span><span class="nw">or, with powers: Σ<sub><var>i</var></sub> <var>P</var><sub><var>i</var></sub> = <span class="frac"><span>d<var>E</var><sub>k</sub></span><span>d<var>t</var></span></span></span></div>
+        <div class="prose"><p>Positive sum: the system is faster at B than at A. Negative: slower. Zero: same speed. This is what was missing in part 2: a single driving force does not tell you whether the system speeds up, the sum does. On the plate at the top of the page, slide the solid from A to B: only the weight does work, positive work, and the green <var>E</var><sub>k</sub> bar grows.</p></div>
+        <div class="note keep"><span class="tag">Method</span><ol>
+          <li>System, reference frame (terrestrial, assumed Galilean).</li>
+          <li>Forces involved, with a force diagram.</li>
+          <li>Work done by each force between A and B. Rule out the ones that do no work (reaction without friction, weight on a horizontal path).</li>
+          <li>Theorem: sum of the works = ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>².</li>
+          <li>Isolate the unknown (speed, force, distance), then do the numerical application.</li>
+        </ol></div>
+        <ol class="steps">
+          <li><div><p><b>The course example</b> <span class="src-tag c">Course p. 9</span> A body of mass <var>m</var> falls from a height <var>H</var>, with no initial velocity, subject only to its own weight. The weight goes down by <var>H</var>: its work is <var>m</var><var>g</var><var>H</var>. The theorem gives <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² − 0 = <var>m</var><var>g</var><var>H</var></span>, so <span class="f"><var>v</var><sub>B</sub> = √(2<var>g</var><var>H</var>)</span>. The mass cancels out. It is also question 3 of TD 4 Ex 1, with <var>h</var>: <var>v</var><sub>sol</sub> = √(2<var>g</var><var>h</var>).</p></div></li>
+          <li><div><p><b>The puck</b> <span class="src-tag c">TD 4 · Ex 5</span> On AA’ (horizontal, length <var>L</var>): <var class="vec kf">W</var> and <var class="vec kf">R</var> are perpendicular to the displacement and do no work; the thrust <var class="vec kf">F</var>, in the direction of motion, gives <var>F</var><var>L</var>. Starting from rest: <span class="f">½ <var>m</var> <var>v</var><sub>A’</sub>² = <var>F</var><var>L</var></span>, so <span class="f"><var>F</var> = <var>m</var> <var>v</var><sub>A’</sub>² / (2<var>L</var>)</span>.</p><p>On A’B (horizontal, no friction, no thrust), no force does work: Δ<var>E</var><sub>k</sub> = 0, so <var>v</var><sub>B</sub> = <var>v</var><sub>A’</sub>.</p></div></li>
+          <li><div><p><b>With powers</b> <span class="src-tag c">TD 2 · Ex 3</span> The robot of part 3, without friction: <var>E</var><sub>k</sub> = ½ × 10 × (5<var>t</var> + 2)². Its derivative is 10 × 5 × (5<var>t</var> + 2) = 50 (5<var>t</var> + 2): exactly the power of the motor, the only force doing work.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var>v</var>² is the square of the norm: ½ <var>m</var> <var>v</var>² does not depend on the direction of <var class="vec kv">v</var>. The theorem gives a speed, not a vector.</li>
+          <li>Δ<var>E</var><sub>k</sub> = final − initial: ½ <var>m</var> <var>v</var><sub>B</sub>² − ½ <var>m</var> <var>v</var><sub>A</sub>², in that order.</li>
+          <li>Do not leave out any resisting force from the sum, especially friction.</li>
+          <li>Each <var>W</var><sub><var>i</var></sub> in the sum is a work, a number: no arrow. Do not confuse it with the weight <var class="vec kf">W</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>Conservative forces and potential energy</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The work done by the weight depends only on the starting and final heights (part 2), not on the path. Forces with this property are called <b>conservative</b>.</p></div>
+        <div class="note keep"><span class="tag">Definition</span><p>A force is <b>conservative</b> when its work between A and B does not depend on the path used, but only on the positions A and B. Such a force is derived from a <b>potential energy</b> <var>E</var><sub>p</sub>, which characterises the system energetically at each position:</p><p><span class="f"><var>W</var><sub>A→B</sub> = −Δ<var>E</var><sub>p</sub></span> <span class="f">= <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B)</span></p></div>
+        <figure class="fig"><div class="mk-host" id="figPaths"></div><figcaption>Three paths from A to B, 3&nbsp;m lower (one square = 1&nbsp;m; mass 1.0&nbsp;kg, <var>g</var> = 10&nbsp;m·s⁻²). The weight is vertical: only vertical displacements do work. On ②, the horizontal landings give 0 and each 1&nbsp;m step gives <var>m</var><var>g</var> × 1&nbsp;m = 10&nbsp;J. On ③, climbing 1&nbsp;m costs 10&nbsp;J, the 4&nbsp;m descent gives back 40. Same total everywhere.</figcaption></figure>
+        <div class="tbl"><table>
+          <thead><tr><th>Path</th><th>Length <var>L</var></th><th>Work of <var class="vec kf">W</var></th><th>Work of <var class="vec kf">f</var>, <var>f</var> = 2 N</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">① straight line</th><td>6.7&nbsp;m</td><td>30&nbsp;J</td><td>−13.4&nbsp;J</td></tr>
+            <tr><th scope="row">② in steps</th><td>9.0&nbsp;m</td><td>30&nbsp;J</td><td>−18.0&nbsp;J</td></tr>
+            <tr><th scope="row">③ over a hump</th><td>8.0&nbsp;m</td><td>30&nbsp;J</td><td>−16.0&nbsp;J</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The weight is conservative: 30&nbsp;J on all three paths. A friction force of constant magnitude is not: it costs <var>f</var> × <var>L</var>, and the three paths do not have the same length. Friction has no potential energy.</p>
+          <p>For the weight, <span class="f"><var>W</var><sub>A→B</sub>(<var class="vec kf">W</var>) = <var>m</var><var>g</var><var>y</var><sub>A</sub> − <var>m</var><var>g</var><var>y</var><sub>B</sub></span>. Comparing with <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B):</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>p</sub> = <var>m</var><var>g</var><var>h</var></span><small>gravitational potential energy; <var>h</var>: height of the system above the ground, with the assumption that <var>E</var><sub>p</sub> = 0 on the ground</small></div>
+        <div class="prose"><p>Where <var>E</var><sub>p</sub> = 0 is a choice: the ground, the bottom of the track, the lowest point. Only differences in potential energy count, and they do not depend on that choice. Choose it once, write it down, keep it. (There are other potential energies, such as that of a spring, seen with oscillators in midterm 2.)</p></div>
+        <ol class="steps">
+          <li><div><p><b>The circular arc</b> <span class="src-tag c">TD 4 · Ex 4</span> “Show that <var>h</var> = <var>R</var> (1 − cos <var>θ</var>).” O is vertically above B, and OA = OB = <var>R</var>. Measured downwards from O, B is at <var>R</var> and A at <var>R</var> cos <var>θ</var> (side adjacent to the angle <var>θ</var>). So <span class="f"><var>h</var> = <var>R</var> − <var>R</var> cos <var>θ</var> = <var>R</var> (1 − cos <var>θ</var>)</span> = 1.6 × (1 − 1/2) = 0.80&nbsp;m.</p><p>With <var>E</var><sub>p</sub> = 0 at B, <var>m</var> = 0.10&nbsp;kg and <var>g</var> = 10&nbsp;m·s⁻²: <var>E</var><sub>p</sub>(A) = <var>m</var><var>g</var><var>h</var> = 0.80&nbsp;J. This is the track of the plate at the top of the page.</p></div></li>
+        </ol>
+        <div class="note why"><span class="tag">Why a minus sign</span><p>When the system moves down, the weight does positive work (<var>W</var> &gt; 0) and the potential energy decreases (Δ<var>E</var><sub>p</sub> &lt; 0). The work done by the weight is drawn from the <var>E</var><sub>p</sub> reserve: <var>W</var> = −Δ<var>E</var><sub>p</sub>.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li><var>h</var> is a height, not the length of the path. On a slope of length <var>L</var> inclined at <var>α</var>, <var>h</var> = <var>L</var> sin <var>α</var>.</li>
+          <li>The sign: <var>W</var> = −Δ<var>E</var><sub>p</sub> = <var>E</var><sub>p</sub>(A) − <var>E</var><sub>p</sub>(B), start minus end, as for the work done by the weight.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Part 6</div><h2>Mechanical energy and its conservation</h2></div>
+      <div class="stack">
+        <div class="prose"><p><b>Mechanical energy</b> is the sum of the kinetic energy and the potential energies. Conservation of mechanical energy (course, p. 10): in all systems in which only conservative forces are acting, it is conserved during motion.</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>M</sub> = <var>E</var><sub>k</sub> + <var>E</var><sub>p</sub> = const.</span><small>so <var>E</var><sub>M</sub>(A) = <var>E</var><sub>M</sub>(B) for any two points of the motion</small></div>
+        <div class="note why"><span class="tag">Where it comes from</span><p>If only the weight does work (the other forces do no work), the work-kinetic energy theorem gives Δ<var>E</var><sub>k</sub> = <var>W</var><sub>A→B</sub>(<var class="vec kf">W</var>) = −Δ<var>E</var><sub>p</sub>. So Δ<var>E</var><sub>k</sub> + Δ<var>E</var><sub>p</sub> = 0: Δ<var>E</var><sub>M</sub> = 0. Energy changes from one form to the other, with no loss.</p></div>
+        <div class="prose"><p>To use it, you must <b>justify</b> it: show that the non-conservative forces do no work (friction neglected, reaction perpendicular to the displacement). It is question 2 of TD 4 Ex 1: “Explain why this theorem can be used.”</p></div>
+        <div class="prose"><p><b>Free fall</b> <span class="src-tag c">TD 4 · Ex 1</span> A ball released at a height <var>h</var> with no initial velocity, friction neglected, <var>E</var><sub>p</sub> = 0 on the ground.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th><var>y</var>(0) = <var>h</var></th><th><var>y</var> = 0 (ground)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><var>E</var><sub>k</sub></th><td class="f">0</td><td class="f">½ <var>m</var> <var>v</var><sub>sol</sub>²</td></tr>
+            <tr><th scope="row"><var>E</var><sub>p</sub></th><td class="f"><var>m</var><var>g</var><var>h</var></td><td class="f">0</td></tr>
+            <tr><th scope="row"><var>E</var><sub>M</sub></th><td class="f"><var>m</var><var>g</var><var>h</var></td><td class="f">½ <var>m</var> <var>v</var><sub>sol</sub>²</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Only the weight, a conservative force, acts: <var>E</var><sub>M</sub> is conserved. <span class="f"><var>m</var><var>g</var><var>h</var> = ½ <var>m</var> <var>v</var><sub>sol</sub>²</span>, so <span class="f"><var>v</var><sub>sol</sub> = √(2<var>g</var><var>h</var>)</span>: the same result as with the work-kinetic energy theorem (part 4).</p></div>
+        <ol class="steps">
+          <li><div><p><b>The circular arc</b> <span class="src-tag c">TD 4 · Ex 4</span> On AB, with no friction, <var class="vec kf">R</var> is perpendicular to the trajectory and does no work; only the weight does work: <var>E</var><sub>M</sub> is conserved. Going down, <var>E</var><sub>p</sub> decreases and <var>E</var><sub>k</sub> increases by the same amount (question 1).</p><p>Question 3, with <var>E</var><sub>p</sub> = 0 at B: <span class="f">½ <var>m</var> <var>v</var><sub>A</sub>² + <var>m</var><var>g</var><var>h</var> = ½ <var>m</var> <var>v</var><sub>B</sub>²</span>, so <span class="f"><var>v</var><sub>B</sub> = √(<var>v</var><sub>A</sub>² + 2<var>g</var><var>R</var> (1 − cos <var>θ</var>))</span> = √(9 + 16) = 5.0&nbsp;m·s⁻¹.</p><p>On the plate, slide the solid from A to B: <var>E</var><sub>k</sub> (green) and <var>E</var><sub>p</sub> (blue) are exchanged, their sum stays at 0.45 + 0.80 = 1.25&nbsp;J.</p></div></li>
+          <li><div><p><b>The puck</b> <span class="src-tag c">TD 4 · Ex 5</span> From B to D, with no friction, it must reach D with zero velocity; <var>E</var><sub>p</sub> = 0 on AB. <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² = <var>m</var><var>g</var><var>h</var></span>, so <span class="f"><var>v</var><sub>B</sub> = √(2<var>g</var><var>h</var>) = √30 ≈ 5.5&nbsp;m·s⁻¹</span>.</p><p>With part 4 (<var>F</var> = <var>m</var> <var>v</var><sub>B</sub>² / (2<var>L</var>) and <var>v</var><sub>B</sub> = <var>v</var><sub>A’</sub>): <span class="f"><var>F</var> = <var>m</var><var>g</var><var>h</var> / <var>L</var></span> <span class="f">= 5.0 × 10 × 1.5 / 0.50</span> <span class="f">= 150 N</span>. At C, <var>R</var> (1 − cos <var>θ</var>) above B: <var>v</var><sub>C</sub> = √(<var>v</var><sub>B</sub>² − 2<var>g</var><var>R</var> (1 − cos <var>θ</var>)).</p></div></li>
+        </ol>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li><var>E</var><sub>M</sub> is conserved when only conservative forces do work. Justify it every time.</li>
+          <li><var>E</var><sub>M</sub>(A) = <var>E</var><sub>M</sub>(B) gives a speed from a difference in height, without computing the duration or the trajectory.</li>
+          <li>Same height, same speed: the projectile of chapter 1 hits the ground with its launch speed <var>v</var><sub>0</sub> (in norm).</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing “<var>E</var><sub>M</sub> = const.” when there is friction: wrong (part 7).</li>
+          <li><var>E</var><sub>k</sub> and <var>E</var><sub>p</sub> are not conserved separately: their sum is.</li>
+          <li>Choose where <var>E</var><sub>p</sub> = 0 and keep it throughout the equation: on the ground (Ex 1), at B (Ex 4), on AB (Ex 5).</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="7"></span>Part 7</div><h2>Friction: mechanical energy decreases</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Forces of friction are non-conservative: their work, always negative, depends on the length of the path. The course says it: they <b>dissipate</b> the system’s energy (as heat). Mechanical energy decreases.</p>
+          <p>The course does not write it as a formula, but the work-kinetic energy theorem gives it in one line. With the weight, a reaction that does no work and a friction force <var class="vec kf">f</var>:</p></div>
+        <div class="eq"><span class="nw"><var>W</var>(<var class="vec kf">W</var>) + <var>W</var>(<var class="vec kf">R</var>) + <var>W</var>(<var class="vec kf">f</var>) = Δ<var>E</var><sub>k</sub></span><span class="nw">−Δ<var>E</var><sub>p</sub> + 0 + <var>W</var>(<var class="vec kf">f</var>) = Δ<var>E</var><sub>k</sub></span><span class="nw">Δ<var>E</var><sub>M</sub> = <var>W</var>(<var class="vec kf">f</var>) &lt; 0</span><small>show it again in your answer, starting from the theorem; in general, Δ<var>E</var><sub>M</sub> = sum of the works done by the non-conservative forces (friction, thrust of a motor…)</small></div>
+        <div class="prose"><p>On the plate at the top of the page, compare with and without “Friction on BC”. On the arc, nothing changes. On BC, the hatched part of <var>E</var><sub>M</sub> grows by <var>f</var> × (distance travelled): that is the dissipated energy.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The arc, continued</b> <span class="src-tag c">TD 4 · Ex 4</span> On BC (horizontal), <var class="vec kf">W</var> and <var class="vec kf">R</var> do no work; only <var class="vec kf">f</var> does: <var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> × BC. The theorem gives <span class="f">½ <var>m</var> <var>v</var><sub>C</sub>² − ½ <var>m</var> <var>v</var><sub>B</sub>² = −<var>f</var> BC</span>, so</p><p><span class="f"><var>f</var> = <var>m</var> (<var>v</var><sub>B</sub>² − <var>v</var><sub>C</sub>²) / (2 BC)</span> <span class="f">= 0.10 × (25 − 9) / (2 × 2.0)</span> <span class="f">= 0.40 N</span></p><p>Balance: <var>E</var><sub>M</sub> goes from 1.25&nbsp;J to 0.45&nbsp;J. The 0.80&nbsp;J lost is indeed <var>f</var> × BC = 0.40 × 2.0.</p></div></li>
+          <li><div><p><b>The robot</b> <span class="src-tag c">TD 4 · Ex 3</span> <var>m</var> = 100&nbsp;kg, thrust force <var>F</var><sub>p</sub> = 250 N, friction <var>f</var> = 50 N, <var>α</var> = 30°, AB = 10&nbsp;m, <var>h</var> = 20&nbsp;m (height of C), starting from rest at A.</p><p>On AB (horizontal), <var class="vec kf">W</var> and <var class="vec kf">R</var> do no work: <span class="f">½ <var>m</var> <var>v</var><sub>B</sub>² = (<var>F</var><sub>p</sub> − <var>f</var>) × AB</span> <span class="f">= 200 × 10 = 2000&nbsp;J</span>, so <var>v</var><sub>B</sub> = √40 ≈ 6.3&nbsp;m·s⁻¹.</p><p>On BC (uphill, BC = <var>h</var> / sin <var>α</var> = 40&nbsp;m): <var class="vec kf">F</var><sub>p</sub> is driving, <var class="vec kf">W</var> and <var class="vec kf">f</var> are resistive, <var class="vec kf">R</var> does no work. <span class="f">½ <var>m</var> <var>v</var><sub>C</sub>² = 2000 + 250 × 40</span> <span class="f">− 50 × 40 − 100 × 10 × 20</span> <span class="f">= −10,000&nbsp;J</span>.</p><p>A negative kinetic energy is impossible: the robot does not reach C, the motor is not powerful enough. Each metre of slope costs it 500 + 50 − 250 = 300&nbsp;J; it stops after 2000 / 300 ≈ 6.7&nbsp;m. To reach C, it would need <var>F</var><sub>p</sub> ≥ 500 N.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">The robot exercise: read with care</span><p>Part 3 of this exercise (descent CD, energy stored in the battery) assumes the robot has reached C, which part 2 has just ruled out, and does not give its speed at C. The exercise is inconsistent: if you have to do it, write down the assumption you make (for instance <var>v</var><sub>C</sub> = 0).</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>With friction, Δ<var>E</var><sub>M</sub> = <var>W</var>(<var class="vec kf">f</var>) &lt; 0. For a constant magnitude, the dissipated energy is <var>f</var> × (length travelled).</li>
+          <li><var>E</var><sub>k</sub> cannot be negative: a calculation that gives <var>E</var><sub>k</sub> &lt; 0 at a point means the system never gets there.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“Collinear to the velocity vector” (TD 4 Ex 4): same direction as <var class="vec kv">v</var>, but opposite orientation. The work done by friction is negative.</li>
+          <li>In <var>f</var> × <var>L</var>, <var>L</var> is the distance travelled on the part with friction, not a height.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="8"></span>Part 8</div><h2>Choosing between the second law and energy</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Two tools for the same problem. Newton’s second law (chapter 2) is a vector law and gives the whole motion, at the cost of two integrations. Energy gives a speed in one line, without time, but only in norm.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>The question</th><th>The tool</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>A speed at a given height, or after a given distance</td><td>energy: work-kinetic energy theorem, or <var>E</var><sub>M</sub> if conservative</td><td>neither time nor the trajectory is needed</td></tr>
+            <tr><td>A constant force, knowing two speeds and a distance</td><td>work-kinetic energy theorem</td><td>the work <var>F</var> × <var>L</var> makes the link (TD 4 Ex 4 and 5)</td></tr>
+            <tr><td>A duration, a time, a position at instant <var>t</var></td><td>second law, then integrate</td><td>energy does not contain time</td></tr>
+            <tr><td>The trajectory equation, the direction of <var class="vec kv">v</var></td><td>second law</td><td>energy only gives the norm of the velocity</td></tr>
+            <tr><td>A reaction <var class="vec kf">R</var>, an equilibrium</td><td>second law, projected</td><td>a force that does no work does not appear in an energy balance</td></tr>
+            <tr><td>A curved track (circular arc)</td><td>energy</td><td>only the height counts; the second law would need polar coordinates (chapter 4)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>The same fall, twice</b> <span class="src-tag c">Course p. 7 and p. 9</span> A point released with no initial velocity from 5&nbsp;m high, with <var>g</var> = 10&nbsp;m·s⁻².</p></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Second law</span><p><var>a</var> = −<var>g</var>; <var>v</var> = −<var>g</var><var>t</var>; <var>y</var> = 5 − <var>g</var><var>t</var>²/2.</p><p><var>y</var>(<var>T</var>) = 0 gives <var>T</var> = √(10/<var>g</var>) = 1 s, then <var>v</var>(<var>T</var>) = −<var>g</var><var>T</var> = −10&nbsp;m·s⁻¹.</p><p class="muted">Five lines, but you also get the duration and the direction (downwards).</p></div>
+          <div class="card"><span class="k">Energy</span><p>Only the weight does work: <var>E</var><sub>M</sub> is conserved.</p><p><var>m</var><var>g</var> × 5 = ½ <var>m</var> <var>v</var>², so <var>v</var> = √(2 × 10 × 5) = 10&nbsp;m·s⁻¹.</p><p class="muted">Two lines, the norm only.</p></div>
+        </div>
+        <div class="prose"><p>The course takes <var>g</var> = 9.81: it rounds <var>T</var> = √(10/9.81) ≈ 1.01 s to 1 s and writes <var>v</var>(<var>T</var>) = −9.81&nbsp;m·s⁻¹. Without rounding, both methods give 9.90&nbsp;m·s⁻¹. Likewise, the parachutist of TD 3 (Ex 1, 3000&nbsp;m with no friction) reaches √(2 × 9.81 × 3000) ≈ 242.6&nbsp;m·s⁻¹ by energy, without computing the duration of the fall; the official solution finds 242&nbsp;m·s⁻¹ with the second law.</p></div>
+        <div class="note keep"><span class="tag">Write-up of an energy solution</span><ul>
+          <li><b>System</b> and <b>reference frame</b>: terrestrial, assumed Galilean.</li>
+          <li><b>Forces involved</b> (force diagram), and for each one its work between A and B, or “does no work: perpendicular to the displacement”.</li>
+          <li><b>Theorem</b> and reason: “only the weight does work, <var>E</var><sub>M</sub> is conserved”, or “work-kinetic energy theorem between A and B”.</li>
+          <li>Equation, literal result, <b>homogeneity</b> (√(<var>g</var><var>h</var>): √(m·s⁻² × m) = m·s⁻¹), then numerical application with the unit.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">In the midterm</span><p>None of the 7 past papers found (2017 to 2022) asks about work or energy, and the content of this year’s midterm 1 has not been published. To practise, the exercises of TD 4 are the best basis; also redo a fall from TD 3 with energy.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Energy gives a norm. For the direction, you need the coordinate system: <var>v</var><sub><var>y</var></sub>(<var>T</var>) = −10&nbsp;m·s⁻¹ is a component, 10&nbsp;m·s⁻¹ its norm.</li>
+          <li>Do not mix the two methods in one equation: either Σ <var>W</var><sub><var>i</var></sub> = Δ<var>E</var><sub>k</sub>, or Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var>.</li>
+        </ul></div>
+        <div data-check-ref="physique/cours-3-energie.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="physique:energie:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Chapter 4, <a href="cours-4-polaires.html">polar coordinates</a>, describes circular motion. For instance, it gives the acceleration of the solid on the arc of the plate, which energy does not tell you.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  var NB = '\u00a0', MS = 'm·s⁻¹';
+  /* texts shown by the visuals (translated from the French page) */
+  var TX = {
+    weight: 'W', ek: 'k', dec: '.',
+    plateHead: 'Track of TD 4 · Ex 4', plateData: 'm = 0.10 kg · g = 10 m·s⁻² · Δt = 0.05 s',
+    sLab: 'Distance travelled from A', fric: 'Friction on BC', forces: 'Forces', launch: 'Launch (slow motion × 3)',
+    plateAria: 'Track of TD 4: circular arc AB of radius 1.6 m and angle 60°, then horizontal segment BC of 2 m. Exposures of the solid every 0.05 s, velocity and forces at the current point.',
+    atA: 'At A', atB: 'At B', atC: 'At C', onArc: 'On the arc, {h} above B', onBC: 'On BC, {d} after B',
+    lineA: 'Start at A at {va}: {ec} = {ecv} and {ep} = {epv}, so {em} = {emv}.',
+    lineArc: 'On the arc, only the weight does work: {R} stays perpendicular to the track. {ep} turns into {ec}; their sum {em} stays equal to {emv}.',
+    lineB: 'At B, {ep} = 0: all the energy is kinetic, <var>v</var><sub>B</sub> = {vb}.',
+    lineBCf: '{f} opposes the motion: <var>W</var>({f}) = −<var>f</var> × {d} = {w}. {em} has lost the same amount (hatched).',
+    lineBC0: 'Without friction, no force does work on BC: {P} and {R} are perpendicular to the displacement. {ec} stays constant.',
+    lineCf: 'At C, <var>v</var><sub>C</sub> = {vc}: friction has dissipated {q} = <var>f</var> × BC (TD 4 Ex 4, question 4).',
+    lineC0: 'At C, <var>v</var><sub>C</sub> = <var>v</var><sub>B</sub> = {vc}: without friction, nothing is lost.',
+    data: 'Data: <var>R</var> = 1.6 m, <var>θ</var> = 60°, <var>v</var><sub>A</sub> = 3.0 m·s⁻¹, BC = 2.0 m, <var>f</var> = 0.40 N. <var>E</var><sub>p</sub> = 0 at B.',
+    dissip: 'dissipated',
+    wHead: 'Work done by a constant force', wData: 'F = 3 N · AB = 0.50 m (TD 4 · Ex 2)',
+    wAngle: 'Angle <var>θ</var> between <var class="vec kf">F</var> and <var class="vec">AB</var>',
+    wAria: 'Force F applied at point M, displacement from A to B, angle θ, components parallel and perpendicular to the displacement',
+    wCos: '<var>θ</var> = {a}°: cos <var>θ</var> {cos}. Projection of the force on the displacement: <var>F</var><sub>∥</sub> = <var>F</var> cos <var>θ</var> {eq} {par}.',
+    wW: '<var>W</var><sub>A→B</sub> = <var>F</var> × AB × cos <var>θ</var> = 3 × 0.50 × cos {a}° {eq} <b>{w}</b>.',
+    wPos: '<b>Driving</b> force, positive work: it tends to accelerate the system.',
+    wZero: '<b>No</b> work: the force is perpendicular to the displacement.',
+    wNeg: '<b>Resisting</b> force, negative work: it tends to slow the system down.',
+    pAria: 'Three paths from A to B: in a straight line, in steps, over a hump; the weight is vertical'
+  };
+
+  /* number with d fixed decimals (decimal point in English), true minus sign */
+  function nf(x, d) { var t = (Math.abs(x) < 1e-9 ? 0 : x).toFixed(d).replace('-', '−'); return TX.dec === ',' ? t.replace('.', ',') : t; }
+  function un(x, d, u) { return nf(x, d) + NB + u; }
+  function fill(s, o) { return s.replace(/\{(\w+)\}/g, function (m, k) { return o[k] == null ? m : o[k]; }); }
+  function vec(s, k) { return '<var class="vec ' + (k || '') + '">' + s + '</var>'; }
+  function en(s) { return '<var>E</var><sub>' + s + '</sub>'; }
+  function r1(v) { return Math.round(v * 10) / 10; }
+  function ext(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
+  function slider(id, lab, min, max, step, val) {
+    return '<div class="slider"><label for="' + id + '">' + lab + '</label><output id="' + id + 'v" for="' + id + '"></output>' +
+      '<input id="' + id + '" type="range" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '"></div>';
+  }
+
+  /* -- calculations (pure; checked under node) -- */
+  var C = {
+    /* work done by a constant force F (N) over a straight displacement L (m), angle deg (degrees) */
+    work: function (F, L, deg) {
+      var a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
+      if (Math.abs(c) < 1e-12) c = 0;
+      if (Math.abs(s) < 1e-12) s = 0;
+      return { cos: c, W: F * L * c, par: F * c, perp: F * s };
+    },
+    /* track of TD 4 Ex 4: arc AB (centre O above B, radius R, angle theta), then horizontal BC;
+       friction of constant magnitude f on BC; E_p = 0 at B. s = distance travelled from A. */
+    track: function (o) {
+      var m = o.m, g = o.g, Rr = o.R, th = o.theta * Math.PI / 180, vA = o.vA, BC = o.BC, f = o.f || 0;
+      var La = Rr * th, L = La + BC, h = Rr * (1 - Math.cos(th));
+      var EM0 = 0.5 * m * vA * vA + m * g * h;
+      function at(s) {
+        s = Math.max(0, Math.min(L, s));
+        var arc = s < La - 1e-9, phi = arc ? th - s / Rr : 0, d = arc ? 0 : s - La;
+        var y = arc ? Rr * (1 - Math.cos(phi)) : 0;
+        var Ep = m * g * y, Q = f * d, EM = EM0 - Q, Ec = Math.max(0, EM - Ep), v = Math.sqrt(2 * Ec / m);
+        return {
+          s: s, arc: arc, phi: phi, d: d, x: arc ? -Rr * Math.sin(phi) : d, y: y,
+          tx: Math.cos(phi), ty: -Math.sin(phi), nx: Math.sin(phi), ny: Math.cos(phi), // tangent (direction of motion), normal towards O
+          Ep: Ep, Ec: Ec, EM: EM, Q: Q, v: v,
+          Rn: arc ? m * g * Math.cos(phi) + m * v * v / Rr : m * g // reaction: on the arc, it also curves the trajectory
+        };
+      }
+      /* time law: t(s) = ∫ ds / v, then s(t) by interpolation */
+      var N = 900, ts = [0], ss = [0];
+      for (var i = 1; i <= N; i++) {
+        var s0 = L * (i - 1) / N, s1 = L * i / N, vm = at((s0 + s1) / 2).v;
+        if (vm < 1e-6) break;
+        ss.push(s1); ts.push(ts[ts.length - 1] + (s1 - s0) / vm);
+      }
+      var T = ts[ts.length - 1];
+      function sAt(t) {
+        if (t <= 0) return 0;
+        if (t >= T) return ss[ss.length - 1];
+        var lo = 0, hi = ts.length - 1;
+        while (hi - lo > 1) { var md = (lo + hi) >> 1; if (ts[md] <= t) lo = md; else hi = md; }
+        return ss[lo] + (ss[hi] - ss[lo]) * (t - ts[lo]) / (ts[hi] - ts[lo]);
+      }
+      return { La: La, L: L, h: h, EM0: EM0, T: T, at: at, sAt: sAt };
+    },
+    /* paths of part 5: A (0.5, 3) → B (6.5, 0), in metres */
+    paths: function () {
+      var A = [0.5, 3], B = [6.5, 0], K = 12.4;
+      var hump = function (t) { return [A[0] + 6 * t, 3 * (1 - t) + K * t * (1 - t) * (1 - t)]; };
+      var stairs = [A, [0.5, 2], [2.5, 2], [2.5, 1], [4.5, 1], [4.5, 0], B];
+      function len(pts) { var l = 0; for (var i = 1; i < pts.length; i++) l += Math.sqrt(Math.pow(pts[i][0] - pts[i - 1][0], 2) + Math.pow(pts[i][1] - pts[i - 1][1], 2)); return l; }
+      var hp = [], top = 0;
+      for (var i = 0; i <= 2000; i++) { hp.push(hump(i / 2000)); top = Math.max(top, hp[i][1]); }
+      return { A: A, B: B, hump: hump, stairs: stairs, top: top, L: [len([A, B]), len(stairs), len(hp)] };
+    }
+  };
+  /* -- end of calculations -- */
+
+  /* ------------------------------------------------ plate: the track of TD 4 Ex 4 */
+  function plate(el) {
+    if (!el) return;
+    var base = { m: 0.10, g: 10, R: 1.6, theta: 60, vA: 3, BC: 2.0 }, FR = 0.40, DT = 0.05, SLOW = 3;
+    var K = { 1: C.track(ext(base, { f: FR })), 0: C.track(ext(base, { f: 0 })) };
+    var st = { s: 0, fr: true, forces: true, anim: false, t: 0 }, raf = 0, view = null;
+    function k() { return K[st.fr ? 1 : 0]; }
+    el.classList.add('plate');
+    el.innerHTML =
+      '<div class="plate-head"><span>' + TX.plateHead + '</span><span>' + TX.plateData + '</span></div>' +
+      '<div class="plate-fig mk-host"></div>' +
+      '<div class="plate-ctrls">' +
+        '<div class="sliders one">' + slider('ens', TX.sLab + ' <var>s</var>', 0, (Math.ceil(k().L * 100) / 100).toFixed(2), 0.01, 0) + '</div>' +
+        '<div class="row plate-tg">' +
+          '<button type="button" class="chip-btn" data-tg="fr" aria-pressed="true">' + TX.fric + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="forces" aria-pressed="true">' + TX.forces + '</button>' +
+          '<button type="button" class="btn primary plate-go" data-go><span aria-hidden="true">▶</span> ' + TX.launch + '</button>' +
+        '</div>' +
+        '<div class="plate-read" aria-live="polite"></div>' +
+      '</div>';
+    var fig = el.querySelector('.plate-fig'), out = el.querySelector('.plate-read'), inp = document.getElementById('ens');
+
+    function draw(w) {
+      var K1 = k(), c = K1.at(st.s), Rr = base.R, th = base.theta * Math.PI / 180;
+      var A = [-Rr * Math.sin(th), Rr * (1 - Math.cos(th))], O = [0, Rr];
+      var p = M.plot({ x: [-1.95, 2.45], y: [-0.55, 1.95], w: w, equal: true, pad: [10, 8, 8, 8] });
+      p.grid({ x: [0.2, 1], y: [0.2, 1] });
+      // construction from the TD: radii, angle θ, height h
+      p.line(O, A, { cls: 'mk-dash' }).line(O, [0, 0], { cls: 'mk-dash' });
+      p.param(function (u) { return [0.28 * Math.cos(u), Rr + 0.28 * Math.sin(u)]; }, -Math.PI / 2, -Math.PI / 2 - th, { cls: 'en-ang', clip: false });
+      p.label([0.44 * Math.cos(-Math.PI / 2 - th / 2), Rr + 0.44 * Math.sin(-Math.PI / 2 - th / 2)], 'θ', { fs: 14, anchor: 'middle', dy: 5 });
+      var xh = -1.72;
+      p.line([xh - 0.08, A[1]], [A[0] - 0.06, A[1]], { cls: 'mk-dash' }).line([xh - 0.08, 0], [-0.06, 0], { cls: 'mk-dash' });
+      p.add(M.arrow(p.X(xh), p.Y(A[1] / 2), p.X(xh), p.Y(A[1]), { kind: 'ink', head: 6 }) + M.arrow(p.X(xh), p.Y(A[1] / 2), p.X(xh), p.Y(0), { kind: 'ink', head: 6 }));
+      p.label([xh, A[1] / 2], 'h', { dx: 7, dy: 5, fs: 15 });
+      // the track
+      p.param(function (u) { return [-Rr * Math.sin(u), Rr * (1 - Math.cos(u))]; }, th, 0, { cls: 'en-track' });
+      p.line([0, 0], [2.4, 0], { cls: 'en-track' });
+      if (st.fr) {
+        var hs = '';
+        for (var x = 0.1; x <= base.BC + 1e-9; x += 0.13) hs += 'M' + r1(p.X(x)) + ' ' + r1(p.Y(0) + 2) + 'l-5 6';
+        p.add('<path class="en-hatch" d="' + hs + '"/>');
+      }
+      p.point(O, { cls: 'mk-key', r: 2.6, label: 'O', dx: 7, dy: -3 });
+      p.point(A, { cls: 'mk-key', r: 3, label: 'A', dx: -7, dy: -8, anchor: 'end' });
+      p.point([0, 0], { cls: 'mk-key', r: 3, label: 'B', dx: -8, dy: 17, anchor: 'end' });
+      p.point([base.BC, 0], { cls: 'mk-key', r: 3, label: 'C', dx: 8, dy: 17, anchor: 'start' });
+      // exposures every Δt
+      var tmax = st.anim ? st.t : K1.T, imgs = '';
+      for (var i = 0; i * DT <= Math.min(K1.T, tmax) + 1e-9; i++) {
+        var q = K1.at(K1.sAt(i * DT));
+        imgs += '<circle class="mk-img" cx="' + r1(p.X(q.x)) + '" cy="' + r1(p.Y(q.y)) + '" r="4.2"/>';
+      }
+      p.add('<g class="mk-chrono">' + imgs + '</g>');
+      // current point: forces (1 N → 0.25 m) and velocity (1 m·s⁻¹ → 0.15 m)
+      var X = p.X(c.x), Y = p.Y(c.y), kf = 0.25 * p.sx, kv = 0.15 * p.sx, g = base.m * base.g;
+      p.add('<circle class="mk-now" cx="' + r1(X) + '" cy="' + r1(Y) + '" r="7.5"/>');
+      if (st.forces) {
+        p.add(M.arrow(X, Y, X, Y + g * kf, { kind: 'frc', head: 8, w: 2, label: TX.weight }));
+        p.add(M.arrow(X, Y, X + c.nx * c.Rn * kf, Y - c.ny * c.Rn * kf, { kind: 'frc', head: 8, w: 2, label: 'R' }));
+        if (st.fr && !c.arc && c.v > 1e-6) p.add(M.arrow(X, Y, X - FR * kf, Y, { kind: 'frc', head: 7, w: 2, label: 'f', lab: [0, -10] }));
+      }
+      p.add(M.arrow(X, Y, X + c.tx * c.v * kv, Y - c.ty * c.v * kv, { kind: 'vel', head: 9, w: 2.4, label: 'v' }));
+      return p.svg({ cls: 'mk-plate', label: TX.plateAria });
+    }
+    function bar(cls, name, val, scale) {
+      return '<div class="eb"><span class="eb-n">' + name + '</span><span class="eb-t">' +
+        (cls ? '<i class="' + cls + '" style="width:' + (val * scale).toFixed(1) + '%"></i>' : '') + '</span><output>' + un(val, 2, 'J') + '</output></div>';
+    }
+    function read() {
+      var K1 = k(), c = K1.at(st.s), sc = 100 / K1.EM0, where, line;
+      var o = {
+        ec: en(TX.ek), ep: en('p'), em: en('M'), R: vec('R', 'kf'), P: vec(TX.weight, 'kf'), f: vec('f', 'kf'),
+        ecv: un(c.Ec, 2, 'J'), epv: un(c.Ep, 2, 'J'), emv: un(K1.EM0, 2, 'J'), va: un(base.vA, 1, MS),
+        vb: un(K1.at(K1.La).v, 1, MS), vc: un(K1.at(K1.L).v, 1, MS), d: un(c.d, 2, 'm'), w: un(-c.Q, 2, 'J'), q: un(K1.at(K1.L).Q, 2, 'J')
+      };
+      if (c.s < 1e-9) { where = TX.atA; line = TX.lineA; }
+      else if (c.arc) { where = fill(TX.onArc, { h: un(c.y, 2, 'm') }); line = TX.lineArc; }
+      else if (c.d < 1e-9) { where = TX.atB; line = TX.lineB; }
+      else if (c.d >= base.BC - 1e-9) { where = TX.atC; line = st.fr ? TX.lineCf : TX.lineC0; }
+      else { where = fill(TX.onBC, { d: un(c.d, 2, 'm') }); line = st.fr ? TX.lineBCf : TX.lineBC0; }
+      out.innerHTML =
+        '<div class="ro-t">' + where + ' · <var>v</var> = ' + un(c.v, 2, MS) + '</div>' +
+        '<div class="en-bars">' +
+          bar('c', en(TX.ek), c.Ec, sc) + bar('p', en('p'), c.Ep, sc) +
+          '<div class="eb"><span class="eb-n">' + en('M') + '</span><span class="eb-t">' +
+            '<i class="c" style="width:' + (c.Ec * sc).toFixed(1) + '%"></i><i class="p" style="width:' + (c.Ep * sc).toFixed(1) + '%"></i>' +
+            (c.Q > 1e-9 ? '<i class="q" style="width:' + (c.Q * sc).toFixed(1) + '%" title="' + TX.dissip + '"></i>' : '') +
+          '</span><output>' + un(c.EM, 2, 'J') + '</output></div>' +
+        '</div>' +
+        '<p class="ro-line">' + fill(line, o) + '</p>' +
+        '<p class="ro-line muted">' + TX.data + '</p>';
+    }
+    function update(fromSlider) {
+      if (!fromSlider) inp.value = String(Math.round(st.s * 100) / 100);
+      document.getElementById('ensv').textContent = un(st.s, 2, 'm');
+      read();
+      if (view) view.redraw(); else view = M.mount(fig, draw);
+    }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; st.anim = false; }
+    inp.addEventListener('input', function () {
+      stop();
+      var K1 = k(), s = +inp.value;
+      if (Math.abs(s - K1.La) < 0.03) s = K1.La;
+      st.s = Math.min(s, K1.L);
+      update(true);
+    });
+    U.$$('[data-tg]', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        stop();
+        var key = b.getAttribute('data-tg'); st[key] = !st[key];
+        b.setAttribute('aria-pressed', String(st[key])); update();
+      });
+    });
+    el.querySelector('[data-go]').addEventListener('click', function () {
+      stop();
+      var K1 = k();
+      if (U.reduceMotion()) { st.s = K1.L; update(); return; }
+      var t0 = null; st.anim = true; st.t = 0;
+      function step(ts) {
+        if (t0 === null) t0 = ts;
+        st.t = Math.min(K1.T, (ts - t0) / 1000 / SLOW);
+        st.s = K1.sAt(st.t);
+        if (st.t >= K1.T) { st.anim = false; st.s = K1.L; update(); raf = 0; return; }
+        update(); raf = requestAnimationFrame(step);
+      }
+      raf = requestAnimationFrame(step);
+    });
+    document.addEventListener('rev:theme', function () { if (view) view.redraw(); });
+    update();
+  }
+
+  /* ------------------------------------------------ part 1: work versus angle */
+  function workBench(el) {
+    if (!el) return;
+    var F = 3, L = 0.5, st = { a: 30 }, view = null;
+    var EXACT = { 0: '1', 30: '√3/2', 45: '√2/2', 60: '1/2', 90: '0', 120: '−1/2', 135: '−√2/2', 150: '−√3/2', 180: '−1' };
+    el.classList.add('bench');
+    el.innerHTML =
+      '<div class="bench-head"><span>' + TX.wHead + '</span><span>' + TX.wData + '</span></div>' +
+      '<div class="bench-body"><div class="mk-host"></div></div>' +
+      '<div class="ctrls"><div class="sliders one">' + slider('wka', TX.wAngle, 0, 180, 5, st.a) + '</div><div class="readout" aria-live="polite"></div></div>';
+    var host = el.querySelector('.mk-host'), inp = document.getElementById('wka'), out = el.querySelector('.readout');
+    function draw(w) {
+      var r = C.work(F, L, st.a), a = st.a * Math.PI / 180, kk = 0.85, Mx = [2.6, 0];
+      var p = M.plot({ x: [-0.45, 6.85], y: [-1.05, 2.75], w: Math.min(w, 640), equal: true, pad: [8, 8, 8, 8] });
+      p.grid({ x: [0.25, 1], y: [0.25, 1] });
+      p.line([0, 0], [6.4, 0], { cls: 'wk-line' });
+      p.point([0, 0], { label: 'A', dx: 0, dy: 20, anchor: 'middle' }).point([6.4, 0], { label: 'B', dx: 0, dy: 20, anchor: 'middle' });
+      p.vec([0.1, -0.68], [6.2, 0], { kind: 'ink', head: 8, w: 1.6 });
+      p.label([3.2, -0.68], 'AB', { arrow: true, anchor: 'middle', dy: 19, fs: 15 });
+      if (st.a >= 10) p.param(function (u) { return [Mx[0] + 0.62 * Math.cos(u), 0.62 * Math.sin(u)]; }, 0, a, { cls: 'wk-ang', clip: false });
+      if (st.a >= 20) p.label([Mx[0] + 0.95 * Math.cos(a / 2), 0.95 * Math.sin(a / 2)], 'θ', { anchor: 'middle', dy: 5, fs: 15 });
+      var tip = [Mx[0] + kk * F * Math.cos(a), kk * F * Math.sin(a)];
+      if (Math.abs(r.cos) > 0.05 && Math.abs(r.perp) > 0.05 * F) p.line(tip, [tip[0], 0], { cls: 'mk-dash' }).line(tip, [Mx[0], tip[1]], { cls: 'mk-dash' });
+      if (Math.abs(r.perp) > 0.05 * F && Math.abs(r.cos) > 0.05) p.vec(Mx, [kk * r.par, 0], { kind: 'frc', head: 8, w: 1.8, cls: 'soft', label: 'F', sub: '∥', lab: [0, 14] });
+      if (Math.abs(r.cos) > 0.05 && Math.abs(r.perp) > 0.05 * F) p.vec(Mx, [0, kk * r.perp], { kind: 'frc', head: 8, w: 1.8, cls: 'soft', label: 'F', sub: '⊥', lab: [r.cos > 0 ? -16 : 16, 4], anchor: r.cos > 0 ? 'end' : 'start' });
+      p.vec(Mx, [kk * F * Math.cos(a), kk * F * Math.sin(a)], { kind: 'frc', head: 10, w: 2.6, label: 'F' });
+      p.point(Mx, { r: 4, label: 'M', dx: 0, dy: 20, anchor: 'middle' });
+      return p.svg({ label: TX.wAria });
+    }
+    function read() {
+      var r = C.work(F, L, st.a), W = r.W, pct = Math.abs(W) / (F * L) * 50;
+      var ex = EXACT[st.a], cs = ex ? '= ' + ex + (/√/.test(ex) ? ' ≈ ' + nf(r.cos, 2) : '') : '≈ ' + nf(r.cos, 2);
+      var exact = Math.abs(r.cos * 2 - Math.round(r.cos * 2)) < 1e-9;
+      var nat = W > 1e-9 ? TX.wPos : W < -1e-9 ? TX.wNeg : TX.wZero;
+      out.innerHTML =
+        '<p>' + fill(TX.wCos, { a: st.a, cos: cs, eq: exact ? '=' : '≈', par: un(r.par, 2, 'N') }) + '</p>' +
+        '<div class="wg" aria-hidden="true">' + (pct > 0.01 ? '<i class="' + (W > 0 ? 'pos' : 'neg') + '" style="left:' + (W > 0 ? 50 : 50 - pct).toFixed(1) + '%;width:' + pct.toFixed(1) + '%"></i>' : '') + '<span class="z"></span></div>' +
+        '<div class="wg-sc" aria-hidden="true"><span>' + un(-F * L, 1, 'J') + '</span><span>0</span><span>+' + un(F * L, 1, 'J') + '</span></div>' +
+        '<p>' + fill(TX.wW, { a: st.a, eq: exact ? '=' : '≈', w: un(W, 2, 'J') }) + ' ' + nat + '</p>';
+    }
+    function update() {
+      document.getElementById('wkav').textContent = st.a + '°';
+      read();
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.a = +inp.value; update(); });
+    update();
+  }
+
+  /* ------------------------------------------------ part 5: three paths, same work done by the weight */
+  function pathsFig(el) {
+    if (!el) return;
+    var P = C.paths();
+    M.mount(el, function (w) {
+      var p = M.plot({ x: [-0.75, 7.45], y: [-0.6, 4.55], w: Math.min(w, 640), equal: true, pad: [12, 12, 10, 12] });
+      p.grid({ x: [0.5, 1], y: [0.5, 1] });
+      p.axes({ y: { v: 'y', u: 'm' }, tx: 1, ty: 1, ly: 1, origin: 'O' });
+      p.line([0, 3], P.A, { cls: 'mk-dash' });
+      p.line(P.A, P.B, { cls: 'pth p1' });
+      var hz = '', vt = '';
+      for (var i = 1; i < P.stairs.length; i++) {
+        var a = P.stairs[i - 1], b = P.stairs[i], d = 'M' + r1(p.X(a[0])) + ' ' + r1(p.Y(a[1])) + 'L' + r1(p.X(b[0])) + ' ' + r1(p.Y(b[1]));
+        if (a[1] === b[1]) hz += d; else vt += d;
+      }
+      p.add('<path class="pth p2 hz" d="' + hz + '"/><path class="pth p2" d="' + vt + '"/>');
+      p.param(P.hump, 0, 1, { cls: 'pth p3' });
+      function badge(at, n, cls) { p.add('<g class="pth-b ' + cls + '"><circle cx="' + r1(p.X(at[0])) + '" cy="' + r1(p.Y(at[1])) + '" r="9"/><text x="' + r1(p.X(at[0])) + '" y="' + r1(p.Y(at[1]) + 4) + '" text-anchor="middle">' + n + '</text></g>'); }
+      badge([4.05, 1.75], '1', 'p1'); badge([3.5, 0.55], '2', 'p2'); badge([3.05, 4.05], '3', 'p3');
+      // the weight, vertical, at a point of ③
+      var q = P.hump(0.35);
+      p.vec(q, [0, -0.9], { kind: 'frc', head: 8, w: 2, label: TX.weight });
+      // the height descended
+      p.add(M.arrow(p.X(7.05), p.Y(1.5), p.X(7.05), p.Y(3), { kind: 'ink', head: 6 }) + M.arrow(p.X(7.05), p.Y(1.5), p.X(7.05), p.Y(0), { kind: 'ink', head: 6 }));
+      p.line([4.2, 3], [7.2, 3], { cls: 'mk-dash' });
+      p.text([7.05, 1.5], '3 m', { cls: 'mk-t', dx: -6, anchor: 'end' });
+      p.point(P.A, { label: 'A', dx: -9, dy: -8, anchor: 'end' }).point(P.B, { label: 'B', dx: 8, dy: 16, anchor: 'start' });
+      return p.svg({ label: TX.pAria });
+    });
+  }
+
+  plate(document.getElementById('plate'));
+  workBench(document.getElementById('workBench'));
+  pathsFig(document.getElementById('figPaths'));
+})();
+</script>
+</body>
+</html>

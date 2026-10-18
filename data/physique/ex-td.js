@@ -413,7 +413,7 @@
 
   add({
     id: 'td1-ex3', exam: null, kind: 'td', order: 13, src: 'TD 1 · Ex 3', title: 'Mouvement parabolique',
-    topics: ['cinematique', 'trajectoire', 'tir'], lvl: 2, time: 25,
+    topics: ['cinematique', 'trajectoire', 'nature', 'tir'], lvl: 2, time: 25,
     intro: '<p>On étudie la chute libre d’un projectile lancé du point (0,0) à t=0 avec une vitesse initiale @v_0 faisant un $α angle avec l’horizontale.</p><p>On donne les équations du mouvement :</p>' +
       eq('$x($t) = $v_0.cos($α).$t', '$y($t) = $v_0.sin($α).$t − ' + fr('$g', '2') + ' $t²'),
     figs: [{ svg: figParab(), cap: 'Figure de l’énoncé : tir depuis O, sommet S, point d’impact P.' }],
@@ -460,7 +460,7 @@
 
   add({
     id: 'td1-ex4', exam: null, kind: 'td', order: 14, src: 'TD 1 · Ex 4', title: 'Mesure de la profondeur d’un puits',
-    topics: ['cinematique', 'tir'], lvl: 1, time: 15,
+    topics: ['cinematique', 'nature', 'tir'], lvl: 1, time: 15,
     intro: '<p>Afin d’établir une méthode de mesure de la profondeur d’un puits, on cherche à déterminer la nature du mouvement d’un caillou lancé horizontalement au-dessus du sol. Le mouvement est filmé et étudié à l’aide d’un logiciel de pointage. Les positions du caillou sont étudiées dans un repère (O,x,y) dont l’origine coïncide avec la position de départ du caillou (après qu’il a quitté la main du lanceur). La modélisation donne les expressions des coordonnées de position du caillou (en mètre) en fonction du temps :</p>' +
       eq('$x($t) = 0,5$t   et   $y($t) = −5$t²'),
     questions: [
@@ -915,7 +915,7 @@
 
   add({
     id: 'td5-ex2', exam: null, kind: 'td', order: 52, src: 'TD 5 · Ex 2', title: 'Mouvement d’un manège',
-    topics: ['polaire', 'circulaire'], lvl: 2, time: 25,
+    topics: ['polaire', 'circulaire', 'nature'], lvl: 2, time: 25,
     intro: '<p>Dans le plan rapporté à un repère orthonormé (Oxy), les coordonnées du cheval en bois d’un manège, assimilé à un point matériel M, sont définies en fonction du temps par les équations dites paramétriques suivantes :</p>' +
       eq('$x($t) = $r_0 cos($ω$t)', '$y($t) = $r_0 sin($ω$t)'),
     questions: [

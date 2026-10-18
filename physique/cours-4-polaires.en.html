@@ -371,6 +371,306 @@ var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
 <script src="../data/qcm/physique.js"></script>
 <script src="../data/en/qcm/physique.js"></script>
 <script src="../assets/js/meca.js"></script>
-<!--INLINE-SCRIPT-->
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util, NB = ' ';
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  function un(x, d, u) { return nf(x, d) + NB + u; }
+  function deg(a) { return Math.round(a * 180 / Math.PI); }
+  var MS = 'm·s⁻¹', MS2 = 'm·s⁻²';
+  var UR = '<var class="vec">u</var><sub><var>r</var></sub>', UT = '<var class="vec">u</var><sub><var>θ</var></sub>';
+  var VV = '<var class="vec kv">v</var>', VA = '<var class="vec ka">a</var>';
+  /* page texts (the French page has the same table in French) */
+  var L = {
+    head: 'Chronophotographic plate · moving basis', presets: 'Motions',
+    modes: { u: 'Uniform circular', a: 'Accelerated circular', s: 'Spiral' },
+    angle: 'Angle', base: 'basis at each exposure', comp: 'components of ' + VA, go: 'Move forward',
+    pos: 'Position', vel: 'Velocity', acc: 'Acceleration', onr: 'along ' + UR + ': ', ont: 'along ' + UT + ': ',
+    svg: function (m, th) { return 'Plate: ' + m + ' motion, point M at θ = ' + th + '°, with its polar basis, its velocity and its acceleration'; },
+    line: {
+      u: 'Uniform circular motion: ‖' + VV + '‖ stays equal to <var>R</var><var>ω</var>, but ' + VV + ' turns with ' + UT + '. That change of direction is ' + VA + ' = −<var>R</var><var>ω</var>² ' + UR + ': pointing towards O, <b>centripetal</b>.',
+      a: 'Accelerated circular motion: <var class="d1 hi">θ</var> and <var class="d2 hi">θ</var> have the same sign, so ‖' + VV + '‖ = <var>R</var><var class="d1 hi">θ</var> increases. The part −<var>R</var><var class="d1 hi">θ</var>² ' + UR + ' turns ' + VV + ', the part <var>R</var><var class="d2 hi">θ</var> ' + UT + ' stretches it.',
+      s: 'Spiral: <var>r</var> increases, so ' + VV + ' has a component <var class="d1">r</var> along ' + UR + ', and ' + VA + ' has a component 2<var class="d1">r</var><var class="d1 hi">θ</var> along ' + UT + ' even though <var class="d2 hi">θ</var> = 0.'
+    },
+    par: {
+      u: '<var>r</var> = <var>R</var> = 2&nbsp;m (<var class="d1">r</var> = <var class="d2">r</var> = 0) · <var class="d1 hi">θ</var> = <var>ω</var> = 1.5&nbsp;rad·s⁻¹ (<var class="d2 hi">θ</var> = 0)',
+      a: '<var>r</var> = <var>R</var> = 2&nbsp;m · <var class="d1 hi">θ</var> = 0.6 + 0.2 <var>t</var> (rad·s⁻¹) · <var class="d2 hi">θ</var> = 0.2&nbsp;rad·s⁻²',
+      s: '<var>r</var> = 1 + 0.4 <var>t</var> (m) · <var>θ</var> = <var>ω</var><var>t</var>, <var>ω</var> = 1&nbsp;rad·s⁻¹'
+    },
+    bsvg: 'Circle of radius 1: vectors ur and uθ brought back to O, angle θ, projections on the axes',
+    bread: function (t, c, s) {
+      return '<p><var>θ</var> = ' + t + '°: ' + UR + ' = (cos <var>θ</var>; sin <var>θ</var>) = (' + nf(c, 2) + '; ' + nf(s, 2) + ') and ' + UT + ' = (−sin <var>θ</var>; cos <var>θ</var>) = (' + nf(-s, 2) + '; ' + nf(c, 2) + ').</p>';
+    },
+    dsvg: 'Differentiating a rotating unit vector: difference between the vector at θ and at θ + Δθ, divided by Δθ, compared with the vector rotated by +π/2',
+    dread: function (w, d, c) {
+      var V = w === 'r' ? UR : UT, T = w === 'r' ? UT : '−' + UR;
+      return '<p>Δ<var>θ</var> = ' + deg(d) + '° = ' + nf(d, 2) + '&nbsp;rad · length of the difference Δ' + V + ': 2 sin(Δ<var>θ</var>/2) = ' + nf(c.len, 3) + ' · divided by Δ<var>θ</var>: <b>' + nf(c.ratio, 3) + '</b> · angle with ' + T + ': Δ<var>θ</var>/2 = <b>' + nf(deg(d) / 2, deg(d) % 2 ? 1 : 0) + '°</b>.</p>' +
+        '<p class="muted">As Δ<var>θ</var> tends to 0, the ratio tends to 1 and the angle to 0: Δ' + V + '/Δ<var>θ</var> tends to ' + T + '. That is d' + V + '/d<var>θ</var> = ' + T + '.</p>';
+    }
+  };
+
+  /* calc:start — pure calculations (tested under node) */
+  var MODES = {
+    u: { R: 2, w: 1.5 },           // uniform circular: r = R, θ = ω t
+    a: { R: 2, w0: 0.6, al: 0.2 }, // accelerated circular: θ̇ = ω0 + α t
+    s: { r0: 1, b: 0.4, w: 1 }     // spiral: r = r0 + b t, θ = ω t
+  };
+  function motion(k) {
+    var p = MODES[k], st, tOf;
+    if (k === 'u') {
+      st = function (t) { return { r: p.R, rd: 0, rdd: 0, th: p.w * t, thd: p.w, thdd: 0 }; };
+      tOf = function (th) { return th / p.w; };
+    } else if (k === 'a') {
+      st = function (t) { return { r: p.R, rd: 0, rdd: 0, th: p.w0 * t + p.al * t * t / 2, thd: p.w0 + p.al * t, thdd: p.al }; };
+      tOf = function (th) { return (-p.w0 + Math.sqrt(p.w0 * p.w0 + 2 * p.al * th)) / p.al; };
+    } else {
+      st = function (t) { return { r: p.r0 + p.b * t, rd: p.b, rdd: 0, th: p.w * t, thd: p.w, thdd: 0 }; };
+      tOf = function (th) { return th / p.w; };
+    }
+    function at(t) {
+      var s = st(t), c = Math.cos(s.th), n = Math.sin(s.th);
+      s.t = t;
+      s.vr = s.rd; s.vt = s.r * s.thd;                                     // v = ṙ ur + r θ̇ uθ
+      s.ar = s.rdd - s.r * s.thd * s.thd; s.at = 2 * s.rd * s.thd + s.r * s.thdd; // a = (r̈ − r θ̇²) ur + (2 ṙ θ̇ + r θ̈) uθ
+      s.ur = [c, n]; s.ut = [-n, c];
+      s.x = s.r * c; s.y = s.r * n;
+      s.vx = s.vr * c - s.vt * n; s.vy = s.vr * n + s.vt * c;
+      s.ax = s.ar * c - s.at * n; s.ay = s.ar * n + s.at * c;
+      s.v = Math.sqrt(s.vr * s.vr + s.vt * s.vt); s.a = Math.sqrt(s.ar * s.ar + s.at * s.at);
+      return s;
+    }
+    return { k: k, p: p, at: at, tOf: tOf, T: tOf(2 * Math.PI) };
+  }
+  /* difference between a unit vector at angle e and the same at e + d: length 2 sin(d/2), angle d/2 with the vector rotated by +π/2 */
+  function chord(e, d) {
+    var A0 = [Math.cos(e), Math.sin(e)], A1 = [Math.cos(e + d), Math.sin(e + d)], D = [A1[0] - A0[0], A1[1] - A0[1]];
+    var len = Math.sqrt(D[0] * D[0] + D[1] * D[1]);
+    return { A0: A0, A1: A1, D: D, len: len, ratio: len / d, gap: d / 2, Q: [D[0] / d, D[1] / d], T: [-A0[1], A0[0]] };
+  }
+  /* calc:end */
+
+  function arc(p, rad, a0, a1) {
+    var b = Math.min(a1, a0 + 2 * Math.PI - 1e-3), R0 = rad * p.sx;
+    return 'M' + p.X(rad * Math.cos(a0)).toFixed(1) + ' ' + p.Y(rad * Math.sin(a0)).toFixed(1) + 'A' + R0.toFixed(1) + ' ' + R0.toFixed(1) + ' 0 ' + (b - a0 > Math.PI ? 1 : 0) + ' 0 ' + p.X(rad * Math.cos(b)).toFixed(1) + ' ' + p.Y(rad * Math.sin(b)).toFixed(1);
+  }
+  /* arrow between two world points */
+  function W(p, a, d, o) { return M.arrow(p.X(a[0]), p.Y(a[1]), p.X(a[0] + d[0]), p.Y(a[1] + d[1]), o); }
+  /* composite label: upright pieces ('Δ'), vectors ({ v: 'u', s: 'r' }) or italics ({ i: 'θ' }) */
+  function tag(x, y, parts, kind, anchor, fs) {
+    fs = fs || 15;
+    function sw(q) { return q.split('').reduce(function (a, ch) { return a + (ch === ' ' ? 0.28 : ch === '/' ? 0.4 : 0.66) * fs; }, 0); }
+    var w = parts.reduce(function (a, q) { return a + (typeof q === 'string' ? sw(q) : q.v ? 0.95 * fs : 0.55 * fs); }, 0);
+    var cx = anchor === 'end' ? x - w : anchor === 'middle' ? x - w / 2 : x, s = '';
+    parts.forEach(function (q) {
+      if (typeof q === 'string') { s += M.label(cx, y, q, { kind: kind, it: false, fs: fs }); cx += sw(q); }
+      else if (q.v) { s += M.label(cx, y, q.v, { sub: q.s, kind: kind, arrow: true, fs: fs }); cx += 0.95 * fs; }
+      else { s += M.label(cx, y, q.i, { kind: kind, fs: fs }); cx += 0.55 * fs; }
+    });
+    return s;
+  }
+  function chips(el, attr, cb) {
+    U.$$('[' + attr + ']', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        U.$$('[' + attr + ']', el).forEach(function (c) { c.setAttribute('aria-pressed', String(c === b)); });
+        cb(b.getAttribute(attr));
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------- the plate: a point that turns */
+  function plate(el) {
+    if (!el) return;
+    var dt = 0.5, st = { k: 'u', th: Math.PI / 3, base: true, v: true, a: true, comp: false, anim: false };
+    var mo = motion(st.k), view = null, raf = 0;
+    function vec(s, k) { return '<var class="vec ' + k + '">' + s + '</var>'; }
+    el.classList.add('plate', 'pl-polar');
+    el.innerHTML =
+      '<div class="plate-head"><span>' + L.head + '</span><span>Δt = ' + un(dt, 1, 's') + '</span></div>' +
+      '<div class="plate-fig mk-host"></div>' +
+      '<div class="plate-ctrls">' +
+        '<div class="row" role="group" aria-label="' + L.presets + '">' + ['u', 'a', 's'].map(function (k) { return '<button type="button" class="chip-btn" data-pm="' + k + '" aria-pressed="' + (k === st.k) + '">' + L.modes[k] + '</button>'; }).join('') + '</div>' +
+        '<div class="sliders"><div class="slider"><label for="pth">' + L.angle + ' <var>θ</var></label><output id="pthv" for="pth"></output><input id="pth" type="range" min="0" max="360" step="1" value="60"></div></div>' +
+        '<div class="row">' +
+          '<button type="button" class="chip-btn" data-tg="base" aria-pressed="true">' + L.base + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="v" aria-pressed="true">' + vec('v', 'kv') + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="a" aria-pressed="true">' + vec('a', 'ka') + '</button>' +
+          '<button type="button" class="chip-btn" data-tg="comp" aria-pressed="false">' + L.comp + '</button>' +
+          '<button type="button" class="btn primary plate-go" data-go><span aria-hidden="true">▶</span> ' + L.go + '</button>' +
+        '</div>' +
+        '<div class="plate-read" aria-live="polite"></div>' +
+      '</div>';
+    var fig = el.querySelector('.plate-fig'), out = el.querySelector('.plate-read');
+    var inp = document.getElementById('pth'), outv = document.getElementById('pthv');
+
+    function draw(w) {
+      var XW = w < 480 ? [-4.1, 4.1] : [-5.2, 5.2], YW = [-3.6, 3.6];
+      var p = M.plot({ x: XW, y: YW, w: w, equal: true, pad: [8, 8, 8, 8] });
+      var kv = 0.4, ka = 0.25, Lb = 0.75, Lg = 0.42, k, s;
+      p.grid({ x: [0.5, 1], y: [0.5, 1] });
+      p.axes({ x: { v: 'x', u: 'm' }, y: { v: 'y', u: 'm' }, tx: 1, ty: 1, lx: 2, ly: 2, origin: 'O' });
+      p.param(function (t) { var q = mo.at(t); return [q.x, q.y]; }, 0, mo.T, { cls: 'mk-traj', n: 240 });
+      var t = mo.tOf(st.th), m = mo.at(t), tmax = st.anim ? t : mo.T, imgs = '', ghosts = '';
+      for (k = 0; k * dt < mo.T - 1e-6; k++) {
+        if (k * dt > tmax + 1e-9) break;
+        s = mo.at(k * dt);
+        imgs += '<circle class="mk-img" cx="' + p.X(s.x).toFixed(1) + '" cy="' + p.Y(s.y).toFixed(1) + '" r="4.2"/>';
+        if (st.base) ghosts += W(p, [s.x, s.y], [s.ur[0] * Lg, s.ur[1] * Lg], { kind: 'ink', head: 5, cls: 'thin ghost' }) + W(p, [s.x, s.y], [s.ut[0] * Lg, s.ut[1] * Lg], { kind: 'ink', head: 5, cls: 'thin ghost' });
+      }
+      p.add('<g class="mk-chrono">' + imgs + '</g>' + ghosts);
+      var X = p.X(m.x), Y = p.Y(m.y), ur = m.ur, ut = m.ut;
+      // the angle θ, from the x-axis
+      if (st.th > 0.12) {
+        p.add('<path class="mk-arc" d="' + arc(p, 0.5, 0, st.th) + '"/>');
+        var hm = Math.min(st.th, 2 * Math.PI) / 2;
+        p.add(M.label(p.X(0.8 * Math.cos(hm)), p.Y(0.8 * Math.sin(hm)) + 5, 'θ', { anchor: 'middle', fs: 15 }));
+      }
+      // position vector, label on the −uθ side
+      p.add(M.arrow(p.X(0), p.Y(0), X, Y, { kind: 'pos', head: 9, cls: 'bold' }));
+      if (m.r > 1.1) p.add(M.label(p.X(0.6 * m.x) - ut[0] * 15, p.Y(0.6 * m.y) + ut[1] * 15 + 5, 'OM', { kind: 'pos', arrow: true, fs: 15, anchor: 'middle' }));
+      p.add('<circle class="mk-now" cx="' + X.toFixed(1) + '" cy="' + Y.toFixed(1) + '" r="7.5"/>');
+      // polar basis at point M
+      p.add(W(p, [m.x, m.y], [ur[0] * Lb, ur[1] * Lb], { kind: 'ink', head: 7, label: 'u', sub: 'r' }));
+      p.add(W(p, [m.x, m.y], [ut[0] * Lb, ut[1] * Lb], { kind: 'ink', head: 7, label: 'u', sub: 'θ', anchor: 'middle', lab: [-ur[0] * 17 - ut[0] * 7, ur[1] * 17 + ut[1] * 7] }));
+      // velocity and acceleration
+      if (st.v) p.add(W(p, [m.x, m.y], [m.vx * kv, m.vy * kv], { kind: 'vel', head: 9, cls: 'bold', label: 'v', zero: true }));
+      if (st.a) {
+        if (st.comp) {
+          var ar = [ur[0] * m.ar * ka, ur[1] * m.ar * ka], at = [ut[0] * m.at * ka, ut[1] * m.at * ka], tip = [m.x + m.ax * ka, m.y + m.ay * ka];
+          p.line([m.x + ar[0], m.y + ar[1]], tip, { cls: 'mk-dash' }).line([m.x + at[0], m.y + at[1]], tip, { cls: 'mk-dash' });
+          p.add(W(p, [m.x, m.y], ar, { kind: 'acc', head: 7, cls: 'thin dash' }) + W(p, [m.x, m.y], at, { kind: 'acc', head: 7, cls: 'thin dash' }));
+        }
+        var ua = m.a > 1e-9 ? [m.ax / m.a, m.ay / m.a] : [0, 0];
+        p.add(W(p, [m.x, m.y], [m.ax * ka, m.ay * ka], { kind: 'acc', head: 9, cls: 'bold', label: 'a', anchor: 'middle', lab: [ut[0] * 14 - ua[0] * 4, -ut[1] * 14 + ua[1] * 4] }));
+      }
+      return p.svg({ cls: 'mk-plate', label: L.svg(L.modes[st.k], deg(st.th)) });
+    }
+    function read() {
+      var m = mo.at(mo.tOf(st.th));
+      out.innerHTML =
+        '<div class="ro-t"><var>t</var> = ' + un(m.t, 2, 's') + ' · <var>θ</var> = ' + deg(st.th) + '° = ' + un(st.th, 2, 'rad') + ' · <var class="d1 hi">θ</var> = ' + un(m.thd, 2, 'rad·s⁻¹') + '</div>' +
+        '<div class="ro-grid">' +
+          '<div class="ro k-pos"><b>' + L.pos + '</b><span><var>r</var> = ' + un(m.r, 2, 'm') + '</span><span>' + vec('OM', 'kp') + ' = <var>r</var> ' + UR + '</span></div>' +
+          '<div class="ro k-vel"><b>' + L.vel + '</b><span>' + L.onr + '<var class="d1">r</var> = ' + un(m.vr, 2, MS) + '</span><span>' + L.ont + '<var>r</var><var class="d1 hi">θ</var> = ' + un(m.vt, 2, MS) + '</span><span>‖' + VV + '‖ = ' + un(m.v, 2, MS) + '</span></div>' +
+          '<div class="ro k-acc"><b>' + L.acc + '</b><span>' + L.onr + '<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>² = ' + un(m.ar, 2, MS2) + '</span><span>' + L.ont + '2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var> = ' + un(m.at, 2, MS2) + '</span><span>‖' + VA + '‖ = ' + un(m.a, 2, MS2) + '</span></div>' +
+        '</div>' +
+        '<p class="ro-line">' + L.line[st.k] + '</p>' +
+        '<p class="ro-line muted">' + L.par[st.k] + '</p>';
+    }
+    function update() {
+      inp.value = String(deg(st.th)); outv.textContent = deg(st.th) + '°';
+      read();
+      if (view) view.redraw(); else view = M.mount(fig, draw);
+    }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (st.anim) { st.anim = false; out.setAttribute('aria-live', 'polite'); } }
+    chips(el, 'data-pm', function (k) { stop(); st.k = k; mo = motion(k); update(); });
+    inp.addEventListener('input', function () { stop(); st.th = +inp.value * Math.PI / 180; update(); });
+    U.$$('[data-tg]', el).forEach(function (b) {
+      b.addEventListener('click', function () { var k = b.getAttribute('data-tg'); st[k] = !st[k]; b.setAttribute('aria-pressed', String(st[k])); update(); });
+    });
+    el.querySelector('[data-go]').addEventListener('click', function () {
+      stop();
+      if (U.reduceMotion()) { st.th = st.th >= 2 * Math.PI - 1e-6 ? Math.PI / 4 : Math.min(2 * Math.PI, st.th + Math.PI / 4); update(); return; }
+      var th0 = st.th >= 2 * Math.PI - 0.02 ? 0 : st.th, t0 = mo.tOf(th0), start = null;
+      st.anim = true; out.setAttribute('aria-live', 'off');
+      function step(ts) {
+        if (start === null) start = ts;
+        var t = Math.min(mo.T, t0 + (ts - start) / 1000); // real time: 1 s of motion = 1 s on screen
+        st.th = t >= mo.T ? 2 * Math.PI : mo.at(t).th;
+        if (t >= mo.T) { raf = 0; st.anim = false; out.setAttribute('aria-live', 'polite'); update(); return; }
+        update(); raf = requestAnimationFrame(step);
+      }
+      raf = requestAnimationFrame(step);
+    });
+    update();
+  }
+
+  /* ---------------------------------------------------------- part 2: the basis on the unit circle */
+  function baseFig() {
+    var host = document.getElementById('figBase'); if (!host) return;
+    var box = host.parentNode, inp = document.getElementById('bth'), outv = document.getElementById('bthv'), rd = document.getElementById('bread');
+    var st = { th: 30 * Math.PI / 180, w: 'r' }, view;
+    function draw(w) {
+      var p = M.plot({ x: [-1.5, 1.5], y: [-1.32, 1.32], w: Math.min(w, 440), equal: true, pad: [10, 10, 10, 10] });
+      var c = Math.cos(st.th), n = Math.sin(st.th), V = st.w === 'r' ? [c, n] : [-n, c];
+      p.grid({ x: [0.25, 0.5], y: [0.25, 0.5] });
+      p.axes({ x: { v: 'x' }, y: { v: 'y' }, origin: 'O' });
+      p.add('<circle class="mk-dash" cx="' + p.X(0).toFixed(1) + '" cy="' + p.Y(0).toFixed(1) + '" r="' + p.sx.toFixed(1) + '"/>');
+      p.add(W(p, [0, 0], [1, 0], { kind: 'ink', head: 8, label: 'u', sub: 'x', lab: [-12, 18], anchor: 'middle' }));
+      p.add(W(p, [0, 0], [0, 1], { kind: 'ink', head: 8, label: 'u', sub: 'y', lab: [-14, 12], anchor: 'end' }));
+      if (st.th > 0.05) {
+        p.add('<path class="mk-arc" d="' + arc(p, 0.24, 0, st.th) + '"/>');
+        p.add(M.label(p.X(0.36 * Math.cos(st.th / 2)), p.Y(0.36 * Math.sin(st.th / 2)) + 5, 'θ', { anchor: 'middle', fs: 15 }));
+      }
+      // right angle between ur and uθ
+      var q = 0.1, a1 = [q * c, q * n], a2 = [q * (c - n), q * (n + c)], a3 = [-q * n, q * c];
+      p.add('<path class="mk-line" fill="none" d="M' + p.X(a1[0]).toFixed(1) + ' ' + p.Y(a1[1]).toFixed(1) + 'L' + p.X(a2[0]).toFixed(1) + ' ' + p.Y(a2[1]).toFixed(1) + 'L' + p.X(a3[0]).toFixed(1) + ' ' + p.Y(a3[1]).toFixed(1) + '"/>');
+      // projections of the chosen vector
+      p.line([V[0], 0], V, { cls: 'mk-dash' }).line([0, V[1]], V, { cls: 'mk-dash' });
+      var nx = st.w === 'r' ? ['cos ', 'θ'] : ['−sin ', 'θ'], ny = st.w === 'r' ? ['sin ', 'θ'] : ['cos ', 'θ'];
+      if (Math.abs(V[0]) > 0.14) {
+        p.add(W(p, [0, 0], [V[0], 0], { kind: 'amb', head: 7, cls: 'thin' }));
+        p.add('<text class="mk-name k-amb" x="' + p.X(V[0] / 2).toFixed(1) + '" y="' + (p.Y(0) + (V[1] >= 0 ? 17 : -8)).toFixed(1) + '" text-anchor="middle">' + nx[0] + '<tspan class="mk-it">' + nx[1] + '</tspan></text>');
+      }
+      if (Math.abs(V[1]) > 0.14) {
+        p.add(W(p, [0, 0], [0, V[1]], { kind: 'amb', head: 7, cls: 'thin' }));
+        p.add('<text class="mk-name k-amb" x="' + (p.X(0) + (V[0] >= 0 ? -7 : 7)).toFixed(1) + '" y="' + (p.Y(V[1] / 2) + 4).toFixed(1) + '" text-anchor="' + (V[0] >= 0 ? 'end' : 'start') + '">' + ny[0] + '<tspan class="mk-it">' + ny[1] + '</tspan></text>');
+      }
+      p.add(W(p, [0, 0], [c, n], { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: 'r' }));
+      p.add(W(p, [0, 0], [-n, c], { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: 'θ' }));
+      return p.svg({ label: L.bsvg });
+    }
+    function update() {
+      outv.textContent = deg(st.th) + '°';
+      rd.innerHTML = L.bread(deg(st.th), Math.cos(st.th), Math.sin(st.th));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.th = +inp.value * Math.PI / 180; update(); });
+    chips(box, 'data-bw', function (w) { st.w = w; update(); });
+    update();
+  }
+
+  /* ---------------------------------------------------------- part 3: differentiating a rotating unit vector */
+  function derivFig() {
+    var host = document.getElementById('figDeriv'); if (!host) return;
+    var box = host.parentNode, inp = document.getElementById('dth'), outv = document.getElementById('dthv'), rd = document.getElementById('dread');
+    var th = 30 * Math.PI / 180, st = { d: 40 * Math.PI / 180, w: 'r' }, view;
+    function draw(w) {
+      var p = M.plot({ x: [-1.62, 1.3], y: [-0.4, 1.58], w: Math.min(w, 560), equal: true, pad: [8, 8, 8, 8] });
+      var e = st.w === 'r' ? th : th + Math.PI / 2, C = chord(e, st.d), A0 = C.A0, sub = st.w === 'r' ? 'r' : 'θ';
+      p.grid({ x: [0.25, 0.5], y: [0.25, 0.5] });
+      p.axes({ x: { v: 'x' }, y: { v: 'y' }, origin: 'O' });
+      p.add('<circle class="mk-dash" cx="' + p.X(0).toFixed(1) + '" cy="' + p.Y(0).toFixed(1) + '" r="' + p.sx.toFixed(1) + '"' + p.clip({}) + '/>');
+      p.add('<path class="mk-arc" d="' + arc(p, 0.3, e, e + st.d) + '"/>');
+      p.add(tag(p.X(0.44 * Math.cos(e + st.d / 2)), p.Y(0.44 * Math.sin(e + st.d / 2)) + 5, ['Δ', { i: 'θ' }], 'ink', 'middle', 14));
+      // the vector at θ + Δθ (faint), then the vector at θ
+      p.add(W(p, [0, 0], C.A1, { kind: 'amb', head: 9, cls: 'ghost' }));
+      p.add(W(p, [0, 0], A0, { kind: 'amb', head: 10, cls: 'bold', label: 'u', sub: sub, lab: [-C.T[0] * 10, C.T[1] * 10] }));
+      // target: the vector rotated by +π/2, grey dashes, placed at the tip
+      var out = [A0[0] * 15, -A0[1] * 15];
+      p.add(W(p, A0, C.T, { kind: 'mut', head: 9, cls: 'dash' }));
+      var Tt = [p.X(A0[0] + C.T[0]) + C.T[0] * 10 + out[0], p.Y(A0[1] + C.T[1]) - C.T[1] * 10 + out[1] + 5];
+      p.add(tag(Tt[0], Tt[1], st.w === 'r' ? [{ v: 'u', s: 'θ' }] : ['−', { v: 'u', s: 'r' }], 'mut', 'middle', 15));
+      // the difference, then the difference divided by Δθ
+      p.add(W(p, A0, C.D, { kind: 'ink', head: 6, cls: 'thin' }));
+      p.add(W(p, A0, C.Q, { kind: 'ink', head: 10, cls: 'bold' }));
+      var Qt = [p.X(A0[0] + C.Q[0]) + C.Q[0] * 8 - out[0] * 1.2, p.Y(A0[1] + C.Q[1]) - C.Q[1] * 8 - out[1] * 1.2 + 5];
+      p.add(tag(Qt[0], Qt[1], ['Δ', { v: 'u', s: sub }, ' / Δ', { i: 'θ' }], 'ink', 'middle', 15));
+      return p.svg({ label: L.dsvg });
+    }
+    function update() {
+      outv.textContent = deg(st.d) + '°';
+      rd.innerHTML = L.dread(st.w, st.d, chord(0, st.d));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', function () { st.d = +inp.value * Math.PI / 180; update(); });
+    chips(box, 'data-dw', function (w) { st.w = w; update(); });
+    update();
+  }
+
+  plate(document.getElementById('plate'));
+  baseFig();
+  derivFig();
+})();
+</script>
 </body>
 </html>
