@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Archi sheet · S1 Revision</title>
+<meta name="description" content="The Archi (numeration) summary sheet, printable on one A4 page: 0 to 15 in decimal, binary and hexadecimal, powers of two, conversions and truncation, written operations, n-bit ranges, two’s complement, overflow, IEEE 754 single and double precision, other codes and traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Summary sheet: boxes in columns, like the panels of a datasheet; each title links to the course. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:46em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:16px;columns:3 300px;column-gap:14px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-top:2px solid var(--rule);padding:.55rem .65rem;margin:0 0 12px;display:grid;gap:.4rem;background:var(--bg);min-width:0}
+.box>*{min-width:0}
+.box h2{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.box h2 a{color:inherit;text-decoration:none}
+.box h2 a:hover{text-decoration:underline}
+.box.hot{border-top-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-top-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.42}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box h3{font-size:.84rem;font-weight:700;margin:.15rem 0 0;font-family:var(--font-body)}
+.box .bn{font-size:.92em}
+.mtw{overflow-x:auto;min-width:0}
+.mt{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.mt{font-size:.74rem}.mt th{font-size:.56rem;letter-spacing:0}.mt th,.mt td{padding:.12rem .15rem}}
+.mt th,.mt td{padding:.12rem .3rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.mt th{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
+.mt th:first-child,.mt td:first-child{text-align:left}
+.mt tr:last-child td{border-bottom:0}
+.mt.c td,.mt.c th{text-align:center}
+.mt td.l{text-align:left}
+.mt .bn{font-size:1em}
+.nib16 tbody tr:nth-child(4n) td{border-bottom:1px solid var(--muted)}
+.ie-b .s{color:var(--vi)} .ie-b .e{color:var(--cu)} .ie-b .m{color:var(--bl)}
+.gray{font-family:var(--font-mono);font-size:.8rem;overflow-wrap:anywhere}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 2.5mm}
+  .top h1{font-size:14pt;margin:0}
+  .top p,.top .eyebrow{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:3.5mm;margin:0;background:#fff}
+  .box{padding:1.3mm 1.7mm;margin-bottom:2mm;gap:.8mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li,.mt,.gray{font-size:7.6pt;line-height:1.27}
+  .box h2{font-size:7.2pt}
+  .box h3{font-size:7.5pt}
+  .box ul,.box ol{gap:.2mm}
+  .mt th,.mt td{padding:.2mm .8mm}
+}
+</style>
+</head>
+<body data-resume="Archi · summary sheet">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="nib" data-n="15"></span><a href="index.html">Archi</a> · Summary sheet</div><h1>Numeration on one sheet</h1><p>To read the day before the test and the morning of the exam. One A4 page when printed. Each box title links to the part of the course.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Print on A4</button><a class="btn" href="methodes.html">Detailed methods</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box hot"><h2><a href="index.html#evaluation">At the exam · 1 hr (2025-2026)</a></h2>
+      <ul>
+        <li>4 exercises since 2023: <b>conversions</b> (bases 2, 10, 16), <b>written operations</b>, <b>8-bit table</b>, <b>IEEE 754</b>.</li>
+        <li>Answers on the worksheet, with a pen. The result only, except for the written operations: “Show all calculations”.</li>
+        <li>“n digits after the point”: <b>truncate</b>.</li>
+        <li>Grade: Moodle tests 10%, exam 90%.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s4">0 to 15, by heart</a></h2>
+      <div class="mtw"><table class="mt c nib16" data-eq-rows="triples">
+        <thead><tr><th>Dec.</th><th>Binary</th><th>Hex</th><th>Dec.</th><th>Binary</th><th>Hex</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td data-b="2"><span class="bn">0000</span></td><td data-b="16"><span class="bn">0</span></td><td>8</td><td data-b="2"><span class="bn">1000</span></td><td data-b="16"><span class="bn">8</span></td></tr>
+          <tr><td>1</td><td data-b="2"><span class="bn">0001</span></td><td data-b="16"><span class="bn">1</span></td><td>9</td><td data-b="2"><span class="bn">1001</span></td><td data-b="16"><span class="bn">9</span></td></tr>
+          <tr><td>2</td><td data-b="2"><span class="bn">0010</span></td><td data-b="16"><span class="bn">2</span></td><td>10</td><td data-b="2"><span class="bn">1010</span></td><td data-b="16"><span class="bn">A</span></td></tr>
+          <tr><td>3</td><td data-b="2"><span class="bn">0011</span></td><td data-b="16"><span class="bn">3</span></td><td>11</td><td data-b="2"><span class="bn">1011</span></td><td data-b="16"><span class="bn">B</span></td></tr>
+          <tr><td>4</td><td data-b="2"><span class="bn">0100</span></td><td data-b="16"><span class="bn">4</span></td><td>12</td><td data-b="2"><span class="bn">1100</span></td><td data-b="16"><span class="bn">C</span></td></tr>
+          <tr><td>5</td><td data-b="2"><span class="bn">0101</span></td><td data-b="16"><span class="bn">5</span></td><td>13</td><td data-b="2"><span class="bn">1101</span></td><td data-b="16"><span class="bn">D</span></td></tr>
+          <tr><td>6</td><td data-b="2"><span class="bn">0110</span></td><td data-b="16"><span class="bn">6</span></td><td>14</td><td data-b="2"><span class="bn">1110</span></td><td data-b="16"><span class="bn">E</span></td></tr>
+          <tr><td>7</td><td data-b="2"><span class="bn">0111</span></td><td data-b="16"><span class="bn">7</span></td><td>15</td><td data-b="2"><span class="bn">1111</span></td><td data-b="16"><span class="bn">F</span></td></tr>
+        </tbody>
+      </table></div>
+      <p>Reading 4 bits: weights 8, 4, 2, 1. <span data-eq><span class="bn">1101<sub>2</sub></span> = 8 + 4 + 1 = 13</span> = D.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s2">Powers of 2 and 16</a></h2>
+      <div class="mtw"><table class="mt" data-eq-rows="pairs">
+        <tbody>
+          <tr><td>2<sup>0</sup></td><td>1</td><td>2<sup>9</sup></td><td>512</td></tr>
+          <tr><td>2<sup>1</sup></td><td>2</td><td>2<sup>10</sup></td><td>1,024</td></tr>
+          <tr><td>2<sup>2</sup></td><td>4</td><td>2<sup>11</sup></td><td>2,048</td></tr>
+          <tr><td>2<sup>3</sup></td><td>8</td><td>2<sup>12</sup></td><td>4,096</td></tr>
+          <tr><td>2<sup>4</sup></td><td>16</td><td>2<sup>13</sup></td><td>8,192</td></tr>
+          <tr><td>2<sup>5</sup></td><td>32</td><td>2<sup>14</sup></td><td>16,384</td></tr>
+          <tr><td>2<sup>6</sup></td><td>64</td><td>2<sup>15</sup></td><td>32,768</td></tr>
+          <tr><td>2<sup>7</sup></td><td>128</td><td>2<sup>16</sup></td><td>65,536</td></tr>
+          <tr><td>2<sup>8</sup></td><td>256</td><td>2<sup>−1</sup></td><td>0.5</td></tr>
+          <tr><td>2<sup>−2</sup></td><td>0.25</td><td>2<sup>−3</sup></td><td>0.125</td></tr>
+          <tr><td>2<sup>−4</sup></td><td>0.0625</td><td>2<sup>−5</sup></td><td>0.03125</td></tr>
+          <tr><td>16<sup>2</sup></td><td>256</td><td>16<sup>3</sup></td><td>4,096</td></tr>
+          <tr><td>16<sup>−1</sup></td><td>0.0625</td><td>16<sup>−2</sup></td><td>0.00390625</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s5">Conversions</a></h2>
+      <h3>To base 10</h3>
+      <p>Sum of products digit × base<sup>position</sup>; position 0 just left of the point. <span data-eq><span class="bn">28.28<sub>16</sub></span> = 32 + 8 + 0.125 + 0.03125 = 40.15625</span>.</p>
+      <h3>From base 10</h3>
+      <ul>
+        <li>Integer part: <b>successive divisions</b>, remainders read from the <b>last to the first</b>.</li>
+        <li>Fractional part: <b>successive multiplications</b>, integer parts read from the <b>first to the last</b>; carry on with the fractional part only.</li>
+        <li><b>n digits asked for: stop, without rounding.</b> <span data-eq="t"><span class="bn">40.35<sub>10</sub></span> → <span class="bn">10 1000.0101 1<sub>2</sub></span></span>; <span data-eq="t"><span class="bn">141.3<sub>10</sub></span> → <span class="bn">8D.4C<sub>16</sub></span></span> (not 4D).</li>
+      </ul>
+      <h3>Base 2 ↔ base 16</h3>
+      <p>Groups of 4 bits <b>from the point</b>; pad with 0s on the left of the integer part and <b>on the right</b> of the fractional part: <span data-eq><span class="bn">1011 1011.1011 01<sub>2</sub></span> = <span class="bn">BB.B4<sub>16</sub></span></span>. One hexadecimal digit = exactly 4 bits.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-2-operations.html">Written operations</a></h2>
+      <ul>
+        <li><b>Addition</b>: 1 + 1 = <span class="bn">10</span> (0 carry 1); 1 + 1 + 1 = <span class="bn">11</span>; four 1s = <span class="bn">100</span>, a carry over two columns.</li>
+        <li><b>Subtraction</b>: top digit too small → it gains 2, the <b>bottom</b> digit of the next column gains 1.</li>
+        <li><b>Multiplication</b>: one partial product per 1 of the multiplier, shifted by its position; add the partial products.</li>
+        <li><b>Division</b>: 1 in the quotient if the remainder contains the divisor, 0 otherwise; each digit brought down gives a digit of the quotient. Papers: final remainder 0.</li>
+        <li><b>Hexadecimal addition</b>: each column in decimal (A = 10 … F = 15), then in base 16: <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span>, write down 3, carry 1. Three terms: a carry of up to 2.</li>
+        <li>Check: go back to decimal. <span data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></span>.</li>
+      </ul>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s3">Words and n-bit ranges</a></h2>
+      <p>Bit, byte = 8 bits; MSB = most significant bit (on the left), LSB = least significant bit. An <var>n</var>-bit word can be arranged into 2<sup><var>n</var></sup> patterns.</p>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Bits</th><th>Unsigned min</th><th>max</th><th>Signed min</th><th>max</th></tr></thead>
+        <tbody>
+          <tr data-range="4"><th>4</th><td>0</td><td>15</td><td>−8</td><td>7</td></tr>
+          <tr data-range="8"><th>8</th><td>0</td><td>255</td><td>−128</td><td>127</td></tr>
+          <tr data-range="16"><th>16</th><td>0</td><td>65,535</td><td>−32,768</td><td>32,767</td></tr>
+          <tr data-range="32"><th>32</th><td>0</td><td>2<sup>32</sup> − 1</td><td>−2<sup>31</sup></td><td>2<sup>31</sup> − 1</td></tr>
+          <tr><th><var>n</var></th><td>0</td><td>2<sup><var>n</var></sup> − 1</td><td>−2<sup><var>n</var>−1</sup></td><td>2<sup><var>n</var>−1</sup> − 1</td></tr>
+        </tbody>
+      </table></div>
+      <p>8-bit words: positive from <span class="bn">00</span> to <span class="bn">7F</span>, negative from <span class="bn">80</span> to <span class="bn">FF</span>.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s2">Two’s complement</a></h2>
+      <ul>
+        <li>One’s complement: invert each bit. Two’s complement: one’s complement + 1.</li>
+        <li>Shortcut: from right to left, keep up to the <b>first 1 included</b>, invert the rest.</li>
+        <li><b>Encoding −x</b>: x in binary on <var>n</var> bits, then its two’s complement: 17 = <span class="bn">00010001</span> → −17 = <span class="bn">11101111</span>.</li>
+        <li><b>Decoding</b>: MSB 0 → as an unsigned number; MSB 1 → negative, its absolute value is its two’s complement: <span class="bn">10111101</span> → <span class="bn">01000011</span> = 67 → −67.</li>
+        <li>−128 = <span class="bn">10000000</span> on 8 bits: its two’s complement gives the same word back.</li>
+        <li>Sign extension: replicate the sign bit to the left. <span class="bn">10001101</span> → <span class="bn">1111 1111 1000 1101</span>.</li>
+      </ul>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s6">Overflow, the 8-bit table</a></h2>
+      <ul>
+        <li>Always write the <b>8-bit word</b> obtained (the carry or borrow that goes out is left out).</li>
+        <li><b>Unsigned</b>: ERROR if the true result is out of 0 … 255: carry out of an addition, first &lt; second in a subtraction.</li>
+        <li><b>Signed</b>: ERROR if the true result is out of −128 … 127. With the signs: only P + P = N, N + N = P, P − N = N, N − P = P.</li>
+      </ul>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Operation</th><th>Word</th><th>Unsig.</th><th>Signed</th></tr></thead>
+        <tbody>
+          <tr data-n8="01010100-10011100"><td class="l"><span class="bn w">01010100 − 10011100</span></td><td><span class="bn">10111000</span></td><td>ERROR</td><td>ERROR</td></tr>
+          <tr data-n8="01110110+00011001"><td class="l"><span class="bn w">01110110 + 00011001</span></td><td><span class="bn">10001111</span></td><td>143</td><td>ERROR</td></tr>
+          <tr data-n8="11010011-00010110"><td class="l"><span class="bn w">11010011 − 00010110</span></td><td><span class="bn">10111101</span></td><td>189</td><td>−67</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="cours-4-flottants.html#s2">IEEE 754: the formats</a></h2>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Format</th><th>S</th><th>E</th><th>M</th><th>Bias</th><th>Word</th></tr></thead>
+        <tbody>
+          <tr><td>Single</td><td>1</td><td>8</td><td>23</td><td>127</td><td>8 hex</td></tr>
+          <tr><td>Double</td><td>1</td><td>11</td><td>52</td><td>1,023</td><td>16 hex</td></tr>
+        </tbody>
+      </table></div>
+      <p>Normalized number: (−1)<sup>S</sup> × 1.M × 2<sup>E − bias</sup>; the 1 before the point is not stored.</p>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>E</th><th>M</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td class="l">±0</td></tr>
+          <tr><td>0</td><td>≠ 0</td><td class="l">denormalized: 0.M × 2<sup>−126</sup> (single), 0.M × 2<sup>−1022</sup> (double)</td></tr>
+          <tr><td>all ones</td><td>0</td><td class="l">±∞</td></tr>
+          <tr><td>all ones</td><td>≠ 0</td><td class="l">NaN</td></tr>
+          <tr><td>otherwise</td><td></td><td class="l">1.M × 2<sup>E − bias</sup></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="methodes.html#ieee-encoder">IEEE 754: encoding (single)</a></h2>
+      <ol>
+        <li>S = 0 if positive.</li>
+        <li>The number in binary, then normalized: 1.… × 2<sup><var>e</var></sup>.</li>
+        <li>E = <var>e</var> + 127, <b>on 8 bits</b> (leading zeros).</li>
+        <li>M = digits after the point, <b>padded on the right</b> up to 23 bits.</li>
+      </ol>
+      <p><span data-eq><span class="bn">0.09375<sub>10</sub></span> = <span class="bn">0.0001 1<sub>2</sub></span> = <span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></span>; E = 123.</p>
+      <div class="mtw"><table class="mt ie-b"><tbody><tr data-ieee-enc="0.09375"><td class="l">0.09375</td><td><span class="bn s">0</span></td><td><span class="bn e">01111011</span></td><td class="l"><span class="bn m w">10000000000000000000000</span></td></tr></tbody></table></div>
+    </section>
+
+    <section class="box"><h2><a href="methodes.html#ieee-decoder">IEEE 754: decoding (double)</a></h2>
+      <ol>
+        <li>First 3 hexadecimal digits → S (1 bit) and E (11 bits); if the 1<sup>st</sup> digit &lt; 8, E = those three digits.</li>
+        <li>M = the last 13 digits (52 bits).</li>
+        <li>E = 7FF: ∞ or NaN; E = 0: 0 or denormalized; otherwise 1.M × 2<sup>E − 1023</sup>.</li>
+        <li><var>k</var> × 2<sup><var>n</var></sup>: point moved up to the last 1, odd <var>k</var>.</li>
+      </ol>
+      <p><span class="bn">2844 0000 0000 0000</span>: E = <span data-eq><span class="bn">284<sub>16</sub></span> = 644</span>, <span data-eq><span class="bn">1.01<sub>2</sub></span> × 2<sup>644 − 1023</sup> = 5 × 2<sup>−381</sup></span>.</p>
+      <p><span class="bn">000A 8000 0000 0000</span> → <span data-ieee-dec="000A 8000 0000 0000">21 × 2<sup>−1027</sup></span> (denormalized); <span class="bn">7FF0 0001 0000 0000</span> → <span data-ieee-dec="7FF0 0001 0000 0000">NaN</span>.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s8">BCD, Gray, ASCII</a></h2>
+      <ul>
+        <li><b>BCD</b>: each decimal digit on 4 bits: 3,768 = <span class="bn" data-bcd="3768">0011 0111 0110 1000</span><sub>BCD</sub>.</li>
+        <li><b>Gray</b> (reflected binary code): a single bit changes from one number to the next, unweighted code. From 0 to 15:</li>
+      </ul>
+      <p class="gray" data-gray>0000 0001 0011 0010 0110 0111 0101 0100 1100 1101 1111 1110 1010 1011 1001 1000</p>
+      <ul><li><b>ASCII</b>: ‘0’ = <span data-eq><span class="bn">30<sub>16</sub></span> = 48</span>, ‘A’ = <span data-eq><span class="bn">41<sub>16</sub></span> = 65</span>, ‘a’ = <span data-eq><span class="bn">61<sub>16</sub></span> = 97</span>.</li></ul>
+      <p class="muted">Never asked at the exam; on the syllabus of Moodle test 2.</p>
+    </section>
+
+    <section class="box trapb"><h2><a href="methodes.html#pieges">Traps</a></h2>
+      <ul>
+        <li>Rounding instead of truncating; multiplying the whole product instead of its fractional part.</li>
+        <li>Fractional part grouped from the right (BB.2D instead of BB.B4); inner zeros lost (DC.81 → ….1000 0001).</li>
+        <li>A hexadecimal digit written in decimal (13 instead of D); a column total left in decimal.</li>
+        <li>A 0 forgotten in the quotient; partial products shifted wrongly.</li>
+        <li>A carry mistaken for a signed overflow; the binary word left empty when there is an overflow.</li>
+        <li>IEEE: a forgotten bias (127 / 1023); E without its leading zeros; the hidden 1 stored; a denormalized number with 2<sup>−1023</sup> instead of 2<sup>−1022</sup>; an even <var>k</var>.</li>
+        <li>In English: a decimal point and a comma between thousands (3,129 = three thousand one hundred and twenty-nine).</li>
+      </ul></section>
+  </div>
+</div>
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

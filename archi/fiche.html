@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche Archi · Révisions S1</title>
+<meta name="description" content="La fiche de révision d’archi (numération), imprimable sur une page A4 : 0 à 15 en décimal, binaire et hexadécimal, puissances de 2, conversions et troncature, opérations posées, plages sur n bits, complément à deux, dépassements, IEEE 754 simple et double précision, autres codes et pièges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Fiche : des cases en colonnes, comme les encadrés d’une fiche technique ; chaque titre renvoie au cours. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:46em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:16px;columns:3 300px;column-gap:14px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-top:2px solid var(--rule);padding:.55rem .65rem;margin:0 0 12px;display:grid;gap:.4rem;background:var(--bg);min-width:0}
+.box>*{min-width:0}
+.box h2{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.box h2 a{color:inherit;text-decoration:none}
+.box h2 a:hover{text-decoration:underline}
+.box.hot{border-top-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-top-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.42}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box h3{font-size:.84rem;font-weight:700;margin:.15rem 0 0;font-family:var(--font-body)}
+.box .bn{font-size:.92em}
+.mtw{overflow-x:auto;min-width:0}
+.mt{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.mt{font-size:.74rem}.mt th{font-size:.56rem;letter-spacing:0}.mt th,.mt td{padding:.12rem .15rem}}
+.mt th,.mt td{padding:.12rem .3rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.mt th{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
+.mt th:first-child,.mt td:first-child{text-align:left}
+.mt tr:last-child td{border-bottom:0}
+.mt.c td,.mt.c th{text-align:center}
+.mt td.l{text-align:left}
+.mt .bn{font-size:1em}
+.nib16 tbody tr:nth-child(4n) td{border-bottom:1px solid var(--muted)}
+.ie-b .s{color:var(--vi)} .ie-b .e{color:var(--cu)} .ie-b .m{color:var(--bl)}
+.gray{font-family:var(--font-mono);font-size:.8rem;overflow-wrap:anywhere}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 2.5mm}
+  .top h1{font-size:14pt;margin:0}
+  .top p,.top .eyebrow{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:3.5mm;margin:0;background:#fff}
+  .box{padding:1.3mm 1.7mm;margin-bottom:2mm;gap:.8mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li,.mt,.gray{font-size:7.6pt;line-height:1.27}
+  .box h2{font-size:7.2pt}
+  .box h3{font-size:7.5pt}
+  .box ul,.box ol{gap:.2mm}
+  .mt th,.mt td{padding:.2mm .8mm}
+}
+</style>
+</head>
+<body data-resume="Archi · fiche de révision">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="nib" data-n="15"></span><a href="index.html">Archi</a> · Fiche</div><h1>La numération sur une fiche</h1><p>À relire la veille du test et le matin de l’examen. Une page A4 à l’impression. Chaque titre de case renvoie à la partie du cours.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="methodes.html">Méthodes détaillées</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box hot"><h2><a href="index.html#evaluation">À l’examen · 1 h (2025-2026)</a></h2>
+      <ul>
+        <li>4 exercices depuis 2023 : <b>conversions</b> (bases 2, 10, 16), <b>opérations posées</b>, <b>tableau sur 8 bits</b>, <b>IEEE 754</b>.</li>
+        <li>Réponses sur le sujet, au stylo. Le résultat seul, sauf les opérations posées : « le détail des calculs devra apparaître ».</li>
+        <li>« n chiffres après la virgule » : <b>on tronque</b>.</li>
+        <li>Note : tests Moodle 10 %, examen 90 %.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s4">De 0 à 15, par cœur</a></h2>
+      <div class="mtw"><table class="mt c nib16" data-eq-rows="triples">
+        <thead><tr><th>Déc.</th><th>Binaire</th><th>Hexa</th><th>Déc.</th><th>Binaire</th><th>Hexa</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td data-b="2"><span class="bn">0000</span></td><td data-b="16"><span class="bn">0</span></td><td>8</td><td data-b="2"><span class="bn">1000</span></td><td data-b="16"><span class="bn">8</span></td></tr>
+          <tr><td>1</td><td data-b="2"><span class="bn">0001</span></td><td data-b="16"><span class="bn">1</span></td><td>9</td><td data-b="2"><span class="bn">1001</span></td><td data-b="16"><span class="bn">9</span></td></tr>
+          <tr><td>2</td><td data-b="2"><span class="bn">0010</span></td><td data-b="16"><span class="bn">2</span></td><td>10</td><td data-b="2"><span class="bn">1010</span></td><td data-b="16"><span class="bn">A</span></td></tr>
+          <tr><td>3</td><td data-b="2"><span class="bn">0011</span></td><td data-b="16"><span class="bn">3</span></td><td>11</td><td data-b="2"><span class="bn">1011</span></td><td data-b="16"><span class="bn">B</span></td></tr>
+          <tr><td>4</td><td data-b="2"><span class="bn">0100</span></td><td data-b="16"><span class="bn">4</span></td><td>12</td><td data-b="2"><span class="bn">1100</span></td><td data-b="16"><span class="bn">C</span></td></tr>
+          <tr><td>5</td><td data-b="2"><span class="bn">0101</span></td><td data-b="16"><span class="bn">5</span></td><td>13</td><td data-b="2"><span class="bn">1101</span></td><td data-b="16"><span class="bn">D</span></td></tr>
+          <tr><td>6</td><td data-b="2"><span class="bn">0110</span></td><td data-b="16"><span class="bn">6</span></td><td>14</td><td data-b="2"><span class="bn">1110</span></td><td data-b="16"><span class="bn">E</span></td></tr>
+          <tr><td>7</td><td data-b="2"><span class="bn">0111</span></td><td data-b="16"><span class="bn">7</span></td><td>15</td><td data-b="2"><span class="bn">1111</span></td><td data-b="16"><span class="bn">F</span></td></tr>
+        </tbody>
+      </table></div>
+      <p>Lire un quartet : poids 8, 4, 2, 1. <span data-eq><span class="bn">1101<sub>2</sub></span> = 8 + 4 + 1 = 13</span> = D.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s2">Puissances de 2 et de 16</a></h2>
+      <div class="mtw"><table class="mt" data-eq-rows="pairs">
+        <tbody>
+          <tr><td>2<sup>0</sup></td><td>1</td><td>2<sup>9</sup></td><td>512</td></tr>
+          <tr><td>2<sup>1</sup></td><td>2</td><td>2<sup>10</sup></td><td>1 024</td></tr>
+          <tr><td>2<sup>2</sup></td><td>4</td><td>2<sup>11</sup></td><td>2 048</td></tr>
+          <tr><td>2<sup>3</sup></td><td>8</td><td>2<sup>12</sup></td><td>4 096</td></tr>
+          <tr><td>2<sup>4</sup></td><td>16</td><td>2<sup>13</sup></td><td>8 192</td></tr>
+          <tr><td>2<sup>5</sup></td><td>32</td><td>2<sup>14</sup></td><td>16 384</td></tr>
+          <tr><td>2<sup>6</sup></td><td>64</td><td>2<sup>15</sup></td><td>32 768</td></tr>
+          <tr><td>2<sup>7</sup></td><td>128</td><td>2<sup>16</sup></td><td>65 536</td></tr>
+          <tr><td>2<sup>8</sup></td><td>256</td><td>2<sup>−1</sup></td><td>0,5</td></tr>
+          <tr><td>2<sup>−2</sup></td><td>0,25</td><td>2<sup>−3</sup></td><td>0,125</td></tr>
+          <tr><td>2<sup>−4</sup></td><td>0,0625</td><td>2<sup>−5</sup></td><td>0,03125</td></tr>
+          <tr><td>16<sup>2</sup></td><td>256</td><td>16<sup>3</sup></td><td>4 096</td></tr>
+          <tr><td>16<sup>−1</sup></td><td>0,0625</td><td>16<sup>−2</sup></td><td>0,00390625</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="cours-1-bases.html#s5">Conversions</a></h2>
+      <h3>Vers la base 10</h3>
+      <p>Somme des produits chiffre × base<sup>position</sup> ; position 0 juste à gauche de la virgule. <span data-eq><span class="bn">28,28<sub>16</sub></span> = 32 + 8 + 0,125 + 0,03125 = 40,15625</span>.</p>
+      <h3>Depuis la base 10</h3>
+      <ul>
+        <li>Partie entière : <b>divisions successives</b>, restes lus du <b>dernier au premier</b>.</li>
+        <li>Partie fractionnaire : <b>multiplications successives</b>, parties entières lues du <b>premier au dernier</b> ; on continue avec la partie fractionnaire seule.</li>
+        <li><b>n chiffres demandés : on s’arrête, sans arrondir.</b> <span data-eq="t"><span class="bn">40,35<sub>10</sub></span> → <span class="bn">10 1000,0101 1<sub>2</sub></span></span> ; <span data-eq="t"><span class="bn">141,3<sub>10</sub></span> → <span class="bn">8D,4C<sub>16</sub></span></span> (pas 4D).</li>
+      </ul>
+      <h3>Base 2 ↔ base 16</h3>
+      <p>Paquets de 4 bits <b>à partir de la virgule</b> ; on complète par des 0 à gauche de la partie entière et <b>à droite</b> de la partie fractionnaire : <span data-eq><span class="bn">1011 1011,1011 01<sub>2</sub></span> = <span class="bn">BB,B4<sub>16</sub></span></span>. Un chiffre hexadécimal = 4 bits exactement.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-2-operations.html">Opérations posées</a></h2>
+      <ul>
+        <li><b>Addition</b> : 1 + 1 = <span class="bn">10</span> (on pose 0, retenue 1) ; 1 + 1 + 1 = <span class="bn">11</span> ; quatre 1 = <span class="bn">100</span>, retenue sur deux colonnes.</li>
+        <li><b>Soustraction</b> : chiffre du haut trop petit → il gagne 2, le chiffre <b>du bas</b> de la colonne suivante gagne 1.</li>
+        <li><b>Multiplication</b> : un produit partiel par 1 du multiplicateur, décalé de sa position ; on additionne.</li>
+        <li><b>Division</b> : 1 au quotient si le reste contient le diviseur, 0 sinon ; chaque chiffre abaissé donne un chiffre du quotient. Sujets : reste final 0.</li>
+        <li><b>Addition hexadécimale</b> : chaque colonne en décimal (A = 10 … F = 15), puis en base 16 : <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span>, on pose 3, retenue 1. Trois termes : retenue jusqu’à 2.</li>
+        <li>Contrôle : repasser en décimal. <span data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span></span>.</li>
+      </ul>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s3">Mots et plages sur n bits</a></h2>
+      <p>Bit, octet = 8 bits ; MSB = bit de poids fort (à gauche), LSB = bit de poids faible. Un mot de <var>n</var> bits a 2<sup><var>n</var></sup> combinaisons.</p>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Bits</th><th>Non signé min</th><th>max</th><th>Signé min</th><th>max</th></tr></thead>
+        <tbody>
+          <tr data-range="4"><th>4</th><td>0</td><td>15</td><td>−8</td><td>7</td></tr>
+          <tr data-range="8"><th>8</th><td>0</td><td>255</td><td>−128</td><td>127</td></tr>
+          <tr data-range="16"><th>16</th><td>0</td><td>65 535</td><td>−32 768</td><td>32 767</td></tr>
+          <tr data-range="32"><th>32</th><td>0</td><td>2<sup>32</sup> − 1</td><td>−2<sup>31</sup></td><td>2<sup>31</sup> − 1</td></tr>
+          <tr><th><var>n</var></th><td>0</td><td>2<sup><var>n</var></sup> − 1</td><td>−2<sup><var>n</var>−1</sup></td><td>2<sup><var>n</var>−1</sup> − 1</td></tr>
+        </tbody>
+      </table></div>
+      <p>Mots de 8 bits : positifs de <span class="bn">00</span> à <span class="bn">7F</span>, négatifs de <span class="bn">80</span> à <span class="bn">FF</span>.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s2">Complément à deux</a></h2>
+      <ul>
+        <li>Complément à un : inverser chaque bit. Complément à deux : complément à un + 1.</li>
+        <li>Raccourci : de droite à gauche, on garde jusqu’au <b>premier 1 inclus</b>, on inverse le reste.</li>
+        <li><b>Encoder −x</b> : x en binaire sur <var>n</var> bits, puis son complément à deux : 17 = <span class="bn">00010001</span> → −17 = <span class="bn">11101111</span>.</li>
+        <li><b>Décoder</b> : MSB 0 → comme un non signé ; MSB 1 → négatif, sa valeur absolue est son complément à deux : <span class="bn">10111101</span> → <span class="bn">01000011</span> = 67 → −67.</li>
+        <li>−128 = <span class="bn">10000000</span> sur 8 bits : son complément à deux redonne le même mot.</li>
+        <li>Extension de signe : on recopie le bit de signe à gauche. <span class="bn">10001101</span> → <span class="bn">1111 1111 1000 1101</span>.</li>
+      </ul>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s6">Dépassements, tableau sur 8 bits</a></h2>
+      <ul>
+        <li>Toujours écrire le <b>mot de 8 bits</b> obtenu (on ignore la retenue ou l’emprunt qui sort).</li>
+        <li><b>Non signé</b> : ERREUR si le vrai résultat sort de 0 … 255 : retenue sortante d’une addition, premier &lt; second dans une soustraction.</li>
+        <li><b>Signé</b> : ERREUR si le vrai résultat sort de −128 … 127. Par les signes : seulement P + P = N, N + N = P, P − N = N, N − P = P.</li>
+      </ul>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Opération</th><th>Mot</th><th>Non s.</th><th>Signé</th></tr></thead>
+        <tbody>
+          <tr data-n8="01010100-10011100"><td class="l"><span class="bn w">01010100 − 10011100</span></td><td><span class="bn">10111000</span></td><td>ERREUR</td><td>ERREUR</td></tr>
+          <tr data-n8="01110110+00011001"><td class="l"><span class="bn w">01110110 + 00011001</span></td><td><span class="bn">10001111</span></td><td>143</td><td>ERREUR</td></tr>
+          <tr data-n8="11010011-00010110"><td class="l"><span class="bn w">11010011 − 00010110</span></td><td><span class="bn">10111101</span></td><td>189</td><td>−67</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="cours-4-flottants.html#s2">IEEE 754 : les formats</a></h2>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>Format</th><th>S</th><th>E</th><th>M</th><th>Biais</th><th>Mot</th></tr></thead>
+        <tbody>
+          <tr><td>Simple</td><td>1</td><td>8</td><td>23</td><td>127</td><td>8 hexa</td></tr>
+          <tr><td>Double</td><td>1</td><td>11</td><td>52</td><td>1 023</td><td>16 hexa</td></tr>
+        </tbody>
+      </table></div>
+      <p>Nombre normalisé : (−1)<sup>S</sup> × 1,M × 2<sup>E − biais</sup> ; le 1 avant la virgule n’est pas stocké.</p>
+      <div class="mtw"><table class="mt">
+        <thead><tr><th>E</th><th>M</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td class="l">±0</td></tr>
+          <tr><td>0</td><td>≠ 0</td><td class="l">dénormalisé : 0,M × 2<sup>−126</sup> (simple), 0,M × 2<sup>−1022</sup> (double)</td></tr>
+          <tr><td>tout à 1</td><td>0</td><td class="l">±∞</td></tr>
+          <tr><td>tout à 1</td><td>≠ 0</td><td class="l">NaN</td></tr>
+          <tr><td>sinon</td><td></td><td class="l">1,M × 2<sup>E − biais</sup></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="box"><h2><a href="methodes.html#ieee-encoder">IEEE 754 : encoder (simple)</a></h2>
+      <ol>
+        <li>S = 0 si positif.</li>
+        <li>Le nombre en binaire, puis normalisé : 1,… × 2<sup><var>e</var></sup>.</li>
+        <li>E = <var>e</var> + 127, <b>sur 8 bits</b> (zéros de tête).</li>
+        <li>M = chiffres après la virgule, <b>complétés à droite</b> jusqu’à 23 bits.</li>
+      </ol>
+      <p><span data-eq><span class="bn">0,09375<sub>10</sub></span> = <span class="bn">0,0001 1<sub>2</sub></span> = <span class="bn">1,1<sub>2</sub></span> × 2<sup>−4</sup></span> ; E = 123.</p>
+      <div class="mtw"><table class="mt ie-b"><tbody><tr data-ieee-enc="0,09375"><td class="l">0,09375</td><td><span class="bn s">0</span></td><td><span class="bn e">01111011</span></td><td class="l"><span class="bn m w">10000000000000000000000</span></td></tr></tbody></table></div>
+    </section>
+
+    <section class="box"><h2><a href="methodes.html#ieee-decoder">IEEE 754 : décoder (double)</a></h2>
+      <ol>
+        <li>3 premiers chiffres hexadécimaux → S (1 bit) et E (11 bits) ; si le 1<sup>er</sup> chiffre &lt; 8, E = ces trois chiffres.</li>
+        <li>M = les 13 derniers chiffres (52 bits).</li>
+        <li>E = 7FF : ∞ ou NaN ; E = 0 : 0 ou dénormalisé ; sinon 1,M × 2<sup>E − 1023</sup>.</li>
+        <li><var>k</var> × 2<sup><var>n</var></sup> : virgule déplacée jusqu’au dernier 1, <var>k</var> impair.</li>
+      </ol>
+      <p><span class="bn">2844 0000 0000 0000</span> : E = <span data-eq><span class="bn">284<sub>16</sub></span> = 644</span>, <span data-eq><span class="bn">1,01<sub>2</sub></span> × 2<sup>644 − 1023</sup> = 5 × 2<sup>−381</sup></span>.</p>
+      <p><span class="bn">000A 8000 0000 0000</span> → <span data-ieee-dec="000A 8000 0000 0000">21 × 2<sup>−1027</sup></span> (dénormalisé) ; <span class="bn">7FF0 0001 0000 0000</span> → <span data-ieee-dec="7FF0 0001 0000 0000">NaN</span>.</p>
+    </section>
+
+    <section class="box"><h2><a href="cours-3-entiers.html#s8">BCD, Gray, ASCII</a></h2>
+      <ul>
+        <li><b>BCD</b> : chaque chiffre décimal sur 4 bits : 3 768 = <span class="bn" data-bcd="3768">0011 0111 0110 1000</span><sub>BCD</sub>.</li>
+        <li><b>Gray</b> (binaire réfléchi) : un seul bit change d’un nombre au suivant, code non pondéré. De 0 à 15 :</li>
+      </ul>
+      <p class="gray" data-gray>0000 0001 0011 0010 0110 0111 0101 0100 1100 1101 1111 1110 1010 1011 1001 1000</p>
+      <ul><li><b>ASCII</b> : ‘0’ = <span data-eq><span class="bn">30<sub>16</sub></span> = 48</span>, ‘A’ = <span data-eq><span class="bn">41<sub>16</sub></span> = 65</span>, ‘a’ = <span data-eq><span class="bn">61<sub>16</sub></span> = 97</span>.</li></ul>
+      <p class="muted">Jamais tombés à l’examen ; au programme du test Moodle 2.</p>
+    </section>
+
+    <section class="box trapb"><h2><a href="methodes.html#pieges">Pièges</a></h2>
+      <ul>
+        <li>Arrondir au lieu de tronquer ; multiplier tout le produit au lieu de sa partie fractionnaire.</li>
+        <li>Partie fractionnaire groupée depuis la droite (BB,2D au lieu de BB,B4) ; zéros internes perdus (DC,81 → …,1000 0001).</li>
+        <li>Chiffre hexadécimal écrit en décimal (13 au lieu de D) ; total de colonne laissé en décimal.</li>
+        <li>Zéro oublié au quotient ; produits partiels mal décalés.</li>
+        <li>Retenue prise pour un dépassement signé ; mot binaire laissé vide en cas de dépassement.</li>
+        <li>IEEE : biais oublié (127 / 1023) ; E sans ses zéros de tête ; 1 implicite stocké ; dénormalisé avec 2<sup>−1023</sup> au lieu de 2<sup>−1022</sup> ; <var>k</var> pair.</li>
+        <li>Anglais : point décimal et virgule des milliers (3,129 = trois mille…).</li>
+      </ul></section>
+  </div>
+</div>
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

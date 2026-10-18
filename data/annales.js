@@ -18,7 +18,8 @@ window.ANNALES = {
    "page": "taa/annales.html"
   },
   "archi": {
-   "name": "Architecture"
+   "name": "Architecture",
+   "page": "archi/annales.html"
   },
   "prog": {
    "name": "Programmation"

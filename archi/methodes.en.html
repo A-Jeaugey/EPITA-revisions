@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Archi</title>
+<meta name="description" content="Archi: one method per type of exercise in the papers, each with a worked example and the tool that shows it. Conversions and truncation, subtraction, hexadecimal addition, written division and multiplication, the 8-bit table, IEEE 754 in single and double precision, checks, a checklist and the traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Methods: one section per type of exercise in the papers, numbered in binary like the parts of the course; each
+   example comes from a paper and can be replayed with the archi.js tool. */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;width:34px;height:15px;font-family:var(--font-mono);font-size:.8rem;font-weight:700;color:var(--accent);flex:none}
+.kicker .mk{width:auto;height:auto;font-size:.9rem}
+.copy{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:0 var(--radius) var(--radius) 0;padding:.8rem 1rem;display:grid;gap:.45rem;min-width:0}
+.copy>*{min-width:0}
+.copy .tag{font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.copy .tbl{border-top-width:1px}
+.ex-src{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;color:var(--exam)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check h3{font-size:1rem;margin:.6rem 0 0;font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.signs td,.signs th{text-align:center}
+.signs td.y{color:var(--bad);font-weight:700}
+.n8 td{white-space:nowrap}
+.n8 td.e{color:var(--bad);font-weight:700}
+.ie-t td{white-space:nowrap}
+.ie-t td.m{white-space:normal;word-break:break-all;min-width:9rem}
+.vf td:first-child{min-width:9rem}
+@media (max-width:560px){.calc>div{white-space:normal}}
+</style>
+</head>
+<body data-resume="Archi · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numeration</b> — exam methods</span><span>Examples: B1 Examination 2025-2026 and the 2023, 2024 papers</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="10"></span><a href="index.html">Archi</a> · Methods</div>
+      <h1>One method per <span class="w">type of exercise.</span></h1>
+      <p class="lead">The papers ask the same questions year after year: a table of conversions, four written operations, an 8-bit table, IEEE 754. Each method fits in a few steps, with an example taken from a paper, the tool that replays it step by step and what to write on the exam paper.</p>
+      <ul class="feats">
+        <li><span><span class="k">Methods</span> 10, in the order of the paper</span></li>
+        <li><span><span class="k">Then</span> checks, the checklist, the traps</span></li>
+        <li class="ex"><span><span class="k">Examples</span> all taken from the papers</span></li>
+        <li><span><span class="k">Practise</span> <a href="entrainement.html#infini">generators</a></span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Contents of the methods">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#vers-10"><span class="nib" data-n="1"></span><span>To base 10</span></a></li>
+      <li><a href="#depuis-10"><span class="nib" data-n="2"></span><span>From base 10, truncation</span></a></li>
+      <li><a href="#paquets"><span class="nib" data-n="3"></span><span>Base 2 ↔ base 16</span></a></li>
+      <li><a href="#soustraction"><span class="nib" data-n="4"></span><span>Binary subtraction</span></a></li>
+      <li><a href="#addition"><span class="nib" data-n="5"></span><span>Hexadecimal addition</span></a></li>
+      <li><a href="#division"><span class="nib" data-n="6"></span><span>Binary division</span></a></li>
+      <li><a href="#multiplication"><span class="nib" data-n="7"></span><span>Binary multiplication</span></a></li>
+      <li><a href="#huit-bits"><span class="nib" data-n="8"></span><span>The 8-bit table</span></a></li>
+      <li><a href="#ieee-encoder"><span class="nib" data-n="9"></span><span>IEEE 754: encoding</span></a></li>
+      <li><a href="#ieee-decoder"><span class="nib" data-n="10"></span><span>IEEE 754: decoding</span></a></li>
+      <li><a href="#verifier"><span class="mk">=</span><span>Quick checks</span></a></li>
+      <li><a href="#copie"><span class="mk">✓</span><span>Before handing in</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>The traps</span></a></li>
+    </ol>
+    <p class="toc-note">The numbers are written in binary on 4 bits, like the parts of the course: method 10 is <span class="bn">1010</span>.</p>
+    <div class="toc-nav"><a href="index.html">← Archi home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">One-page summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Contents of the methods</summary><ol>
+      <li><a href="#vers-10">To base 10</a></li><li><a href="#depuis-10">From base 10, truncation</a></li><li><a href="#paquets">Base 2 ↔ base 16</a></li>
+      <li><a href="#soustraction">Binary subtraction</a></li><li><a href="#addition">Hexadecimal addition</a></li><li><a href="#division">Binary division</a></li><li><a href="#multiplication">Binary multiplication</a></li>
+      <li><a href="#huit-bits">The 8-bit table</a></li><li><a href="#ieee-encoder">IEEE 754: encoding</a></li><li><a href="#ieee-decoder">IEEE 754: decoding</a></li>
+      <li><a href="#verifier">Quick checks</a></li><li><a href="#copie">Before handing in</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="vers-10">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="1"></span>Method 1 <span class="ref">exercise 1 · <a href="cours-1-bases.html#s5">sheet 1, part 5</a></span></div><h2>To base 10: the sum of products</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Number the positions</b> from the point: 0 for the digit just left of it, then 1, 2, 3… to the left, −1, −2… to the right.</p></div></li>
+          <li><div><p><b>Write each digit × its weight</b>: the base raised to the position. In hexadecimal, A = 10 … F = 15.</p></div></li>
+          <li><div><p><b>Add up.</b> In binary, just add the weights of the 1 bits. After the point: 2<sup>−1</sup> = 0.5; 2<sup>−2</sup> = 0.25; 2<sup>−3</sup> = 0.125; 2<sup>−4</sup> = 0.0625; 2<sup>−5</sup> = 0.03125; and in base 16: 16<sup>−1</sup> = 0.0625; 16<sup>−2</sup> = 0.00390625.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026, exercise 1</p>
+        <div class="calc" data-eq><div><span class="bn">1101.1000 1<sub>2</sub></span> = 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>0</sup> + 2<sup>−1</sup> + 2<sup>−5</sup></div><div>= 8 + 4 + 1 + 0.5 + 0.03125</div><div class="r">= <span class="bn">13.53125<sub>10</sub></span></div></div>
+        <div class="calc" data-eq><div><span class="bn">28.28<sub>16</sub></span> = 2×16<sup>1</sup> + 8×16<sup>0</sup> + 2×16<sup>−1</sup> + 8×16<sup>−2</sup></div><div>= 32 + 8 + 0.125 + 0.03125</div><div class="r">= <span class="bn">40.15625<sub>10</sub></span></div></div>
+        <div data-archi="place" data-opts='{"base":16,"value":"28.28","edit":false,"also":[2],"title":"28.28 in base 16: positions and weights"}'></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>The result only, in decimal: <b>40.15625</b>. No fraction or power (“write down 0.25 and not ¼ or 2<sup>−2</sup>”). Without a number of digits, the result is always finite in the papers: write all its digits.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Reading the hexadecimal fractional part as decimal: <span class="bn">28.28<sub>16</sub></span> is neither 40.28 nor 40.175. And from one row to the next, the numbers look alike on purpose: <span data-eq><span class="bn">1A5<sub>16</sub></span> = 421</span>, but <span data-eq><span class="bn">1BA<sub>16</sub></span> = 442</span> the year before.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="depuis-10">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="2"></span>Method 2 <span class="ref">exercise 1 · <a href="cours-1-bases.html#s6">sheet 1, parts 6 and 7</a></span></div><h2>From base 10: divisions, multiplications, truncation</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Split</b> the integer part and the fractional part: each one is converted on its own.</p></div></li>
+          <li><div><p><b>Integer part: successive divisions</b> by the base, until the quotient is 0. Read the remainders <b>from the last to the first</b>. In base 16, a remainder from 10 to 15 is written A to F.</p></div></li>
+          <li><div><p><b>Fractional part: successive multiplications</b> by the base. The integer part of the product gives the digit; carry on with the fractional part <b>only</b>. Read the digits <b>from the first to the last</b>.</p></div></li>
+          <li><div><p><b>Stop at the number of digits asked for, without rounding</b>: truncate, as the course and every answer key do.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026: 40.35 to binary, 5 digits after the point</p>
+        <div class="grid2">
+          <div data-archi="divs" data-opts='{"n":"40","base":2}'></div>
+          <div data-archi="mults" data-opts='{"x":"0.35","base":2,"digits":5}'></div>
+        </div>
+        <div class="calc"><div data-eq="t"><span class="bn">40.35<sub>10</sub></span> → <span class="bn">10 1000.0101 1<sub>2</sub></span></div></div>
+        <p class="ex-src">Same paper: 22.84 to hexadecimal, 2 digits after the point</p>
+        <div class="calc"><div><span data-eq>22 = 1 × 16 + 6</span>; <span data-eq>0.84 × 16 = 13.44</span> → D; <span data-eq>0.44 × 16 = 7.04</span> → 7</div><div class="r" data-eq="t"><span class="bn">22.84<sub>10</sub></span> → <span class="bn">16.D7<sub>16</sub></span></div></div>
+        <div class="note keep"><span class="tag">Truncate, do not round</span><p>2024 paper: 28.35 to hexadecimal with 4 digits. The multiplications give 5, 9, 9, 9 and 0.6 is still left. Stop: <span data-eq="t"><span class="bn">28.35<sub>10</sub></span> → <span class="bn">1C.5999<sub>16</sub></span></span>. Rounding would give 1C.599A: that is not the convention of the answer keys, which truncated all five times the two differed.</p></div>
+        <div data-archi="mults" data-opts='{"x":"0.35","base":16,"digits":4}'></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>The result only, with exactly the number of digits asked for, trailing zeros included: <b>10 1000.0101 1</b> (or 101000.01011: the answer keys use both). Hexadecimal digits in capitals: <b>16.D7</b>.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Multiplying the whole product: after 0.84 × 16 = 13.44, carry on with 0.44, not with 13.44.</li>
+          <li>Writing a digit in decimal: 13 gives D. “16.137” is wrong.</li>
+          <li>A number that “looks decimal”: <span data-eq><span class="bn">528<sub>10</sub></span> = <span class="bn">210<sub>16</sub></span></span> (B1 Examination).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="paquets">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="3"></span>Method 3 <span class="ref">exercise 1 · <a href="cours-1-bases.html#s8">sheet 1, part 8</a></span></div><h2>Base 2 ↔ base 16: groups of 4 bits</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Start from the point</b>: groups of 4 bits leftwards for the integer part, rightwards for the fractional part.</p></div></li>
+          <li><div><p><b>Complete the incomplete groups with 0s</b>: on the left of the integer part, <b>on the right</b> of the fractional part.</p></div></li>
+          <li><div><p><b>One group = one hexadecimal digit</b> (the 0-to-15 table). The other way, each hexadecimal digit gives exactly 4 bits, zeros included.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026: 1011 1011.1011 01 to hexadecimal</p>
+        <div data-archi="groups" data-opts='{"value":"10111011.101101","from":2,"to":16}'></div>
+        <div class="calc"><div data-eq><span class="bn">1011 1011.1011 01<sub>2</sub></span> = <span class="bn">1011 1011.1011 0100<sub>2</sub></span> = <span class="bn">BB.B4<sub>16</sub></span></div></div>
+        <p class="ex-src">The other way · 2023 paper: DC.81 to binary</p>
+        <div data-archi="groups" data-opts='{"value":"DC.81","from":16,"to":2}'></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p><b>BB.B4</b>; <b>1101 1100.1000 0001</b>. The leading zeros of the integer part and the trailing zeros of the fractional part may disappear; those in the middle, never.</p></div>
+        <div class="note trap"><span class="tag">Trap: padding on the wrong side</span><p>Grouping the fractional part from the right gives <span class="bn">0010 1101</span>, that is BB.2D: wrong. The fractional part is grouped <b>from the point</b> and padded on the right. This case comes up in each of the 10 papers.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="soustraction">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="4"></span>Method 4 <span class="ref">exercise 2 · <a href="cours-2-operations.html#s2">sheet 2, part 2</a></span></div><h2>Binary subtraction, with borrows</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Align on the right</b> and pad the bottom number with 0s on the left.</p></div></li>
+          <li><div><p><b>Column by column, from right to left</b>: 1 − 0 = 1, 1 − 1 = 0, 0 − 0 = 0.</p></div></li>
+          <li><div><p><b>Top digit too small: borrow 1.</b> The top digit gains <span class="bn">10<sub>2</sub></span> (two) and the <b>bottom</b> digit of the next column gains 1 (the course’s method). If that bottom digit is already 1, it becomes <span class="bn">10<sub>2</sub></span> and you will borrow again.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026, exercise 2</p>
+        <div data-archi="posed" data-opts='{"op":"sub","ops":["101110110","11011011"],"base":2,"pad":true}'></div>
+        <div class="calc" data-eq><div><span class="bn">101110110<sub>2</sub></span> − <span class="bn">11011011<sub>2</sub></span> = <span class="bn">10011011<sub>2</sub></span></div><div>= 374 − 219 = 155</div></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>“Show all calculations”: write the operation in the grid, one box per digit, and note the borrows. Result without leading zeros: <b>10011011</b>. In the papers, the first number is always the larger one.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Taking the borrow from the top digit of the next column while also adding 1 at the bottom: the borrow only counts once. With the course’s method, it is the bottom digit that gains 1.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="addition">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="5"></span>Method 5 <span class="ref">exercise 2 · <a href="cours-2-operations.html#s6">sheet 2, part 6</a></span></div><h2>Hexadecimal addition, with two or three terms</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Column by column, from right to left</b>, add the digits <b>in decimal</b> (A = 10 … F = 15), with the carry.</p></div></li>
+          <li><div><p><b>Rewrite the column total in base 16</b>: write down the right digit, carry the left one. From 16 to 31, the carry is 1; with three terms, a column can reach 15 × 3 + 2 = 47 = <span class="bn">2F<sub>16</sub></span>: carry 2.</p></div></li>
+          <li><div><p><b>The last carry</b> becomes the leading digit: 8 papers out of 9 create one more digit this way.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026, exercise 2 (three terms, as in 2024)</p>
+        <div data-archi="posed" data-opts='{"op":"add","ops":["763","FAA","5B6"],"base":16}'></div>
+        <div class="calc"><div>3 + A + 6 = <span data-eq>3 + 10 + 6 = 19 = <span class="bn">13<sub>16</sub></span></span>: write down 3, carry 1</div><div>1 + 6 + A + B = <span data-eq>1 + 6 + 10 + 11 = 28 = <span class="bn">1C<sub>16</sub></span></span>: write down C, carry 1</div><div>1 + 7 + F + 5 = <span data-eq>1 + 7 + 15 + 5 = 28 = <span class="bn">1C<sub>16</sub></span></span>: write down C, carry 1</div><div class="r" data-eq><span class="bn">763<sub>16</sub></span> + <span class="bn">FAA<sub>16</sub></span> + <span class="bn">5B6<sub>16</sub></span> = <span class="bn">1CC3<sub>16</sub></span> = 7,363</div></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>The written operation, the carries above, the result <b>1CC3</b>. Check in decimal if you have time: <span data-eq>1,891 + 4,010 + 1,462 = 7,363</span>.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Leaving a total in decimal: 28 is written <span class="bn">1C<sub>16</sub></span>, write down C (not “28”, nor “8 carry 2”).</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="division">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="6"></span>Method 6 <span class="ref">exercise 2 · <a href="cours-2-operations.html#s4">sheet 2, part 4</a></span></div><h2>Written binary division</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>The dividend on the left, the divisor on the right</b>, the quotient under the divisor.</p></div></li>
+          <li><div><p><b>Take the shortest leading part of the dividend that contains the divisor</b>: record a 1 in the quotient, subtract the divisor.</p></div></li>
+          <li><div><p><b>Bring down the next digit.</b> If the remainder is smaller than the divisor, record a <b>0</b> in the quotient; otherwise record a 1 and subtract. Go on until the last digit.</p></div></li>
+          <li><div><p><b>The final remainder is 0</b> in every paper: otherwise, go back over your subtractions. (A division with digits after the point only exists in tutorial 1.)</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026, exercise 2</p>
+        <div data-archi="posed" data-opts='{"op":"div","ops":["101001101","1001"],"base":2}'></div>
+        <div class="calc" data-eq><div><span class="bn">101001101<sub>2</sub></span> / <span class="bn">1001<sub>2</sub></span> = <span class="bn">100101<sub>2</sub></span></div><div>= 333 / 9 = 37</div></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>The successive partial remainders, each one under the previous one, and the quotient <b>100101</b>. The 2022, 2023 and 2025 answer keys only keep the remainders; the older ones also write the “− divisor” lines.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Forgetting a 0 in the quotient when the remainder is too small: the quotient loses a digit and is worth nothing. Check: <span data-eq>37 × 9 = 333</span>.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="multiplication">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="7"></span>Method 7 <span class="ref">exercise 2 · <a href="cours-2-operations.html#s3">sheet 2, part 3</a></span></div><h2>Written binary multiplication</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Spot the 1s of the multiplier</b> and their position (0 on the right).</p></div></li>
+          <li><div><p><b>One partial product per 1</b>: the multiplicand, shifted left by the position of that 1. The 0s of the multiplier only give rows of zeros, which the answer keys skip.</p></div></li>
+          <li><div><p><b>Add the partial products</b>, column by column: with three 1s in a column, 1 + 1 + 1 = <span class="bn">11<sub>2</sub></span>; with four, <span class="bn">100<sub>2</sub></span>, the carry goes two columns further.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026 and 2023 paper, exercise 2 (the same multiplication)</p>
+        <div data-archi="posed" data-opts='{"op":"mul","ops":["10101010100","101010"],"base":2,"zeros":false}'></div>
+        <div class="calc" data-eq><div><span class="bn">10101010100<sub>2</sub></span> × <span class="bn">101010<sub>2</sub></span> = <span class="bn">1101111111001000<sub>2</sub></span></div><div>= 1,364 × 42 = 57,288</div></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>One row per 1 of the multiplier (here three, shifted 1, 3 and 5 places), preceded by “+”, then the sum: <b>1101111111001000</b>.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Shifting each row one place more than the previous one after skipping 0s: the shift is the position of the 1, not the row number.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="huit-bits">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="8"></span>Method 8 <span class="ref">exercise 3 · <a href="cours-3-entiers.html#s6">sheet 3, part 6</a></span></div><h2>The 8-bit table: unsigned, signed, ERROR</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>The 8-bit word.</b> Work out the addition or subtraction and keep the 8 rightmost bits, even if a carry or a borrow goes out beyond bit 7.</p></div></li>
+          <li><div><p><b>Unsigned</b>: each operand is worth 0 to 255. Redo the operation in decimal; outside 0 … 255, write <b>ERROR</b>. For an addition, this happens when a carry goes out; for a subtraction, when the first number is the smaller one.</p></div></li>
+          <li><div><p><b>Signed (two’s complement)</b>: a word starting with 1 is negative, its absolute value is its two’s complement. Redo the operation; outside −128 … 127, write <b>ERROR</b>. Otherwise, read the result word as signed.</p></div></li>
+          <li><div><p><b>Check with the signs</b> (tutorial 2): there is a signed overflow only for positive + positive = negative, negative + negative = positive, positive − negative = negative, negative − positive = positive.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B1 Examination 2025-2026, exercise 3 (the official answer key, recomputed)</p>
+        <div class="tbl"><table class="n8">
+          <thead><tr><th>Operation</th><th>Binary result</th><th>Unsigned</th><th>Signed</th></tr></thead>
+          <tbody>
+            <tr data-n8="01010100-10011100"><td><span class="bn">01010100 − 10011100</span></td><td><span class="bn">10111000</span></td><td class="e">ERROR</td><td class="e">ERROR</td></tr>
+            <tr data-n8="01110110+00011001"><td><span class="bn">01110110 + 00011001</span></td><td><span class="bn">10001111</span></td><td>143</td><td class="e">ERROR</td></tr>
+            <tr data-n8="11010011-00010110"><td><span class="bn">11010011 − 00010110</span></td><td><span class="bn">10111101</span></td><td>189</td><td>−67</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Row 1: unsigned, <span data-eq>84 − 156 = −72</span> &lt; 0; signed, <span class="bn">10011100</span> is −100 and <span data-eq>84 − (−100) = 184</span> &gt; 127: ERROR twice. Row 3: <span class="bn">10111101</span> is 189 unsigned and −67 signed; click its bits to see it.</p></div>
+        <div data-archi="register" data-opts='{"n":8,"value":"10111101","sizes":[8]}'></div>
+        <div class="tbl" style="max-width:34rem"><table class="signs">
+          <caption>Signed overflow according to the signs (tutorial 2, ex. 3; P = positive, N = negative)</caption>
+          <thead><tr><th>Operation</th><th>Result P</th><th>Result N</th></tr></thead>
+          <tbody>
+            <tr><td>P + P</td><td>no</td><td class="y">yes</td></tr>
+            <tr><td>N + N</td><td class="y">yes</td><td>no</td></tr>
+            <tr><td>P + N, N + P</td><td>no</td><td>no</td></tr>
+            <tr><td>P − N</td><td>no</td><td class="y">yes</td></tr>
+            <tr><td>N − P</td><td class="y">yes</td><td>no</td></tr>
+            <tr><td>P − P, N − N</td><td>no</td><td>no</td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>The 8-bit binary result, <b>always</b>; then a number or <b>ERROR</b> in each of the two columns. No working: “Do not show any calculation unless you are explicitly asked”.</p></div>
+        <div class="note exam"><span class="tag">In the papers</span><p>Each of the 4 tables of the papers has a “positive − negative” subtraction that gives ERROR in both columns, and the last three a “positive + positive” addition that overflows when signed only.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Mistaking the carry for a signed overflow: the carry out of an addition signals the <b>unsigned</b> overflow. <span class="bn">10001100 + 01111110</span> produces a carry (ERROR unsigned), but signed, <span data-eq>−116 + 126 = 10</span> is right (2017 paper).</li>
+          <li>Leaving the binary box empty when there is an overflow.</li>
+          <li>Reading a negative word as unsigned in the “Signed” column: <span class="bn">10111101</span> gives −67, not 189.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="ieee-encoder">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="9"></span>Method 9 <span class="ref">exercise 4 · <a href="cours-4-flottants.html#s3">sheet 4, part 3</a></span></div><h2>IEEE 754: encoding a real number in single precision</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Sign</b>: S = 0 for a positive number (every number in the papers), 1 for a negative one.</p></div></li>
+          <li><div><p><b>In binary</b>: integer part by divisions, fractional part by multiplications (method 2). In the papers, the expansion is always finite.</p></div></li>
+          <li><div><p><b>Normalize</b>: move the point just after the first 1, which gives 1.… × 2<sup><var>e</var></sup>. Moving it left, <var>e</var> is positive; moving it right (a number smaller than 1), negative.</p></div></li>
+          <li><div><p><b>Exponent</b>: E = <var>e</var> + 127, written <b>on 8 bits</b>, leading zeros included.</p></div></li>
+          <li><div><p><b>Mantissa</b>: M = the digits <b>after</b> the point (the leading 1 is not stored), padded <b>on the right</b> with 0s up to 23 bits.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · 2023 paper, exercise 4</p>
+        <div class="calc"><div data-eq><span class="bn">67.375<sub>10</sub></span> = <span class="bn">100 0011.011<sub>2</sub></span> = <span class="bn">1.0000 1101 1<sub>2</sub></span> × 2<sup>6</sup></div><div>S = 0; E = 6 + 127 = 133 = <span class="bn">10000101</span>; M = <span class="bn w">0000 1101 1000 0000 0000 000</span></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"single","value":"67.375","input":false}'></div>
+        <div class="tbl"><table class="ie-t">
+          <caption>The three boxes to fill (B1 Examination 2025-2026 and 2023 paper), plus the hexadecimal word</caption>
+          <thead><tr><th>Number</th><th>S</th><th>E</th><th>M</th><th>Word (not asked)</th></tr></thead>
+          <tbody>
+            <tr data-ieee-enc="320"><td>320</td><td><span class="bn">0</span></td><td><span class="bn">10000111</span></td><td class="m"><span class="bn w">01000000000000000000000</span></td><td><span class="bn">43A0 0000</span></td></tr>
+            <tr data-ieee-enc="0.09375"><td>0.09375</td><td><span class="bn">0</span></td><td><span class="bn">01111011</span></td><td class="m"><span class="bn w">10000000000000000000000</span></td><td><span class="bn">3DC0 0000</span></td></tr>
+            <tr data-ieee-enc="67.375"><td>67.375</td><td><span class="bn">0</span></td><td><span class="bn">10000101</span></td><td class="m"><span class="bn w">00001101100000000000000</span></td><td><span class="bn">4286 C000</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p>Three boxes, in binary, without spaces: S = <b>0</b>, E = <b>10000101</b>, M = <b>00001101100000000000000</b> (23 digits). The hexadecimal word has never been asked.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing E without its leading zeros: <span data-eq><span class="bn">0.09375<sub>10</sub></span> = <span class="bn">1.1<sub>2</sub></span> × 2<sup>−4</sup></span>, E = 123 = <span class="bn">01111011</span>.</li>
+          <li>Storing the 1 before the point: <span data-eq>320 = <span class="bn">1.01<sub>2</sub></span> × 2<sup>8</sup></span> gives M = <span class="bn">0100…</span>, not <span class="bn">1010…</span>.</li>
+          <li>Padding M on the left: the zeros go on the right.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 -->
+    <section class="sec" id="ieee-decoder">
+      <div class="sec-head"><div class="kicker"><span class="nib" data-n="10"></span>Method 10 <span class="ref">exercise 4 · <a href="cours-4-flottants.html#s4">sheet 4, parts 4 to 6</a></span></div><h2>IEEE 754: decoding a double-precision word as <var>k</var> × 2<sup><var>n</var></sup></h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>S and E</b>: the first 3 hexadecimal digits give 12 bits, S (1 bit) then E (11 bits). If the first digit is less than 8, S = 0 and E reads directly: the three digits in hexadecimal.</p></div></li>
+          <li><div><p><b>M</b>: the last 13 hexadecimal digits (52 bits).</p></div></li>
+          <li><div><p><b>The case</b>: E = <span class="bn">7FF<sub>16</sub></span> (all ones): infinity if M = 0, NaN otherwise. E = 0: zero if M = 0, otherwise denormalized, 0.M × 2<sup>−1022</sup>. Otherwise: 1.M × 2<sup>E − 1023</sup>.</p></div></li>
+          <li><div><p><b><var>k</var> × 2<sup><var>n</var></sup></b>: move the point to the right up to the last 1, to get an odd integer <var>k</var>; take the number of places moved off the exponent.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · 2023 paper, exercise 4</p>
+        <div class="calc"><div><span class="bn">3548 0000 0000 0000</span>: 354 = <span class="bn">0011 0101 0100<sub>2</sub></span> → S = 0, E = <span data-eq><span class="bn">354<sub>16</sub></span> = 852</span></div><div>M = <span class="bn">8 0000 0000 0000<sub>16</sub></span> = <span class="bn">1000 0…<sub>2</sub></span>; exponent <span data-eq>852 − 1023 = −171</span></div><div class="r" data-eq><span class="bn">1.1<sub>2</sub></span> × 2<sup>−171</sup> = <span class="bn">11<sub>2</sub></span> × 2<sup>−172</sup> = 3 × 2<sup>−172</sup></div></div>
+        <div data-archi="ieee" data-opts='{"fmt":"double","hex":"3548 0000 0000 0000","input":false}'></div>
+        <div class="tbl"><table class="ie-t">
+          <caption>Every word of the 2023 to 2025 papers (2024: no answer key, answers computed)</caption>
+          <thead><tr><th>Word (base 16)</th><th>Paper</th><th>Case</th><th>Representation</th></tr></thead>
+          <tbody>
+            <tr data-ieee-dec><td><span class="bn">3548 0000 0000 0000</span></td><td>2023</td><td>normalized</td><td>3 × 2<sup>−172</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">000A 8000 0000 0000</span></td><td>2023</td><td>denormalized</td><td>21 × 2<sup>−1027</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">FFFF 0000 0000 0000</span></td><td>2023</td><td>E = 7FF, M ≠ 0</td><td>NaN</td></tr>
+            <tr data-ieee-dec><td><span class="bn">3688 0000 0000 0000</span></td><td>2024</td><td>normalized</td><td>3 × 2<sup>−152</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">0015 8000 0000 0000</span></td><td>2024</td><td>normalized, E = 1</td><td>43 × 2<sup>−1027</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">7FF0 0000 0000 0000</span></td><td>2024</td><td>E = 7FF, M = 0</td><td>+∞</td></tr>
+            <tr data-ieee-dec><td><span class="bn">2844 0000 0000 0000</span></td><td>2025</td><td>normalized</td><td>5 × 2<sup>−381</sup></td></tr>
+            <tr data-ieee-dec><td><span class="bn">7FF0 0001 0000 0000</span></td><td>2025</td><td>E = 7FF, M ≠ 0</td><td>NaN</td></tr>
+          </tbody>
+        </table></div>
+        <div class="copy"><span class="tag">On the exam paper</span><p><b>3 × 2<sup>−172</sup></b>, with an odd <var>k</var> as in every answer key; <b>NaN</b> for a NaN, without a sign. Infinity has never been in an answer key: <b>+∞</b> is the most likely way to write it.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Using the bias 127: in double precision, it is 1023.</li>
+          <li>Denormalized: the exponent is −1022, not −1023, and there is no 1 before the point: <span data-eq><span class="bn">0.10101<sub>2</sub></span> × 2<sup>−1022</sup> = 21 × 2<sup>−1027</sup></span>.</li>
+          <li>Fake denormalized number: <span class="bn">0015 8000 0000 0000</span> has E = 1, it is normalized: <span data-eq><span class="bn">1.01011<sub>2</sub></span> × 2<sup>−1022</sup> = 43 × 2<sup>−1027</sup></span>.</li>
+          <li>A single 1 bit in M is enough for a NaN: <span class="bn">7FF0 0001 0000 0000</span>.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ checks -->
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="mk">=</span>Checks</div><h2>Checking a result quickly</h2></div>
+      <div class="stack">
+        <div class="prose"><p>One minute of checking per exercise catches most mistakes. Each check below redoes the calculation another way.</p></div>
+        <div class="tbl"><table class="vf">
+          <thead><tr><th>Exercise</th><th>Check</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Conversion to base 10</td><td>The order of magnitude: the leading digit × its weight</td><td><span class="bn">1 0110 1101<sub>2</sub></span>: at least 256, less than 512; <span data-eq><span class="bn">1 0110 1101<sub>2</sub></span> = 365</span></td></tr>
+            <tr><td>Conversion from base 10</td><td>Convert the integer part back; count the bits (2<sup>5</sup> ≤ 40 &lt; 2<sup>6</sup>: 6 bits)</td><td><span data-eq><span class="bn">10 1000<sub>2</sub></span> = 32 + 8 = 40</span></td></tr>
+            <tr><td>Subtraction</td><td>Result + bottom number = top number</td><td><span data-eq><span class="bn">10011011<sub>2</sub></span> + <span class="bn">11011011<sub>2</sub></span> = <span class="bn">101110110<sub>2</sub></span></span></td></tr>
+            <tr><td>Hexadecimal addition</td><td>Go back to decimal</td><td><span data-eq>1,891 + 4,010 + 1,462 = 7,363 = <span class="bn">1CC3<sub>16</sub></span></span></td></tr>
+            <tr><td>Division</td><td>Quotient × divisor = dividend (remainder 0)</td><td><span data-eq><span class="bn">100101<sub>2</sub></span> × <span class="bn">1001<sub>2</sub></span> = <span class="bn">101001101<sub>2</sub></span></span></td></tr>
+            <tr><td>Multiplication</td><td>Go back to decimal; number of digits: 11 + 6 bits give 16 or 17 bits</td><td><span data-eq>1,364 × 42 = 57,288 = <span class="bn">1101 1111 1100 1000<sub>2</sub></span></span></td></tr>
+            <tr><td>8-bit table</td><td>The sign rule; carry out ⇒ unsigned ERROR (addition); first &lt; second ⇒ unsigned ERROR (subtraction)</td><td><span class="bn">01110110 + 00011001</span>: P + P = N, ERROR when signed only</td></tr>
+            <tr><td>IEEE 754, encoding</td><td>Number ≥ 2: E starts with 1; number &lt; 1: E &lt; 127, starts with 0; exact number: M ends with 0s</td><td>0.09375 → E = <span class="bn">01111011</span> = 123</td></tr>
+            <tr><td>IEEE 754, decoding</td><td>Rebuild: <var>k</var> × 2<sup><var>n</var></sup> must give back 1.M × 2<sup>E − 1023</sup></td><td><span data-eq>5 × 2<sup>−381</sup> = <span class="bn">1.01<sub>2</sub></span> × 2<sup>−379</sup></span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ checklist -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>The last minutes</div><h2>Before handing in your paper</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Go over each exercise with this list. It sums up the instructions of the papers and the mistakes the answer keys help avoid. Nothing is saved.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Uncheck all</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Conversions</b>: the result only, no fraction or power; exactly the number of digits asked for, truncated (trailing zeros included).</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Hexadecimal</b>: digits in capitals, no digit written in decimal (13 → D).</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Binary ↔ hexadecimal</b>: groups from the point, fractional part padded on the right.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>Operations</b>: written in the grid, the working visible (borrows, carries, partial remainders, partial products); result without leading zeros.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Division</b>: the final remainder is 0 and quotient × divisor gives back the dividend.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>8-bit table</b>: each binary result written on 8 bits, even when there is an overflow; ERROR in capitals, in the right column; the minus sign of the signed values.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>IEEE, encoding</b>: S, E and M in binary in three boxes; E on 8 bits with its leading zeros; M on 23 bits padded on the right, without the leading 1.</label></li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>IEEE, decoding</b>: bias 1023; the cases E = 0 and E = <span class="bn">7FF</span> handled; odd <var>k</var> and <var>n</var> with its sign; a NaN written “NaN”.</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>With a pen</b>, neither red ink nor pencil; every box filled in.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ traps -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>To read the day before</div><h2>The traps, exercise by exercise</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Conversions</span><ul>
+            <li>Rounding instead of truncating: <span data-eq="t"><span class="bn">141.3<sub>10</sub></span> → <span class="bn">8D.4C<sub>16</sub></span></span> (not 8D.4D); <span data-eq="t"><span class="bn">92.47<sub>10</sub></span> → <span class="bn">5C.7851<sub>16</sub></span></span> in tutorial 1.</li>
+            <li>Reading the remainders the wrong way: divisions from the last to the first, multiplications from the first to the last.</li>
+            <li>Losing the inner zeros: <span data-eq><span class="bn">DC.81<sub>16</sub></span> = <span class="bn">1101 1100.1000 0001<sub>2</sub></span></span>, not ….11.</li>
+            <li>Grouping the fractional part from the right: <span data-eq><span class="bn">10 0101.1100 11<sub>2</sub></span> = <span class="bn">25.CC<sub>16</sub></span></span> (tutorial 1), not 25.33.</li>
+            <li>Same digits, another base: 151.32 in base 8 and in base 16 in the same table (2022).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Written operations</span><ul>
+            <li>A borrow counted twice or carried to the wrong place (course’s method: the bottom digit of the next column gains 1).</li>
+            <li>A carry over two columns: four 1s in a column make <span class="bn">100<sub>2</sub></span> (tutorial 1, four-term addition).</li>
+            <li>A hexadecimal column total left in decimal: <span data-eq>5 + 10 + 15 = 30 = <span class="bn">1E<sub>16</sub></span></span>, write down E.</li>
+            <li>A 0 forgotten in the quotient; partial products shifted wrongly.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">8-bit integers</span><ul>
+            <li>A carry mistaken for a signed overflow (and the other way round).</li>
+            <li>An unsigned subtraction going below 0: <span class="bn">11001000 − 11100010</span> gives ERROR unsigned, but <span data-eq>−56 − (−30) = −26</span> signed (2023).</li>
+            <li>−128 is <span class="bn">10000000</span>: its opposite does not fit in 8 signed bits. And <span class="bn">0111 1111 + 0000 0001</span> = <span class="bn">1000 0000</span>: 128 unsigned, ERROR signed (2024).</li>
+            <li>Asymmetric ranges: from −2<sup><var>n</var>−1</sup> to 2<sup><var>n</var>−1</sup> − 1 signed; the largest unsigned is 2<sup><var>n</var></sup> − 1, not 2<sup><var>n</var></sup>.</li>
+            <li>Quick two’s complement: from right to left, keep the bits up to the first 1 <b>included</b>, invert the others.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">IEEE 754</span><ul>
+            <li>A forgotten bias, or the bias 127 in double precision.</li>
+            <li>E without its leading zeros, M without its trailing zeros, the hidden 1 stored.</li>
+            <li>Exponent of a number smaller than 1: negative. <span data-eq><span class="bn">0.1011<sub>2</sub></span> = <span class="bn">1.011<sub>2</sub></span> × 2<sup>−1</sup></span>, E = 126.</li>
+            <li>An unreduced <var>k</var>: 6 × 2<sup>−173</sup> equals 3 × 2<sup>−172</sup>, but the answer keys give an odd <var>k</var>.</li>
+            <li>The truncation rule of conversions does not hold for IEEE 754: the standard rounds to nearest (<span class="bn">0.1<sub>10</sub></span> → <span class="bn">3DCC CCCD</span>). No paper has asked for it.</li>
+          </ul></div>
+        </div>
+        <div class="note exam"><span class="tag">Typos in Chapter 1: do not copy them</span><ul>
+          <li>p. 9: “0.4025<sub>10</sub> = 0.01101<sub>2</sub>”: read <span data-eq><span class="bn">0.40625<sub>10</sub></span> = <span class="bn">0.01101<sub>2</sub></span></span>.</li>
+          <li>p. 12, step 5: “0 – 1 = 1 → borrow 1”: the “= 1” should not be there.</li>
+          <li>The French version also writes “0.C8<sub>16</sub>” with a point (p. 9) and calls the division 11111001 / 110 a “multiplication” (p. 13).</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  /* the checklist (nothing is saved) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' checked'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

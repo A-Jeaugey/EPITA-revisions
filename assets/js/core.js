@@ -161,13 +161,13 @@
       exam: 'Written · no calculator, no documents',
       chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy', 'Polar coordinates'] },
     taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
-      exam: 'Written, on the exam paper · 1 h this year according to Moodle (30 min, out of 10, in 2024)',
+      exam: 'Written, on the exam paper · 1 hr this year according to Moodle (30 min, out of 10, in 2024)',
       chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
     caml: { name: 'Algo · Caml', short: 'Caml', course: 'Caml and recursion', open: 'Open Caml',
-      exam: 'Written · 1 h 30 · end of October',
+      exam: 'Written · 1 hr 30 min · end of October',
       chapters: ['Language basics', 'Recursion', 'Lists', 'Higher-order functions'] },
     archi: { name: 'Architecture · Numeration', short: 'Archi', course: 'Computer architecture · Numeration', open: 'Open Archi',
-      exam: 'Exam 1 h, date not published · Moodle tests 10%',
+      exam: 'Exam 1 hr, date not published · Moodle tests 10%',
       chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {

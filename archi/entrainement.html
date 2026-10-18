@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entraînement · Archi</title>
+<meta name="description" content="Archi : les exercices des 10 sujets (2016 à 2025) et des TD 1 et 2, filtrables par notion, provenance, niveau et état, avec indices et corrections pas à pas ; et cinq générateurs d’exercices sans fin, de la difficulté des sujets : conversions, opérations posées, tableau sur 8 bits, IEEE 754.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Entraînement : les fiches des sujets et des TD (filtrables), puis les générateurs. Les outils des corrections
+   (opérations posées, divisions successives, mot IEEE…) sont montés par archi.js quand la correction s’ouvre. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.3rem}
+.stat{border:1px solid var(--line);border-top:2px solid var(--rule);background:var(--bg);padding:.55rem .8rem;display:grid;gap:2px;min-width:104px;text-decoration:none;color:inherit}
+a.stat:hover{border-color:var(--accent)}
+.stat b{font-family:var(--font-mono);font-weight:700;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.filters{background:var(--bg);border-bottom:1px solid var(--line);padding-block:14px}
+.filters .wrapx{display:grid;gap:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lbl{margin-right:4px;min-width:86px}
+.fchip{font:inherit;font-family:var(--font-mono);font-size:.78rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:3px;padding:.28rem .65rem;cursor:pointer;min-height:34px}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip .n{opacity:.7;margin-left:4px}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fsum{font-size:.9rem;color:var(--muted)}
+.fsum:empty,.fnote:empty{display:none}
+.fnote{font-size:.9rem;color:var(--warn);max-width:76ch}
+.list{display:grid;gap:22px;padding-block:28px 56px}
+.empty{color:var(--muted);padding:1.5rem 0;max-width:62ch}
+.exo{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:70px;min-width:0}
+.exo.target{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.exo-head{display:grid;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.exo-head>*{min-width:0}
+.exo-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tagc{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:3px;padding:.08rem .5rem;color:var(--muted)}
+.tagc.src{color:var(--exam);border-color:var(--exam)}
+.tagc.src.td{color:var(--accent);border-color:var(--accent)}
+.tagc.st-ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.tagc.st-review{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.exo h3{font-size:1.4rem;margin:0}
+.exo h3 a{color:inherit;text-decoration:none}
+.exo h3 a:hover{text-decoration:underline}
+.exo-body{display:grid;gap:14px;padding:14px 16px}
+.exo-body>*,.exo-sol>*,.sol-step>*,.sol-step .body>*,.exo-intro>*,.exo-qs li>*,.exo-qs li>div>*{min-width:0}
+.exo-intro{display:grid;gap:.6rem;max-width:84ch}
+.exo-qs{list-style:none;margin:0;padding:0;display:grid;gap:.7rem;max-width:84ch}
+.exo-qs li{padding-left:.9rem;border-left:3px solid var(--line);min-width:0;display:grid;gap:.5rem}
+.exo-qs li>div{display:grid;gap:.5rem}
+.rel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:.9rem;background:var(--accent-soft);border-radius:var(--radius);padding:.5rem .75rem}
+.rel b{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.exo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px dashed var(--line)}
+.exo-actions .grow{flex:1}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.rev[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.exo-hints{display:grid;gap:8px;padding:0 16px}
+.exo-hints:empty{display:none}
+.hint{background:var(--why-soft);border-radius:var(--radius);padding:.6rem .8rem;font-size:.95rem}
+.hint b{color:var(--why);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.exo-sol{display:grid;gap:16px;padding:14px 16px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.sol-step{display:grid;gap:6px}
+.sol-step>b{font-family:var(--font-mono);font-size:.76rem;font-weight:700;letter-spacing:.03em;color:var(--accent)}
+.sol-step>b .k{color:var(--muted);margin-right:.4em}
+.sol-step .body{display:grid;gap:.6rem;max-width:84ch}
+.sol-step .body ol,.sol-step .body ul{margin:0;padding-left:1.25rem;display:grid;gap:.3rem}
+.sol-step .bench{max-width:100%}
+.answer{background:var(--ok-soft);border-radius:var(--radius);padding:.7rem .9rem;display:grid;gap:.5rem}
+.answer>*{min-width:0}
+.answer .tbl{background:var(--surface)}
+.answer ul,.answer ol{margin:0;padding-left:1.25rem;display:grid;gap:.25rem}
+.answer b.t,.traps b.t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.answer b.t{color:var(--ok)}
+.traps{background:var(--warn-soft);border-radius:var(--radius);padding:.7rem .9rem}
+.traps b.t{color:var(--warn);margin-bottom:4px}
+.traps ul{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.sol-note{font-size:.85rem;color:var(--muted)}
+.exo li{min-width:0}
+.exo li .bn{white-space:normal}
+/* générateurs */
+.infini{display:grid;gap:18px;padding-block:8px 96px;scroll-margin-top:72px}
+.infini-h{display:grid;gap:.5rem;max-width:74ch;padding-top:.8rem;border-top:2px solid var(--rule)}
+.gen-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:980px){.gen-grid{grid-template-columns:minmax(0,1fr)}}
+.gen{scroll-margin-top:72px}
+.gen-opts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:end}
+.gen-opts .cv-f{flex:1 1 15rem}
+.gen-chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);min-height:42px}
+.gen-chk input{width:18px;height:18px;accent-color:var(--accent)}
+.gen-q{font-size:1.02rem;line-height:1.55;min-height:2.6em}
+.gen-q .bn{font-size:1.05em}
+.gen-q .big{font-size:1.25rem;font-weight:600;overflow-wrap:anywhere}
+.gen-f{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:end}
+.gen-f .cv-f{flex:1 1 9rem}
+.gen-f .cv-f.wide{flex:3 1 16rem}
+.gen-f .cv-f.narrow{flex:0 1 5.5rem}
+.gen-f .row{flex:1 1 100%}
+.gen-fb{font-size:.95rem;display:grid;gap:.4rem}
+.gen-fb:empty{display:none}
+.gen-fb .ok{color:var(--ok);font-weight:700}
+.gen-fb .no{color:var(--bad);font-weight:700}
+.gen-fb .bn{white-space:normal;overflow-wrap:anywhere}
+.gen-sol{display:grid;gap:.7rem;padding-top:.7rem;border-top:1px dashed var(--line)}
+.gen-sol>*{min-width:0}
+.gen-score{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+.gen .bench .bench-head{background:var(--bg)}
+</style>
+</head>
+<body data-resume="Archi · entraînement">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — entraînement</span><span>10 sujets (2016-2025) · TD 1 et 2 · générateurs</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="9"></span><a href="index.html">Archi</a> · Entraînement</div>
+      <h1>Les vrais exercices, <span class="w">puis d’autres sans fin.</span></h1>
+      <p class="lead">Les exercices des 10 sujets encore au programme et ceux des TD 1 et 2, corrigés pas à pas : fais-les sur papier, demande un indice si tu bloques, puis ouvre la correction. En dessous, cinq générateurs fabriquent des exercices de la difficulté des sujets, autant que tu veux.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"><div class="wrapx">
+  <div class="frow" id="fTopic" role="group" aria-label="Filtrer par notion"></div>
+  <div class="frow" id="fKind" role="group" aria-label="Filtrer par provenance"></div>
+  <div class="frow" id="fLvl" role="group" aria-label="Filtrer par niveau"></div>
+  <div class="frow" id="fState" role="group" aria-label="Filtrer par état"></div>
+  <p class="fsum" id="fsum" aria-live="polite"></p>
+  <p class="fnote" id="fnote"></p>
+</div></div>
+
+<div class="wrapx">
+  <div class="list" id="list"></div>
+
+  <section class="infini" id="infini" aria-labelledby="t-inf">
+    <div class="infini-h">
+      <div class="eyebrow">Entraînement infini</div>
+      <h2 id="t-inf">Cinq générateurs, de la difficulté des sujets</h2>
+      <p>Chaque générateur reprend une ligne type des sujets 2023 à 2025 : mêmes tailles de nombres, mêmes consignes. Tape ta réponse, puis vérifie : la correction se refait avec les outils du cours. Les cas que les sujets n’ont jamais posés (division avec reste, nombre négatif) n’apparaissent que si tu coches l’option.</p>
+    </div>
+    <div class="gen-grid">
+      <div class="bench gen" id="gen-conv"></div>
+      <div class="bench gen" id="gen-ops"></div>
+      <div class="bench gen" id="gen-n8"></div>
+      <div class="bench gen" id="gen-enc"></div>
+      <div class="bench gen" id="gen-dec"></div>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/js/archi.js"></script>
+<script src="../data/archi/exams.js"></script>
+<script src="../data/archi/ex-annales.js"></script>
+<script src="../data/archi/ex-td.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, A = R.archi;
+  /* ================================================================ les fiches */
+  var KINDS = [{ id: 'partiel', t: 'Sujets d’examen' }, { id: 'td1', t: 'TD 1' }, { id: 'td2', t: 'TD 2' }];
+  function prov(e) { return e.kind === 'partiel' ? 'partiel' : /^td1-/.test(e.id) ? 'td1' : 'td2'; }
+  var KORD = { partiel: 1, td1: 2, td2: 3 };
+  /* sujets du plus récent au plus ancien, puis les TD dans l’ordre */
+  var EX = (window.ARCHI_EX || []).slice().sort(function (a, b) {
+    var ka = KORD[prov(a)], kb = KORD[prov(b)];
+    if (ka !== kb) return ka - kb;
+    if (a.exam !== b.exam) return (b.exam || '') < (a.exam || '') ? -1 : 1;
+    return (a.order || 0) - (b.order || 0);
+  });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  /* « near » : une fiche de TD proche d’un exercice de sujet ; affiché dans les deux sens */
+  var NEAR_IN = {};
+  EX.forEach(function (e) { (e.near || []).forEach(function (id) { (NEAR_IN[id] = NEAR_IN[id] || []).push(e.id); }); });
+  var TOP = window.ARCHI_TOPICS || {};
+  var LVL = ['', 'facile', 'moyen', 'difficile'];
+  var STATES = [{ id: 'todo', t: 'À faire' }, { id: 'ok', t: 'Réussis' }, { id: 'review', t: 'À revoir' }];
+  /* méthode (methodes.html) et parties du cours à relire pour chaque notion */
+  var METH = { 'vers-10': ['vers-10', 1], 'depuis-10': ['depuis-10', 2], fraction: ['depuis-10', 2], paquets: ['paquets', 3], soustraction: ['soustraction', 4], addition: ['addition', 5],
+    division: ['division', 6], multiplication: ['multiplication', 7], 'non-signe': ['huit-bits', 8], signe: ['huit-bits', 8], depassement: ['huit-bits', 8],
+    'ieee-encodage': ['ieee-encoder', 9], 'ieee-decodage': ['ieee-decoder', 10], 'ieee-special': ['ieee-decoder', 10] };
+  var C1 = 'cours-1-bases.html', C2 = 'cours-2-operations.html', C3 = 'cours-3-entiers.html', C4 = 'cours-4-flottants.html';
+  var COURS = { bases: [[C1, 1, 1]], 'vers-10': [[C1, 1, 5]], 'depuis-10': [[C1, 1, 6]], fraction: [[C1, 1, 7]], paquets: [[C1, 1, 8]],
+    addition: [[C2, 2, 6]], soustraction: [[C2, 2, 2]], multiplication: [[C2, 2, 3]], division: [[C2, 2, 4]],
+    'non-signe': [[C3, 3, 3]], signe: [[C3, 3, 4], [C3, 3, 5]], depassement: [[C3, 3, 6]], plages: [[C3, 3, 3], [C3, 3, 4]], codes: [[C3, 3, 8]],
+    'ieee-encodage': [[C4, 4, 3]], 'ieee-decodage': [[C4, 4, 4], [C4, 4, 5]], 'ieee-special': [[C4, 4, 6]] };
+  var COURS_ID = { 'td1-ex3a': [[C2, 2, 1]], 'td1-ex3d': [[C2, 2, 4], [C2, 2, 5]], 'td1-ex1': [[C1, 1, 2]] };
+  var st = { topic: null, kind: null, lvl: 0, state: null };
+  function key(ex) { return 'archi-' + ex.id; }
+  function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
+  function esc(s) { return U.esc(String(s)); }
+  function has(e, t) { return (e.topics || []).indexOf(t) >= 0; }
+  function pts(v) { return String(v).replace('.', ','); }
+  function stOk(e, s) { var x = state(e); return s === 'todo' ? !x : x === s; }
+  function shown(e) { return (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)); }
+
+  function paintStats() {
+    var ok = 0, rv = 0, np = 0;
+    EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
+    $('#stats').innerHTML = '<div class="stat"><b>' + np + '</b><span>exercices de sujets</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>des TD 1 et 2</span></div><div class="stat"><b>' + ok + '</b><span>réussis</span></div><div class="stat"><b>' + rv + '</b><span>à revoir</span></div><a class="stat" href="#infini"><b>∞</b><span>exercices générés</span></a>';
+  }
+  function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+  function paintFilters() {
+    var topics = Object.keys(TOP).filter(function (t) { return EX.some(function (e) { return has(e, t); }); });
+    $('#fTopic').innerHTML = '<span class="lbl">Notion</span>' + chip('data-t', '', !st.topic, 'Toutes', EX.length) +
+      topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), EX.filter(function (e) { return has(e, t); }).length); }).join('');
+    $('#fKind').innerHTML = '<span class="lbl">Provenance</span>' + chip('data-k', '', !st.kind, 'Toutes') +
+      KINDS.map(function (k) { return chip('data-k', k.id, st.kind === k.id, k.t, EX.filter(function (e) { return prov(e) === k.id; }).length); }).join('');
+    $('#fLvl').innerHTML = '<span class="lbl">Niveau</span>' + chip('data-l', 0, !st.lvl, 'Tous') +
+      [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), EX.filter(function (e) { return e.lvl === l; }).length); }).join('');
+    $('#fState').innerHTML = '<span class="lbl">État</span>' + chip('data-s', '', !st.state, 'Tous') +
+      STATES.map(function (s) { return chip('data-s', s.id, st.state === s.id, s.t, EX.filter(function (e) { return stOk(e, s.id); }).length); }).join('');
+    var ieee = st.topic && /^ieee-/.test(st.topic), td = st.kind && st.kind !== 'partiel';
+    $('#fnote').innerHTML = ieee || td ? 'Le TD 3 (virgule flottante) ne nous a pas été fourni : pour IEEE 754, il reste les exercices 4 des sujets 2023 à 2025 et les <a href="#gen-enc">générateurs</a>.' : '';
+    $('#filters').hidden = !EX.length;
+    $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
+    $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });
+    $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; repaint(); }); });
+    $$('#fState [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.state = b.dataset.s || null; repaint(); }); });
+  }
+
+  function link(id) { var e = BY[id]; return e ? '<a href="#' + id + '">' + esc(e.src) + ' : ' + e.title + '</a>' : ''; }
+  function relHTML(ex) {
+    var r = [];
+    if (ex.near && ex.near.length) r.push('<b>Proche d’un sujet</b>' + ex.near.map(link).join(' · '));
+    if (NEAR_IN[ex.id]) r.push('<b>Le même travail au TD</b>' + NEAR_IN[ex.id].map(link).join(' · '));
+    return r.map(function (x) { return '<p class="rel">' + x + '</p>'; }).join('');
+  }
+  function readHTML(ex) {
+    var seenM = {}, m = [], parts = {}, order = [];
+    (ex.topics || []).forEach(function (t) {
+      var x = METH[t]; if (x && !seenM[x[0]]) { seenM[x[0]] = 1; m.push(x); }
+    });
+    (COURS_ID[ex.id] || [].concat.apply([], (ex.topics || []).map(function (t) { return COURS[t] || []; }))).forEach(function (c) {
+      if (!parts[c[1]]) { parts[c[1]] = { href: c[0], ps: [] }; order.push(c[1]); }
+      if (parts[c[1]].ps.indexOf(c[2]) < 0) parts[c[1]].ps.push(c[2]);
+    });
+    var out = m.map(function (x) { return '<a href="methodes.html#' + x[0] + '">méthode ' + x[1] + '</a>'; });
+    order.forEach(function (f) {
+      var p = parts[f]; p.ps.sort(function (a, b) { return a - b; });
+      out.push('fiche ' + f + ', partie' + (p.ps.length > 1 ? 's ' : ' ') + p.ps.map(function (k) { return '<a href="' + p.href + '#s' + k + '">' + k + '</a>'; }).join(', '));
+    });
+    return out.length ? '<p class="sol-note">À relire : ' + out.join(' ; ') + '.</p>' : '';
+  }
+  function solHTML(ex) {
+    var s = (ex.solution || []).map(function (p, i) { return '<div class="sol-step"><b><span class="k">' + (i + 1) + '.</span>' + (p.t || 'Correction') + '</b><div class="body">' + (p.html || '') + '</div></div>'; }).join('');
+    if (ex.answer) s += '<div class="answer"><b class="t">Ce qu’il faut écrire sur la copie</b>' + ex.answer + '</div>';
+    if (ex.traps && ex.traps.length) s += '<div class="traps"><b class="t">Pièges</b><ul>' + ex.traps.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    if (ex.grading) s += '<p class="sol-note">Barème : ' + ex.grading + '</p>';
+    s += '<p class="sol-note">' + (ex.official ? 'Conforme au corrigé officiel. ' : '') + (ex.note || 'Correction rédigée, chaque résultat recalculé par programme.') + '</p>';
+    return s + readHTML(ex);
+  }
+  function metaHTML(ex) {
+    var s = state(ex);
+    return '<span class="tagc src' + (ex.kind === 'partiel' ? '' : ' td') + '">' + esc(ex.src) + '</span>' + (ex.pts ? '<span class="tagc">' + pts(ex.pts) + ' pts</span>' : '') + (ex.time ? '<span class="tagc">≈ ' + ex.time + ' min</span>' : '') +
+      (ex.lvl ? '<span class="tagc">' + LVL[ex.lvl] + '</span>' : '') +
+      (ex.topics || []).map(function (t) { return '<span class="tagc">' + esc(TOP[t] || t) + '</span>'; }).join('') +
+      (s ? '<span class="tagc st-' + s + '">' + (s === 'ok' ? 'réussi' : 'à revoir') + '</span>' : '');
+  }
+  function card(ex) {
+    var s = state(ex), el = document.createElement('article');
+    el.className = 'exo'; el.id = ex.id;
+    var qs = (ex.questions || []).length ? '<ol class="exo-qs">' + ex.questions.map(function (q) { return '<li><div>' + q + '</div></li>'; }).join('') + '</ol>' : '';
+    var nh = (ex.hints || []).length;
+    el.innerHTML = '<div class="exo-head"><div class="exo-meta">' + metaHTML(ex) + '</div><h3><a href="#' + ex.id + '">' + ex.title + '</a></h3></div>' +
+      '<div class="exo-body">' + (ex.intro ? '<div class="exo-intro">' + ex.intro + '</div>' : '') + qs + relHTML(ex) + '</div>' +
+      '<div class="exo-hints"></div>' +
+      '<div class="exo-actions">' + (nh ? '<button type="button" class="btn" data-act="hint">Indice 1 / ' + nh + '</button>' : '') +
+      '<button type="button" class="btn primary" data-act="sol" aria-expanded="false">Voir la correction</button><span class="grow"></span>' +
+      '<button type="button" class="btn ok" data-act="ok" aria-pressed="' + (s === 'ok') + '">J’ai réussi</button><button type="button" class="btn rev" data-act="review" aria-pressed="' + (s === 'review') + '">À revoir</button></div>' +
+      '<div class="exo-sol" hidden></div>';
+    el.querySelector('[data-act="sol"]').addEventListener('click', function (e) {
+      var box = el.querySelector('.exo-sol'), open = box.hidden;
+      if (open && !box.dataset.ready) { box.innerHTML = solHTML(ex); box.dataset.ready = '1'; }
+      box.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); e.currentTarget.textContent = open ? 'Masquer la correction' : 'Voir la correction';
+    });
+    var shownH = 0, hb = el.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shownH >= nh) return;
+      el.querySelector('.exo-hints').insertAdjacentHTML('beforeend', '<div class="hint"><b>Indice ' + (shownH + 1) + '</b>' + ex.hints[shownH] + '</div>');
+      shownH++; hb.textContent = shownH < nh ? 'Indice ' + (shownH + 1) + ' / ' + nh : 'Plus d’indice'; hb.disabled = shownH >= nh;
+    });
+    /* « J’ai réussi » / « À revoir » : mis à jour sur place, la correction ouverte reste ouverte */
+    ['ok', 'review'].forEach(function (k) {
+      el.querySelector('[data-act="' + k + '"]').addEventListener('click', function () {
+        R.exo.set(key(ex), state(ex) === k ? null : k);
+        var now = state(ex);
+        el.querySelector('[data-act="ok"]').setAttribute('aria-pressed', String(now === 'ok'));
+        el.querySelector('[data-act="review"]').setAttribute('aria-pressed', String(now === 'review'));
+        el.querySelector('.exo-meta').innerHTML = metaHTML(ex);
+        paintStats(); paintFilters(); paintSum();
+      });
+    });
+    return el;
+  }
+  function paintSum() {
+    var n = EX.filter(shown).length, any = st.topic || st.kind || st.lvl || st.state;
+    $('#fsum').textContent = any ? n + ' exercice' + (n > 1 ? 's' : '') + ' pour ces filtres.' : '';
+  }
+  function paintList() {
+    var list = EX.filter(shown), box = $('#list'); box.innerHTML = '';
+    if (!EX.length) { box.innerHTML = '<p class="empty">Les exercices corrigés arrivent ici.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">Aucun exercice pour ces filtres.</p>'; return; }
+    list.forEach(function (e) { box.appendChild(card(e)); });
+  }
+  function repaint() { paintFilters(); paintList(); paintSum(); }
+
+  /* ================================================================ les générateurs
+     Les nombres sont tirés au hasard dans les tailles des sujets ; toute réponse attendue est calculée par REV.archi
+     (convert, subCols, addCols, divCols, mulCols, addN, subN, ieeeEncode, ieeeDecode). L’élément .gen-q porte la
+     question en données (data-q), pour les tests. */
+  var Q = A.Q, q = A.q, MINUS = '−', ERRW = 'ERREUR';
+  function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function wpick(list) { var t = 0, i; for (i = 0; i < list.length; i++) t += list[i][0]; var r = Math.random() * t; for (i = 0; i < list.length; i++) { r -= list[i][0]; if (r < 0) return list[i][1]; } return list[list.length - 1][1]; }
+  function str(n, b) { return A.intStr(A.big(n), b); }
+  function pad(s, n) { while (s.length < n) s = '0' + s; return s; }
+  function canon(r) { return r.int + (r.frac ? ',' + r.frac : ''); }
+  function N(x, b, o) { return A.num(x, b, o); }
+  function BN(s) { return '<span class="bn">' + esc(s) + '</span>'; }
+  function BNw(s) { return '<span class="bn w">' + esc(s) + '</span>'; }
+  function tool(name, o) { return '<div data-archi="' + name + '" data-opts=\'' + JSON.stringify(o) + '\'></div>'; }
+  function decOf(v) { return A.dec(v).replace(/-/g, MINUS); }
+  function bigS(v) { return String(v).replace('-', MINUS); }
+  var BASE_NAME = { 2: 'binaire', 10: 'décimal', 16: 'hexadécimal' };
+
+  /* banc commun : options, question, champs, Vérifier / Autre, retour, correction */
+  function bench(o) {
+    var el = document.getElementById(o.id), cur = null, score = { ok: 0, n: 0 }, done = false;
+    el.innerHTML = '<div class="bench-head"><span class="bh-t">' + o.title + '</span><span class="gen-score" aria-live="polite">0 / 0</span></div><div class="bench-body">' +
+      '<div class="gen-opts">' + (o.modes ? '<label class="cv-f"><span>' + o.modeLabel + '</span><select data-k="mode">' + o.modes.map(function (m) { return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select></label>' : '') +
+      (o.opt ? '<label class="gen-chk"><input type="checkbox" data-k="opt">' + o.opt + '</label>' : '') + '</div>' +
+      '<div class="gen-q"></div><form class="gen-f" novalidate autocomplete="off"></form><div class="gen-fb" aria-live="polite"></div><div class="gen-sol" hidden></div></div>';
+    var qEl = el.querySelector('.gen-q'), form = el.querySelector('form'), fb = el.querySelector('.gen-fb'), sol = el.querySelector('.gen-sol');
+    var modeEl = el.querySelector('[data-k="mode"]'), optEl = el.querySelector('[data-k="opt"]');
+    function make() {
+      cur = o.make(modeEl ? modeEl.value : null, optEl ? optEl.checked : false); done = false;
+      qEl.innerHTML = cur.q; qEl.setAttribute('data-q', JSON.stringify(cur.spec));
+      form.innerHTML = cur.fields.map(function (f, i) {
+        return '<label class="cv-f' + (f.cls ? ' ' + f.cls : '') + '"><span>' + f.label + '</span><input type="text" data-f="' + f.k + '" spellcheck="false" autocapitalize="characters" inputmode="' + (f.mode || 'text') + '" placeholder="' + esc(f.ph || '') + '"></label>';
+      }).join('') + '<div class="row"><button class="btn primary" type="submit">Vérifier</button><button class="btn" type="button" data-new>Autre</button><button class="btn ghost" type="button" data-sol hidden aria-expanded="false">Voir la correction</button></div>';
+      fb.innerHTML = ''; sol.innerHTML = ''; sol.hidden = true;
+      form.querySelector('[data-new]').addEventListener('click', function () { make(); var i = form.querySelector('input'); if (i) i.focus(); });
+      form.querySelector('[data-sol]').addEventListener('click', function (e) { toggleSol(sol.hidden); });
+    }
+    function toggleSol(open) {
+      var b = form.querySelector('[data-sol]');
+      if (open && !sol.innerHTML) sol.innerHTML = cur.sol();
+      sol.hidden = !open; b.hidden = false; b.setAttribute('aria-expanded', String(open)); b.textContent = open ? 'Masquer la correction' : 'Voir la correction';
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var vals = {}; $$('input[data-f]', form).forEach(function (i) { vals[i.getAttribute('data-f')] = i.value; });
+      var r = o.check(cur, vals);
+      if (r.unread) { fb.innerHTML = '<p><span class="no">Réponse illisible.</span> ' + r.unread + '</p>'; return; }
+      if (!done) { score.n++; if (r.ok) score.ok++; done = true; el.querySelector('.gen-score').textContent = score.ok + ' / ' + score.n; }
+      fb.innerHTML = '<p>' + (r.ok ? '<span class="ok">Juste.</span> ' : '<span class="no">Pas tout à fait.</span> ') + (r.msg || '') + '</p>' + (r.note ? '<p class="muted">' + r.note + '</p>' : '');
+      toggleSol(!r.ok);
+    });
+    if (modeEl) modeEl.addEventListener('change', make);
+    if (optEl) optEl.addEventListener('change', make);
+    make();
+  }
+  function isErr(s) { return /^(erreur|error|err|e)$/i.test(String(s).trim()); }
+  function intIn(s) { var t = String(s).replace(/[\s  ]/g, '').replace(/[−–]/g, '-'); return /^[+-]?\d+$/.test(t) ? String(A.big(t.replace('+', ''))) : null; }
+
+  /* ---------- 1. conversions ---------- */
+  function frac2() { var f; do { f = ri(1, 99); } while (f % 25 === 0); return pad(String(f), 2); }   /* jamais fini en base 2 ou 16 */
+  function bits1(n) { var s = '1'; for (var i = 1; i < n; i++) s += ri(0, 1); return s; }               /* n bits, le premier à 1 */
+  function bitsEnd1(n) { var s = ''; for (var i = 1; i < n; i++) s += ri(0, 1); return s + '1'; }       /* n bits, le dernier à 1 */
+  var CONV = {
+    d2b: function () { return { x: ri(10, 99) + ',' + frac2(), from: 10, to: 2, digits: 5 }; },
+    d2h: function () { return { x: ri(10, 255) + ',' + (Math.random() < 0.3 ? String(pick([1, 2, 3, 4, 6, 7, 8, 9])) : frac2()), from: 10, to: 16, digits: ri(2, 4) }; },
+    b2d: function () { return Math.random() < 0.4 ? { x: bits1(ri(8, 9)), from: 2, to: 10 } : { x: bits1(ri(4, 5)) + ',' + bitsEnd1(ri(4, 5)), from: 2, to: 10 }; },
+    h2d: function () { return Math.random() < 0.4 ? { x: str(ri(256, 4095), 16), from: 16, to: 10 } : { x: str(ri(16, 255), 16) + ',' + (Math.random() < 0.5 ? str(ri(1, 15), 16) : str(ri(1, 15), 16) + str(ri(1, 15), 16)), from: 16, to: 10 }; },
+    b2h: function () { var fl; do { fl = ri(5, 7); } while (fl % 4 === 0); return { x: bits1(ri(7, 10)) + ',' + bitsEnd1(fl), from: 2, to: 16 }; },
+    h2b: function () { return { x: str(ri(128, 255), 16) + ',' + str(ri(16, 255), 16).replace(/0$/, str(ri(1, 15), 16)), from: 16, to: 2 }; },
+    dInt: function () { return Math.random() < 0.5 ? { x: String(ri(128, 255)), from: 10, to: 2 } : { x: String(ri(256, 999)), from: 10, to: 16 }; }
+  };
+  var MIX = [[2, 'b2d'], [2, 'h2d'], [2, 'dInt'], [1, 'd2b'], [1, 'd2h'], [1, 'b2h'], [1, 'h2b']];
+  function convMake(mode) {
+    var c = CONV[mode === 'mix' || !CONV[mode] ? wpick(MIX) : mode]();
+    var r = A.convert(c.x, c.from, c.to, c.digits ? { digits: c.digits } : {}).res, want = { int: r.int, frac: r.frac };
+    var wv = A.value(canon(want), c.to), rounded = null;
+    if (c.digits) {
+      var v = A.value(c.x, c.from), half = q.div(q.powb(c.to, -c.digits), Q(2)), rr = A.toBase(q.add(v, half), c.to, { digits: c.digits });
+      if (canon(rr) !== canon(want)) rounded = { int: rr.int, frac: rr.frac };
+    }
+    return {
+      spec: { k: 'conv', x: c.x, from: c.from, to: c.to, digits: c.digits || 0 },
+      q: '<p>Convertis <span class="big">' + N(c.x, c.from) + '</span> en ' + BASE_NAME[c.to] + (c.digits ? ', <b>' + c.digits + ' chiffres après la virgule</b>' : '') + '.</p>',
+      fields: [{ k: 'a', label: 'Résultat en base ' + c.to, ph: c.to === 2 ? 'ex. 10 1000,0101 1' : c.to === 16 ? 'ex. 16,D7' : 'ex. 40,15625', cls: 'wide', mode: c.to === 16 ? 'text' : 'decimal' }],
+      c: c, want: want, wv: wv, rounded: rounded,
+      sol: function () {
+        var h = '', p = A.parse(c.x, c.from);
+        if (c.from === 10) {
+          h += '<p>On convertit séparément la partie entière (divisions successives, restes lus du dernier au premier)' + (p.frac ? ' et la partie fractionnaire (multiplications successives, chiffres lus du premier au dernier)' : '') + '.</p>';
+          h += tool('divs', { n: p.int, base: c.to });
+          if (p.frac) h += tool('mults', { x: '0,' + p.frac, base: c.to, digits: c.digits });
+          if (c.digits) h += '<p>' + c.digits + ' chiffres demandés : on s’arrête là, sans arrondir.' + (rounded ? ' L’arrondi donnerait ' + N(rounded, c.to) + ' : ce n’est pas la convention des corrigés.' : ' Ici, l’arrondi donnerait le même résultat.') + '</p>';
+        } else if (c.to === 10) {
+          h += '<p>La somme des produits chiffre × poids' + (c.from === 16 ? ' (A = 10 … F = 15)' : ', ou simplement la somme des poids des bits à 1') + '.</p>' + tool('place', { base: c.from, value: c.x, edit: false, also: [10] });
+        } else {
+          h += '<p>' + (c.from === 2 ? 'Paquets de 4 bits à partir de la virgule, complétés par des 0 à gauche de la partie entière et à droite de la partie fractionnaire.' : 'Chaque chiffre hexadécimal donne exactement 4 bits, zéros compris.') + '</p>' + tool('groups', { value: c.x, from: c.from, to: c.to });
+        }
+        return h + '<p>Réponse : ' + N(c.x, c.from) + ' = <b>' + N(want, c.to) + '</b></p>';
+      }
+    };
+  }
+  function convCheck(it, v) {
+    var p = A.parse(v.a, it.c.to);
+    if (!String(v.a).trim()) return { unread: 'Écris un nombre en base ' + it.c.to + '.' };
+    if (p.error) return { unread: p.error === 'digit' ? '« ' + esc(p.ch) + ' » n’est pas un chiffre de la base ' + it.c.to + '.' : 'Des chiffres, avec au plus une virgule.' };
+    var ok = q.eq(p.q, it.wv), msg = 'Réponse : <b>' + N(it.want, it.c.to) + '</b>.', note = '';
+    if (ok && it.c.digits && p.frac.length < it.c.digits) note = 'Sur la copie, écris les ' + it.c.digits + ' chiffres demandés, zéros de queue compris.';
+    if (!ok && it.rounded && q.eq(p.q, A.value(canon(it.rounded), it.c.to))) note = 'Tu as arrondi : on tronque, on s’arrête au dernier chiffre demandé.';
+    return { ok: ok, msg: msg, note: note };
+  }
+
+  /* ---------- 2. opérations posées ---------- */
+  function popc(n) { var c = 0; while (n) { c += n & 1; n >>= 1; } return c; }
+  function opsMake(mode, inexact) {
+    var op = mode === 'mix' || !mode ? pick(['sub', 'add', 'div', 'mul']) : mode, it = { op: op }, a, b, d, k;
+    if (op === 'sub') { do { a = ri(256, 511); b = ri(128, 255); } while (a - b < 64 || a - b > 255); it.base = 2; it.ops = [str(a, 2), str(b, 2)]; }
+    else if (op === 'add') {
+      it.base = 16;
+      if (Math.random() < 0.6) { do { a = [ri(256, 4095), ri(256, 4095), ri(256, 4095)]; } while (a[0] + a[1] + a[2] < 4096); }
+      else { k = Math.random() < 0.9; do { a = [ri(4096, 65535), ri(4096, 65535)]; } while ((a[0] + a[1] >= 65536) !== k); }
+      it.ops = a.map(function (x) { return str(x, 16); });
+    } else if (op === 'div') {
+      it.base = 2;
+      if (inexact) { do { a = ri(64, 1023); d = ri(3, 15); } while (a % d === 0 || a < 4 * d); it.digits = ri(3, 6); it.ops = [str(a, 2), str(d, 2)]; }
+      else { do { d = ri(9, 15); k = ri(8, 63); } while (d * k < 128 || d * k > 511); it.ops = [str(d * k, 2), str(d, 2)]; }
+    } else { do { a = ri(1024, 2047); b = ri(32, 127); } while (popc(b) < 3 || popc(b) > 4); it.base = 2; it.ops = [str(a, 2), str(b, 2)]; }
+    var res, SIGN = { sub: MINUS, add: '+', div: '/', mul: '×' };
+    if (op === 'sub') res = A.subCols(it.ops[0], it.ops[1], 2).result;
+    else if (op === 'add') res = A.addCols(it.ops, 16).result;
+    else if (op === 'div') res = A.divCols(it.ops[0], it.ops[1], 2, it.digits ? { digits: it.digits } : {}).quotient;
+    else res = { int: A.mulCols(it.ops[0], it.ops[1], 2).result, frac: '' };
+    it.want = { int: res.int, frac: res.frac || '' }; it.wv = A.value(canon(it.want), it.base);
+    var expr = it.ops.join(' ' + SIGN[op] + ' ');
+    return {
+      spec: { k: 'op', op: op, base: it.base, ops: it.ops, digits: it.digits || 0 },
+      q: '<p>Pose et calcule en base ' + it.base + (it.digits ? ', <b>' + it.digits + ' chiffres après la virgule</b>' : '') + ' :</p><p class="big">' + BNw(expr) + '</p>',
+      fields: [{ k: 'a', label: it.digits ? 'Quotient (base 2)' : 'Résultat (base ' + it.base + ')', ph: it.base === 16 ? 'ex. 1CC3' : 'ex. 10011011', cls: 'wide', mode: it.base === 16 ? 'text' : 'decimal' }],
+      it: it, want: it.want, wv: it.wv,
+      sol: function () {
+        var o = { op: op, ops: it.ops, base: it.base, step: false }, vs = it.ops.map(function (s) { return decOf(A.value(s, it.base)); }), h = '';
+        if (op === 'sub') { o.pad = true; h += '<p>De droite à gauche ; quand le chiffre du haut est trop petit, on emprunte 1 : il gagne 2 et le chiffre du bas de la colonne suivante gagne 1.</p>'; }
+        if (op === 'add') h += '<p>Chaque colonne s’additionne en décimal (A = 10 … F = 15), puis s’écrit en base 16 : on pose le chiffre de droite, on retient le reste.</p>';
+        if (op === 'div') { if (it.digits) o.digits = it.digits; h += '<p>Le plus petit début du dividende qui contient le diviseur, puis un chiffre abaissé à la fois : 1 au quotient si le reste contient le diviseur, 0 sinon.' + (it.digits ? ' Quand tous les chiffres sont abaissés, on écrit la virgule et on ajoute des 0, jusqu’au ' + it.digits + '<sup>e</sup> chiffre.' : '') + '</p>'; }
+        if (op === 'mul') { o.zeros = false; h += '<p>Un produit partiel par 1 du multiplicateur, décalé de la position de ce 1 ; on saute les 0, puis on additionne.</p>'; }
+        h += tool('posed', o);
+        var chk = op === 'div' && it.digits ? vs[0] + ' / ' + vs[1] + ' = ' + decOf(q.div(A.value(it.ops[0], 2), A.value(it.ops[1], 2))) + ' ; tronqué à ' + it.digits + ' chiffres binaires, le quotient vaut ' + decOf(it.wv)
+          : vs.join(' ' + SIGN[op] + ' ') + ' = ' + decOf(it.wv);
+        return h + '<p>Vérification en base 10 : ' + chk + '.</p><p>Réponse : <b>' + N(it.want, it.base, { group: 0 }) + '</b></p>';
+      }
+    };
+  }
+  function opsCheck(it, v) {
+    if (!String(v.a).trim()) return { unread: 'Écris un nombre en base ' + it.it.base + '.' };
+    var p = A.parse(v.a, it.it.base);
+    if (p.error) return { unread: p.error === 'digit' ? '« ' + esc(p.ch) + ' » n’est pas un chiffre de la base ' + it.it.base + '.' : 'Des chiffres seulement.' };
+    return { ok: q.eq(p.q, it.wv), msg: 'Réponse : <b>' + N(it.want, it.it.base, { group: 0 }) + '</b>.' };
+  }
+
+  /* ---------- 3. une ligne du tableau sur 8 bits ---------- */
+  function n8Make() {
+    var cat = wpick([[7, 'none'], [3, 'u'], [3, 's'], [4, 'us']]), op = Math.random() < 0.47 ? '+' : '-', a, b, r, tries = 0;
+    do {
+      a = A.bits(ri(0, 255), 8); b = A.bits(ri(0, 255), 8); r = op === '+' ? A.addN(a, b) : A.subN(a, b);
+      var c = (r.u.overflow ? 'u' : '') + (r.s.overflow ? 's' : '') || 'none';
+      if (++tries > 4000) { op = op === '+' ? '-' : '+'; tries = 0; }
+    } while (c !== cat);
+    var uW = r.u.overflow ? ERRW : String(r.u.r), sW = r.s.overflow ? ERRW : String(r.s.r);
+    return {
+      spec: { k: 'n8', a: a, op: op, b: b },
+      q: '<p>Sur 8 bits (opérandes et résultat) : le résultat binaire, puis sa valeur non signée et signée, ou ' + ERRW + ' en cas de dépassement.</p><p class="big">' + BN(a + ' ' + (op === '+' ? '+' : MINUS) + ' ' + b) + '</p>',
+      fields: [{ k: 'w', label: 'Résultat binaire', ph: '8 bits', cls: 'wide' }, { k: 'u', label: 'Non signée', ph: 'nombre ou ' + ERRW }, { k: 's', label: 'Signée', ph: 'nombre ou ' + ERRW }],
+      a: a, b: b, op: op, r: r, uW: uW, sW: sW,
+      sol: function () {
+        var h = '', sub = op === '-', lend = sub && r.u.overflow;
+        h += '<p>' + BN(a) + ' vaut ' + bigS(r.u.a) + ' en non signé' + (a.charAt(0) === '1' ? ' et ' + bigS(r.s.a) + ' en signé (complément à deux : C2 = ' + BN(A.twos(a).bits) + ')' : ', comme en signé') + ' ; ' +
+          BN(b) + ' vaut ' + bigS(r.u.b) + ' en non signé' + (b.charAt(0) === '1' ? ' et ' + bigS(r.s.b) + ' en signé (C2 = ' + BN(A.twos(b).bits) + ')' : ', comme en signé') + '.</p>';
+        h += tool('posed', sub ? { op: 'sub', ops: [(lend ? '1' : '') + a, b], base: 2, pad: true, step: false } : { op: 'add', ops: [a, b], base: 2, step: false });
+        h += '<p>' + (sub ? (lend ? 'Le premier nombre est le plus petit : on emprunte au-delà du bit 7 (le 1 ajouté devant). ' : '') : (r.carry ? 'Une retenue sort du bit 7 : elle est ignorée. ' : '')) + 'On garde les 8 bits : ' + BN(r.bits) + '.</p>';
+        h += '<p>Non signé : ' + bigS(r.u.a) + ' ' + (sub ? MINUS : '+') + ' ' + bigS(r.u.b) + ' = ' + decOf(sub ? q.sub(Q(r.u.a), Q(r.u.b)) : q.add(Q(r.u.a), Q(r.u.b))) + (r.u.overflow ? ', hors de 0 … 255 : <b>' + ERRW + '</b>.' : ' : <b>' + bigS(r.u.r) + '</b>.') + '</p>';
+        var se = decOf(sub ? q.sub(Q(r.s.a), Q(r.s.b)) : q.add(Q(r.s.a), Q(r.s.b)));
+        h += '<p>Signé : ' + bigS(r.s.a) + ' ' + (sub ? MINUS : '+') + ' ' + (r.s.b < 0 ? '(' + bigS(r.s.b) + ')' : bigS(r.s.b)) + ' = ' + se + (r.s.overflow ? ', hors de −128 … 127 : <b>' + ERRW + '</b>.' : ' : <b>' + bigS(r.s.r) + '</b>.') + '</p>';
+        return h + tool('register', { n: 8, value: r.bits, sizes: [8] });
+      }
+    };
+  }
+  function n8Check(it, v) {
+    var w = String(v.w).replace(/[\s  ]/g, '');
+    if (!w && !v.u.trim() && !v.s.trim()) return { unread: 'Remplis les trois cases.' };
+    if (!/^[01]{8}$/.test(w)) return { unread: 'Le résultat binaire s’écrit avec 8 bits exactement.' };
+    function val(s) { return isErr(s) ? ERRW : intIn(s); }
+    var u = val(v.u), s = val(v.s);
+    if (u === null || s === null) return { unread: 'Dans les colonnes décimales : un nombre entier ou ' + ERRW + '.' };
+    var bad = [];
+    if (w !== it.r.bits) bad.push('le mot');
+    if (u !== it.uW) bad.push('la valeur non signée');
+    if (s !== it.sW) bad.push('la valeur signée');
+    return { ok: !bad.length, msg: (bad.length ? 'À revoir : ' + bad.join(', ') + '. ' : '') + 'Réponse : ' + BN(it.r.bits) + ' · <b>' + bigS(it.uW) + '</b> · <b>' + bigS(it.sW) + '</b>.' };
+  }
+
+  /* ---------- 4. IEEE 754 : encoder en simple précision ---------- */
+  function encMake(mode, neg) {
+    var r, x, t = 0;
+    do {
+      var kind = wpick([[2, 'int'], [2, 'mixed'], [2, 'small']]);
+      if (kind === 'int') x = String(Math.random() < 0.7 ? ri(256, 511) : ri(64, 1023));
+      else {
+        var m = kind === 'mixed' ? ri(2, 3) : ri(3, 5), j = 2 * ri(0, Math.pow(2, m - 1) - 1) + 1;
+        var v = q.div(Q(j), q.powb(2, m)); if (kind === 'mixed') v = q.add(v, Q(ri(16, 127)));
+        var tb = A.toBase(v, 10, { max: 12 }); x = canon(tb);
+      }
+      if (neg && Math.random() < 0.5) x = '-' + x;
+      r = A.ieeeEncode(x, 'single');
+    } while ((!r.exact || r.cls !== 'normal') && ++t < 50);
+    return {
+      spec: { k: 'enc', x: x },
+      q: '<p>Encode en IEEE 754 <b>simple précision</b> ; écris les trois champs en binaire.</p><p class="big">' + N(x, 10, { sub: false }) + '</p>',
+      fields: [{ k: 's', label: 'S', ph: '1 bit', cls: 'narrow', mode: 'numeric' }, { k: 'e', label: 'E (8 bits)', ph: '8 bits', mode: 'numeric' }, { k: 'm', label: 'M (23 bits)', ph: '23 bits', cls: 'wide', mode: 'numeric' }],
+      x: x, r: r,
+      sol: function () { return tool('ieee', { fmt: 'single', value: x, input: false }); }
+    };
+  }
+  function encCheck(it, v) {
+    var s = String(v.s).replace(/\s/g, ''), e = String(v.e).replace(/[\s  ]/g, ''), m = String(v.m).replace(/[\s  ]/g, '');
+    if (!s && !e && !m) return { unread: 'Remplis les trois champs.' };
+    if (!/^[01]*$/.test(s + e + m)) return { unread: 'Des 0 et des 1 seulement.' };
+    var wS = String(it.r.s), wE = A.bits(it.r.e, 8), wM = A.bits(it.r.M, 23), bad = [], note = '';
+    if (s !== wS) bad.push('S');
+    if (e !== wE) { bad.push('E'); if (e && e.length < 8 && pad(e, 8) === wE) note = 'E s’écrit sur 8 bits, zéros de tête compris : ' + BN(wE) + '.'; }
+    if (m !== wM) { bad.push('M'); if (m && m.length < 23 && wM.indexOf(m) === 0 && /^0*$/.test(wM.slice(m.length))) note += (note ? ' ' : '') + 'M s’écrit sur 23 bits : complète à droite par des 0.'; }
+    return { ok: !bad.length, msg: (bad.length ? 'À revoir : ' + bad.join(', ') + '. ' : '') + 'S = ' + BN(wS) + ', E = ' + BN(wE) + ', M = ' + BNw(wM) + '.', note: note };
+  }
+
+  /* ---------- 5. IEEE 754 : décoder un mot double précision ---------- */
+  function topM(bitsStr) { return (bitsStr + new Array(53).join('0')).slice(0, 52); }
+  function decMake(mode, neg) {
+    var kind = wpick([[12, 'normal'], [2, 'sub'], [2, 'e1'], [2, 'nan'], [2, 'inf']]), s = neg && Math.random() < 0.5 ? '1' : '0', E, M;
+    if (kind === 'normal') { E = ri(520, 1020); M = topM(bitsEnd1(ri(1, 5))); }
+    else if (kind === 'sub') { E = 0; M = topM(new Array(ri(1, 3)).join('0') + '1' + bitsEnd1(ri(2, 5))); }
+    else if (kind === 'e1') { E = 1; M = topM(bitsEnd1(ri(2, 6))); }
+    else if (kind === 'nan') { E = 2047; if (Math.random() < 0.5) M = topM(bitsEnd1(ri(1, 4))); else { var p = ri(4, 51); M = new Array(p + 1).join('0') + '1' + new Array(52 - p).join('0'); } if (!neg && Math.random() < 0.25) s = '1'; }
+    else { E = 2047; M = topM(''); }
+    var w = A.hex(s + A.bits(E, 11) + M), word = w.replace(/(.{4})(?=.)/g, '$1 '), r = A.ieeeDecode(word);
+    return {
+      spec: { k: 'dec', w: w },
+      q: '<p>Donne la représentation associée à ce mot IEEE 754 <b>double précision</b> (base 16) : <var>k</var> × 2<sup><var>n</var></sup> avec <var>k</var> et <var>n</var> entiers, NaN ou ±∞.</p><p class="big">' + BN(word) + '</p>',
+      fields: [{ k: 'a', label: 'Représentation', ph: 'ex. 3 × 2^-172, NaN, +inf', cls: 'wide' }],
+      w: word, r: r,
+      sol: function () { return tool('ieee', { fmt: 'double', hex: word, input: false }); }
+    };
+  }
+  var SUP = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-', '⁺': '+' };
+  function readRep(s) {
+    var t = String(s).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, function (x) { return '^' + x.split('').map(function (c) { return SUP[c]; }).join(''); })
+      .replace(/[\s  ]/g, '').replace(/[−–]/g, '-').replace(/[x*·.]/gi, '×').replace(/\^+/g, '^');
+    if (/^[+-]?nan$/i.test(t)) return { t: 'nan' };
+    var m = /^([+-]?)(∞|inf|infini|infinity)$/i.exec(t); if (m) return { t: 'inf', s: m[1] === '-' ? 1 : 0 };
+    if (/^[+-]?0$/.test(t)) return { t: 'num', k: A.big(0), n: 0 };
+    m = /^([+-]?\d+)×2\^?\(?([+-]?\d+)\)?$/.exec(t) || /^()2\^?\(?([+-]?\d+)\)?$/.exec(t);
+    if (!m) return null;
+    var k = m[1] === '' || m[1] === '+' ? A.big(1) : m[1] === '-' ? A.big(-1) : A.big(m[1].replace('+', ''));
+    return { t: 'num', k: k, n: parseInt(m[2], 10) };
+  }
+  function repHTML(r) {
+    if (r.cls === 'nan') return 'NaN';
+    if (r.cls === 'inf') return (r.s ? MINUS : '+') + '∞';
+    return bigS(r.k) + ' × ' + A.pw(2, r.n);
+  }
+  function decCheck(it, v) {
+    if (!String(v.a).trim()) return { unread: 'Écris k × 2^n, NaN ou +inf.' };
+    var g = readRep(v.a), r = it.r, want = repHTML(r);
+    if (!g) return { unread: 'Écris par exemple <code>3 × 2^-172</code>, <code>NaN</code> ou <code>+inf</code>.' };
+    var ok = false, note = '';
+    if (r.cls === 'nan') ok = g.t === 'nan';
+    else if (r.cls === 'inf') ok = g.t === 'inf' && g.s === r.s;
+    else if (g.t === 'num') {
+      var gv = g.n >= 0 ? q.mul(Q(g.k), q.powb(2, g.n)) : q.div(Q(g.k), q.powb(2, -g.n));
+      ok = q.eq(gv, r.value);
+      if (ok && g.k % A.big(2) === A.big(0) && g.k !== A.big(0)) note = 'Juste, mais les corrigés réduisent : ' + want + ', avec <var>k</var> impair.';
+    }
+    return { ok: ok, msg: 'Réponse : <b>' + want + '</b>.', note: note };
+  }
+
+  /* ---------- montage ---------- */
+  function initGens() {
+    bench({ id: 'gen-conv', title: 'Conversion · ligne du tableau', modeLabel: 'Ligne',
+      modes: [['mix', 'Au hasard, comme au sujet'], ['d2b', 'Décimal → binaire, 5 chiffres après la virgule'], ['d2h', 'Décimal → hexadécimal, 2 à 4 chiffres'], ['b2d', 'Binaire → décimal'], ['h2d', 'Hexadécimal → décimal'], ['b2h', 'Binaire → hexadécimal'], ['h2b', 'Hexadécimal → binaire'], ['dInt', 'Décimal entier → binaire ou hexadécimal']],
+      make: convMake, check: convCheck });
+    bench({ id: 'gen-ops', title: 'Opération posée · base 2 ou 16', modeLabel: 'Opération',
+      modes: [['mix', 'Au hasard, comme au sujet'], ['sub', 'Soustraction binaire'], ['add', 'Addition hexadécimale'], ['div', 'Division binaire'], ['mul', 'Multiplication binaire']],
+      opt: 'Division avec chiffres après la virgule (TD 1, jamais au sujet)', make: opsMake, check: opsCheck });
+    bench({ id: 'gen-n8', title: 'Une ligne du tableau sur 8 bits', make: n8Make, check: n8Check });
+    bench({ id: 'gen-enc', title: 'IEEE 754 · encoder en simple précision', opt: 'Avec des nombres négatifs (jamais au sujet)', make: encMake, check: encCheck });
+    bench({ id: 'gen-dec', title: 'IEEE 754 · décoder un mot double précision', opt: 'Avec des nombres négatifs (jamais au sujet)', make: decMake, check: decCheck });
+  }
+
+  /* ---------- liens directs : #<notion>, #partiel, #td, #td1, #td2, #<id de fiche>, #infini, #gen-… ---------- */
+  function applyHash() {
+    var h = decodeURIComponent((location.hash || '').slice(1));
+    if (!h) return;
+    if (TOP[h]) { st = { topic: h, kind: null, lvl: 0, state: null }; repaint(); return; }
+    if (KORD[h] || h === 'td') { st = { topic: null, kind: h, lvl: 0, state: null }; repaint(); return; }
+    if (BY[h]) { if (!shown(BY[h])) { st = { topic: null, kind: null, lvl: 0, state: null }; repaint(); } go(h, true); return; }
+    if (h === 'infini' || /^gen-/.test(h)) go(h, false);
+  }
+  function go(id, mark) {
+    var t = document.getElementById(id); if (!t) return;
+    if (mark) { $$('.exo.target').forEach(function (x) { x.classList.remove('target'); }); t.classList.add('target'); }
+    setTimeout(function () { t.scrollIntoView({ behavior: U.reduceMotion() ? 'auto' : 'smooth' }); }, 30);
+  }
+  paintStats(); repaint(); initGens();
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+  R.store.on(paintStats);
+})();
+</script>
+</body>
+</html>

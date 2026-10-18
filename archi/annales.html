@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annales · Archi</title>
+<meta name="description" content="Archi : les 10 sujets d’architecture des ordinateurs (numération) retrouvés, de 2016-2017 à l’examen B1 de 2025-2026, exercice par exercice : notions de chaque sujet, évolution du format, parties hors programme, liens vers les corrigés détaillés et vers les PDF d’origine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/archi.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Annales Archi : la matrice notions × sujets, l’évolution du format, puis une fiche par sujet. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.chip{font-family:var(--font-mono);font-size:.78rem;border:1px solid var(--line);border-radius:3px;padding:.2rem .6rem;color:var(--muted);text-decoration:none}
+a.chip{color:var(--exam);border-color:var(--exam)}
+main.ann{display:grid;gap:56px;padding-block:40px 96px}
+main.ann>section{display:grid;gap:16px;min-width:0;scroll-margin-top:72px}
+.sec-t{display:grid;gap:.35rem;padding-top:.8rem;border-top:2px solid var(--rule)}
+.matrix td,.matrix th{text-align:center;white-space:nowrap;vertical-align:middle;padding:.42rem .5rem}
+.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:normal;min-width:11rem}
+.matrix thead a{color:inherit}
+.matrix .yr{font-family:var(--font-mono);font-size:.66rem;color:var(--muted);letter-spacing:0;text-transform:none}
+.matrix .tot{font-family:var(--font-mono);font-size:.8rem;font-weight:700}
+.matrix tr.never td:first-child{color:var(--warn)}
+.matrix tr.never td.nv{color:var(--warn);font-family:var(--font-mono);font-size:.74rem;text-align:left}
+.matrix tr.hp td:first-child{color:var(--muted);font-style:italic}
+.matrix tr.new td{background:var(--accent-soft)}
+.dot{color:var(--accent);font-size:1.05rem}
+.dot.off{color:var(--muted)}
+.fmt td,.fmt th{vertical-align:middle}
+.fmt td.c{text-align:center;white-space:nowrap}
+.fmt .mono{font-size:.86rem;white-space:nowrap}
+.fmt tr.cut td{border-top:2px solid var(--exam)}
+.pbar{display:inline-block;vertical-align:middle;width:70px;height:8px;background:var(--surface-2);margin-right:8px}
+.pbar i{display:block;height:100%;background:var(--accent)}
+.steps-y{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.steps-y li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.65rem .85rem}
+.steps-y li>b{font-family:var(--font-mono);font-size:.8rem;color:var(--exam)}
+.steps-y li>span{min-width:0}
+@media (max-width:560px){.steps-y li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.exam-c{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:72px;min-width:0}
+.exam-c.target{box-shadow:0 0 0 2px var(--accent-soft);border-color:var(--accent)}
+.exam-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.exam-h h3{margin:0;font-size:1.35rem}
+.exam-h .meta{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.exam-b{padding:12px 16px 16px;display:grid;gap:12px}
+.exam-b>*{min-width:0}
+.prog{font-family:var(--font-mono);font-size:.78rem;color:var(--exam);border:1px solid var(--exam);border-radius:3px;padding:.08rem .55rem;justify-self:start}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:.55rem .7rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg)}
+.parts li.off{opacity:.62;border-style:dashed}
+.parts .n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.parts .p{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.parts .pt{display:grid;gap:4px;min-width:0}
+.parts .pt a{font-size:.88rem}
+.parts .hp{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 .4rem;margin-left:4px;white-space:nowrap}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.files .btn{font-size:.86rem}
+@media (max-width:560px){.parts li{grid-template-columns:40px minmax(0,1fr)}.parts .p{grid-column:2}}
+</style>
+</head>
+<body data-resume="Archi · annales">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi · Numération</b> — annales</span><span>Epidocs Past-Exams · Moodle (examen B1)</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="nib" data-n="10"></span><a href="index.html">Archi</a> · Annales</div>
+      <h1>Les 10 sujets, <span class="w">exercice par exercice.</span></h1>
+      <p class="lead">Les sujets d’archi retrouvés, du contrôle de 2016-2017 à l’examen B1 de 2025-2026. Les anciens contiennent des exercices qui ne sont plus au programme : ils sont grisés. Tout le reste est corrigé pas à pas dans l’entraînement, et chaque réponse officielle a été recalculée : aucune n’est fausse.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx ann">
+  <section id="matrice" aria-labelledby="t-mx">
+    <div class="sec-t"><div class="eyebrow">Vue d’ensemble</div><h2 id="t-mx">Quelles notions, quel sujet</h2></div>
+    <p class="muted" style="max-width:68ch">● la notion sert dans au moins un exercice au programme du sujet (survole le point pour voir lesquels) ; ○ une partie hors programme. Sous chaque année, la part du barème encore au programme. Les trois colonnes surlignées ont le format actuel.</p>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+
+  <section id="format" aria-labelledby="t-fmt">
+    <div class="sec-t"><div class="eyebrow">Évolution</div><h2 id="t-fmt">Le format, d’un sujet à l’autre</h2></div>
+    <div class="tbl"><table class="fmt" id="fmt"></table></div>
+    <ol class="steps-y">
+      <li><b>2016 → 2022</b><span>1 h 30, cinq ou six exercices. À côté des conversions et des opérations posées : puissances de deux à simplifier, préfixes binaires (Ki, Mi, Gi), addition en base 8, bases inconnues ou plan mémoire, hors programme cette année. Les conversions passaient aussi par les bases 3, 4, 5, 7, 8, 9 et 13 : la méthode du cours s’y applique, mais aucun sujet n’en demande plus depuis 2023.</span></li>
+      <li><b>2023-2024</b><span>Rupture : quatre exercices fixes, toujours dans le même ordre. Conversions entre les bases 2, 10 et 16, quatre opérations posées (dont la multiplication), un tableau sur 8 bits, IEEE 754.</span></li>
+      <li><b>2024-2025</b><span>Même plan. L’addition hexadécimale passe à trois termes, comme l’exemple du cours ; les nombres binaires à convertir sont écrits par paquets de 4.</span></li>
+      <li><b>2025-2026</b><span>Même plan en <b>1 h</b> au lieu de 1 h 30, avec moins de lignes. La multiplication reprend exactement celle de 2023-2024.</span></li>
+    </ol>
+    <div class="note why"><span class="tag">Reprises</span><p>Des exercices reviennent tels quels : la division de 2016-2017 en 2019-2020, la multiplication de 2023-2024 en 2025-2026, les quatre calculs sur 8 bits (250 + 10, 4 − 10, 120 + 10, −126 − 10) en 2019-2020 et 2022-2023, la conversion de 100110011,10011 en hexadécimal en 2020-2021 et 2021-2022.</p></div>
+  </section>
+
+  <section id="sujets" aria-labelledby="t-ex">
+    <div class="sec-t"><div class="eyebrow">Sujets</div><h2 id="t-ex">Chaque sujet</h2></div>
+    <div id="exams" style="display:grid;gap:18px"></div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/archi.js"></script>
+<script src="../data/qcm/archi-annales.js"></script>
+<script src="../data/archi/exams.js"></script>
+<script src="../data/archi/ex-annales.js"></script>
+<script src="../assets/js/archi.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, E = window.ARCHI_EXAMS || [], TOP = window.ARCHI_TOPICS || {}, EX = window.ARCHI_EX || [];
+  var BANK = R.quiz.bank().filter(function (q) { return q.s === 'archi'; });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  var NEW = { p2025: 1, p2024: 1, p2023: 1 };
+  function esc(s) { return U.esc(String(s)); }
+  function pts(v) { return String(v).replace('.', ','); }
+  function yr(e) { return e.key.slice(1); }
+  function school(e) { var y = +e.key.slice(1); return y + '-' + (y + 1); }
+  function inProg(e) { return (e.parts || []).filter(function (p) { return p.prog !== false; }); }
+  function strip(h) { return String(h).replace(/<[^>]+>/g, ''); }
+  var nCards = {}; E.forEach(function (e) { inProg(e).forEach(function (p) { if (p.card && BY[p.card]) nCards[p.card] = 1; }); });
+  document.getElementById('chips').innerHTML = '<span class="chip">' + E.length + ' sujets</span><span class="chip">' + Object.keys(nCards).length + ' exercices au programme corrigés</span><a class="chip" href="entrainement.html#partiel">corrigés détaillés →</a>';
+
+  /* matrice notions × sujets : toutes les notions, puis le hors programme */
+  var head = '<thead><tr><th>Notion</th>' + E.map(function (e) { return '<th><a href="#' + e.key + '" title="' + esc(e.title) + '">' + yr(e) + '</a>' + (e.progPts ? '<br><span class="yr">' + esc(e.progPts) + '</span>' : '') + '</th>'; }).join('') + '<th>Sujets</th></tr></thead>';
+  function cls(e) { return NEW[e.key] ? ' class="new"' : ''; }
+  var body = Object.keys(TOP).map(function (t) {
+    var hp = t === 'hors-programme', n = 0;
+    var cells = E.map(function (e) {
+      var ps = (hp ? (e.parts || []).filter(function (p) { return p.prog === false; }) : inProg(e).filter(function (p) { return (p.topics || []).indexOf(t) >= 0; }));
+      if (ps.length) n++;
+      return '<td' + cls(e) + '>' + (ps.length ? '<span class="dot' + (hp ? ' off' : '') + '" title="' + esc(ps.map(function (p) { return 'Ex ' + p.ex + ' : ' + strip(p.t); }).join(' · ')) + '">' + (hp ? '○' : '●') + '</span>' : '') + '</td>';
+    }).join('');
+    if (!n) return '<tr class="never"><td>' + esc(TOP[t]) + '</td><td class="nv" colspan="' + (E.length + 1) + '">jamais tombé · au programme du chapitre 1, donc du test Moodle</td></tr>';
+    return '<tr' + (hp ? ' class="hp"' : '') + '><td>' + esc(TOP[t]) + '</td>' + cells + '<td class="tot">' + n + ' / ' + E.length + '</td></tr>';
+  }).join('');
+  document.getElementById('matrix').innerHTML = head + '<tbody>' + body + '</tbody>';
+
+  /* le format : durée, exercices, barème, part au programme */
+  function dur(e) { var m = /(\d h(?: \d+)?)/.exec(e.meta || ''); return m ? m[1] : ''; }
+  function frac(e) { var m = /(\d+)\s*\/\s*20/.exec(e.progPts || ''); return m ? +m[1] / 20 : 0; }
+  document.getElementById('fmt').innerHTML = '<thead><tr><th>Sujet</th><th>Durée</th><th>Exercices</th><th>Barème</th><th>Au programme</th></tr></thead><tbody>' + E.map(function (e) {
+    return '<tr' + (e.key === 'p2022' ? ' class="cut"' : '') + '><td><a href="#' + e.key + '">' + school(e) + '</a></td><td class="c mono">' + esc(dur(e)) + '</td><td class="c mono">' + e.parts.length + '</td><td class="mono">' + e.parts.map(function (p) { return pts(p.pts); }).join(' + ') + '</td><td class="mono"><span class="pbar" aria-hidden="true"><i style="width:' + Math.round(100 * frac(e)) + '%"></i></span>' + esc(e.progPts || '') + '</td></tr>';
+  }).join('') + '</tbody>';
+
+  /* une carte par sujet */
+  document.getElementById('exams').innerHTML = E.map(function (e) {
+    var nq = BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('archi-' + e.key + '-') === 0; }); }).length;
+    var files = (e.files || []).map(function (f) { return '<a class="btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.t) + ' ↗</a>'; }).join('');
+    var parts = (e.parts || []).map(function (p) {
+      var c = p.card && BY[p.card], off = p.prog === false, links = [];
+      if (c && !off) links.push('<a href="entrainement.html#' + c.id + '">Corrigé détaillé' + (c.exam !== e.key ? ' (fiche commune avec le sujet ' + school({ key: c.exam }) + ')' : '') + ' : ' + c.title + ' →</a>');
+      return '<li class="' + (off ? 'off' : '') + '"><span class="n">Ex ' + esc(p.ex) + '</span><span class="pt"><span>' + p.t + (off ? ' <span class="hp">hors programme</span>' : '') + '</span>' + links.join(' ') + '</span><span class="p">' + (p.pts ? pts(p.pts) + ' pts' : '') + '</span></li>';
+    }).join('');
+    return '<article class="exam-c" id="' + e.key + '"><div class="exam-h"><h3>' + esc(e.title) + '</h3><span class="meta">' + esc(e.meta || '') + '</span></div><div class="exam-b">' +
+      (e.progPts ? '<span class="prog">Au programme cette année : ' + esc(e.progPts) + '</span>' : '') +
+      (e.note ? '<p>' + e.note + '</p>' : '') + '<ul class="parts">' + parts + '</ul>' +
+      '<div class="files">' + files + (nq ? '<a class="btn primary" href="../qcm/index.html#archi-' + e.key + '">Ses ' + nq + ' questions dans le QCM</a>' : '') + '</div></div></article>';
+  }).join('');
+  function goHash() {
+    var h = (location.hash || '').slice(1), t = h && document.getElementById(h);
+    if (!t) return;
+    U.$$('.exam-c.target').forEach(function (x) { x.classList.remove('target'); });
+    if (t.classList.contains('exam-c')) t.classList.add('target');
+    setTimeout(function () { t.scrollIntoView(); }, 50);
+  }
+  goHash();
+  window.addEventListener('hashchange', goHash);
+})();
+</script>
+</body>
+</html>
