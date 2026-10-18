@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recursion · Caml</title>
+<meta name="description" content="Caml, chapter 2: recursive reasoning, the call stack, wrapper functions, accumulators and counters, recursion on integers, Fibonacci and Hanoi, optimisation (never repeat a computation, stop early), termination and frequent mistakes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,MONO@300..1000,0..1,0..1&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/caml.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Caml · chapter 2: recursion">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pr" aria-hidden="true">#</span><a href="index.html">Caml</a> · Chapter 2 of 4</div>
+      <h1>A function that <span class="w">calls itself.</span></h1>
+      <p class="lead">A recursive function brings a problem down to the same problem, only smaller, until it reaches a case it can solve directly. This chapter follows the seminar (exercises 4.1 to 4.13) and the Moodle advice: base cases, the call stack, wrapper functions, accumulators, several calls, optimisation.</p>
+      <div class="chips"><span class="chip">≈ 50 min</span><span class="chip">8 parts</span><span class="chip">seminar, part 4 · Moodle advice</span><span class="chip ex">used in every list exercise</span></div>
+    </div>
+<pre data-ml-repl data-mode="guess" data-title="Seminar, exercise 4.1 · what do these functions compute?" id="heroRepl" aria-label="Interactive loop: guess the Caml answer to each phrase">
+# let rec f1 n = match n with
+      0 -> 0
+    | n -> n + f1 (n-1) ;;
+val f1 : int -> int = &lt;fun&gt;
+# f1 4 ;;
+- : int = 10
+# let rec mystery x =
+    if x &lt; 10 then
+      1
+    else
+      1 + mystery (x/10) ;;
+val mystery : int -> int = &lt;fun&gt;
+# mystery 2026 ;;
+- : int = 4
+# mystery (-345) ;;
+- : int = 1
+</pre>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Recursion</div>
+    <ol>
+      <li><a href="#s1"><span class="calls" data-n="1"></span><span>Recursive reasoning</span></a></li>
+      <li><a href="#s2"><span class="calls" data-n="2"></span><span>Evaluating a call: the stack</span></a></li>
+      <li><a href="#s3"><span class="calls" data-n="3"></span><span>Wrapper functions</span></a></li>
+      <li><a href="#s4"><span class="calls" data-n="4"></span><span>Accumulator and counter</span></a></li>
+      <li><a href="#s5"><span class="calls" data-n="5"></span><span>Recursion on integers</span></a></li>
+      <li><a href="#s6"><span class="calls" data-n="6"></span><span>Several calls: Fibonacci, Hanoi</span></a></li>
+      <li><a href="#s7"><span class="calls" data-n="7"></span><span>Never repeat, stop early</span></a></li>
+      <li><a href="#s8"><span class="calls" data-n="8"></span><span>Termination and frequent mistakes</span></a></li>
+    </ol>
+    <p class="toc-note">Each part number is drawn as a call trace: one more line, one more indentation step, like the stack of a recursive function. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="cours-1-bases.html">← Chapter 1: the basics</a><a href="cours-3-listes.html">Chapter 3: lists →</a><a href="../qcm/index.html#caml">Caml MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Recursive reasoning</a></li><li><a href="#s2">Evaluating a call: the stack</a></li><li><a href="#s3">Wrapper functions</a></li><li><a href="#s4">Accumulator and counter</a></li>
+      <li><a href="#s5">Recursion on integers</a></li><li><a href="#s6">Several calls: Fibonacci, Hanoi</a></li><li><a href="#s7">Never repeat, stop early</a></li><li><a href="#s8">Termination and frequent mistakes</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="1"></span>Part 1</div><h2>Recursive reasoning: base case, recursive case</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>recursive</b> function calls itself. The idea: to solve a problem, assume you can already solve the <b>same problem, only smaller</b>, and use it.</p>
+          <p>Example: the factorial, <var>n</var>! = 1 × 2 × … × <var>n</var>. If you know (<var>n</var> − 1)!, you only have to multiply by <var>n</var>: <var>n</var>! = <var>n</var> × (<var>n</var> − 1)!. And 0! = 1 is known without any computation. These are the two cases of every recursive function:</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">base case</span><p>The answer is known directly, without any new call: <code class="ml">fact 0</code> is 1.</p><p class="muted">Also called the stopping case.</p></div>
+          <div class="card"><span class="k">recursive case</span><p>The problem is expressed with the same problem, only smaller: <code class="ml">fact n</code> is <code class="ml">n * fact (n-1)</code>.</p><p class="muted">This is the “recurrence equation”.</p></div>
+        </div>
+        <div class="prose"><p>In Caml, a function that calls itself is defined with <code class="ml">let rec</code>:</p></div>
+<pre data-ml-repl>
+# let rec fact n =
+    if n = 0 then
+      1
+    else
+      n * fact (n-1) ;;
+val fact : int -> int = &lt;fun&gt;
+# fact 5 ;;
+- : int = 120
+</pre>
+        <div class="prose"><p>The Caml answer does not mention <code class="ml">rec</code>: it is <code data-ml-ans>val fact : int -> int = &lt;fun&gt;</code>, as for any other function. This is what you copy under your function at the exam.</p>
+          <p><b>The Moodle method</b> <span class="src-tag c">Moodle · advice on recursion</span> In this order:</p></div>
+        <ol class="steps">
+          <li><div><p><b>The specifications.</b> What exactly must the function do? Its parameters (their meaning, their type), the nature of the result, the calling conditions (<var>n</var> ≥ 0…): this is the “user manual”.</p></div></li>
+          <li><div><p><b>The principle and the cases.</b> “I have already seen something similar” gives the structure. Write it as a function with holes: the different cases, and the answer for each one.</p></div></li>
+          <li><div><p><b>The recurrence equation.</b> The base case is the stopping case; the recursive cases express the problem with the same, smaller problem (<code class="ml">n-1</code>, <code class="ml">n/10</code>, <code class="ml">n/2</code>…).</p></div></li>
+          <li><div><p><b>The checks.</b> Does every call get closer to a base case (part 8)? Are the special cases handled? Is a wrapper function needed (part 3)?</p></div></li>
+        </ol>
+        <div class="prose"><p><b>Example</b> <span class="src-tag c">seminar · ex. 4.2</span> The sequence defined by <var>u</var><sub>0</sub> = 1 and <var>u<sub>n</sub></var> = 4<var>u</var><sub><var>n</var>−1</sub> + 2.</p>
+          <ul>
+            <li>Specifications: <code class="ml">seq n</code> returns <var>u<sub>n</sub></var>, for an integer <var>n</var> ≥ 0. Expected type: <code class="ml">int -> int</code>.</li>
+            <li>Base case: <var>n</var> = 0, the answer is 1.</li>
+            <li>Recursive case: <var>u<sub>n</sub></var> is computed from <var>u</var><sub><var>n</var>−1</sub>, that is <code class="ml">4 * seq (n-1) + 2</code>.</li>
+          </ul></div>
+<pre data-ml-repl>
+# let rec seq n =
+    if n = 0 then
+      1
+    else
+      4 * seq (n-1) + 2 ;;
+val seq : int -> int = &lt;fun&gt;
+# seq 0 ;;
+- : int = 1
+# seq 3 ;;
+- : int = 106
+</pre>
+        <div class="prose"><p>Check by hand: <var>u</var><sub>1</sub> = 6, <var>u</var><sub>2</sub> = 26, <var>u</var><sub>3</sub> = 4 × 26 + 2 = 106. Same pattern for the geometric sequence of exercise 4.3, with first term <code class="ml">u0</code> and common ratio <code class="ml">q</code>:</p></div>
+<pre data-ml-repl>
+# let rec geo u0 q n =
+    if n = 0 then
+      u0
+    else
+      q *. geo u0 q (n-1) ;;
+val geo : float -> float -> int -> float = &lt;fun&gt;
+# geo 3. 2. 4 ;;
+- : float = 48.
+</pre>
+        <div class="prose"><p><code class="ml">u0</code> and <code class="ml">q</code> do not change from one call to the next; only <code class="ml">n</code> decreases. Part 3 shows how to avoid passing them again at every call.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>Every recursive function has at least one base case and at least one recursive case. The base case is tested first.</li>
+          <li>The recursive case calls the function on a smaller piece of data, one that gets closer to the base case.</li>
+          <li>Both cases have the same type, like the two branches of an <code class="ml">if</code>: it is the type of the result.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: the missing rec</span>
+<pre data-ml-repl>
+# let sum n =
+    if n = 0 then
+      0
+    else
+      n + sum (n-1) ;;
+Error: Unbound value sum
+Hint: If this is a recursive definition,
+you should add the 'rec' keyword on line 1
+</pre>
+          <p>Without <code class="ml">rec</code>, the name <code class="ml">sum</code> does not exist yet during its own definition. Worse: if a <code class="ml">sum</code> already existed, Caml would take it without a word, and your function would call the old one.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="2"></span>Part 2</div><h2>Evaluating a recursive call: the call stack</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>What does Caml do when you ask for <code class="ml">fact 4</code>? It replaces the call with the body of the function: <code class="ml">4 * fact 3</code>. It cannot multiply yet: it first needs <code class="ml">fact 3</code>. The call <code class="ml">fact 4</code> <b>waits</b>, and so on down to the base case:</p>
+        </div>
+<pre data-ml>
+fact 4 = 4 * fact 3
+       = 4 * (3 * fact 2)
+       = 4 * (3 * (2 * fact 1))
+       = 4 * (3 * (2 * (1 * fact 0)))
+       = 4 * (3 * (2 * (1 * 1)))
+       = 24
+</pre>
+        <div class="prose"><p>The waiting calls form a <b>stack</b>: the last call is on top. On the <b>way down</b>, the stack fills up, one call per level. At the base case, <code class="ml">fact 0</code> returns 1 without any new call. On the <b>way back up</b>, each call receives the value of the one above it, finishes its multiplication and leaves the stack. Go step by step:</p></div>
+        <div id="u-fact"></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>A call only ends after all the calls it started. The multiplications of <code class="ml">fact</code> are done on the way back up, in the reverse order of the calls: 1 × 1, then 2 × 1, 3 × 2, 4 × 6.</li>
+          <li><code class="ml">fact n</code> makes <var>n</var> + 1 calls, and the stack holds up to <var>n</var> + 1 of them at once. Its size is limited: a recursion that never stops makes it overflow (part 8).</li>
+          <li>Each call has its own parameters: the <code class="ml">n</code> of <code class="ml">fact 3</code> is 3, the one of <code class="ml">fact 4</code> is still 4.</li>
+        </ul></div>
+        <div class="prose"><p><b>Before or after the call?</b> <span class="src-tag c">seminar · ex. 4.1</span> The seminar shows it with a little imperative code: <code class="ml">print_int</code> displays an integer, <code class="ml">print_char</code> a character, <code class="ml">e1; e2</code> evaluates <code class="ml">e1</code> then <code class="ml">e2</code> (a sequence, wrapped in <code class="ml">begin … end</code>), and <code class="ml">()</code> is the value “nothing”, of type <code class="ml">unit</code>. These predefined functions are not used at the exam; here, they show the order of the computations. Guess what is displayed:</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Order of the displays · seminar, exercise 4.1">
+# let rec print1 n =
+    if n = 0 then
+      ()
+    else
+      begin
+        print_int n; print_char ' ';
+        print1 (n-1)
+      end ;;
+val print1 : int -> unit = &lt;fun&gt;
+# print1 5 ;;
+5 4 3 2 1 - : unit = ()
+# let rec print2 n =
+    if n = 0 then
+      ()
+    else
+      begin
+        print2 (n-1);
+        print_int n; print_char ' ';
+      end ;;
+val print2 : int -> unit = &lt;fun&gt;
+# print2 5 ;;
+1 2 3 4 5 - : unit = ()
+</pre>
+        <div class="prose"><p>In <code class="ml">print1</code>, the display comes before the recursive call: it happens on the way down, from 5 to 1. In <code class="ml">print2</code>, it comes after: each call waits until <code class="ml">print2 (n-1)</code> is over before displaying its <code class="ml">n</code>, so the display happens on the way back up, from 1 to 5. The Caml answer, <code data-ml-ans>- : unit = ()</code>, comes after what is displayed, on the same line.</p>
+          <p><b>Your turn</b> <span class="src-tag c">seminar · ex. 4.1</span> What do these functions compute? Unfold one call by hand, like <code class="ml">fact 4</code> above, then type the Caml answer. This is the “Mystery” exercise of the exam.</p></div>
+<pre data-ml-repl data-mode="guess" data-title="Mystery · seminar, exercise 4.1">
+# let rec f3 d n =
+    if n &lt;= 1 then
+      d
+    else
+      d * f3 (d - 1) (n - 1) ;;
+val f3 : int -> int -> int = &lt;fun&gt;
+# f3 5 3 ;;
+- : int = 60
+# let rec f4 n =
+    if n &lt;= 0 then 0
+    else
+      let r = f4 (n - 1) in
+      if n mod 4 = 0 then r + n else r ;;
+val f4 : int -> int = &lt;fun&gt;
+# f4 12 ;;
+- : int = 24
+</pre>
+        <div class="prose"><p><code class="ml">f3 d n</code> multiplies <var>n</var> factors, starting from <var>d</var> and going down: <code class="ml">f3 5 3</code> = 5 × 4 × 3 = 60. <code class="ml">f4 n</code> adds up the multiples of 4 up to <var>n</var>: 4 + 8 + 12 = 24. In <code class="ml">f4</code>, <code class="ml">let r = f4 (n - 1) in</code> makes the call first; adding <code class="ml">n</code> or not happens on the way back up.</p></div>
+        <div class="note trap"><span class="tag">Trap: the value of the base case is not the result</span>
+          <p><code class="ml">fact 0</code> returns 1, but <code class="ml">fact 4</code> is 24: the value of the base case goes back to the call above, which transforms it, and so on up to the first call. For a “Mystery”, go down to the base case, then all the way back up: do not stop at the value of the base case. The only exception is the accumulator (part 4): its base case does return the final result.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="3"></span>Part 3</div><h2>Wrapper functions: check only once</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The factorial of part 1 assumes <var>n</var> ≥ 0. With a negative number, <code class="ml">n</code> goes from −1 to −2, −3… and is never 0: the recursion never stops, until the stack overflows.</p>
+        </div>
+<pre data-ml-repl>
+# let rec fact n =
+    if n = 0 then
+      1
+    else
+      n * fact (n-1) ;;
+val fact : int -> int = &lt;fun&gt;
+# fact (-1) ;;
+Stack overflow during evaluation (looping recursion?).
+</pre>
+        <div class="prose"><p>Invalid parameters must be rejected with <code class="ml">invalid_arg</code> (chapter 1, part 5). First idea <span class="src-tag c">Moodle · advice on recursion</span>: test <code class="ml">n &lt; 0</code> inside the function.</p></div>
+<pre data-ml-repl>
+# let rec fact n =
+    if n &lt; 0 then
+      invalid_arg "fact: n is not a natural"
+    else
+      if n = 0 then
+        1
+      else
+        n * fact (n-1) ;;
+val fact : int -> int = &lt;fun&gt;
+</pre>
+        <div class="prose"><p>It is correct, but the test <code class="ml">n &lt; 0</code> is only useful at the first call: after that, <code class="ml">n-1</code> comes from a strictly positive <code class="ml">n</code>, so it can no longer be negative. Yet the test is done again at every call: 2<var>n</var> tests instead of <var>n</var>, as the Moodle page notes.</p>
+          <p><b>The wrapper function</b> checks the parameters only once, then calls a <b>local</b> recursive function, defined with <code class="ml">let rec … in</code>, which only does the computation:</p></div>
+<pre data-ml-repl>
+# let fact n =
+    if n &lt; 0 then
+      invalid_arg "fact: n is not a natural"
+    else
+      let rec fact_rec = function
+          0 -> 1
+        | n -> n * fact_rec (n-1)
+      in
+        fact_rec n ;;
+val fact : int -> int = &lt;fun&gt;
+# fact 5 ;;
+- : int = 120
+# fact (-3) ;;
+Exception: Invalid_argument "fact: n is not a natural".
+</pre>
+        <div class="note keep"><span class="tag">Remember: the shape of a wrapper function</span>
+<pre data-ml>
+let f n =
+  if n &lt; 0 then                  (* the invalid parameters *)
+    invalid_arg "f: n &lt; 0"
+  else
+    let rec f_rec n =            (* the computation only *)
+      …
+    in
+      f_rec n                    (* the call, with the starting values *)
+</pre>
+          <ul>
+            <li>The wrapper function is not recursive: <code class="ml">let f</code>, without <code class="ml">rec</code>. The local function is: <code class="ml">let rec f_rec … in</code>.</li>
+            <li>The local function sees the parameters of the wrapper function: those that do not change from one call to the next do not need to be passed again.</li>
+            <li>The Caml answer only shows the wrapper function, <code data-ml-ans>val fact : int -> int = &lt;fun&gt;</code>: the local function does not exist outside it.</li>
+          </ul>
+        </div>
+        <div class="prose"><p><b>Getting rid of the special cases</b> <span class="src-tag c">Moodle · advice on recursion</span> The Moodle page computes <var>x</var> × <var>y</var> in ℤ with additions (seminar, exercise 4.6). Its local function <code class="ml">mult_rec</code> has only one parameter, <code class="ml">y</code>: <code class="ml">x</code> never changes, so it takes it from the wrapper function. It only works for <code class="ml">y</code> ≥ 0; rather than a second recursive function for negative numbers, the wrapper function calls it with <code class="ml">-y</code> and changes the sign of the result. But the page has a typo: copied as it is, its function is rejected.</p></div>
+<pre data-ml-repl data-title="The multiply function of the Moodle page, as it is">
+# let multiply x y =
+    let rec mult_rec = function
+        0 -> 0
+      | y -> x + mult_rec (x, y-1)
+    in
+    match x with
+      0 -> 0
+    | 1 -> y
+    | x ->
+        if y &lt; 0 then
+          -mult_rec (-y)
+        else
+          mult_rec y ;;
+Error: This expression has type 'a * 'b
+       but an expression was expected of type int
+</pre>
+        <div class="prose"><p><code class="ml">mult_rec</code> takes a single integer, and the page gives it a pair, <code class="ml">(x, y-1)</code>. Corrected: <code class="ml">mult_rec (y-1)</code>.</p></div>
+<pre data-ml-repl>
+# let multiply x y =
+    let rec mult_rec = function
+        0 -> 0
+      | y -> x + mult_rec (y-1)
+    in
+    match x with
+      0 -> 0
+    | 1 -> y
+    | x ->
+        if y &lt; 0 then
+          -mult_rec (-y)
+        else
+          mult_rec y ;;
+val multiply : int -> int -> int = &lt;fun&gt;
+# multiply 7 (-3) ;;
+- : int = -21
+# multiply (-2) 6 ;;
+- : int = -12
+</pre>
+        <div class="prose"><p>The cases <code class="ml">x = 0</code> and <code class="ml">x = 1</code> are settled without any recursive call, and the sign of <code class="ml">y</code> is tested only once. The function <code class="ml">f2</code> of the seminar (exercise 4.1) tests <code class="ml">n &lt; 0</code> at every call: it too would gain from a wrapper function.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>A wrapper function or extra parameters (part 4) are used in all nine subjects found, from 2017 to 2024.</li>
+          <li>An invalid parameter raises <code class="ml">Invalid_argument</code> in all nine subjects, and the statement says which one: <code class="ml">check_list k lst</code> if <code class="ml">k &lt; 0</code> (October 2024), <code class="ml">pos_max lst</code> if the list is “initially empty” (October 2022). “Initially”: the test is done once, in the wrapper function, before going through the list.</li>
+          <li>A function you add must be documented: one sentence that says what it does (October 2024 rules). A local function also meets the other rule: “the last function written must be the one that answers the question”.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Traps: read the Caml answer</span>
+<pre data-ml-repl>
+# let fact n =
+    if n &lt; 0 then
+      invalid_arg "fact: n is not a natural"
+    else
+      let rec fact_rec = function
+          0 -> 1
+        | n -> n * fact_rec (n-1)
+      in
+        fact_rec ;;
+val fact : int -> int -> int = &lt;fun&gt;
+# let fact n =
+    if n &lt; 0 then
+      invalid_arg "fact: n is not a natural"
+    else
+      let fact_rec = function
+          0 -> 1
+        | n -> n * fact_rec (n-1)
+      in
+        fact_rec n ;;
+Error: Unbound value fact_rec
+Hint: If this is a recursive definition,
+you should add the 'rec' keyword on line 5
+</pre>
+          <p>In the first one, <code class="ml">fact_rec n</code> became <code class="ml">fact_rec</code>: the wrapper function returns the local function instead of calling it, and the type has one <code class="ml">int -></code> too many. Always compare the type of your Caml answer with the one of the examples. In the second one, the local function lost its <code class="ml">rec</code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="4"></span>Part 4</div><h2>Extra parameters: accumulator and counter</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Sometimes the recursive function needs information that the requested function does not have as a parameter. The Moodle page lists three kinds: <b>an accumulator</b>, in which the result is built call after call; <b>information carried along</b> as the recursion moves forward (the largest value seen so far, for example); <b>a counter</b> or an index, often 0 or 1 at the first call. The wrapper function calls the recursive function with the right starting value.</p>
+          <p><b>An accumulator</b> <span class="src-tag c">seminar · ex. 4.1</span> What does <code class="ml">f</code> compute?</p>
+        </div>
+<pre data-ml-repl data-mode="guess" data-title="Seminar, exercise 4.1">
+# let f n =
+    let rec g n acc =
+      if n = 0 then
+        acc
+      else
+        g (n-1) (acc * 10 + 1)
+      in
+        g n 0 ;;
+val f : int -> int = &lt;fun&gt;
+# f 4 ;;
+- : int = 1111
+# f 0 ;;
+- : int = 0
+</pre>
+        <div class="prose"><p><code class="ml">g</code> adds a digit 1 to the right of <code class="ml">acc</code> at each call: 0, 1, 11, 111, 1111. When <code class="ml">n</code> is 0, the result is already built: the base case returns <code class="ml">acc</code>. The computation happens on the <b>way down</b>, and the way back up changes nothing.</p>
+          <p><b>The mirror of an integer</b> <span class="src-tag c">seminar · ex. 4.9</span> <code class="ml">reverse_int 1234</code> must return <code class="ml">4321</code>. With pure recursion, you would have to put the 4 in front of the mirror of 123, so you would need the number of digits. With an accumulator, it is direct: take the last digit off <code class="ml">n</code> (<code class="ml">n mod 10</code>) and push it to the right of the accumulator (<code class="ml">acc * 10 + …</code>).</p></div>
+<pre data-ml-repl>
+# let reverse_int n =
+    if n &lt; 0 then
+      invalid_arg "reverse_int: n &lt; 0"
+    else
+      let rec rev acc n =
+        if n = 0 then
+          acc
+        else
+          rev (acc * 10 + n mod 10) (n / 10)
+      in
+        rev 0 n ;;
+val reverse_int : int -> int = &lt;fun&gt;
+# reverse_int 1234 ;;
+- : int = 4321
+# reverse_int 1200 ;;
+- : int = 21
+</pre>
+        <div id="u-rev"></div>
+        <div class="prose"><p>Compare with the stack of <code class="ml">fact 4</code> (part 2): here, no call has a computation waiting. Each one returns, as it is, what the next one returns, and the last one returns the accumulator. <code class="ml">reverse_int 1200</code> is 21: the leading zeros of an integer disappear (the seminar version that returns a string gives <code class="ml">"0021"</code>).</p>
+          <p><b>A counter</b> <span class="src-tag c">seminar · ex. 4.13</span> The sum of the divisors of <var>n</var> smaller than <var>n</var>. The local function tries each possible divisor <code class="ml">d</code>, from 1 to <var>n</var> − 1: <code class="ml">d</code> is a counter, which starts at 1.</p></div>
+<pre data-ml-repl>
+# let sum_divisors n =
+    if n &lt;= 0 then
+      invalid_arg "sum_divisors: n &lt;= 0"
+    else
+      let rec sum d =
+        if d >= n then
+          0
+        else
+          if n mod d = 0 then
+            d + sum (d + 1)
+          else
+            sum (d + 1)
+      in
+        sum 1 ;;
+val sum_divisors : int -> int = &lt;fun&gt;
+# sum_divisors 28 ;;
+- : int = 28
+# sum_divisors 12 ;;
+- : int = 16
+# let is_perfect n =
+    n > 1 &amp;&amp; sum_divisors n = n ;;
+val is_perfect : int -> bool = &lt;fun&gt;
+# is_perfect 28 ;;
+- : bool = true
+# is_perfect 0 ;;
+- : bool = false
+</pre>
+        <div class="prose"><p>A number is perfect if it is greater than 1 and equal to the sum of its proper divisors: 28 = 1 + 2 + 4 + 7 + 14. <code class="ml">is_perfect</code> reuses <code class="ml">sum_divisors</code>, and <code class="ml">&amp;&amp;</code> stops as soon as <code class="ml">n > 1</code> is false: <code class="ml">is_perfect 0</code> is <code class="ml">false</code> without raising the exception of <code class="ml">sum_divisors</code>.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>Pure recursion</th><th>Accumulator</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">The computation happens</th><td>on the way back up: <code class="ml">n * fact (n-1)</code></td><td>on the way down: <code class="ml">rev (acc * 10 + n mod 10) (n / 10)</code></td></tr>
+            <tr><th scope="row">The base case returns</th><td>the value of the smallest case: <code class="ml">1</code>, <code class="ml">0</code>…</td><td>the accumulator, which holds the result</td></tr>
+            <tr><th scope="row">Wrapper function</th><td>to check the parameters</td><td>always: it gives the starting value</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">Remember: pure recursion first</span>
+          <p>The Moodle page “Advice on lists” is clear: try pure recursion first. The accumulator? “Careful: most of the time, this method is not necessary. It only makes things more complicated, and you risk getting a result different from the one asked for.” In chapter 3, an accumulator reverses the order of a list.</p>
+        </div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>October 2022, <code class="ml">pos_max lst</code> (4.5 points): the position of the maximum of a list. The official solution carries three extra parameters: the maximum seen so far, its position, and the current position, which starts at 2.</li>
+          <li>October 2023, <code class="ml">split</code>: a paper marked 6 out of 8 built its pieces with an accumulator, and they came out in reverse order. The statement had announced the penalty.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: the starting value</span>
+<pre data-ml-repl>
+# let fact n =
+    let rec f acc n =
+      if n = 0 then
+        acc
+      else
+        f (acc * n) (n-1)
+    in
+      f 0 n ;;
+val fact : int -> int = &lt;fun&gt;
+# fact 5 ;;
+- : int = 0
+</pre>
+          <p>A product that starts at 0 stays at 0. The starting value of an accumulator is the neutral element of the computation: 0 for a sum, 1 for a product. Check it on the smallest case: <code class="ml">fact 0</code> must be 1, and that is exactly the starting value of <code class="ml">acc</code>. You need <code class="ml">f 1 n</code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="5"></span>Part 5</div><h2>Recursion on integers: digits, gcd, power</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The seminar practises on integers (exercises 4.2 to 4.13). The reasoning is always the same; what changes is how the problem is made smaller:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>The computation is about</th><th>Smaller problem</th><th>Base case</th><th>Seminar</th></tr></thead>
+          <tbody>
+            <tr><td><var>n</var>: sequence, sum, product</td><td><code class="ml">n-1</code></td><td><code class="ml">n = 0</code></td><td>4.2, 4.3</td></tr>
+            <tr><td>the digits of <var>n</var></td><td><code class="ml">n / 10</code>; the last digit is <code class="ml">n mod 10</code></td><td><code class="ml">n &lt; 10</code></td><td>4.1, 4.9</td></tr>
+            <tr><td>two integers <var>a</var> and <var>b</var></td><td><code class="ml">b</code> and <code class="ml">a mod b</code></td><td><code class="ml">a mod b = 0</code></td><td>4.4</td></tr>
+            <tr><td>a power <var>x</var><sup><var>n</var></sup></td><td><code class="ml">n-1</code>, or <code class="ml">n / 2</code> (part 7)</td><td><code class="ml">n = 0</code></td><td>4.10</td></tr>
+            <tr><td>a division by subtractions</td><td><code class="ml">a - b</code></td><td><code class="ml">a &lt; b</code></td><td>4.7</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>The digits of an integer.</b> The last digit of <var>n</var> is <code class="ml">n mod 10</code>, and <code class="ml">n / 10</code> removes this digit. The sum of the digits, then the digital root: start again as long as more than one digit is left.</p></div>
+<pre data-ml-repl>
+# let rec sum_digits n =
+    if n &lt; 10 then
+      n
+    else
+      n mod 10 + sum_digits (n / 10) ;;
+val sum_digits : int -> int = &lt;fun&gt;
+# sum_digits 2026 ;;
+- : int = 10
+# let rec digital_root n =
+    if n &lt; 10 then
+      n
+    else
+      digital_root (sum_digits n) ;;
+val digital_root : int -> int = &lt;fun&gt;
+# digital_root 2026 ;;
+- : int = 1
+</pre>
+        <div class="prose"><p><code class="ml">digital_root</code> calls <code class="ml">sum_digits</code>, then calls itself on the result: 2026, then 10, then 1. It terminates, because the sum of the digits of a number with at least two digits is smaller than the number.</p>
+          <p><b>The gcd</b> <span class="src-tag c">seminar · ex. 4.4</span> Euclid’s algorithm: if <var>b</var> divides <var>a</var>, the gcd is <var>b</var>; otherwise, it is the gcd of <var>b</var> and of the remainder <var>a</var> mod <var>b</var>. The exercise is about non-zero natural numbers: the wrapper function checks it.</p></div>
+<pre data-ml-repl>
+# let gcd a b =
+    if a &lt;= 0 || b &lt;= 0 then
+      invalid_arg "gcd: a and b must be > 0"
+    else
+      let rec euclid a b =
+        if a mod b = 0 then
+          b
+        else
+          euclid b (a mod b)
+      in
+        euclid a b ;;
+val gcd : int -> int -> int = &lt;fun&gt;
+# gcd 150 45 ;;
+- : int = 15
+# gcd 45 150 ;;
+- : int = 15
+# gcd 0 5 ;;
+Exception: Invalid_argument "gcd: a and b must be > 0".
+</pre>
+        <div class="prose"><p>No need to order <var>a</var> and <var>b</var>: if <var>a</var> &lt; <var>b</var>, <code class="ml">a mod b</code> is <code class="ml">a</code>, and the first call swaps them. Without the wrapper function, <code class="ml">euclid 5 0</code> would raise <code data-ml-ans>Exception: Division_by_zero.</code></p>
+          <p><b>Power and division</b> <span class="src-tag c">seminar · ex. 4.10 and 4.7</span> <var>x</var><sup><var>n</var></sup> = <var>x</var> × <var>x</var><sup><var>n</var>−1</sup>, for a real number <var>x</var>: mind the float operators. Then the quotient and the remainder of <var>a</var> by <var>b</var>, with subtractions and a single recursive function, which returns a pair:</p></div>
+<pre data-ml-repl>
+# let rec power x n =
+    if n = 0 then
+      1.
+    else
+      x *. power x (n-1) ;;
+val power : float -> int -> float = &lt;fun&gt;
+# power 2. 10 ;;
+- : float = 1024.
+# let euclid_div a b =
+    if a &lt; 0 || b &lt;= 0 then
+      invalid_arg "euclid_div: a &lt; 0 or b &lt;= 0"
+    else
+      let rec div a =
+        if a &lt; b then
+          (0, a)
+        else
+          let (q, r) = div (a - b) in
+            (q + 1, r)
+      in
+        div a ;;
+val euclid_div : int -> int -> int * int = &lt;fun&gt;
+# euclid_div 17 5 ;;
+- : int * int = (3, 2)
+# euclid_div 3 5 ;;
+- : int * int = (0, 3)
+</pre>
+        <div class="prose"><p>17 = 5 × 3 + 2: 5 is taken away three times before going below 5. Each call gets the pair of the next call with <code class="ml">let (q, r) = … in</code> and adds 1 to the quotient. Like <code class="ml">mult_rec</code> (part 3), the local function <code class="ml">div</code> only takes <code class="ml">a</code>: <code class="ml">b</code> does not change.</p></div>
+        <div class="note exam"><span class="tag">At the exam</span><ul>
+          <li>To be honest: from 2017 to 2024, none of the nine subjects asked for a recursive function on integers alone (factorial, gcd, power, digits). The functions to write are about lists.</li>
+          <li>This chapter is used everywhere, though. A function on a list follows the same reasoning: base case, recursive case, wrapper function, accumulator. And the seminar MCQs (30% of the grade) are about recursion too: it is the topic of MCQ 5.</li>
+          <li>Seven subjects out of nine have a “Mystery” exercise (2 to 4 points): read recursive code and give the Caml answers, as in part 2.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: the brackets of the call</span>
+<pre data-ml-repl>
+# let rec sum_digits n =
+    if n &lt; 10 then
+      n
+    else
+      n mod 10 + sum_digits n / 10 ;;
+val sum_digits : int -> int = &lt;fun&gt;
+# sum_digits 2026 ;;
+Stack overflow during evaluation (looping recursion?).
+</pre>
+          <p><code class="ml">sum_digits n / 10</code> reads <code class="ml">(sum_digits n) / 10</code>: application comes before division (chapter 1, part 3). The function calls itself again with the same <code class="ml">n</code>, endlessly. Caml accepts the definition, only running it shows the mistake. Write <code class="ml">sum_digits (n / 10)</code>, <code class="ml">fact (n-1)</code>.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="6"></span>Part 6</div><h2>Several recursive calls: Fibonacci, Hanoi</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A function can call itself several times in the same case. The Fibonacci sequence of the seminar <span class="src-tag c">seminar · ex. 4.8</span>: <var>F</var>(<var>n</var>) = 1 if <var>n</var> ≤ 1, and <var>F</var>(<var>n</var>) = <var>F</var>(<var>n</var> − 1) + <var>F</var>(<var>n</var> − 2) otherwise. The definition translates word for word:</p></div>
+<pre data-ml-repl>
+# let rec fibo n =
+    if n &lt;= 1 then
+      1
+    else
+      fibo (n-1) + fibo (n-2) ;;
+val fibo : int -> int = &lt;fun&gt;
+# fibo 5 ;;
+- : int = 8
+# fibo 10 ;;
+- : int = 89
+</pre>
+        <div class="prose"><p>Each call that is not a base case starts two more: the calls no longer form a chain, but a <b>tree</b>. A call ends completely, with all its sub-calls, before the other one starts. Unfold <code class="ml">fibo 5</code>:</p></div>
+        <div id="u-fibo"></div>
+        <div class="prose"><p>15 calls for <code class="ml">fibo 5</code>, while there are only six different values, from <code class="ml">fibo 0</code> to <code class="ml">fibo 5</code>. The dashed calls redo a computation already done: <code class="ml">fibo 3</code> is computed twice, <code class="ml">fibo 2</code> three times. Part 7 fixes this.</p>
+          <p class="muted">The unfolder evaluates <code class="ml">fibo (n-1)</code> before <code class="ml">fibo (n-2)</code>, in reading order. OCaml does not fix the evaluation order of the two sides of a <code class="ml">+</code>, and in practice starts with the right one: the result and the number of calls are the same.</p>
+          <p><b>The towers of Hanoi</b> <span class="src-tag c">Moodle · Hanoi</span> Three pegs, numbered 1, 2 and 3; <var>n</var> disks of different sizes, stacked on peg 1, from the largest at the bottom to the smallest on top. They must be taken to peg 3, one disk at a time, without ever putting a disk on a smaller one.</p>
+          <p>Recursive reasoning gives the solution without looking for the moves one by one. To move <var>n</var> disks from <code class="ml">source</code> to <code class="ml">destination</code>:</p></div>
+        <ol class="steps">
+          <li><div><p>move the <var>n</var> − 1 top disks to the third peg: the same problem, only smaller;</p></div></li>
+          <li><div><p>move the large disk, now alone, to <code class="ml">destination</code>;</p></div></li>
+          <li><div><p>move the <var>n</var> − 1 disks from the third peg to <code class="ml">destination</code>: the same problem again, only smaller.</p></div></li>
+        </ol>
+        <div class="prose"><p>With 0 disks, there is nothing to do: this is the base case. The pegs are 1, 2 and 3, which add up to 6: the third peg is <code class="ml">6 - source - destination</code>. The page gives <code class="ml">move</code>, which displays one move, and the wrapper function; <code class="ml">play</code> is left to write (the <code class="ml">FIXME</code> of the page):</p></div>
+<pre data-ml-repl data-title="Hanoi · Moodle page, FIXME filled in">
+# let move source destination =
+    print_int source ;
+    print_string " -> " ;
+    print_int destination ;
+    print_newline() ;;
+val move : int -> int -> unit = &lt;fun&gt;
+# let hanoi n =
+    let rec play n source destination =
+      if n > 0 then
+        let other = 6 - source - destination in
+          begin
+            play (n-1) source other ;
+            move source destination ;
+            play (n-1) other destination
+          end
+    in
+      if n &lt;= 0 then
+        invalid_arg "Hanoi: number of disks invalid"
+      else
+        play n 1 3 ;;
+val hanoi : int -> unit = &lt;fun&gt;
+# hanoi 3 ;;
+1 -> 3
+1 -> 2
+3 -> 2
+1 -> 3
+2 -> 1
+2 -> 3
+1 -> 3
+- : unit = ()
+</pre>
+        <div class="prose"><p>This is exactly the display of the page. The body of <code class="ml">play</code> is an <code class="ml">if</code> without <code class="ml">else</code>: it is allowed here, because the function returns nothing (<code class="ml">unit</code>), it displays (chapter 1, part 4). The three steps form a sequence between <code class="ml">begin</code> and <code class="ml">end</code>, evaluated in order.</p>
+          <p><b>How many moves?</b> The page asks the question: 1 move for one disk, 3 for two. The reasoning directly gives a recursive function: <var>n</var> − 1 disks, then the large one, then <var>n</var> − 1 disks again.</p></div>
+<pre data-ml-repl data-mode="reveal">
+# let rec moves n =
+    if n = 0 then
+      0
+    else
+      2 * moves (n-1) + 1 ;;
+val moves : int -> int = &lt;fun&gt;
+# moves 3 ;;
+- : int = 7
+# moves 10 ;;
+- : int = 1023
+</pre>
+        <div class="prose"><p>The number of moves almost doubles with each extra disk: 2<sup><var>n</var></sup> − 1. With the 64 disks of Édouard Lucas’s legend, 2<sup>64</sup> − 1 would be needed, more than 18 billion billion.</p></div>
+        <div class="note keep"><span class="tag">Remember</span><ul>
+          <li>With two calls per case, the number of calls is multiplied at each level: it grows exponentially with <var>n</var>.</li>
+          <li>For Hanoi, this cannot be avoided: each displayed move has to be made. For Fibonacci, it can: the same values are computed again, and part 7 computes them only once.</li>
+          <li>The order of a sequence <code class="ml">e1; e2; e3</code> is guaranteed: from left to right. The order of the two sides of <code class="ml">fibo (n-1) + fibo (n-2)</code> is not.</li>
+        </ul></div>
+        <div class="note trap"><span class="tag">Trap: two calls do not mean twice as long</span>
+          <p>Two calls per case do not make twice as many calls as <code class="ml">fact</code>: <code class="ml">fibo 5</code> makes 15 calls, <code class="ml">fibo 25</code> makes 242,785, <code class="ml">fibo 40</code> more than 331 million (part 7). Each level multiplies the number of calls of the previous level.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="7"></span>Part 7</div><h2>Optimising: never repeat a computation, stop as soon as possible</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The course sheet sets three complexity rules: “avoid useless computations, do not repeat computations, stop as soon as an answer is given”. A function can give the right result and break all three: this part shows how to follow them.</p>
+          <p><b>Never repeat a computation.</b> How many calls does <code class="ml">fibo n</code> make? A recursive function of the same shape tells you: one call, plus those of the two sub-calls.</p>
+        </div>
+<pre data-ml-repl>
+# let rec calls n =
+    if n &lt;= 1 then
+      1
+    else
+      1 + calls (n-1) + calls (n-2) ;;
+val calls : int -> int = &lt;fun&gt;
+# calls 5 ;;
+- : int = 15
+# calls 25 ;;
+- : int = 242785
+# calls 40 ;;
+- : int = 331160281
+</pre>
+        <div class="prose"><p>More than 331 million calls for <code class="ml">fibo 40</code>, which only needs 41 values. The solution: compute each value only once, by carrying the last two terms of the sequence in extra parameters (part 4).</p></div>
+<pre data-ml-repl>
+# let fibo n =
+    if n &lt; 0 then
+      invalid_arg "fibo: n &lt; 0"
+    else
+      let rec fib a b n =
+        if n = 0 then
+          a
+        else
+          fib b (a + b) (n-1)
+      in
+        fib 1 1 n ;;
+val fibo : int -> int = &lt;fun&gt;
+# fibo 10 ;;
+- : int = 89
+# fibo 50 ;;
+- : int = 20365011074
+</pre>
+        <div class="prose"><p><code class="ml">a</code> and <code class="ml">b</code> are two consecutive terms of the sequence; at each call, the sequence moves one term forward: <code class="ml">(a, b)</code> becomes <code class="ml">(b, a + b)</code>. <code class="ml">fibo 50</code> makes 51 calls and answers at once; the first version would make more than 40 billion.</p>
+          <p><b>A call repeated in an if.</b> The largest digit of an integer: compare the last digit with the largest digit of the rest.</p></div>
+<pre data-ml-repl>
+# let rec max_digit n =
+    if n &lt; 10 then
+      n
+    else
+      if n mod 10 > max_digit (n / 10) then
+        n mod 10
+      else
+        max_digit (n / 10) ;;
+val max_digit : int -> int = &lt;fun&gt;
+# max_digit 2026 ;;
+- : int = 6
+# let rec max_digit n =
+    if n &lt; 10 then
+      n
+    else
+      let m = max_digit (n / 10) in
+        if n mod 10 > m then
+          n mod 10
+        else
+          m ;;
+val max_digit : int -> int = &lt;fun&gt;
+# max_digit 2026 ;;
+- : int = 6
+</pre>
+        <div class="prose"><p>Both versions return 6. But the first one writes <code class="ml">max_digit (n / 10)</code> twice: when the test is false, the same call is made again in full, and each of them can split in two in turn. On a 10-digit integer such as 9876543210, this makes 1,023 calls instead of 10. A <code class="ml">let … in</code> names the result to reuse it. In chapter 3, the maximum of a list sets the same trap.</p>
+          <p><b>Fast exponentiation</b> <span class="src-tag c">seminar · ex. 4.10</span> <var>x</var><sup><var>n</var></sup> = (<var>x</var><sup><var>n</var>/2</sup>)² if <var>n</var> is even, and <var>x</var> × (<var>x</var><sup><var>n</var>/2</sup>)² otherwise, with <var>n</var>/2 an integer division. The square is computed with <b>a single</b> call, named <code class="ml">p</code>:</p></div>
+<pre data-ml-repl>
+# let rec fast_power x n =
+    if n = 0 then
+      1.
+    else
+      let p = fast_power x (n / 2) in
+        if n mod 2 = 0 then
+          p *. p
+        else
+          x *. p *. p ;;
+val fast_power : float -> int -> float = &lt;fun&gt;
+# fast_power 2. 10 ;;
+- : float = 1024.
+# fast_power 1.5 3 ;;
+- : float = 3.375
+</pre>
+        <div class="prose"><p>For <var>n</var> = 1,000: 11 calls, against 1,001 for <code class="ml">power</code> (part 5). Writing <code class="ml">fast_power x (n / 2) *. fast_power x (n / 2)</code> would do every computation twice: 2,047 calls, worse than the classic version.</p>
+          <p><b>Stop as soon as the answer is known</b> <span class="src-tag c">seminar · ex. 4.12</span> An integer <var>n</var> &gt; 1 is prime if it has no divisor between 2 and <var>n</var> − 1. Two savings: stop at the first divisor found, since the answer is then <code class="ml">false</code>; and do not look beyond √<var>n</var>, because if <var>n</var> = <var>d</var> × <var>e</var> with <var>d</var> ≤ <var>e</var>, then <var>d</var> × <var>d</var> ≤ <var>n</var>.</p></div>
+<pre data-ml-repl>
+# let is_prime n =
+    if n &lt;= 1 then
+      invalid_arg "is_prime: n &lt;= 1"
+    else
+      let rec no_divisor d =
+        if d * d > n then
+          true
+        else
+          if n mod d = 0 then
+            false
+          else
+            no_divisor (d + 1)
+      in
+        no_divisor 2 ;;
+val is_prime : int -> bool = &lt;fun&gt;
+# is_prime 97 ;;
+- : bool = true
+# is_prime 91 ;;
+- : bool = false
+# is_prime 1 ;;
+Exception: Invalid_argument "is_prime: n &lt;= 1".
+</pre>
+        <div class="prose"><p>For 1,000,003, which is prime, <code class="ml">no_divisor</code> makes 1,000 calls instead of a million; for 1,000,000, a single one. The two base cases come before the recursive case, and the test <code class="ml">d * d > n</code> avoids <code class="ml">sqrt</code>, a predefined function. With <code class="ml">||</code> and <code class="ml">&amp;&amp;</code>, which stop as soon as the result is known (chapter 1, part 1), the same function fits on one line:</p></div>
+<pre data-ml-repl>
+# let is_prime n =
+    if n &lt;= 1 then
+      invalid_arg "is_prime: n &lt;= 1"
+    else
+      let rec no_divisor d =
+        d * d > n || (n mod d &lt;> 0 &amp;&amp; no_divisor (d + 1))
+      in
+        no_divisor 2 ;;
+val is_prime : int -> bool = &lt;fun&gt;
+# is_prime 91 ;;
+- : bool = false
+</pre>
+        <div class="note keep"><span class="tag">Remember: the three rules</span><ul>
+          <li><b>Avoid useless computations</b>: test the parameters only once (wrapper function, part 3), settle the simple cases without any call (<code class="ml">multiply</code>).</li>
+          <li><b>Never repeat a computation</b>: a result used twice is named with <code class="ml">let … in</code>; a value you would compute again is carried in a parameter.</li>
+          <li><b>Stop as soon as the answer is known</b>: one more base case (found, property false), or <code class="ml">&amp;&amp;</code> and <code class="ml">||</code>.</li>
+        </ul></div>
+        <div class="note exam"><span class="tag">At the exam</span>
+          <p>Eight subjects out of nine (2017 to 2024) ask for a function that can stop before the end of the list: look for an element, check a property, go through a sorted list. The Moodle page “Advice on lists” says so: a partial traversal has at least one base case other than the empty list. Chapter 3 applies it.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: a let … in too early</span>
+<pre data-ml-repl>
+# let is_prime n =
+    if n &lt;= 1 then
+      invalid_arg "is_prime: n &lt;= 1"
+    else
+      let rec no_divisor d =
+        if d * d > n then
+          true
+        else
+          let rest = no_divisor (d + 1) in
+            n mod d &lt;> 0 &amp;&amp; rest
+      in
+        no_divisor 2 ;;
+val is_prime : int -> bool = &lt;fun&gt;
+# is_prime 1000000 ;;
+- : bool = false
+</pre>
+          <p>The result is right, but <code class="ml">rest</code> is computed before the test: the function always goes up to √<var>n</var>, that is 1,000 calls for 1,000,000 instead of one. A <code class="ml">let … in</code> avoids repeating a computation; placed too early, it does a computation that may not be needed. Write the call where its value is used.</p>
+        </div>
+        <div data-check-ref="caml/cours-2-recursivite.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 7 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="calls" data-n="8"></span>Part 8</div><h2>Termination and frequent mistakes</h2></div>
+      <div class="stack">
+        <div class="prose"><p><b>A recursive function terminates if each call gets closer to a base case and finally reaches it</b>, for every allowed parameter. “Smaller” is not enough: you have to land on the base case. The seminar asks for it: “study all the cases”. Do these calls terminate?</p></div>
+<pre data-ml-repl data-mode="reveal" data-title="Termination · study all the cases">
+# let rec f1 n = match n with
+      0 -> 0
+    | n -> n + f1 (n-1) ;;
+val f1 : int -> int = &lt;fun&gt;
+# f1 (-1) ;;
+Stack overflow during evaluation (looping recursion?).
+# let rec halve n =
+    if n = 0 then
+      0
+    else
+      1 + halve (n - 2) ;;
+val halve : int -> int = &lt;fun&gt;
+# halve 6 ;;
+- : int = 3
+# halve 7 ;;
+Stack overflow during evaluation (looping recursion?).
+</pre>
+        <div class="prose"><p>When a recursion does not stop, the call stack grows until it overflows: Caml answers <code>Stack overflow during evaluation (looping recursion?).</code> With <code class="ml">f1 (-1)</code>, <var>n</var> goes down without ever being 0. With <code class="ml">halve 7</code>, <var>n</var> is 7, 5, 3, 1, −1…: it jumps over 0. Two remedies: a base case that covers everything left (<code class="ml">n &lt;= 0</code>, <code class="ml">n &lt; 2</code>), or a wrapper function that rejects the parameters outside the domain.</p></div>
+        <div class="note why"><span class="tag">The case of double · seminar, exercise 4.1</span>
+<pre data-ml-repl>
+# let rec double = function
+      0 -> 0
+    | n -> n / 2 + double (2*n) ;;
+val double : int -> int = &lt;fun&gt;
+# double 0 ;;
+- : int = 0
+# double 1 ;;
+- : int = -1
+</pre>
+          <p>For <var>n</var> ≠ 0, <code class="ml">2*n</code> moves away from 0: mathematically, <code class="ml">double n</code> does not terminate, and this is the answer expected at the seminar. Yet Caml answers −1. Its integers are bounded (<code class="ml">max_int</code> is 2<sup>62</sup> − 1): by dint of doubling, <code class="ml">2*n</code> goes past the bound, and the computation ends up giving 0, which stops the recursion. This −1 means nothing: only the reasoning counts.</p>
+        </div>
+        <div class="prose"><p><b>Frequent mistakes</b>, and what Caml says about them:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Mistake</th><th>What Caml answers</th><th>Remedy</th></tr></thead>
+          <tbody>
+            <tr><td>missing <code class="ml">rec</code> (part 1)</td><td><code data-ml-ans>Error: Unbound value sum</code></td><td><code class="ml">let rec</code>, also for the local function of a wrapper</td></tr>
+            <tr><td><code class="ml">f n / 10</code> instead of <code class="ml">f (n / 10)</code> (part 5)</td><td>the definition is accepted, then <code>Stack overflow</code></td><td>brackets around the argument</td></tr>
+            <tr><td>base case never reached</td><td><code>Stack overflow</code></td><td>a wider base case, or a wrapper function</td></tr>
+            <tr><td>wrapper function that does not call its local function (part 3)</td><td>a type with one <code class="ml">-></code> too many</td><td><code class="ml">f_rec n</code>, not <code class="ml">f_rec</code></td></tr>
+            <tr><td>parameters tested at every call (part 3)</td><td>nothing: the function is right, but makes useless tests</td><td>a wrapper function</td></tr>
+            <tr><td>repeated call (part 7)</td><td>nothing: the function is right, but slow</td><td><code class="ml">let … in</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note trap"><span class="tag">Traps: the base case misplaced, mistyped, badly chosen</span>
+<pre data-ml-repl>
+# let rec f1 n = match n with
+      n -> n + f1 (n-1)
+    | 0 -> 0 ;;
+Warning 11 [redundant-case]: this match case is unused.
+val f1 : int -> int = &lt;fun&gt;
+# f1 3 ;;
+Stack overflow during evaluation (looping recursion?).
+# let rec power x n =
+    if n = 0 then
+      1
+    else
+      x *. power x (n-1) ;;
+Error: This expression has type int but an expression was expected of type
+         float
+# let rec count_digits n =
+    if n = 0 then
+      0
+    else
+      1 + count_digits (n / 10) ;;
+val count_digits : int -> int = &lt;fun&gt;
+# count_digits 0 ;;
+- : int = 0
+</pre>
+          <ul>
+            <li>Patterns are tried in order: <code class="ml">n</code> matches everything, the case <code class="ml">0</code> placed after it is never used, and <code class="ml">f1 3</code> does not stop. The warning says so: the base case comes first.</li>
+            <li>The base case and the recursive case have the same type: <code class="ml">1.</code>, not <code class="ml">1</code>, when the result is a <code class="ml">float</code>.</li>
+            <li><code class="ml">count_digits 0</code> returns 0, but 0 is written with one digit. Test the smallest case: the right base case is <code class="ml">n &lt; 10</code>, which returns 1. This is <code class="ml">mystery</code>, at the top of the chapter.</li>
+          </ul>
+        </div>
+        <div class="prose"><p><b>Before handing in a recursive function:</b></p></div>
+        <ol class="steps">
+          <li><div><p><b>The specifications</b> come from the statement and the examples: name, order and type of the parameters, type of the result, exception and its message.</p></div></li>
+          <li><div><p><b>The base case</b> is tested first, and checked on the smallest example.</p></div></li>
+          <li><div><p><b>The recursive case</b> calls the function on a smaller piece of data, in brackets.</p></div></li>
+          <li><div><p><b>Termination</b> is ensured for every allowed parameter; the others are rejected by the wrapper function.</p></div></li>
+          <li><div><p><b>No repeated or useless computation</b>, and a stop as soon as the answer is known.</p></div></li>
+          <li><div><p><b>The Caml answer</b> follows the function: <code data-ml-ans>val fact : int -> int = &lt;fun&gt;</code>, without <code class="ml">rec</code>.</p></div></li>
+        </ol>
+        <div data-check-ref="caml/cours-2-recursivite.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 8 of 8</span><button type="button" class="done-btn" data-done="caml:recursivite:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>A list is recursive data: either empty, or an element followed by a list. Chapter 3, <a href="cours-3-listes.html">lists</a>, applies this whole chapter: base case <code class="ml">[]</code>, recursive case <code class="ml">e :: lst</code>, wrapper functions and early stops.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/caml.js"></script>
+<script src="../data/en/qcm/caml.js"></script>
+<script src="../assets/js/caml.js"></script>
+<script>
+(function () {
+  var C = window.REV.caml;
+  /* part 2: the call stack of fact 4 */
+  C.unroll(document.getElementById('u-fact'), {
+    tree: C.trace(function (self, n) { return n === 0 ? 1 : n * self(n - 1); }, [4], { show: function (n) { return 'fact ' + n; } }),
+    mode: 'stack',
+    wait: function (nd, v) { var n = nd.args[0]; return n === 0 ? '1' : n + ' * ' + (v.length ? v[0] : 'fact ' + (n - 1)); }
+  });
+  /* part 4: reverse_int 1234, an accumulator: no computation waits in the stack */
+  C.unroll(document.getElementById('u-rev'), {
+    tree: C.trace(function (self, acc, n) { return n === 0 ? acc : self(acc * 10 + n % 10, Math.floor(n / 10)); }, [0, 1234], { name: 'rev' }),
+    mode: 'stack',
+    wait: function (nd, v) {
+      var a = nd.args[0], n = nd.args[1];
+      return n === 0 ? String(a) : v.length ? String(v[0]) : 'rev ' + (a * 10 + n % 10) + ' ' + Math.floor(n / 10);
+    },
+    say: function (e) {
+      if (!e) return null;
+      var a = e.node.args[0], n = e.node.args[1], c = C.code(e.node.label);
+      if (e.type === 'call') {
+        return n === 0
+          ? 'Call ' + c + ': <code class="ml">n</code> is 0, this is the base case. The result is already in the accumulator: <b class="cu-v">' + a + '</b>.'
+          : 'Call ' + c + ': the last digit of ' + n + ', ' + (n % 10) + ', goes to the right of the accumulator, which becomes ' + (a * 10 + n % 10) +
+            '. ' + c + ' waits for ' + C.code(e.node.kids[0].label) + ', with nothing to compute afterwards.';
+      }
+      if (e.type === 'ret' && e.parent) return c + ' returns <b class="cu-v">' + e.node.val + '</b> to ' + C.code(e.parent.label) + ', which returns it as it is: it has nothing left to compute.';
+      return null;
+    }
+  });
+  /* part 6: the call tree of fibo 5, calls already computed are dashed */
+  C.unroll(document.getElementById('u-fibo'), {
+    tree: C.trace(function (self, n) { return n <= 1 ? 1 : self(n - 1) + self(n - 2); }, [5], { name: 'fibo' }),
+    mode: 'tree', dupes: true
+  });
+})();
+</script>
+</body>
+</html>
