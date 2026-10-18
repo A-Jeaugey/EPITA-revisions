@@ -1,6 +1,7 @@
 /* English text for data/qcm/caml-annales.js (questions taken from the Caml part of the algorithm midterms,
-   2017-2024). Wording of the English papers where they exist (2018, 2019, 2019#, 2020), otherwise translated with the
-   same vocabulary. Sources (src) are translated by the MCQ engine (“Partiel 2023” → “Midterm 2023”).
+   2017-2024). Translated with the vocabulary of the English papers (2018, 2019, 2019#, 2020): Application examples,
+   raise an exception, the Caml answer, the rank i. Sources (src) are translated by the MCQ engine (“Partiel 2023” →
+   “Midterm 2023”).
    Same markup as the French file: `code`, {{Caml answer}}. */
 /* topic names (already given by data/en/qcm/caml.js; repeated in case this file is loaded alone) */
 REV.i18n.topics({

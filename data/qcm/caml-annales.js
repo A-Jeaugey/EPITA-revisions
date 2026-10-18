@@ -3,9 +3,10 @@
    2019 (p2019d, src « Partiel 2019# »), octobre 2019 (p2019), 9 novembre 2020 (p2020), 4 novembre 2021 (p2021),
    31 octobre 2022 (p2022), examens Caml du 30 octobre 2023 (p2023) et du 30 octobre 2024 (p2024).
    Ids caml-pAAAA-qN : N = rang de la question dans le sujet, dans l’ordre des exercices (Ex = numéro dans le sujet).
-   Fonctions : corrigé officiel quand il existe (2018 à 2022), sinon corrigé vérifié (2017, 2023, 2024) ; réponses de
-   Caml obtenues avec OCaml 4.14. Coquilles des sujets signalées dans l’explication, jamais recopiées : Invalid_arg
-   (2018, 2020), encode-rec (2018), remove_internal (2021) ; corrigé officiel faux de 2019 (remove_nth lève Failure).
+   Fonctions : corrigé officiel quand il existe et respecte l’énoncé (2018 à 2022), sinon corrigé vérifié (2017, 2023,
+   2024, remove_nth 2019, search_both 2020) ; toutes les réponses de Caml sont obtenues avec OCaml 4.14.
+   Coquilles des sujets signalées dans l’explication, jamais recopiées : Invalid_arg (2018, 2020), encode-rec (2018),
+   remove_internal (2021) ; corrigé officiel faux de 2019 (remove_nth lève Failure).
    Recoupements : une question que le cours pose déjà (data/qcm/caml.js, chargé avant) porte same:'caml-c…' ; un
    exercice retombé à un autre sujet porte also:[…] (assoc 2017 et 2019#, almost 2017 et 2019, insert_nth 2018 et
    2020). REV.quiz.bank() rattache une question same à la question gardée, dont les ids (REV.quiz.ids) comprennent
