@@ -91,7 +91,7 @@
     'fond de la pile': 'bottom of the stack', 'en cours': 'running', 'attend {c}': 'waits for {c}', 'renvoie {v}': 'returns {v}',
     'exception': 'exception', 'déjà calculé': 'already computed',
     'Pile : {n} · profondeur max : {d} · appels : {c} / {t}': 'Stack: {n} · max depth: {d} · calls: {c} / {t}',
-    ' · dont {k} déjà calculés': ' · {k} of them already computed',
+    ' · dont {k} déjà calculés': ' · {k} of them already computed', ' · dont 1 déjà calculé': ' · 1 of them already computed',
     'Appuie sur « Suivant » pour évaluer {c}.': 'Press “Next” to evaluate {c}.',
     'Appel de {c}. Ce n’est pas un cas d’arrêt : il faut d’abord {k}, et {c} reste en attente dans la pile.':
       'Call {c}. It is not a base case: {k} is needed first, and {c} waits in the stack.',
@@ -196,14 +196,14 @@
   function mlc(src, typeMode) { return '<code class="ml" data-ml-done="1">' + highlight(src, typeMode) + '</code>'; }
 
   /* ------------------------------------------------------------------ réponses de Caml */
-  var HEAD = /^(val |- :|Exception:|Error:|Warning |Characters |Line )/;
+  var HEAD = /^(val |- :|Exception:|Error:|Warning |Characters |Line |Stack overflow )/;
   function answerItems(text) {
     var items = [], cur = null;
     String(text).replace(/\s+$/, '').split('\n').forEach(function (l) {
-      if (cur && !HEAD.test(l) && (/^\s/.test(l) || cur.k === 'warn')) { cur.text += '\n' + l; return; }
+      if (cur && !HEAD.test(l) && (/^\s/.test(l) || cur.k === 'warn' || (cur.k === 'err' && /^Hint:/.test(l)))) { cur.text += '\n' + l; return; }
       var m = !HEAD.test(l) && /^(.+?)(- : .*)$/.exec(l);      /* affichage suivi de la réponse sur la même ligne */
       if (m) { items.push({ k: 'out', text: m[1], inl: true }); l = m[2]; }
-      cur = { k: /^(val |- :)/.test(l) ? 'val' : /^Exception:/.test(l) ? 'exn' : /^Error:/.test(l) ? 'err' : /^Warning /.test(l) ? 'warn' : 'out', text: l };
+      cur = { k: /^(val |- :)/.test(l) ? 'val' : /^(Exception:|Stack overflow )/.test(l) ? 'exn' : /^Error:/.test(l) ? 'err' : /^Warning /.test(l) ? 'warn' : 'out', text: l };
       items.push(cur);
     });
     return items;
@@ -222,7 +222,7 @@
       return '<code class="ml-a">' + (m.name === '-' ? '<code class="m-dash">-</code>' : '<code class="m-kw">val</code> <code class="m-def">' + esc(m.name) + '</code>') +
         ' : ' + highlight(m.type, true) + ' =' + valueHTML(m.value) + '</code>';
     }
-    if (it.k === 'exn') return '<code class="ml-a ml-exn"><code class="m-lbl">Exception:</code>' + highlight(t.slice(10)) + '</code>';
+    if (it.k === 'exn') return /^Exception:/.test(t) ? '<code class="ml-a ml-exn"><code class="m-lbl">Exception:</code>' + highlight(t.slice(10)) + '</code>' : '<code class="ml-a ml-exn">' + esc(t) + '</code>';
     if (it.k === 'err') return '<code class="ml-a ml-err"><code class="m-lbl">Error:</code>' + esc(t.slice(6)) + '</code>';
     if (it.k === 'warn') {
       m = /^(Warning \d+(?: \[[^\]]*\])?:)([\s\S]*)$/.exec(t);
@@ -265,7 +265,7 @@
       }
     }
     if (main.k === 'err' && /err/i.test(g)) return 'error';
-    if (main.k === 'exn') { var c = /^Exception:\s*(\w+)/.exec(main.text); if ((c && g.indexOf(c[1]) >= 0) || /exception|exn/i.test(g)) return 'exn'; }
+    if (main.k === 'exn') { var c = /^Exception:\s*(\w+)/.exec(main.text); if ((c && g.indexOf(c[1]) >= 0) || /exception|exn|stack|overflow|boucle|loop/i.test(g)) return 'exn'; }
     return 'no';
   }
   var VERDICT = {
@@ -520,7 +520,7 @@
       view.innerHTML = mode === 'tree' ? drawTree(st) : drawStack(st);
       say.innerHTML = sayText(st);
       meta.textContent = T('Pile : {n} · profondeur max : {d} · appels : {c} / {t}', { n: st.stack.length, d: st.maxDepth, c: st.calls, t: all.length }) +
-        (o.dupes && st.ndup ? T(' · dont {k} déjà calculés', { k: st.ndup }) : '');
+        (o.dupes && st.ndup ? (st.ndup === 1 ? T(' · dont 1 déjà calculé') : T(' · dont {k} déjà calculés', { k: st.ndup })) : '');
       cnt.textContent = T('étape {i} / {n}', { i: i, n: ev.length });
       el.querySelector('[data-act="prev"]').disabled = i === 0;
       el.querySelector('[data-act="next"]').disabled = el.querySelector('[data-act="end"]').disabled = i === ev.length;
