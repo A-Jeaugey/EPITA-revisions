@@ -156,13 +156,13 @@
     'Le dividende à gauche, le diviseur à droite, le quotient sous le diviseur.': 'The dividend on the left, the divisor on the right, the quotient under the divisor.',
     'Le diviseur ({d}) est plus grand que le dividende : le quotient commence par 0.': 'The divisor ({d}) is greater than the dividend: the quotient starts with 0.',
     'Le diviseur ({d}) va {q} fois dans {c}, le plus petit début du dividende qui le contient. On écrit {q} au quotient et on soustrait : {c} − {s} = {r}.':
-      'The divisor ({d}) goes into {c} (the shortest leading part of the dividend that contains it) {q} time(s). Record {q} in the quotient and subtract: {c} − {s} = {r}.',
+      'The divisor ({d}) goes into {c}, the shortest leading part of the dividend that contains it. Record {q} in the quotient and subtract: {c} − {s} = {r}.',
     'Tous les chiffres du dividende sont abaissés et le reste n’est pas nul : on écrit une virgule au quotient, puis on ajoute un 0 au reste.':
       'All the digits of the dividend have been brought down and the remainder is not 0: record a point in the quotient, then bring down an extra 0 to the remainder.',
     'On ajoute un 0 au reste : {c}.': 'Bring down an extra 0 to the remainder: {c}.',
     'On abaisse le chiffre suivant ({x}) : {c}.': 'Bring down the next digit ({x}): {c}.',
     'C’est plus petit que le diviseur : on écrit 0 au quotient.': 'It is smaller than the divisor: record a 0 in the quotient.',
-    'Le diviseur y va {q} fois : on écrit {q} au quotient et on soustrait : {c} − {s} = {r}.': 'The divisor goes into it {q} time(s): record {q} in the quotient and subtract: {c} − {s} = {r}.',
+    'Le diviseur y va {q} fois : on écrit {q} au quotient et on soustrait : {c} − {s} = {r}.': 'The divisor goes into it: record {q} in the quotient and subtract: {c} − {s} = {r}.',
     'Le reste est nul : {a} / {d} = {q}.': 'The final remainder is 0: {a} / {d} = {q}.',
     'On a les chiffres demandés après la virgule : on s’arrête. {a} / {d} ≈ {q} (reste {r}).': 'We have the digits asked for after the point: stop. {a} / {d} ≈ {q} (remainder {r}).',
     'Quotient {q}, reste {r}.': 'Quotient {q}, remainder {r}.',
