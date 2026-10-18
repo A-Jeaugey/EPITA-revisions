@@ -58,19 +58,23 @@
     function bn(s, base, o) { o = o || {}; return '<span class="bn">' + esc(fmt(s, base, o)) + (o.sub === false ? '' : '<sub>' + base + '</sub>') + '</span>'; }
     /* un nombre tel qu’il est imprimé dans le sujet (séparateur de la langue) */
     function prT(s) { return String(s).replace(/,/g, L.sep); }
-    function pr(s, base) { return '<span class="bn">' + esc(prT(s).replace(/ /g, NB)) + (base ? '<sub>' + base + '</sub>' : '') + '</span>'; }
-    function w8(s) { return '<span class="bn">' + esc(s) + '</span>'; }
+    function pr(s, base, wrap) { return '<span class="bn' + (wrap ? ' w' : '') + '">' + esc(wrap ? prT(s) : prT(s).replace(/ /g, NB)) + (base ? '<sub>' + base + '</sub>' : '') + '</span>'; }
+    function w8(s, wrap) { return '<span class="bn' + (wrap ? ' w' : '') + '">' + esc(s) + '</span>'; }
     function dec(n) { return fmt(String(n), 10); }
     function sgn(n) { return n < 0 ? '(' + dec(n) + ')' : dec(n); }
     function P(s) { return '<p>' + s + '</p>'; }
     function tool(name, o) { return '<div data-archi="' + name + '" data-opts=\'' + JSON.stringify(o) + '\'></div>'; }
     function td(h, cls) { return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + h + '</td>'; }
     function tr(cells, chk) { return '<tr' + (chk ? ' data-chk=\'' + JSON.stringify(chk) + '\'' : '') + '>' + cells.join('') + '</tr>'; }
+    function grp(label, n, rows, chk) {
+      return '<tbody' + (chk ? ' data-chk=\'' + JSON.stringify(chk) + '\'' : '') + '><tr><th scope="rowgroup" colspan="' + n + '" style="font-weight:600;background:var(--surface-2)">' + label + '</th></tr>' + rows.join('') + '</tbody>';
+    }
     /* tableau : head = liste d’en-têtes ou <thead> tout fait */
     function tbl(head, rows, o) {
       o = o || {};
       var h = typeof head === 'string' ? head : '<thead><tr>' + head.map(function (x) { return '<th scope="col">' + x + '</th>'; }).join('') + '</tr></thead>';
-      return '<div class="tbl"><table>' + (o.cap ? '<caption>' + o.cap + '</caption>' : '') + h + '<tbody>' + rows.join('') + '</tbody></table></div>';
+      var body = rows.join('');
+      return '<div class="tbl"><table>' + (o.cap ? '<caption>' + o.cap + '</caption>' : '') + h + (/^<tbody/.test(body) ? body : '<tbody>' + body + '</tbody>') + '</table></div>';
     }
     /* tableau de réponses : rows [[cellule, …, cellule-réponse…], chk] ; nr = nombre de cellules-réponses (à droite) */
     function ans(head, rows, nr) {
@@ -107,27 +111,27 @@
     }
     /* partie fractionnaire décimale 0,f en base b : multiplications successives sur des entiers (exact) */
     function fracDigits(f, b, want) {
-      var D = Math.pow(10, f.length), n = parseInt(f, 10) || 0, ds = [], end = null;
-      for (var i = 0; i < 400 && n; i++) { n *= b; ds.push(Math.floor(n / D)); n %= D; if (!n) end = i + 1; }
-      return { ds: ds.slice(0, want), end: end };
+      var D = Math.pow(10, f.length), n = parseInt(f, 10) || 0, ds = [], end = null, up = false;
+      for (var i = 0; i < 400 && n; i++) { n *= b; ds.push(Math.floor(n / D)); n %= D; if (i + 1 === want) up = 2 * n >= D; if (!n) end = i + 1; }
+      return { ds: ds.slice(0, want), end: end, up: up };
     }
     function digitsStr(a) { return a.map(function (v) { return v.toString(36).toUpperCase(); }).join(''); }
     /* troncature et arrondi au plus proche à d chiffres d’un nombre décimal en base b */
     function roundOf(x, b, d) {
-      var p = split(x), fd = fracDigits(p.frac, b, d + 1), keep = fd.ds.slice(0, d), next = fd.ds[d] || 0;
+      var p = split(x), fd = fracDigits(p.frac, b, d), keep = fd.ds.slice(0, d);
       while (keep.length < d) keep.push(0);
       var ip = parseInt(p.int, 10).toString(b).toUpperCase(), tr0 = ip + ',' + digitsStr(keep), all = parseInt(p.int, 10).toString(b).split('').map(function (c) { return parseInt(c, 36); }).concat(keep), L0 = ip.length;
-      if (next * 2 >= b) { for (var i = all.length - 1; i >= 0; i--) { all[i]++; if (all[i] < b) break; all[i] = 0; if (i === 0) { all.unshift(1); L0++; } } }
+      if (fd.up) { for (var i = all.length - 1; i >= 0; i--) { all[i]++; if (all[i] < b) break; all[i] = 0; if (i === 0) { all.unshift(1); L0++; } } }
       return { trunc: tr0, round: digitsStr(all.slice(0, L0)) + ',' + digitsStr(all.slice(L0)), end: fd.end };
     }
     function conv(spec, txt) {
       var rows = spec.rows, notes = txt.notes || {}, C = L.conv;
-      var st = tbl(C.head, rows.map(function (r) {
-        return tr([td(pr(r[0])), td(L.form(r[1])), td(L.form(r[2]) + (r[3] ? '<br><small>' + L.digits(r[3]) + '</small>' : '')), td('')]);
+      var st = tbl(C.head.slice(0, 3), rows.map(function (r) {
+        return tr([td(pr(r[0])), td(L.form(r[1])), td(L.form(r[2]) + (r[3] ? '<br><small>' + L.digits(r[3]) + '</small>' : ''))]);
       }));
       var sol = rows.map(function (r, i) { return convStep(r, i, notes[i]); });
-      var a = tbl([C.head[0], C.head[2], C.head[3]], rows.map(function (r) {
-        return tr([td(pr(r[0], r[1])), td(L.form(r[2]) + (r[3] ? ' <small>' + L.digits(r[3]) + '</small>' : '')), td(bn(r[4], r[2], { sub: false }), 'r')],
+      var a = tbl([C.head[0], C.head[3]], rows.map(function (r) {
+        return tr([td(pr(r[0], r[1], true) + (r[3] ? '<br><small>' + L.digits(r[3]) + '</small>' : '')), td(bn(r[4], r[2]), 'r')],
           { t: 'conv', x: r[0], f: r[1], to: r[2], d: r[3] || null });
       }));
       return out(txt, { intro: (txt.intro || '') + st, solution: sol, answer: a });
@@ -185,10 +189,10 @@
     }
     function ops(spec, txt) {
       var rows = spec.rows, O = L.ops;
-      var st = tbl(O.head, rows.map(function (r) { return tr([td(O.base(r[1])), td(w8(opStr(r)))]); }));
+      var st = tbl(O.head, rows.map(function (r) { return tr([td(O.base(r[1])), td(w8(opStr(r), true))]); }));
       var sol = rows.map(function (r, i) { return opStep(r, (txt.notes || {})[i]); });
-      var a = tbl(O.ahead, rows.map(function (r) {
-        return tr([td(w8(opStr(r)) + '<sub>' + r[1] + '</sub>'), td(bn(r[3], r[1], { sub: false }), 'r')], { t: 'op', op: r[0], b: r[1], o: r[2] });
+      var a = tbl([O.ahead[1]], rows.map(function (r) {
+        return grp(w8(opStr(r), true) + ' <small>(' + O.base(r[1]).toLowerCase() + ')</small>', 1, [tr([td(bn(r[3], r[1]), 'r')])], { t: 'op', op: r[0], b: r[1], o: r[2] });
       }));
       return out(txt, { intro: (txt.intro || '') + st, solution: sol, answer: a });
     }
@@ -231,8 +235,8 @@
       var st = tbl(head, rows.map(function (r) { return tr([td(w8(opP(r))), td(''), td(''), td('')]); }));
       var sol = rows.map(function (r, i) { return n8Step(r, i, opP(r), (txt.notes || {})[i]); });
       function val(x) { return x === 'E' ? N.err : dec(+x); }
-      var a = tbl(head, rows.map(function (r) {
-        return tr([td(w8(opP(r))), td(w8(gInt(r[3], 4).join(NB)), 'r'), td(val(r[4]), 'r'), td(val(r[5]), 'r')], { t: 'n8', a: r[0], op: r[1], b: r[2] });
+      var a = tbl([N.bin, N.u, N.s], rows.map(function (r) {
+        return grp(w8(opP(r)), 3, [tr([td(w8(gInt(r[3], 4).join(NB)), 'r'), td(val(r[4]), 'r'), td(val(r[5]), 'r')])], { t: 'n8', a: r[0], op: r[1], b: r[2] });
       }));
       return out(txt, { intro: (txt.intro || '') + st, solution: sol, answer: a });
     }
@@ -279,8 +283,10 @@
       var q1 = txt.q1 + tbl(I.h1, spec.enc.map(function (r) { return tr([td(pr(r[0])), td(''), td(''), td('')]); }));
       var q2 = txt.q2 + tbl(I.h2, spec.dec.map(function (r) { return tr([td(w8(r[0].replace(/ /g, NB))), td('')]); }));
       var sol = spec.enc.map(function (r) { return encStep(r, (txt.notes || {})[r[0]]); }).concat(spec.dec.map(function (r) { return decStep(r, (txt.notes || {})[r[0]]); }));
-      var a1 = tbl(I.h1, spec.enc.map(function (r) { return tr([td(pr(r[0])), td(w8(r[1]), 'r'), td(w8(r[2]), 'r'), td(w8(r[3]), 'r')], { t: 'ieeeE', x: r[0] }); }));
-      var a2 = tbl(I.h2, spec.dec.map(function (r) { return tr([td(w8(r[0].replace(/ /g, NB))), td(kv(r[1]), 'r')], { t: 'ieeeD', w: r[0] }); }));
+      var a1 = tbl([I.field, I.val], spec.enc.map(function (r) {
+        return grp(pr(r[0]), 2, [tr([td('S'), td(w8(r[1]), 'r')]), tr([td('E'), td(w8(r[2]), 'r')]), tr([td('M'), td(w8(r[3]), 'r')])], { t: 'ieeeE', x: r[0] });
+      }));
+      var a2 = tbl(I.h2, spec.dec.map(function (r) { return tr([td(w8(r[0], true)), td(kv(r[1]), 'r')], { t: 'ieeeD', w: r[0] }); }));
       return out(txt, { questions: [q1, q2], solution: sol, answer: P(I.a1) + a1 + P(I.a2) + a2 });
     }
     function encStep(r, note) {
@@ -308,7 +314,7 @@
       return { t: I.decTitle(r[0]), html: h.join('') };
     }
 
-    return { conv: conv, ops: ops, n8: n8, ieee: ieee, ans: ans, tbl: tbl, tr: tr, td: td, tool: tool, bn: bn, pr: pr, w8: w8, dec: dec, fmt: fmt, P: P, pow2: pow2, kv: kv, roundOf: roundOf, addCols: addCols, c2: c2, s8: s8, u8: u8 };
+    return { conv: conv, ops: ops, n8: n8, ieee: ieee, ans: ans, tbl: tbl, tr: tr, td: td, grp: grp, tool: tool, bn: bn, pr: pr, w8: w8, dec: dec, fmt: fmt, P: P, pow2: pow2, kv: kv, roundOf: roundOf, addCols: addCols, c2: c2, s8: s8, u8: u8 };
   }
 
   /* =====================================================================
@@ -359,7 +365,7 @@
       sub: function () { return 'Soustraction posée, de droite à gauche, avec la méthode du cours : quand le chiffre du haut est trop petit, on emprunte 1 ; il gagne <span class="bn">10<sub>2</sub></span> (2) et le chiffre du bas de la colonne suivante gagne 1. Le nombre du bas est complété à gauche par des 0.'; },
       add: function (b, n) {
         return b === 16 ? 'On additionne chaque colonne avec les valeurs décimales des chiffres (A = 10 … F = 15), on convertit le total en hexadécimal, on pose le chiffre de droite et on reporte la retenue.' + (n > 2 ? ' Avec trois termes, une colonne vaut au plus 15 × 3 + 2 = 47 : la retenue peut valoir 2.' : '')
-          : 'On additionne colonne par colonne, de droite à gauche : 1 + 1 = 10 (on pose 0, retenue 1), 1 + 1 + 1 = 11 (on pose 1, retenue 1).';
+          : 'On additionne colonne par colonne, de droite à gauche : 1 + 1 = <span class="bn">10<sub>2</sub></span> (on pose 0, retenue 1), 1 + 1 + 1 = <span class="bn">11<sub>2</sub></span> (on pose 1, retenue 1).';
       },
       cols: function (cols, b) {
         return '<ul>' + cols.map(function (c, k) {
@@ -393,7 +399,7 @@
       }
     },
     ie: {
-      h1: ['Nombre', 'S', 'E', 'M'], h2: ['Représentation IEEE 754 (base 16)', 'Représentation associée'],
+      h1: ['Nombre', 'S', 'E', 'M'], h2: ['Représentation IEEE 754 (base 16)', 'Représentation associée'], field: 'Champ', val: 'Valeur (binaire)',
       a1: 'Simple précision : les trois champs en binaire, sans espace, comme sur la copie.', a2: 'Double précision :',
       encTitle: function (x) { return 'Encoder ' + x + ' en simple précision'; },
       decTitle: function (w) { return 'Décoder ' + w + ' (double précision)'; },
@@ -465,10 +471,10 @@
     notes: {
       2: 'Piège : le résultat 210 a l’air décimal. En base 16, 210<sub>16</sub> = 2 × 256 + 1 × 16 + 0 = 528.',
       4: 'Piège : 0,28<sub>16</sub> ne vaut pas 0,28. 0,28<sub>16</sub> = 2/16 + 8/256 = 0,125 + 0,03125 = 0,15625.',
-      7: 'Compléter à gauche (0010 1101 = 2D) donnerait BB,2D : faux.'
+      7: 'Compléter à gauche (<span class="bn">0010 1101</span> = 2D) donnerait BB,2D : faux.'
     },
     hints: ['Lignes 1, 2, 4 et 5. ' + H_TO10, 'Lignes 3, 6 et 7. ' + H_FROM10, 'Ligne 8. ' + H_GRP],
-    traps: ['Compléter le dernier paquet du mauvais côté : 1011 01 après la virgule devient 1011 0100 (B4), pas 0010 1101 (2D).',
+    traps: ['Compléter le dernier paquet du mauvais côté : <span class="bn">1011 01</span> après la virgule devient <span class="bn">1011 0100</span> (B4), pas <span class="bn">0010 1101</span> (2D).',
       'Lire 28,28<sub>16</sub> comme 28,28 : la partie entière vaut 2 × 16 + 8 = 40 et la partie fractionnaire 0,15625.',
       'Écrire un chiffre hexadécimal en décimal : 0,84 × 16 = 13,44 donne le chiffre D, pas « 13 ».', T_ROUND],
     grading: '4 points pour les 8 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_B1
@@ -501,8 +507,8 @@
   }, {
     src: 'Examen B1 2025-2026 · Ex 4', title: 'IEEE 754 : encoder en simple précision, décoder des mots double précision', q1: K_IE1, q2: K_IE2,
     hints: H_IE,
-    traps: ['Écrire E sans ses zéros de tête : 0,09375 = 1,1 × 2<sup>−4</sup>, E = 123 = 01111011, sur 8 bits.',
-      'Stocker le 1 avant la virgule : 320 = 1,01 × 2<sup>8</sup> donne M = 0100…0, pas 1010…0.',
+    traps: ['Écrire E sans ses zéros de tête : 0,09375 = <span class="bn">1,1<sub>2</sub></span> × 2<sup>−4</sup>, E = 123 = <span class="bn">01111011</span>, sur 8 bits.',
+      'Stocker le 1 avant la virgule : 320 = <span class="bn">1,01<sub>2</sub></span> × 2<sup>8</sup> donne M = <span class="bn">0100…0</span>, pas <span class="bn">1010…0</span>.',
       T_IE[0], 'Croire qu’il faut beaucoup de bits à 1 dans M pour un NaN : 7FF0 0001 0000 0000 en est un.'],
     grading: '4 points pour 4 lignes (2 encodages, 2 décodages) ; la répartition n’est pas imprimée.', note: NOTE_B1
   });
@@ -518,9 +524,9 @@
     notes: { 1: 'Piège de lecture : 1BA suit une ligne qui donne 443. 1BA<sub>16</sub> = 256 + 11 × 16 + 10 = 256 + 176 + 10 = 442.' },
     hints: ['Lignes 1, 2, 5 et 6. ' + H_TO10, 'Lignes 3, 4, 7 et 8. ' + H_FROM10, 'Lignes 9 et 10. ' + H_GRP],
     traps: ['Arrondir le 4<sup>e</sup> chiffre de 28,35 : 0,35 × 16 = 5,6 puis 0,6 × 16 = 9,6 sans fin ; on garde 1C,5999, pas 1C,599A.',
-      'Compléter 1111 11 à gauche : après la virgule, on complète à droite, 1111 1100 = FC.',
-      'Perdre des zéros en hexadécimal → binaire : B7,53 → 1011 0111,0101 0011 (le 5 et le 3 gardent leurs 4 bits).',
-      'Recopier une valeur voisine : 1 1011 1011<sub>2</sub> = 443 et 1BA<sub>16</sub> = 442.'],
+      'Compléter <span class="bn">1111 11</span> à gauche : après la virgule, on complète à droite, <span class="bn">1111 1100</span> = FC.',
+      'Perdre des zéros en hexadécimal → binaire : B7,53 → <span class="bn">1011 0111,0101 0011</span> (le 5 et le 3 gardent leurs 4 bits).',
+      'Recopier une valeur voisine : <span class="bn">1 1011 1011<sub>2</sub></span> = 443 et <span class="bn">1BA<sub>16</sub></span> = 442.'],
     grading: '5 points pour les 10 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_NONE
   });
 
@@ -543,13 +549,13 @@
   }, {
     src: 'Examen 1 2024-2025 · Ex 3', title: 'Opérations sur 8 bits : non signé, signé, dépassements', intro: P(K_8),
     notes: {
-      3: 'Cas limite du cours : 127 + 1 donne 1000 0000, qui est 128 en non signé mais −128 en signé.',
+      3: 'Cas limite du cours : 127 + 1 donne <span class="bn">1000 0000</span>, qui est 128 en non signé mais −128 en signé.',
       4: 'Autre cas limite : 255 + 1 « fait le tour » et redonne 0 ; en signé, −1 + 1 = 0 est juste.'
     },
     hints: H_N8,
-    traps: T_N8.concat(['0111 1111 + 1 : pas de retenue, donc 128 est juste en non signé ; mais en signé, 127 + 1 = 128 > 127 : ERREUR.',
-      '1111 1111 + 1 : la retenue sort (non signé ERREUR) alors qu’en signé −1 + 1 = 0 est juste.',
-      'Lire 1010 1000 comme 168 en signé : il vaut −88 (C2 = 0101 1000 = 88).']),
+    traps: T_N8.concat(['<span class="bn">0111 1111</span> + 1 : pas de retenue, donc 128 est juste en non signé ; mais en signé, 127 + 1 = 128 > 127 : ERREUR.',
+      '<span class="bn">1111 1111</span> + 1 : la retenue sort (non signé ERREUR) alors qu’en signé −1 + 1 = 0 est juste.',
+      'Lire <span class="bn">1010 1000</span> comme 168 en signé : il vaut −88 (C2 = <span class="bn">0101 1000</span> = 88).']),
     grading: '5 points pour 5 lignes de 3 cases ; la répartition n’est pas imprimée.', note: NOTE_NONE
   });
 
@@ -558,11 +564,11 @@
     dec: [['3688 0000 0000 0000', '3|-152'], ['0015 8000 0000 0000', '43|-1027'], ['7FF0 0000 0000 0000', '+inf']]
   }, {
     src: 'Examen 1 2024-2025 · Ex 4', title: 'IEEE 754 : encoder en simple précision, décoder des mots double précision', q1: K_IE1, q2: K_IE2,
-    notes: { '0015 8000 0000 0000': 'Piège : 0015… ressemble à un dénormalisé, mais E = 000 0000 0001 = 1 n’est pas nul : le nombre est normalisé, avec le plus petit exposant possible, 1 − 1023 = −1022.' },
+    notes: { '0015 8000 0000 0000': 'Piège : 0015… ressemble à un dénormalisé, mais E = <span class="bn">000 0000 0001</span> = 1 n’est pas nul : le nombre est normalisé, avec le plus petit exposant possible, 1 − 1023 = −1022.' },
     hints: H_IE,
     traps: ['Prendre 0015 8000 0000 0000 pour un dénormalisé : E = 1, il est normalisé (1,M × 2<sup>−1022</sup>).',
       'Répondre NaN pour 7FF0 0000 0000 0000 : M est nul, c’est +∞.',
-      'Se tromper de sens pour l’exposant : 0,15625 = 0,00101<sub>2</sub> = 1,01 × 2<sup>−3</sup>, donc E = 124.',
+      'Se tromper de sens pour l’exposant : 0,15625 = <span class="bn">0,00101<sub>2</sub></span> = <span class="bn">1,01<sub>2</sub></span> × 2<sup>−3</sup>, donc E = 124.',
       T_IE[0]],
     grading: '6 points pour 6 lignes (3 encodages, 3 décodages) ; la répartition n’est pas imprimée.', note: NOTE_NONE
   });
@@ -575,11 +581,11 @@
       ['25,B', 16, 10, 0, '37,6875'], ['57,48', 10, 2, 5, '111001,01111'], ['18,24', 10, 16, 3, '12,3D7'], ['DC,81', 16, 2, 0, '11011100,10000001'], ['1010100,10111', 2, 16, 0, '54,B8']]
   }, {
     src: 'Examen 1 2023-2024 · Ex 1', title: 'Conversions entre les bases 2, 10 et 16', intro: K_CONV,
-    notes: { 8: 'Chaque chiffre donne 4 bits : 8 → 1000 et 1 → 0001. Écrire « 1101 1100,11 » perd les zéros internes.' },
+    notes: { 8: 'Chaque chiffre donne 4 bits : 8 → <span class="bn">1000</span> et 1 → <span class="bn">0001</span>. Écrire « <span class="bn">1101 1100,11</span> » perd les zéros internes.' },
     hints: ['Lignes 1, 2, 5 et 6. ' + H_TO10, 'Lignes 3, 4, 7 et 8. ' + H_FROM10, 'Lignes 9 et 10. ' + H_GRP],
     traps: ['Écrire 12,3137 au lieu de 12,3D7 : la partie entière 13 d’un produit s’écrit D en hexadécimal.',
-      'Perdre les zéros internes : DC,81 → 1101 1100,1000 0001.',
-      'Compléter 1010100,10111 du mauvais côté : 0101 0100,1011 1000 = 54,B8.', T_ROUND],
+      'Perdre les zéros internes : DC,81 → <span class="bn">1101 1100,1000 0001</span>.',
+      'Compléter <span class="bn">1010100,10111</span> du mauvais côté : <span class="bn">0101 0100,1011 1000</span> = 54,B8.', T_ROUND],
     grading: '5 points pour les 10 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK
   });
 
@@ -592,7 +598,7 @@
     hints: [H_SUB, H_HEX.replace('19 = 13<sub>16</sub>, on pose 3 et on retient 1', '4 + 9 = 13 = D<sub>16</sub>, on pose D sans retenue'),
       'Division : 1100 va une fois dans 10010 (mais pas dans 1001) ; à chaque chiffre abaissé, écris 1 au quotient si le reste contient le diviseur, 0 sinon.'],
     traps: [T_DIV0, 'Mal décaler les produits partiels : 101010 a ses 1 aux positions 1, 3 et 5.', T_HEXCOL,
-      'Soustraire 11111111 « de tête » : les emprunts se propagent sur presque toutes les colonnes ; pose l’opération.'],
+      'Soustraire <span class="bn">11111111</span> « de tête » : les emprunts se propagent sur presque toutes les colonnes ; pose l’opération.'],
     grading: '4 points pour les 4 opérations ; la répartition n’est pas imprimée. Le détail des calculs est exigé.', note: NOTE_OK
   });
 
@@ -603,8 +609,8 @@
     src: 'Examen 1 2023-2024 · Ex 3', title: 'Opérations sur 8 bits : non signé, signé, dépassements', intro: P(K_8),
     notes: { 3: 'Ici le non signé déborde (200 − 226 < 0) mais le signé est juste : −56 − (−30) = −26.' },
     hints: H_N8,
-    traps: T_N8.concat(['Mettre ERREUR dans les deux colonnes dès qu’une seule déborde : 11001000 − 11100010 donne ERREUR en non signé mais −26 en signé.',
-      'Croire qu’une addition sans retenue ne déborde jamais : 01101001 + 01101110 = 11010111, pas de retenue, mais 105 + 110 = 215 > 127 en signé.']),
+    traps: T_N8.concat(['Mettre ERREUR dans les deux colonnes dès qu’une seule déborde : <span class="bn">11001000 − 11100010</span> donne ERREUR en non signé mais −26 en signé.',
+      'Croire qu’une addition sans retenue ne déborde jamais : <span class="bn">01101001 + 01101110 = 11010111</span>, pas de retenue, mais 105 + 110 = 215 > 127 en signé.']),
     grading: '5 points pour 5 lignes de 3 cases ; la répartition n’est pas imprimée.', note: NOTE_OK
   });
 
@@ -651,7 +657,7 @@
     hints: ['Écris chaque nombre sur 8 bits (le complément à deux pour −126), fais l’opération et garde les 8 bits de droite.',
       'Puis relis le mot obtenu : en non signé (partie 1), il vaut de 0 à 255 ; en signé (partie 2), de −128 à 127.'],
     solution: [
-      { t: 'L’idée : sur 8 bits, les mots forment un cycle', html: P('Un mot de 8 bits n’a pas de 9<sup>e</sup> bit : la retenue ou l’emprunt qui sort à gauche est perdu. Après le plus grand mot, on repart du plus petit : en non signé, 255 + 1 = 0 et 0 − 1 = 255 ; en signé, 127 + 1 = −128. La roue montre la même chose sur 4 bits (16 mots).') + tool('wheel', { value: 7 }) },
+      { t: 'L’idée : sur 8 bits, les mots forment un cycle', html: P('Un mot de 8 bits n’a pas de 9<sup>e</sup> bit : la retenue ou l’emprunt qui sort à gauche est perdu. Après le plus grand mot, on repart du plus petit : en non signé, 255 + 1 donne 0 et 0 − 1 donne 255 ; en signé, 127 + 1 donne −128. La roue montre la même chose sur 4 bits (16 mots).') + tool('wheel', { value: 7 }) },
       { t: 'Partie 1, question 1 · 250 + 10', html: P('250 = ' + w8('1111 1010') + ' et 10 = ' + w8('0000 1010') + '.') + tool('posed', { op: 'add', ops: ['11111010', '00001010'], base: 2, step: false }) +
         P('Le 9<sup>e</sup> bit (la retenue) est perdu : il reste ' + w8('0000 0100') + ' = <strong>4</strong>. Le résultat exact, 260, dépasse 255 (dépassement non signé) : le mot vaut 260 − 256 = 4.') },
       { t: 'Partie 1, question 2 · 4 − 10', html: P('4 = ' + w8('0000 0100') + ' et 10 = ' + w8('0000 1010') + ' ; 4 est le plus petit : la soustraction emprunte au-delà du bit 7 (le 1 ajouté devant).') + tool('posed', { op: 'sub', ops: ['100000100', '00001010'], base: 2, pad: true, step: false }) +
@@ -666,7 +672,7 @@
       [['Signé : 120 + 10', '−126'], { t: 'cyc', a: 120, op: '+', b: 10, sg: true }],
       [['Signé : −126 − 10', '120'], { t: 'cyc', a: -126, op: '-', b: 10, sg: true }]]),
     traps: ['Répondre « ERREUR » : la question demande ce que contient vraiment le mot de 8 bits (4, 250, −126, 120).',
-      'Lire 1000 0010 comme 130 dans la partie 2 : en signé, c’est −126.',
+      'Lire <span class="bn">1000 0010</span> comme 130 dans la partie 2 : en signé, c’est −126.',
       'Garder le 9<sup>e</sup> bit : sur 8 bits, la retenue ou l’emprunt qui sort à gauche est perdu.'],
     grading: '2 points pour les 4 questions (dans les deux sujets) ; la répartition n’est pas imprimée.',
     note: 'Mêmes questions aux exercices 4 de 2019-2020 et de 2022-2023 : ce sont les exemples du cours (IV.1.4 et IV.2.5). Réponses recalculées par programme.'
@@ -694,7 +700,7 @@
     notes: { 9: 'Même ligne qu’au contrôle 2020-2021 (Ex 3).' },
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['En base 13, un reste ou une partie entière de 10, 11 ou 12 s’écrit A, B ou C (ici 80 = 6 × 13 + 2 : pas de lettre).',
-      'Perdre les zéros de queue d’un paquet : 0,64<sub>8</sub> → 110 100, puis on retire seulement les 0 de la fin : 0,1101.', T_ROUND],
+      'Perdre des zéros en base 8 → base 2 : chaque chiffre donne 3 bits, 0,64<sub>8</sub> → <span class="bn">0,110 100</span>, puis on retire seulement les 0 de la fin : <span class="bn">0,1101<sub>2</sub></span>.', T_ROUND],
     grading: '5 points pour les 10 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD
   });
 
@@ -723,7 +729,7 @@
         K.ans(['Puissance', 'Valeur'], [-5, -6, -7, -8, -9, -10].map(function (k) {
           return [[pow2(k), { '-5': '0,03125', '-6': '0,015625', '-7': '0,0078125', '-8': '0,00390625', '-9': '0,001953125', '-10': '0,0009765625' }[k]], { t: 'pow2', k: k }];
         })) + P('Pour t’entraîner aux puissances de 2 :') + tool('drill', { kind: 'pow2' }) },
-      { t: 'Question 2 · les combinaisons d’un octet', html: P('Un octet a 8 bits, chacun vaut 0 ou 1 : 2<sup>8</sup> = <strong>256</strong> combinaisons, de 0000 0000 à 1111 1111.') },
+      { t: 'Question 2 · les combinaisons d’un octet', html: P('Un octet a 8 bits, chacun vaut 0 ou 1 : 2<sup>8</sup> = <strong>256</strong> combinaisons, de <span class="bn">0000 0000</span> à <span class="bn">1111 1111</span>.') },
       { t: 'Question 3 · 8192 en signé', html: P('Sur n bits signés, le plus grand entier est 2<sup>n−1</sup> − 1. Comme 8192 = 2<sup>13</sup>, il faut 2<sup>n−1</sup> − 1 ≥ 2<sup>13</sup>, donc n − 1 ≥ 14 : <strong>15 bits</strong>. Sur 14 bits, le plus grand est 2<sup>13</sup> − 1 = 8191 : il manque 1.') +
         P('En binaire, 8192 = ' + bn('10000000000000', 2) + ' (14 chiffres) ; il faut un 0 devant pour le signe. Clique sur 14 : des bits utiles sont perdus.') + tool('register', { n: 15, value: '010000000000000', sizes: [14, 15, 16] }) },
       { t: 'Question 4 · −8192 en signé', html: P('Le plus petit entier sur n bits signés est −2<sup>n−1</sup>. Comme −8192 = −2<sup>13</sup>, n − 1 = 13 suffit : <strong>14 bits</strong>, le mot ' + bn('10000000000000', 2) + ' (bit de signe à 1, tout le reste à 0). La plage n’est pas symétrique : −8192 tient sur 14 bits, 8192 non.') +
@@ -734,7 +740,7 @@
       [['3. 8192 en signé', '15 bits'], { t: 'minbits', v: 8192 }], [['4. −8192 en signé', '14 bits'], { t: 'minbits', v: -8192 }]]),
     traps: ['Donner la même réponse pour 8192 et −8192 : la plage signée n’est pas symétrique (15 bits contre 14).',
       'Compter les chiffres binaires de 8192 (14) sans ajouter le bit de signe.',
-      'Recopier 2<sup>−8</sup> = 0,0390625 : un zéro oublié. Chaque division par 2 ajoute en gros un chiffre.'],
+      'Oublier un zéro : 2<sup>−8</sup> = 0,00390625, pas 0,0390625. Chaque division par 2 ajoute un chiffre après la virgule.'],
     grading: '4 points pour les 4 questions ; la répartition n’est pas imprimée.', note: NOTE_OK
   });
 
@@ -749,7 +755,7 @@
     src: 'Contrôle 2020-2021 · Ex 3', title: 'Conversions, dont les bases 8, 5, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['Hexadécimal → base 8 : on ne convertit pas chiffre à chiffre ; on passe par la base 2, puis des paquets de 3 bits à partir de la virgule.',
-      'Oublier un chiffre nul en base 3 : 40<sub>9</sub> donne 11 et 00, soit 1100<sub>3</sub>, pas 11<sub>3</sub>.', T_ROUND],
+      'Oublier un chiffre nul en base 3 : 40<sub>9</sub> donne 11 et 00, soit <span class="bn">1100<sub>3</sub></span>, pas <span class="bn">11<sub>3</sub></span>.', T_ROUND],
     grading: '5 points pour les 10 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD
   });
 
@@ -762,16 +768,16 @@
       '4. En fonction de n, quel est le plus grand entier signé que l’on peut coder sur n bits ?',
       '5. En fonction de n, quel est le plus petit entier signé que l’on peut coder sur n bits ?',
       '6. Le complément à un d’un mot s’obtient en inversant chacun de ses bits. Répondre vrai ou faux. <span class="muted">(2020-2021 seulement)</span>'],
-    hints: ['Teste avec n = 4 : 16 mots, de 0000 à 1111.', 'En signé (complément à deux), le bit de poids fort est le bit de signe : la moitié des mots sont négatifs.'],
+    hints: ['Teste avec n = 4 : 16 mots, de <span class="bn">0000</span> à <span class="bn">1111</span>.', 'En signé (complément à deux), le bit de poids fort est le bit de signe : la moitié des mots sont négatifs.'],
     solution: [
       { t: 'Questions 1 et 2 · combien de mots ?', html: P('Chaque bit vaut 0 ou 1 : un mot de n bits a 2 × 2 × … × 2 = <strong>2<sup>n</sup></strong> combinaisons. En non signé, elles codent 0 … 2<sup>n</sup> − 1. En signé, ce sont les mêmes 2<sup>n</sup> mots, partagés en deux moitiés (bit de poids fort 0 : zéro et positifs ; 1 : négatifs) : encore <strong>2<sup>n</sup></strong> entiers.') +
         P('Sur 4 bits : 16 mots, de 0 à 15 en non signé (dedans), de −8 à 7 en signé (dehors).') + tool('wheel', { value: 7 }) },
-      { t: 'Question 3 · le plus grand non signé', html: P('Tous les bits à 1 : 1 + 2 + 4 + … + 2<sup>n−1</sup> = <strong>2<sup>n</sup> − 1</strong>. Sur 8 bits : 1111 1111 = 255 = 2<sup>8</sup> − 1.') },
-      { t: 'Questions 4 et 5 · les signés', html: P('La moitié des mots, 2<sup>n−1</sup>, codent les négatifs −2<sup>n−1</sup> … −1 ; les 2<sup>n−1</sup> autres codent 0 … 2<sup>n−1</sup> − 1. Le plus grand est 0111…1 = <strong>2<sup>n−1</sup> − 1</strong>, le plus petit 1000…0 = <strong>−2<sup>n−1</sup></strong> : il y a un négatif de plus que de positifs.') +
+      { t: 'Question 3 · le plus grand non signé', html: P('Tous les bits à 1 : 1 + 2 + 4 + … + 2<sup>n−1</sup> = <strong>2<sup>n</sup> − 1</strong>. Sur 8 bits : <span class="bn">1111 1111</span> = 255 = 2<sup>8</sup> − 1.') },
+      { t: 'Questions 4 et 5 · les signés', html: P('La moitié des mots, 2<sup>n−1</sup>, codent les négatifs −2<sup>n−1</sup> … −1 ; les 2<sup>n−1</sup> autres codent 0 … 2<sup>n−1</sup> − 1. Le plus grand est <span class="bn">0111…1</span> = <strong>2<sup>n−1</sup> − 1</strong>, le plus petit <span class="bn">1000…0</span> = <strong>−2<sup>n−1</sup></strong> : il y a un négatif de plus que de positifs.') +
         K.ans(['Bits', 'Non signé', 'Signé'], [4, 8, 16].map(function (n) {
           return [[String(n), '0 … ' + K.dec(Math.pow(2, n) - 1), K.dec(-Math.pow(2, n - 1)) + ' … ' + K.dec(Math.pow(2, n - 1) - 1)], { t: 'range', n: n }];
         }), 2) + P('Le registre montre les deux lectures d’un même mot ; change sa taille avec 4, 8, 16.') + tool('register', { n: 8, value: '01111111', sizes: [4, 8, 16] }) },
-      { t: 'Question 6 · le complément à un', html: P('<strong>Vrai</strong> : c’est la définition du cours (III.2). Par exemple, 0011 0110 devient 1100 1001. Le complément à deux, lui, ajoute 1 au complément à un. Essaie avec le bouton « Complément à un ».') +
+      { t: 'Question 6 · le complément à un', html: P('<strong>Vrai</strong> : c’est la définition du cours (III.2). Par exemple, <span class="bn">0011 0110</span> devient <span class="bn">1100 1001</span>. Le complément à deux, lui, ajoute 1 au complément à un. Essaie avec le bouton « Complément à un ».') +
         tool('register', { n: 8, value: '00110110', sizes: [8] }) }],
     answer: K.ans(['Question', 'Réponse'], [
       [['1. Entiers non signés sur n bits', '2<sup>n</sup>'], { t: 'kn', q: 'countU' }], [['2. Entiers signés sur n bits', '2<sup>n</sup>'], { t: 'kn', q: 'countS' }],
@@ -794,7 +800,7 @@
     src: 'Contrôle 2019-2020 · Ex 3', title: 'Conversions, dont les bases 8, 7, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['Écrire 403,5 pour 1027,5 : 0,5 × 16 = 8, la partie fractionnaire en base 16 est 8.',
-      'Garder les zéros de tête : 0000 1101 1101,0101 s’écrit DD,5 (et non 0DD,50).', T_ROUND],
+      'Garder les zéros de tête : <span class="bn">0000 1101 1101,0101</span> s’écrit DD,5 (et non 0DD,50).', T_ROUND],
     grading: '4 points pour les 8 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD + ' Pas de sujet français dans les annales : l’énoncé vient du corrigé français.'
   });
 
@@ -819,7 +825,7 @@
     src: 'Contrôle 2018-2019 · Ex 3', title: 'Conversions, dont les bases 8, 5, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['Arrondir 141,3 : 0,3 × 16 = 4,8 (4), puis 0,8 × 16 = 12,8 (C) ; on écrit 8D,4C, comme le corrigé, et non 8D,4D.',
-      'Compléter 0110111 à gauche : après la virgule, 0110 1110 = 6E.', 'Lire 0,3<sub>16</sub> comme 0,3 : D7,3<sub>16</sub> = 215 + 3/16 = 215,1875.'],
+      'Compléter <span class="bn">0110111</span> à gauche : après la virgule, <span class="bn">0110 1110</span> = 6E.', 'Lire 0,3<sub>16</sub> comme 0,3 : D7,3<sub>16</sub> = 215 + 3/16 = 215,1875.'],
     grading: '4 points pour les 8 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD + ' Pas de corrigé français : le corrigé anglais fait foi.'
   });
 
@@ -843,7 +849,7 @@
     src: 'Contrôle 2017-2018 · Ex 2', title: 'Conversions, dont les bases 8, 5, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['0,4 en base 16 : 0,4 × 16 = 6,4, puis 0,4 revient, d’où 0,666… ; avec 2 chiffres, 7D,66.',
-      'Oublier 0 dans la partie fractionnaire : 0,0625 = 2<sup>−4</sup> s’écrit 0,0001 en binaire.', T_ROUND],
+      'Oublier des 0 dans la partie fractionnaire : 0,0625 = 2<sup>−4</sup> s’écrit <span class="bn">0,0001<sub>2</sub></span>.', T_ROUND],
     grading: '4 points pour les 8 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD
   });
 
@@ -879,7 +885,7 @@
     src: 'Midterm 2016-2017 · Ex 3', title: 'Conversions, dont les bases 8, 7, 9 et 3', intro: K_CONV,
     hints: [H_TO10 + ' ' + H_FROM10.split(' « ')[0], H_GRP, H_OLD],
     traps: ['Arrondir 515,3 : 0,3 × 16 = 4,8 (4), puis 0,8 × 16 = 12,8 (C) ; le corrigé écrit 203,4C, pas 203,4D. C’est la preuve que les corrigés tronquent.',
-      'Oublier le zéro de tête d’un paquet de 2 chiffres en base 3 : 24<sub>9</sub> donne 02 et 11, soit 211<sub>3</sub>.', 'Lire 0,9<sub>16</sub> comme 0,9 : 1AD,9<sub>16</sub> = 429 + 9/16 = 429,5625.'],
+      'Oublier le zéro de tête d’un paquet de 2 chiffres en base 3 : 24<sub>9</sub> donne 02 et 11, soit <span class="bn">211<sub>3</sub></span>.', 'Lire 0,9<sub>16</sub> comme 0,9 : 1AD,9<sub>16</sub> = 429 + 9/16 = 429,5625.'],
     grading: '4 points pour les 8 lignes ; la répartition n’est pas imprimée. Seul le résultat est attendu.', note: NOTE_OK + ' ' + OLD + TRAD
   });
 
@@ -890,7 +896,7 @@
     notes: { 2: 'Le contrôle 2019-2020 reprend cette division.' },
     hints: [H_SUB, H_HEX.replace('19 = 13<sub>16</sub>, on pose 3 et on retient 1', 'B + 9 = 20 = 14<sub>16</sub>, on pose 4 et on retient 1'),
       'Division : 1011 va une fois dans 1100 ; à chaque chiffre abaissé, écris 1 au quotient si le reste contient le diviseur, 0 sinon.'],
-    traps: [T_DIV0, 'Garder les zéros de tête du résultat de la soustraction : 0 0110 1111 s’écrit 1101111.', T_HEXCOL],
+    traps: [T_DIV0, 'Garder les zéros de tête du résultat de la soustraction : <span class="bn">0 0110 1111</span> s’écrit <span class="bn">110 1111</span>.', T_HEXCOL],
     grading: '4 points pour les 4 opérations du sujet (dont l’addition en base 8) ; la répartition n’est pas imprimée.', note: NOTE_OK + TRAD
   });
 })();
