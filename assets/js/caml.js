@@ -200,7 +200,7 @@
   function answerItems(text) {
     var items = [], cur = null;
     String(text).replace(/\s+$/, '').split('\n').forEach(function (l) {
-      if (cur && !HEAD.test(l) && (/^\s/.test(l) || cur.k === 'warn' || (cur.k === 'err' && /^Hint:/.test(l)))) { cur.text += '\n' + l; return; }
+      if (cur && !HEAD.test(l) && (/^\s/.test(l) || cur.k === 'warn' || (cur.k === 'err' && /^Hint:/.test(l)) || (cur.k === 'val' && / =$/.test(cur.text)))) { cur.text += '\n' + l; return; }
       var m = !HEAD.test(l) && /^(.+?)(- : .*)$/.exec(l);      /* affichage suivi de la réponse sur la même ligne */
       if (m) { items.push({ k: 'out', text: m[1], inl: true }); l = m[2]; }
       cur = { k: /^(val |- :)/.test(l) ? 'val' : /^(Exception:|Stack overflow )/.test(l) ? 'exn' : /^Error:/.test(l) ? 'err' : /^Warning /.test(l) ? 'warn' : 'out', text: l };
