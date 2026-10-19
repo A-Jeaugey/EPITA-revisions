@@ -7,7 +7,8 @@ window.ANNALES = {
    "page": "elec/annales.html"
   },
   "maths": {
-   "name": "Mathématiques"
+   "name": "Mathématiques",
+   "page": "maths/annales.html"
   },
   "physique": {
    "name": "Physique",

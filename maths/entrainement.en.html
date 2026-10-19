@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice · Maths</title>
+<meta name="description" content="Maths, exam 1: the 146 exercises of the 2018 to 2024 papers, the seminar, Tutorials 1 and 2 and the exercise sheets, filtered by course unit (OBM, DP), topic, source, level and status, with hints and written solutions; and three generators: counting, conditional probability and Bayes, binomial distribution, solved with exact fractions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Practice: the exercise cards of the papers, the seminar and the tutorials (filterable), then the generators. The
+   tools in the solutions (probability tree, distribution, diagrams) are mounted by maths.js when the solution opens;
+   formulas are rendered by mathrender.js, including those added by script. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.3rem}
+.stat{border:1px solid var(--line);border-top:2px solid var(--rule);background:var(--bg);padding:.55rem .8rem;display:grid;gap:2px;min-width:104px;text-decoration:none;color:inherit}
+a.stat:hover{border-color:var(--accent)}
+.stat b{font-family:var(--font-ui);font-weight:700;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.filters{background:var(--bg);border-bottom:1px solid var(--line);padding-block:14px}
+.filters .wrapx{display:grid;gap:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lbl{margin-right:4px;min-width:86px}
+.fchip{font:inherit;font-family:var(--font-ui);font-size:.84rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:3px;padding:.24rem .65rem;cursor:pointer;min-height:34px}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip .n{opacity:.7;margin-left:4px}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fsum{font-size:.95rem;color:var(--muted)}
+.fsum:empty{display:none}
+.list{display:grid;gap:22px;padding-block:28px 56px}
+.empty{color:var(--muted);padding:1.5rem 0;max-width:62ch}
+.exo{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:70px;min-width:0}
+.exo.target{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.exo-head{display:grid;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.exo-head>*{min-width:0}
+.exo-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tagc{font-family:var(--font-ui);font-size:.76rem;border:1px solid var(--line);border-radius:3px;padding:.06rem .5rem;color:var(--muted)}
+.tagc.src{color:var(--exam);border-color:var(--exam)}
+.tagc.src.td{color:var(--accent);border-color:var(--accent)}
+.tagc.ec{font-weight:600;color:var(--ink)}
+.tagc.st-ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.tagc.st-review{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.exo h3{font-size:1.4rem;margin:0}
+.exo h3 a{color:inherit;text-decoration:none}
+.exo h3 a:hover{text-decoration:underline}
+.exo-body{display:grid;gap:14px;padding:14px 16px}
+.exo-body>*,.exo-sol>*,.sol-step>*,.sol-step .body>*,.exo-intro>*,.exo-qs li>*{min-width:0}
+.exo-intro{display:grid;gap:.6rem;max-width:84ch}
+.exo-qs{list-style:none;margin:0;padding:0;display:grid;gap:.7rem;max-width:84ch}
+.exo-qs li{padding-left:.9rem;border-left:3px solid var(--line);min-width:0}
+.exo-qs .q{display:block}
+.exo-qs .q>*+*{margin-top:.5rem}
+.exo-qs .q ul,.exo-qs .q ol,.exo-intro ul,.exo-intro ol{margin:0;padding-left:1.25rem}
+.rel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:.95rem;background:var(--accent-soft);border-radius:var(--radius);padding:.5rem .75rem}
+.rel b{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.exo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px dashed var(--line)}
+.exo-actions .grow{flex:1}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.rev[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.exo-hints{display:grid;gap:8px;padding:0 16px}
+.exo-hints:empty{display:none}
+.hintb{background:var(--why-soft);border-radius:var(--radius);padding:.6rem .8rem;font-size:1rem}
+.hintb>b{color:var(--why);font-family:var(--font-ui);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.exo-sol{display:grid;gap:16px;padding:14px 16px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.sol-step{display:grid;gap:6px}
+.sol-step>b{font-family:var(--font-ui);font-size:.82rem;font-weight:700;letter-spacing:.03em;color:var(--accent)}
+.sol-step>b .k{color:var(--muted);margin-right:.4em}
+.sol-step .body{display:grid;gap:.6rem;max-width:84ch}
+.sol-step .body ol,.sol-step .body ul{margin:0;padding-left:1.25rem;display:grid;gap:.3rem}
+.answer{background:var(--ok-soft);border-radius:var(--radius);padding:.7rem .9rem;display:grid;gap:.5rem}
+.answer>*{min-width:0}
+.answer ul,.answer ol{margin:0;padding-left:1.25rem;display:grid;gap:.25rem}
+.answer b.t,.traps b.t{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.answer b.t{color:var(--ok)}
+.traps{background:var(--red-soft);border-radius:var(--radius);padding:.7rem .9rem}
+.traps b.t{color:var(--red);margin-bottom:4px}
+.traps ul{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.sol-note{font-size:.92rem;color:var(--muted)}
+.exo li{min-width:0}
+/* generators */
+.infini{display:grid;gap:18px;padding-block:8px 96px;scroll-margin-top:72px}
+.infini-h{display:grid;gap:.5rem;max-width:74ch;padding-top:.8rem;border-top:2px solid var(--rule)}
+.gen-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;max-width:900px}
+.gen{scroll-margin-top:72px}
+.gen-opts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:end}
+.gen-opts .fld{flex:1 1 16rem}
+.gen-q{font-size:1.05rem;line-height:1.6;min-height:2.6em;display:grid;gap:.5rem}
+.gen-f{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:end}
+.gen-f .fld{flex:1 1 10rem}
+.gen-f .fld.wide{flex:2 1 16rem}
+.gen-f .row{flex:1 1 100%}
+.gen-fb{font-size:1rem;display:grid;gap:.4rem}
+.gen-fb:empty{display:none}
+.gen-fb .ok{color:var(--ok);font-weight:700}
+.gen-fb .no{color:var(--bad);font-weight:700}
+.gen-sol{display:grid;gap:.8rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+.gen-sol>*{min-width:0}
+.gen-score{font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+.gen-help{font-family:var(--font-ui);font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Maths · practice">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM and DP</b> — practice</span><span>Papers 2018-2024 · seminar · Tutorials 1 and 2 · sheets · generators</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Maths</a> · Practice</div>
+      <h1>The real exercises, <span class="w">written out as on the exam paper.</span></h1>
+      <p class="lead">The exercises of the papers still on the syllabus, the seminar, Tutorials 1 and 2 and the exercise sheets. Do them on paper, ask for a hint if you are stuck, then open the solution: each one contains a model answer. Below, three generators make exercises of the kind found in the papers, solved with exact fractions.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"><div class="wrapx">
+  <div class="frow" id="fEcue" role="group" aria-label="Filter by exam"></div>
+  <div class="frow" id="fTopic" role="group" aria-label="Filter by topic"></div>
+  <div class="frow" id="fKind" role="group" aria-label="Filter by source"></div>
+  <div class="frow" id="fLvl" role="group" aria-label="Filter by level"></div>
+  <div class="frow" id="fState" role="group" aria-label="Filter by status"></div>
+  <p class="fsum" id="fsum" aria-live="polite"></p>
+</div></div>
+
+<div class="wrapx">
+  <div class="list" id="list"></div>
+
+  <section class="infini" id="infini" aria-labelledby="t-inf">
+    <div class="infini-h">
+      <div class="eyebrow">Endless practice · DP</div>
+      <h2 id="t-inf">Three generators, of the kind found in the papers</h2>
+      <p>Each generator follows an exercise that comes back in every DP exam: a concrete counting problem, conditional probability with Bayes’ formula, a binomial distribution. Type your answer (a whole number, a fraction like <code>7/20</code>, or a computation like <code>20*19*18</code>), then check. The solution is written as on the exam paper; every number is computed with exact fractions.</p>
+    </div>
+    <div class="gen-grid">
+      <div class="bench gen" id="gen-count"></div>
+      <div class="bench gen" id="gen-bayes"></div>
+      <div class="bench gen" id="gen-binom"></div>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../data/maths/exams.js"></script>
+<script src="../data/en/maths/exams.js"></script>
+<script src="../data/maths/ex-annales.js"></script>
+<script src="../data/en/maths/ex-annales.js"></script>
+<script src="../data/maths/ex-td.js"></script>
+<script src="../data/en/maths/ex-td.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, MA = R.maths;
+  /* ================================================================ the exercise cards */
+  var KINDS = [{ id: 'partiel', t: 'Papers' }, { id: 'sem', t: 'Seminar' }, { id: 'td1', t: 'Tutorial 1' }, { id: 'td2', t: 'Tutorial 2' }, { id: 'tdx', t: 'Sheets' }];
+  function prov(e) { return e.kind === 'partiel' ? 'partiel' : e.id.split('-')[0]; }
+  var KORD = { partiel: 1, sem: 2, td1: 3, td2: 4, tdx: 5 };
+  var ECUES = [{ id: 'obm', t: 'OBM · morning' }, { id: 'dp', t: 'DP · afternoon' }];
+  var EXAMS = window.MATHS_EXAMS || [], EORD = {};
+  EXAMS.forEach(function (x, i) { EORD[x.key] = i; });
+  /* papers from the most recent (MATHS_EXAMS order), then seminar, Tutorial 1, Tutorial 2, sheets, in the order of the sheets */
+  var EX = (window.MATHS_EX || []).slice().sort(function (a, b) {
+    var ka = KORD[prov(a)], kb = KORD[prov(b)];
+    if (ka !== kb) return ka - kb;
+    if (a.exam !== b.exam) return (EORD[a.exam] || 0) - (EORD[b.exam] || 0);
+    return (a.order || 0) - (b.order || 0);
+  });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  /* "near": links to close exercises, shown both ways. A tutorial exercise points to a paper; a paper exercise may point
+     to another paper (the same exercise another year). */
+  var NEAR_IN = {};
+  EX.forEach(function (e) { (e.near || []).forEach(function (id) { (NEAR_IN[id] = NEAR_IN[id] || []).push(e.id); }); });
+  var TOP = window.MATHS_TOPICS || {}, TEC = window.MATHS_ECUE || {};
+  var LVL = ['', 'easy', 'medium', 'hard'];
+  var STATES = [{ id: 'todo', t: 'To do' }, { id: 'ok', t: 'Solved' }, { id: 'review', t: 'To review' }];
+  /* method (methodes.html) and lesson parts to read again, by topic */
+  var METH = { quantificateurs: ['negation', 1], logique: ['cn-cs', 2], raisonnement: ['raisonnements', 3], ensembles: ['raisonnements', 3], images: ['images', 4], usuelles: ['images', 4],
+    injections: ['injectivite', 5], fonctions: ['injectivite', 5], relations: ['relations', 6], denombrement: ['modele', 7], binomial: ['double-denombrement', 8],
+    conditionnelles: ['conditionnelles', 9], bayes: ['conditionnelles', 9], variables: ['binomiale', 10], esperance: ['binomiale', 10], lois: ['binomiale', 10], cardinal: ['demonstrations', 11], demonstrations: ['demonstrations', 11] };
+  var C = ['', 'cours-1-logique.html', 'cours-2-ensembles.html', 'cours-3-fonctions.html', 'cours-4-raisonnement.html', 'cours-5-denombrement.html', 'cours-6-probabilites.html', 'cours-7-variables.html'];
+  var COURS = { logique: [[1, 3], [1, 4], [1, 5]], quantificateurs: [[1, 6], [1, 7]], ensembles: [[2, 3], [2, 4]], cardinal: [[2, 7], [2, 8]], fonctions: [[3, 1], [3, 7]],
+    images: [[3, 2], [3, 3]], injections: [[3, 4], [3, 5], [3, 6]], usuelles: [[3, 3], [3, 8]], raisonnement: [[4, 1], [4, 3], [4, 4]], relations: [[4, 6]], recurrence: [[4, 7]], sommes: [[4, 8]],
+    denombrement: [[5, 4], [5, 5], [5, 6]], binomial: [[5, 7], [5, 8]], probabilites: [[6, 2], [6, 4]], conditionnelles: [[6, 5], [6, 7]], independance: [[6, 6]], bayes: [[6, 8]],
+    variables: [[7, 1]], esperance: [[7, 2], [7, 4]], lois: [[7, 6], [7, 7]], demonstrations: [[7, 3], [7, 4], [7, 5]] };
+  var st = { ecue: null, topic: null, kind: null, lvl: 0, state: null };
+  function key(ex) { return 'maths-' + ex.id; }
+  function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
+  function esc(s) { return U.esc(String(s)); }
+  function has(e, t) { return (e.topics || []).indexOf(t) >= 0; }
+  function pts(v) { return String(v); }
+  function stOk(e, s) { var x = state(e); return s === 'todo' ? !x : x === s; }
+  function inEcue(e) { return !st.ecue || e.ecue === st.ecue; }
+  function shown(e) { return inEcue(e) && (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)); }
+
+  function paintStats() {
+    var ok = 0, rv = 0, np = 0;
+    EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
+    $('#stats').innerHTML = '<a class="stat" href="#partiel"><b>' + np + '</b><span>exercises from papers</span></a><a class="stat" href="#td"><b>' + (EX.length - np) + '</b><span>from the seminar and tutorials</span></a><div class="stat"><b>' + ok + '</b><span>solved</span></div><div class="stat"><b>' + rv + '</b><span>to review</span></div><a class="stat" href="#infini"><b>∞</b><span>generated exercises</span></a>';
+  }
+  function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+  function paintFilters() {
+    var base = EX.filter(inEcue);
+    var topics = Object.keys(TOP).filter(function (t) { return (!st.ecue || TEC[t] === st.ecue) && base.some(function (e) { return has(e, t); }); });
+    $('#fEcue').innerHTML = '<span class="lbl">Exam</span>' + chip('data-e', '', !st.ecue, 'Both', EX.length) +
+      ECUES.map(function (c) { return chip('data-e', c.id, st.ecue === c.id, c.t, EX.filter(function (e) { return e.ecue === c.id; }).length); }).join('');
+    $('#fTopic').innerHTML = '<span class="lbl">Topic</span>' + chip('data-t', '', !st.topic, 'All', base.length) +
+      topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), base.filter(function (e) { return has(e, t); }).length); }).join('');
+    $('#fKind').innerHTML = '<span class="lbl">Source</span>' + chip('data-k', '', !st.kind, 'All') +
+      KINDS.map(function (k) { var n = base.filter(function (e) { return prov(e) === k.id; }).length; return n ? chip('data-k', k.id, st.kind === k.id, k.t, n) : ''; }).join('');
+    $('#fLvl').innerHTML = '<span class="lbl">Level</span>' + chip('data-l', 0, !st.lvl, 'All') +
+      [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), base.filter(function (e) { return e.lvl === l; }).length); }).join('');
+    $('#fState').innerHTML = '<span class="lbl">Status</span>' + chip('data-s', '', !st.state, 'All') +
+      STATES.map(function (s) { return chip('data-s', s.id, st.state === s.id, s.t, base.filter(function (e) { return stOk(e, s.id); }).length); }).join('');
+    $('#filters').hidden = !EX.length;
+    $$('#fEcue [data-e]').forEach(function (b) { b.addEventListener('click', function () { st.ecue = b.dataset.e || null; if (st.topic && st.ecue && TEC[st.topic] !== st.ecue) st.topic = null; repaint(); }); });
+    $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
+    $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });
+    $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; repaint(); }); });
+    $$('#fState [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.state = b.dataset.s || null; repaint(); }); });
+  }
+
+  function link(id) { var e = BY[id]; return e ? '<a href="#' + id + '">' + esc(e.src) + ': ' + e.title + '</a>' : ''; }
+  function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i && BY[x]; }); }
+  function relHTML(ex) {
+    var out = (ex.near || []).filter(function (id) { return BY[id]; }), inn = (NEAR_IN[ex.id] || []).filter(function (id) { return BY[id]; }), r = [];
+    if (ex.kind === 'partiel') {
+      var same = uniq(out.filter(function (id) { return BY[id].kind === 'partiel'; }).concat(inn.filter(function (id) { return BY[id].kind === 'partiel'; })));
+      var td = uniq(inn.filter(function (id) { return BY[id].kind !== 'partiel'; }));
+      if (same.length) r.push('<b>The same exercise in another paper</b>' + same.map(link).join(' · '));
+      if (td.length) r.push('<b>The same work in a tutorial</b>' + td.map(link).join(' · '));
+    } else {
+      var sj = uniq(out.filter(function (id) { return BY[id].kind === 'partiel'; })), oth = uniq(out.filter(function (id) { return BY[id].kind !== 'partiel'; }).concat(inn));
+      if (sj.length) r.push('<b>Close to a paper</b>' + sj.map(link).join(' · '));
+      if (oth.length) r.push('<b>See also</b>' + oth.map(link).join(' · '));
+    }
+    return r.map(function (x) { return '<p class="rel">' + x + '</p>'; }).join('');
+  }
+  function readHTML(ex) {
+    var seenM = {}, m = [], parts = {}, order = [];
+    (ex.topics || []).forEach(function (t) { var x = METH[t]; if (x && !seenM[x[0]]) { seenM[x[0]] = 1; m.push(x); } });
+    m.sort(function (a, b) { return a[1] - b[1]; });
+    [].concat.apply([], (ex.topics || []).map(function (t) { return COURS[t] || []; })).forEach(function (c) {
+      if (!parts[c[0]]) { parts[c[0]] = []; order.push(c[0]); }
+      if (parts[c[0]].indexOf(c[1]) < 0) parts[c[0]].push(c[1]);
+    });
+    order.sort(function (a, b) { return a - b; });
+    var out = m.map(function (x) { return '<a href="methodes.html#' + x[0] + '">method ' + x[1] + '</a>'; });
+    order.forEach(function (f) {
+      var ps = parts[f].sort(function (a, b) { return a - b; });
+      out.push('lesson ' + f + ', part' + (ps.length > 1 ? 's ' : ' ') + ps.map(function (k) { return '<a href="' + C[f] + '#s' + k + '">' + k + '</a>'; }).join(', '));
+    });
+    return out.length ? '<p class="sol-note">To read again: ' + out.join('; ') + '.</p>' : '';
+  }
+  function solHTML(ex) {
+    var s = (ex.solution || []).map(function (p, i) { return '<div class="sol-step"><b><span class="k">' + (i + 1) + '.</span>' + (p.t || 'Solution') + '</b><div class="body">' + (p.html || '') + '</div></div>'; }).join('');
+    if (ex.answer) s += '<div class="answer"><b class="t">What to write on the exam paper</b>' + ex.answer + '</div>';
+    if (ex.traps && ex.traps.length) s += '<div class="traps"><b class="t">Traps</b><ul>' + ex.traps.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    if (ex.grading) s += '<p class="sol-note">Marking scheme: ' + ex.grading + '</p>';
+    s += '<p class="sol-note">' + (ex.official ? 'Matches the official answer key. ' : '') + (ex.note || 'Solution written, each result recomputed by a program.') + '</p>';
+    return s + readHTML(ex);
+  }
+  function metaHTML(ex) {
+    var s = state(ex);
+    return '<span class="tagc ec">' + (ex.ecue === 'obm' ? 'OBM' : 'DP') + '</span><span class="tagc src' + (ex.kind === 'partiel' ? '' : ' td') + '">' + esc(ex.src) + '</span>' + (ex.pts ? '<span class="tagc">' + pts(ex.pts) + ' pts</span>' : '') + (ex.time ? '<span class="tagc">≈ ' + ex.time + ' min</span>' : '') +
+      (ex.lvl ? '<span class="tagc">' + LVL[ex.lvl] + '</span>' : '') +
+      (ex.topics || []).map(function (t) { return '<span class="tagc">' + esc(TOP[t] || t) + '</span>'; }).join('') +
+      (s ? '<span class="tagc st-' + s + '">' + (s === 'ok' ? 'solved' : 'to review') + '</span>' : '');
+  }
+  function card(ex) {
+    var s = state(ex), el = document.createElement('article');
+    el.className = 'exo'; el.id = ex.id;
+    var qs = (ex.questions || []).length ? '<ol class="exo-qs">' + ex.questions.map(function (q) { return '<li><div class="q">' + q + '</div></li>'; }).join('') + '</ol>' : '';
+    var nh = (ex.hints || []).length;
+    el.innerHTML = '<div class="exo-head"><div class="exo-meta">' + metaHTML(ex) + '</div><h3><a href="#' + ex.id + '">' + ex.title + '</a></h3></div>' +
+      '<div class="exo-body">' + (ex.intro ? '<div class="exo-intro">' + ex.intro + '</div>' : '') + qs + relHTML(ex) + '</div>' +
+      '<div class="exo-hints"></div>' +
+      '<div class="exo-actions">' + (nh ? '<button type="button" class="btn" data-act="hint">Hint 1 / ' + nh + '</button>' : '') +
+      '<button type="button" class="btn primary" data-act="sol" aria-expanded="false">Show the solution</button><span class="grow"></span>' +
+      '<button type="button" class="btn ok" data-act="ok" aria-pressed="' + (s === 'ok') + '">I solved it</button><button type="button" class="btn rev" data-act="review" aria-pressed="' + (s === 'review') + '">To review</button></div>' +
+      '<div class="exo-sol" hidden></div>';
+    el.querySelector('[data-act="sol"]').addEventListener('click', function (e) {
+      var box = el.querySelector('.exo-sol'), open = box.hidden;
+      if (open && !box.dataset.ready) { box.innerHTML = solHTML(ex); box.dataset.ready = '1'; }
+      box.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); e.currentTarget.textContent = open ? 'Hide the solution' : 'Show the solution';
+    });
+    var shownH = 0, hb = el.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shownH >= nh) return;
+      el.querySelector('.exo-hints').insertAdjacentHTML('beforeend', '<div class="hintb"><b>Hint ' + (shownH + 1) + '</b>' + ex.hints[shownH] + '</div>');
+      shownH++; hb.textContent = shownH < nh ? 'Hint ' + (shownH + 1) + ' / ' + nh : 'No more hints'; hb.disabled = shownH >= nh;
+    });
+    /* "I solved it" / "To review": updated in place, an open solution stays open */
+    ['ok', 'review'].forEach(function (k) {
+      el.querySelector('[data-act="' + k + '"]').addEventListener('click', function () {
+        R.exo.set(key(ex), state(ex) === k ? null : k);
+        var now = state(ex);
+        el.querySelector('[data-act="ok"]').setAttribute('aria-pressed', String(now === 'ok'));
+        el.querySelector('[data-act="review"]').setAttribute('aria-pressed', String(now === 'review'));
+        el.querySelector('.exo-meta').innerHTML = metaHTML(ex);
+        paintStats(); paintFilters(); paintSum();
+      });
+    });
+    return el;
+  }
+  function paintSum() {
+    var n = EX.filter(shown).length, any = st.ecue || st.topic || st.kind || st.lvl || st.state;
+    $('#fsum').textContent = any ? n + ' exercise' + (n > 1 ? 's' : '') + ' for these filters.' : '';
+  }
+  function paintList() {
+    var list = EX.filter(shown), box = $('#list'); box.innerHTML = '';
+    if (!EX.length) { box.innerHTML = '<p class="empty">The worked exercises will appear here.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">No exercise for these filters.</p>'; return; }
+    list.forEach(function (e) { box.appendChild(card(e)); });
+  }
+  function repaint() { paintFilters(); paintList(); paintSum(); }
+
+  /* ================================================================ the generators
+     Every expected number is computed by REV.maths (BigInt, exact fractions). The typed answer is read by expr():
+     whole number, fraction, exact decimal, or a computation with + − × / ^ ! and brackets. The .gen-q element carries
+     the question as data (data-q, JSON), for the tests. */
+  var F = MA.F, fr = MA.fr;
+  function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function B(x) { return BigInt(x); }
+  function fT(f) { return fr.tex(f); }
+  function iT(x) { return MA.intTex(x); }
+  function m(t) { return '\\(' + t + '\\)'; }
+  function model(html) { return '<div class="box model"><span class="tag">Model answer</span>' + html + '</div>'; }
+  function tool(name, o) { return '<div data-maths="' + name + '" style="position:relative" data-opts=\'' + JSON.stringify(o).replace(/'/g, '&#39;') + '\'></div>'; }
+  /* ---------- reading an answer: exact expression (comma or point as decimal separator) ---------- */
+  function expr(src) {
+    var s = String(src).replace(/[\s  ]/g, '').replace(/[−–]/g, '-').replace(/[×xX·∗]/g, '*').replace(/÷/g, '/').replace(/,/g, '.');
+    if (!s) return null;
+    var i = 0;
+    function peek() { return s.charAt(i); }
+    function num() {
+      var m0 = /^\d+(\.\d+)?/.exec(s.slice(i)); if (!m0) throw 0;
+      i += m0[0].length; return MA.frac(m0[0]);
+    }
+    function atom() {
+      if (peek() === '(') { i++; var v = add(); if (peek() !== ')') throw 0; i++; return v; }
+      return num();
+    }
+    function post() {
+      var v = atom();
+      while (peek() === '!') { i++; if (v.d !== B(1) || v.n < B(0) || v.n > B(300)) throw 0; v = F(MA.fact(v.n)); }
+      return v;
+    }
+    function pow() {
+      var v = post();
+      if (peek() === '^') { i++; var e = unary(); if (e.d !== B(1) || e.n > B(400) || e.n < B(-400)) throw 0; var k = Number(e.n); v = k >= 0 ? fr.pow(v, k) : fr.div(F(1), fr.pow(v, -k)); }
+      return v;
+    }
+    function unary() { if (peek() === '-') { i++; return fr.neg(unary()); } if (peek() === '+') { i++; return unary(); } return pow(); }
+    function mul() {
+      var v = unary();
+      while (peek() === '*' || peek() === '/') { var o = s.charAt(i++), w = unary(); if (o === '*') v = fr.mul(v, w); else { if (fr.isZero(w)) throw 0; v = fr.div(v, w); } }
+      return v;
+    }
+    function add() {
+      var v = mul();
+      while (peek() === '+' || peek() === '-') { var o = s.charAt(i++), w = mul(); v = o === '+' ? fr.add(v, w) : fr.sub(v, w); }
+      return v;
+    }
+    try { var v = add(); return i === s.length ? v : null; } catch (e) { return null; }
+  }
+
+  /* shared bench: options, question, fields, Check / Another, feedback, solution */
+  function bench(o) {
+    var el = document.getElementById(o.id), cur = null, score = { ok: 0, n: 0 }, done = false;
+    el.innerHTML = '<div class="bench-head"><span class="bh-t">' + o.title + '</span><span class="gen-score" aria-live="polite">0 / 0</span></div><div class="bench-body">' +
+      (o.modes ? '<div class="gen-opts"><label class="fld"><span>' + o.modeLabel + '</span><select data-k="mode">' + o.modes.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join('') + '</select></label></div>' : '') +
+      '<div class="gen-q"></div><form class="gen-f" novalidate autocomplete="off"></form><div class="gen-fb" aria-live="polite"></div><div class="gen-sol" hidden></div></div>';
+    var qEl = el.querySelector('.gen-q'), form = el.querySelector('form'), fb = el.querySelector('.gen-fb'), sol = el.querySelector('.gen-sol'), modeEl = el.querySelector('[data-k="mode"]');
+    function make() {
+      cur = o.make(modeEl ? modeEl.value : null); done = false;
+      qEl.innerHTML = cur.q; qEl.setAttribute('data-q', JSON.stringify(cur.spec));
+      form.innerHTML = cur.fields.map(function (f) {
+        if (f.choices) return '<label class="fld' + (f.cls ? ' ' + f.cls : '') + '"><span>' + f.label + '</span><select data-f="' + f.k + '"><option value="">…</option>' + f.choices.map(function (c) { return '<option value="' + c[0] + '">' + c[1] + '</option>'; }).join('') + '</select></label>';
+        return '<label class="fld' + (f.cls ? ' ' + f.cls : '') + '"><span>' + f.label + '</span><input type="text" data-f="' + f.k + '" spellcheck="false" autocapitalize="off" inputmode="text" placeholder="' + esc(f.ph || '') + '"></label>';
+      }).join('') + '<div class="row"><button class="btn primary" type="submit">Check</button><button class="btn" type="button" data-new>Another</button><button class="btn ghost" type="button" data-sol hidden aria-expanded="false">Show the solution</button></div>' +
+        '<p class="gen-help row">Whole number, fraction (<code>7/20</code>), exact decimal or computation (<code>20*19*18</code>, <code>10^4-9^4</code>, <code>8!/(3!*2!)</code>).</p>';
+      fb.innerHTML = ''; sol.innerHTML = ''; sol.hidden = true;
+      form.querySelector('[data-new]').addEventListener('click', function () { make(); var i = form.querySelector('input,select'); if (i) i.focus(); });
+      form.querySelector('[data-sol]').addEventListener('click', function () { toggleSol(sol.hidden); });
+    }
+    function toggleSol(open) {
+      var b = form.querySelector('[data-sol]');
+      if (open && !sol.innerHTML) sol.innerHTML = cur.sol();
+      sol.hidden = !open; b.hidden = false; b.setAttribute('aria-expanded', String(open)); b.textContent = open ? 'Hide the solution' : 'Show the solution';
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var vals = {}; $$('[data-f]', form).forEach(function (i) { vals[i.getAttribute('data-f')] = i.value; });
+      var r = check(cur, vals);
+      if (r.unread) { fb.innerHTML = '<p><span class="no">Cannot read this answer.</span> ' + r.unread + '</p>'; return; }
+      if (!done) { score.n++; if (r.ok) score.ok++; done = true; el.querySelector('.gen-score').textContent = score.ok + ' / ' + score.n; }
+      fb.innerHTML = '<p>' + (r.ok ? '<span class="ok">Right.</span> ' : '<span class="no">Not quite.</span> ') + r.msg + '</p>';
+      toggleSol(!r.ok);
+    });
+    if (modeEl) modeEl.addEventListener('change', make);
+    make();
+  }
+  /* shared check: each numeric field compared with its exact value, the model choice with its leaf */
+  function check(it, v) {
+    var bad = [], miss = [];
+    for (var i = 0; i < it.fields.length; i++) {
+      var f = it.fields[i], val = v[f.k];
+      if (f.choices) { if (!val) miss.push(f.label); else if (val !== f.want) bad.push(f.label); continue; }
+      if (!String(val || '').trim()) { miss.push(f.label); continue; }
+      var g = expr(val);
+      if (!g) return { unread: '“' + esc(val) + '”: write a whole number, a fraction or a computation.' };
+      if (!fr.eq(g, f.want)) bad.push(f.label);
+    }
+    if (miss.length) return { unread: 'Fill in: ' + miss.join(', ') + '.' };
+    return { ok: !bad.length, msg: (bad.length ? 'To review: ' + bad.join(', ') + '. ' : '') + it.fields.map(function (f) { return f.label + ' = ' + (f.choices ? f.choices.filter(function (c) { return c[0] === f.want; })[0][1] : m(fT(f.want))); }).join('; ') + '.' };
+  }
+
+  /* ---------- 1. counting: choose the model, then count ---------- */
+  /* plain-text labels: the content of an <option> is not rendered by KaTeX */
+  var LEAF = [['list', 'p-tuple with repetition: nᵖ'], ['perm', 'permutation: n!'], ['arr', 'arrangement: Aₙᵖ'], ['comb', 'combination: “n choose p”']];
+  var LEAFTXT = { list: 'p-tuple with repetition', perm: 'permutation', arr: 'arrangement', comb: 'combination' };
+  var WORDS = ['BANANA', 'BALLOON', 'COFFEE', 'LETTER', 'PEPPER', 'COCONUT', 'TOMATO', 'ELEMENT', 'ANAGRAM', 'KITTEN', 'PUZZLE', 'APPLE'];
+  function letters(w) { var c = {}; w.split('').forEach(function (x) { c[x] = (c[x] || 0) + 1; }); return c; }
+  function fact(n) { return MA.fact(n); }
+  function A(n, p) { return MA.arr(n, p); }
+  function Cb(n, p) { return MA.binom(n, p); }
+  function ord(k) { return k === 1 ? '1<sup>st</sup>' : k === 2 ? '2<sup>nd</sup>' : k === 3 ? '3<sup>rd</sup>' : k + '<sup>th</sup>'; }
+  var COUNT = {
+    podium: function () { var n = ri(8, 25), k = pick([3, 3, 4]); return { leaf: 'arr', n: n, p: k, v: A(n, k),
+      q: 'A race has ' + n + ' competitors. ' + (k === 3 ? 'The podium is the ranking of the first three' : 'The ranking of the first four is rewarded') + '. How many ' + (k === 3 ? 'podiums' : 'rankings') + ' are possible?',
+      why: 'Swapping the ' + ord(1) + ' and the ' + ord(2) + ' gives another ranking: <b>the order matters</b>. A competitor takes only one place: <b>no repetition</b>. We choose ' + k + ' competitors out of ' + n + ': it is an arrangement.',
+      calc: 'For the ' + ord(1) + ' place there are ' + n + ' possibilities; for the ' + ord(2) + ', ' + (n - 1) + '; for the ' + ord(3) + ', ' + (n - 2) + (k === 4 ? '; for the ' + ord(4) + ', ' + (n - 3) : '') + '.', tex: MA.countTex('arr', n, k) }; },
+    code: function () { var k = ri(3, 5); return { leaf: 'list', n: 10, p: k, v: B(10) ** B(k),
+      q: 'A padlock has a code of ' + k + ' digits (0 to 9), which may repeat. How many codes are possible?',
+      why: 'The code 1 2 3 is not the code 3 2 1: <b>the order matters</b>. A digit may come back: <b>with repetition</b>. It is a ' + k + '-tuple of the set of the 10 digits.',
+      calc: 'Each of the ' + k + ' digits has 10 possibilities, whatever the others.', tex: MA.countTex('list', 10, k) }; },
+    codeD: function () { var k = ri(3, 5); return { leaf: 'arr', n: 10, p: k, v: A(10, k),
+      q: 'A code is made of ' + k + ' <b>distinct</b> digits (0 to 9). How many codes are possible?',
+      why: '<b>The order matters</b> (a code is read from left to right) and the digits are distinct: <b>without repetition</b>. It is an arrangement of ' + k + ' digits out of 10.',
+      calc: '10 choices for the first digit, 9 for the second, and so on.', tex: MA.countTex('arr', 10, k) }; },
+    comite: function () { var n = ri(8, 20), k = ri(2, 5); return { leaf: 'comb', n: n, p: k, v: Cb(n, k),
+      q: 'In a class of ' + n + ' students, a group of ' + k + ' students is formed, with no particular roles. How many groups are possible?',
+      why: 'A group is a set of students: <b>the order does not matter</b>, and a student appears in it only once. We choose a subset with ' + k + ' elements of a set with ' + n + ' elements: it is a combination.',
+      calc: 'The number of subsets with ' + k + ' elements of a set with ' + n + ' elements.', tex: MA.countTex('comb', n, k) }; },
+    main: function () { var k = ri(3, 5); return { leaf: 'comb', n: 32, p: k, v: Cb(32, k),
+      q: k + ' cards are drawn simultaneously from a 32-card deck. How many hands are possible?',
+      why: 'A <b>simultaneous</b> draw gives a set of cards: the order does not matter, no repetition. It is a combination of ' + k + ' cards out of 32.',
+      calc: 'The number of subsets with ' + k + ' elements of a set with 32 elements.', tex: MA.countTex('comb', 32, k) }; },
+    livres: function () { var n = ri(4, 9); return { leaf: 'perm', n: n, p: n, v: fact(n),
+      q: n + ' different books are put on a shelf. How many arrangements of the shelf are possible?',
+      why: '<b>All</b> the books are placed, the order matters, each one once: it is a permutation of the ' + n + ' books.',
+      calc: n + ' choices for the first place, ' + (n - 1) + ' for the second, …, 1 for the last one.', tex: MA.countTex('perm', n) }; },
+    bureau: function () { var n = ri(10, 30); return { leaf: 'arr', n: n, p: 3, v: A(n, 3),
+      q: 'A club of ' + n + ' members elects a president, a treasurer and a secretary, three different people. How many boards are possible?',
+      why: 'The positions are <b>distinct</b>: swapping the president and the treasurer changes the board, the order matters. A person holds one position only: without repetition. It is an arrangement of 3 out of ' + n + '.',
+      calc: n + ' choices for the president, ' + (n - 1) + ' for the treasurer, ' + (n - 2) + ' for the secretary.', tex: MA.countTex('arr', n, 3) }; },
+    urne: function () { var n = ri(5, 12), k = ri(3, 5); return { leaf: 'list', n: n, p: k, v: B(n) ** B(k),
+      q: 'A box contains ' + n + ' balls numbered 1 to ' + n + '. We successively pick ' + k + ' balls <b>with replacement</b>, writing down the numbers in order. How many results are possible?',
+      why: '<b>Successive</b> draws: the order matters. <b>With replacement</b>: a number may come back. It is a ' + k + '-tuple of ⟦1, ' + n + '⟧.',
+      calc: 'Each draw has ' + n + ' possible outcomes.', tex: MA.countTex('list', n, k) }; },
+    /* combined cases */
+    auMoins: function () { var k = ri(3, 5), d = ri(1, 9); return { leaf: 'list', n: 10, p: k, v: B(10) ** B(k) - B(9) ** B(k), comp: true, par: { k: k },
+      q: 'A code is made of ' + k + ' digits (0 to 9), which may repeat. How many codes contain the digit ' + d + ' <b>at least once</b>?',
+      why: 'The basic model is the ' + k + '-tuple (order, repetition). “At least once” is counted through the <b>complement</b>: all the codes, minus those with no ' + d + '.',
+      calc: 'There are \\(10^{' + k + '}\\) codes, \\(9^{' + k + '}\\) of them without the digit ' + d + ' (9 possible digits in each place).', tex: '10^{' + k + '} - 9^{' + k + '} = ' + iT(B(10) ** B(k)) + ' - ' + iT(B(9) ** B(k)) + ' = ' + iT(B(10) ** B(k) - B(9) ** B(k)) }; },
+    maisPas: function () { var n = ri(8, 25); return { leaf: 'arr', n: n, p: 3, v: B(3) * A(n - 2, 2), comp: true, par: { n: n },
+      q: 'A race has ' + n + ' competitors, including Pierre and Jade. How many podiums (the first three, in order) contain Pierre <b>but not</b> Jade?',
+      why: 'The model is the arrangement (podium: order, no repetition). First place Pierre, then fill in with competitors who are neither Pierre nor Jade.',
+      calc: 'Pierre has 3 possible places. The other two places are filled in order with the ' + (n - 2) + ' other competitors (neither Pierre nor Jade): ' + (n - 2) + ' then ' + (n - 3) + ' choices.', tex: '3 \\times ' + (n - 2) + ' \\times ' + (n - 3) + ' = ' + iT(B(3) * A(n - 2, 2)) }; },
+    ouOu: function () { var n = ri(8, 25); return { leaf: 'arr', n: n, p: 3, v: A(n, 3) - A(n - 2, 3), comp: true, par: { n: n },
+      q: 'A race has ' + n + ' competitors, including Pierre and Jade. How many podiums contain <b>at least</b> Pierre or Jade?',
+      why: 'The model is the arrangement. “At least one of the two”: go through the <b>complement</b>, the podiums with neither Pierre nor Jade.',
+      calc: 'All the podiums: \\(A_{' + n + '}^{3}\\). Without Pierre and without Jade: \\(A_{' + (n - 2) + '}^{3}\\).', texP: 'A_{' + n + '}^{3} - A_{' + (n - 2) + '}^{3} = ' + n + ' \\times ' + (n - 1) + ' \\times ' + (n - 2) + ' - ' + (n - 2) + ' \\times ' + (n - 3) + ' \\times ' + (n - 4) + ' = ' + iT(A(n, 3) - A(n - 2, 3)) }; },
+    exact: function () { var g = ri(4, 12), b = ri(4, 12), k = ri(3, 5), j = ri(1, k - 1); return { leaf: 'comb', n: g + b, p: k, v: Cb(g, j) * Cb(b, k - j), comp: true, par: { g: g, b: b, k: k, j: j },
+      q: 'A class has ' + g + ' girls and ' + b + ' boys. A committee of ' + k + ' students is formed. How many committees have <b>exactly</b> ' + j + ' girl' + (j > 1 ? 's' : '') + '?',
+      why: 'A committee is a set: combinations. “Exactly ' + j + '”: choose the girls among the girls and the boys among the boys, then multiply (successive independent choices).',
+      calc: j + ' girl' + (j > 1 ? 's' : '') + ' out of ' + g + ', and ' + (k - j) + ' boy' + (k - j > 1 ? 's' : '') + ' out of ' + b + '.', tex: '\\binom{' + g + '}{' + j + '} \\times \\binom{' + b + '}{' + (k - j) + '} = ' + Cb(g, j) + ' \\times ' + Cb(b, k - j) + ' = ' + iT(Cb(g, j) * Cb(b, k - j)) }; },
+    auMoinsF: function () { var g = ri(4, 12), b = ri(4, 12), k = ri(3, 4); return { leaf: 'comb', n: g + b, p: k, v: Cb(g + b, k) - Cb(b, k), comp: true, par: { g: g, b: b, k: k },
+      q: 'A class has ' + g + ' girls and ' + b + ' boys. A committee of ' + k + ' students is formed. How many committees have <b>at least one</b> girl?',
+      why: 'Combinations (a committee is a set). “At least one”: <b>complement</b>, all the committees minus those made of boys only.',
+      calc: 'All the committees: \\(\\binom{' + (g + b) + '}{' + k + '}\\); with no girl: \\(\\binom{' + b + '}{' + k + '}\\).', tex: '\\binom{' + (g + b) + '}{' + k + '} - \\binom{' + b + '}{' + k + '} = ' + iT(Cb(g + b, k)) + ' - ' + iT(Cb(b, k)) + ' = ' + iT(Cb(g + b, k) - Cb(b, k)) }; },
+    anag: function () { var w = pick(WORDS), c = letters(w), rep = Object.keys(c).filter(function (x) { return c[x] > 1; }), den = B(1);
+      rep.forEach(function (x) { den *= fact(c[x]); });
+      var v = fact(w.length) / den, dtex = rep.map(function (x) { return c[x] + '!'; }).join(' \\times ');
+      return { leaf: 'perm', n: w.length, p: w.length, v: v, comp: true, w: w,
+        q: 'How many anagrams (words, meaningful or not) can be written with all the letters of the word <b>' + w + '</b>?',
+        why: 'All the letters are placed: it is a <b>permutation</b> of the ' + w.length + ' places. But ' + rep.map(function (x) { return 'the letter ' + x + ' appears ' + c[x] + ' times'; }).join(', ') + ': swapping two identical letters gives the same word, so divide by the factorials of the repetitions.',
+        calc: w.length + ' letters, including ' + rep.map(function (x) { return c[x] + ' ' + x; }).join(', ') + '.', tex: '\\frac{' + w.length + '!}{' + dtex + '} = \\frac{' + iT(fact(w.length)) + '}{' + den + '} = ' + iT(v) }; }
+  };
+  var SIMPLE = ['podium', 'code', 'codeD', 'comite', 'main', 'livres', 'bureau', 'urne'], COMPOSE = ['auMoins', 'maisPas', 'ouOu', 'exact', 'auMoinsF', 'anag'];
+  function countMake(mode) {
+    var k = mode === 'simple' ? pick(SIMPLE) : mode === 'compose' ? pick(COMPOSE) : pick(Math.random() < 0.5 ? SIMPLE : COMPOSE), c = COUNT[k]();
+    return {
+      spec: { k: 'count', t: k, leaf: c.leaf, n: c.n, p: c.p, w: c.w || null, par: c.par || null },
+      q: '<p>' + c.q + '</p>',
+      fields: [{ k: 'leaf', label: 'Basic model', choices: LEAF, want: c.leaf, cls: 'wide' }, { k: 'v', label: 'Number', ph: 'e.g. 20*19*18', want: F(c.v) }],
+      sol: function () {
+        return '<p><b>The model.</b> ' + c.why + '</p>' +
+          model('<p>' + c.calc + '</p><p>' + (c.comp ? 'The number we are looking for is ' : 'The number of possibilities is ') + m(c.texP || c.tex) + '.</p>') +
+          '<p class="sol-note">Basic model: ' + LEAFTXT[c.leaf] + '. To read again: <a href="methodes.html#modele">method 7</a>, <a href="cours-5-denombrement.html#s6">lesson 5, part 6</a>.</p>';
+      }
+    };
+  }
+
+  /* ---------- 2. conditional probability: law of total probability, Bayes, threshold ---------- */
+  var CTX = [
+    { a: 'S', b: 'V', ta: 'the student comes to the support classes', tb: 'the student passes the maths unit', seuil: true,
+      txt: function (pa, pb, pc) { return 'In a class year, the probability that a student comes to the maths support classes is ' + pa + '. If they come, the probability that they pass the maths unit is ' + pb + '; otherwise, it drops to ' + pc + '.'; },
+      q2: 'We pick a student who passed. What is the probability that they came to the support classes?', q3: function (s) { return 'What minimal proportion \\(p\\) of students should come to the support classes for the probability of passing to be at least ' + s + '?'; } },
+    { a: 'C', b: 'V', ta: 'the student learns the lecture', tb: 'the student passes the year', seuil: true,
+      txt: function (pa, pb, pc) { return 'In a class year, the probability that a student learns the maths lecture is ' + pa + '. If they learn it, they pass the year with probability ' + pb + '; otherwise, with probability ' + pc + '.'; },
+      q2: 'We pick at random a student who passes the year. What is the probability that they learnt the lecture?', q3: function (s) { return 'What minimal proportion \\(p\\) of students learning the lecture would be needed for the probability of passing to be at least ' + s + '?'; } },
+    { a: 'E', b: 'G', ta: 'the player trained the day before', tb: 'the player wins the match', seuil: true,
+      txt: function (pa, pb, pc) { return 'A player trains the day before a match with probability ' + pa + '. If they trained, they win with probability ' + pb + '; otherwise, with probability ' + pc + '.'; },
+      q2: 'The player won. What is the probability that they trained the day before?', q3: function (s) { return 'With what minimal probability \\(p\\) should they train to win with probability at least ' + s + '?'; } },
+    { a: 'M', b: 'T', ta: 'the person is ill', tb: 'the test is positive', seuil: false,
+      txt: function (pa, pb, pc) { return 'A disease affects a proportion ' + pa + ' of the population. A screening test is positive for an ill person with probability ' + pb + ', and for a healthy person with probability ' + pc + ' (false positive).'; },
+      q2: 'A person’s test is positive. What is the probability that they are ill?' }
+  ];
+  function fs(list) { var f = pick(list); return F(f[0], f[1]); }
+  function pct(f) { var v = fr.mul(f, F(100)); return v.d === B(1) ? v.n + '%' : m(fT(f)); }
+  function bayesMake(mode) {
+    var withS = mode === 'seuil', ctx = pick(withS ? CTX.filter(function (c) { return c.seuil; }) : CTX), pa, pb, pc, s = null, p = null;
+    if (ctx.a === 'M') { pa = fs([[1, 100], [1, 50], [1, 20], [1, 10], [1, 4]]); pb = fs([[9, 10], [19, 20], [99, 100], [4, 5]]); pc = fs([[1, 20], [1, 10], [1, 50], [1, 5]]); }
+    else {
+      pa = fs([[1, 10], [1, 5], [3, 10], [2, 5], [1, 2], [3, 5], [7, 10], [1, 4], [3, 4]]);
+      do { pb = fs([[3, 5], [7, 10], [3, 4], [4, 5], [9, 10], [17, 20]]); pc = fs([[1, 10], [1, 5], [1, 4], [3, 10], [2, 5], [1, 2]]); } while (fr.cmp(pb, pc) <= 0);
+    }
+    var pna = fr.sub(F(1), pa), pB = fr.add(fr.mul(pb, pa), fr.mul(pc, pna)), post = fr.div(fr.mul(pb, pa), pB);
+    if (withS) {
+      var cands = []; for (var k = 1; k < 20; k++) { var x = F(k, 20); if (fr.cmp(x, pc) > 0 && fr.cmp(x, pb) < 0) cands.push(x); }
+      s = pick(cands); p = fr.div(fr.sub(s, pc), fr.sub(pb, pc));
+    }
+    var A0 = ctx.a, B0 = ctx.b, nA = '\\overline{' + A0 + '}';
+    var fields = [{ k: 'pb', label: 'P(' + B0 + ')', ph: 'e.g. 7/20', want: pB }, { k: 'post', label: 'P(' + A0 + ' | ' + B0 + ')', ph: 'e.g. 8/35', want: post }];
+    if (withS) fields.push({ k: 'p', label: 'minimal p', ph: 'e.g. 9/10', want: p });
+    var q = '<p>' + ctx.txt(pct(pa), pct(pb), pct(pc)) + ' Let ' + m(A0) + ' be the event “' + ctx.ta + '” and ' + m(B0) + ' the event “' + ctx.tb + '”. Give the results as simplified fractions.</p><ol style="margin:0;padding-left:1.3rem"><li>We pick a person at random. Compute ' + m('\\P(' + B0 + ')') + '.</li><li>' + ctx.q2 + '</li>' + (withS ? '<li>' + ctx.q3(pct(s)) + '</li>' : '') + '</ol>';
+    return {
+      spec: { k: 'bayes', a: fr.str(pa), b: fr.str(pb), c: fr.str(pc), s: s ? fr.str(s) : null, ctx: ctx.a },
+      q: q, fields: fields,
+      sol: function () {
+        var t1 = '\\P(' + B0 + ') = \\P(' + B0 + ' \\mid ' + A0 + ')\\P(' + A0 + ') + \\P(' + B0 + ' \\mid ' + nA + ')\\P(' + nA + ') = ' + fT(pb) + ' \\times ' + fT(pa) + ' + ' + fT(pc) + ' \\times ' + fT(pna) + ' = ' + fT(pB);
+        var t2 = '\\P(' + A0 + ' \\mid ' + B0 + ') = \\frac{\\P(' + A0 + ' \\cap ' + B0 + ')}{\\P(' + B0 + ')} = \\frac{\\P(' + B0 + ' \\mid ' + A0 + ')\\P(' + A0 + ')}{\\P(' + B0 + ')} = \\frac{' + fT(fr.mul(pb, pa)) + '}{' + fT(pB) + '} = ' + fT(post);
+        var h = model('<p>We have ' + m('\\P(' + A0 + ') = ' + fT(pa)) + ', ' + m('\\P(' + B0 + ' \\mid ' + A0 + ') = ' + fT(pb)) + ' and ' + m('\\P(' + B0 + ' \\mid ' + nA + ') = ' + fT(pc)) + '.</p>' +
+          '<p>1. Since ' + m('\\{' + A0 + ', ' + nA + '\\}') + ' is a partition of ' + m('\\Omega') + ', ' + m(B0 + ' = (' + B0 + ' \\cap ' + A0 + ') \\cup (' + B0 + ' \\cap ' + nA + ')') + ' (disjoint union). By the law of total probability:</p><div class="fm">\\[' + t1 + '.\\]</div>' +
+          '<p>2. We are looking for ' + m('\\P(' + A0 + ' \\mid ' + B0 + ')') + ':</p><div class="fm">\\[' + t2 + '.\\]</div>' +
+          (withS ? '<p>3. Let ' + m('p = \\P(' + A0 + ')') + '. Then ' + m('\\P(' + B0 + ') = ' + fT(pb) + 'p + ' + fT(pc) + '(1 - p) = ' + fT(fr.sub(pb, pc)) + 'p + ' + fT(pc)) + '. We want ' + m(fT(fr.sub(pb, pc)) + 'p + ' + fT(pc) + ' \\geq ' + fT(s)) + ', that is ' + m('p \\geq \\frac{' + fT(s) + ' - ' + fT(pc) + '}{' + fT(fr.sub(pb, pc)) + '} = ' + fT(p)) + '. The minimal proportion is ' + m(fT(p)) + '.</p>' : ''));
+        h += tool('tree', { first: [{ n: A0, p: fr.str(pa) }, { n: nA }], second: { n: B0, nb: '\\overline{' + B0 + '}', p: [fr.str(pb), fr.str(pc)] }, edit: false });
+        if (ctx.a === 'M') h += '<p class="sol-note">A positive test does not mean “ill with probability ' + pct(pb).replace(/\\\(|\\\)/g, '') + '”: when the disease is rare, false positives weigh heavily in ' + m('\\P(T)') + '.</p>';
+        return h + '<p class="sol-note">To read again: <a href="methodes.html#conditionnelles">method 9</a>, <a href="cours-6-probabilites.html#s7">lesson 6, parts 7</a> and <a href="cours-6-probabilites.html#s8">8</a>.</p>';
+      }
+    };
+  }
+
+  /* ---------- 3. binomial distribution: Bernoulli, P(Y = k), E, V ---------- */
+  var BCTX = [
+    function (n) { var c = pick([2, 3, 4, 5]); return { p: F(1, c), txt: 'An MCQ has ' + n + ' independent questions; each has ' + c + ' possible answers, only one of them right. A student answers each question at random. Let ' + m('X_k') + ' be the variable equal to 1 if the answer to question ' + m('k') + ' is right, 0 otherwise, and ' + m('Y') + ' the number of right answers.', succ: 'the answer is right' }; },
+    function (n) { var r = ri(1, 6), w = ri(1, 6); return { p: F(r, r + w), txt: 'A box contains ' + r + ' red ball' + (r > 1 ? 's' : '') + ' and ' + w + ' white ball' + (w > 1 ? 's' : '') + ', indistinguishable to the touch. We successively pick ' + n + ' balls with replacement; the draws are independent. Let ' + m('X_k') + ' be the variable equal to 1 if the ' + m('k') + '-th ball is red, 0 otherwise, and ' + m('Y') + ' the number of red balls obtained.', succ: 'the ball is red' }; },
+    function (n) { var six = Math.random() < 0.5; return { p: six ? F(1, 6) : F(1, 3), txt: 'A fair six-sided dice is rolled ' + n + ' times; the rolls are independent. Let ' + m('X_k') + ' be the variable equal to 1 if the ' + m('k') + '-th roll gives ' + (six ? 'a 6' : 'a multiple of 3') + ', 0 otherwise, and ' + m('Y') + ' the number of rolls giving ' + (six ? 'a 6' : 'a multiple of 3') + '.', succ: six ? 'the dice gives 6' : 'the dice gives 3 or 6' }; }
+  ];
+  function binMake() {
+    var n = ri(4, 10), c = pick(BCTX)(n), p = c.p, q1 = fr.sub(F(1), p), k = ri(0, Math.min(n, 4));
+    var pk = fr.mul(F(MA.binom(n, k)), fr.mul(fr.pow(p, k), fr.pow(q1, n - k))), E = fr.mul(F(n), p), V = fr.mul(fr.mul(F(n), p), q1);
+    return {
+      spec: { k: 'binom', n: n, p: fr.str(p), k2: k },
+      q: '<p>' + c.txt + ' Give the results as simplified fractions.</p><ol style="margin:0;padding-left:1.3rem"><li>Give the distribution of ' + m('X_k') + ': the value of ' + m('\\P(X_k = 1)') + '.</li><li>Justify that ' + m('Y') + ' is binomial-distributed; compute ' + m('\\P(Y = ' + k + ')') + '.</li><li>Compute ' + m('\\E(Y)') + ' and ' + m('\\V(Y)') + '.</li></ol>',
+      fields: [{ k: 'p', label: 'P(X_k = 1)', ph: 'e.g. 1/3', want: p }, { k: 'pk', label: 'P(Y = ' + k + ')', ph: 'e.g. 80/243', want: pk }, { k: 'e', label: 'E(Y)', ph: 'e.g. 20/3', want: E }, { k: 'v', label: 'V(Y)', ph: 'e.g. 40/9', want: V }],
+      sol: function () {
+        var pT = fT(p), qT = fT(q1);
+        var h = model('<p>1. ' + m('X_k(\\Omega) = \\{0, 1\\}') + ', ' + m('\\P(X_k = 1) = ' + pT) + ' (' + c.succ + ') and ' + m('\\P(X_k = 0) = 1 - ' + pT + ' = ' + qT) + ': ' + m('X_k') + ' is Bernoulli-distributed with the parameter ' + m(pT) + '. We have ' + m('\\E(X_k) = 0 \\times ' + qT + ' + 1 \\times ' + pT + ' = ' + pT) + ' and ' + m('\\V(X_k) = \\E(X_k^2) - (\\E(X_k))^2 = ' + pT + ' - ' + fT(fr.mul(p, p)) + ' = ' + fT(fr.mul(p, q1))) + '.</p>' +
+          '<p>2. ' + m('Y = X_1 + X_2 + \\cdots + X_{' + n + '}') + ' is the sum of ' + n + ' <b>independent</b> Bernoulli variables with the same parameter ' + m(pT) + ': ' + m('Y') + ' is binomial-distributed with parameters ' + m(n) + ' and ' + m(pT) + ', ' + m('Y(\\Omega) = \\ent{0}{' + n + '}') + ' and, for all ' + m('i \\in \\ent{0}{' + n + '}') + ', ' + m('\\P(Y = i) = \\binom{' + n + '}{i}\\left(' + pT + '\\right)^i\\left(' + qT + '\\right)^{' + n + ' - i}') + '. Here:</p>' +
+          '<div class="fm">\\[\\P(Y = ' + k + ') = \\binom{' + n + '}{' + k + '}\\left(' + pT + '\\right)^{' + k + '}\\left(' + qT + '\\right)^{' + (n - k) + '} = ' + MA.binom(n, k) + ' \\times ' + fT(fr.pow(p, k)) + ' \\times ' + fT(fr.pow(q1, n - k)) + ' = ' + fT(pk) + '.\\]</div>' +
+          '<p>3. By linearity of the expectation, ' + m('\\E(Y) = \\E(X_1) + \\cdots + \\E(X_{' + n + '}) = ' + n + ' \\times ' + pT + ' = ' + fT(E)) + '. Since ' + m('X_1, \\dots, X_{' + n + '}') + ' are independent, ' + m('\\V(Y) = \\V(X_1) + \\cdots + \\V(X_{' + n + '}) = ' + n + ' \\times ' + fT(fr.mul(p, q1)) + ' = ' + fT(V)) + '.</p>');
+        h += tool('law', { law: 'binom', n: n, p: fr.str(p), name: 'Y', edit: false });
+        return h + '<p class="sol-note">To read again: <a href="methodes.html#binomiale">method 10</a>, <a href="cours-7-variables.html#s7">lesson 7, part 7</a>.</p>';
+      }
+    };
+  }
+
+  function initGens() {
+    bench({ id: 'gen-count', title: 'Counting · choose the model, count', modeLabel: 'Situations', modes: [['mix', 'At random'], ['simple', 'A single model'], ['compose', 'Combined cases: at least, exactly, but not, anagrams']], make: countMake });
+    bench({ id: 'gen-bayes', title: 'Law of total probability and Bayes', modeLabel: 'Questions', modes: [['tot', 'Total probability, Bayes'], ['seuil', 'With the “threshold” question (minimal proportion)']], make: bayesMake });
+    bench({ id: 'gen-binom', title: 'Bernoulli and binomial distribution', make: binMake });
+  }
+
+  /* ---------- direct links: #obm, #dp, #<topic>, #partiel, #sem, #td1, #td2, #tdx, #td, #<exercise id>, #infini, #gen-… ---------- */
+  function applyHash() {
+    var h = decodeURIComponent((location.hash || '').slice(1));
+    if (!h) return;
+    var none = { ecue: null, topic: null, kind: null, lvl: 0, state: null };
+    if (h === 'obm' || h === 'dp') { st = none; st.ecue = h; repaint(); go('filters', false); return; }
+    if (TOP[h]) { st = none; st.topic = h; repaint(); go('filters', false); return; }
+    if (KORD[h] || h === 'td') { st = none; st.kind = h; repaint(); go('filters', false); return; }
+    if (BY[h]) { if (!shown(BY[h])) { st = none; repaint(); } go(h, true); return; }
+    if (h === 'infini' || /^gen-/.test(h)) go(h, false);
+  }
+  function go(id, mark) {
+    var t = document.getElementById(id); if (!t) return;
+    if (mark) { $$('.exo.target').forEach(function (x) { x.classList.remove('target'); }); t.classList.add('target'); }
+    setTimeout(function () { t.scrollIntoView({ behavior: U.reduceMotion() ? 'auto' : 'smooth' }); }, 30);
+  }
+  paintStats(); repaint(); initGens();
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+  R.store.on(paintStats);
+  R.mathsGen = { expr: expr };   /* for the tests */
+})();
+</script>
+</body>
+</html>

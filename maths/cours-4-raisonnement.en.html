@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reasoning · Maths</title>
+<meta name="description" content="Maths, OBM, lesson 4: writing a proof, direct reasoning, proving both implications, double inclusion, proof by contrapositive, proof by contradiction, proof by cases, binary relations (reflexive, symmetric, antisymmetric, transitive, order, equivalence, classes), proof by induction and sums. With the graph of a relation and an induction stepper.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Tools of lesson 4 (written at the bottom of the page): graph of a relation, induction stepper */
+.p4-graph{display:flex;justify-content:center;min-width:0}
+.p4-graph svg{width:100%;max-width:380px;height:auto;display:block;overflow:visible}
+.p4-ar{fill:none;stroke:var(--muted);stroke-width:1.4}
+.p4-ar.hl{stroke:var(--red);stroke-width:2.6}
+.p4-ar.miss{stroke:var(--red);stroke-width:2;stroke-dasharray:5 4}
+.p4-mk{fill:var(--muted)} .p4-mk.hl{fill:var(--red)}
+.p4-nd circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+.p4-nd text{font-family:var(--font-ui);font-size:15px;font-weight:600;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.p4-nd.c0 circle{fill:var(--z1);fill-opacity:.2;stroke:var(--z1);stroke-width:2}
+.p4-nd.c1 circle{fill:var(--z2);fill-opacity:.2;stroke:var(--z2);stroke-width:2}
+.p4-nd.c2 circle{fill:var(--z3);fill-opacity:.2;stroke:var(--z3);stroke-width:2}
+.p4-nd.c3 circle{fill:var(--exam);fill-opacity:.2;stroke:var(--exam);stroke-width:2}
+.p4-nd.hl circle{stroke:var(--red);stroke-width:3}
+.p4-nd.pick circle{stroke:var(--accent);stroke-width:3;stroke-dasharray:4 3}
+.p4-nd.ed{cursor:pointer}
+.p4-nd:focus{outline:none}
+.p4-nd:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.p4-def{font-size:1rem}
+.p4-props{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+@media (max-width:520px){.p4-props{grid-template-columns:minmax(0,1fr)}}
+.p4-pr{width:100%;font:inherit;font-family:var(--font-ui);font-size:.95rem;display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:.3rem .75rem;min-height:40px;cursor:pointer;text-align:left}
+.p4-pr:hover{border-color:var(--accent)}
+.p4-pr[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.p4-pr b{font-weight:700} .p4-pr b.y{color:var(--ok)} .p4-pr b.n{color:var(--bad)}
+.p4-pr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.p4-verdict{font-family:var(--font-ui);font-weight:600}
+.p4-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:6px}
+.p4-tile{border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:.35rem .5rem;display:grid;gap:.1rem;font-family:var(--font-ui);font-size:.84rem;min-width:0}
+.p4-tile .nn{font-weight:700}
+.p4-tile .vv{overflow-x:auto;overflow-y:hidden;min-width:0;color:var(--muted);line-height:1.7}
+.p4-tile .tt{font-weight:600} .p4-tile .tt.y{color:var(--ok)} .p4-tile .tt.n{color:var(--bad)}
+.p4-tile.start{box-shadow:inset 0 3px 0 var(--accent)}
+.p4-tile.pv{background:var(--ok-soft);border-color:var(--ok)}
+.p4-tile.ko{background:var(--red-soft);border-color:var(--red)}
+.p4-tile .pf{font-size:.76rem;color:var(--ok);font-weight:600;min-height:1.1em}
+.p4-tile.ko .pf{color:var(--red)}
+.p4-hd{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.p4-hd .fm{display:inline-block}
+@media print{.p4-nd.pick circle{stroke-dasharray:none}.p4-tile.pv{background:#e3f1e8}}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · lesson 4: reasoning">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM</b> — lesson 4 of 7</span><span>Source: maths seminar, part 6 · exercises 6.26 to 6.33</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="4"></span><a href="index.html">Maths</a> · OBM · Lesson 4 of 7</div>
+      <h1>Proving <span class="w">is writing.</span></h1>
+      <p class="lead">What you have to prove sets your first line: “Let \(x \in E\) be given”, “Assume that \(P\) is true”, “We use a proof by contrapositive”, “Base case”. For each way of reasoning, this lesson tells you when to use it and how to write it, then covers binary relations, set in every OBM or common paper since 2019, proof by induction and sums.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 75 min</span></li>
+        <li><span><span class="k">Parts</span> 8, one model answer per method</span></li>
+        <li><span><span class="k">Course</span> seminar, part 6 · ex. 6.26 to 6.33</span></li>
+        <li class="ex"><span><span class="k">Exam</span> a relation in all 6 OBM, LE or common papers from 2019 to 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-rel='{"preset":"mod3","presets":["mod3","abs","puiss","div","pair","lt"],"title":"Graph of a relation"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — An arrow from \(a\) to \(b\) when \(a \mathrel{\mathcal{R}} b\), a loop when \(a \mathrel{\mathcal{R}} a\). The four properties of part 6 are tested on every pair; click a false property to see its counterexample.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 4 · Reasoning</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Writing a proof, direct reasoning</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Equivalence: both ways</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Inclusion, double inclusion</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Contrapositive</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Contradiction, proof by cases</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Binary relations</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Proof by induction</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>The \(\sum\) symbol, sums</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="cours-3-fonctions.html">← Lesson 3: functions</a><a href="cours-5-denombrement.html">Lesson 5: counting →</a><a href="../qcm/index.html#maths">Maths MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Writing a proof, direct reasoning</a></li><li><a href="#s2">Equivalence: both ways</a></li><li><a href="#s3">Inclusion, double inclusion</a></li><li><a href="#s4">Contrapositive</a></li>
+      <li><a href="#s5">Contradiction, proof by cases</a></li><li><a href="#s6">Binary relations</a></li><li><a href="#s7">Proof by induction</a></li><li><a href="#s8">The \(\sum\) symbol, sums</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">seminar § 6.1, 6.2 · ex. 6.26.1-2</span></div><h2>Writing a proof, direct reasoning</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A proof starts from what you know (the hypotheses, the lecture) and reaches what you want, through steps that each follow from the previous ones. <b>Direct reasoning</b> is the simplest: a succession of implications, from the hypotheses to the result. The seminar sets the first line according to the shape of the statement.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.1 — The first line of your answer, depending on the statement (seminar, “To write a nice proof redaction”)</caption>
+          <thead><tr><th>You have to prove</th><th>First line</th><th>Part</th></tr></thead>
+          <tbody>
+            <tr><td>\(\forall x \in E,\ P(x)\)</td><td>“Let \(x \in E\) be given.”</td><td>1</td></tr>
+            <tr><td>\(P \Rightarrow Q\)</td><td>“Assume that \(P\) is true.”</td><td>1</td></tr>
+            <tr><td>\(\forall x \in E,\ P(x) \Rightarrow Q(x)\)</td><td>“Let \(x \in E\) such that \(P(x)\) is true.”</td><td>1</td></tr>
+            <tr><td>\(P \Leftrightarrow Q\)</td><td>two steps: \(P \Rightarrow Q\), then \(Q \Rightarrow P\)</td><td>2</td></tr>
+            <tr><td>\(A \subset B\)</td><td>“Let \(x \in A\) be given.”, then prove \(x \in B\)</td><td>3</td></tr>
+            <tr><td>\(A = B\)</td><td>two steps: \(A \subset B\), then \(B \subset A\)</td><td>3</td></tr>
+            <tr><td>\(\exists x \in E,\ P(x)\)</td><td>a witness: “Take \(x = \ldots\)”, then check \(P(x)\)</td><td>lesson 1</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box meth"><span class="tag">Method <i>direct reasoning</i></span>
+          <ol>
+            <li>Write the first line set by the statement (table 4.1).</li>
+            <li>On your draft, look at the goal and find the information that leads to it: the seminar asks “which information should you start from to reach the result?”.</li>
+            <li>On your answer sheet, start from the hypotheses: one step per line, each line linked to the previous one by a word (then, since, thus, hence, therefore). “Since” brings in a known fact, “therefore” a consequence.</li>
+            <li>End by copying the goal: it is the sentence the marker is looking for.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Example (seminar 6.26.1).</b> Show that \(\forall (x, y) \in \,]0, 1[^2,\ 0 &lt; \frac{x + y}{1 + xy} &lt; 1\). The seminar’s hint: find the sign of \((1 - x)(1 - y)\), then expand it. On the draft, notice that <span data-eq="d-ecart">\(1 - \frac{x + y}{1 + xy} = \frac{(1 - x)(1 - y)}{1 + xy}\)</span>: this is what makes the proof work.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.26.1</i></span>
+          <p>Let \((x, y) \in \,]0, 1[^2\) be given.<span class="c">the required line</span></p>
+          <p>Since \(x > 0\) and \(y > 0\), we have \(x + y > 0\) and \(1 + xy > 1 > 0\). A quotient of two positive real numbers is positive, therefore \(\frac{x + y}{1 + xy} > 0\).</p>
+          <p>Since \(x &lt; 1\) and \(y &lt; 1\), we have \(1 - x > 0\) and \(1 - y > 0\), hence \((1 - x)(1 - y) > 0\).</p>
+          <p>But <span data-eq="d-dev">\((1 - x)(1 - y) = 1 - x - y + xy\)</span>. Hence \(1 + xy - (x + y) > 0\), that is, \(x + y &lt; 1 + xy\).</p>
+          <p>Since \(1 + xy > 0\), dividing by \(1 + xy\) keeps the inequality: \(\frac{x + y}{1 + xy} &lt; 1\).<span class="c">justify the direction</span></p>
+          <p>Conclusion: \(\forall (x, y) \in \,]0, 1[^2,\ 0 &lt; \frac{x + y}{1 + xy} &lt; 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.26.2: an implication and its converse</i></span>
+          <p>Let \(n \in \N\). Assume that 6 divides \(n\). Then there exists \(k \in \N\) such that \(n = 6k\).</p>
+          <p>Thus \(n = 3 \times (2k)\), since <span data-eq="d-6k">\(6k = 3 \times (2k)\)</span>, with \(2k \in \N\): 3 divides \(n\).<span class="c">the definition, not a picture</span></p>
+          <p>Hence, for every \(n \in \N\), 6 divides \(n\) \(\Rightarrow\) 3 divides \(n\).</p>
+          <p>The converse, “3 divides \(n\) \(\Rightarrow\) 6 divides \(n\)”, is false: for \(n = 3\), 3 divides 3 but 6 does not divide 3.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: starting from the conclusion</span>
+          <ul>
+            <li>Writing “\(\frac{x + y}{1 + xy} &lt; 1 \Rightarrow x + y &lt; 1 + xy \Rightarrow (1 - x)(1 - y) > 0\), true” proves the <b>converse</b>: you started from what you wanted to prove. On the answer sheet, the arrows go from the hypotheses to the goal. If you searched backwards on your draft, copy it the other way round and check each step.</li>
+            <li>“Take \(x = \frac{1}{2}\)” is not “Let \(x \in \,]0, 1[\) be given”: an example does not prove a “for all” (lesson 1, part 8).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">seminar § 6.2 · ex. 6.26.3</span></div><h2>Equivalence: proving both implications</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>\(P \Leftrightarrow Q\) means \(P \Rightarrow Q\) <b>and</b> \(Q \Rightarrow P\). The seminar: “most of the time, this is done in two steps”. Each implication is a direct proof, with its own “Assume…” line.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>two implications</i></span>
+          <ol>
+            <li>If the statement starts with \(\forall x \in E\): “Let \(x \in E\) be given.”</li>
+            <li>(\(\Rightarrow\)) “Assume \(P\).” … “therefore \(Q\).”</li>
+            <li>(\(\Leftarrow\)) “Assume \(Q\).” … “therefore \(P\).”</li>
+            <li>“Both implications are true, therefore \(P \Leftrightarrow Q\).”</li>
+          </ol>
+          <p>One way can be direct and the other by contrapositive (part 4): each implication has its own method.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.26.3</i></span>
+          <p>Let us show that \(\forall (x, y) \in \R^2,\ x^2 + y^2 = 0 \Leftrightarrow x = y = 0\). Let \((x, y) \in \R^2\) be given.</p>
+          <p>(\(\Leftarrow\)) Assume \(x = y = 0\). Then \(x^2 + y^2 = 0 + 0 = 0\).</p>
+          <p>(\(\Rightarrow\)) Assume \(x^2 + y^2 = 0\). Then \(x^2 = -y^2\). But a square is non-negative: \(x^2 \geq 0\) and \(-y^2 \leq 0\).<span class="c">“but”: a fact from the lecture</span></p>
+          <p>Therefore \(0 \leq x^2 = -y^2 \leq 0\), hence \(x^2 = 0\), then \(x = 0\). Then \(y^2 = -x^2 = 0\), so \(y = 0\).</p>
+          <p>Both implications are true: \(x^2 + y^2 = 0 \Leftrightarrow x = y = 0\).</p>
+        </div>
+        <div class="prose">
+          <p><b>One way direct, the other by contrapositive.</b> For \(n \in \N\): \(n\) even \(\Leftrightarrow\) \(n^2\) even. (\(\Rightarrow\)) If \(n = 2k\) with \(k \in \N\), then \(n^2 = (2k)^2\), and <span data-eq="eq-pair">\((2k)^2 = 4k^2 = 2(2k^2)\)</span> is even. (\(\Leftarrow\)) This is exercise 6.28, written in part 4 by contrapositive.</p>
+          <p><b>A chain of \(\Leftrightarrow\)</b> is allowed if every step can be read both ways. \(e^{x+1} = 1 \Leftrightarrow x + 1 = 0 \Leftrightarrow x = -1\) is correct: \(\exp\) is injective and you can subtract 1 from both sides.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: a “\(\Leftrightarrow\)” that is not one</span>
+          <ul>
+            <li>Squaring cannot be reversed: \(x = 1 \Rightarrow x^2 = 1\), but \(x^2 = 1\) does not imply \(x = 1\) (\(x = -1\)). “\(\sqrt{x + 2} = x \Leftrightarrow x + 2 = x^2\)” is false: \(x = -1\) satisfies the right-hand side, but <span data-eq="eq-racine">\(\sqrt{-1 + 2} = 1 \neq -1\)</span>. Write “\(\Rightarrow\)” and check the solutions you find.</li>
+            <li>Proving only one implication, then concluding “therefore \(P \Leftrightarrow Q\)”. The two labels (\(\Rightarrow\)) and (\(\Leftarrow\)) on your answer sheet prevent this.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">seminar ex. 6.26.5-7 · OBM exam 2024, 1.4</span></div><h2>Set inclusion and set equality</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>inclusion, equality</i></span>
+          <ul>
+            <li>\(A \subset B\) means \(\forall x \in A,\ x \in B\): every element of \(A\) is in \(B\).</li>
+            <li>Its negation, \(A \not\subset B\), is \(\exists x \in A,\ x \notin B\): a single element of \(A\) outside \(B\) is enough.</li>
+            <li>\(A = B\) means \(A \subset B\) and \(B \subset A\): this is <b>double inclusion</b>.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>prove \(A \subset B\), then \(A = B\)</i></span>
+          <ol>
+            <li>“Let \(x \in A\) be given.” Translate \(x \in A\) with the definition of \(A\).</li>
+            <li>By successive implications, check the definition of \(B\). Conclude “therefore \(x \in B\), hence \(A \subset B\)”.</li>
+            <li>For \(A = B\), do it again starting from \(B\). For \(B \not\subset A\), give a specific element of \(B\) and check that it is not in \(A\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>OBM exam, October 2024, ex. 1.4 (no official answers)</i></span>
+          <p>\(A = \{(x, y, z) \in \R^3,\ x = y = z\}\) and \(B = \{(x, y, z) \in \R^3,\ 2x - y - z = 0\}\).</p>
+          <p>(a) \(A\) and \(B\) are subsets of \(\R^3\).</p>
+          <p>(b) Let \((x, y, z) \in A\) be given. Then \(x = y = z\), so \(2x - y - z = 2x - x - x = 0\), since <span data-eq="inc-A">\(2x - x - x = 0\)</span>. Therefore \((x, y, z) \in B\). Hence \(A \subset B\).<span class="c">Let… be given</span></p>
+          <p>(c) No. The triple \((1, 2, 0)\) satisfies <span data-eq="inc-120">\(2 \times 1 - 2 - 0 = 0\)</span>, so \((1, 2, 0) \in B\); but \(1 \neq 2\), so \((1, 2, 0) \notin A\). Hence \(B \not\subset A\).<span class="c">a specific element</span></p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.26.7: an equality</i></span>
+          <p>\(A = \{(x, y) \in \R^2,\ 2x + y = 4\}\) and \(B = \{(t - 1,\ 6 - 2t),\ t \in \R\}\). Let us show \(A = B\) by double inclusion.</p>
+          <p>(\(A \subset B\)) Let \((x, y) \in A\) be given: \(2x + y = 4\), so \(y = 4 - 2x\). Take \(t = x + 1\). Then \(x = t - 1\) and \(y = 4 - 2(t - 1) = 6 - 2t\), since <span data-eq="inc-y">\(4 - 2(t - 1) = 6 - 2t\)</span>. Therefore \((x, y) = (t - 1, 6 - 2t)\) with \(t \in \R\): \((x, y) \in B\).</p>
+          <p>(\(B \subset A\)) Let \((x, y) \in B\) be given: there exists \(t \in \R\) such that \(x = t - 1\) and \(y = 6 - 2t\). Then \(2x + y = 2(t - 1) + 6 - 2t = 4\), since <span data-eq="inc-4">\(2(t - 1) + (6 - 2t) = 4\)</span>. Therefore \((x, y) \in A\).</p>
+          <p>Both inclusions are true: \(A = B\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Seminar 6.26.5.</b> \(A\): the constant real functions, \(B\): the even real functions. Let \(f \in A\): there exists \(c \in \R\) such that \(\forall x \in \R,\ f(x) = c\). Let \(x \in \R\): \(f(-x) = c = f(x)\), so \(f\) is even. Hence \(A \subset B\). But \(A \neq B\): \(x \mapsto x^2\) is even and not constant.</p>
+          <p><b>Seminar 6.26.6.</b> \(E = \{x \in \R,\ x^2 + x + 2 \leq 2\}\) and \(F = \,]-2, 0]\). \(x^2 + x + 2 \leq 2 \Leftrightarrow x(x + 1) \leq 0 \Leftrightarrow x \in [-1, 0]\), so \(E = [-1, 0] \subset F\). On the other hand \(-\frac{3}{2} \in F\) and <span data-eq="inc-E">\(\left(-\frac{3}{2}\right)^2 - \frac{3}{2} + 2 = \frac{11}{4} > 2\)</span>, so \(-\frac{3}{2} \notin E\): \(F \not\subset E\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: one inclusion only, or examples</span>
+          <ul>
+            <li>Concluding \(A = B\) after the inclusion \(A \subset B\) alone: in the 2024 exam, \(A \subset B\) is true but \(A \neq B\).</li>
+            <li>Proving \(A \subset B\) with two or three elements of \(A\): you need “Let \(x \in A\) be given”, an unspecified element.</li>
+            <li>Starting from the wrong set: for \(A \subset B\), you start from \(A\) and use its definition; the condition of \(B\) is the goal, not a hypothesis.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">seminar ex. 6.28, 6.29 · OBM exam 2024, 1.3</span></div><h2>Proof by contrapositive</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>An implication and its contrapositive are equivalent: \((P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)\) (proved in <a href="cours-1-logique.html#s5">lesson 1, part 5</a>). To prove \(P \Rightarrow Q\), you may therefore prove \(\neg Q \Rightarrow \neg P\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>when and how</i></span>
+          <p><b>When?</b> When the hypothesis \(P\) is hard to use and \(\neg Q\) gives an equation. “\(n^2\) is even” tells you nothing about \(n\); “\(n\) is odd” gives \(n = 2k + 1\), which you can square. Also when \(P\) starts with “\(\forall \varepsilon > 0\)”: its negation is an “\(\exists \varepsilon\)”, and you choose that \(\varepsilon\).</p>
+          <ol>
+            <li>“We use a proof by contrapositive: let us show that \(\neg Q \Rightarrow \neg P\).” Write \(\neg Q\) and \(\neg P\) in full (negations from lesson 1).</li>
+            <li>“Assume \(\neg Q\).” … “therefore \(\neg P\).”</li>
+            <li>“The contrapositive is true, therefore \(P \Rightarrow Q\) is true.”</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.28</i></span>
+          <p>Let \(n \in \N\). Let us show that if \(n^2\) is even, then \(n\) is even.</p>
+          <p>We use a proof by contrapositive: let us show that if \(n\) is odd, then \(n^2\) is odd.<span class="c">announce it</span></p>
+          <p>Assume that \(n\) is odd: there exists \(k \in \N\) such that \(n = 2k + 1\).</p>
+          <p>Then \(n^2 = (2k + 1)^2\), and <span data-eq="ctr-carre">\((2k + 1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1\)</span>, with \(2k^2 + 2k \in \N\). Therefore \(n^2\) is odd.</p>
+          <p>The contrapositive is proved: if \(n^2\) is even, then \(n\) is even.</p>
+        </div>
+        <div class="prose">
+          <p><b>OBM exam, October 2024, ex. 1.3</b> (“Take care of your wording and write the contrapositive clearly”). Let \(A\) and \(B\) be two propositions. (a) The contrapositive of \(A \Rightarrow B\) is \(\neg B \Rightarrow \neg A\). (b) They are equivalent: \((A \Rightarrow B) \Leftrightarrow (\neg A \lor B) \Leftrightarrow (B \lor \neg A) \Leftrightarrow (\neg(\neg B) \lor \neg A) \Leftrightarrow (\neg B \Rightarrow \neg A)\), or the truth table of lesson 1.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>OBM exam 2024, 1.3 (c) and (d) (no official answers)</i></span>
+          <p>(c) Let \(a \in \R\). Let us prove \((\forall \varepsilon > 0,\ |a| \leq \varepsilon) \Rightarrow a = 0\) by contrapositive.</p>
+          <p>The contrapositive is: \(a \neq 0 \Rightarrow \exists \varepsilon > 0,\ |a| > \varepsilon\).<span class="c">written in full</span></p>
+          <p>Assume \(a \neq 0\). Take \(\varepsilon = \frac{|a|}{2}\). Since \(a \neq 0\), \(|a| > 0\), so \(\varepsilon > 0\).</p>
+          <p>And \(|a| = 2\varepsilon > \varepsilon\), since \(\varepsilon > 0\). So there exists \(\varepsilon > 0\) such that \(|a| > \varepsilon\).</p>
+          <p>The contrapositive is true, therefore \((\forall \varepsilon > 0,\ |a| \leq \varepsilon) \Rightarrow a = 0\).</p>
+          <p>(d) The converse, \(a = 0 \Rightarrow (\forall \varepsilon > 0,\ |a| \leq \varepsilon)\), is true: if \(a = 0\), then for every \(\varepsilon > 0\), \(|a| = 0 \leq \varepsilon\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Seminar 6.29</b>, the same idea: \((\forall \varepsilon > 0,\ a &lt; b + \varepsilon) \Rightarrow a \leq b\). Contrapositive: \(a > b \Rightarrow \exists \varepsilon > 0,\ a \geq b + \varepsilon\). If \(a > b\), \(\varepsilon = a - b\) is positive and \(b + \varepsilon = a\).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.2 — The four sentences around “if \(n^2\) is even, then \(n\) is even”</caption>
+          <thead><tr><th>Name</th><th>Sentence</th><th>Equivalent to the implication?</th></tr></thead>
+          <tbody>
+            <tr><td>implication \(P \Rightarrow Q\)</td><td>\(n^2\) even \(\Rightarrow\) \(n\) even</td><td>—</td></tr>
+            <tr><td>contrapositive \(\neg Q \Rightarrow \neg P\)</td><td>\(n\) odd \(\Rightarrow\) \(n^2\) odd</td><td><b>yes</b></td></tr>
+            <tr><td>converse \(Q \Rightarrow P\)</td><td>\(n\) even \(\Rightarrow\) \(n^2\) even</td><td>no</td></tr>
+            <tr><td>\(\neg P \Rightarrow \neg Q\)</td><td>\(n^2\) odd \(\Rightarrow\) \(n\) odd</td><td>no (it is the contrapositive of the converse)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Trap: the converse taken for the contrapositive</span>
+          <ul>
+            <li>For “\(n^2\) even \(\Rightarrow\) \(n\) even”, proving “\(n\) even \(\Rightarrow\) \(n^2\) even” proves the <b>converse</b>, not the statement. The contrapositive negates <b>and</b> swaps: \(\neg Q\) moves to the left.</li>
+            <li>“\(n^2\) odd \(\Rightarrow\) \(n\) odd” (negating without swapping) is not the contrapositive either.</li>
+            <li>The negation of “\(\forall \varepsilon > 0,\ |a| \leq \varepsilon\)” is “\(\exists \varepsilon > 0,\ |a| > \varepsilon\)”: the domain \(\varepsilon > 0\) is not negated.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">seminar ex. 6.30, 6.31 · LE exam 2023, 4.4</span></div><h2>Proof by contradiction, proof by cases</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The seminar: “the proof by contradiction consists in showing that, if the desired property was false, this would imply something that is obviously false”. To prove \(P\), you assume \(\neg P\) and reach a contradiction.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>by contradiction</i></span>
+          <p><b>When?</b> When the statement is “negative”: \(x\) is not a decimal number, is not rational, there is no… You have nothing to start from, whereas its negation gives an equation to work with.</p>
+          <ol>
+            <li>“Assume by contradiction that [exact negation of the statement].” Translate it with its definition (there exist \(a, n\) such that…).</li>
+            <li>Deduce until you reach a contradiction: something and its opposite, or a false fact.</li>
+            <li>“This is a contradiction. The assumption is therefore false: [statement].”</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.30</i></span>
+          <p>A real number \(x\) is a decimal number if there exist \(a \in \Z\) and \(n \in \N\) such that \(x = \frac{a}{10^n}\).</p>
+          <p>Assume by contradiction that \(\frac{1}{3}\) is a decimal number: there exist \(a \in \Z\) and \(n \in \N\) such that \(\frac{1}{3} = \frac{a}{10^n}\).<span class="c">the negation, translated</span></p>
+          <p>Then \(10^n = 3a\): 3 divides \(10^n\).</p>
+          <p>But <span data-eq="abs-10n">\(10^n = 2^n \times 5^n\)</span>: the only prime factors of \(10^n\) are 2 and 5, so 3 does not divide \(10^n\). This is a contradiction.</p>
+          <p>Therefore \(\frac{1}{3}\) is not a decimal number.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.31 (starred exercise)</i></span>
+          <p>Assume by contradiction that \(\sqrt{2}\) is rational. Since \(\sqrt{2} > 0\), we can write \(\sqrt{2} = \frac{p}{q}\) with \(p, q\) positive integers that are <b>coprime</b> (an irreducible fraction).<span class="c">the key</span></p>
+          <p>Then \(2 = \frac{p^2}{q^2}\), so \(p^2 = 2q^2\): \(p^2\) is even. By exercise 6.28 (part 4), \(p\) is even: \(p = 2k\) with \(k \in \N\).</p>
+          <p>Then \(2q^2 = p^2 = 4k^2\), since <span data-eq="abs-2k">\((2k)^2 = 4k^2\)</span>, so \(q^2 = 2k^2\): \(q^2\) is even, hence \(q\) is even.</p>
+          <p>So 2 divides both \(p\) and \(q\), which contradicts “\(p\) and \(q\) are coprime”. This is a contradiction: \(\sqrt{2}\) is not rational.</p>
+        </div>
+        <div class="box def"><span class="tag">Method <i>proof by cases</i></span>
+          <p>Split into cases that <b>cover every possibility</b> (\(n\) even or \(n\) odd; \(x \geq 0\) or \(x &lt; 0\)), deal with each case, then conclude. It is not in the 2026 seminar, but the official answers of the LE exam 2023 (ex. 4.4) use it: from \(b = b^{np}\), they get “\(b = 1\) or \(np = 1\)” and deal with both cases.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>\(n(n + 1)\) is even</i></span>
+          <p>Let \(n \in \Z\) be given. Two cases.</p>
+          <p>Case 1: \(n\) even, \(n = 2k\) with \(k \in \Z\). Then \(n(n + 1) = 2k(2k + 1)\), and <span data-eq="cas-pair">\(2k(2k + 1) = 2\big(k(2k + 1)\big)\)</span> is even.</p>
+          <p>Case 2: \(n\) odd, \(n = 2k + 1\) with \(k \in \Z\). Then <span data-eq="cas-impair">\((2k + 1)(2k + 2) = 2(2k + 1)(k + 1)\)</span>, so \(n(n + 1)\) is even.</p>
+          <p>Every integer is even or odd: in every case, \(n(n + 1)\) is even.<span class="c">the cases cover everything</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: a badly set-up contradiction</span>
+          <ul>
+            <li>Assuming something other than the exact negation. The negation of “\(\frac{1}{3}\) is not a decimal number” is “there <b>exist</b> \(a\) and \(n\) such that \(\frac{1}{3} = \frac{a}{10^n}\)”, not “for every \(n\)”.</li>
+            <li>Forgetting “coprime” for \(\sqrt{2}\): without this assumption, “\(p\) and \(q\) are even” contradicts nothing.</li>
+            <li>Writing “this is a contradiction” without saying which assumption is contradicted. The contradiction must be written down.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">seminar ex. 6.27 · exams 2019 to 2024</span></div><h2>Binary relations: order and equivalence</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>binary relation</i></span>
+          <p>A <b>binary relation</b> \(\mathcal{R}\) on a set \(E\) says, for each pair \((x, y) \in E^2\), whether \(x\) is in relation with \(y\): we then write \(x \mathrel{\mathcal{R}} y\), and otherwise \(x \mathrel{\not\mathcal{R}} y\). Examples: \(\leq\) on \(\R\); on \(\Z\), \(a \mathrel{\mathcal{R}} b \iff a - b\) is a multiple of 3 (seminar 6.27: \(3 \mathrel{\mathcal{R}} 15\) because <span data-eq="rel-3-15">\(3 - 15 = -12 = 3 \times (-4)\)</span>).</p>
+          <p>\(x \mathrel{\mathcal{R}} y\) is a proposition, true or false: never write it “\(= \ldots\)”.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.3 — The four properties, with quantifiers, and their negation: the negation tells you which counterexample to look for (definitions from the 2022 official answers)</caption>
+          <thead><tr><th>\(\mathcal{R}\) is…</th><th>Definition</th><th>Negation (counterexample)</th></tr></thead>
+          <tbody>
+            <tr><td><b>reflexive</b></td><td>\(\forall x \in E,\ x \mathrel{\mathcal{R}} x\)</td><td>\(\exists x \in E,\ x \mathrel{\not\mathcal{R}} x\)</td></tr>
+            <tr><td><b>symmetric</b></td><td>\(\forall (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y \Rightarrow y \mathrel{\mathcal{R}} x\)</td><td>\(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y\) and \(y \mathrel{\not\mathcal{R}} x\)</td></tr>
+            <tr><td><b>antisymmetric</b></td><td>\(\forall (x, y) \in E^2,\ (x \mathrel{\mathcal{R}} y\) and \(y \mathrel{\mathcal{R}} x) \Rightarrow x = y\)</td><td>\(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y\) and \(y \mathrel{\mathcal{R}} x\) and \(x \neq y\)</td></tr>
+            <tr><td><b>transitive</b></td><td>\(\forall (x, y, z) \in E^3,\ (x \mathrel{\mathcal{R}} y\) and \(y \mathrel{\mathcal{R}} z) \Rightarrow x \mathrel{\mathcal{R}} z\)</td><td>\(\exists (x, y, z) \in E^3,\ x \mathrel{\mathcal{R}} y\) and \(y \mathrel{\mathcal{R}} z\) and \(x \mathrel{\not\mathcal{R}} z\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>The 2022 midterm (ex. 3) also asked for the <b>contrapositive</b> of transitivity: \(\forall (x, y, z) \in E^3,\ x \mathrel{\not\mathcal{R}} z \Rightarrow (x \mathrel{\not\mathcal{R}} y\) or \(y \mathrel{\not\mathcal{R}} z)\). On a graph (figure 1): reflexive = a loop on every element; symmetric = every arrow has its way back; antisymmetric = no round trip between two distinct elements; transitive = two chained arrows have their shortcut.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>order relation, equivalence relation</i></span>
+          <ul>
+            <li>An <b>order relation</b> is reflexive, <b>antisymmetric</b> and transitive. Examples: \(\leq\) on \(\R\), “\(a\) divides \(b\)” on \(\N^*\).</li>
+            <li>An <b>equivalence relation</b> is reflexive, <b>symmetric</b> and transitive. Examples: congruence modulo 3 on \(\Z\), equality.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>studying a relation (the expected answer)</i></span>
+          <ol>
+            <li>Recall the definition of the property, with its quantifiers. The OBM exam 2024 requires it: “After recalling the definition”.</li>
+            <li>True: “Let \(x \in E\) be given” (or the pair, the triple), “Assume \(x \mathrel{\mathcal{R}} y\)”, translate with the definition of \(\mathcal{R}\), then deduce.</li>
+            <li>False: a counterexample with <b>numbers</b>, checked, of the shape given by the negation (table 4.3).</li>
+            <li>Conclude: order relation, equivalence relation, or neither.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.27</i></span>
+          <p>On \(\Z\): \(a \mathrel{\mathcal{R}} b \iff a - b\) is a multiple of 3.</p>
+          <p>1. Translation: \(a \mathrel{\mathcal{R}} b \iff \exists k \in \Z,\ a - b = 3k\).</p>
+          <p>2. Reflexive. Let \(a \in \Z\). <span data-eq="rel-refl">\(a - a = 0 = 3 \times 0\)</span> with \(0 \in \Z\), so \(a \mathrel{\mathcal{R}} a\). \(\mathcal{R}\) is reflexive.</p>
+          <p>3. Symmetric. Let \((a, b) \in \Z^2\) such that \(a \mathrel{\mathcal{R}} b\): there exists \(k \in \Z\) such that \(a - b = 3k\). Then <span data-eq="rel-sym">\(b - a = -(a - b)\)</span> \(= 3 \times (-k)\) with \(-k \in \Z\), so \(b \mathrel{\mathcal{R}} a\). \(\mathcal{R}\) is symmetric.</p>
+          <p>4. Not antisymmetric: \(3 \mathrel{\mathcal{R}} 15\) and \(15 \mathrel{\mathcal{R}} 3\), because <span data-eq="rel-15-3">\(15 - 3 = 12 = 3 \times 4\)</span>, but \(3 \neq 15\).<span class="c">a counterexample with numbers</span></p>
+          <p>5. Transitive. Let \((a, b, c) \in \Z^3\) such that \(a \mathrel{\mathcal{R}} b\) and \(b \mathrel{\mathcal{R}} c\): there exist \(k, k' \in \Z\) such that \(a - b = 3k\) and \(b - c = 3k'\). Then <span data-eq="rel-trans">\(a - c = (a - b) + (b - c)\)</span> \(= 3k + 3k'\), and <span data-eq="rel-trans2">\(3k + 3k' = 3(k + k')\)</span> with \(k + k' \in \Z\): \(a \mathrel{\mathcal{R}} c\).</p>
+          <p>\(\mathcal{R}\) is reflexive, symmetric and transitive: it is an equivalence relation.</p>
+        </div>
+        <div class="box why"><span class="tag">Typo in the seminar, question 3</span>
+          <p>The statement (in French and in English) reads “\(\forall (a, b) \in \Z^2,\ a \mathrel{\mathcal{R}} b \Rightarrow a \mathrel{\mathcal{R}} b\)”, which is always true and says nothing. Read \(a \mathrel{\mathcal{R}} b \Rightarrow b \mathrel{\mathcal{R}} a\): symmetry, between reflexivity (question 2) and antisymmetry (question 4).</p>
+        </div>
+        <div data-rel='{"preset":"abs","presets":["abs","puiss","mod3","pair","div","lt"],"edit":true,"title":"Graph of a relation · your turn"}'></div>
+        <div class="prose">
+          <p>Figure 2 — Choose a relation, or press “Edit the arrows” to build your own: a relation that is symmetric but not transitive, a relation that is neither symmetric nor antisymmetric…</p>
+          <p><b>OBM exam, October 2024, ex. 4</b> (no official answers, answers recomputed). On \(\R\): \(a \mathrel{\mathcal{R}} b \iff |a| \leq |b|\). Reflexive: let \(a \in \R\), \(|a| \leq |a|\). Not symmetric: \(1 \mathrel{\mathcal{R}} 2\) because \(1 \leq 2\), but \(|2| > |1|\), so \(2 \mathrel{\not\mathcal{R}} 1\). Not antisymmetric: \(-1 \mathrel{\mathcal{R}} 1\) and \(1 \mathrel{\mathcal{R}} -1\) (\(|-1| = |1|\)), but \(-1 \neq 1\). Transitive: if \(|a| \leq |b|\) and \(|b| \leq |c|\), then \(|a| \leq |c|\). Neither an order nor an equivalence.</p>
+          <p><b>LE exam, October 2023, ex. 4</b> (official answers). On \(\N^*\): \(a \mathrel{\mathcal{R}} b \iff \exists n \in \N,\ b = a^n\). Reflexive: \(a = a^1\). Not symmetric: \(2 \mathrel{\mathcal{R}} 8\) because <span data-eq="rel-8">\(8 = 2^3\)</span>, but 2 is not a power of 8. Transitive: if \(b = a^n\) and \(c = b^p\), then \(c = a^{np}\), since <span data-eq="rel-np">\((a^n)^p = a^{np}\)</span>. Antisymmetric: if \(b = a^n\) and \(a = b^p\), then \(b = b^{np}\); so \(b = 1\) (and then \(a = 1^p = 1 = b\)) or \(np = 1\), that is \(n = p = 1\) and \(b = a\). Reflexive, antisymmetric and transitive: it is an order relation (the official answers do not say so).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 4.4 — The relations of the seminar and of the exam papers (every cell checked by a program, on every pair of a finite set)</caption>
+          <thead><tr><th>\(a \mathrel{\mathcal{R}} b \iff\)</th><th>on</th><th>refl.</th><th>sym.</th><th>antisym.</th><th>trans.</th><th>type</th><th>source</th></tr></thead>
+          <tbody>
+            <tr><td>\(a - b\) multiple of 3</td><td>\(\Z\)</td><td data-eq="prop-mod3-refl">yes</td><td data-eq="prop-mod3-sym">yes</td><td data-eq="prop-mod3-anti">no</td><td data-eq="prop-mod3-trans">yes</td><td data-eq="prop-mod3-nat">equivalence</td><td>seminar 6.27</td></tr>
+            <tr><td>\(a^2 - b^2\) even</td><td>\(\Z\)</td><td data-eq="prop-pair-refl">yes</td><td data-eq="prop-pair-sym">yes</td><td data-eq="prop-pair-anti">no</td><td data-eq="prop-pair-trans">yes</td><td data-eq="prop-pair-nat">equivalence</td><td>seminar, exercise given in class</td></tr>
+            <tr><td>\(ab' = ba'\), between pairs \((a, b)\) and \((a', b')\)</td><td>\(\Z \times \Z^*\)</td><td data-eq="prop-frac-refl">yes</td><td data-eq="prop-frac-sym">yes</td><td data-eq="prop-frac-anti">no</td><td data-eq="prop-frac-trans">yes</td><td data-eq="prop-frac-nat">equivalence</td><td>2019 midterm, ex. 4</td></tr>
+            <tr><td>\(a \leq b\)</td><td>\(\R\)</td><td data-eq="prop-le-refl">yes</td><td data-eq="prop-le-sym">no</td><td data-eq="prop-le-anti">yes</td><td data-eq="prop-le-trans">yes</td><td data-eq="prop-le-nat">order</td><td>2022 midterm, ex. 3</td></tr>
+            <tr><td>\(\exists n \in \N,\ b = a^n\)</td><td>\(\N^*\)</td><td data-eq="prop-puiss-refl">yes</td><td data-eq="prop-puiss-sym">no</td><td data-eq="prop-puiss-anti">yes</td><td data-eq="prop-puiss-trans">yes</td><td data-eq="prop-puiss-nat">order</td><td>LE exam 2023, ex. 4</td></tr>
+            <tr><td>\(a\) divides \(b\)</td><td>\(\N^*\)</td><td data-eq="prop-div-refl">yes</td><td data-eq="prop-div-sym">no</td><td data-eq="prop-div-anti">yes</td><td data-eq="prop-div-trans">yes</td><td data-eq="prop-div-nat">order</td><td>standard example</td></tr>
+            <tr><td>\(a^2 \leq b^2\)</td><td>\(\R\)</td><td data-eq="prop-carre-refl">yes</td><td data-eq="prop-carre-sym">no</td><td data-eq="prop-carre-anti">no</td><td data-eq="prop-carre-trans">yes</td><td data-eq="prop-carre-nat">neither</td><td>2021 midterm, ex. 1</td></tr>
+            <tr><td>\(|a| \leq |b|\)</td><td>\(\R\)</td><td data-eq="prop-abs-refl">yes</td><td data-eq="prop-abs-sym">no</td><td data-eq="prop-abs-anti">no</td><td data-eq="prop-abs-trans">yes</td><td data-eq="prop-abs-nat">neither</td><td>OBM exam 2024, ex. 4</td></tr>
+            <tr><td>\(a\) lives less than 5 min away from \(b\)</td><td>a class</td><td data-eq="prop-voisins-refl">yes</td><td data-eq="prop-voisins-sym">yes</td><td data-eq="prop-voisins-anti">no</td><td data-eq="prop-voisins-trans">no</td><td data-eq="prop-voisins-nat">neither</td><td>2020 midterm, ex. 2</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>The 2019 row: the relation is between pairs, \((a, b) \mathrel{\mathcal{R}} (a', b') \iff ab' = ba'\) on \(\Z \times \Z^*\); it says that \(\frac{a}{b} = \frac{a'}{b'}\). The 2020 row: a student lives 0 min away from themselves; two neighbours \(e\) and \(e'\) may have a neighbour \(e''\) of \(e'\) “in the opposite direction”, more than 5 min away from \(e\).</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>equivalence class</i></span>
+          <p>Let \(\mathcal{R}\) be an equivalence relation on \(E\) and \(a \in E\). The <b>equivalence class</b> of \(a\) is \(\overline{a} = \{x \in E,\ x \mathrel{\mathcal{R}} a\}\): the elements in relation with \(a\). By reflexivity, \(a \in \overline{a}\). Two classes are either equal or disjoint, and the classes form a partition of \(E\).</p>
+          <p>Modulo 3: \(\overline{0} = \{3k,\ k \in \Z\} = \{\ldots, -3, 0, 3, 6, \ldots\}\), \(\overline{1} = \{3k + 1,\ k \in \Z\} = \{\ldots, -2, 1, 4, 7, \ldots\}\), \(\overline{2} = \{3k + 2,\ k \in \Z\}\), and \(\Z = \overline{0} \sqcup \overline{1} \sqcup \overline{2}\). For example \(7 \in \overline{1}\), because <span data-eq="rel-7">\(7 - 1 = 6 = 3 \times 2\)</span>. In figure 1, each class has its own colour. Classes are neither in the seminar nor in the 2019 to 2024 papers: they only show what an equivalence is, “being in the same class”.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: antisymmetric does not mean “not symmetric”</span>
+          <ul>
+            <li>“Not symmetric” means: there is a one-way arrow. “Antisymmetric” means: never a round trip between two distinct elements. \(\leq\) is antisymmetric and not symmetric; equality is symmetric <b>and</b> antisymmetric; \(|a| \leq |b|\) is neither.</li>
+            <li>A false property is proved false by <b>one</b> counterexample with numbers (“\(-1 \mathrel{\mathcal{R}} 1\) and \(1 \mathrel{\mathcal{R}} -1\), but \(-1 \neq 1\)”), not by a general sentence.</li>
+            <li>For an order relation, you check <b>anti</b>symmetry; for an equivalence, symmetry. Mixing them up loses the whole question.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">seminar ex. 6.32, 6.33 · 2020 midterm, ex. 6</span></div><h2>Proof by induction</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>principle of induction</i></span>
+          <p>Let \(n_0 \in \N\) and, for every integer \(n \geq n_0\), a proposition \(P(n)\). If</p>
+          <ul>
+            <li>\(P(n_0)\) is true (<b>base case</b>),</li>
+            <li>for every \(n \geq n_0\), \(P(n) \Rightarrow P(n + 1)\) (<b>induction step</b>),</li>
+          </ul>
+          <p>then \(P(n)\) is true for every \(n \geq n_0\).</p>
+        </div>
+        <div class="prose">
+          <p>The seminar: “first, the desired property is true in at least one particular case, and second, it propagates from this particular case to all other cases”. Like a row of dominoes: the first one falls, and each one knocks over the next. It is how a recursive function works in algorithmics: a base case, then a call on the previous rank.</p>
+          <p><b>When?</b> When the statement is about every integer \(n \geq n_0\) and rank \(n + 1\) can be computed from rank \(n\): a sum that gains a term, a sequence \(u_{n+1} = f(u_n)\), a derivative of the derivative, \((n + 1)! = (n + 1) \times n!\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>the wording of the 2020 official answers</i></span>
+          <ol>
+            <li>“For every \(n \geq n_0\), let \(P(n)\) be the proposition: “…”.” The proposition, not a value.</li>
+            <li>“<b>Base case</b>: for \(n = n_0\), … therefore \(P(n_0)\) is true.” Compute both sides separately.</li>
+            <li>“<b>Induction step</b>: let \(n \geq n_0\) be given. Assume that \(P(n)\) is true and let us prove \(P(n + 1)\).” Write the goal \(P(n + 1)\), then a computation that <b>uses</b> \(P(n)\), saying so (“by the induction hypothesis”).</li>
+            <li>“<b>Conclusion</b>: \(P(n_0)\) is true and, for every \(n \geq n_0\), \(P(n) \Rightarrow P(n + 1)\). By induction, \(P(n)\) is true for every \(n \geq n_0\).”</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 6.32.1</i></span>
+          <p>For every integer \(n \geq 6\), let \(P(n)\) be the proposition “\(2^n \geq 6n + 7\)”.</p>
+          <p>Base case: <span data-eq="rec-init">\(2^6 = 64\)</span> and <span data-eq="rec-init2">\(6 \times 6 + 7 = 43\)</span>. Since \(64 \geq 43\), \(P(6)\) is true.</p>
+          <p>Induction step: let \(n \geq 6\) be given. Assume that \(P(n)\) is true, \(2^n \geq 6n + 7\), and let us prove \(P(n + 1)\): \(2^{n+1} \geq 6(n + 1) + 7\).<span class="c">the goal, written</span></p>
+          <p>By the induction hypothesis, <span data-eq="rec-her" data-n0="6">\(2^{n+1} = 2 \times 2^n \geq 2(6n + 7) = 12n + 14\)</span>.</p>
+          <p>But <span data-eq="rec-diff">\(12n + 14 - \big(6(n + 1) + 7\big) = 6n + 1\)</span> \(> 0\). Therefore \(2^{n+1} \geq 6(n + 1) + 7\): \(P(n + 1)\) is true.</p>
+          <p>Conclusion: \(P(6)\) is true and, for every \(n \geq 6\), \(P(n) \Rightarrow P(n + 1)\). By induction, \(\forall n \geq 6,\ 2^n \geq 6n + 7\).</p>
+        </div>
+        <div data-rec='{"preset":"pow","presets":["pow","four","gauss"]}'></div>
+        <div class="prose">
+          <p>Figure 3 — The stepper shows two levels: the actual value of \(P(n)\), computed (✓ or ✗), and what the induction has proved (in green). For \(2^n \geq 6n + 7\), the induction step works from \(n = 0\) on, but \(P(5)\) is false, because <span data-eq="rec-5">\(2^5 = 32 &lt; 37 = 6 \times 5 + 7\)</span>: only the right base case starts the induction.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>November 2020 midterm, ex. 6: a factorial</i></span>
+          <p>For every integer \(n \geq 2\), let \(P(n)\) be the proposition “\(\frac{2^n}{n!} \leq \frac{9}{2}\left(\frac{2}{3}\right)^n\)”.</p>
+          <p>Base case: <span data-eq="fac-init">\(\frac{2^2}{2!} = 2\)</span> and <span data-eq="fac-init2">\(\frac{9}{2}\left(\frac{2}{3}\right)^2 = \frac{9}{2} \times \frac{4}{9} = 2\)</span>. Since \(2 \leq 2\), \(P(2)\) is true.</p>
+          <p>Induction step: let \(n \geq 2\) be given; assume that \(P(n)\) is true. We have <span data-eq="fac-split">\(\frac{2^{n+1}}{(n + 1)!} = \frac{2}{n + 1} \times \frac{2^n}{n!}\)</span>.</p>
+          <p>By the induction hypothesis, and since \(\frac{2}{n + 1} > 0\): \(\frac{2^{n+1}}{(n + 1)!} \leq \frac{2}{n + 1} \times \frac{9}{2}\left(\frac{2}{3}\right)^n\).</p>
+          <p>But \(n \geq 2\), so \(n + 1 \geq 3\) and \(\frac{2}{n + 1} \leq \frac{2}{3}\). Hence <span data-eq="fac-her" data-n0="2">\(\frac{2}{n + 1} \times \frac{9}{2}\left(\frac{2}{3}\right)^n \leq \frac{2}{3} \times \frac{9}{2}\left(\frac{2}{3}\right)^n = \frac{9}{2}\left(\frac{2}{3}\right)^{n+1}\)</span>: \(P(n + 1)\) is true.</p>
+          <p>Conclusion: by induction, \(\forall n \geq 2,\ \frac{2^n}{n!} \leq \frac{9}{2}\left(\frac{2}{3}\right)^n\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Two induction steps from the seminar (6.32.3 and 6.32.4)</b>, to be written with the same plan:</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">\(n\)-th derivative, base case 0</span><p>\(f(x) = xe^x\), \(P(n)\): “\(\forall x \in \R,\ f^{(n)}(x) = (x + n)e^x\)”. Base case: <span data-eq="der-init" data-ctx="f">\(f^{(0)}(x) = xe^x = (x + 0)e^x\)</span>. Induction step, differentiating \(P(n)\):</p><div class="fm" data-eq="der-her" data-ctx="f">\(f^{(n+1)}(x) = \big((x + n)e^x\big)' = e^x + (x + n)e^x = (x + n + 1)e^x\)</div></div>
+          <div class="card"><span class="k">sequence, base case 0</span><p>\(u_0 = 1\), \(u_{n+1} = u_n + 2n + 3\), \(P(n)\): “\(u_n = (n + 1)^2\)”. Base case: <span data-eq="seq-init" data-ctx="u">\(u_0 = 1 = (0 + 1)^2\)</span>. Induction step, with \(P(n)\):</p><div class="fm" data-eq="seq-her" data-ctx="u">\(u_{n+1} = u_n + 2n + 3 = (n + 1)^2 + 2n + 3 = n^2 + 4n + 4 = (n + 2)^2\)</div></div>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the forgotten base case, the induction step that uses nothing</span>
+          <ul>
+            <li><b>Forgotten base case.</b> \(P(n)\): “3 divides \(4^n + 1\)”. The induction step works: <span data-eq="piege-4n">\(4^{n+1} + 1 = 4(4^n + 1) - 3\)</span>, so if 3 divides \(4^n + 1\), it divides \(4^{n+1} + 1\). Yet \(P(0)\) is false (<span data-eq="piege-40">\(4^0 + 1 = 2\)</span>), and \(P(n)\) is true for no \(n\): \(4^n + 1\) always leaves remainder 2. Try it in the stepper.</li>
+            <li><b>An induction step that does not use the hypothesis.</b> If your computation of \(P(n + 1)\) never uses \(P(n)\), either you proved \(P(n + 1)\) directly (then no induction is needed), or you assumed what you wanted to prove. Write “by the induction hypothesis” exactly where \(P(n)\) is used.</li>
+            <li>“Assume that \(P(n)\) is true <b>for every</b> \(n\)” assumes the conclusion. You fix one \(n\): “let \(n \geq n_0\) be given, assume \(P(n)\)”.</li>
+            <li>The base case is not always 0: it is in the statement (\(n \geq 6\), \(n \geq 2\)). Concluding “for every \(n \in \N\)” when \(P(5)\) is false is wrong.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">seminar ex. 6.32.2, 6.33.4 · 2021 midterm, ex. 8</span></div><h2>The \(\sum\) symbol and the standard sums</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>the sum symbol</i></span>
+          <p>For integers \(m \leq n\): \(\displaystyle\sum_{k=m}^{n} a_k = a_m + a_{m+1} + \cdots + a_n\). The sum has \(n - m + 1\) terms. The index \(k\) is a <b>dummy</b> variable: \(\sum_{k=1}^{n} k^2\) and \(\sum_{j=1}^{n} j^2\) are the same sum. If \(n &lt; m\), the sum is empty and equals 0.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>rules of computation</i></span>
+          <ul>
+            <li><b>Linearity</b>: \(\sum_{k=m}^{n} (\lambda a_k + \mu b_k) = \lambda \sum_{k=m}^{n} a_k + \mu \sum_{k=m}^{n} b_k\).</li>
+            <li><b>Constant</b>: \(\sum_{k=m}^{n} c = (n - m + 1)\,c\). For example <span data-eq="som-cst">\(\sum_{k=0}^{10} 3 = 11 \times 3 = 33\)</span>.</li>
+            <li><b>Last term</b> (the tool of induction steps): \(\sum_{k=m}^{n+1} a_k = \sum_{k=m}^{n} a_k + a_{n+1}\).</li>
+            <li><b>Change of index</b> \(j = k + 1\): \(\sum_{k=0}^{n-1} a_{k+1} = \sum_{j=1}^{n} a_j\). You change the term <b>and</b> the bounds. With \(j = n - k\), you go through the sum backwards.</li>
+            <li><b>Telescoping</b>: \(\sum_{k=m}^{n} (b_{k+1} - b_k) = b_{n+1} - b_m\): everything else cancels out.</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>standard sums, for \(n \in \N^*\)</i></span>
+          <div class="fm" data-eq="cl-k">\[\sum_{k=1}^{n} k = \frac{n(n + 1)}{2}\]</div>
+          <div class="fm" data-eq="cl-k2">\[\sum_{k=1}^{n} k^2 = \frac{n(n + 1)(2n + 1)}{6}\]</div>
+          <div class="fm" data-eq="cl-k3">\[\sum_{k=1}^{n} k^3 = \left(\frac{n(n + 1)}{2}\right)^2\]</div>
+          <div class="fm" data-eq="cl-geo" data-n0="0">\[\sum_{k=0}^{n} q^k = \frac{1 - q^{n+1}}{1 - q}\]</div>
+          <p>if \(q \neq 1\); if \(q = 1\), <span data-eq="cl-geo1" data-n0="0">\(\sum_{k=0}^{n} 1^k = n + 1\)</span>.</p>
+          <div class="fm" data-eq="cl-tel">\[\sum_{k=1}^{n} \frac{1}{k(k + 1)} = 1 - \frac{1}{n + 1}\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>seminar 6.32.2, by induction</i></span>
+          <p>For \(n \geq 1\), let \(P(n)\) be the proposition “\(\sum_{k=1}^{n} k = \frac{n(n + 1)}{2}\)”.</p>
+          <p>Base case: \(\sum_{k=1}^{1} k = 1\) and \(\frac{1 \times 2}{2} = 1\): \(P(1)\) is true.</p>
+          <p>Induction step: let \(n \geq 1\) be given; assume that \(P(n)\) is true. Take out the last term, then use \(P(n)\):</p>
+          <div class="fm" data-eq="pr-k">\[\sum_{k=1}^{n+1} k = \sum_{k=1}^{n} k + (n + 1) = \frac{n(n + 1)}{2} + (n + 1) = \frac{(n + 1)(n + 2)}{2}\]</div>
+          <p>This is \(P(n + 1)\). By induction, \(P(n)\) is true for every \(n \geq 1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Another proof, by a change of index</b> (the sum backwards, \(j = n + 1 - k\)): <span data-eq="gauss-1">\(\sum_{k=1}^{n} k = \sum_{j=1}^{n} (n + 1 - j)\)</span>. Adding the two forms term by term: <span data-eq="gauss-2">\(2\sum_{k=1}^{n} k = \sum_{k=1}^{n} (k + n + 1 - k) = n(n + 1)\)</span>. For example, <span data-eq="gauss-100">\(\sum_{k=1}^{100} k = \frac{100 \times 101}{2} = 5{,}050\)</span>.</p>
+          <p><b>Linearity at work</b>: the sum of the first \(n\) odd numbers, <span data-eq="impairs">\(\sum_{k=1}^{n} (2k - 1) = 2\sum_{k=1}^{n} k - \sum_{k=1}^{n} 1 = n(n + 1) - n = n^2\)</span>. A change of index \(j = k - 1\): <span data-eq="chg">\(\sum_{k=1}^{n} (k - 1) = \sum_{j=0}^{n-1} j = \frac{(n - 1)n}{2}\)</span>.</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>induction step for \(\sum k^2\) (formula given in exercise sheet 2)</i></span>
+          <p>Assume \(\sum_{k=1}^{n} k^2 = \frac{n(n + 1)(2n + 1)}{6}\). Then \(\sum_{k=1}^{n+1} k^2 = \frac{n(n + 1)(2n + 1)}{6} + (n + 1)^2\), and we factor out \(n + 1\):</p>
+          <div class="fm" data-eq="pr-k2">\[\frac{n(n + 1)(2n + 1)}{6} + (n + 1)^2 = \frac{(n + 1)\big(n(2n + 1) + 6(n + 1)\big)}{6} = \frac{(n + 1)(2n^2 + 7n + 6)}{6} = \frac{(n + 1)(n + 2)(2n + 3)}{6}\]</div>
+          <p>This is the formula at rank \(n + 1\), since \(2n + 3 = 2(n + 1) + 1\). The base case: \(1^2 = 1 = \frac{1 \times 2 \times 3}{6}\).</p>
+        </div>
+        <div class="prose">
+          <p>\(\sum k^3\) is proved in the same way (induction step: <span data-eq="pr-k3">\(\left(\frac{n(n + 1)}{2}\right)^2 + (n + 1)^3 = \left(\frac{(n + 1)(n + 2)}{2}\right)^2\)</span>). It is the square of \(\sum k\): <span data-eq="k3-ex">\(1^3 + 2^3 + 3^3 + 4^3 = 100 = (1 + 2 + 3 + 4)^2\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>November 2021 midterm, ex. 8 (2 points): the geometric sum</i></span>
+          <p>Let \(q \in \R\) and, for \(n \in \N\), \(S_n = \sum_{k=0}^{n} q^k\).</p>
+          <p>If \(q = 1\): all the terms are 1 and there are \(n + 1\) of them, so \(S_n = n + 1\).<span class="c">the special case</span></p>
+          <p>If \(q \neq 1\), let \(P(n)\) be the proposition “\(S_n = \frac{1 - q^{n+1}}{1 - q}\)”. Base case: \(S_0 = q^0 = 1 = \frac{1 - q}{1 - q}\).</p>
+          <p>Induction step: let \(n \in \N\) be given; assume \(P(n)\). Then \(S_{n+1} = S_n + q^{n+1}\) and, by the induction hypothesis,</p>
+          <div class="fm" data-eq="pr-geo">\(\frac{1 - q^{n+1}}{1 - q} + q^{n+1} = \frac{1 - q^{n+1} + q^{n+1} - q^{n+2}}{1 - q} = \frac{1 - q^{n+2}}{1 - q}\)</div>
+          <p>This is \(P(n + 1)\). By induction, \(S_n = \frac{1 - q^{n+1}}{1 - q}\) for every \(n \in \N\). Example: <span data-eq="geo-2">\(\sum_{k=0}^{10} 2^k = \frac{1 - 2^{11}}{1 - 2} = 2{,}047\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>Telescoping (seminar 6.33.4).</b> For \(k \geq 1\), <span data-eq="tel-1">\(\frac{1}{k(k + 1)} = \frac{1}{k} - \frac{1}{k + 1}\)</span>. Adding up, the intermediate terms cancel out in pairs: <span data-eq="tel-2">\(\sum_{k=1}^{n} \frac{1}{k(k + 1)} = \sum_{k=1}^{n} \left(\frac{1}{k} - \frac{1}{k + 1}\right) = 1 - \frac{1}{n + 1}\)</span>. The seminar also asks for a proof by induction.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: counting the terms, keeping the bounds</span>
+          <ul>
+            <li>\(\sum_{k=0}^{n}\) has \(n + 1\) terms, not \(n\): <span data-eq="piege-n1">\(\sum_{k=0}^{n} 1 = n + 1\)</span>. The geometric sum starts at \(k = 0\): its numerator is \(1 - q^{n+1}\), not \(1 - q^n\).</li>
+            <li>A sum of products is not the product of the sums: <span data-eq="piege-prod">\(\sum_{k=1}^{2} k^2 = 5 \neq 9 = \left(\sum_{k=1}^{2} k\right)^2\)</span>.</li>
+            <li>A change of index also changes the bounds: with \(j = k - 1\), \(k = 1\) becomes \(j = 0\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li><b>Relations: 6 papers out of 6 since 2019</b> (common midterms, LE and OBM exams; never in the DP exams). OBM exam, October 2024: ex. 4, <b>4 points out of 40</b> (\(|a| \leq |b|\), “after recalling the definition”). LE exam, October 2023: ex. 4, <b>4 points out of 20</b> (\(b = a^n\), then guided antisymmetry). Midterms: 2022, ex. 3, 4 points out of 40 (definitions, negations, contrapositive of transitivity, an example of an order relation); 2021, ex. 1, 3 points out of 30 (\(x^2 \leq y^2\)); 2020, ex. 1 and 2, 3 + 4 points out of 30 (translate, then order or not); 2019, ex. 4, 1.5 points (an equivalence).</li>
+            <li><b>Contrapositive and inclusion</b>: OBM exam 2024, ex. 1.3 and 1.4, within a 10-point logic exercise out of 40 (no mark per question given).</li>
+            <li><b>Induction</b>: 2020 midterm, ex. 6, 4 points out of 30 (\(\frac{2^n}{n!}\)); 2021 midterm, ex. 8, 2 points out of 30 (geometric sum). Never in the LE exam 2023 or the OBM exam 2024; it is in the seminar, though (6.32, 6.33). <b>Contradiction and proof by cases</b>: never asked from 2016 to 2024.</li>
+            <li>This year’s exam: OBM, <b>Wednesday 28 October at 9:50</b>, 2 hr, no documents, no calculator. The rigour of your writing is taken into account in the mark: the first line, the logical links and the conclusion count.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You now have the four OBM lessons. Sums \(\sum\) are everywhere in DP: lesson 5, <a href="cours-5-denombrement.html">counting</a>, proves \(\sum_{k=0}^{n} \binom{n}{k} = 2^n\) by counting in two ways.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../data/en/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+/* Lesson 4: graph of a binary relation (<div data-rel='{…}'>) and induction stepper (<div data-rec='{…}'>).
+   Same script as the French page, texts translated. The properties of the relation are tested on every pair (and
+   triple) of the finite set E. Nothing moves by itself: each click changes the state. Formulas \( … \) are rendered
+   by mathrender.js (MutationObserver). */
+(function () {
+  'use strict';
+  var TX = {
+    relTitle: 'Graph of a relation', edit: 'Edit the arrows', editOff: 'Done', clear: 'Clear all',
+    editHint: 'Click an element, then another one: the arrow appears or disappears. The same element twice: its loop.',
+    hint: 'Click a property: its reason, or its counterexample in red (what is missing is dashed).',
+    props: { refl: 'Reflexive', sym: 'Symmetric', anti: 'Antisymmetric', trans: 'Transitive' },
+    yes: 'yes', no: 'no',
+    why: {
+      refl: 'Reflexive: every element has its loop, \\(\\forall x \\in E,\\ x \\mathrel{\\mathcal{R}} x\\).',
+      sym: 'Symmetric: every arrow has its way back.',
+      anti: 'Antisymmetric: no round trip between two distinct elements.',
+      trans: 'Transitive: two chained arrows always have their direct shortcut.'
+    },
+    cx: {
+      refl: 'Not reflexive: \\({a} \\mathrel{\\not\\mathcal{R}} {a}\\), its loop is missing.',
+      sym: 'Not symmetric: \\({a} \\mathrel{\\mathcal{R}} {b}\\) but \\({b} \\mathrel{\\not\\mathcal{R}} {a}\\), the way back is missing.',
+      anti: 'Not antisymmetric: \\({a} \\mathrel{\\mathcal{R}} {b}\\) and \\({b} \\mathrel{\\mathcal{R}} {a}\\), but \\({a} \\neq {b}\\).',
+      trans: 'Not transitive: \\({a} \\mathrel{\\mathcal{R}} {b}\\) and \\({b} \\mathrel{\\mathcal{R}} {c}\\), but \\({a} \\mathrel{\\not\\mathcal{R}} {c}\\), the shortcut is missing.'
+    },
+    equiv: 'Reflexive, symmetric and transitive: an equivalence relation.',
+    order: 'Reflexive, antisymmetric and transitive: an order relation.',
+    both: 'All four properties: both an order and an equivalence (it is equality).',
+    none: 'Neither an order relation nor an equivalence relation.',
+    classes: 'Equivalence classes: ',
+    custom: 'Relation built by hand on \\(E = {E}\\).',
+    arrows: '{n} arrows and loops',
+    pre: {
+      mod3: ['\\(a - b\\) multiple of 3', '\\(a \\mathrel{\\mathcal{R}} b \\iff a - b\\) is a multiple of 3, on \\(E = \\ent{0}{8}\\) (seminar 6.27).'],
+      abs: ['\\(|a| \\leq |b|\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff |a| \\leq |b|\\), on \\(E = \\ent{-2}{2}\\) (OBM exam 2024).'],
+      puiss: ['\\(b = a^n\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff \\exists n \\in \\N,\\ b = a^n\\), on \\(E = \\{1, 2, 3, 4, 8, 9\\}\\) (LE exam 2023).'],
+      div: ['\\(a\\) divides \\(b\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff a\\) divides \\(b\\), on \\(E = \\ent{1}{6}\\).'],
+      pair: ['\\(a^2 - b^2\\) even', '\\(a \\mathrel{\\mathcal{R}} b \\iff a^2 - b^2\\) is even, on \\(E = \\ent{0}{5}\\).'],
+      lt: ['\\(a &lt; b\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff a &lt; b\\), on \\(E = \\ent{1}{4}\\).']
+    },
+    recTitle: 'Induction stepper', n0: 'base case', next: 'Next', all: 'Show all', reset: 'Start again',
+    start: 'Choose the base case \\(n_0\\), then press “Next”.',
+    initOk: 'Base case: \\(P({n})\\) is true, \\({v}\\).',
+    initKo: 'Base case: \\(P({n})\\) is false, \\({v}\\). The induction does not start.',
+    her: 'Induction step applied to \\(n = {n}\\): \\(P({n})\\) is true, so \\(P({m})\\) is true too.',
+    end: 'Conclusion: \\(P(n)\\) is true for every \\(n \\geq {n0}\\). The cells stop at {last}, the induction does not.',
+    legend: 'Green: proved by induction. ✓ or ✗: value of \\(P(n)\\), computed.',
+    tTrue: '✓ true', tFalse: '✗ false', proved: 'proved', notStarted: 'not proved',
+    rec: {
+      pow: { label: '\\(2^n \\geq 6n + 7\\)', P: '2^n \\geq 6n + 7',
+        her: 'Induction step, true for every \\(n \\geq 0\\): \\(2^{n+1} = 2 \\times 2^n \\geq 12n + 14 \\geq 6(n + 1) + 7\\).',
+        fail: 'Yet the induction step works from \\(n = 0\\) on: the base case sets the start. Try \\(n_0 = 6\\).' },
+      four: { label: '3 divides \\(4^n + 1\\)', P: '3 \\text{ divides } 4^n + 1',
+        her: 'Induction step, true: \\(4^{n+1} + 1 = 4(4^n + 1) - 3\\), so if 3 divides \\(4^n + 1\\), it divides \\(4^{n+1} + 1\\).',
+        fail: 'No rank works: \\(4^n + 1\\) always leaves remainder 2 when divided by 3. An induction step alone proves nothing.' },
+      gauss: { label: '\\(1 + \\cdots + n = \\frac{n(n+1)}{2}\\)', P: '1 + 2 + \\cdots + n = \\frac{n(n + 1)}{2}',
+        her: 'Induction step: \\(\\frac{n(n + 1)}{2} + (n + 1) = \\frac{(n + 1)(n + 2)}{2}\\).', fail: '' }
+    }
+  };
+
+  var NS = 'http://www.w3.org/2000/svg', uid = 0;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fill(s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return o && o[k] !== undefined ? o[k] : m; }); }
+  function mod(a, m) { return ((a % m) + m) % m; }
+  function isPow(a, b) { if (a === 1) return b === 1; var v = 1; while (v < b) v *= a; return v === b; }
+  function lab(v) { return v < 0 ? '−' + (-v) : String(v); }
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function range(a, b) { var r = []; for (var i = a; i <= b; i++) r.push(i); return r; }
+
+  var RELS = {
+    mod3: { E: range(0, 8), order: [0, 3, 6, 1, 4, 7, 2, 5, 8], groups: 3, R: function (a, b) { return mod(a - b, 3) === 0; } },
+    abs: { E: range(-2, 2), R: function (a, b) { return Math.abs(a) <= Math.abs(b); } },
+    puiss: { E: [1, 2, 3, 4, 8, 9], pref: [2, 8, 4, 3, 9, 1], R: isPow },
+    div: { E: range(1, 6), R: function (a, b) { return b % a === 0; } },
+    pair: { E: range(0, 5), order: [0, 2, 4, 1, 3, 5], groups: 2, R: function (a, b) { return mod(a * a - b * b, 2) === 0; } },
+    lt: { E: range(1, 4), R: function (a, b) { return a < b; } }
+  };
+
+  /* ---------- properties, tested on every pair; the simplest counterexample first ---------- */
+  function analyse(E, has, pref) {
+    var S = pref ? pref.slice() : E.slice().sort(function (a, b) { return Math.abs(a) - Math.abs(b) || b - a; });
+    var out = { refl: { ok: true }, sym: { ok: true }, anti: { ok: true }, trans: { ok: true } };
+    var i, j, l, a, b, c;
+    for (i = 0; i < S.length; i++) { a = S[i]; if (!has(a, a)) { out.refl = { ok: false, a: a }; break; } }
+    search: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) {
+      a = S[i]; b = S[j]; if (has(a, b) && !has(b, a)) { out.sym = { ok: false, a: a, b: b }; break search; }
+    }
+    search2: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) {
+      a = S[i]; b = S[j]; if (a !== b && has(a, b) && has(b, a)) { out.anti = { ok: false, a: a, b: b }; break search2; }
+    }
+    search3: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) for (l = 0; l < S.length; l++) {
+      a = S[i]; b = S[j]; c = S[l];
+      if (has(a, b) && has(b, c) && !has(a, c)) { out.trans = { ok: false, a: a, b: b, c: c }; break search3; }
+    }
+    out.equiv = out.refl.ok && out.sym.ok && out.trans.ok;
+    out.order = out.refl.ok && out.anti.ok && out.trans.ok;
+    if (out.equiv) {
+      var cls = [], seen = {};
+      E.forEach(function (x) {
+        if (seen[x]) return;
+        var k = E.filter(function (y) { return has(y, x); });
+        k.forEach(function (y) { seen[y] = true; });
+        cls.push(k);
+      });
+      out.classes = cls;
+    }
+    return out;
+  }
+
+  function mountRel(host) {
+    var o = {}; try { o = JSON.parse(host.getAttribute('data-rel') || '{}'); } catch (e) { o = {}; }
+    var id = 'p4r' + (++uid), presets = (o.presets || ['mod3']).filter(function (p) { return RELS[p]; });
+    var st = { key: RELS[o.preset] ? o.preset : presets[0], pairs: {}, E: [], order: [], edit: false, pick: null, sel: null };
+    host.className = 'bench';
+    host.innerHTML = '<div class="bench-head"><span class="bh-t">' + esc(o.title || TX.relTitle) + '</span><span class="bh-r" data-k="count"></span></div>' +
+      '<div class="bench-body"><p class="p4-def" data-k="def"></p><div class="p4-graph" data-k="g"></div>' +
+      '<ul class="p4-props" data-k="props"></ul><p class="readout" data-k="out" aria-live="polite"></p><p class="p4-verdict" data-k="verdict"></p></div>' +
+      '<div class="ctrls"><div class="presets" data-k="pre"></div><div class="row" data-k="edrow"></div><p class="hint" data-k="hint"></p></div>';
+    function q(k) { return host.querySelector('[data-k="' + k + '"]'); }
+    function has(a, b) { return !!st.pairs[a + '|' + b]; }
+    function load(key) {
+      var P = RELS[key]; st.key = key; st.E = P.E.slice(); st.order = (P.order || P.E).slice(); st.pairs = {};
+      st.E.forEach(function (a) { st.E.forEach(function (b) { if (P.R(a, b)) st.pairs[a + '|' + b] = true; }); });
+      st.sel = null; st.pick = null; draw();
+    }
+    function draw() {
+      var A = analyse(st.E, has, st.key !== 'custom' && RELS[st.key].pref), n = st.order.length, W = 360, H = 320, cx = W / 2, cy = H / 2 + 4, rad = n > 6 ? 118 : 104, r = 17;
+      var pos = {}, anchor = {}, G = st.key !== 'custom' && RELS[st.key].groups;
+      if (G) {
+        /* one class per triangle: triangle centres on a circle, vertices facing outwards */
+        var per = n / G, Rc = G === 2 ? 92 : 94, rl = 46;
+        st.order.forEach(function (v, i) {
+          var gi = Math.floor(i / per), j = i % per, tc = (G === 2 ? Math.PI : -Math.PI / 2) + 2 * Math.PI * gi / G;
+          var c0 = [cx + Rc * Math.cos(tc), cy + 10 + Rc * Math.sin(tc)], tl = tc + 2 * Math.PI * j / per;
+          pos[v] = [c0[0] + rl * Math.cos(tl), c0[1] + rl * Math.sin(tl)]; anchor[v] = c0;
+        });
+      } else st.order.forEach(function (v, i) { var t = -Math.PI / 2 + 2 * Math.PI * i / n; pos[v] = [cx + rad * Math.cos(t), cy + rad * Math.sin(t)]; anchor[v] = [cx, cy]; });
+      var hl = {}, miss = [], hlN = {};
+      var w = st.sel && A[st.sel] && !A[st.sel].ok ? A[st.sel] : null;
+      if (w) {
+        if (st.sel === 'refl') { miss.push([w.a, w.a]); hlN[w.a] = 1; }
+        if (st.sel === 'sym') { hl[w.a + '|' + w.b] = 1; miss.push([w.b, w.a]); hlN[w.a] = hlN[w.b] = 1; }
+        if (st.sel === 'anti') { hl[w.a + '|' + w.b] = hl[w.b + '|' + w.a] = 1; hlN[w.a] = hlN[w.b] = 1; }
+        if (st.sel === 'trans') { hl[w.a + '|' + w.b] = hl[w.b + '|' + w.c] = 1; miss.push([w.a, w.c]); hlN[w.a] = hlN[w.b] = hlN[w.c] = 1; }
+      }
+      var cls = {};
+      if (A.classes && A.classes.length > 1) A.classes.forEach(function (k, i) { k.forEach(function (v) { cls[v] = 'c' + (i % 4); }); });
+      var g = q('g'); g.innerHTML = '';
+      var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' }, g);
+      var count = 0;
+      var defs = el('defs', {}, svg);
+      [['', 'p4-mk'], ['h', 'p4-mk hl']].forEach(function (m) {
+        var mk = el('marker', { id: id + 'm' + m[0], viewBox: '0 0 10 10', refX: '8.5', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
+        el('path', { d: 'M0,0 L10,5 L0,10 z', 'class': m[1] }, mk);
+      });
+      function unit(x, y) { var d = Math.sqrt(x * x + y * y) || 1; return [x / d, y / d]; }
+      function arrow(a, b, curved, cl) {
+        var p = pos[a], s = pos[b], off = curved ? 16 : 0;
+        var u = unit(s[0] - p[0], s[1] - p[1]), perp = [-u[1], u[0]];
+        var mx = (p[0] + s[0]) / 2 + perp[0] * off, my = (p[1] + s[1]) / 2 + perp[1] * off;
+        var u1 = unit(mx - p[0], my - p[1]), u2 = unit(mx - s[0], my - s[1]);
+        var x1 = p[0] + u1[0] * r, y1 = p[1] + u1[1] * r, x2 = s[0] + u2[0] * (r + 1.5), y2 = s[1] + u2[1] * (r + 1.5);
+        el('path', { d: 'M' + x1.toFixed(1) + ',' + y1.toFixed(1) + ' Q' + mx.toFixed(1) + ',' + my.toFixed(1) + ' ' + x2.toFixed(1) + ',' + y2.toFixed(1),
+          'class': 'p4-ar' + (cl ? ' ' + cl : ''), 'marker-end': 'url(#' + id + 'm' + (cl ? 'h' : '') + ')' }, svg);
+      }
+      function loop(a, cl) {
+        var p = pos[a], d = unit(p[0] - anchor[a][0], p[1] - anchor[a][1]);
+        el('circle', { cx: (p[0] + d[0] * (r + 8)).toFixed(1), cy: (p[1] + d[1] * (r + 8)).toFixed(1), r: 10, 'class': 'p4-ar' + (cl ? ' ' + cl : '') }, svg);
+      }
+      st.E.forEach(function (a) {
+        if (has(a, a)) { loop(a, hl[a + '|' + a] ? 'hl' : ''); count++; }
+        st.E.forEach(function (b) {
+          if (a === b || !has(a, b)) return;
+          count++;
+          arrow(a, b, has(b, a), hl[a + '|' + b] ? 'hl' : '');
+        });
+      });
+      miss.forEach(function (m) { if (m[0] === m[1]) loop(m[0], 'miss'); else arrow(m[0], m[1], has(m[1], m[0]) || has(m[0], m[1]), 'miss'); });
+      st.order.forEach(function (v) {
+        var gr = el('g', { 'class': 'p4-nd' + (cls[v] ? ' ' + cls[v] : '') + (hlN[v] ? ' hl' : '') + (st.pick === v ? ' pick' : '') + (st.edit ? ' ed' : ''),
+          transform: 'translate(' + pos[v][0].toFixed(1) + ',' + pos[v][1].toFixed(1) + ')', 'data-v': v }, svg);
+        el('circle', { r: r }, gr);
+        var t = el('text', {}, gr); t.textContent = lab(v);
+        if (st.edit) {
+          gr.setAttribute('tabindex', '0'); gr.setAttribute('role', 'button'); gr.setAttribute('aria-label', lab(v));
+          var act = function () { click(v); };
+          gr.addEventListener('click', act);
+          gr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
+        }
+      });
+      svg.setAttribute('aria-label', fill(TX.arrows, { n: count }));
+      q('count').textContent = fill(TX.arrows, { n: count });
+      var Etex = '\\{' + st.E.map(function (v) { return String(v); }).join(', ') + '\\}';
+      q('def').innerHTML = st.key === 'custom' ? fill(TX.custom, { E: Etex }) : TX.pre[st.key][1];
+      var ul = q('props'); ul.innerHTML = '';
+      ['refl', 'sym', 'anti', 'trans'].forEach(function (p) {
+        var li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.className = 'p4-pr'; b.setAttribute('aria-pressed', st.sel === p ? 'true' : 'false');
+        b.innerHTML = '<span>' + TX.props[p] + '</span><b class="' + (A[p].ok ? 'y' : 'n') + '">' + (A[p].ok ? TX.yes : TX.no) + '</b>';
+        b.addEventListener('click', function () { st.sel = st.sel === p ? null : p; draw(); });
+        li.appendChild(b); ul.appendChild(li);
+      });
+      var out = '';
+      if (st.sel) out = A[st.sel].ok ? TX.why[st.sel] : fill(TX.cx[st.sel], { a: A[st.sel].a, b: A[st.sel].b, c: A[st.sel].c });
+      q('out').innerHTML = out || TX.hint;
+      var v = A.equiv && A.order ? TX.both : A.equiv ? TX.equiv : A.order ? TX.order : TX.none;
+      if (A.equiv && A.classes) v += ' ' + TX.classes + A.classes.map(function (k) { return '\\(\\{' + k.join(', ') + '\\}\\)'; }).join(', ') + '.';
+      q('verdict').innerHTML = v;
+      q('hint').textContent = st.edit ? TX.editHint : '';
+    }
+    function click(v) {
+      if (st.pick === null) st.pick = v;
+      else {
+        var k = st.pick + '|' + v;
+        if (st.pairs[k]) delete st.pairs[k]; else st.pairs[k] = true;
+        st.pick = null; st.key = 'custom'; st.sel = null; syncPre();
+      }
+      draw();
+      var f = q('g').querySelector('[data-v="' + v + '"]'); if (f && f.focus) f.focus();   /* keyboard focus stays in place */
+    }
+    var pre = q('pre');
+    presets.forEach(function (p) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-p', p);
+      b.innerHTML = TX.pre[p][0];
+      b.addEventListener('click', function () { load(p); syncPre(); });
+      pre.appendChild(b);
+    });
+    function syncPre() { Array.prototype.forEach.call(pre.children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === st.key ? 'true' : 'false'); }); }
+    if (o.edit) {
+      var ed = document.createElement('button'), cl = document.createElement('button');
+      ed.type = cl.type = 'button'; ed.className = 'btn'; cl.className = 'btn ghost';
+      ed.textContent = TX.edit; cl.textContent = TX.clear; cl.hidden = true;
+      ed.addEventListener('click', function () { st.edit = !st.edit; st.pick = null; ed.textContent = st.edit ? TX.editOff : TX.edit; cl.hidden = !st.edit; draw(); });
+      cl.addEventListener('click', function () { st.pairs = {}; st.key = 'custom'; st.sel = null; st.pick = null; syncPre(); draw(); });
+      q('edrow').appendChild(ed); q('edrow').appendChild(cl);
+    } else q('edrow').remove();
+    load(st.key); syncPre();
+  }
+
+  /* ---------- induction stepper ---------- */
+  var RECS = {
+    pow: { a: 0, b: 12, n0: 6, chips: range(0, 8),
+      cell: function (n) { var L = Math.pow(2, n), M = 6 * n + 7; return { ok: L >= M, v: L + (L >= M ? ' \\geq ' : ' \\lt ') + M, full: '2^{' + n + '} = ' + L + (L >= M ? ' \\geq ' : ' \\lt ') + M + ' = 6 \\times ' + n + ' + 7' }; } },
+    four: { a: 0, b: 6, n0: 0, chips: range(0, 3),
+      cell: function (n) { var v = Math.pow(4, n) + 1; return { ok: v % 3 === 0, v: String(v), full: '4^{' + n + '} + 1 = ' + v + ' = 3 \\times ' + Math.floor(v / 3) + ' + ' + (v % 3) }; } },
+    gauss: { a: 1, b: 10, n0: 1, chips: [1],
+      cell: function (n) { var s = n * (n + 1) / 2; return { ok: true, v: String(s), full: '1 + \\cdots + ' + n + ' = ' + s + ' = \\frac{' + n + ' \\times ' + (n + 1) + '}{2}' }; } }
+  };
+  function mountRec(host) {
+    var o = {}; try { o = JSON.parse(host.getAttribute('data-rec') || '{}'); } catch (e) { o = {}; }
+    var presets = (o.presets || ['pow']).filter(function (p) { return RECS[p]; });
+    var st = { key: RECS[o.preset] ? o.preset : presets[0], n0: 0, k: 0, ko: false, msg: '' };
+    host.className = 'bench';
+    host.innerHTML = '<div class="bench-head"><span class="bh-t">' + esc(o.title || TX.recTitle) + '</span><span class="bh-r" data-k="step"></span></div>' +
+      '<div class="bench-body"><div class="p4-hd"><span class="fm" data-k="P"></span></div><p class="hint" data-k="her"></p><div class="p4-tiles" data-k="tiles"></div>' +
+      '<p class="readout" data-k="out" aria-live="polite"></p><p class="hint">' + TX.legend + '</p></div>' +
+      '<div class="ctrls"><div class="presets" data-k="pre"></div><div class="row"><span class="lbl">' + TX.n0 + '</span><span class="presets" data-k="chips"></span></div>' +
+      '<div class="row"><button type="button" class="btn primary" data-k="next">' + TX.next + '</button><button type="button" class="btn" data-k="all">' + TX.all + '</button><button type="button" class="btn ghost" data-k="reset">' + TX.reset + '</button></div></div>';
+    function q(k) { return host.querySelector('[data-k="' + k + '"]'); }
+    function P() { return RECS[st.key]; }
+    function last() { return P().b; }
+    function provedTo() { return st.k >= 1 && !st.ko ? st.n0 + st.k - 1 : -1; }
+    function step() {
+      var p = P();
+      if (st.ko) return;
+      if (st.k === 0) {
+        var c = p.cell(st.n0);
+        st.k = 1;
+        if (!c.ok) { st.ko = true; st.msg = fill(TX.initKo, { n: st.n0, v: c.full }) + ' ' + TX.rec[st.key].fail; }
+        else st.msg = fill(TX.initOk, { n: st.n0, v: c.full });
+      } else if (st.n0 + st.k - 1 < last()) {
+        var n = st.n0 + st.k - 1; st.k++;
+        st.msg = fill(TX.her, { n: n, m: n + 1 });
+        if (n + 1 === last()) st.msg += ' ' + fill(TX.end, { n0: st.n0, last: last() });
+      }
+      draw();
+    }
+    function draw() {
+      var p = P(), to = provedTo();
+      q('P').innerHTML = '\\(P(n)\\ :\\ ' + TX.rec[st.key].P + '\\)';
+      q('her').innerHTML = TX.rec[st.key].her;
+      var t = q('tiles'); t.innerHTML = '';
+      range(p.a, p.b).forEach(function (n) {
+        var c = p.cell(n), d = document.createElement('div');
+        var pv = to >= 0 && n >= st.n0 && n <= to, ko = st.ko && n === st.n0;
+        d.className = 'p4-tile' + (n === st.n0 ? ' start' : '') + (pv ? ' pv' : '') + (ko ? ' ko' : '');
+        d.innerHTML = '<span class="nn">n = ' + n + '</span><span class="vv">\\(' + c.v + '\\)</span><span class="tt ' + (c.ok ? 'y' : 'n') + '">' + (c.ok ? TX.tTrue : TX.tFalse) + '</span><span class="pf">' + (pv ? TX.proved : ko ? '✗' : '') + '</span>';
+        t.appendChild(d);
+      });
+      q('out').innerHTML = st.msg || TX.start;
+      q('step').textContent = st.k ? (st.ko ? '✗' : (st.n0 + st.k - 1) + ' / ' + last()) : '';
+      var done = st.ko || (st.k >= 1 && st.n0 + st.k - 1 >= last());
+      q('next').disabled = done; q('all').disabled = done;
+      Array.prototype.forEach.call(q('chips').children, function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-n') === st.n0 ? 'true' : 'false'); });
+      Array.prototype.forEach.call(q('pre').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === st.key ? 'true' : 'false'); });
+    }
+    function reset() { st.k = 0; st.ko = false; st.msg = ''; draw(); }
+    function chips() {
+      var c = q('chips'); c.innerHTML = '';
+      P().chips.forEach(function (n) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-n', n); b.textContent = n;
+        b.addEventListener('click', function () { st.n0 = n; reset(); });
+        c.appendChild(b);
+      });
+    }
+    function load(key) { st.key = key; st.n0 = RECS[key].n0; chips(); reset(); }
+    presets.forEach(function (p) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-p', p); b.innerHTML = TX.rec[p].label;
+      b.addEventListener('click', function () { load(p); });
+      q('pre').appendChild(b);
+    });
+    q('next').addEventListener('click', step);
+    q('all').addEventListener('click', function () { var g = 0; do { step(); g++; } while (!st.ko && st.n0 + st.k - 1 < last() && g < 40); });
+    q('reset').addEventListener('click', reset);
+    load(st.key);
+  }
+
+  function boot() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rel]'), function (h) { try { mountRel(h); } catch (e) { h.textContent = e.message; } });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rec]'), function (h) { try { mountRec(h); } catch (e) { h.textContent = e.message; } });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sets · Maths</title>
+<meta name="description" content="Maths, OBM, lesson 2: sets and elements, intervals, sets in extension, in intention and in parametric form, membership and inclusion, power set, intersection, union, complement, set difference, De Morgan’s laws, Cartesian product, cardinal, partition, inclusion-exclusion formula with its proof. With Venn diagrams, an interval line and an “∈ or ⊂” exercise.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Lesson 2 tools (drawn in the page, in the theme colours) */
+.p2-ivl svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}
+.p2-ivl .ax{stroke:var(--rule);stroke-width:1.2;fill:none}
+.p2-ivl .tk{stroke:var(--rule);stroke-width:1}
+.p2-ivl .gd{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.p2-ivl .seg{stroke-width:5;stroke-linecap:butt;fill:none}
+.p2-ivl .br{stroke-width:2.2;fill:none;stroke-linejoin:miter}
+.p2-ivl .s0{stroke:var(--z1)} .p2-ivl .s1{stroke:var(--z2)} .p2-ivl .s2{stroke:var(--z3)} .p2-ivl .sr{stroke:var(--accent)}
+.p2-ivl text{font-family:var(--font-ui);font-size:13px;fill:var(--muted)}
+.p2-ivl text.nm{font-family:var(--font-display);font-style:italic;font-size:18px}
+.p2-ivl text.n0{fill:var(--z1)} .p2-ivl text.n1{fill:var(--z2)} .p2-ivl text.n2{fill:var(--z3)} .p2-ivl text.nr{fill:var(--accent);font-style:normal;font-family:var(--font-ui);font-weight:600;font-size:14px}
+.p2-ivl .ops{display:flex;flex-wrap:wrap;gap:6px}
+.p2-q{display:grid;gap:8px}
+.p2-q li{list-style:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;border:1px solid var(--line);border-radius:var(--radius);padding:.5rem .7rem;background:var(--surface)}
+.p2-q ol{margin:0;padding:0;display:grid;gap:8px}
+.p2-q .lhs{min-width:0;overflow-x:auto;overflow-y:hidden}
+.p2-q .sym{display:flex;gap:4px}
+.p2-q .sym .chip-btn{min-width:42px;font-size:1.05rem;padding:.15rem .5rem}
+.p2-q .sym .chip-btn.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.p2-q .sym .chip-btn.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.p2-q .fb{grid-column:1/-1;font-size:.96rem;line-height:1.5;margin:0}
+.p2-q .fb:empty{display:none}
+.p2-q .fb b.ok{color:var(--ok)} .p2-q .fb b.no{color:var(--bad)} .p2-q .fb b.mid{color:var(--meth)}
+.p2-q .ans{display:none;font-family:var(--font-ui);font-weight:600;color:var(--ok)}
+.p2-q.shown .ans{display:inline}
+.p2-pw td,.p2-pw th{text-align:center}
+.p2-grid td,.p2-grid th{text-align:center;font-variant-numeric:tabular-nums}
+@media (max-width:520px){.p2-q li{grid-template-columns:minmax(0,1fr)}}
+@media print{.p2-q .sym,.p2-ivl .ops{display:none !important}.p2-q .ans{display:inline}.p2-q .fb{display:none}}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · lesson 2: sets">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM</b> — lesson 2 of 7</span><span>Source: maths seminar, sections 2 and 3 · exercises 2.8 to 3.13</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Maths</a> · OBM · Lesson 2 of 7</div>
+      <h1>Belonging, being included, <span class="w">then counting.</span></h1>
+      <p class="lead">A set is known by its elements. This lesson shows you how to write a set (in extension, in intention), how to choose between \(\in\) and \(\subset\), how to compute with \(\cap\), \(\cup\) and the complement as you do with “and”, “or”, “not”, and then how to count: Cartesian product, \(\mathcal{P}(E)\) and the inclusion-exclusion formula, proved with a partition as in the 2023 DP exam.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 55 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with Venn diagrams</span></li>
+        <li><span><span class="k">Course</span> seminar, sections 2 and 3 · exercises 2.8 to 3.13</span></li>
+        <li class="ex"><span><span class="k">Exam</span> OBM on Wednesday 28 October at 9:50 am; inclusion-exclusion came up in the 2023 DP exam</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="venn" data-opts='{"names":["A","B","C"],"u":"E","expr":"A \\cap (B \\cup C)","title":"Venn diagram · type an operation"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Type a set (\(\cup\) is typed |, \(\cap\) is typed &amp;, the complement A’) or click the regions: the shortest way to write the shaded regions is displayed.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 2 · Sets</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Sets, elements, intervals</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Describing a set</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Inclusion, ∈ or ⊂, power set</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>∩, ∪, complement, difference</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Intervals, De Morgan’s laws</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Cartesian product</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Cardinal, partition</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Inclusion-exclusion</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="cours-3-fonctions.html">Lesson 3: functions →</a><a href="../qcm/index.html#maths">Maths MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Sets, elements, intervals</a></li><li><a href="#s2">Describing a set</a></li><li><a href="#s3">Inclusion, ∈ or ⊂, power set</a></li><li><a href="#s4">∩, ∪, complement, difference</a></li>
+      <li><a href="#s5">Intervals, De Morgan’s laws</a></li><li><a href="#s6">Cartesian product</a></li><li><a href="#s7">Cardinal, partition</a></li><li><a href="#s8">Inclusion-exclusion</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">notes p. 9-10 · seminar 2.10</span></div><h2>Sets, elements, the empty set, intervals</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Numbers, functions, the outcomes of a random experiment: in maths, everything lives in sets. Between an object and a set, there is only one question: is the object in it or not?</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>set, element, membership</i></span>
+          <p>A <b>set</b> is a collection of distinct objects, called its <b>elements</b>. We write \(x \in A\) (“\(x\) belongs to \(A\)”) when \(x\) is an element of \(A\), and \(x \notin A\) otherwise. For a given object \(x\), “\(x \in A\)” is a proposition: it is either true or false (lesson 1).</p>
+          <p>Two sets are <b>equal</b> when they have exactly the same elements. The order in which you write them and repetitions do not matter: <span data-eq>\(\{1, 2, 3\} = \{3, 1, 2\} = \{1, 1, 2, 3\}\)</span>.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>empty set, usual sets</i></span>
+          <ul>
+            <li>The <b>empty set</b> \(\varnothing\) has no element. For example <span data-eq="py:solveset(x**2 + 1, x, S.Reals)">\(\{x \in \R,\ x^2 + 1 = 0\} = \varnothing\)</span>.</li>
+            <li>\(\N = \{0, 1, 2, \dots\}\) (it contains 0), \(\Z\) the integers, \(\Q\) the rational numbers, \(\R\) the real numbers, \(\C\) the complex numbers: \(\N \subset \Z \subset \Q \subset \R \subset \C\).</li>
+            <li>A star removes 0: \(\N^* = \N \setminus \{0\}\), \(\R^* = \R \setminus \{0\}\). A sign keeps one side: \(\R^+ = [0, +\infty[\), \(\R^- = \,]{-\infty}, 0]\).</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>intervals</i></span>
+          <p>For two real numbers \(a \leq b\): \([a, b] = \{x \in \R,\ a \leq x \leq b\}\), \(]a, b[\, = \{x \in \R,\ a &lt; x &lt; b\}\), and in the same way \([a, b[\) and \(]a, b]\); \([a, +\infty[\, = \{x \in \R,\ x \geq a\}\), \(]{-\infty}, b[\, = \{x \in \R,\ x &lt; b\}\). A bracket turned outwards excludes the endpoint (French notation, used in the course); \(\pm\infty\) is never an included endpoint.</p>
+          <p>For two integers \(a \leq b\), the <b>interval of integers</b> is \(\ent{a}{b} = \{n \in \Z,\ a \leq n \leq b\}\). It has \(b - a + 1\) elements.</p>
+        </div>
+        <div class="calc"><div class="fm"><span data-eq>\(\ent{2}{6} = \{2, 3, 4, 5, 6\}\)</span>: <span data-eq="A = \ent{2}{6}">\(\card(A) = 6 - 2 + 1 = 5\)</span></div><div class="fm"><span data-eq>\(\{n \in \N,\ 4 \leq n &lt; 9\} = \{4, 5, 6, 7, 8\} = \ent{4}{8}\)</span></div></div>
+        <div class="prose">
+          <p><b>Example (seminar 2.10).</b> \(A = \{x \in \R,\ -1 &lt; x &lt; 10\}\) and \(B = \{n \in \N,\ n + 1 \leq 8\}\). We translate them: <span data-eq="A = \{x \in \R, -1 &lt; x &lt; 10\}">\(A = \,]{-1}, 10[\)</span> is an interval of real numbers, <span data-eq="B = \{n \in \N, n + 1 \leq 8\}">\(B = \ent{0}{7}\)</span> has only 8 elements. A common set \(S\) containing both is \(\R\), because \(B \subset \N \subset \R\).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 2.1 — Does it belong or not? Check the condition that defines the set (seminar 2.10, checked by a program)</caption>
+          <thead><tr><th>Object</th><th>in \(A\)?</th><th>in \(B\)?</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>\(0\)</td><td>yes</td><td>yes</td><td>\(-1 &lt; 0 &lt; 10\); \(0 \in \N\) and \(0 + 1 \leq 8\)</td></tr>
+            <tr><td>\(7\)</td><td>yes</td><td>yes</td><td>\(7 + 1 = 8 \leq 8\)</td></tr>
+            <tr><td>\(8\)</td><td>yes</td><td>no</td><td>\(8 + 1 = 9 > 8\)</td></tr>
+            <tr><td>\(10\)</td><td>no</td><td>no</td><td>\(10 &lt; 10\) is false; \(11 > 8\)</td></tr>
+            <tr><td>\(2.5\)</td><td>yes</td><td>no</td><td>\(2.5 \notin \N\)</td></tr>
+            <tr><td>\(-1\)</td><td>no</td><td>no</td><td>\(-1 &lt; -1\) is false; \(-1 \notin \N\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>showing that an object does not belong to a set</i></span>
+          <p>Let us show that \(10 \notin A\), with \(A = \{x \in \R,\ -1 &lt; x &lt; 10\}\). We do have \(10 \in \R\), but \(10 &lt; 10\) is false.<span class="c">test the condition</span></p>
+          <p>The condition that defines \(A\) does not hold, so \(10 \notin A\).</p>
+          <p>In the same way, \(-1 \notin \{n \in \Z,\ n^2 > 1\}\): \(-1 \in \Z\), but \((-1)^2 = 1\) and \(1 > 1\) is false (seminar 2.9.6a).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: an interval of real numbers is not a list of integers</span>
+          <ul>
+            <li>\([0, 3]\) contains infinitely many real numbers (\(1.5\), \(\sqrt{2}\)…); the integers from 0 to 3 form \(\ent{0}{3} = \{0, 1, 2, 3\}\).</li>
+            <li>In \(]2, 5]\), the endpoint 2 is excluded: \(2 \notin \,]2, 5]\), but \(5 \in \,]2, 5]\).</li>
+            <li>\(\{1, 1, 2\}\) has 2 elements, not 3: a set does not count repetitions.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>Lecture test of 16 October 2023: seminar exercise 2.10 copied word for word, <b>4 points out of 20</b> (find elements of \(A\), \(A \cup B\), \(A \cap B\), \(A \times B\), then the complement of \(B\) in \(\Z\)). Weekly MCQ of 29 September 2025: you had to see that \(\{n \in \N,\ 4 \leq n &lt; 9\}\) has 5 elements to get <span data-eq="A = \{n \in \N, 4 \leq n &lt; 9\}; B = \{0, 1, 9, 15, 23\}">\(\card(A \cup B) = 5 + 5 = 10\)</span>, with \(B = \{0, 1, 9, 15, 23\}\). The functions in the exams start from intervals of integers: \(\ent{1}{4} \to \ent{10}{14}\) (2022), \(\{a, b, c, d\} \to \ent{1}{5}\) (2023).</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">notes p. 9 · seminar 2.8, 2.9</span></div><h2>Describing a set: in extension, in intention, in parametric form</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>three ways to write a set</i></span>
+          <ul>
+            <li><b>In extension</b> (roster notation): the list of its elements in braces, \(\{1, 2, 3, 4\}\). Dots are allowed when the pattern is obvious: \(\{1, 3, 5, \dots, 19\}\).</li>
+            <li><b>In intention</b> (set-builder notation, with a membership condition): \(\{x \in E,\ P(x)\}\), “the elements \(x\) of \(E\) such that \(P(x)\) holds”. Example: \(\{x \in \N,\ 1 \leq x \leq 4\}\).</li>
+            <li><b>In parametric form</b>: \(\{f(t),\ t \in T\}\), “all the \(f(t)\) as \(t\) runs through \(T\)”. Example: \(\{2n,\ n \in \N\}\), the even natural numbers.</li>
+          </ul>
+          <p>Inside the braces there is always either a list, or “variable \(\in\) set, condition”, or “expression, parameter \(\in\) set”.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 2.2 — Seminar 2.9.3: one set, three ways to write it (“—”: impossible or pointless; equalities checked by a program)</caption>
+          <thead><tr><th>Set</th><th>In extension</th><th>In intention</th><th>Parametric</th></tr></thead>
+          <tbody>
+            <tr><td>(a) odd natural numbers \(&lt; 20\)</td><td>\(\{1, 3, \dots, 19\}\)</td><td>\(\{n \in \N,\ n &lt; 20 \text{ and } n \text{ odd}\}\)</td><td>\(\{2k + 1,\ k \in \ent{0}{9}\}\)</td></tr>
+            <tr><td>(b) the line \(y = x\) in the plane</td><td>— (infinite)</td><td>\(\{(x, y) \in \R^2,\ y = x\}\)</td><td>\(\{(t, t),\ t \in \R\}\)</td></tr>
+            <tr><td>(c) multiples of 4 strictly between 2 and 30</td><td>\(\{4, 8, \dots, 28\}\)</td><td>\(\{n \in \N,\ 2 &lt; n &lt; 30 \text{ and } 4 \mid n\}\)</td><td>\(\{4k,\ k \in \ent{1}{7}\}\)</td></tr>
+            <tr><td>(d) real solutions of \((x - 1)(x^2 - 5x + 6) = 0\)</td><td>\(\{1, 2, 3\}\)</td><td>\(\{x \in \R,\ (x - 1)(x^2 - 5x + 6) = 0\}\)</td><td>—</td></tr>
+            <tr><td>(e) real numbers in \([-3\pi, 3\pi]\) whose sine is 0</td><td>\(\{-3\pi, -2\pi, \dots, 3\pi\}\)</td><td>\(\{x \in [-3\pi, 3\pi],\ \sin(x) = 0\}\)</td><td>\(\{k\pi,\ k \in \ent{-3}{3}\}\)</td></tr>
+            <tr><td>(f) real even functions</td><td>— (infinite)</td><td>\(\{f \in \R^\R,\ \forall x \in \R,\ f(-x) = f(x)\}\)</td><td>—</td></tr>
+          </tbody>
+        </table></div>
+        <div class="calc">
+          <div class="fm"><span data-eq="py:FiniteSet(*[n for n in range(0, 20) if n % 2 == 1])">\(\{1, 3, \dots, 19\} = \{2k + 1,\ k \in \ent{0}{9}\}\)</span></div>
+          <div class="fm"><span data-eq="py:FiniteSet(*[n for n in range(3, 30) if n % 4 == 0])">\(\{4, 8, \dots, 28\} = \{4k,\ k \in \ent{1}{7}\}\)</span></div>
+          <div class="fm"><span data-eq>\(\{x \in \R,\ (x - 1)(x^2 - 5x + 6) = 0\} = \{1, 2, 3\}\)</span></div>
+          <div class="fm"><span data-eq="py:solveset(sin(x), x, Interval(-3*pi, 3*pi))">\(\{-3\pi, -2\pi, -\pi, 0, \pi, 2\pi, 3\pi\} = \{k\pi,\ k \in \ent{-3}{3}\}\)</span></div>
+        </div>
+        <div class="prose">
+          <p><b>Two ways, one set (seminar 2.9.2).</b> \(E = \{n \in \N,\ \exists k \in \N,\ n = 2k\}\) is written in intention, \(F = \{2p,\ p \in \N\}\) in parametric form: both describe the even natural numbers, so \(E = F\).</p>
+          <p><b>What is not a set (seminar 2.8).</b> \(E_1 = \{\forall x \in \R,\ \sin(x) = 0\}\) and \(E_2 = \{\exists x \in \R,\ \sin(x) = 0\}\) mean nothing: a proposition has been put inside the braces, with no variable and no set it runs through. The set of real numbers that make \(\sin\) equal to zero is \(\{x \in \R,\ \sin(x) = 0\}\) in intention and \(\{k\pi,\ k \in \Z\}\) in parametric form.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>express a set in extension (seminar 2.9.1)</i></span>
+          <p>\(A = \{n \in \N,\ \sqrt{2} &lt; n &lt; 2\pi\}\). Bound the endpoints: \(1 &lt; \sqrt{2} &lt; 2\) since \(1 &lt; 2 &lt; 4\), and \(6 &lt; 2\pi &lt; 7\) since \(3 &lt; \pi &lt; 3.5\).<span class="c">no calculator</span></p>
+          <p>So the integers strictly between \(\sqrt{2}\) and \(2\pi\) are 2, 3, 4, 5 and 6: <span data-eq="py:FiniteSet(*[n for n in range(0, 50) if sqrt(2) < n < 2*pi])">\(A = \{2, 3, 4, 5, 6\}\)</span>.</p>
+          <p>\(B = \{x \in [0, 20],\ \exists n \in \N,\ x = n^2\}\): these are the squares of natural numbers that are at most 20. Since \(5^2 = 25 > 20\), <span data-eq="py:FiniteSet(*[n*n for n in range(0, 50) if n*n <= 20])">\(B = \{0, 1, 4, 9, 16\}\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: braces around a sentence</span>
+          <ul>
+            <li>\(\{x^2 = 1\}\) is not a set: write \(\{x \in \R,\ x^2 = 1\}\), which is <span data-eq="py:solveset(x**2 - 1, x, S.Reals)">\(\{-1, 1\}\)</span>. The variable and the set it runs through are compulsory.</li>
+            <li>In a parametric form, the letter that varies is the one after the comma. \(\{2x + 1,\ x \in \N,\ 0 \leq k \leq 9\}\) (found in a student’s notes) mixes \(x\) and \(k\): write \(\{2k + 1,\ k \in \ent{0}{9}\}\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>No “write in extension” exercise in the 2023 and 2024 exams, but every direct image or pre-image is a set to give in extension. 2024 OBM exam, exercise 2 (<b>7 points out of 40</b>): \(f(x, y) = x + y\) on \(\{2, 3, 4\} \times \{1, 2, 3\}\) gives <span data-eq="py:FiniteSet(*[x + y for x in (2, 3, 4) for y in (1, 2, 3)])">\(f(E \times F) = \{3, 4, 5, 6, 7\}\)</span> and <span data-eq="py:FiniteSet(*[Tuple(x, y) for x in (2, 3, 4) for y in (1, 2, 3) if x + y == 6])">\(f^{-1}(\{6\}) = \{(3, 3), (4, 2)\}\)</span>. 2022 midterm, exercise 2 (<b>8.5 points out of 40</b>): \(f^{-1}(\{12\}) = \varnothing\). The 2024 OBM exam (1.4) defines its sets in intention in \(\R^3\) (part 3).</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">notes p. 10 · seminar 2.9.5, 2.9.6, 3.12</span></div><h2>Inclusion, equality, “∈ or ⊂?”, power set</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>inclusion, equality</i></span>
+          <p>\(A\) is <b>included</b> in \(B\), written \(A \subset B\), when every element of \(A\) is an element of \(B\):</p>
+          <div class="fm">\[A \subset B \iff \forall x \in A,\ x \in B.\]</div>
+          <p>We also say that \(A\) is a <b>subset</b> (a part) of \(B\). Its negation: \(A \not\subset B \iff \exists x \in A,\ x \notin B\). Equality is a double inclusion: \(A = B \iff (A \subset B \text{ and } B \subset A)\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Properties</span>
+          <ul>
+            <li>\(\varnothing \subset A\) and \(A \subset A\) for every set \(A\).</li>
+            <li>Transitivity: if \(A \subset B\) and \(B \subset C\), then \(A \subset C\).</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>power set</i></span>
+          <p>The <b>power set</b> of \(E\), written \(\mathcal{P}(E)\), is the set of all the subsets of \(E\): \(X \in \mathcal{P}(E) \iff X \subset E\). It always contains \(\varnothing\) and \(E\). Example: <span data-eq>\(\mathcal{P}(\{1, 2\}) = \{\varnothing, \{1\}, \{2\}, \{1, 2\}\}\)</span>.</p>
+        </div>
+        <div class="calc"><div class="fm"><span data-eq>\(\mathcal{P}(\{1, 2, 3\}) = \{\varnothing, \{1\}, \{2\}, \{3\}, \{1, 2\}, \{1, 3\}, \{2, 3\}, \{1, 2, 3\}\}\)</span></div><div class="fm"><span data-eq>\(\card\big(\mathcal{P}(\{1, 2, 3\})\big) = 8 = 2^3\)</span> (seminar 3.12; the formula \(2^n\) is proved in part 7)</div></div>
+        <div class="box meth"><span class="tag">Method <i>∈ or ⊂: look at the type of both sides</i></span>
+          <ol>
+            <li>If the object on the left has the same type as the <b>elements</b> on the right (a number and a set of numbers), compare with \(\in\) or \(\notin\).</li>
+            <li>If the object on the left is a <b>set</b> of objects of the same type as those on the right (a set of numbers and a set of numbers), compare with \(\subset\) or \(\not\subset\).</li>
+            <li>In \(\mathcal{P}(A)\), the elements are sets: \(\{3\} \in \mathcal{P}(A)\), whereas \(\{3\} \subset A\) and \(3 \in A\).</li>
+          </ol>
+        </div>
+        <div class="bench p2-q" id="p2-quiz" data-q='{"title":"∈, ∉, ⊂ or ⊄? · seminar 2.9.5 and 2.9.6","intro":"With \\(A = \\ent{0}{10}\\). Pick the symbol that makes each statement both correctly written and true.","items":[
+{"l":"-1","r":"A","set":false,"ok":["notin"],"also":[],"why":"\\(-1\\) is a number, \\(A\\) a set of numbers: compare with \\(\\in\\). Since \\(-1 &lt; 0\\), \\(-1 \\notin A\\)."},
+{"l":"2","r":"A","set":false,"ok":["in"],"also":[],"why":"\\(2\\) is an integer and \\(0 \\leq 2 \\leq 10\\): \\(2 \\in A\\)."},
+{"l":"\\varnothing","r":"A","set":true,"ok":["sub"],"also":["notin"],"why":"\\(\\varnothing\\) is a set, included in every set: \\(\\varnothing \\subset A\\). “\\(\\varnothing \\notin A\\)” is also true (the elements of \\(A\\) are numbers), but it is not the expected answer."},
+{"l":"\\{5\\}","r":"A","set":true,"ok":["sub"],"also":["notin"],"why":"\\(\\{5\\}\\) is a set of numbers: compare with inclusion. \\(5 \\in A\\), so \\(\\{5\\} \\subset A\\)."},
+{"l":"\\{3\\}","r":"\\{1, 2, 3\\}","set":true,"ok":["sub"],"also":["notin"],"why":"\\(3 \\in \\{1, 2, 3\\}\\), so \\(\\{3\\} \\subset \\{1, 2, 3\\}\\). “\\(\\{3\\} \\in \\{1, 2, 3\\}\\)” is false: the elements are 1, 2 and 3, not \\(\\{3\\}\\)."},
+{"l":"\\{3\\}","r":"\\mathcal{P}(A)","set":true,"ok":["in"],"also":["notsub"],"why":"The elements of \\(\\mathcal{P}(A)\\) are the subsets of \\(A\\), and \\(\\{3\\} \\subset A\\): \\(\\{3\\} \\in \\mathcal{P}(A)\\)."},
+{"l":"-1","r":"\\{n \\in \\Z,\\ n^2 &gt; 1\\}","set":false,"ok":["notin"],"also":[],"why":"\\((-1)^2 = 1\\) and \\(1 &gt; 1\\) is false: \\(-1\\) does not satisfy the condition."},
+{"l":"(1, 2)","r":"\\{(x, y) \\in \\N^2,\\ x^2 + y^2 = 5\\}","set":false,"ok":["in"],"also":[],"why":"\\((1, 2)\\) is a 2-tuple of natural numbers and \\(1^2 + 2^2 = 5\\)."},
+{"l":"\\{0, 1\\}","r":"\\{(x, y) \\in \\N^2,\\ x &gt; y\\}","set":true,"ok":["notin","notsub"],"also":[],"why":"\\(\\{0, 1\\}\\) is a set, not a 2-tuple: it does not belong to a set of 2-tuples. It is not included in it either, because \\(0\\) is not a 2-tuple."},
+{"l":"\\{5\\}","r":"\\mathcal{P}(\\{-4, 1, 5\\})","set":true,"ok":["in"],"also":["notsub"],"why":"\\(\\{5\\} \\subset \\{-4, 1, 5\\}\\), so \\(\\{5\\} \\in \\mathcal{P}(\\{-4, 1, 5\\})\\)."}]}'></div>
+        <div class="box model"><span class="tag">Model answer <i>2024 OBM exam, exercise 1.4</i></span>
+          <p>\(A = \{(x, y, z) \in \R^3,\ x = y = z\}\) and \(B = \{(x, y, z) \in \R^3,\ 2x - y - z = 0\}\).</p>
+          <p>(a) \(A\) and \(B\) are subsets of \(\R^3\).</p>
+          <p>(b) Let us show that \(A \subset B\). Let \((x, y, z) \in A\).<span class="c">any element</span> Then \(x = y = z\), so \(2x - y - z = 2x - x - x = 0\). Thus \((x, y, z) \in B\). Hence \(A \subset B\).</p>
+          <p>(c) No. \((1, 2, 0) \in B\) since <span data-eq>\(2 \times 1 - 2 - 0 = 0\)</span>, but \((1, 2, 0) \notin A\) since \(1 \neq 2\). So \(B \not\subset A\).<span class="c">a counterexample with numbers</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: \(\{3\} \in\) or \(\subset\), \(\varnothing\) or \(\{\varnothing\}\)</span>
+          <ul>
+            <li>“\(\{3\} \in \{1, 2, 3\}\)” is false (a student’s notes write it): \(3 \in \{1, 2, 3\}\) and \(\{3\} \subset \{1, 2, 3\}\). “\(3 \subset A\)” is badly written: 3 is not a set.</li>
+            <li>\(\varnothing\) has no element; \(\{\varnothing\}\) has one, the empty set. \(\varnothing \subset A\) is always true, \(\varnothing \in A\) almost never, \(\varnothing \in \mathcal{P}(A)\) always.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2024 OBM exam, exercise 1.4 (inside an exercise worth <b>10 points out of 40</b>): “Show carefully that \(A \subset B\). Do we have \(B \subset A\)?”. Lecture test of 16 October 2023: \(\in\), \(\notin\), \(\subset\) on exercise 2.10 (<b>4 points out of 20</b>). DP lecture test on the same day: \(\card \mathcal{P}(E)\) by counting, see <a href="cours-5-denombrement.html#s8">lesson 5, part 8</a>. Proofs of inclusion and equality come back in <a href="cours-4-raisonnement.html#s3">lesson 4, part 3</a>.</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">notes p. 10-15 · seminar 2.10</span></div><h2>Intersection, union, complement, set difference</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>the four operations</i></span>
+          <ul>
+            <li><b>Intersection</b>: \(A \cap B = \{x,\ x \in A \text{ and } x \in B\}\).</li>
+            <li><b>Union</b>: \(A \cup B = \{x,\ x \in A \text{ or } x \in B\}\).</li>
+            <li><b>Complement</b> of \(A \subset E\) in \(E\): \(\overline{A} = A^c = E \setminus A = \{x \in E,\ x \notin A\}\).</li>
+            <li><b>Set difference</b>: \(A \setminus B = \{x \in A,\ x \notin B\}\) (“\(A\) minus \(B\)”).</li>
+          </ul>
+          <p>\(A\) and \(B\) are <b>disjoint</b> when \(A \cap B = \varnothing\).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 2.3 — Each operation is a logical connector on “\(x \in A\)” (seminar, summary of section 2)</caption>
+          <thead><tr><th>Set</th><th>Membership rule</th><th>Connector</th></tr></thead>
+          <tbody>
+            <tr><td>\(A \cap B\)</td><td>\(x \in A \cap B \iff (x \in A) \land (x \in B)\)</td><td>and</td></tr>
+            <tr><td>\(A \cup B\)</td><td>\(x \in A \cup B \iff (x \in A) \lor (x \in B)\)</td><td>or (inclusive)</td></tr>
+            <tr><td>\(\overline{A}\)</td><td>\(x \in \overline{A} \iff \neg(x \in A)\), for \(x \in E\)</td><td>not</td></tr>
+            <tr><td>\(A \setminus B\)</td><td>\(x \in A \setminus B \iff (x \in A) \land \neg(x \in B)\)</td><td>and not: \(A \setminus B = A \cap \overline{B}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div data-maths="venn" data-opts='{"names":["A","B"],"u":"E","expr":"A \\setminus B","title":"Your turn · shade or type a set"}'></div>
+        <div class="prose">
+          <p><b>Worked example.</b> In \(E = \ent{1}{10}\), take \(A = \{2, 4, 6, 8, 10\}\) (the even numbers) and \(B = \{3, 6, 9\}\) (the multiples of 3).</p>
+        </div>
+        <div class="calc">
+          <div class="fm"><span data-eq="U = \ent{1}{10}; A = \{2, 4, 6, 8, 10\}; B = \{3, 6, 9\}">\(A \cap B = \{6\}\)</span>; <span data-eq="U = \ent{1}{10}; A = \{2, 4, 6, 8, 10\}; B = \{3, 6, 9\}">\(A \cup B = \{2, 3, 4, 6, 8, 9, 10\}\)</span></div>
+          <div class="fm"><span data-eq="U = \ent{1}{10}; A = \{2, 4, 6, 8, 10\}; B = \{3, 6, 9\}">\(\overline{A} = \{1, 3, 5, 7, 9\}\)</span>; <span data-eq="U = \ent{1}{10}; A = \{2, 4, 6, 8, 10\}; B = \{3, 6, 9\}">\(A \setminus B = A \cap \overline{B} = \{2, 4, 8, 10\}\)</span>; <span data-eq="U = \ent{1}{10}; A = \{2, 4, 6, 8, 10\}; B = \{3, 6, 9\}">\(B \setminus A = \{3, 9\}\)</span></div>
+        </div>
+        <div class="box thm"><span class="tag">Properties <i>the same as for the connectors</i></span>
+          <ul>
+            <li>\(\cap\) and \(\cup\) are commutative and associative: we write \(A \cap B \cap C\) without brackets.</li>
+            <li>\(A \cap B \subset A \subset A \cup B\); \(A \cup \overline{A} = E\) and \(A \cap \overline{A} = \varnothing\); \(\overline{\overline{A}} = A\).</li>
+            <li>\(A \subset B \iff A \cap B = A \iff A \cup B = B\).</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p><b>Seminar 2.10, continued.</b> With \(A = \,]{-1}, 10[\) and \(B = \ent{0}{7}\): \(B \subset A\), so <span data-eq="A = ]{-1}, 10[; B = \ent{0}{7}">\(A \cup B = A\)</span> and <span data-eq="A = ]{-1}, 10[; B = \ent{0}{7}">\(A \cap B = B\)</span>. The complement of \(B\) in \(\Z\) is <span data-eq="py:FiniteSet(*[n for n in range(-60, 61) if n < 0 or n >= 8])">\(\{n \in \Z,\ n &lt; 0 \text{ or } n \geq 8\}\)</span>: the “or” comes from negating “\(0 \leq n\) and \(n \leq 7\)” (De Morgan).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 2.10.2, fill the dotted lines</i></span>
+          <p>(b) \(10 \notin A \cup B\): \(10 \notin A\) since \(10 &lt; 10\) is false, and \(10 \notin B\) since \(10 + 1 = 11 > 8\). Being neither in \(A\) nor in \(B\), \(10 \notin A \cup B\).<span class="c">“neither … nor”: two proofs</span></p>
+          <p>(c) \(\{0\} \subset A \cup B\): \(0 \in A\) since \(-1 &lt; 0 &lt; 10\), so \(0 \in A \cup B\), hence \(\{0\} \subset A \cup B\).</p>
+          <p>(d) \(3 \in A \cap B\): \(-1 &lt; 3 &lt; 10\) gives \(3 \in A\); \(3 \in \N\) and \(3 + 1 = 4 \leq 8\) give \(3 \in B\).<span class="c">“and”: two proofs</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the complement depends on the reference set</span>
+          <ul>
+            <li>The complement of \(B = \ent{0}{7}\) is \(\{n \in \Z,\ n &lt; 0 \text{ or } n \geq 8\}\) in \(\Z\), but \(\{n \in \N,\ n \geq 8\}\) in \(\N\): always say “in \(E\)”.</li>
+            <li>\(A \setminus B \neq B \setminus A\) in general: above, \(\{2, 4, 8, 10\}\) against \(\{3, 9\}\).</li>
+            <li>“Intersection” and “union” are for sets; for propositions we say “conjunction” and “disjunction”.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>Weekly MCQ of 30 September 2024: \(A\) = gold or silver medals, \(B\) = gold or bronze medals; \(A \cap B\) is the set of gold medals (inclusion-exclusion follows in part 8). Lecture test of 16 October 2023: complement of \(B\) in \(\Z\). 2020 midterm, exercise 1 (<b>3 points out of 30</b>): “at least one classmate” is translated rigorously with \(C \setminus \{e\}\), to leave out the student themself. 2024 OBM exam, 1.4c: the counterexample \((1, 2, 0)\) is an element of \(B \setminus A\).</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">notes p. 15 · seminar 2.11</span></div><h2>Computing with intervals, De Morgan’s laws, distributivity</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>De Morgan’s laws, distributivity</i></span>
+          <p>For \(A\), \(B\), \(C\) subsets of \(E\) (complements taken in \(E\)):</p>
+          <div class="fm">\[\overline{A \cup B} = \overline{A} \cap \overline{B} \qquad \overline{A \cap B} = \overline{A} \cup \overline{B}\]</div>
+          <div class="fm">\[A \cap (B \cup C) = (A \cap B) \cup (A \cap C)\]</div>
+          <div class="fm">\[A \cup (B \cap C) = (A \cup B) \cap (A \cup C)\]</div>
+          <p>These are De Morgan’s laws and the distributive laws of lesson 1, translated into sets: “not (\(P\) or \(Q\))” is “not \(P\) and not \(Q\)”.</p>
+        </div>
+        <div class="grid2">
+          <div data-maths="venn" data-opts='{"names":["A","B"],"u":"E","compare":["\\overline{A \\cup B}","\\overline{A} \\cap \\overline{B}"],"title":"De Morgan: same regions"}'></div>
+          <div data-maths="venn" data-opts='{"names":["A","B"],"u":"E","compare":["\\overline{A \\cap B}","\\overline{A} \\cup \\overline{B}"],"title":"The second law"}'></div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>first law, by equivalences</i></span>
+          <p>Let \(x \in E\). Translate each membership into a proposition, then apply De Morgan’s law of logic:</p>
+          <div class="fm">\[\begin{aligned} x \in \overline{A \cup B} &\iff \neg(x \in A \lor x \in B) \\ &\iff (x \notin A) \land (x \notin B) \\ &\iff x \in \overline{A} \cap \overline{B}. \end{aligned}\]</div>
+          <p>The two sets have exactly the same elements: \(\overline{A \cup B} = \overline{A} \cap \overline{B}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>second law, by double inclusion</i></span>
+          <p>\(\subset\): let \(x \in \overline{A \cap B}\). Then \(x \notin A \cap B\): \(x\) is not both in \(A\) and in \(B\). So \(x \notin A\) or \(x \notin B\), that is \(x \in \overline{A}\) or \(x \in \overline{B}\): \(x \in \overline{A} \cup \overline{B}\).</p>
+          <p>\(\supset\): let \(x \in \overline{A} \cup \overline{B}\). If \(x \in \overline{A}\), then \(x \notin A\), so \(x \notin A \cap B\) (since \(A \cap B \subset A\)). If \(x \in \overline{B}\), in the same way \(x \notin A \cap B\). In both cases, \(x \in \overline{A \cap B}\).</p>
+          <p>By double inclusion, \(\overline{A \cap B} = \overline{A} \cup \overline{B}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>distributivity</i></span>
+          <div class="fm">\[\begin{aligned} x \in A \cap (B \cup C) &\iff x \in A \land (x \in B \lor x \in C) \\ &\iff (x \in A \land x \in B) \lor (x \in A \land x \in C) \\ &\iff x \in (A \cap B) \cup (A \cap C). \end{aligned}\]</div>
+          <p>The second equivalence is the distributivity of “and” over “or” (lesson 1, part 2).</p>
+        </div>
+        <div data-maths="venn" data-opts='{"names":["A","B","C"],"u":"E","compare":["A \\cap (B \\cup C)","(A \\cap B) \\cup (A \\cap C)"],"title":"Distributivity: same regions"}'></div>
+        <div class="box meth"><span class="tag">Method <i>computing with intervals</i></span>
+          <ol>
+            <li>Draw the real line and one line per set, with its brackets.</li>
+            <li>\(\cap\): keep what is on every line; \(\cup\): what is on at least one.</li>
+            <li>Complement in \(\R\): the gaps, with the brackets turned round. \(\overline{[0, 3]} = \,]{-\infty}, 0[\, \cup \,]3, +\infty[\): 0 and 3 are in \([0, 3]\), so not in its complement.</li>
+          </ol>
+        </div>
+        <div class="bench p2-ivl" id="p2-ivl" data-ivl='{"title":"Seminar 2.11 · the interval line","sets":[["A",[[0,1,3,1]]],["B",[[-1,0,10,1]]],["C",[[2,1,20,1]]]],"ops":[
+{"tex":"A \\cap B","res":[[0,1,3,1]],"why":"The lines of \\(A\\) and \\(B\\) overlap from 0 to 3: \\(A \\subset B\\)."},
+{"tex":"A \\cup B","res":[[-1,0,10,1]],"why":"\\(A \\subset B\\), so the union is \\(B\\)."},
+{"tex":"(A \\cup C) \\cap B","res":[[0,1,10,1]],"why":"\\(A \\cup C = [0, 20]\\), cut by \\(B = \\,]{-1}, 10]\\)."},
+{"tex":"(A \\cap B) \\cup (C \\cap B)","res":[[0,1,10,1]],"why":"\\([0, 3] \\cup [2, 10] = [0, 10]\\): the same set as the previous line, by distributivity."},
+{"tex":"(A \\cap C) \\cup B","res":[[-1,0,10,1]],"why":"\\(A \\cap C = [2, 3]\\) is already in \\(B\\)."},
+{"tex":"\\overline{A} \\cup C","res":[["-inf",0,0,0],[2,1,"inf",0]],"why":"\\(\\overline{A} = \\,]{-\\infty}, 0[\\, \\cup \\,]3, +\\infty[\\); with \\(C = [2, 20]\\), everything from 2 onwards is covered."},
+{"tex":"\\overline{A \\cup C}","res":[["-inf",0,0,0],[20,0,"inf",0]],"why":"\\(A \\cup C = [0, 20]\\); its complement leaves out 0 and 20. It is also \\(\\overline{A} \\cap \\overline{C}\\) (De Morgan)."}]}'></div>
+        <div class="tbl"><table>
+          <caption>Table 2.4 — Seminar 2.11 with \(A = [0, 3]\), \(B = \,]{-1}, 10]\), \(C = [2, 20]\), complements in \(\R\) (checked by a program)</caption>
+          <thead><tr><th>Set</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>\(A \cap B\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\(A \cap B = [0, 3]\)</span></td></tr>
+            <tr><td>\(A \cup B\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\(A \cup B = \,]{-1}, 10]\)</span></td></tr>
+            <tr><td>\((A \cup C) \cap B\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\((A \cup C) \cap B = [0, 20] \cap B = [0, 10]\)</span></td></tr>
+            <tr><td>\((A \cap B) \cup (C \cap B)\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\((A \cap B) \cup (C \cap B) = [0, 3] \cup [2, 10] = [0, 10]\)</span></td></tr>
+            <tr><td>\((A \cap C) \cup B\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\((A \cap C) \cup B = [2, 3] \cup B = \,]{-1}, 10]\)</span></td></tr>
+            <tr><td>\(\overline{A} \cup C\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\(\overline{A} \cup C = \,]{-\infty}, 0[\, \cup [2, +\infty[\)</span></td></tr>
+            <tr><td>\(\overline{A \cup C}\)</td><td><span data-eq="U = \R; A = [0, 3]; B = ]{-1}, 10]; C = [2, 20]">\(\overline{A \cup C} = \overline{A} \cap \overline{C} = \,]{-\infty}, 0[\, \cup \,]20, +\infty[\)</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 2.11, last computation</i></span>
+          <p>In \(\R\), \(\overline{A} = \,]{-\infty}, 0[\, \cup \,]3, +\infty[\): the endpoints 0 and 3 belong to \(A\), so not to \(\overline{A}\).<span class="c">brackets turned round</span></p>
+          <p>So \(\overline{A} \cup C = \,]{-\infty}, 0[\, \cup \,]3, +\infty[\, \cup [2, 20]\). Now \(]3, +\infty[\, \cup [2, 20] = [2, +\infty[\), hence \(\overline{A} \cup C = \,]{-\infty}, 0[\, \cup [2, +\infty[\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the wrong De Morgan law</span>
+          <ul>
+            <li>\(\overline{A \cap B} \neq \overline{A} \cap \overline{B}\) in general: the complement turns \(\cap\) into \(\cup\). With \(A = \{1, 2\}\), \(B = \{2, 3\}\) in \(E = \{1, 2, 3\}\): <span data-eq="U = \{1, 2, 3\}; A = \{1, 2\}; B = \{2, 3\}">\(\overline{A \cap B} = \{1, 3\}\)</span> but <span data-eq="U = \{1, 2, 3\}; A = \{1, 2\}; B = \{2, 3\}">\(\overline{A} \cap \overline{B} = \varnothing\)</span>.</li>
+            <li>The complement of \([0, 3]\) is neither \(]0, 3[\) nor \(]{-\infty}, 0] \cup [3, +\infty[\): the endpoints change sides.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>De Morgan’s laws for sets were never asked as an exercise on their own, from 2016 to 2024: they are used in proofs and in probability (\(\P(\overline{A \cup B})\), <a href="cours-6-probabilites.html">lesson 6</a>). Computing with intervals comes back in every image exercise: 2023 LE exam, 3.3b, for \(g(x) = |x - 1|\), <span data-eq="py:function_range(Abs(x - 1), x, Interval(-1, 3))">\(g([-1, 3]) = [0, 2]\)</span> and <span data-eq="py:solveset(Abs(x - 1) <= 1, x, S.Reals)">\(g^{-1}([0, 1]) = [0, 2]\)</span>; 2024 OBM exam, exercise 3 (<b>3 points out of 40</b>), for \(\cos\) on \([0, \pi]\): <span data-eq="py:solveset(cos(x) <= 0, x, Interval(0, pi))">\(\cos^{-1}(]{-\infty}, 0]) = [\frac{\pi}{2}, \pi]\)</span>.</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">seminar 2.10, 3.12</span></div><h2>Cartesian product and 2-tuples</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>2-tuple, Cartesian product</i></span>
+          <p>A <b>2-tuple</b> (ordered pair) \((x, y)\) is an <b>ordered</b> pair: \((x, y) = (x', y') \iff (x = x' \text{ and } y = y')\). The <b>Cartesian product</b> of \(A\) and \(B\) is the set of 2-tuples:</p>
+          <div class="fm">\[A \times B = \{(a, b),\ a \in A,\ b \in B\}.\]</div>
+          <p>We write \(A^2 = A \times A\); \(\R^2\) is the plane, \(\R^3\) space. In the same way, \(A_1 \times \cdots \times A_n\) is the set of \(n\)-tuples \((a_1, \dots, a_n)\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (seminar 3.12).</b> \(E = \{1, 2, 3\}\) and \(F = \{a, b\}\), where \(a\) and \(b\) are the characters “a” and “b”. A two-way table gives all the 2-tuples, without missing any:</p>
+        </div>
+        <div class="grid2">
+          <div class="tbl"><table class="p2-grid">
+            <caption>Table 2.5 — \(E \times F\): the row gives the 1st coordinate</caption>
+            <thead><tr><th></th><th>\(a\)</th><th>\(b\)</th></tr></thead>
+            <tbody><tr><th>\(1\)</th><td>\((1, a)\)</td><td>\((1, b)\)</td></tr><tr><th>\(2\)</th><td>\((2, a)\)</td><td>\((2, b)\)</td></tr><tr><th>\(3\)</th><td>\((3, a)\)</td><td>\((3, b)\)</td></tr></tbody>
+          </table></div>
+          <div class="tbl"><table class="p2-grid">
+            <caption>Table 2.6 — \(F \times E\): the same letters, in the other order</caption>
+            <thead><tr><th></th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th></tr></thead>
+            <tbody><tr><th>\(a\)</th><td>\((a, 1)\)</td><td>\((a, 2)\)</td><td>\((a, 3)\)</td></tr><tr><th>\(b\)</th><td>\((b, 1)\)</td><td>\((b, 2)\)</td><td>\((b, 3)\)</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="calc">
+          <div class="fm"><span data-eq="E = \{1, 2, 3\}; F = \{a, b\}">\(\card(E \times F) = \card(F \times E) = 3 \times 2 = 6\)</span></div>
+          <div class="fm"><span data-eq="E = \{1, 2, 3\}; F = \{a, b\}">\((E \times F) \cap (F \times E) = \varnothing\)</span>: a 2-tuple of \(E \times F\) starts with a number, a 2-tuple of \(F \times E\) with a letter.</div>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>proved in part 7</i></span>
+          <p>If \(A\) and \(B\) are finite: \(\card(A \times B) = \card(A) \times \card(B)\).</p>
+        </div>
+        <div class="prose">
+          <p><b>In the 2024 OBM exam (exercise 2).</b> \(E = \{2, 3, 4\}\), \(F = \{1, 2, 3\}\) and \(f : E \times F \to \N\), \((x, y) \mapsto x + y\). The table of values has <span data-eq>\(3 \times 3 = 9\)</span> cells, one per 2-tuple:</p>
+        </div>
+        <div class="tbl"><table class="p2-grid">
+          <caption>Table 2.7 — Values of \(f(x, y) = x + y\): the row gives \(x\), the column \(y\) (checked by a program)</caption>
+          <thead><tr><th>\(x \backslash y\)</th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th></tr></thead>
+          <tbody><tr><th>\(2\)</th><td>3</td><td>4</td><td>5</td></tr><tr><th>\(3\)</th><td>4</td><td>5</td><td>6</td></tr><tr><th>\(4\)</th><td>5</td><td>6</td><td>7</td></tr></tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 2.10.2e and 2.9.6b</i></span>
+          <p>\(\{(0, 0)\} \subset A \times B\), with \(A = \{x \in \R,\ -1 &lt; x &lt; 10\}\) and \(B = \{n \in \N,\ n + 1 \leq 8\}\): we have \(0 \in A\) since \(-1 &lt; 0 &lt; 10\), and \(0 \in B\) since \(0 + 1 \leq 8\). So \((0, 0) \in A \times B\), hence \(\{(0, 0)\} \subset A \times B\).<span class="c">one coordinate at a time</span></p>
+          <p>\((1, 2) \in \{(x, y) \in \N^2,\ x^2 + y^2 = 5\}\): \((1, 2) \in \N^2\) and <span data-eq>\(1^2 + 2^2 = 5\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: a 2-tuple is not a set with two elements</span>
+          <ul>
+            <li>\(\{1, 2\} = \{2, 1\}\), but \((1, 2) \neq (2, 1)\): in a 2-tuple, order matters. So \(E \times F \neq F \times E\) in general.</li>
+            <li>\(\{0, 1\} \notin \{(x, y) \in \N^2,\ x > y\}\): \(\{0, 1\}\) is not a 2-tuple, so it cannot belong to a set of 2-tuples (seminar 2.9.6c), even though \((1, 0)\) belongs to it.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2024 OBM exam, exercise 2 (<b>7 points out of 40</b>): the function is defined on \(E \times F\); you need its 9 values, then direct images and pre-images (sets of 2-tuples) and restrictions \(I \subset E \times F\). 2024 OBM exam, 1.4: subsets of \(\R^3\). The Cartesian product was never an exercise on its own from 2016 to 2024, but \(\card(A \times B)\) is used throughout <a href="cours-5-denombrement.html">counting</a>.</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">notes p. 16-17 · seminar 3.12, 3.13 · sheet 1, ex. 1.6</span></div><h2>Cardinal, disjoint union, partition</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>cardinal, disjoint union, partition</i></span>
+          <ul>
+            <li>The <b>cardinal</b> (cardinality) of a finite set \(A\) is its number of elements, written \(\card(A)\), \(|A|\) or \(\#A\). \(\card(\varnothing) = 0\).</li>
+            <li>If \(A \cap B = \varnothing\), their union is written \(A \sqcup B\): it is a <b>disjoint union</b>.</li>
+            <li>A family \((A_i)_{i \in I}\) of subsets of \(E\) is a <b>partition</b> of \(E\) when: (1) each \(A_i\) is non-empty; (2) \(A_i \cap A_j = \varnothing\) for \(i \neq j\); (3) \(\bigcup_{i \in I} A_i = E\). Each element of \(E\) is then in <b>one and only one</b> \(A_i\).</li>
+          </ul>
+          <p>The summary sheet on probability spaces does not require (1): in probability, a partition may contain the empty set.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>cardinals (notes, summary sheet)</i></span>
+          <ul>
+            <li>\(\card(A \sqcup B) = \card(A) + \card(B)\); if \((A_i)\) is a partition of \(E\), \(\card(E) = \sum_{i} \card(A_i)\).</li>
+            <li>If \(X \subset Y\): \(\card(Y \setminus X) = \card(Y) - \card(X)\), so \(\card(X) \leq \card(Y)\).</li>
+            <li>\(\card(A \times B) = \card(A) \times \card(B)\).</li>
+            <li>If \(\card(E) = n\), then \(\card\big(\mathcal{P}(E)\big) = 2^n\).</li>
+          </ul>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>\(\card(Y \setminus X)\), seminar 3.13.3</i></span>
+          <p>Since \(X \subset Y\), we have \(Y = X \sqcup (Y \setminus X)\): an element of \(Y\) is either in \(X\) or outside \(X\), never both. So \(\card(Y) = \card(X) + \card(Y \setminus X)\), hence \(\card(Y \setminus X) = \card(Y) - \card(X)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>\(\card(A \times B)\)</i></span>
+          <p>Sort the 2-tuples by their first coordinate: \(A \times B = \bigsqcup_{a \in A} \big(\{a\} \times B\big)\). These sets are pairwise disjoint (different first coordinates) and each one has \(\card(B)\) elements. There are \(\card(A)\) of them, so \(\card(A \times B) = \card(A) \times \card(B)\). This is the two-way table of part 6: \(\card(A)\) rows of \(\card(B)\) cells.</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>\(\card \mathcal{P}(E) = 2^n\) (sheet 1, ex. 1.6)</i></span>
+          <p>Write \(E = \{x_1, \dots, x_n\}\). To a subset \(X \subset E\), associate the list \((\varepsilon_1, \dots, \varepsilon_n) \in \{0, 1\}^n\), where \(\varepsilon_i = 1\) if \(x_i \in X\) and \(\varepsilon_i = 0\) otherwise.</p>
+          <p>Two different subsets give two different lists (some \(x_i\) is in one and not in the other), and every list comes from a subset: \(X = \{x_i,\ \varepsilon_i = 1\}\). So the two sets have the same number of elements: \(\card \mathcal{P}(E) = \card\big(\{0, 1\}^n\big) = 2 \times \cdots \times 2 = 2^n\).</p>
+          <p>For \(n = 0\): \(\mathcal{P}(\varnothing) = \{\varnothing\}\) does have \(2^0 = 1\) element. Another proof, \(\sum_{k=0}^{n} \binom{n}{k} = 2^n\), is in <a href="cours-5-denombrement.html#s8">lesson 5, part 8</a>.</p>
+        </div>
+        <div class="tbl"><table class="p2-pw">
+          <caption>Table 2.8 — The 8 subsets of \(E = \{a, b, c\}\) and their lists of 0s and 1s (one row per subset)</caption>
+          <thead><tr><th>\(a \in X\)?</th><th>\(b \in X\)?</th><th>\(c \in X\)?</th><th>Subset \(X\)</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>\(\varnothing\)</td></tr>
+            <tr><td>1</td><td>0</td><td>0</td><td>\(\{a\}\)</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td><td>\(\{b\}\)</td></tr>
+            <tr><td>0</td><td>0</td><td>1</td><td>\(\{c\}\)</td></tr>
+            <tr><td>1</td><td>1</td><td>0</td><td>\(\{a, b\}\)</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>\(\{a, c\}\)</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td><td>\(\{b, c\}\)</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td><td>\(\{a, b, c\}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Worked examples.</b> \(\ent{1}{10}\) is partitioned into even and odd numbers, 5 and 5 elements. With \(Y = \ent{1}{10}\) and \(X = \{2, 4, 6, 8, 10\}\): <span data-eq="Y = \ent{1}{10}; X = \{2, 4, 6, 8, 10\}">\(\card(Y \setminus X) = 10 - 5 = 5\)</span>. 2022 lecture test: <span data-eq>\(\card\big(\mathcal{P}(\{a, b, c, d, e\})\big) = 2^5 = 32\)</span>.</p>
+          <p><b>Partition or not? (weekly MCQ, October 2025.)</b> Roll a die with 6 faces: \(A\) “multiple of 3”, \(B\) “the result is 1”, \(C\) “less than 5”. Then \(A = \{3, 6\}\), \(B = \{1\}\), \(C = \{1, 2, 3, 4\}\). It is not a partition: <span data-eq="A = \{3, 6\}; B = \{1\}; C = \{1, 2, 3, 4\}">\(B \cap C = \{1\} \neq \varnothing\)</span>, and <span data-eq="A = \{3, 6\}; B = \{1\}; C = \{1, 2, 3, 4\}">\(A \cup B \cup C = \{1, 2, 3, 4, 6\}\)</span> does not contain 5.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2023 DP exam, exercise 1.1 and 2(a)</i></span>
+          <p>1. \(F\) and \(G\) are disjoint, so \(\card(F \cup G) = \card(F) + \card(G)\).</p>
+          <p>2(a). An element of \(A\) is either outside \(B\) or in \(B\): \(A = (A \setminus B) \cup (A \cap B)\), and this union is disjoint.<span class="c">the word that justifies</span></p>
+          <p>By question 1, with \(F = A \setminus B\) and \(G = A \cap B\): \(\card(A) = \card(A \setminus B) + \card(A \cap B)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the cardinal of \(\{\varnothing\}\), a set or a number</span>
+          <ul>
+            <li>\(\card(\{\varnothing\}) = 1\), not 0 (a mistake in a student’s notes): \(\{\varnothing\}\) has one element, the empty set. And \(\card \mathcal{P}(\varnothing) = 1\).</li>
+            <li>A cardinal is a number, a subset is a set. “\(\card(A \cap B) = \varnothing\)” (offered in the 2025 MCQ) is badly written: write \(A \cap B = \varnothing\) or \(\card(A \cap B) = 0\). In the same way, do not write “\(\mathcal{P}(F) = 4\)” but \(\card \mathcal{P}(F) = 4\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2023 DP exam, exercise 1 (<b>3 points out of 30</b>): \(\card(F \cup G)\) for disjoint \(F\), \(G\), then a partition of \(A\) and inclusion-exclusion (part 8). 2022 lecture test: <span data-eq>\(2^5 = 32\)</span> subsets of \(\{a, b, c, d, e\}\), of which <span data-eq>\(\binom{5}{3} = 10\)</span> have 3 elements. 2023 DP lecture test: \(\card \mathcal{P}(E)\) by counting, then with the binomial theorem. MCQs of October 2024 and October 2025: “Do \(A\), \(B\), \(C\) form a partition?” (answer: false both times).</p>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">notes p. 16 · seminar 3.13 · sheet 1, ex. 1.3, 1.4</span></div><h2>The inclusion-exclusion formula</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In \(\card(A) + \card(B)\), the elements of \(A \cap B\) are counted twice: once in \(A\), once in \(B\). We remove them once.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>inclusion-exclusion formula</i></span>
+          <p>For finite sets \(A\), \(B\), \(C\):</p>
+          <div class="fm">\[\card(A \cup B) = \card(A) + \card(B) - \card(A \cap B)\]</div>
+          <div class="fm">\[\begin{aligned} & \card(A \cup B \cup C) \\ & = \card(A) + \card(B) + \card(C) \\ & \quad - \card(A \cap B) - \card(A \cap C) - \card(B \cap C) \\ & \quad + \card(A \cap B \cap C) \end{aligned}\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>two sets, with a partition (2023 DP exam)</i></span>
+          <p>We have \(A \cup B = (A \setminus B) \cup B\), and this union is disjoint: an element of \(A \cup B\) is either in \(B\), or in \(A\) and outside \(B\).</p>
+          <p>So \(\card(A \cup B) = \card(A \setminus B) + \card(B)\). Now \(A = (A \setminus B) \sqcup (A \cap B)\) (part 7) gives \(\card(A \setminus B) = \card(A) - \card(A \cap B)\). Thus:</p>
+          <div class="fm">\[\card(A \cup B) = \card(A) - \card(A \cap B) + \card(B).\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>three sets (sheet 1, ex. 1.4)</i></span>
+          <p>Write \(A \cup B \cup C = (A \cup B) \cup C\) and apply the formula for two sets:</p>
+          <div class="fm">\[\begin{aligned} \card(A \cup B \cup C) = {} & \card(A \cup B) + \card(C) \\ & - \card\big((A \cup B) \cap C\big). \end{aligned}\]</div>
+          <p>By distributivity (part 5), \((A \cup B) \cap C = (A \cap C) \cup (B \cap C)\), and \((A \cap C) \cap (B \cap C) = A \cap B \cap C\). The formula for two sets gives \(\card\big((A \cup B) \cap C\big) = \card(A \cap C) + \card(B \cap C) - \card(A \cap B \cap C)\).</p>
+          <p>Also replace \(\card(A \cup B)\) by \(\card(A) + \card(B) - \card(A \cap B)\): this gives the formula for three sets.</p>
+        </div>
+        <div data-maths="venn" data-opts='{"names":["A","B"],"u":"M","expr":"A \\cap B","sizes":{"A":42,"B":38,"AB":16,"E":64},"edit":false,"title":"2024 MCQ: 64 medals, A gold or silver, B gold or bronze"}'></div>
+        <div class="prose">
+          <p><b>Example (weekly MCQ of 30 September 2024).</b> 64 medals; \(A\) (gold or silver) has 42 of them, \(B\) (gold or bronze) 38. Every medal is in \(A\) or in \(B\), so \(\card(A \cup B) = 64\), and the gold medals form \(A \cap B\): <span data-eq="A = \ent{1}{42}; B = \ent{1}{16} \cup \ent{43}{64}">\(\card(A \cap B) = 42 + 38 - 64 = 16\)</span>. That leaves <span data-eq>\(42 - 16 = 26\)</span> silver medals and <span data-eq>\(38 - 16 = 22\)</span> bronze ones.</p>
+          <p><b>Example with three sets.</b> In \(E = \ent{1}{100}\), \(A\), \(B\), \(C\) are the multiples of 2, of 3, of 5. The intersections are the multiples of 6, 10, 15 and 30.</p>
+        </div>
+        <div class="calc">
+          <div class="fm"><span data-eq="E = \ent{1}{100}; A = \{2k, k \in \ent{1}{50}\}; B = \{3k, k \in \ent{1}{33}\}; C = \{5k, k \in \ent{1}{20}\}">\(\card(A \cup B \cup C) = 50 + 33 + 20 - 16 - 10 - 6 + 3 = 74\)</span></div>
+          <div class="fm">That leaves <span data-eq="E = \ent{1}{100}; A = \{2k, k \in \ent{1}{50}\}; B = \{3k, k \in \ent{1}{33}\}; C = \{5k, k \in \ent{1}{20}\}">\(\card\big(E \setminus (A \cup B \cup C)\big) = 100 - 74 = 26\)</span> integers divisible neither by 2, nor by 3, nor by 5.</div>
+        </div>
+        <div data-maths="venn" data-opts='{"names":["A","B","C"],"u":"E","expr":"A \\cup B \\cup C","sizes":{"A":50,"B":33,"C":20,"AB":16,"AC":10,"BC":6,"ABC":3,"E":100},"title":"Multiples of 2, 3, 5 in ⟦1, 100⟧ · click the regions"}'></div>
+        <div class="box model"><span class="tag">Model answer <i>seminar 3.13.6</i></span>
+          <p>An EPITA class of 40 students: 25 speak English, 11 speak Spanish, 6 speak neither English nor Spanish. Let \(C\) be the class, \(E\) the students who speak English, \(S\) those who speak Spanish.<span class="c">name the sets</span></p>
+          <p>(a) \(\card(C) = 40\), \(\card(E) = 25\), \(\card(S) = 11\) and \(\card\big(C \setminus (E \cup S)\big) = 6\).</p>
+          <p>(b) Since \(E \cup S \subset C\), \(\card(E \cup S) = \card(C) - \card\big(C \setminus (E \cup S)\big)\) <span data-eq>\(= 40 - 6 = 34\)</span>.</p>
+          <p>By the inclusion-exclusion formula, \(\card(E \cup S) = \card(E) + \card(S) - \card(E \cap S)\), so \(\card(E \cap S) = \card(E) + \card(S) - \card(E \cup S)\) <span data-eq>\(= 25 + 11 - 34 = 2\)</span>.<span class="c">the formula, then the numbers</span></p>
+          <p>Two students speak both languages.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: adding without subtracting</span>
+          <ul>
+            <li>\(\card(A \cup B) = \card(A) + \card(B)\) only if \(A\) and \(B\) are disjoint. For the class: \(25 + 11 = 36 \neq 34\), because the 2 bilingual students are counted twice.</li>
+            <li>With three sets, do not forget \(+\,\card(A \cap B \cap C)\): the elements common to all three are added 3 times then removed 3 times, so they must be added back once.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>2023 DP exam, exercise 1: <b>3 points out of 30</b> for \(\card(F \cup G)\), the partition of \(A\), the inclusion-exclusion formula and then its proof with a partition of \(A \cup B\) (the two model answers of parts 7 and 8).</li>
+            <li>Weekly MCQs: medals (<span data-eq>\(42 + 38 - 64 = 16\)</span>, September 2024) and languages (<span data-eq>\(30 + 25 - 42 = 13\)</span>, September 2025). Only the formula for two sets has come up; the one for three sets comes from sheet 1 (ex. 1.4).</li>
+            <li>This year: OBM exam on <b>Wednesday 28 October at 9:50 am</b> (2 hr), on the whole seminar. Inclusion-exclusion may also come back in the DP exam, the same day at 2 pm, as in 2023. The wording is marked: the instructions say that the rigour of your writing is taken into account in the mark.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-2-ensembles.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="maths:ensembles:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can write, compare and count sets. Lesson 3, <a href="cours-3-fonctions.html">functions</a>, uses them at once: the direct image \(f(A)\) and the pre-image \(f^{-1}(B)\) are sets, and a partition of the sample space prepares the law of total probability (lesson 6).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../data/en/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+/* Lesson 2: interval line and the “∈, ∉, ⊂ or ⊄” exercise. Results checked by a program (sympy). */
+(function () {
+  'use strict';
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function head(t) { return '<div class="bench-head"><span class="bh-t"><span>' + t + '</span></span></div>'; }
+  function data(el, k) { try { return JSON.parse(el.getAttribute(k)); } catch (e) { return null; } }
+
+  /* ---------- interval line ---------- */
+  var X0 = -3, X1 = 23, W = 440, L = 44, RGT = 16;
+  function px(v) { return v === '-inf' ? 30 : v === 'inf' ? W - 6 : L + (v - X0) * (W - L - RGT - 12) / (X1 - X0); }
+  function bracket(x, y, left, closed, cls) {
+    /* bracket turned inwards when the endpoint is included (French notation) */
+    var d = (closed ? 6 : -6) * (left ? 1 : -1);
+    return '<path class="br ' + cls + '" d="M' + (x + d) + ' ' + (y - 9) + 'H' + x + 'V' + (y + 9) + 'H' + (x + d) + '"/>';
+  }
+  function row(segs, y, cls) {
+    var h = '';
+    segs.forEach(function (s) {
+      var a = px(s[0]), b = px(s[2]);
+      h += '<line class="seg ' + cls + '" x1="' + a + '" y1="' + y + '" x2="' + b + '" y2="' + y + '"/>';
+      if (s[0] === '-inf') h += '<path class="br ' + cls + '" d="M' + (a + 8) + ' ' + (y - 6) + 'L' + a + ' ' + y + 'L' + (a + 8) + ' ' + (y + 6) + '"/>';
+      else h += bracket(a, y, true, !!s[1], cls);
+      if (s[2] === 'inf') h += '<path class="br ' + cls + '" d="M' + (b - 8) + ' ' + (y - 6) + 'L' + b + ' ' + y + 'L' + (b - 8) + ' ' + (y + 6) + '"/>';
+      else h += bracket(b, y, false, !!s[3], cls);
+    });
+    return h;
+  }
+  function svgIvl(o, k) {
+    var n = o.sets.length, H = 40 + (n + 1) * 36 + 30, ticks = {}, h;
+    o.sets.forEach(function (s) { s[1].forEach(function (g) { [g[0], g[2]].forEach(function (v) { if (typeof v === 'number') ticks[v] = 1; }); }); });
+    var res = k == null ? null : o.ops[k];
+    if (res) res.res.forEach(function (g) { [g[0], g[2]].forEach(function (v) { if (typeof v === 'number') ticks[v] = 1; }); });
+    h = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(o.label || '') + '">';
+    var yAx = H - 28;
+    Object.keys(ticks).forEach(function (t) { var x = px(+t); h += '<line class="gd" x1="' + x + '" y1="18" x2="' + x + '" y2="' + yAx + '"/><line class="tk" x1="' + x + '" y1="' + (yAx - 5) + '" x2="' + x + '" y2="' + (yAx + 5) + '"/><text x="' + x + '" y="' + (yAx + 20) + '" text-anchor="middle">' + String(t).replace('-', '−') + '</text>'; });
+    h += '<path class="ax" d="M' + 24 + ' ' + yAx + 'H' + (W - 4) + 'M' + (W - 12) + ' ' + (yAx - 5) + 'L' + (W - 4) + ' ' + yAx + 'L' + (W - 12) + ' ' + (yAx + 5) + '"/>';
+    o.sets.forEach(function (s, i) { var y = 30 + i * 36; h += '<text class="nm n' + i + '" x="8" y="' + (y + 6) + '">' + esc(s[0]) + '</text>' + row(s[1], y, 's' + i); });
+    if (res) { var y = 30 + n * 36 + 6; h += '<text class="nr" x="6" y="' + (y + 5) + '">=</text>' + row(res.res, y, 'sr'); }
+    return h + '</svg>';
+  }
+  function ivlTex(segs) {
+    return segs.map(function (s) {
+      var lo = s[0] === '-inf' ? '{-\\infty}' : (s[0] < 0 ? '{' + s[0] + '}' : s[0]), hi = s[2] === 'inf' ? '+\\infty' : s[2];
+      return (s[1] ? '[' : ']') + lo + ', ' + hi + (s[3] ? ']' : '[');
+    }).join(' \\cup ');
+  }
+  document.querySelectorAll('[data-ivl]').forEach(function (el) {
+    var o = data(el, 'data-ivl'); if (!o) return;
+    o.label = 'Real line with the intervals A, B, C and the result of the chosen operation';
+    el.innerHTML = head(o.title) + '<div class="bench-body"><div class="ops presets" role="group" aria-label="Operations">' +
+      o.ops.map(function (p, i) { return '<button type="button" class="chip-btn" data-k="' + i + '" aria-pressed="false">\\(' + p.tex + '\\)</button>'; }).join('') +
+      '</div><div class="fig"></div><div class="readout" aria-live="polite"></div></div>';
+    var fig = el.querySelector('.fig'), out = el.querySelector('.readout');
+    function show(k) {
+      fig.innerHTML = svgIvl(o, k);
+      el.querySelectorAll('[data-k]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-k') === k)); });
+      var p = o.ops[k];
+      out.innerHTML = '<p>\\(' + p.tex + ' = ' + ivlTex(p.res) + '\\)</p><p class="hint">' + p.why + '</p>';
+    }
+    el.querySelectorAll('[data-k]').forEach(function (b) { b.addEventListener('click', function () { show(+b.getAttribute('data-k')); }); });
+    show(o.ops.length - 2);
+  });
+
+  /* ---------- ∈, ∉, ⊂ or ⊄ ---------- */
+  var LAB = { 'in': 'belongs to', 'notin': 'does not belong to', 'sub': 'is a subset of', 'notsub': 'is not a subset of' };
+  var SYM = { 'in': '∈', 'notin': '∉', 'sub': '⊂', 'notsub': '⊄' }, TEX = { 'in': '\\in', 'notin': '\\notin', 'sub': '\\subset', 'notsub': '\\not\\subset' };
+  document.querySelectorAll('[data-q]').forEach(function (el) {
+    var o = data(el, 'data-q'); if (!o) return;
+    el.innerHTML = head(o.title) + '<div class="bench-body"><p>' + o.intro + '</p><ol>' + o.items.map(function (it, i) {
+      return '<li data-i="' + i + '"><div class="lhs">\\(' + it.l + ' \\;\\ldots\\; ' + it.r + '\\)<span class="ans"> → \\(' + it.l + ' ' + TEX[it.ok[0]] + ' ' + it.r + '\\)</span></div>' +
+        '<div class="sym" role="group" aria-label="Symbol">' + ['in', 'notin', 'sub', 'notsub'].map(function (s) { return '<button type="button" class="chip-btn" data-s="' + s + '" aria-label="' + esc(LAB[s]) + '">' + SYM[s] + '</button>'; }).join('') + '</div><p class="fb" aria-live="polite"></p></li>';
+    }).join('') + '</ol><div class="row ctrls-row"><button type="button" class="btn" data-a="all">Show the answers</button><span class="cnt"></span></div></div>';
+    var done = {};
+    function count() { var n = Object.keys(done).length, ok = Object.keys(done).filter(function (k) { return done[k]; }).length; el.querySelector('.cnt').textContent = ok + ' right out of ' + n + ' tried'; }
+    el.querySelectorAll('li[data-i]').forEach(function (li) {
+      var it = o.items[+li.getAttribute('data-i')], fb = li.querySelector('.fb');
+      li.querySelectorAll('[data-s]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var s = b.getAttribute('data-s'), msg, cls;
+          li.querySelectorAll('[data-s]').forEach(function (x) { x.classList.remove('ok', 'no'); });
+          if (it.ok.indexOf(s) >= 0) { cls = 'ok'; msg = '<b class="ok">Right.</b> '; done[li.getAttribute('data-i')] = true; }
+          else if (it.also.indexOf(s) >= 0) { cls = 'no'; msg = '<b class="mid">True, but it is not the expected answer.</b> '; done[li.getAttribute('data-i')] = false; }
+          else if (!it.set && (s === 'sub' || s === 'notsub')) { cls = 'no'; msg = '<b class="no">Badly written:</b> \\(' + it.l + '\\) is not a set, so inclusion makes no sense. '; done[li.getAttribute('data-i')] = false; }
+          else { cls = 'no'; msg = '<b class="no">False.</b> '; done[li.getAttribute('data-i')] = false; }
+          b.classList.add(cls);
+          fb.innerHTML = msg + it.why;
+          count();
+        });
+      });
+    });
+    el.querySelector('[data-a="all"]').addEventListener('click', function () { el.classList.add('shown'); });
+  });
+})();
+</script>
+</body>
+</html>

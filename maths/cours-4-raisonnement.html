@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raisonnements · Maths</title>
+<meta name="description" content="Maths, OBM, cours 4 : rédiger une démonstration, raisonnement direct, double implication, double inclusion, contraposée, absurde, disjonction de cas, relations binaires (réflexive, symétrique, antisymétrique, transitive, ordre, équivalence, classes), récurrence et sommes. Avec le graphe d’une relation et un dérouleur de récurrence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Outils propres au cours 4 (écrits en bas de la page) : graphe d'une relation, dérouleur de récurrence */
+.p4-graph{display:flex;justify-content:center;min-width:0}
+.p4-graph svg{width:100%;max-width:380px;height:auto;display:block;overflow:visible}
+.p4-ar{fill:none;stroke:var(--muted);stroke-width:1.4}
+.p4-ar.hl{stroke:var(--red);stroke-width:2.6}
+.p4-ar.miss{stroke:var(--red);stroke-width:2;stroke-dasharray:5 4}
+.p4-mk{fill:var(--muted)} .p4-mk.hl{fill:var(--red)}
+.p4-nd circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+.p4-nd text{font-family:var(--font-ui);font-size:15px;font-weight:600;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.p4-nd.c0 circle{fill:var(--z1);fill-opacity:.2;stroke:var(--z1);stroke-width:2}
+.p4-nd.c1 circle{fill:var(--z2);fill-opacity:.2;stroke:var(--z2);stroke-width:2}
+.p4-nd.c2 circle{fill:var(--z3);fill-opacity:.2;stroke:var(--z3);stroke-width:2}
+.p4-nd.c3 circle{fill:var(--exam);fill-opacity:.2;stroke:var(--exam);stroke-width:2}
+.p4-nd.hl circle{stroke:var(--red);stroke-width:3}
+.p4-nd.pick circle{stroke:var(--accent);stroke-width:3;stroke-dasharray:4 3}
+.p4-nd.ed{cursor:pointer}
+.p4-nd:focus{outline:none}
+.p4-nd:focus-visible circle{stroke:var(--accent);stroke-width:3}
+.p4-def{font-size:1rem}
+.p4-props{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+@media (max-width:520px){.p4-props{grid-template-columns:minmax(0,1fr)}}
+.p4-pr{width:100%;font:inherit;font-family:var(--font-ui);font-size:.95rem;display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:4px;padding:.3rem .75rem;min-height:40px;cursor:pointer;text-align:left}
+.p4-pr:hover{border-color:var(--accent)}
+.p4-pr[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.p4-pr b{font-weight:700} .p4-pr b.y{color:var(--ok)} .p4-pr b.n{color:var(--bad)}
+.p4-pr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.p4-verdict{font-family:var(--font-ui);font-weight:600}
+.p4-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:6px}
+.p4-tile{border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:.35rem .5rem;display:grid;gap:.1rem;font-family:var(--font-ui);font-size:.84rem;min-width:0}
+.p4-tile .nn{font-weight:700}
+.p4-tile .vv{overflow-x:auto;overflow-y:hidden;min-width:0;color:var(--muted);line-height:1.7}
+.p4-tile .tt{font-weight:600} .p4-tile .tt.y{color:var(--ok)} .p4-tile .tt.n{color:var(--bad)}
+.p4-tile.start{box-shadow:inset 0 3px 0 var(--accent)}
+.p4-tile.pv{background:var(--ok-soft);border-color:var(--ok)}
+.p4-tile.ko{background:var(--red-soft);border-color:var(--red)}
+.p4-tile .pf{font-size:.76rem;color:var(--ok);font-weight:600;min-height:1.1em}
+.p4-tile.ko .pf{color:var(--red)}
+.p4-hd{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.p4-hd .fm{display:inline-block}
+@media print{.p4-nd.pick circle{stroke-dasharray:none}.p4-tile.pv{background:#e3f1e8}}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · cours 4 : raisonnements">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM</b> — cours 4 sur 7</span><span>Source : séminaire de rentrée, partie 4 · exercices 4.26 à 4.33</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="4"></span><a href="index.html">Maths</a> · OBM · Cours 4 sur 7</div>
+      <h1>Démontrer, <span class="w">c’est rédiger.</span></h1>
+      <p class="lead">Ce qu’il faut démontrer impose la première ligne : « Soit \(x \in E\) fixé », « Supposons \(P\) vraie », « Raisonnons par contraposée », « Initialisation ». Pour chaque mode de raisonnement, ce cours dit quand l’utiliser et comment l’écrire, puis traite les relations binaires, tombées à chaque sujet d’OBM ou commun depuis 2019, la récurrence et les sommes.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 75 min</span></li>
+        <li><span><span class="k">Parties</span> 8, une rédaction modèle par mode</span></li>
+        <li><span><span class="k">Cours</span> séminaire, partie 4 · ex. 4.26 à 4.33</span></li>
+        <li class="ex"><span><span class="k">Examen</span> une relation dans les 6 sujets OBM, LE ou communs de 2019 à 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-rel='{"preset":"mod3","presets":["mod3","abs","puiss","div","pair","lt"],"title":"Graphe d’une relation"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Une flèche de \(a\) vers \(b\) quand \(a \mathrel{\mathcal{R}} b\), une boucle quand \(a \mathrel{\mathcal{R}} a\). Les quatre propriétés de la partie 6 sont testées sur tous les couples ; clique sur une propriété fausse pour voir son contre-exemple.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 4 · Raisonnements</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Rédiger, raisonnement direct</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Équivalence : deux sens</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Inclusion, double inclusion</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Contraposée</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Absurde, disjonction de cas</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Relations binaires</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Récurrence</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Le symbole \(\sum\), sommes</span></a></li>
+    </ol>
+    <p class="toc-note">Les numéros de parties sont entourés comme ceux des questions sur ta copie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Maths</a><a href="cours-3-fonctions.html">← Cours 3 : les fonctions</a><a href="cours-5-denombrement.html">Cours 5 : dénombrement →</a><a href="../qcm/index.html#maths">QCM de maths</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Rédiger, raisonnement direct</a></li><li><a href="#s2">Équivalence : deux sens</a></li><li><a href="#s3">Inclusion, double inclusion</a></li><li><a href="#s4">Contraposée</a></li>
+      <li><a href="#s5">Absurde, disjonction de cas</a></li><li><a href="#s6">Relations binaires</a></li><li><a href="#s7">Récurrence</a></li><li><a href="#s8">Le symbole \(\sum\), sommes</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">séminaire § 4.1, 4.2 · ex. 4.26.1-2</span></div><h2>Rédiger une démonstration, raisonnement direct</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une démonstration part de ce qu’on sait (les hypothèses, le cours) et arrive à ce qu’on veut, par des étapes dont chacune découle des précédentes. Le <b>raisonnement direct</b> est le plus simple : une suite d’implications, des hypothèses jusqu’au résultat. Le séminaire impose la première ligne selon la forme de l’énoncé.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 4.1 — La première ligne de la copie selon l’énoncé (séminaire, « Comment rédiger ? »)</caption>
+          <thead><tr><th>Il faut démontrer</th><th>Première ligne</th><th>Partie</th></tr></thead>
+          <tbody>
+            <tr><td>\(\forall x \in E,\ P(x)\)</td><td>« Soit \(x \in E\) fixé. »</td><td>1</td></tr>
+            <tr><td>\(P \Rightarrow Q\)</td><td>« Supposons la propriété \(P\) vraie. »</td><td>1</td></tr>
+            <tr><td>\(\forall x \in E,\ P(x) \Rightarrow Q(x)\)</td><td>« Soit \(x \in E\) tel que \(P(x)\) soit vraie. »</td><td>1</td></tr>
+            <tr><td>\(P \Leftrightarrow Q\)</td><td>deux temps : \(P \Rightarrow Q\), puis \(Q \Rightarrow P\)</td><td>2</td></tr>
+            <tr><td>\(A \subset B\)</td><td>« Soit \(x \in A\) fixé. », puis montrer \(x \in B\)</td><td>3</td></tr>
+            <tr><td>\(A = B\)</td><td>deux temps : \(A \subset B\), puis \(B \subset A\)</td><td>3</td></tr>
+            <tr><td>\(\exists x \in E,\ P(x)\)</td><td>un témoin : « Posons \(x = \ldots\) », puis vérifier \(P(x)\)</td><td>cours 1</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box meth"><span class="tag">Méthode <i>raisonnement direct</i></span>
+          <ol>
+            <li>Écris la première ligne imposée par l’énoncé (tableau 4.1).</li>
+            <li>Au brouillon, regarde le but et cherche l’information qui y mène : le séminaire dit « de quelle information partir pour arriver au résultat ? ».</li>
+            <li>Sur la copie, pars des hypothèses : une étape par ligne, chaque ligne reliée à la précédente par un mot (alors, ainsi, or, d’où, donc). « Or » introduit un fait connu, « donc » une conséquence.</li>
+            <li>Termine en recopiant le but : c’est la phrase que le correcteur cherche.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (séminaire 4.26.1).</b> Montrer que \(\forall (x, y) \in \,]0, 1[^2,\ 0 &lt; \frac{x + y}{1 + xy} &lt; 1\). L’indication du séminaire : trouver le signe de \((1 - x)(1 - y)\), puis le développer. Au brouillon, on remarque que <span data-eq="d-ecart">\(1 - \frac{x + y}{1 + xy} = \frac{(1 - x)(1 - y)}{1 + xy}\)</span> : c’est ce qui fait marcher la preuve.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.26.1</i></span>
+          <p>Soit \((x, y) \in \,]0, 1[^2\) fixé.<span class="c">la ligne imposée</span></p>
+          <p>Comme \(x > 0\) et \(y > 0\), on a \(x + y > 0\) et \(1 + xy > 1 > 0\). Un quotient de deux réels strictement positifs est strictement positif, donc \(\frac{x + y}{1 + xy} > 0\).</p>
+          <p>Comme \(x &lt; 1\) et \(y &lt; 1\), on a \(1 - x > 0\) et \(1 - y > 0\), donc \((1 - x)(1 - y) > 0\).</p>
+          <p>Or <span data-eq="d-dev">\((1 - x)(1 - y) = 1 - x - y + xy\)</span>. D’où \(1 + xy - (x + y) > 0\), c’est-à-dire \(x + y &lt; 1 + xy\).</p>
+          <p>Comme \(1 + xy > 0\), on divise par \(1 + xy\) sans changer le sens : \(\frac{x + y}{1 + xy} &lt; 1\).<span class="c">on justifie le sens</span></p>
+          <p>Conclusion : \(\forall (x, y) \in \,]0, 1[^2,\ 0 &lt; \frac{x + y}{1 + xy} &lt; 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.26.2 : une implication et sa réciproque</i></span>
+          <p>Soit \(n \in \N\). Supposons que 6 divise \(n\). Alors il existe \(k \in \N\) tel que \(n = 6k\).</p>
+          <p>Donc \(n = 3 \times (2k)\), car <span data-eq="d-6k">\(6k = 3 \times (2k)\)</span>, avec \(2k \in \N\) : 3 divise \(n\).<span class="c">la définition, pas un dessin</span></p>
+          <p>Ainsi, pour tout \(n \in \N\), 6 divise \(n\) \(\Rightarrow\) 3 divise \(n\).</p>
+          <p>La réciproque, « 3 divise \(n\) \(\Rightarrow\) 6 divise \(n\) », est fausse : pour \(n = 3\), 3 divise 3 mais 6 ne divise pas 3.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : partir de la conclusion</span>
+          <ul>
+            <li>Écrire « \(\frac{x + y}{1 + xy} &lt; 1 \Rightarrow x + y &lt; 1 + xy \Rightarrow (1 - x)(1 - y) > 0\), vrai » démontre la <b>réciproque</b> : on est parti de ce qu’on voulait prouver. Sur la copie, les flèches vont des hypothèses vers le but. Si tu as cherché à l’envers au brouillon, recopie dans l’autre sens en vérifiant chaque étape.</li>
+            <li>« Soit \(x = \frac{1}{2}\) » n’est pas « Soit \(x \in \,]0, 1[\) fixé » : un exemple ne démontre pas un « pour tout » (cours 1, partie 8).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">séminaire § 4.2 · ex. 4.26.3</span></div><h2>Équivalence : démontrer les deux sens</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>\(P \Leftrightarrow Q\) veut dire \(P \Rightarrow Q\) <b>et</b> \(Q \Rightarrow P\). Le séminaire : « cela se fait le plus souvent en deux temps ». Chaque sens est un raisonnement direct, avec sa ligne « Supposons… ».</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>double implication</i></span>
+          <ol>
+            <li>Si l’énoncé commence par \(\forall x \in E\) : « Soit \(x \in E\) fixé. »</li>
+            <li>(\(\Rightarrow\)) « Supposons \(P\). » … « donc \(Q\). »</li>
+            <li>(\(\Leftarrow\)) « Supposons \(Q\). » … « donc \(P\). »</li>
+            <li>« Les deux implications sont vraies, donc \(P \Leftrightarrow Q\). »</li>
+          </ol>
+          <p>Un sens peut être direct et l’autre par contraposée (partie 4) : chaque sens a sa méthode.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.26.3</i></span>
+          <p>Montrons que \(\forall (x, y) \in \R^2,\ x^2 + y^2 = 0 \Leftrightarrow x = y = 0\). Soit \((x, y) \in \R^2\) fixé.</p>
+          <p>(\(\Leftarrow\)) Supposons \(x = y = 0\). Alors \(x^2 + y^2 = 0 + 0 = 0\).</p>
+          <p>(\(\Rightarrow\)) Supposons \(x^2 + y^2 = 0\). Alors \(x^2 = -y^2\). Or un carré est positif : \(x^2 \geq 0\) et \(-y^2 \leq 0\).<span class="c">« or » : un fait du cours</span></p>
+          <p>Donc \(0 \leq x^2 = -y^2 \leq 0\), d’où \(x^2 = 0\), puis \(x = 0\). Alors \(y^2 = -x^2 = 0\), donc \(y = 0\).</p>
+          <p>Les deux implications sont vraies : \(x^2 + y^2 = 0 \Leftrightarrow x = y = 0\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Un sens direct, l’autre par contraposée.</b> Pour \(n \in \N\) : \(n\) pair \(\Leftrightarrow\) \(n^2\) pair. (\(\Rightarrow\)) Si \(n = 2k\) avec \(k \in \N\), alors \(n^2 = (2k)^2\), et <span data-eq="eq-pair">\((2k)^2 = 4k^2 = 2(2k^2)\)</span> est pair. (\(\Leftarrow\)) C’est l’exercice 4.28, rédigé en partie 4 par contraposée.</p>
+          <p><b>Une chaîne de \(\Leftrightarrow\)</b> est permise si chaque étape se lit dans les deux sens. \(e^{x+1} = 1 \Leftrightarrow x + 1 = 0 \Leftrightarrow x = -1\) est juste : \(\exp\) est injective et l’on peut retrancher 1 des deux côtés.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : un « \(\Leftrightarrow\) » qui n’en est pas un</span>
+          <ul>
+            <li>Élever au carré ne se remonte pas : \(x = 1 \Rightarrow x^2 = 1\), mais \(x^2 = 1\) n’entraîne pas \(x = 1\) (\(x = -1\)). « \(\sqrt{x + 2} = x \Leftrightarrow x + 2 = x^2\) » est faux : \(x = -1\) vérifie la droite, mais <span data-eq="eq-racine">\(\sqrt{-1 + 2} = 1 \neq -1\)</span>. Écris « \(\Rightarrow\) » et vérifie les solutions trouvées.</li>
+            <li>Ne démontrer qu’un sens, puis conclure « donc \(P \Leftrightarrow Q\) ». Les deux étiquettes (\(\Rightarrow\)) et (\(\Leftarrow\)) sur la copie évitent l’oubli.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">séminaire § 4.2 · ex. 4.26.5-7 · examen OBM 2024, 1.4</span></div><h2>Inclusion et égalité d’ensembles</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>inclusion, égalité</i></span>
+          <ul>
+            <li>\(A \subset B\) signifie \(\forall x \in A,\ x \in B\) : tout élément de \(A\) est dans \(B\).</li>
+            <li>Sa négation, \(A \not\subset B\), est \(\exists x \in A,\ x \notin B\) : un seul élément de \(A\) hors de \(B\) suffit.</li>
+            <li>\(A = B\) signifie \(A \subset B\) et \(B \subset A\) : c’est la <b>double inclusion</b>.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>montrer \(A \subset B\), puis \(A = B\)</i></span>
+          <ol>
+            <li>« Soit \(x \in A\) fixé. » Traduis \(x \in A\) avec la définition de \(A\).</li>
+            <li>Par implications successives, vérifie la définition de \(B\). Conclus « donc \(x \in B\), d’où \(A \subset B\) ».</li>
+            <li>Pour \(A = B\), recommence en partant de \(B\). Pour \(B \not\subset A\), donne un élément précis de \(B\) et vérifie qu’il n’est pas dans \(A\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen OBM d’octobre 2024, ex. 1.4 (sujet sans corrigé)</i></span>
+          <p>\(A = \{(x, y, z) \in \R^3,\ x = y = z\}\) et \(B = \{(x, y, z) \in \R^3,\ 2x - y - z = 0\}\).</p>
+          <p>(a) \(A\) et \(B\) sont des sous-ensembles de \(\R^3\).</p>
+          <p>(b) Soit \((x, y, z) \in A\) fixé. Alors \(x = y = z\), donc \(2x - y - z = 2x - x - x = 0\), car <span data-eq="inc-A">\(2x - x - x = 0\)</span>. Donc \((x, y, z) \in B\). Ainsi \(A \subset B\).<span class="c">Soit… fixé</span></p>
+          <p>(c) Non. Le triplet \((1, 2, 0)\) vérifie <span data-eq="inc-120">\(2 \times 1 - 2 - 0 = 0\)</span>, donc \((1, 2, 0) \in B\) ; mais \(1 \neq 2\), donc \((1, 2, 0) \notin A\). Ainsi \(B \not\subset A\).<span class="c">un élément précis</span></p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.26.7 : une égalité</i></span>
+          <p>\(A = \{(x, y) \in \R^2,\ 2x + y = 4\}\) et \(B = \{(t - 1,\ 6 - 2t),\ t \in \R\}\). Montrons \(A = B\) par double inclusion.</p>
+          <p>(\(A \subset B\)) Soit \((x, y) \in A\) fixé : \(2x + y = 4\), donc \(y = 4 - 2x\). Posons \(t = x + 1\). Alors \(x = t - 1\) et \(y = 4 - 2(t - 1) = 6 - 2t\), car <span data-eq="inc-y">\(4 - 2(t - 1) = 6 - 2t\)</span>. Donc \((x, y) = (t - 1, 6 - 2t)\) avec \(t \in \R\) : \((x, y) \in B\).</p>
+          <p>(\(B \subset A\)) Soit \((x, y) \in B\) fixé : il existe \(t \in \R\) tel que \(x = t - 1\) et \(y = 6 - 2t\). Alors \(2x + y = 2(t - 1) + 6 - 2t = 4\), car <span data-eq="inc-4">\(2(t - 1) + (6 - 2t) = 4\)</span>. Donc \((x, y) \in A\).</p>
+          <p>Les deux inclusions sont vraies : \(A = B\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Séminaire 4.26.5.</b> \(A\) : les fonctions constantes de \(\R\) dans \(\R\), \(B\) : les fonctions paires. Soit \(f \in A\) : il existe \(c \in \R\) tel que \(\forall x \in \R,\ f(x) = c\). Soit \(x \in \R\) : \(f(-x) = c = f(x)\), donc \(f\) est paire. Ainsi \(A \subset B\). Mais \(A \neq B\) : \(x \mapsto x^2\) est paire et non constante.</p>
+          <p><b>Séminaire 4.26.6.</b> \(E = \{x \in \R,\ x^2 + x + 2 \leq 2\}\) et \(F = \,]-2, 0]\). \(x^2 + x + 2 \leq 2 \Leftrightarrow x(x + 1) \leq 0 \Leftrightarrow x \in [-1, 0]\), donc \(E = [-1, 0] \subset F\). En revanche \(-\frac{3}{2} \in F\) et <span data-eq="inc-E">\(\left(-\frac{3}{2}\right)^2 - \frac{3}{2} + 2 = \frac{11}{4} > 2\)</span>, donc \(-\frac{3}{2} \notin E\) : \(F \not\subset E\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : une seule inclusion, ou des exemples</span>
+          <ul>
+            <li>Conclure \(A = B\) après la seule inclusion \(A \subset B\) : à l’examen 2024, \(A \subset B\) est vraie mais \(A \neq B\).</li>
+            <li>Montrer \(A \subset B\) avec deux ou trois éléments de \(A\) : il faut « Soit \(x \in A\) fixé », un élément quelconque.</li>
+            <li>Partir du mauvais ensemble : pour \(A \subset B\), on part de \(A\) et on utilise sa définition ; la condition de \(B\) est le but, pas une hypothèse.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">séminaire ex. 4.28, 4.29 · examen OBM 2024, 1.3</span></div><h2>Raisonnement par contraposée</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une implication et sa contraposée sont équivalentes : \((P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)\) (démontré au <a href="cours-1-logique.html#s5">cours 1, partie 5</a>). Pour prouver \(P \Rightarrow Q\), on peut donc prouver \(\neg Q \Rightarrow \neg P\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>quand et comment</i></span>
+          <p><b>Quand ?</b> Quand l’hypothèse \(P\) est difficile à utiliser et que \(\neg Q\) donne une égalité. « \(n^2\) pair » ne dit rien sur \(n\) ; « \(n\) impair » donne \(n = 2k + 1\), qu’on peut élever au carré. Aussi quand \(P\) commence par « \(\forall \varepsilon > 0\) » : sa négation est un « \(\exists \varepsilon\) », et on choisit ce \(\varepsilon\).</p>
+          <ol>
+            <li>« Raisonnons par contraposée : montrons que \(\neg Q \Rightarrow \neg P\). » Écris \(\neg Q\) et \(\neg P\) en clair (négations du cours 1).</li>
+            <li>« Supposons \(\neg Q\). » … « donc \(\neg P\). »</li>
+            <li>« La contraposée est vraie, donc \(P \Rightarrow Q\) est vraie. »</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.28</i></span>
+          <p>Soit \(n \in \N\). Montrons que si \(n^2\) est pair, alors \(n\) est pair.</p>
+          <p>Raisonnons par contraposée : montrons que si \(n\) est impair, alors \(n^2\) est impair.<span class="c">annoncer</span></p>
+          <p>Supposons \(n\) impair : il existe \(k \in \N\) tel que \(n = 2k + 1\).</p>
+          <p>Alors \(n^2 = (2k + 1)^2\), et <span data-eq="ctr-carre">\((2k + 1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1\)</span>, avec \(2k^2 + 2k \in \N\). Donc \(n^2\) est impair.</p>
+          <p>La contraposée est démontrée : si \(n^2\) est pair, alors \(n\) est pair.</p>
+        </div>
+        <div class="prose">
+          <p><b>Examen OBM d’octobre 2024, ex. 1.3</b> (« Vous prendrez soin de votre rédaction et vous écrirez clairement la contraposée »). Soient \(A\) et \(B\) deux assertions. (a) La contraposée de \(A \Rightarrow B\) est \(\neg B \Rightarrow \neg A\). (b) Elles sont équivalentes : \((A \Rightarrow B) \Leftrightarrow (\neg A \lor B) \Leftrightarrow (B \lor \neg A) \Leftrightarrow (\neg(\neg B) \lor \neg A) \Leftrightarrow (\neg B \Rightarrow \neg A)\), ou la table de vérité du cours 1.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen OBM 2024, 1.3 (c) et (d) (sujet sans corrigé)</i></span>
+          <p>(c) Soit \(a \in \R\). Montrons \((\forall \varepsilon > 0,\ |a| \leq \varepsilon) \Rightarrow a = 0\) par contraposée.</p>
+          <p>La contraposée est : \(a \neq 0 \Rightarrow \exists \varepsilon > 0,\ |a| > \varepsilon\).<span class="c">écrite en clair</span></p>
+          <p>Supposons \(a \neq 0\). Posons \(\varepsilon = \frac{|a|}{2}\). Comme \(a \neq 0\), \(|a| > 0\), donc \(\varepsilon > 0\).</p>
+          <p>Et \(|a| = 2\varepsilon > \varepsilon\), car \(\varepsilon > 0\). Il existe donc \(\varepsilon > 0\) tel que \(|a| > \varepsilon\).</p>
+          <p>La contraposée est vraie, donc \((\forall \varepsilon > 0,\ |a| \leq \varepsilon) \Rightarrow a = 0\).</p>
+          <p>(d) La réciproque, \(a = 0 \Rightarrow (\forall \varepsilon > 0,\ |a| \leq \varepsilon)\), est vraie : si \(a = 0\), pour tout \(\varepsilon > 0\), \(|a| = 0 \leq \varepsilon\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Séminaire 4.29</b>, la même idée : \((\forall \varepsilon > 0,\ a &lt; b + \varepsilon) \Rightarrow a \leq b\). Contraposée : \(a > b \Rightarrow \exists \varepsilon > 0,\ a \geq b + \varepsilon\). Si \(a > b\), \(\varepsilon = a - b\) est strictement positif et \(b + \varepsilon = a\).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 4.2 — Les quatre phrases autour de « si \(n^2\) est pair, alors \(n\) est pair »</caption>
+          <thead><tr><th>Nom</th><th>Phrase</th><th>Équivalente à l’implication ?</th></tr></thead>
+          <tbody>
+            <tr><td>implication \(P \Rightarrow Q\)</td><td>\(n^2\) pair \(\Rightarrow\) \(n\) pair</td><td>—</td></tr>
+            <tr><td>contraposée \(\neg Q \Rightarrow \neg P\)</td><td>\(n\) impair \(\Rightarrow\) \(n^2\) impair</td><td><b>oui</b></td></tr>
+            <tr><td>réciproque \(Q \Rightarrow P\)</td><td>\(n\) pair \(\Rightarrow\) \(n^2\) pair</td><td>non</td></tr>
+            <tr><td>\(\neg P \Rightarrow \neg Q\)</td><td>\(n^2\) impair \(\Rightarrow\) \(n\) impair</td><td>non (c’est la contraposée de la réciproque)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Piège : la réciproque prise pour la contraposée</span>
+          <ul>
+            <li>Pour « \(n^2\) pair \(\Rightarrow\) \(n\) pair », démontrer « \(n\) pair \(\Rightarrow\) \(n^2\) pair » prouve la <b>réciproque</b>, pas l’énoncé. La contraposée nie <b>et</b> échange : \(\neg Q\) passe à gauche.</li>
+            <li>« \(n^2\) impair \(\Rightarrow\) \(n\) impair » (nier sans échanger) n’est pas non plus la contraposée.</li>
+            <li>La négation de « \(\forall \varepsilon > 0,\ |a| \leq \varepsilon\) » est « \(\exists \varepsilon > 0,\ |a| > \varepsilon\) » : le domaine \(\varepsilon > 0\) ne se nie pas.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">séminaire ex. 4.30, 4.31 · examen LE 2023, 4.4</span></div><h2>Raisonnement par l’absurde, disjonction de cas</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le séminaire : « la preuve par l’absurde consiste à montrer qu’un résultat est faux en prouvant qu’il impliquerait quelque chose que l’on sait être irréalisable ». Pour prouver \(P\), on suppose \(\neg P\) et on aboutit à une contradiction.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>par l’absurde</i></span>
+          <p><b>Quand ?</b> Quand l’énoncé est « négatif » : \(x\) n’est pas décimal, n’est pas rationnel, il n’existe pas de… On n’a rien pour démarrer, alors que sa négation donne une égalité à exploiter.</p>
+          <ol>
+            <li>« Supposons par l’absurde que [négation exacte de l’énoncé]. » Traduis-la avec sa définition (\(\exists a, n\) tels que…).</li>
+            <li>Déduis jusqu’à une contradiction : une chose et son contraire, ou un fait faux.</li>
+            <li>« C’est absurde. L’hypothèse est donc fausse : [énoncé]. »</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.30</i></span>
+          <p>Un réel \(x\) est décimal s’il existe \(a \in \Z\) et \(n \in \N\) tels que \(x = \frac{a}{10^n}\).</p>
+          <p>Supposons par l’absurde que \(\frac{1}{3}\) soit décimal : il existe \(a \in \Z\) et \(n \in \N\) tels que \(\frac{1}{3} = \frac{a}{10^n}\).<span class="c">la négation, traduite</span></p>
+          <p>Alors \(10^n = 3a\) : 3 divise \(10^n\).</p>
+          <p>Or <span data-eq="abs-10n">\(10^n = 2^n \times 5^n\)</span> : les seuls facteurs premiers de \(10^n\) sont 2 et 5, donc 3 ne divise pas \(10^n\). C’est absurde.</p>
+          <p>Donc \(\frac{1}{3}\) n’est pas décimal.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.31 (exercice étoilé)</i></span>
+          <p>Supposons par l’absurde que \(\sqrt{2}\) soit rationnel. Comme \(\sqrt{2} > 0\), on peut l’écrire \(\sqrt{2} = \frac{p}{q}\) avec \(p, q\) entiers strictement positifs, <b>premiers entre eux</b> (fraction irréductible).<span class="c">la clé</span></p>
+          <p>Alors \(2 = \frac{p^2}{q^2}\), donc \(p^2 = 2q^2\) : \(p^2\) est pair. Par l’exercice 4.28 (partie 4), \(p\) est pair : \(p = 2k\) avec \(k \in \N\).</p>
+          <p>Alors \(2q^2 = p^2 = 4k^2\), car <span data-eq="abs-2k">\((2k)^2 = 4k^2\)</span>, donc \(q^2 = 2k^2\) : \(q^2\) est pair, donc \(q\) est pair.</p>
+          <p>Ainsi 2 divise \(p\) et \(q\), ce qui contredit « \(p\) et \(q\) premiers entre eux ». C’est absurde : \(\sqrt{2}\) n’est pas rationnel.</p>
+        </div>
+        <div class="box def"><span class="tag">Méthode <i>disjonction de cas</i></span>
+          <p>On découpe en cas qui <b>couvrent toutes les possibilités</b> (\(n\) pair ou \(n\) impair ; \(x \geq 0\) ou \(x &lt; 0\)), on traite chaque cas, puis on conclut. Elle n’est pas au séminaire 2026, mais le corrigé de l’examen LE 2023 (ex. 4.4) s’en sert : de \(b = b^{np}\), il tire « \(b = 1\) ou \(np = 1\) » et traite les deux cas.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>\(n(n + 1)\) est pair</i></span>
+          <p>Soit \(n \in \Z\) fixé. Deux cas.</p>
+          <p>1<sup>er</sup> cas : \(n\) pair, \(n = 2k\) avec \(k \in \Z\). Alors \(n(n + 1) = 2k(2k + 1)\), et <span data-eq="cas-pair">\(2k(2k + 1) = 2\big(k(2k + 1)\big)\)</span> est pair.</p>
+          <p>2<sup>e</sup> cas : \(n\) impair, \(n = 2k + 1\) avec \(k \in \Z\). Alors <span data-eq="cas-impair">\((2k + 1)(2k + 2) = 2(2k + 1)(k + 1)\)</span>, donc \(n(n + 1)\) est pair.</p>
+          <p>Tout entier est pair ou impair : dans tous les cas, \(n(n + 1)\) est pair.<span class="c">les cas couvrent tout</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : un absurde mal posé</span>
+          <ul>
+            <li>Supposer autre chose que la négation exacte. La négation de « \(\frac{1}{3}\) n’est pas décimal » est « il <b>existe</b> \(a\) et \(n\) tels que \(\frac{1}{3} = \frac{a}{10^n}\) », pas « pour tout \(n\) ».</li>
+            <li>Oublier « premiers entre eux » pour \(\sqrt{2}\) : sans cette hypothèse, « \(p\) et \(q\) sont pairs » ne contredit rien.</li>
+            <li>Conclure « c’est absurde » sans dire quelle hypothèse est contredite. La contradiction doit être écrite.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">séminaire ex. 4.27 · examens 2019 à 2024</span></div><h2>Relations binaires : ordre et équivalence</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>relation binaire</i></span>
+          <p>Une <b>relation binaire</b> \(\mathcal{R}\) sur un ensemble \(E\) dit, pour chaque couple \((x, y) \in E^2\), si \(x\) est en relation avec \(y\) : on écrit alors \(x \mathrel{\mathcal{R}} y\), sinon \(x \mathrel{\not\mathcal{R}} y\). Exemples : \(\leq\) sur \(\R\) ; sur \(\Z\), \(a \mathrel{\mathcal{R}} b \iff a - b\) est un multiple de 3 (séminaire 4.27 : \(3 \mathrel{\mathcal{R}} 15\) car <span data-eq="rel-3-15">\(3 - 15 = -12 = 3 \times (-4)\)</span>).</p>
+          <p>\(x \mathrel{\mathcal{R}} y\) est une assertion, vraie ou fausse : on ne l’écrit jamais « \(= \ldots\) ».</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 4.3 — Les quatre propriétés, avec quantificateurs, et leur négation : la négation dit quel contre-exemple chercher (définitions du corrigé de 2022)</caption>
+          <thead><tr><th>\(\mathcal{R}\) est…</th><th>Définition</th><th>Négation (contre-exemple)</th></tr></thead>
+          <tbody>
+            <tr><td><b>réflexive</b></td><td>\(\forall x \in E,\ x \mathrel{\mathcal{R}} x\)</td><td>\(\exists x \in E,\ x \mathrel{\not\mathcal{R}} x\)</td></tr>
+            <tr><td><b>symétrique</b></td><td>\(\forall (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y \Rightarrow y \mathrel{\mathcal{R}} x\)</td><td>\(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y\) et \(y \mathrel{\not\mathcal{R}} x\)</td></tr>
+            <tr><td><b>antisymétrique</b></td><td>\(\forall (x, y) \in E^2,\ (x \mathrel{\mathcal{R}} y\) et \(y \mathrel{\mathcal{R}} x) \Rightarrow x = y\)</td><td>\(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y\) et \(y \mathrel{\mathcal{R}} x\) et \(x \neq y\)</td></tr>
+            <tr><td><b>transitive</b></td><td>\(\forall (x, y, z) \in E^3,\ (x \mathrel{\mathcal{R}} y\) et \(y \mathrel{\mathcal{R}} z) \Rightarrow x \mathrel{\mathcal{R}} z\)</td><td>\(\exists (x, y, z) \in E^3,\ x \mathrel{\mathcal{R}} y\) et \(y \mathrel{\mathcal{R}} z\) et \(x \mathrel{\not\mathcal{R}} z\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Le contrôle de 2022 (ex. 3) demandait aussi la <b>contraposée</b> de la transitivité : \(\forall (x, y, z) \in E^3,\ x \mathrel{\not\mathcal{R}} z \Rightarrow (x \mathrel{\not\mathcal{R}} y\) ou \(y \mathrel{\not\mathcal{R}} z)\). Sur un graphe (figure 1) : réflexive = une boucle sur chaque élément ; symétrique = chaque flèche a son retour ; antisymétrique = aucun aller-retour entre deux éléments distincts ; transitive = deux flèches enchaînées ont leur raccourci.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>relation d’ordre, relation d’équivalence</i></span>
+          <ul>
+            <li>Une <b>relation d’ordre</b> est réflexive, <b>antisymétrique</b> et transitive. Exemples : \(\leq\) sur \(\R\), « \(a\) divise \(b\) » sur \(\N^*\).</li>
+            <li>Une <b>relation d’équivalence</b> est réflexive, <b>symétrique</b> et transitive. Exemples : la congruence modulo 3 sur \(\Z\), l’égalité.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>étudier une relation (la copie attendue)</i></span>
+          <ol>
+            <li>Rappelle la définition de la propriété, avec ses quantificateurs. L’examen OBM 2024 l’exige : « Après avoir rappelé la définition ».</li>
+            <li>Vraie : « Soit \(x \in E\) fixé » (ou le couple, le triplet), « Supposons \(x \mathrel{\mathcal{R}} y\) », traduis avec la définition de \(\mathcal{R}\), puis déduis.</li>
+            <li>Fausse : un contre-exemple <b>chiffré</b> et vérifié, de la forme donnée par la négation (tableau 4.3).</li>
+            <li>Conclus : relation d’ordre, d’équivalence, ou ni l’une ni l’autre.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.27</i></span>
+          <p>Sur \(\Z\) : \(a \mathrel{\mathcal{R}} b \iff a - b\) est un multiple de 3.</p>
+          <p>1. Traduction : \(a \mathrel{\mathcal{R}} b \iff \exists k \in \Z,\ a - b = 3k\).</p>
+          <p>2. Réflexive. Soit \(a \in \Z\). <span data-eq="rel-refl">\(a - a = 0 = 3 \times 0\)</span> avec \(0 \in \Z\), donc \(a \mathrel{\mathcal{R}} a\). \(\mathcal{R}\) est réflexive.</p>
+          <p>3. Symétrique. Soit \((a, b) \in \Z^2\) tel que \(a \mathrel{\mathcal{R}} b\) : il existe \(k \in \Z\) tel que \(a - b = 3k\). Alors <span data-eq="rel-sym">\(b - a = -(a - b)\)</span> \(= 3 \times (-k)\) avec \(-k \in \Z\), donc \(b \mathrel{\mathcal{R}} a\). \(\mathcal{R}\) est symétrique.</p>
+          <p>4. Pas antisymétrique : \(3 \mathrel{\mathcal{R}} 15\) et \(15 \mathrel{\mathcal{R}} 3\), car <span data-eq="rel-15-3">\(15 - 3 = 12 = 3 \times 4\)</span>, mais \(3 \neq 15\).<span class="c">contre-exemple chiffré</span></p>
+          <p>5. Transitive. Soit \((a, b, c) \in \Z^3\) tel que \(a \mathrel{\mathcal{R}} b\) et \(b \mathrel{\mathcal{R}} c\) : il existe \(k, k' \in \Z\) tels que \(a - b = 3k\) et \(b - c = 3k'\). Alors <span data-eq="rel-trans">\(a - c = (a - b) + (b - c)\)</span> \(= 3k + 3k'\), et <span data-eq="rel-trans2">\(3k + 3k' = 3(k + k')\)</span> avec \(k + k' \in \Z\) : \(a \mathrel{\mathcal{R}} c\).</p>
+          <p>\(\mathcal{R}\) est réflexive, symétrique et transitive : c’est une relation d’équivalence.</p>
+        </div>
+        <div class="box why"><span class="tag">Coquille du séminaire, question 3</span>
+          <p>L’énoncé (français et anglais) écrit « \(\forall (a, b) \in \Z^2,\ a \mathrel{\mathcal{R}} b \Rightarrow a \mathrel{\mathcal{R}} b\) », toujours vrai et sans intérêt. Il faut lire \(a \mathrel{\mathcal{R}} b \Rightarrow b \mathrel{\mathcal{R}} a\) : la symétrie, entre la réflexivité (question 2) et l’antisymétrie (question 4).</p>
+        </div>
+        <div data-rel='{"preset":"abs","presets":["abs","puiss","mod3","pair","div","lt"],"edit":true,"title":"Graphe d’une relation · à toi"}'></div>
+        <div class="prose">
+          <p>Figure 2 — Choisis une relation, ou appuie sur « Modifier les flèches » pour construire la tienne : une relation symétrique mais pas transitive, une relation ni symétrique ni antisymétrique…</p>
+          <p><b>Examen OBM d’octobre 2024, ex. 4</b> (sujet sans corrigé, réponses recalculées). Sur \(\R\) : \(a \mathrel{\mathcal{R}} b \iff |a| \leq |b|\). Réflexive : soit \(a \in \R\), \(|a| \leq |a|\). Pas symétrique : \(1 \mathrel{\mathcal{R}} 2\) car \(1 \leq 2\), mais \(|2| > |1|\), donc \(2 \mathrel{\not\mathcal{R}} 1\). Pas antisymétrique : \(-1 \mathrel{\mathcal{R}} 1\) et \(1 \mathrel{\mathcal{R}} -1\) (\(|-1| = |1|\)), mais \(-1 \neq 1\). Transitive : si \(|a| \leq |b|\) et \(|b| \leq |c|\), alors \(|a| \leq |c|\). Ni ordre ni équivalence.</p>
+          <p><b>Examen LE d’octobre 2023, ex. 4</b> (corrigé officiel). Sur \(\N^*\) : \(a \mathrel{\mathcal{R}} b \iff \exists n \in \N,\ b = a^n\). Réflexive : \(a = a^1\). Pas symétrique : \(2 \mathrel{\mathcal{R}} 8\) car <span data-eq="rel-8">\(8 = 2^3\)</span>, mais 2 n’est pas une puissance de 8. Transitive : si \(b = a^n\) et \(c = b^p\), alors \(c = a^{np}\), car <span data-eq="rel-np">\((a^n)^p = a^{np}\)</span>. Antisymétrique : si \(b = a^n\) et \(a = b^p\), alors \(b = b^{np}\) ; donc \(b = 1\) (et alors \(a = 1^p = 1 = b\)) ou \(np = 1\), soit \(n = p = 1\) et \(b = a\). Réflexive, antisymétrique et transitive : c’est une relation d’ordre (le corrigé ne le dit pas).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 4.4 — Les relations du séminaire et des sujets (chaque case vérifiée par programme, sur tous les couples d’un ensemble fini)</caption>
+          <thead><tr><th>\(a \mathrel{\mathcal{R}} b \iff\)</th><th>sur</th><th>réfl.</th><th>sym.</th><th>antisym.</th><th>trans.</th><th>nature</th><th>source</th></tr></thead>
+          <tbody>
+            <tr><td>\(a - b\) multiple de 3</td><td>\(\Z\)</td><td data-eq="prop-mod3-refl">oui</td><td data-eq="prop-mod3-sym">oui</td><td data-eq="prop-mod3-anti">non</td><td data-eq="prop-mod3-trans">oui</td><td data-eq="prop-mod3-nat">équivalence</td><td>séminaire 4.27</td></tr>
+            <tr><td>\(a^2 - b^2\) pair</td><td>\(\Z\)</td><td data-eq="prop-pair-refl">oui</td><td data-eq="prop-pair-sym">oui</td><td data-eq="prop-pair-anti">non</td><td data-eq="prop-pair-trans">oui</td><td data-eq="prop-pair-nat">équivalence</td><td>séminaire, exercice dicté</td></tr>
+            <tr><td>\(ab' = ba'\), entre couples \((a, b)\) et \((a', b')\)</td><td>\(\Z \times \Z^*\)</td><td data-eq="prop-frac-refl">oui</td><td data-eq="prop-frac-sym">oui</td><td data-eq="prop-frac-anti">non</td><td data-eq="prop-frac-trans">oui</td><td data-eq="prop-frac-nat">équivalence</td><td>contrôle 2019, ex. 4</td></tr>
+            <tr><td>\(a \leq b\)</td><td>\(\R\)</td><td data-eq="prop-le-refl">oui</td><td data-eq="prop-le-sym">non</td><td data-eq="prop-le-anti">oui</td><td data-eq="prop-le-trans">oui</td><td data-eq="prop-le-nat">ordre</td><td>contrôle 2022, ex. 3</td></tr>
+            <tr><td>\(\exists n \in \N,\ b = a^n\)</td><td>\(\N^*\)</td><td data-eq="prop-puiss-refl">oui</td><td data-eq="prop-puiss-sym">non</td><td data-eq="prop-puiss-anti">oui</td><td data-eq="prop-puiss-trans">oui</td><td data-eq="prop-puiss-nat">ordre</td><td>examen LE 2023, ex. 4</td></tr>
+            <tr><td>\(a\) divise \(b\)</td><td>\(\N^*\)</td><td data-eq="prop-div-refl">oui</td><td data-eq="prop-div-sym">non</td><td data-eq="prop-div-anti">oui</td><td data-eq="prop-div-trans">oui</td><td data-eq="prop-div-nat">ordre</td><td>exemple classique</td></tr>
+            <tr><td>\(a^2 \leq b^2\)</td><td>\(\R\)</td><td data-eq="prop-carre-refl">oui</td><td data-eq="prop-carre-sym">non</td><td data-eq="prop-carre-anti">non</td><td data-eq="prop-carre-trans">oui</td><td data-eq="prop-carre-nat">ni l’une ni l’autre</td><td>contrôle 2021, ex. 1</td></tr>
+            <tr><td>\(|a| \leq |b|\)</td><td>\(\R\)</td><td data-eq="prop-abs-refl">oui</td><td data-eq="prop-abs-sym">non</td><td data-eq="prop-abs-anti">non</td><td data-eq="prop-abs-trans">oui</td><td data-eq="prop-abs-nat">ni l’une ni l’autre</td><td>examen OBM 2024, ex. 4</td></tr>
+            <tr><td>\(a\) habite à moins de 5 min de \(b\)</td><td>une classe</td><td data-eq="prop-voisins-refl">oui</td><td data-eq="prop-voisins-sym">oui</td><td data-eq="prop-voisins-anti">non</td><td data-eq="prop-voisins-trans">non</td><td data-eq="prop-voisins-nat">ni l’une ni l’autre</td><td>contrôle 2020, ex. 2</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Ligne du contrôle 2019 : la relation porte sur des couples, \((a, b) \mathrel{\mathcal{R}} (a', b') \iff ab' = ba'\) sur \(\Z \times \Z^*\) ; elle dit que \(\frac{a}{b} = \frac{a'}{b'}\). Ligne de 2020 : un élève habite à 0 min de lui-même ; deux voisins \(e\) et \(e'\) peuvent avoir un voisin \(e''\) de \(e'\) « dans la direction opposée », à plus de 5 min de \(e\).</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>classe d’équivalence</i></span>
+          <p>Soient \(\mathcal{R}\) une relation d’équivalence sur \(E\) et \(a \in E\). La <b>classe d’équivalence</b> de \(a\) est \(\overline{a} = \{x \in E,\ x \mathrel{\mathcal{R}} a\}\) : les éléments en relation avec \(a\). Par réflexivité, \(a \in \overline{a}\). Deux classes sont égales ou disjointes, et les classes forment une partition de \(E\).</p>
+          <p>Modulo 3 : \(\overline{0} = \{3k,\ k \in \Z\} = \{\ldots, -3, 0, 3, 6, \ldots\}\), \(\overline{1} = \{3k + 1,\ k \in \Z\} = \{\ldots, -2, 1, 4, 7, \ldots\}\), \(\overline{2} = \{3k + 2,\ k \in \Z\}\), et \(\Z = \overline{0} \sqcup \overline{1} \sqcup \overline{2}\). Par exemple \(7 \in \overline{1}\), car <span data-eq="rel-7">\(7 - 1 = 6 = 3 \times 2\)</span>. Sur la figure 1, chaque classe a sa couleur. Les classes ne sont ni au séminaire ni dans les sujets de 2019 à 2024 : elles disent seulement ce qu’est une équivalence, « être dans la même classe ».</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : antisymétrique n’est pas « non symétrique »</span>
+          <ul>
+            <li>« Non symétrique » veut dire : il existe un aller sans retour. « Antisymétrique » veut dire : jamais d’aller-retour entre deux éléments distincts. \(\leq\) est antisymétrique et non symétrique ; l’égalité est symétrique <b>et</b> antisymétrique ; \(|a| \leq |b|\) n’est ni l’une ni l’autre.</li>
+            <li>Une propriété fausse se prouve par <b>un</b> contre-exemple chiffré (« \(-1 \mathrel{\mathcal{R}} 1\) et \(1 \mathrel{\mathcal{R}} -1\), mais \(-1 \neq 1\) »), pas par une phrase générale.</li>
+            <li>Pour une relation d’ordre, on vérifie l’<b>anti</b>symétrie ; pour une équivalence, la symétrie. Les confondre fait perdre la question entière.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Partie 7 <span class="ref">séminaire ex. 4.32, 4.33 · contrôle 2020, ex. 6</span></div><h2>Le raisonnement par récurrence</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>principe de récurrence</i></span>
+          <p>Soient \(n_0 \in \N\) et, pour tout entier \(n \geq n_0\), une assertion \(P(n)\). Si</p>
+          <ul>
+            <li>\(P(n_0)\) est vraie (<b>initialisation</b>),</li>
+            <li>pour tout \(n \geq n_0\), \(P(n) \Rightarrow P(n + 1)\) (<b>hérédité</b>),</li>
+          </ul>
+          <p>alors \(P(n)\) est vraie pour tout \(n \geq n_0\).</p>
+        </div>
+        <div class="prose">
+          <p>Le séminaire : « la propriété est vraie à un endroit donné, et de là elle se propage de proche en proche ». Comme une rangée de dominos : le premier tombe, et chacun fait tomber le suivant. C’est la démarche d’une fonction récursive en algorithmique : un cas de base, puis un appel au rang précédent.</p>
+          <p><b>Quand ?</b> Quand l’énoncé porte sur tous les entiers \(n \geq n_0\) et que le rang \(n + 1\) se calcule à partir du rang \(n\) : une somme qui gagne un terme, une suite \(u_{n+1} = f(u_n)\), une dérivée de la dérivée, \((n + 1)! = (n + 1) \times n!\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>la rédaction du corrigé de 2020</i></span>
+          <ol>
+            <li>« Pour tout \(n \geq n_0\), on pose \(P(n)\) : « … ». » L’assertion, pas une valeur.</li>
+            <li>« <b>Initialisation</b> : pour \(n = n_0\), … donc \(P(n_0)\) est vraie. » On calcule les deux membres séparément.</li>
+            <li>« <b>Hérédité</b> : soit \(n \geq n_0\) fixé. Supposons \(P(n)\) vraie et montrons \(P(n + 1)\). » On écrit le but \(P(n + 1)\), puis un calcul qui <b>utilise</b> \(P(n)\), en le disant (« par hypothèse de récurrence »).</li>
+            <li>« <b>Conclusion</b> : \(P(n_0)\) est vraie et, pour tout \(n \geq n_0\), \(P(n) \Rightarrow P(n + 1)\). Par récurrence, \(P(n)\) est vraie pour tout \(n \geq n_0\). »</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>séminaire 4.32.1</i></span>
+          <p>Pour tout entier \(n \geq 6\), on pose \(P(n)\) : « \(2^n \geq 6n + 7\) ».</p>
+          <p>Initialisation : <span data-eq="rec-init">\(2^6 = 64\)</span> et <span data-eq="rec-init2">\(6 \times 6 + 7 = 43\)</span>. Comme \(64 \geq 43\), \(P(6)\) est vraie.</p>
+          <p>Hérédité : soit \(n \geq 6\) fixé. Supposons \(P(n)\) vraie, \(2^n \geq 6n + 7\), et montrons \(P(n + 1)\) : \(2^{n+1} \geq 6(n + 1) + 7\).<span class="c">le but écrit</span></p>
+          <p>Par hypothèse de récurrence, <span data-eq="rec-her" data-n0="6">\(2^{n+1} = 2 \times 2^n \geq 2(6n + 7) = 12n + 14\)</span>.</p>
+          <p>Or <span data-eq="rec-diff">\(12n + 14 - \big(6(n + 1) + 7\big) = 6n + 1\)</span> \(> 0\). Donc \(2^{n+1} \geq 6(n + 1) + 7\) : \(P(n + 1)\) est vraie.</p>
+          <p>Conclusion : \(P(6)\) est vraie et, pour tout \(n \geq 6\), \(P(n) \Rightarrow P(n + 1)\). Par récurrence, \(\forall n \geq 6,\ 2^n \geq 6n + 7\).</p>
+        </div>
+        <div data-rec='{"preset":"pow","presets":["pow","four","gauss"]}'></div>
+        <div class="prose">
+          <p>Figure 3 — Le dérouleur montre les deux étages : la valeur réelle de \(P(n)\), calculée (✓ ou ✗), et ce que la récurrence a démontré (en vert). Pour \(2^n \geq 6n + 7\), l’hérédité marche dès \(n = 0\) mais \(P(5)\) est fausse, car <span data-eq="rec-5">\(2^5 = 32 &lt; 37 = 6 \times 5 + 7\)</span> : seul le bon rang initial fait démarrer la récurrence.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>contrôle de novembre 2020, ex. 6 : une factorielle</i></span>
+          <p>Pour tout entier \(n \geq 2\), on pose \(P(n)\) : « \(\frac{2^n}{n!} \leq \frac{9}{2}\left(\frac{2}{3}\right)^n\) ».</p>
+          <p>Initialisation : <span data-eq="fac-init">\(\frac{2^2}{2!} = 2\)</span> et <span data-eq="fac-init2">\(\frac{9}{2}\left(\frac{2}{3}\right)^2 = \frac{9}{2} \times \frac{4}{9} = 2\)</span>. Comme \(2 \leq 2\), \(P(2)\) est vraie.</p>
+          <p>Hérédité : soit \(n \geq 2\) fixé ; supposons \(P(n)\) vraie. On a <span data-eq="fac-split">\(\frac{2^{n+1}}{(n + 1)!} = \frac{2}{n + 1} \times \frac{2^n}{n!}\)</span>.</p>
+          <p>Par hypothèse de récurrence, et comme \(\frac{2}{n + 1} > 0\) : \(\frac{2^{n+1}}{(n + 1)!} \leq \frac{2}{n + 1} \times \frac{9}{2}\left(\frac{2}{3}\right)^n\).</p>
+          <p>Or \(n \geq 2\), donc \(n + 1 \geq 3\) et \(\frac{2}{n + 1} \leq \frac{2}{3}\). D’où <span data-eq="fac-her" data-n0="2">\(\frac{2}{n + 1} \times \frac{9}{2}\left(\frac{2}{3}\right)^n \leq \frac{2}{3} \times \frac{9}{2}\left(\frac{2}{3}\right)^n = \frac{9}{2}\left(\frac{2}{3}\right)^{n+1}\)</span> : \(P(n + 1)\) est vraie.</p>
+          <p>Conclusion : par récurrence, \(\forall n \geq 2,\ \frac{2^n}{n!} \leq \frac{9}{2}\left(\frac{2}{3}\right)^n\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Deux hérédités du séminaire (4.32.3 et 4.32.4)</b>, à rédiger avec le même plan :</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">dérivée \(n\)-ième, rang initial 0</span><p>\(f(x) = xe^x\), \(P(n)\) : « \(\forall x \in \R,\ f^{(n)}(x) = (x + n)e^x\) ». Initialisation : <span data-eq="der-init" data-ctx="f">\(f^{(0)}(x) = xe^x = (x + 0)e^x\)</span>. Hérédité, en dérivant \(P(n)\) :</p><div class="fm" data-eq="der-her" data-ctx="f">\(f^{(n+1)}(x) = \big((x + n)e^x\big)' = e^x + (x + n)e^x = (x + n + 1)e^x\)</div></div>
+          <div class="card"><span class="k">suite, rang initial 0</span><p>\(u_0 = 1\), \(u_{n+1} = u_n + 2n + 3\), \(P(n)\) : « \(u_n = (n + 1)^2\) ». Initialisation : <span data-eq="seq-init" data-ctx="u">\(u_0 = 1 = (0 + 1)^2\)</span>. Hérédité, avec \(P(n)\) :</p><div class="fm" data-eq="seq-her" data-ctx="u">\(u_{n+1} = u_n + 2n + 3 = (n + 1)^2 + 2n + 3 = n^2 + 4n + 4 = (n + 2)^2\)</div></div>
+        </div>
+        <div class="box trap"><span class="tag">Piège : l’initialisation oubliée, l’hérédité qui n’utilise rien</span>
+          <ul>
+            <li><b>Initialisation oubliée.</b> \(P(n)\) : « 3 divise \(4^n + 1\) ». L’hérédité marche : <span data-eq="piege-4n">\(4^{n+1} + 1 = 4(4^n + 1) - 3\)</span>, donc si 3 divise \(4^n + 1\), il divise \(4^{n+1} + 1\). Pourtant \(P(0)\) est fausse (<span data-eq="piege-40">\(4^0 + 1 = 2\)</span>), et \(P(n)\) n’est vraie pour aucun \(n\) : \(4^n + 1\) laisse toujours le reste 2. Essaie-la dans le dérouleur.</li>
+            <li><b>Hérédité qui n’utilise pas l’hypothèse.</b> Si ton calcul de \(P(n + 1)\) ne se sert jamais de \(P(n)\), soit tu as démontré \(P(n + 1)\) directement (alors pas besoin de récurrence), soit tu as supposé ce que tu voulais montrer. Écris « par hypothèse de récurrence » à l’endroit exact où \(P(n)\) sert.</li>
+            <li>« Supposons \(P(n)\) vraie <b>pour tout</b> \(n\) » suppose la conclusion. On fixe un \(n\) : « soit \(n \geq n_0\) fixé, supposons \(P(n)\) ».</li>
+            <li>Le rang initial n’est pas toujours 0 : il est dans l’énoncé (\(n \geq 6\), \(n \geq 2\)). Conclure « pour tout \(n \in \N\) » quand \(P(5)\) est fausse est faux.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Partie 8 <span class="ref">séminaire ex. 4.32.2, 4.33.4 · contrôle 2021, ex. 8</span></div><h2>Le symbole \(\sum\) et les sommes classiques</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>le symbole somme</i></span>
+          <p>Pour des entiers \(m \leq n\) : \(\displaystyle\sum_{k=m}^{n} a_k = a_m + a_{m+1} + \cdots + a_n\). La somme a \(n - m + 1\) termes. L’indice \(k\) est <b>muet</b> : \(\sum_{k=1}^{n} k^2\) et \(\sum_{j=1}^{n} j^2\) sont la même somme. Si \(n &lt; m\), la somme est vide et vaut 0.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>règles de calcul</i></span>
+          <ul>
+            <li><b>Linéarité</b> : \(\sum_{k=m}^{n} (\lambda a_k + \mu b_k) = \lambda \sum_{k=m}^{n} a_k + \mu \sum_{k=m}^{n} b_k\).</li>
+            <li><b>Constante</b> : \(\sum_{k=m}^{n} c = (n - m + 1)\,c\). Par exemple <span data-eq="som-cst">\(\sum_{k=0}^{10} 3 = 11 \times 3 = 33\)</span>.</li>
+            <li><b>Dernier terme</b> (l’outil des hérédités) : \(\sum_{k=m}^{n+1} a_k = \sum_{k=m}^{n} a_k + a_{n+1}\).</li>
+            <li><b>Changement d’indice</b> \(j = k + 1\) : \(\sum_{k=0}^{n-1} a_{k+1} = \sum_{j=1}^{n} a_j\). On change le terme <b>et</b> les bornes. Avec \(j = n - k\), on parcourt la somme à l’envers.</li>
+            <li><b>Télescopage</b> : \(\sum_{k=m}^{n} (b_{k+1} - b_k) = b_{n+1} - b_m\) : tout le reste se simplifie.</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>sommes classiques, pour \(n \in \N^*\)</i></span>
+          <div class="fm" data-eq="cl-k">\[\sum_{k=1}^{n} k = \frac{n(n + 1)}{2}\]</div>
+          <div class="fm" data-eq="cl-k2">\[\sum_{k=1}^{n} k^2 = \frac{n(n + 1)(2n + 1)}{6}\]</div>
+          <div class="fm" data-eq="cl-k3">\[\sum_{k=1}^{n} k^3 = \left(\frac{n(n + 1)}{2}\right)^2\]</div>
+          <div class="fm" data-eq="cl-geo" data-n0="0">\[\sum_{k=0}^{n} q^k = \frac{1 - q^{n+1}}{1 - q}\]</div>
+          <p>si \(q \neq 1\) ; si \(q = 1\), <span data-eq="cl-geo1" data-n0="0">\(\sum_{k=0}^{n} 1^k = n + 1\)</span>.</p>
+          <div class="fm" data-eq="cl-tel">\[\sum_{k=1}^{n} \frac{1}{k(k + 1)} = 1 - \frac{1}{n + 1}\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>séminaire 4.32.2, par récurrence</i></span>
+          <p>Pour \(n \geq 1\), on pose \(P(n)\) : « \(\sum_{k=1}^{n} k = \frac{n(n + 1)}{2}\) ».</p>
+          <p>Initialisation : \(\sum_{k=1}^{1} k = 1\) et \(\frac{1 \times 2}{2} = 1\) : \(P(1)\) est vraie.</p>
+          <p>Hérédité : soit \(n \geq 1\) fixé ; supposons \(P(n)\) vraie. On isole le dernier terme, puis on utilise \(P(n)\) :</p>
+          <div class="fm" data-eq="pr-k">\[\sum_{k=1}^{n+1} k = \sum_{k=1}^{n} k + (n + 1) = \frac{n(n + 1)}{2} + (n + 1) = \frac{(n + 1)(n + 2)}{2}\]</div>
+          <p>C’est \(P(n + 1)\). Par récurrence, \(P(n)\) est vraie pour tout \(n \geq 1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Une autre preuve, par changement d’indice</b> (la somme à l’envers, \(j = n + 1 - k\)) : <span data-eq="gauss-1">\(\sum_{k=1}^{n} k = \sum_{j=1}^{n} (n + 1 - j)\)</span>. En ajoutant les deux écritures terme à terme : <span data-eq="gauss-2">\(2\sum_{k=1}^{n} k = \sum_{k=1}^{n} (k + n + 1 - k) = n(n + 1)\)</span>. Par exemple, <span data-eq="gauss-100">\(\sum_{k=1}^{100} k = \frac{100 \times 101}{2} = 5\,050\)</span>.</p>
+          <p><b>La linéarité en action</b> : la somme des \(n\) premiers impairs, <span data-eq="impairs">\(\sum_{k=1}^{n} (2k - 1) = 2\sum_{k=1}^{n} k - \sum_{k=1}^{n} 1 = n(n + 1) - n = n^2\)</span>. Un changement d’indice \(j = k - 1\) : <span data-eq="chg">\(\sum_{k=1}^{n} (k - 1) = \sum_{j=0}^{n-1} j = \frac{(n - 1)n}{2}\)</span>.</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>hérédité de \(\sum k^2\) (formule admise au TD 2)</i></span>
+          <p>Supposons \(\sum_{k=1}^{n} k^2 = \frac{n(n + 1)(2n + 1)}{6}\). Alors \(\sum_{k=1}^{n+1} k^2 = \frac{n(n + 1)(2n + 1)}{6} + (n + 1)^2\), et l’on factorise par \(n + 1\) :</p>
+          <div class="fm" data-eq="pr-k2">\[\frac{n(n + 1)(2n + 1)}{6} + (n + 1)^2 = \frac{(n + 1)\big(n(2n + 1) + 6(n + 1)\big)}{6} = \frac{(n + 1)(2n^2 + 7n + 6)}{6} = \frac{(n + 1)(n + 2)(2n + 3)}{6}\]</div>
+          <p>C’est la formule au rang \(n + 1\), car \(2n + 3 = 2(n + 1) + 1\). L’initialisation : \(1^2 = 1 = \frac{1 \times 2 \times 3}{6}\).</p>
+        </div>
+        <div class="prose">
+          <p>\(\sum k^3\) se prouve de même (hérédité : <span data-eq="pr-k3">\(\left(\frac{n(n + 1)}{2}\right)^2 + (n + 1)^3 = \left(\frac{(n + 1)(n + 2)}{2}\right)^2\)</span>). Elle est le carré de \(\sum k\) : <span data-eq="k3-ex">\(1^3 + 2^3 + 3^3 + 4^3 = 100 = (1 + 2 + 3 + 4)^2\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>contrôle de novembre 2021, ex. 8 (2 points) : la somme géométrique</i></span>
+          <p>Soit \(q \in \R\) et, pour \(n \in \N\), \(S_n = \sum_{k=0}^{n} q^k\).</p>
+          <p>Si \(q = 1\) : tous les termes valent 1 et il y en a \(n + 1\), donc \(S_n = n + 1\).<span class="c">le cas à part</span></p>
+          <p>Si \(q \neq 1\), on pose \(P(n)\) : « \(S_n = \frac{1 - q^{n+1}}{1 - q}\) ». Initialisation : \(S_0 = q^0 = 1 = \frac{1 - q}{1 - q}\).</p>
+          <p>Hérédité : soit \(n \in \N\) fixé ; supposons \(P(n)\). Alors \(S_{n+1} = S_n + q^{n+1}\) et, par hypothèse de récurrence,</p>
+          <div class="fm" data-eq="pr-geo">\(\frac{1 - q^{n+1}}{1 - q} + q^{n+1} = \frac{1 - q^{n+1} + q^{n+1} - q^{n+2}}{1 - q} = \frac{1 - q^{n+2}}{1 - q}\)</div>
+          <p>C’est \(P(n + 1)\). Par récurrence, \(S_n = \frac{1 - q^{n+1}}{1 - q}\) pour tout \(n \in \N\). Exemple : <span data-eq="geo-2">\(\sum_{k=0}^{10} 2^k = \frac{1 - 2^{11}}{1 - 2} = 2\,047\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>Télescopage (séminaire 4.33.4).</b> Pour \(k \geq 1\), <span data-eq="tel-1">\(\frac{1}{k(k + 1)} = \frac{1}{k} - \frac{1}{k + 1}\)</span>. En sommant, les termes intermédiaires s’annulent deux à deux : <span data-eq="tel-2">\(\sum_{k=1}^{n} \frac{1}{k(k + 1)} = \sum_{k=1}^{n} \left(\frac{1}{k} - \frac{1}{k + 1}\right) = 1 - \frac{1}{n + 1}\)</span>. Le séminaire la fait aussi démontrer par récurrence.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : compter les termes, garder les bornes</span>
+          <ul>
+            <li>\(\sum_{k=0}^{n}\) a \(n + 1\) termes, pas \(n\) : <span data-eq="piege-n1">\(\sum_{k=0}^{n} 1 = n + 1\)</span>. La somme géométrique commence à \(k = 0\) : son numérateur est \(1 - q^{n+1}\), pas \(1 - q^n\).</li>
+            <li>Une somme de produits n’est pas le produit des sommes : <span data-eq="piege-prod">\(\sum_{k=1}^{2} k^2 = 5 \neq 9 = \left(\sum_{k=1}^{2} k\right)^2\)</span>.</li>
+            <li>Un changement d’indice change aussi les bornes : avec \(j = k - 1\), \(k = 1\) devient \(j = 0\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li><b>Relations : 6 sujets sur 6 depuis 2019</b> (contrôles communs, examens LE et OBM ; jamais aux examens DP). Examen OBM d’octobre 2024 : ex. 4, <b>4 points sur 40</b> (\(|a| \leq |b|\), « après avoir rappelé la définition »). Examen LE d’octobre 2023 : ex. 4, <b>4 points sur 20</b> (\(b = a^n\), puis l’antisymétrie guidée). Contrôles : 2022, ex. 3, 4 points sur 40 (définitions, négations, contraposée de la transitivité, exemple de relation d’ordre) ; 2021, ex. 1, 3 points sur 30 (\(x^2 \leq y^2\)) ; 2020, ex. 1 et 2, 3 + 4 points sur 30 (traduire, puis ordre ou pas) ; 2019, ex. 4, 1,5 point (une équivalence).</li>
+            <li><b>Contraposée et inclusion</b> : examen OBM 2024, ex. 1.3 et 1.4, dans un exercice de logique de 10 points sur 40 (barème par question non donné).</li>
+            <li><b>Récurrence</b> : contrôle 2020, ex. 6, 4 points sur 30 (\(\frac{2^n}{n!}\)) ; contrôle 2021, ex. 8, 2 points sur 30 (somme géométrique). Jamais aux examens LE 2023 et OBM 2024 ; elle est pourtant au séminaire (4.32, 4.33). <b>Absurde et disjonction de cas</b> : jamais demandés de 2016 à 2024.</li>
+            <li>Examen de cette année : OBM, <b>mercredi 28 octobre à 9 h 50</b>, 2 h, documents et calculatrices interdits. « La rigueur de votre rédaction sera prise en compte dans la note » : la première ligne, les liens logiques et la conclusion comptent.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-4-raisonnement.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="maths:raisonnement:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu as les quatre cours de l’OBM. Les sommes \(\sum\) reviennent partout en DP : le cours 5, <a href="cours-5-denombrement.html">le dénombrement</a>, prouve \(\sum_{k=0}^{n} \binom{n}{k} = 2^n\) en comptant de deux façons.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+/* Cours 4 : graphe d'une relation binaire (<div data-rel='{…}'>) et dérouleur de récurrence (<div data-rec='{…}'>).
+   Écrits dans la page : assets/js/maths.js n'a pas ces outils. Les propriétés de la relation sont testées sur tous les
+   couples (et triplets) de l'ensemble fini E. Rien ne s'anime : chaque clic change l'état. Les formules \( … \) sont
+   rendues par mathrender.js (MutationObserver). La page anglaise a le même script, textes traduits. */
+(function () {
+  'use strict';
+  var TX = {
+    relTitle: 'Graphe d’une relation', edit: 'Modifier les flèches', editOff: 'Terminer', clear: 'Tout effacer',
+    editHint: 'Clique sur un élément, puis sur un autre : la flèche apparaît ou disparaît. Deux fois le même élément : sa boucle.',
+    hint: 'Clique sur une propriété : sa raison, ou son contre-exemple en rouge (ce qui manque est en pointillés).',
+    props: { refl: 'Réflexive', sym: 'Symétrique', anti: 'Antisymétrique', trans: 'Transitive' },
+    yes: 'oui', no: 'non',
+    why: {
+      refl: 'Réflexive : chaque élément porte sa boucle, \\(\\forall x \\in E,\\ x \\mathrel{\\mathcal{R}} x\\).',
+      sym: 'Symétrique : chaque flèche a sa flèche retour.',
+      anti: 'Antisymétrique : aucun aller-retour entre deux éléments distincts.',
+      trans: 'Transitive : deux flèches enchaînées ont toujours leur raccourci direct.'
+    },
+    cx: {
+      refl: 'Pas réflexive : \\({a} \\mathrel{\\not\\mathcal{R}} {a}\\), sa boucle manque.',
+      sym: 'Pas symétrique : \\({a} \\mathrel{\\mathcal{R}} {b}\\) mais \\({b} \\mathrel{\\not\\mathcal{R}} {a}\\), le retour manque.',
+      anti: 'Pas antisymétrique : \\({a} \\mathrel{\\mathcal{R}} {b}\\) et \\({b} \\mathrel{\\mathcal{R}} {a}\\), mais \\({a} \\neq {b}\\).',
+      trans: 'Pas transitive : \\({a} \\mathrel{\\mathcal{R}} {b}\\) et \\({b} \\mathrel{\\mathcal{R}} {c}\\), mais \\({a} \\mathrel{\\not\\mathcal{R}} {c}\\), le raccourci manque.'
+    },
+    equiv: 'Réflexive, symétrique et transitive : relation d’équivalence.',
+    order: 'Réflexive, antisymétrique et transitive : relation d’ordre.',
+    both: 'Les quatre propriétés : à la fois ordre et équivalence (c’est l’égalité).',
+    none: 'Ni relation d’ordre, ni relation d’équivalence.',
+    classes: 'Classes d’équivalence : ',
+    custom: 'Relation construite à la main sur \\(E = {E}\\).',
+    arrows: '{n} flèches et boucles',
+    pre: {
+      mod3: ['\\(a - b\\) multiple de 3', '\\(a \\mathrel{\\mathcal{R}} b \\iff a - b\\) est un multiple de 3, sur \\(E = \\ent{0}{8}\\) (séminaire 4.27).'],
+      abs: ['\\(|a| \\leq |b|\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff |a| \\leq |b|\\), sur \\(E = \\ent{-2}{2}\\) (examen OBM 2024).'],
+      puiss: ['\\(b = a^n\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff \\exists n \\in \\N,\\ b = a^n\\), sur \\(E = \\{1, 2, 3, 4, 8, 9\\}\\) (examen LE 2023).'],
+      div: ['\\(a\\) divise \\(b\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff a\\) divise \\(b\\), sur \\(E = \\ent{1}{6}\\).'],
+      pair: ['\\(a^2 - b^2\\) pair', '\\(a \\mathrel{\\mathcal{R}} b \\iff a^2 - b^2\\) est pair, sur \\(E = \\ent{0}{5}\\).'],
+      lt: ['\\(a &lt; b\\)', '\\(a \\mathrel{\\mathcal{R}} b \\iff a &lt; b\\), sur \\(E = \\ent{1}{4}\\).']
+    },
+    recTitle: 'Dérouleur de récurrence', n0: 'rang initial', next: 'Suivant', all: 'Tout afficher', reset: 'Recommencer',
+    start: 'Choisis le rang initial \\(n_0\\), puis appuie sur « Suivant ».',
+    initOk: 'Initialisation : \\(P({n})\\) est vraie, \\({v}\\).',
+    initKo: 'Initialisation : \\(P({n})\\) est fausse, \\({v}\\). La récurrence ne démarre pas.',
+    her: 'Hérédité appliquée à \\(n = {n}\\) : \\(P({n})\\) est vraie, donc \\(P({m})\\) aussi.',
+    end: 'Conclusion : \\(P(n)\\) est vraie pour tout \\(n \\geq {n0}\\). Les cases s’arrêtent à {last}, pas la récurrence.',
+    legend: 'Vert : démontré par récurrence. ✓ ou ✗ : valeur de \\(P(n)\\), calculée.',
+    tTrue: '✓ vraie', tFalse: '✗ fausse', proved: 'démontrée', notStarted: 'non démontrée',
+    rec: {
+      pow: { label: '\\(2^n \\geq 6n + 7\\)', P: '2^n \\geq 6n + 7',
+        her: 'Hérédité, vraie pour tout \\(n \\geq 0\\) : \\(2^{n+1} = 2 \\times 2^n \\geq 12n + 14 \\geq 6(n + 1) + 7\\).',
+        fail: 'L’hérédité marche pourtant dès \\(n = 0\\) : c’est l’initialisation qui fixe le départ. Essaie \\(n_0 = 6\\).' },
+      four: { label: '3 divise \\(4^n + 1\\)', P: '3 \\text{ divise } 4^n + 1',
+        her: 'Hérédité, vraie : \\(4^{n+1} + 1 = 4(4^n + 1) - 3\\), donc si 3 divise \\(4^n + 1\\), il divise \\(4^{n+1} + 1\\).',
+        fail: 'Aucun rang ne convient : \\(4^n + 1\\) laisse toujours le reste 2 dans la division par 3. Une hérédité seule ne prouve rien.' },
+      gauss: { label: '\\(1 + \\cdots + n = \\frac{n(n+1)}{2}\\)', P: '1 + 2 + \\cdots + n = \\frac{n(n + 1)}{2}',
+        her: 'Hérédité : \\(\\frac{n(n + 1)}{2} + (n + 1) = \\frac{(n + 1)(n + 2)}{2}\\).', fail: '' }
+    }
+  };
+
+  var NS = 'http://www.w3.org/2000/svg', uid = 0;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fill(s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return o && o[k] !== undefined ? o[k] : m; }); }
+  function mod(a, m) { return ((a % m) + m) % m; }
+  function isPow(a, b) { if (a === 1) return b === 1; var v = 1; while (v < b) v *= a; return v === b; }
+  function lab(v) { return v < 0 ? '−' + (-v) : String(v); }
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function range(a, b) { var r = []; for (var i = a; i <= b; i++) r.push(i); return r; }
+
+  var RELS = {
+    mod3: { E: range(0, 8), order: [0, 3, 6, 1, 4, 7, 2, 5, 8], groups: 3, R: function (a, b) { return mod(a - b, 3) === 0; } },
+    abs: { E: range(-2, 2), R: function (a, b) { return Math.abs(a) <= Math.abs(b); } },
+    puiss: { E: [1, 2, 3, 4, 8, 9], pref: [2, 8, 4, 3, 9, 1], R: isPow },
+    div: { E: range(1, 6), R: function (a, b) { return b % a === 0; } },
+    pair: { E: range(0, 5), order: [0, 2, 4, 1, 3, 5], groups: 2, R: function (a, b) { return mod(a * a - b * b, 2) === 0; } },
+    lt: { E: range(1, 4), R: function (a, b) { return a < b; } }
+  };
+
+  /* ---------- propriétés, testées sur tous les couples ; le contre-exemple le plus simple d'abord ---------- */
+  function analyse(E, has, pref) {
+    var S = pref ? pref.slice() : E.slice().sort(function (a, b) { return Math.abs(a) - Math.abs(b) || b - a; });
+    var out = { refl: { ok: true }, sym: { ok: true }, anti: { ok: true }, trans: { ok: true } };
+    var i, j, l, a, b, c;
+    for (i = 0; i < S.length; i++) { a = S[i]; if (!has(a, a)) { out.refl = { ok: false, a: a }; break; } }
+    search: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) {
+      a = S[i]; b = S[j]; if (has(a, b) && !has(b, a)) { out.sym = { ok: false, a: a, b: b }; break search; }
+    }
+    search2: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) {
+      a = S[i]; b = S[j]; if (a !== b && has(a, b) && has(b, a)) { out.anti = { ok: false, a: a, b: b }; break search2; }
+    }
+    search3: for (i = 0; i < S.length; i++) for (j = 0; j < S.length; j++) for (l = 0; l < S.length; l++) {
+      a = S[i]; b = S[j]; c = S[l];
+      if (has(a, b) && has(b, c) && !has(a, c)) { out.trans = { ok: false, a: a, b: b, c: c }; break search3; }
+    }
+    out.equiv = out.refl.ok && out.sym.ok && out.trans.ok;
+    out.order = out.refl.ok && out.anti.ok && out.trans.ok;
+    if (out.equiv) {
+      var cls = [], seen = {};
+      E.forEach(function (x) {
+        if (seen[x]) return;
+        var k = E.filter(function (y) { return has(y, x); });
+        k.forEach(function (y) { seen[y] = true; });
+        cls.push(k);
+      });
+      out.classes = cls;
+    }
+    return out;
+  }
+
+  function mountRel(host) {
+    var o = {}; try { o = JSON.parse(host.getAttribute('data-rel') || '{}'); } catch (e) { o = {}; }
+    var id = 'p4r' + (++uid), presets = (o.presets || ['mod3']).filter(function (p) { return RELS[p]; });
+    var st = { key: RELS[o.preset] ? o.preset : presets[0], pairs: {}, E: [], order: [], edit: false, pick: null, sel: null };
+    host.className = 'bench';
+    host.innerHTML = '<div class="bench-head"><span class="bh-t">' + esc(o.title || TX.relTitle) + '</span><span class="bh-r" data-k="count"></span></div>' +
+      '<div class="bench-body"><p class="p4-def" data-k="def"></p><div class="p4-graph" data-k="g"></div>' +
+      '<ul class="p4-props" data-k="props"></ul><p class="readout" data-k="out" aria-live="polite"></p><p class="p4-verdict" data-k="verdict"></p></div>' +
+      '<div class="ctrls"><div class="presets" data-k="pre"></div><div class="row" data-k="edrow"></div><p class="hint" data-k="hint"></p></div>';
+    function q(k) { return host.querySelector('[data-k="' + k + '"]'); }
+    function has(a, b) { return !!st.pairs[a + '|' + b]; }
+    function load(key) {
+      var P = RELS[key]; st.key = key; st.E = P.E.slice(); st.order = (P.order || P.E).slice(); st.pairs = {};
+      st.E.forEach(function (a) { st.E.forEach(function (b) { if (P.R(a, b)) st.pairs[a + '|' + b] = true; }); });
+      st.sel = null; st.pick = null; draw();
+    }
+    function draw() {
+      var A = analyse(st.E, has, st.key !== 'custom' && RELS[st.key].pref), n = st.order.length, W = 360, H = 320, cx = W / 2, cy = H / 2 + 4, rad = n > 6 ? 118 : 104, r = 17;
+      var pos = {}, anchor = {}, G = st.key !== 'custom' && RELS[st.key].groups;
+      if (G) {
+        /* une classe par triangle : centres des triangles sur un cercle, sommets tournés vers l'extérieur */
+        var per = n / G, Rc = G === 2 ? 92 : 94, rl = 46;
+        st.order.forEach(function (v, i) {
+          var gi = Math.floor(i / per), j = i % per, tc = (G === 2 ? Math.PI : -Math.PI / 2) + 2 * Math.PI * gi / G;
+          var c0 = [cx + Rc * Math.cos(tc), cy + 10 + Rc * Math.sin(tc)], tl = tc + 2 * Math.PI * j / per;
+          pos[v] = [c0[0] + rl * Math.cos(tl), c0[1] + rl * Math.sin(tl)]; anchor[v] = c0;
+        });
+      } else st.order.forEach(function (v, i) { var t = -Math.PI / 2 + 2 * Math.PI * i / n; pos[v] = [cx + rad * Math.cos(t), cy + rad * Math.sin(t)]; anchor[v] = [cx, cy]; });
+      var hl = {}, miss = [], hlN = {};
+      var w = st.sel && A[st.sel] && !A[st.sel].ok ? A[st.sel] : null;
+      if (w) {
+        if (st.sel === 'refl') { miss.push([w.a, w.a]); hlN[w.a] = 1; }
+        if (st.sel === 'sym') { hl[w.a + '|' + w.b] = 1; miss.push([w.b, w.a]); hlN[w.a] = hlN[w.b] = 1; }
+        if (st.sel === 'anti') { hl[w.a + '|' + w.b] = hl[w.b + '|' + w.a] = 1; hlN[w.a] = hlN[w.b] = 1; }
+        if (st.sel === 'trans') { hl[w.a + '|' + w.b] = hl[w.b + '|' + w.c] = 1; miss.push([w.a, w.c]); hlN[w.a] = hlN[w.b] = hlN[w.c] = 1; }
+      }
+      var cls = {};
+      if (A.classes && A.classes.length > 1) A.classes.forEach(function (k, i) { k.forEach(function (v) { cls[v] = 'c' + (i % 4); }); });
+      var g = q('g'); g.innerHTML = '';
+      var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' }, g);
+      var count = 0;
+      var defs = el('defs', {}, svg);
+      [['', 'p4-mk'], ['h', 'p4-mk hl']].forEach(function (m) {
+        var mk = el('marker', { id: id + 'm' + m[0], viewBox: '0 0 10 10', refX: '8.5', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
+        el('path', { d: 'M0,0 L10,5 L0,10 z', 'class': m[1] }, mk);
+      });
+      function unit(x, y) { var d = Math.sqrt(x * x + y * y) || 1; return [x / d, y / d]; }
+      function arrow(a, b, curved, cl) {
+        var p = pos[a], s = pos[b], off = curved ? 16 : 0;
+        var u = unit(s[0] - p[0], s[1] - p[1]), perp = [-u[1], u[0]];
+        var mx = (p[0] + s[0]) / 2 + perp[0] * off, my = (p[1] + s[1]) / 2 + perp[1] * off;
+        var u1 = unit(mx - p[0], my - p[1]), u2 = unit(mx - s[0], my - s[1]);
+        var x1 = p[0] + u1[0] * r, y1 = p[1] + u1[1] * r, x2 = s[0] + u2[0] * (r + 1.5), y2 = s[1] + u2[1] * (r + 1.5);
+        el('path', { d: 'M' + x1.toFixed(1) + ',' + y1.toFixed(1) + ' Q' + mx.toFixed(1) + ',' + my.toFixed(1) + ' ' + x2.toFixed(1) + ',' + y2.toFixed(1),
+          'class': 'p4-ar' + (cl ? ' ' + cl : ''), 'marker-end': 'url(#' + id + 'm' + (cl ? 'h' : '') + ')' }, svg);
+      }
+      function loop(a, cl) {
+        var p = pos[a], d = unit(p[0] - anchor[a][0], p[1] - anchor[a][1]);
+        el('circle', { cx: (p[0] + d[0] * (r + 8)).toFixed(1), cy: (p[1] + d[1] * (r + 8)).toFixed(1), r: 10, 'class': 'p4-ar' + (cl ? ' ' + cl : '') }, svg);
+      }
+      st.E.forEach(function (a) {
+        if (has(a, a)) { loop(a, hl[a + '|' + a] ? 'hl' : ''); count++; }
+        st.E.forEach(function (b) {
+          if (a === b || !has(a, b)) return;
+          count++;
+          arrow(a, b, has(b, a), hl[a + '|' + b] ? 'hl' : '');
+        });
+      });
+      miss.forEach(function (m) { if (m[0] === m[1]) loop(m[0], 'miss'); else arrow(m[0], m[1], has(m[1], m[0]) || has(m[0], m[1]), 'miss'); });
+      st.order.forEach(function (v) {
+        var gr = el('g', { 'class': 'p4-nd' + (cls[v] ? ' ' + cls[v] : '') + (hlN[v] ? ' hl' : '') + (st.pick === v ? ' pick' : '') + (st.edit ? ' ed' : ''),
+          transform: 'translate(' + pos[v][0].toFixed(1) + ',' + pos[v][1].toFixed(1) + ')', 'data-v': v }, svg);
+        el('circle', { r: r }, gr);
+        var t = el('text', {}, gr); t.textContent = lab(v);
+        if (st.edit) {
+          gr.setAttribute('tabindex', '0'); gr.setAttribute('role', 'button'); gr.setAttribute('aria-label', lab(v));
+          var act = function () { click(v); };
+          gr.addEventListener('click', act);
+          gr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
+        }
+      });
+      svg.setAttribute('aria-label', fill(TX.arrows, { n: count }));
+      q('count').textContent = fill(TX.arrows, { n: count });
+      var Etex = '\\{' + st.E.map(function (v) { return String(v); }).join(', ') + '\\}';
+      q('def').innerHTML = st.key === 'custom' ? fill(TX.custom, { E: Etex }) : TX.pre[st.key][1];
+      var ul = q('props'); ul.innerHTML = '';
+      ['refl', 'sym', 'anti', 'trans'].forEach(function (p) {
+        var li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.className = 'p4-pr'; b.setAttribute('aria-pressed', st.sel === p ? 'true' : 'false');
+        b.innerHTML = '<span>' + TX.props[p] + '</span><b class="' + (A[p].ok ? 'y' : 'n') + '">' + (A[p].ok ? TX.yes : TX.no) + '</b>';
+        b.addEventListener('click', function () { st.sel = st.sel === p ? null : p; draw(); });
+        li.appendChild(b); ul.appendChild(li);
+      });
+      var out = '';
+      if (st.sel) out = A[st.sel].ok ? TX.why[st.sel] : fill(TX.cx[st.sel], { a: A[st.sel].a, b: A[st.sel].b, c: A[st.sel].c });
+      q('out').innerHTML = out || TX.hint;
+      var v = A.equiv && A.order ? TX.both : A.equiv ? TX.equiv : A.order ? TX.order : TX.none;
+      if (A.equiv && A.classes) v += ' ' + TX.classes + A.classes.map(function (k) { return '\\(\\{' + k.join(', ') + '\\}\\)'; }).join(', ') + '.';
+      q('verdict').innerHTML = v;
+      q('hint').textContent = st.edit ? TX.editHint : '';
+    }
+    function click(v) {
+      if (st.pick === null) st.pick = v;
+      else {
+        var k = st.pick + '|' + v;
+        if (st.pairs[k]) delete st.pairs[k]; else st.pairs[k] = true;
+        st.pick = null; st.key = 'custom'; st.sel = null; syncPre();
+      }
+      draw();
+      var f = q('g').querySelector('[data-v="' + v + '"]'); if (f && f.focus) f.focus();   /* le clavier garde sa place */
+    }
+    var pre = q('pre');
+    presets.forEach(function (p) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-p', p);
+      b.innerHTML = TX.pre[p][0];
+      b.addEventListener('click', function () { load(p); syncPre(); });
+      pre.appendChild(b);
+    });
+    function syncPre() { Array.prototype.forEach.call(pre.children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === st.key ? 'true' : 'false'); }); }
+    if (o.edit) {
+      var ed = document.createElement('button'), cl = document.createElement('button');
+      ed.type = cl.type = 'button'; ed.className = 'btn'; cl.className = 'btn ghost';
+      ed.textContent = TX.edit; cl.textContent = TX.clear; cl.hidden = true;
+      ed.addEventListener('click', function () { st.edit = !st.edit; st.pick = null; ed.textContent = st.edit ? TX.editOff : TX.edit; cl.hidden = !st.edit; draw(); });
+      cl.addEventListener('click', function () { st.pairs = {}; st.key = 'custom'; st.sel = null; st.pick = null; syncPre(); draw(); });
+      q('edrow').appendChild(ed); q('edrow').appendChild(cl);
+    } else q('edrow').remove();
+    load(st.key); syncPre();
+  }
+
+  /* ---------- dérouleur de récurrence ---------- */
+  var RECS = {
+    pow: { a: 0, b: 12, n0: 6, chips: range(0, 8),
+      cell: function (n) { var L = Math.pow(2, n), M = 6 * n + 7; return { ok: L >= M, v: L + (L >= M ? ' \\geq ' : ' \\lt ') + M, full: '2^{' + n + '} = ' + L + (L >= M ? ' \\geq ' : ' \\lt ') + M + ' = 6 \\times ' + n + ' + 7' }; } },
+    four: { a: 0, b: 6, n0: 0, chips: range(0, 3),
+      cell: function (n) { var v = Math.pow(4, n) + 1; return { ok: v % 3 === 0, v: String(v), full: '4^{' + n + '} + 1 = ' + v + ' = 3 \\times ' + Math.floor(v / 3) + ' + ' + (v % 3) }; } },
+    gauss: { a: 1, b: 10, n0: 1, chips: [1],
+      cell: function (n) { var s = n * (n + 1) / 2; return { ok: true, v: String(s), full: '1 + \\cdots + ' + n + ' = ' + s + ' = \\frac{' + n + ' \\times ' + (n + 1) + '}{2}' }; } }
+  };
+  function mountRec(host) {
+    var o = {}; try { o = JSON.parse(host.getAttribute('data-rec') || '{}'); } catch (e) { o = {}; }
+    var presets = (o.presets || ['pow']).filter(function (p) { return RECS[p]; });
+    var st = { key: RECS[o.preset] ? o.preset : presets[0], n0: 0, k: 0, ko: false, msg: '' };
+    host.className = 'bench';
+    host.innerHTML = '<div class="bench-head"><span class="bh-t">' + esc(o.title || TX.recTitle) + '</span><span class="bh-r" data-k="step"></span></div>' +
+      '<div class="bench-body"><div class="p4-hd"><span class="fm" data-k="P"></span></div><p class="hint" data-k="her"></p><div class="p4-tiles" data-k="tiles"></div>' +
+      '<p class="readout" data-k="out" aria-live="polite"></p><p class="hint">' + TX.legend + '</p></div>' +
+      '<div class="ctrls"><div class="presets" data-k="pre"></div><div class="row"><span class="lbl">' + TX.n0 + '</span><span class="presets" data-k="chips"></span></div>' +
+      '<div class="row"><button type="button" class="btn primary" data-k="next">' + TX.next + '</button><button type="button" class="btn" data-k="all">' + TX.all + '</button><button type="button" class="btn ghost" data-k="reset">' + TX.reset + '</button></div></div>';
+    function q(k) { return host.querySelector('[data-k="' + k + '"]'); }
+    function P() { return RECS[st.key]; }
+    function last() { return P().b; }
+    function provedTo() { return st.k >= 1 && !st.ko ? st.n0 + st.k - 1 : -1; }
+    function step() {
+      var p = P();
+      if (st.ko) return;
+      if (st.k === 0) {
+        var c = p.cell(st.n0);
+        st.k = 1;
+        if (!c.ok) { st.ko = true; st.msg = fill(TX.initKo, { n: st.n0, v: c.full }) + ' ' + TX.rec[st.key].fail; }
+        else st.msg = fill(TX.initOk, { n: st.n0, v: c.full });
+      } else if (st.n0 + st.k - 1 < last()) {
+        var n = st.n0 + st.k - 1; st.k++;
+        st.msg = fill(TX.her, { n: n, m: n + 1 });
+        if (n + 1 === last()) st.msg += ' ' + fill(TX.end, { n0: st.n0, last: last() });
+      }
+      draw();
+    }
+    function draw() {
+      var p = P(), to = provedTo();
+      q('P').innerHTML = '\\(P(n)\\ :\\ ' + TX.rec[st.key].P + '\\)';
+      q('her').innerHTML = TX.rec[st.key].her;
+      var t = q('tiles'); t.innerHTML = '';
+      range(p.a, p.b).forEach(function (n) {
+        var c = p.cell(n), d = document.createElement('div');
+        var pv = to >= 0 && n >= st.n0 && n <= to, ko = st.ko && n === st.n0;
+        d.className = 'p4-tile' + (n === st.n0 ? ' start' : '') + (pv ? ' pv' : '') + (ko ? ' ko' : '');
+        d.innerHTML = '<span class="nn">n = ' + n + '</span><span class="vv">\\(' + c.v + '\\)</span><span class="tt ' + (c.ok ? 'y' : 'n') + '">' + (c.ok ? TX.tTrue : TX.tFalse) + '</span><span class="pf">' + (pv ? TX.proved : ko ? '✗' : '') + '</span>';
+        t.appendChild(d);
+      });
+      q('out').innerHTML = st.msg || TX.start;
+      q('step').textContent = st.k ? (st.ko ? '✗' : (st.n0 + st.k - 1) + ' / ' + last()) : '';
+      var done = st.ko || (st.k >= 1 && st.n0 + st.k - 1 >= last());
+      q('next').disabled = done; q('all').disabled = done;
+      Array.prototype.forEach.call(q('chips').children, function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-n') === st.n0 ? 'true' : 'false'); });
+      Array.prototype.forEach.call(q('pre').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === st.key ? 'true' : 'false'); });
+    }
+    function reset() { st.k = 0; st.ko = false; st.msg = ''; draw(); }
+    function chips() {
+      var c = q('chips'); c.innerHTML = '';
+      P().chips.forEach(function (n) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-n', n); b.textContent = n;
+        b.addEventListener('click', function () { st.n0 = n; reset(); });
+        c.appendChild(b);
+      });
+    }
+    function load(key) { st.key = key; st.n0 = RECS[key].n0; chips(); reset(); }
+    presets.forEach(function (p) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip-btn'; b.setAttribute('data-p', p); b.innerHTML = TX.rec[p].label;
+      b.addEventListener('click', function () { load(p); });
+      q('pre').appendChild(b);
+    });
+    q('next').addEventListener('click', step);
+    q('all').addEventListener('click', function () { var g = 0; do { step(); g++; } while (!st.ko && st.n0 + st.k - 1 < last() && g < 40); });
+    q('reset').addEventListener('click', reset);
+    load(st.key);
+  }
+
+  function boot() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rel]'), function (h) { try { mountRel(h); } catch (e) { h.textContent = e.message; } });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rec]'), function (h) { try { mountRec(h); } catch (e) { h.textContent = e.message; } });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+</body>
+</html>

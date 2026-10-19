@@ -216,11 +216,17 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/en/archi/ex-annales.js"></script>
 <script src="data/archi/ex-td.js"></script>
 <script src="data/en/archi/ex-td.js"></script>
+<script src="data/maths/exams.js"></script>
+<script src="data/en/maths/exams.js"></script>
+<script src="data/maths/ex-annales.js"></script>
+<script src="data/en/maths/ex-annales.js"></script>
+<script src="data/maths/ex-td.js"></script>
+<script src="data/en/maths/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [] };
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [], maths: window.MATHS_EX || [] };
   function nEx(sid) { return (EXS[sid] || []).length; }
   function nChap(s) { var n = s.chapters.length; return (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][n] || n) + ' chapter' + (n > 1 ? 's' : ''); }
   function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
@@ -308,7 +314,7 @@ a.tool:hover{border-color:var(--accent)}
     var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
     $('#subjects').innerHTML = list.map(function (s) {
       /* Archi: the Epidocs papers, plus the B1 Examination 2025-2026 from Moodle (data/archi/exams.js) */
-      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
+      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : s.id === 'maths' && window.MATHS_EXAMS ? window.MATHS_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
       if (s.status !== 'ready') {
         return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">soon</span></div>' +
           '<p>The course and the practice will come with your course materials. In the meantime: ' + pl(nAnn, 'midterm paper') + '.</p>' +

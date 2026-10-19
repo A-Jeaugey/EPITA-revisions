@@ -62,6 +62,8 @@ main{display:grid;gap:44px}
 <script src="../data/en/annales.js"></script>
 <script src="../data/caml/exams.js"></script>
 <script src="../data/en/caml/exams.js"></script>
+<script src="../data/maths/exams.js"></script>
+<script src="../data/en/maths/exams.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
@@ -75,6 +77,14 @@ main{display:grid;gap:44px}
     if (String(m.variant || '').toUpperCase() === 'TAA') return null;
     var fs = m.files.map(function (f) { return folder(f.url); });
     for (var i = 0; i < CE.length; i++) if ((CE[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return CE[i].key;
+    return null;
+  }
+  /* Maths: the key of our worked solutions (p2024-dp, p2023-le, p2022…) is the MATHS_EXAMS paper whose PDFs sit in
+     the same folder (data/maths/exams.js); the PA track (2023) has none. */
+  var ME = window.MATHS_EXAMS || [];
+  function mathsKey(m) {
+    var fs = m.files.map(function (f) { return folder(f.url); });
+    for (var i = 0; i < ME.length; i++) if ((ME[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return ME[i].key;
     return null;
   }
   function count(s) { return A.midterms.filter(function (m) { return m.subject === s; }).length; }
@@ -119,6 +129,7 @@ main{display:grid;gap:44px}
       ms.forEach(function (m) {
         html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>Fall ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
           (info.page && (s === 'elec' || s === 'archi' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') +
+          (s === 'maths' && info.page && mathsKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + mathsKey(m) + '">Our solution</a>' : '') +
           (s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Our solution (Caml)</a>' : '') + '</div></div>';
       });
       hy.forEach(function (h) {

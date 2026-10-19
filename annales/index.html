@@ -59,6 +59,7 @@ main{display:grid;gap:44px}
 <footer class="page-foot"><div class="wrap"><span class="credit">Sujets hébergés par <a href="https://github.com/Epidocs/Past-Exams">Epidocs · Past-Exams</a> et <a href="https://annales.hyperion.tf/">HyperAnnales</a>. Les liens ouvrent les PDF d’origine.</span><span>Une promo passe son S1 cinq ans avant son diplôme : promo 2029 = automne 2024.</span></div></footer>
 <script src="../data/annales.js"></script>
 <script src="../data/caml/exams.js"></script>
+<script src="../data/maths/exams.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
@@ -72,6 +73,14 @@ main{display:grid;gap:44px}
     if (String(m.variant || '').toUpperCase() === 'TAA') return null;
     var fs = m.files.map(function (f) { return folder(f.url); });
     for (var i = 0; i < CE.length; i++) if ((CE[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return CE[i].key;
+    return null;
+  }
+  /* Maths : la clé de notre corrigé (p2024-dp, p2023-le, p2022…) est celle du sujet de MATHS_EXAMS dont les PDF sont
+     dans le même dossier (data/maths/exams.js) ; la filière PA (2023) n’en a pas. */
+  var ME = window.MATHS_EXAMS || [];
+  function mathsKey(m) {
+    var fs = m.files.map(function (f) { return folder(f.url); });
+    for (var i = 0; i < ME.length; i++) if ((ME[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return ME[i].key;
     return null;
   }
   function count(s) { return A.midterms.filter(function (m) { return m.subject === s; }).length; }
@@ -98,6 +107,7 @@ main{display:grid;gap:44px}
       ms.forEach(function (m) {
         html += '<div class="ex"><div class="when"><b>Promo ' + m.promo + '</b><span>automne ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + m.files.map(fileLink).join('') +
           (info.page && (s === 'elec' || s === 'archi' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Notre corrigé (TAA)' : 'Notre corrigé') + '</a>' : '') +
+          (s === 'maths' && info.page && mathsKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + mathsKey(m) + '">Notre corrigé</a>' : '') +
           (s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Notre corrigé (Caml)</a>' : '') + '</div></div>';
       });
       hy.forEach(function (h) {

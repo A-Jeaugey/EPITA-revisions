@@ -181,11 +181,14 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/archi/exams.js"></script>
 <script src="data/archi/ex-annales.js"></script>
 <script src="data/archi/ex-td.js"></script>
+<script src="data/maths/exams.js"></script>
+<script src="data/maths/ex-annales.js"></script>
+<script src="data/maths/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$;
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [] };
+  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [], maths: window.MATHS_EX || [] };
   function nEx(sid) { return (EXS[sid] || []).length; }
   function nChap(s) { var n = s.chapters.length; return (['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'][n] || n) + ' chapitre' + (n > 1 ? 's' : ''); }
   /* sujets de partiel d’une matière (algo : TAA et Caml partagent les sujets d’avant 2023) */
@@ -270,8 +273,8 @@ a.tool:hover{border-color:var(--accent)}
     /* matières prêtes d’abord, chacune sur toute la largeur ; les autres ensuite */
     var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
     $('#subjects').innerHTML = list.map(function (s) {
-      /* Archi : les sujets d’Epidocs, plus l’examen B1 2025-2026 du Moodle (data/archi/exams.js) */
-      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
+      /* Archi : les sujets d’Epidocs, plus l’examen B1 2025-2026 du Moodle (data/archi/exams.js) ; Maths : les 11 sujets PC de data/maths/exams.js (sans les corrigés de la filière PA) */
+      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : s.id === 'maths' && window.MATHS_EXAMS ? window.MATHS_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
       if (s.status !== 'ready') {
         return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">bientôt</span></div>' +
           '<p>Le cours et les entraînements arriveront avec tes supports. En attendant : ' + nAnn + ' sujet' + (nAnn > 1 ? 's' : '') + ' de partiel.</p>' +

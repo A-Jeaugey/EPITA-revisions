@@ -128,6 +128,7 @@
 
 <script src="../assets/js/circuit.js"></script>
 <script src="../assets/js/spec.js"></script>
+<script src="../assets/js/mathrender.js"></script>
 <script src="../assets/js/qcm-engine.js"></script>
 <script src="../data/qcm/elec.js"></script>
 <script src="../data/en/qcm/elec.js"></script>
@@ -232,7 +233,7 @@
     var all = inSubj(), avail = SRC.filter(function (x) { return all.some(function (q) { return hasSrc(q, x.id); }); });
     if (!st.srcs) st.srcs = avail.map(function (x) { return x.id; });
     $('#srcField').hidden = avail.length < 2 && !st.exam;
-    $('#srcChips').innerHTML = (st.exam ? '<span class="chip" aria-pressed="true" style="cursor:default">' + st.exam.replace('p', 'Midterm ') + ' only</span><button type="button" class="chip" id="clearExam">All MCQs</button>' : '') + avail.map(function (x) {
+    $('#srcChips').innerHTML = (st.exam ? '<span class="chip" aria-pressed="true" style="cursor:default">' + st.exam.replace('p', 'Midterm ').replace(/-([a-z]+)$/, function (m, x) { return ' ' + x.toUpperCase(); }) + ' only</span><button type="button" class="chip" id="clearExam">All MCQs</button>' : '') + avail.map(function (x) {
       var n = all.filter(function (q) { return hasSrc(q, x.id); }).length;
       return '<button type="button" class="chip" data-src="' + x.id + '" aria-pressed="' + (st.srcs.indexOf(x.id) >= 0) + '">' + x.t + ' <span class="n">' + n + '</span></button>';
     }).join('');
@@ -383,13 +384,13 @@
     if (!h) return;
     if (run) backToSetup();
     /* "taa-revision", "elec-sprint", "taa-p2024"…: subject, then mode or exam paper */
-    var m = /^([a-z]+)-(sprint|revision|examen|p20\d\d[a-z]?)$/.exec(h);
+    var m = /^([a-z]+)-(sprint|revision|examen|p20\d\d[a-z]?(?:-(?:dp|obm|le))?)$/.exec(h);
     if (m && subjects.some(function (s) { return s.id === m[1]; })) {
       if (m[1] !== st.subj) { st.subj = m[1]; st.topics = null; st.srcs = null; st.exam = null; }
       h = m[2];
     }
     subjects.forEach(function (s) { if (h === s.id && s.id !== st.subj) { st.subj = s.id; st.topics = null; st.srcs = null; st.exam = null; } });
-    if (/^p20\d\d[a-z]?$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
+    if (/^p20\d\d[a-z]?(?:-(?:dp|obm|le))?$/.test(h) && BANK.some(function (q) { return q.s === st.subj && fromExam(q, h); })) { st.exam = h; st.n = 0; st.topics = null; st.srcs = null; }
     if (h.indexOf('t-') === 0) { var t = h.slice(2); if (topicsOf(inSubj()).some(function (x) { return x.id === t; })) st.topics = [t]; }
     if (/^(sprint|revision|examen)$/.test(h)) { st.exam = null; st.topics = null; st.srcs = null; }
     if (h === 'sprint') { st.mode = 'train'; st.n = 10; }
