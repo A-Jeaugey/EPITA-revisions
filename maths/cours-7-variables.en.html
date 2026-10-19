@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Random variables · Maths</title>
+<meta name="description" content="Maths, DP, lesson 7: finite random variable and its distribution, cumulative distribution function, expectation and the transfer theorem, variance and standard deviation, the three proofs you have to know (E(aX + b), König–Huygens, Var(aX + b)), standardized variable, uniform, Bernoulli and binomial distributions, 2-tuples of variables. With exact bar charts and the Bernoulli → binomial chain of the 2023 and 2024 exams.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Figures of lesson 7 (drawn in the page, in the theme colours) */
+.p7-fig{margin:0;min-width:0}
+.p7-fig svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto}
+.p7-fig .ax{stroke:var(--rule);stroke-width:1.2}
+.p7-fig .st{stroke:var(--accent);stroke-width:2.6;fill:none}
+.p7-fig .jp{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 4}
+.p7-fig .dot{fill:var(--accent)}
+.p7-fig .hole{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+.p7-fig text{font-family:var(--font-ui);font-size:14px;fill:var(--ink)}
+.p7-fig text.mu{fill:var(--muted);font-size:13px}
+.p7-fig text.nm{font-family:var(--font-display);font-style:italic;font-size:19px}
+.p7-fig text.rd{fill:var(--red);font-size:13px}
+.p7-fig text.ac{fill:var(--accent);font-weight:600;font-size:13px}
+/* joint distribution: margins in grey */
+.p7-joint td.mg,.p7-joint th.mg{background:var(--surface-2);color:var(--muted)}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · lesson 7: random variables">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · DP</b> — lesson 7 of 7</span><span>Source: lecture 2, MiMo 3 · summary sheet “Random variables” · theorems and proofs § 2 · exercises 2, § 4 and 5</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="7"></span><a href="index.html">Maths</a> · DP · Lesson 7 of 7</div>
+      <h1>A distribution, an expectation, <span class="w">a variance.</span></h1>
+      <p class="lead">A random variable maps each outcome to a number. Its distribution, expectation and variance are computed in fractions, and three proofs must be written out from memory. In the last two DP exams, this chapter was worth a third of the points or more (10 out of 30, then 15 out of 40): a proof from the lecture and the Bernoulli → binomial chain over 20 draws.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 60 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with 3 proofs</span></li>
+        <li><span><span class="k">Course</span> MiMo 3 · exercises 2, § 4 and 5</span></li>
+        <li class="ex"><span><span class="k">Exam</span> a proof and a binomial in 2023 and in 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="law" data-opts='{"x":["0","1","2"],"p":["1/4","1/2","1/4"],"name":"X_k","title":"Distribution of \\(X_k\\) · DP exam 2024, ex. 6"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — A box contains four balls numbered 0, 1, 1 and 2; \(X_k\) is the number of the ball drawn. Each bar carries a probability, the solid line marks the expectation <span data-eq="xk-E">\(\E(X_k) = 1\)</span>, the dashed lines the expectation plus or minus the standard deviation. Detailed computation in parts 2 and 4.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 7 · Random variables</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Random variable, distribution</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Expectation</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Proof: \(\E(aX + b)\)</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Variance, König–Huygens</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>\(\operatorname{Var}(aX + b)\), standardizing</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Uniform and Bernoulli distributions</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Binomial distribution</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>2-tuples of variables</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="cours-6-probabilites.html">← Lesson 6: probability</a><a href="../qcm/index.html#maths">Maths MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Random variable, distribution</a></li><li><a href="#s2">Expectation</a></li><li><a href="#s3">Proof: E(aX + b)</a></li><li><a href="#s4">Variance, König–Huygens</a></li>
+      <li><a href="#s5">Var(aX + b), standardizing</a></li><li><a href="#s6">Uniform and Bernoulli distributions</a></li><li><a href="#s7">Binomial distribution</a></li><li><a href="#s8">2-tuples of variables</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">summary sheet “Random variables” § 1 · ex. 4.15</span></div><h2>Random variable, distribution, cumulative distribution function</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>In a game, what often matters is not the outcome itself but a number that depends on it: a gain, a score, a rank. A <b>random variable</b> is that number. Throughout the lesson, \((\Omega, \mathcal{P}(\Omega), \P)\) is a finite probability space (lesson 6).</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>random variable</i></span>
+          <p>A <b>random variable</b> is a function</p>
+          <div class="fm">\[X : \Omega \to \R, \quad \omega \mapsto X(\omega).\]</div>
+          <p>\(X(\Omega)\) is the set of possible values of \(X\). Since \(\Omega\) is finite, so is \(X(\Omega)\): we write \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\), with distinct values. For a real number \(x\), \((X = x)\) is the event \(\{\omega \in \Omega \mid X(\omega) = x\} = X^{-1}(\{x\})\). Likewise \((X \leq x)\), \((X \in B)\).</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>distribution of a random variable</i></span>
+          <p>The <b>distribution</b> of \(X\) is given by:</p>
+          <ol>
+            <li>the set \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\);</li>
+            <li>the values \(\P(X = x_1), \P(X = x_2), \ldots, \P(X = x_n)\).</li>
+          </ol>
+          <p>Formally, it is the function \(\P_X : \mathcal{P}(X(\Omega)) \to [0, 1]\), \(B \mapsto \P(X^{-1}(B)) = \P(X \in B)\), and \((X(\Omega), \mathcal{P}(X(\Omega)), \P_X)\) is a probability space.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>the sum is 1</i></span>
+          <p>\(\displaystyle\sum_{i=1}^{n} \P(X = x_i) = 1\).</p>
+          <p class="muted">Proof: the events \((X = x_1), \ldots, (X = x_n)\) are pairwise disjoint (an outcome has only one image) and their union is \(\Omega\) (every outcome has an image). They form a partition of \(\Omega\), so the sum of their probabilities is \(\P(\Omega) = 1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (MCQ of 21 October 2024, Q15-Q16).</b> A fair coin is tossed twice. You win 4 points for each heads and lose 2 points for each tails; \(X\) is the total. \(\Omega = \{HH, HT, TH, TT\}\) has 4 equally likely outcomes: \(X(HH) = 8\), \(X(HT) = X(TH) = 2\), \(X(TT) = -4\). Hence <span data-eq="pc-omega">\(X(\Omega) = \{-4, 2, 8\}\)</span> and:</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Table 7.1 — The distribution of \(X\), points scored in two tosses</caption>
+          <thead><tr><th>\(x_i\)</th><th>\(-4\)</th><th>\(2\)</th><th>\(8\)</th></tr></thead>
+          <tbody><tr><th>\(\P(X = x_i)\)</th><td data-eq="pc-m4">\(\frac{1}{4}\)</td><td data-eq="pc-2">\(\frac{2}{4} = \frac{1}{2}\)</td><td data-eq="pc-8">\(\frac{1}{4}\)</td></tr></tbody>
+        </table></div>
+        <div class="calc" data-eq="pc-sum"><div class="fm">\(\frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1\)</div></div>
+        <div class="box def"><span class="tag">Definition <i>cumulative distribution function</i></span>
+          <p>The <b>cumulative distribution function</b> of \(X\) is \(F_X : \R \to [0, 1]\), \(F_X(x) = \P(X \leq x)\). It also determines the distribution: it is a step function that jumps up by \(\P(X = x_i)\) at each value \(x_i\).</p>
+        </div>
+        <figure class="p7-fig">
+          <svg viewBox="0 0 440 215" role="img" aria-label="Cumulative distribution function of X: 0 before −4, 1/4 from −4 to 2, 3/4 from 2 to 8, then 1 from 8 on; each step goes up by the probability of the value.">
+            <line class="ax" x1="40" y1="170" x2="420" y2="170"/>
+            <line class="ax" x1="40" y1="170" x2="40" y2="18"/>
+            <line class="jp" x1="85" y1="170" x2="85" y2="135"/>
+            <line class="jp" x1="220" y1="135" x2="220" y2="65"/>
+            <line class="jp" x1="355" y1="65" x2="355" y2="30"/>
+            <line class="st" x1="40" y1="170" x2="85" y2="170"/>
+            <line class="st" x1="85" y1="135" x2="220" y2="135"/>
+            <line class="st" x1="220" y1="65" x2="355" y2="65"/>
+            <line class="st" x1="355" y1="30" x2="400" y2="30"/>
+            <circle class="hole" cx="85" cy="170" r="4.5"/><circle class="dot" cx="85" cy="135" r="4.5"/>
+            <circle class="hole" cx="220" cy="135" r="4.5"/><circle class="dot" cx="220" cy="65" r="4.5"/>
+            <circle class="hole" cx="355" cy="65" r="4.5"/><circle class="dot" cx="355" cy="30" r="4.5"/>
+            <text class="mu" x="85" y="190" text-anchor="middle">−4</text>
+            <text class="mu" x="175" y="190" text-anchor="middle">0</text>
+            <text class="mu" x="220" y="190" text-anchor="middle">2</text>
+            <text class="mu" x="355" y="190" text-anchor="middle">8</text>
+            <text class="mu" x="414" y="190" text-anchor="end">x</text>
+            <text class="mu" x="33" y="174" text-anchor="end">0</text>
+            <text class="mu" x="33" y="139" text-anchor="end">1/4</text>
+            <text class="mu" x="33" y="69" text-anchor="end">3/4</text>
+            <text class="mu" x="33" y="34" text-anchor="end">1</text>
+            <text class="rd" x="93" y="157">+ 1/4</text>
+            <text class="rd" x="228" y="104">+ 1/2</text>
+            <text class="rd" x="363" y="52">+ 1/4</text>
+            <text class="ac" x="250" y="118">F(x) = P(X ≤ x)</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 2</b> — The cumulative distribution function of table 7.1: <span data-eq="pc-F0">\(F_X(0) = \P(X \leq 0) = \P(X = -4) = \frac{1}{4}\)</span>, <span data-eq="pc-F2">\(F_X(2) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span>. Filled dot: the value taken; open dot: the value left out.</figcaption>
+        </figure>
+        <div class="box meth"><span class="tag">Method <i>giving the distribution of \(X\)</i></span>
+          <ol>
+            <li>Write \(X(\Omega)\): all the possible values, none missing.</li>
+            <li>For each value, describe the event \((X = x_i)\) in words, then compute its probability (equiprobability, chain rule…).</li>
+            <li>Present the distribution in a table.</li>
+            <li>Check that the sum is 1.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>midterm of November 2022, ex. 5.3 (official answer key)</i></span>
+          <p>A box contains 3 white balls and 2 green balls. They are drawn one by one, without replacement. \(Z\) is the rank of the first white ball. Let \(B_i\) be “the \(i\)-th ball is white” and \(V_i\) “the \(i\)-th ball is green”.</p>
+          <p>There are only 2 green balls: the first white ball comes out at the 3rd draw at the latest. <span data-eq="z-omega">\(Z(\Omega) = \{1, 2, 3\}\)</span>.<span class="c">\(Z(\Omega)\) first</span></p>
+          <p><span data-eq="z-1">\(\P(Z = 1) = \P(B_1) = \frac{3}{5}\)</span>.</p>
+          <p><span data-eq="z-2">\(\P(Z = 2) = \P(V_1 \cap B_2) = \P(V_1)\,\P(B_2 \mid V_1) = \frac{2}{5} \times \frac{3}{4} = \frac{3}{10}\)</span>.<span class="c">chain rule</span></p>
+          <p><span data-eq="z-3">\(\P(Z = 3) = \P(V_1)\,\P(V_2 \mid V_1)\,\P(B_3 \mid V_1 \cap V_2) = \frac{2}{5} \times \frac{1}{4} \times 1 = \frac{1}{10}\)</span>.</p>
+          <div class="tbl"><table class="tv">
+            <thead><tr><th>\(k\)</th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th></tr></thead>
+            <tbody><tr><th>\(\P(Z = k)\)</th><td>\(\frac{3}{5}\)</td><td>\(\frac{3}{10}\)</td><td>\(\frac{1}{10}\)</td></tr></tbody>
+          </table></div>
+          <p>Check: <span data-eq="z-sum">\(\frac{3}{5} + \frac{3}{10} + \frac{1}{10} = \frac{6 + 3 + 1}{10} = 1\)</span>.<span class="c">the sum is 1</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: an incomplete distribution</span>
+          <ul>
+            <li>“Give the distribution of \(X\)” means giving \(X(\Omega)\) <b>and</b> all the probabilities. In the MCQ of 20 October 2025 (Q17), neither \(X(\Omega)\) alone nor the table alone was the right answer.</li>
+            <li>Sum of two dice: \(X(\Omega) = \ent{2}{12}\), that is 11 values, and they are not equally likely: <span data-eq="som-2">\(\P(X = 2) = \frac{1}{36}\)</span> but <span data-eq="som-7">\(\P(X = 7) = \frac{6}{36} = \frac{1}{6}\)</span> (MCQ of 21 October 2024, Q18).</li>
+            <li>A probability is missing? The sum is 1: if \(X(\Omega) = \{1, 2, 4\}\), \(\P(X = 1) = \frac{2}{5}\) and \(\P(X = 2) = \frac{1}{5}\), then <span data-eq="q18-4">\(\P(X = 4) = 1 - \frac{2}{5} - \frac{1}{5} = \frac{2}{5}\)</span> (MCQ of 20 October 2025, Q18).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">summary sheet § 2 · ex. 4.13 and 4.14 · DP exam 2024, ex. 6.1</span></div><h2>Expectation, transfer theorem, linearity</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>expectation</i></span>
+          <p>The <b>expectation</b> (or expected value) of \(X\), with \(X(\Omega) = \{x_1, \ldots, x_n\}\), is</p>
+          <div class="fm">\[\E(X) = \sum_{i=1}^{n} x_i\,\P(X = x_i).\]</div>
+        </div>
+        <div class="prose">
+          <p>It is the average of the values of \(X\), each one <b>weighted by its probability</b>. If the experiment is repeated a large number of times, the average of the values obtained gets close to \(\E(X)\). On the bar chart, it is the balance point (figure 1). A game is <b>fair</b> when the expectation of the gain is 0.</p>
+          <p>For the points of the two tosses (part 1): <span data-eq="pc-E">\(\E(X) = (-4) \times \frac{1}{4} + 2 \times \frac{1}{2} + 8 \times \frac{1}{4} = -1 + 1 + 2 = 2\)</span>. For a fair dice, with \(T\) the number obtained: <span data-eq="t-E">\(\E(T) = \frac{1 + 2 + 3 + 4 + 5 + 6}{6} = \frac{21}{6} = \frac{7}{2}\)</span>. The expectation need not be a value taken: no dice shows 3.5.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>transfer theorem</i></span>
+          <p>For any function \(f : \R \to \R\),</p>
+          <div class="fm">\[\E\big(f(X)\big) = \sum_{i=1}^{n} f(x_i)\,\P(X = x_i).\]</div>
+          <p>You compute \(\E(f(X))\) with the distribution of \(X\), without looking for the distribution of \(f(X)\). The most useful case: \(\E(X^2) = \sum_{i=1}^{n} x_i^2\,\P(X = x_i)\).</p>
+        </div>
+        <div class="box why"><span class="tag">Why it holds <i>(to understand; stated and proven in the videos)</i></span>
+          <p>Let \(y\) be a value of \(f(X)\). The event \((f(X) = y)\) is the disjoint union of the \((X = x_i)\) for the \(x_i\) such that \(f(x_i) = y\). So \(\E(f(X)) = \sum_{y} y\,\P(f(X) = y) = \sum_{y} \sum_{i \,:\, f(x_i) = y} f(x_i)\,\P(X = x_i)\), and each \(i\) appears once: this is \(\sum_{i} f(x_i)\,\P(X = x_i)\).</p>
+        </div>
+        <div class="calc" data-eq="t-E2"><div class="fm">\(\E(T^2) = \frac{1^2 + 2^2 + 3^2 + 4^2 + 5^2 + 6^2}{6} = \frac{91}{6}\)</div></div>
+        <div class="box thm"><span class="tag">Theorem <i>linearity of the expectation</i></span>
+          <p>Let \(X\) and \(Y\) be two finite random variables and \((a, b) \in \R^2\).</p>
+          <ul>
+            <li>\(\E(aX + b) = a\,\E(X) + b\): proved in part 3.</li>
+            <li>\(\E(X + Y) = \E(X) + \E(Y)\): stated in the lecture, accepted without proof (the proofs document says so). By induction, \(\E(X_1 + \cdots + X_n) = \E(X_1) + \cdots + \E(X_n)\).</li>
+            <li>A constant \(b\) has expectation \(b\): \(\E(b) = b\).</li>
+          </ul>
+          <p>No independence assumption is needed.</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (ex. 4.14).</b> A box contains four blue balls numbered 1 to 4, three red balls numbered 1 to 3 and two green balls numbered 1 and 2. You randomly pick one ball: 9 equally likely outcomes. \(X\) is the number on the ball.</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Table 7.2 — Ex. 4.14: the distribution of the number \(X\) (recomputed over the 9 balls)</caption>
+          <thead><tr><th>\(k\)</th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th><th>\(4\)</th></tr></thead>
+          <tbody><tr><th>\(\P(X = k)\)</th><td data-eq="u-1">\(\frac{3}{9} = \frac{1}{3}\)</td><td data-eq="u-2">\(\frac{3}{9} = \frac{1}{3}\)</td><td data-eq="u-3">\(\frac{2}{9}\)</td><td data-eq="u-4">\(\frac{1}{9}\)</td></tr></tbody>
+        </table></div>
+        <div class="calc" data-eq="u-E"><div class="fm">\(\E(X) = 1 \times \frac{3}{9} + 2 \times \frac{3}{9} + 3 \times \frac{2}{9} + 4 \times \frac{1}{9} = \frac{3 + 6 + 6 + 4}{9} = \frac{19}{9}\)</div></div>
+        <div class="prose">
+          <p>The game of the exercise: you win 2 euros if the ball is blue with an even number (blue 2 and 4), 3 euros if it is not blue and has an even number (red 2, green 2), nothing otherwise. The gain \(Y\) is 0, 2 or 3, with <span data-eq="g-0">\(\P(Y = 0) = \frac{5}{9}\)</span>, <span data-eq="g-2">\(\P(Y = 2) = \frac{2}{9}\)</span>, <span data-eq="g-3">\(\P(Y = 3) = \frac{2}{9}\)</span>. Then <span data-eq="g-E">\(\E(Y) = 0 \times \frac{5}{9} + 2 \times \frac{2}{9} + 3 \times \frac{2}{9} = \frac{10}{9}\)</span>. If a game costs 1 euro, the net gain is \(Y - 1\) and, by linearity, <span data-eq="g-net">\(\E(Y - 1) = \frac{10}{9} - 1 = \frac{1}{9}\)</span>: the game favours the player.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>DP exam of October 2024, ex. 6.1 (a) and (b), recomputed answers</i></span>
+          <p>Four balls numbered 0, 1, 1 and 2, indistinguishable to the touch; \(X_k\) is the number of the \(k\)-th ball drawn, with replacement.</p>
+          <p>(a) Each draw is made among the 4 balls, all equally likely. <span data-eq="xk-omega">\(X_k(\Omega) = \{0, 1, 2\}\)</span>, with <span data-eq="xk-0">\(\P(X_k = 0) = \frac{1}{4}\)</span>, <span data-eq="xk-1">\(\P(X_k = 1) = \frac{2}{4} = \frac{1}{2}\)</span> (two balls show 1) and <span data-eq="xk-2">\(\P(X_k = 2) = \frac{1}{4}\)</span>. Indeed <span data-eq="xk-sum">\(\frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1\)</span>.<span class="c">distribution + sum</span></p>
+          <p>(b) <span data-eq="xk-E">\(\E(X_k) = 0 \times \P(X_k = 0) + 1 \times \P(X_k = 1) + 2 \times \P(X_k = 2) = 0 \times \frac{1}{4} + 1 \times \frac{1}{2} + 2 \times \frac{1}{4} = 1\)</span>.<span class="c">nothing out of thin air</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: forgetting the weights</span>
+          <ul>
+            <li>The expectation is not the average of the values: in ex. 4.14, <span data-eq>\(\frac{1 + 2 + 3 + 4}{4} = \frac{5}{2}\)</span>, whereas \(\E(X) = \frac{19}{9}\).</li>
+            <li>\(\E(X^2) \neq (\E(X))^2\): for the dice, \(\E(T^2) = \frac{91}{6}\) but <span data-eq>\(\left(\frac{7}{2}\right)^2 = \frac{49}{4}\)</span>. In the MCQ of 21 October 2024 (Q20), with \(\P(X = -1) = 0.4\), \(\P(X = 0) = 0.4\), \(\P(X = 2) = 0.2\): <span data-eq="q20-E2">\(\E(X^2) = (-1)^2 \times 0.4 + 0^2 \times 0.4 + 2^2 \times 0.2 = 1.2\)</span>, whereas <span data-eq="q20-E">\(\E(X) = -0.4 + 0 + 0.4 = 0\)</span>.</li>
+            <li>A student’s notes give \(\E(2T - 6) = \frac{2}{7}\) in ex. 4.13. By linearity, <span data-eq="x26-Elin">\(\E(2T - 6) = 2 \times \frac{7}{2} - 6 = 1\)</span>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">theorems and proofs § 2 · midterm 2022 ex. 7 · DP exam 2024 ex. 5.2</span></div><h2>Proof: \(\E(aX + b) = a\,\E(X) + b\)</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>This proof was set in the midterm of November 2022 (ex. 7, 3 points: “Show that \(\E(Y) = a\E(X) + b\)”) and in the DP exam of October 2024 (ex. 5.2). The 2022 answer key says “See the lecture!”: the expected wording is the one of the document “Theorems and proofs”, copied below.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>expectation of \(aX + b\)</i></span>
+          <p>Let \(X\) be a finite random variable and \((a, b) \in \R^2\). Then \(\E(aX + b) = a\,\E(X) + b\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Theorems and proofs, § 2</i></span>
+          <p>Let \(X\) be a finite random variable and \((a, b) \in \R^2\). Let us enumerate the possible values of \(X\): \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\). Now, consider the random variable \(Y = aX + b\).</p>
+          <p>This random variable has the form \(Y = f(X)\) where \(f\) is the function \(x \mapsto ax + b\). By using a proposition stated (and proven) in a MiMo’s video, we know that</p>
+          <div class="fm">\[\E(Y) = \sum_{i=1}^{n} \P(X = x_i)\,f(x_i) = \sum_{i=1}^{n} \P(X = x_i)\,(a\,x_i + b).\]</div>
+          <p>But for all \(i \in \ent{1}{n}\), \(\P(X = x_i)\,(a\,x_i + b) = a\,\P(X = x_i)\,x_i + b\,\P(X = x_i)\). Hence,</p>
+          <div class="fm">\[\E(Y) = \sum_{i=1}^{n} \big(a\,\P(X = x_i)\,x_i + b\,\P(X = x_i)\big) = \sum_{i=1}^{n} \big(a\,\P(X = x_i)\,x_i\big) + \sum_{i=1}^{n} \big(b\,\P(X = x_i)\big).\]</div>
+          <p>In the latter expression, \(a\) can be factorized in the first sum and \(b\) can be factorized in the second one. We get:</p>
+          <div class="fm">\[\E(Y) = a \sum_{i=1}^{n} \P(X = x_i)\,x_i + b \sum_{i=1}^{n} \P(X = x_i).\]</div>
+          <p>But in this expression, the first sum equals \(\E(X)\) and the second sum equals \(1\). This leads to:</p>
+          <div class="fm">\[\E(aX + b) = a\,\E(X) + b.\]</div>
+        </div>
+        <div class="box why"><span class="tag">Two points of wording</span>
+          <ul>
+            <li>The “proposition stated in a MiMo’s video” is the <b>transfer theorem</b> (part 2). On your paper, quote it by its name.</li>
+            <li>The second sum equals 1 because it is the sum of the probabilities of the distribution of \(X\) (part 1). Say it in one sentence: that is what leaves \(b\) on its own.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p><b>Checking on an example (ex. 4.13).</b> \(T\) is the number on a fair dice and \(X = 2T - 6\). The values of \(X\) are <span data-eq="x26-omega">\(X(\Omega) = \{-4, -2, 0, 2, 4, 6\}\)</span>, each with probability \(\frac{1}{6}\). Directly:</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="x26-E">\(\E(X) = \frac{-4 - 2 + 0 + 2 + 4 + 6}{6} = \frac{6}{6} = 1\)</div><div class="fm" data-eq="x26-Elin">\(2\,\E(T) - 6 = 2 \times \frac{7}{2} - 6 = 1\)</div></div>
+        <div class="prose"><p>Both computations give 1: the formula saves you from finding the distribution of \(X\).</p></div>
+        <div class="box model"><span class="tag">Model answer <i>the short version, on an exam paper</i></span>
+          <p>Let \(X(\Omega) = \{x_1, \ldots, x_n\}\). \(aX + b = f(X)\) with \(f : x \mapsto ax + b\). By the transfer theorem,<span class="c">quoted</span></p>
+          <div class="fm">\[\E(aX + b) = \sum_{i=1}^{n} (a x_i + b)\,\P(X = x_i) = a \sum_{i=1}^{n} x_i\,\P(X = x_i) + b \sum_{i=1}^{n} \P(X = x_i).\]</div>
+          <p>The first sum is \(\E(X)\) by definition. The second one equals 1, since it is the sum of the probabilities of the distribution of \(X\).<span class="c">both sums named</span></p>
+          <p>Hence \(\E(aX + b) = a\,\E(X) + b\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: proving by assuming the result</span>
+          <ul>
+            <li>“The expectation is linear, so \(\E(aX + b) = a\E(X) + b\)” is not a proof: it is the statement itself. Start from the definition and the transfer theorem.</li>
+            <li>\(\sum_{i=1}^{n} b\,\P(X = x_i) = b\), not \(nb\): you factor out \(b\), and the sum of the probabilities remains.</li>
+            <li>The \(b\) does not vanish in the expectation: \(\E(aX + b) \neq a\,\E(X)\). It vanishes in the variance (part 5).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">summary sheet § 2 · theorems and proofs § 2 · DP exam 2023 ex. 5</span></div><h2>Variance, standard deviation, König–Huygens formula</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>variance, standard deviation</i></span>
+          <p>The <b>variance</b> of \(X\) and its <b>standard deviation</b> are</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E\Big(\big(X - \E(X)\big)^2\Big) = \sum_{i=1}^{n} \big(x_i - \E(X)\big)^2\,\P(X = x_i), \qquad \sigma(X) = \sqrt{\operatorname{Var}(X)}.\]</div>
+          <p>The exercise sheets and the exams also write \(\V(X)\) for \(\operatorname{Var}(X)\), and \(\sigma_X\) for \(\sigma(X)\).</p>
+        </div>
+        <div class="prose">
+          <p>The variance is the weighted average of the squared deviations from the expectation: it measures the <b>dispersion</b> of \(X\) around \(\E(X)\). It is always non-negative, and zero only if \(X\) takes a single value. The standard deviation is in the same unit as \(X\) (euros, points): it is the one you read on a chart (dashed lines of figure 1).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>König–Huygens formula</i></span>
+          <p>Let \(X\) be a finite random variable. Then \(\operatorname{Var}(X) = \E(X^2) - \big(\E(X)\big)^2\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Theorems and proofs, § 2, property 1 of the variance</i></span>
+          <p>Let \(X\) be a finite random variable and \((a, b) \in \R^2\). We know that, by definition of the variance,</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E\Big(\big(X - \E(X)\big)^2\Big).\]</div>
+          <p>But \(\big(X - \E(X)\big)^2 = X^2 - 2\,\E(X)\,X + \big(\E(X)\big)^2\). Thus, \(\operatorname{Var}(X) = \E\Big(X^2 - 2\,\E(X)\,X + \big(\E(X)\big)^2\Big)\).</p>
+          <p>We can now use a property of the expectation, which has been stated in the lecture but is not proven in this document: if \(X\) and \(Y\) are two finite random variables, then</p>
+          <div class="fm">\[\E(X + Y) = \E(X) + \E(Y).\]</div>
+          <p>Using this property in the expression above of \(\operatorname{Var}(X)\), we get</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - \E\big(2\,\E(X)\,X\big) + \E\Big(\big(\E(X)\big)^2\Big).\]</div>
+          <p>In the latter expression, note that:</p>
+          <p>(a) \(2\,\E(X)\,X\) is a random variable of the form \(aX + b\) with \(a = 2\,\E(X)\) and \(b = 0\). Indeed, \(\E(X)\) is a constant value. It depends on the distribution of \(X\), but it does not depend on the value of \(X\). If you randomly pick \(X\) several times, \(X\) will take different values but \(\E(X)\) will remain constant. Thus,</p>
+          <div class="fm">\[\E\big(2\,\E(X)\,X\big) = 2\,\E(X)\,\E(X) = 2\big(\E(X)\big)^2.\]</div>
+          <p>(b) \(\E\Big(\big(\E(X)\big)^2\Big)\) is the expectation of the variable \(\big(\E(X)\big)^2\) which is a constant variable. Its expectation is hence the value of this constant, that is:</p>
+          <div class="fm">\[\E\Big(\big(\E(X)\big)^2\Big) = \big(\E(X)\big)^2.\]</div>
+          <p>Using these two remarks, we get:</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - 2\big(\E(X)\big)^2 + \big(\E(X)\big)^2 = \E(X^2) - \big(\E(X)\big)^2.\]</div>
+        </div>
+        <div class="box why"><span class="tag">What the proof uses</span>
+          <ul>
+            <li>\(\E(X + Y) = \E(X) + \E(Y)\), accepted, applied to three terms.</li>
+            <li>\(\E(aX + b) = a\,\E(X) + b\) (part 3), with \(a = 2\,\E(X)\) and \(b = 0\).</li>
+            <li>The expectation of a constant is that constant.</li>
+          </ul>
+          <p>The 2023 DP exam asked for these properties to be “highlighted in the computations”: write them where you use them.</p>
+        </div>
+        <div class="prose">
+          <p><b>Both formulas on the dice.</b> With \(\E(T) = \frac{7}{2}\) and \(\E(T^2) = \frac{91}{6}\) (part 2):</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="t-Vdef">\(\operatorname{Var}(T) = \frac{1}{6}\left[\left(\frac{5}{2}\right)^2 + \left(\frac{3}{2}\right)^2 + \left(\frac{1}{2}\right)^2 + \left(\frac{1}{2}\right)^2 + \left(\frac{3}{2}\right)^2 + \left(\frac{5}{2}\right)^2\right] = \frac{1}{6} \times \frac{70}{4} = \frac{35}{12}\)</div><div class="fm" data-eq="t-V">\(\operatorname{Var}(T) = \E(T^2) - \big(\E(T)\big)^2 = \frac{91}{6} - \frac{49}{4} = \frac{182 - 147}{12} = \frac{35}{12}\)</div><div class="fm" data-eq="t-sd">\(\sigma(T) = \sqrt{\frac{35}{12}} \approx 1.71\)</div></div>
+        <div class="prose"><p>König–Huygens avoids the deviations \(x_i - \E(X)\) when \(\E(X)\) is a fraction: it is the formula to use without a calculator.</p></div>
+        <div class="box model"><span class="tag">Model answer <i>DP exam of October 2023, ex. 5 (4 points)</i></span>
+          <p>1. For finite random variables \(X\), \(Y\) and \((a, b) \in \R^2\): \(\E(X + Y) = \E(X) + \E(Y)\) and \(\E(aX + b) = a\,\E(X) + b\).</p>
+          <p>2. By definition, \(\operatorname{Var}(X) = \E\big((X - \E(X))^2\big) = \E\big(X^2 - 2\E(X)X + \E(X)^2\big)\). \(\E(X)\) is a constant.<span class="c">said once</span></p>
+          <div class="fm">\[\operatorname{Var}(X) \overset{\hl{\E(X+Y)}}{=} \E(X^2) + \E\big(-2\E(X)X\big) + \E\big(\E(X)^2\big) \overset{\hl{\E(aX+b)}}{=} \E(X^2) - 2\E(X)\E(X) + \E(X)^2 = \E(X^2) - \E(X)^2.\]</div>
+          <p>At the second equals sign: \(\E(aX + b)\) with \(a = -2\E(X)\), \(b = 0\), then with \(a = 0\), \(b = \E(X)^2\).<span class="c">properties highlighted</span></p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 7.3 — Distributions from the exercise sheets and the exams: expectation, \(\E(X^2)\), variance by König–Huygens (each value recomputed over the outcomes)</caption>
+          <thead><tr><th>Variable</th><th>\(\E(X)\)</th><th>\(\E(X^2)\)</th><th>\(\operatorname{Var}(X)\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(X_k\), balls 0, 1, 1, 2 (DP exam 2024, ex. 6.1)</td><td data-eq="xk-E">\(1\)</td><td data-eq="xk-E2">\(0^2 \times \frac{1}{4} + 1^2 \times \frac{1}{2} + 2^2 \times \frac{1}{4} = \frac{3}{2}\)</td><td data-eq="xk-V">\(\frac{3}{2} - 1^2 = \frac{1}{2}\)</td></tr>
+            <tr><td>\(Z\), rank of the 1st white ball (midterm 2022, ex. 5.3)</td><td data-eq="z-E">\(\frac{3}{5} + \frac{6}{10} + \frac{3}{10} = \frac{3}{2}\)</td><td data-eq="z-E2">\(\frac{3}{5} + \frac{12}{10} + \frac{9}{10} = \frac{27}{10}\)</td><td data-eq="z-V">\(\frac{27}{10} - \frac{9}{4} = \frac{9}{20}\)</td></tr>
+            <tr><td>points, two draws without replacement (ex. 4.15)</td><td data-eq="t15-E">\(\frac{6}{5}\)</td><td data-eq="t15-E2">\(\frac{12}{5}\)</td><td data-eq="t15-V">\(\frac{12}{5} - \frac{36}{25} = \frac{24}{25}\)</td></tr>
+            <tr><td>number on the ball (ex. 4.14)</td><td data-eq="u-E">\(\frac{19}{9}\)</td><td data-eq="u-E2">\(\frac{49}{9}\)</td><td data-eq="u-V">\(\frac{49}{9} - \frac{361}{81} = \frac{80}{81}\)</td></tr>
+            <tr><td>gain \(G\): 5, 3 or 0 with \(\frac{1}{3}\) each (midterm 2021, ex. 6)</td><td data-eq="g21-E">\(\frac{8}{3}\)</td><td data-eq="g21-E2">\(\frac{34}{3}\)</td><td data-eq="g21-V">\(\frac{34}{3} - \frac{64}{9} = \frac{38}{9}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>For \(X_k\): <span data-eq="xk-sd">\(\sigma(X_k) = \sqrt{\frac{1}{2}} = \frac{\sqrt{2}}{2} \approx 0.71\)</span>, the dashed lines of figure 1.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the sign and the brackets</span>
+          <ul>
+            <li>\(\operatorname{Var}(X) = \E(X^2) - (\E(X))^2\), not \(\E(X^2) + (\E(X))^2\) (wrong box of the MCQ of 20 October 2025, Q20), nor \((\E(X))^2 - \E(X^2)\).</li>
+            <li>\(\E(X^2) = \sum x_i^2\,\P(X = x_i)\): you square the <b>values</b>, not the probabilities, and not the sum \(\big(\sum x_i\,\P(X = x_i)\big)^2\).</li>
+            <li>A negative variance is a computation error: start again. And the standard deviation is \(\sqrt{\operatorname{Var}(X)}\), not \(\operatorname{Var}(X)^2\).</li>
+            <li>Go all the way to the simplified fraction: a student’s notes stop at \(\frac{49}{9} - \left(\frac{19}{9}\right)^2\) in ex. 4.14.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">theorems and proofs § 2 · DP exam 2024 ex. 5.3 · ex. 4.13 and 4.17</span></div><h2>\(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\), standardized variable</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>variance of \(aX + b\)</i></span>
+          <p>Let \(X\) be a finite random variable and \((a, b) \in \R^2\). Then \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\). As a consequence, \(\sigma(aX + b) = |a|\,\sigma(X)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Theorems and proofs, § 2, property 2 of the variance</i></span>
+          <p>To prove property 2, let us write the definition of the variance of \(aX + b\):</p>
+          <div class="fm">\[\operatorname{Var}(aX + b) = \E\Big(\big((aX + b) - \E(aX + b)\big)^2\Big).\]</div>
+          <p>Since \(\E(aX + b) = a\,\E(X) + b\), we have</p>
+          <div class="fm">\[(aX + b) - \E(aX + b) = aX + b - a\,\E(X) - b = a\big(X - \E(X)\big).\]</div>
+          <p>Thus,</p>
+          <div class="fm">\[\operatorname{Var}(aX + b) = \E\Big(a^2\big(X - \E(X)\big)^2\Big) = a^2\,\E\Big(\big(X - \E(X)\big)^2\Big).\]</div>
+          <p>Now, note that the expectation which comes in the latter expression is the variance of \(X\). Hence, \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\).</p>
+        </div>
+        <div class="box why"><span class="tag">One detail</span>
+          <p>The step \(\E\big(a^2 W\big) = a^2\,\E(W)\), with \(W = (X - \E(X))^2\), is part 3 applied to the variable \(W\), with the coefficient \(a^2\) and \(b = 0\). Write it if you are asked to “justify every step”.</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (ex. 4.13).</b> \(X = 2T - 6\), with \(\operatorname{Var}(T) = \frac{35}{12}\) (part 4). By the theorem, then directly with the distribution of \(X\) (part 3):</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="x26-Vlin">\(\operatorname{Var}(2T - 6) = 2^2 \operatorname{Var}(T) = 4 \times \frac{35}{12} = \frac{35}{3}\)</div><div class="fm" data-eq="x26-V">\(\E(X^2) - \E(X)^2 = \frac{16 + 4 + 0 + 4 + 16 + 36}{6} - 1^2 = \frac{38}{3} - 1 = \frac{35}{3}\)</div></div>
+        <figure class="p7-fig">
+          <svg viewBox="0 0 440 250" role="img" aria-label="Top, the distribution of T: six bars of height 1/6 at 1, 2, 3, 4, 5, 6. Bottom, the distribution of X = 2T − 6: six bars of the same height at −4, −2, 0, 2, 4, 6. The expectation goes from 3.5 to 1, the standard deviation doubles.">
+            <text class="nm" x="44" y="34">T</text>
+            <text class="nm" x="44" y="146">X = 2T − 6</text>
+            <line class="lw-axis" x1="40" y1="95" x2="400" y2="95"/>
+            <line class="lw-axis" x1="40" y1="205" x2="400" y2="205"/>
+            <rect class="lw-bar" x="213" y="45" width="14" height="50"/><rect class="lw-bar" x="243" y="45" width="14" height="50"/><rect class="lw-bar" x="273" y="45" width="14" height="50"/>
+            <rect class="lw-bar" x="303" y="45" width="14" height="50"/><rect class="lw-bar" x="333" y="45" width="14" height="50"/><rect class="lw-bar" x="363" y="45" width="14" height="50"/>
+            <rect class="lw-bar" x="63" y="155" width="14" height="50"/><rect class="lw-bar" x="123" y="155" width="14" height="50"/><rect class="lw-bar" x="183" y="155" width="14" height="50"/>
+            <rect class="lw-bar" x="243" y="155" width="14" height="50"/><rect class="lw-bar" x="303" y="155" width="14" height="50"/><rect class="lw-bar" x="363" y="155" width="14" height="50"/>
+            <line class="lw-mu" x1="295" y1="30" x2="295" y2="95"/>
+            <line class="lw-sd" x1="243.8" y1="38" x2="243.8" y2="95"/><line class="lw-sd" x1="346.2" y1="38" x2="346.2" y2="95"/>
+            <line class="lw-mu" x1="220" y1="140" x2="220" y2="205"/>
+            <line class="lw-sd" x1="117.5" y1="148" x2="117.5" y2="205"/><line class="lw-sd" x1="322.5" y1="148" x2="322.5" y2="205"/>
+            <text class="lw-t" x="220" y="113" text-anchor="middle">1</text><text class="lw-t" x="250" y="113" text-anchor="middle">2</text><text class="lw-t" x="280" y="113" text-anchor="middle">3</text>
+            <text class="lw-t" x="310" y="113" text-anchor="middle">4</text><text class="lw-t" x="340" y="113" text-anchor="middle">5</text><text class="lw-t" x="370" y="113" text-anchor="middle">6</text>
+            <text class="lw-t" x="70" y="223" text-anchor="middle">−4</text><text class="lw-t" x="130" y="223" text-anchor="middle">−2</text><text class="lw-t" x="190" y="223" text-anchor="middle">0</text>
+            <text class="lw-t" x="250" y="223" text-anchor="middle">2</text><text class="lw-t" x="310" y="223" text-anchor="middle">4</text><text class="lw-t" x="370" y="223" text-anchor="middle">6</text>
+            <text class="rd" x="295" y="24" text-anchor="middle">E = 7/2</text>
+            <text class="rd" x="220" y="134" text-anchor="middle">E = 1</text>
+            <text class="mu" x="44" y="244">each bar: probability 1/6</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 3</b> — Same probabilities, values multiplied by 2 then shifted 6 to the left. The expectation follows the transformation (\(\frac{7}{2}\) becomes 1). The shift does not change the spread, the multiplication by 2 doubles the standard deviation (<span data-eq="t-sd">\(\sigma(T) \approx 1.71\)</span>, <span data-eq="x26-sd">\(\sigma(X) = \sqrt{\frac{35}{3}} \approx 3.42\)</span>): the variance is multiplied by \(2^2 = 4\).</figcaption>
+        </figure>
+        <div class="box def"><span class="tag">Definition <i>standardized variable (ex. 4.17★)</i></span>
+          <p>If \(\operatorname{Var}(X) \neq 0\) (\(X\) is not constant), the <b>standardized variable</b> of \(X\) is \(\overline{X} = \dfrac{X - \E(X)}{\sigma_X}\). Then \(\E(\overline{X}) = 0\) and \(\operatorname{Var}(\overline{X}) = 1\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>\(\overline{X} = aX + b\) with \(a = \frac{1}{\sigma_X}\) and \(b = -\frac{\E(X)}{\sigma_X}\), two constants. By part 3, \(\E(\overline{X}) = \frac{\E(X)}{\sigma_X} - \frac{\E(X)}{\sigma_X} = 0\). By the theorem above, \(\operatorname{Var}(\overline{X}) = \frac{1}{\sigma_X^2} \operatorname{Var}(X) = \frac{\operatorname{Var}(X)}{\operatorname{Var}(X)} = 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>DP exam of October 2024, ex. 5.3 (no answer key)</i></span>
+          <p>\(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\): it does not depend on \(b\).<span class="c">the formula first</span></p>
+          <p>By definition, \(\operatorname{Var}(aX + b) = \E\big(((aX + b) - \E(aX + b))^2\big)\). By question 2, \(\E(aX + b) = a\,\E(X) + b\), so \((aX + b) - \E(aX + b) = a(X - \E(X))\).<span class="c">question 2 quoted</span></p>
+          <p>Thus \(\operatorname{Var}(aX + b) = \E\big(a^2 (X - \E(X))^2\big) = a^2\,\E\big((X - \E(X))^2\big)\), applying question 2 again with the coefficient \(a^2\) and \(b = 0\). The last expectation is \(\operatorname{Var}(X)\): \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: \(b\) vanishes, \(a\) is squared</span>
+          <ul>
+            <li>\(\operatorname{Var}(aX + b) \neq a \operatorname{Var}(X) + b\), and \(\neq a^2 \operatorname{Var}(X) + b\). The net gain \(Y - 1\) of ex. 4.14 has the same variance as \(Y\): <span data-eq="g-netV">\(\operatorname{Var}(Y - 1) = \operatorname{Var}(Y) = \frac{134}{81}\)</span>.</li>
+            <li>\(\operatorname{Var}(-X) = (-1)^2 \operatorname{Var}(X) = \operatorname{Var}(X)\): a variance is never negative. But \(\sigma(-X) = |-1|\,\sigma(X)\).</li>
+            <li>\(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\) requires independence (part 8). With \(Y = X = T\): <span data-eq="t-V2T">\(\operatorname{Var}(2T) = 4 \times \frac{35}{12} = \frac{35}{3}\)</span>, not \(2 \times \frac{35}{12}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">summary sheet § 3.1 · ex. 5.19 and 5.20 · DP exams 2023 and 2024, ex. 6</span></div><h2>Uniform and Bernoulli distributions</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>uniform distribution</i></span>
+          <p>\(X\) follows the <b>uniform distribution</b> on \(\ent{1}{n}\) if \(X(\Omega) = \ent{1}{n}\) and \(\P(X = k) = \frac{1}{n}\) for all \(k \in \ent{1}{n}\). Then</p>
+          <div class="fm">\[\E(X) = \frac{n + 1}{2}, \qquad \operatorname{Var}(X) = \frac{n^2 - 1}{12}.\]</div>
+          <p class="muted">The summary sheet does not mention it; it is in exercises 2 (ex. 5.19).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>ex. 5.19, with the two sums given</i></span>
+          <p>Accept \(\sum_{k=1}^{n} k = \frac{n(n+1)}{2}\) and \(\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}\). Then</p>
+          <div class="fm">\[\E(X) = \sum_{k=1}^{n} k \times \frac{1}{n} = \frac{1}{n} \times \frac{n(n+1)}{2} = \frac{n+1}{2}, \qquad \E(X^2) = \frac{1}{n} \sum_{k=1}^{n} k^2 = \frac{(n+1)(2n+1)}{6}.\]</div>
+          <p>By König–Huygens,</p>
+          <div class="fm">\[\operatorname{Var}(X) = \frac{(n+1)(2n+1)}{6} - \frac{(n+1)^2}{4} = \frac{(n+1)\big(2(2n+1) - 3(n+1)\big)}{12} = \frac{(n+1)(n-1)}{12} = \frac{n^2 - 1}{12}.\]</div>
+        </div>
+        <div class="prose">
+          <p>For a dice (\(n = 6\)): <span data-eq="t-E">\(\E(T) = \frac{6 + 1}{2} = \frac{7}{2}\)</span> and <span data-eq="u6-V">\(\operatorname{Var}(T) = \frac{6^2 - 1}{12} = \frac{35}{12}\)</span>, as in part 4.</p>
+          <p><b>Careful: your English exercise sheet (ex. 5.19) is on \(\ent{0}{n}\)</b>, which has \(n + 1\) values (the French sheet is on \(\{1, \ldots, n\}\)). If \(X\) is uniform on \(\ent{0}{n}\), then \(X + 1\) is uniform on \(\ent{1}{n+1}\). By parts 3 and 5: \(\E(X) = \frac{n + 2}{2} - 1 = \frac{n}{2}\) and \(\operatorname{Var}(X) = \frac{(n+1)^2 - 1}{12} = \frac{n(n+2)}{12}\) (formulas checked by enumeration for \(n\) from 1 to 20).</p>
+          <p><b>Example (ex. 5.20).</b> A teacher marks each paper by rolling a 20-sided dice: the mark \(M_i\) follows the uniform distribution on \(\ent{1}{20}\). <span data-eq="n20-E">\(\E(M_i) = \frac{20 + 1}{2} = \frac{21}{2}\)</span>, and the marks from 10 to 20 are 11 values: <span data-eq="n20-ge10">\(\P(M_i \geq 10) = \frac{11}{20}\)</span>.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>Bernoulli distribution</i></span>
+          <p>Let \(p \in [0, 1]\). \(X\) is <b>Bernoulli-distributed with the parameter \(p\)</b> if</p>
+          <div class="fm">\[X(\Omega) = \{0, 1\}, \qquad \P(X = 1) = p, \qquad \P(X = 0) = 1 - p.\]</div>
+          <p>We write \(X \leadsto \text{Bernoulli}(p)\). Then \(\E(X) = p\) and \(\operatorname{Var}(X) = p(1 - p)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>the computation to detail every time</i></span>
+          <div class="fm">\[\E(X) = 0 \times (1 - p) + 1 \times p = p, \qquad \E(X^2) = 0^2 \times (1 - p) + 1^2 \times p = p,\]</div>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - \big(\E(X)\big)^2 = p - p^2 = p(1 - p).\]</div>
+        </div>
+        <div class="prose">
+          <p>A Bernoulli trial has only two useful outcomes: <b>success</b> (\(X = 1\)) or <b>failure</b> (\(X = 0\)). For any event \(A\), the variable equal to 1 if \(A\) occurs and 0 otherwise is Bernoulli-distributed with the parameter \(\P(A)\). The 2022 midterm (ex. 5.1) asked for one: in a box of 3 white balls and 2 green balls, draw one ball and let \(X\) be 1 if it is green. \(X \leadsto \text{Bernoulli}\left(\frac{2}{5}\right)\), <span data-eq="b25-V">\(\operatorname{Var}(X) = \frac{2}{5} \times \frac{3}{5} = \frac{6}{25}\)</span>.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 7.4 — The Bernoulli variables of the exams</caption>
+          <thead><tr><th>Exam</th><th>Success</th><th>\(p\)</th><th>\(\E(X)\)</th><th>\(\operatorname{Var}(X)\)</th></tr></thead>
+          <tbody>
+            <tr><td>DP exam 2023, ex. 6</td><td>right answer to one MCQ question</td><td>\(\frac{1}{3}\)</td><td data-eq="b13-E">\(\frac{1}{3}\)</td><td data-eq="b13-V">\(\frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</td></tr>
+            <tr><td>DP exam 2024, ex. 6.2</td><td>the ball shows 0 or 1</td><td>\(\frac{3}{4}\)</td><td data-eq="b34-E">\(\frac{3}{4}\)</td><td data-eq="b34-V">\(\frac{3}{4} - \frac{9}{16} = \frac{3}{16}\)</td></tr>
+            <tr><td>midterm 2022, ex. 5.1</td><td>the ball drawn is green</td><td>\(\frac{2}{5}\)</td><td data-eq="b25-E">\(\frac{2}{5}\)</td><td data-eq="b25-V">\(\frac{2}{5} - \frac{4}{25} = \frac{6}{25}\)</td></tr>
+            <tr><td>midterm 2021, ex. 6</td><td>the dice shows 1</td><td>\(\frac{1}{6}\)</td><td data-eq="b16-E">\(\frac{1}{6}\)</td><td data-eq="b16-V">\(\frac{1}{6} - \frac{1}{36} = \frac{5}{36}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>DP exam of October 2024, ex. 6.2 (recomputed answers)</i></span>
+          <p>You win one euro if the ball drawn shows 0 or 1, nothing otherwise; \(Y_k\) is the gain at the \(k\)-th draw.</p>
+          <p>(a) \(Y_k(\Omega) = \{0, 1\}\) and \((Y_k = 1) = (X_k = 0) \sqcup (X_k = 1)\), a disjoint union. So <span data-eq="yk-1">\(\P(Y_k = 1) = \P(X_k = 0) + \P(X_k = 1) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span> and <span data-eq="yk-0">\(\P(Y_k = 0) = 1 - \frac{3}{4} = \frac{1}{4}\)</span>.<span class="c">justify</span></p>
+          <p>\(Y_k\) is Bernoulli-distributed with the parameter \(\frac{3}{4}\): \(Y_k \leadsto \text{Bernoulli}\left(\frac{3}{4}\right)\).<span class="c">name the distribution and its parameter</span></p>
+          <p>(b) <span data-eq="yk-E">\(\E(Y_k) = 0 \times \frac{1}{4} + 1 \times \frac{3}{4} = \frac{3}{4}\)</span>, <span data-eq="yk-E2">\(\E(Y_k^2) = 0^2 \times \frac{1}{4} + 1^2 \times \frac{3}{4} = \frac{3}{4}\)</span>, hence <span data-eq="yk-V">\(\operatorname{Var}(Y_k) = \frac{3}{4} - \left(\frac{3}{4}\right)^2 = \frac{3}{16}\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the values and the parameter</span>
+          <ul>
+            <li>A Bernoulli variable takes the values 0 and 1, nothing else. A gain of 2 euros or 0 is not one: it is \(2X\) with \(X\) Bernoulli.</li>
+            <li>The parameter is \(\P(X = 1)\), the probability of success, not of failure.</li>
+            <li>Uniform on \(\ent{0}{20}\): 21 values. <span data-eq="0a20">\(\P(X \geq 10) = \frac{11}{21}\)</span>, not \(\frac{1}{2}\) (MCQ of 6 October 2025).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">summary sheet § 3.2 · ex. 5.21 · DP exams 2023 and 2024, ex. 6</span></div><h2>Binomial distribution: repeating a Bernoulli trial</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The same Bernoulli trial is repeated \(n\) times, independently, and the successes are counted. It has been the last exercise of every DP exam since 2023: 20 MCQ questions, 20 draws with replacement.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>binomial distribution (summary sheet)</i></span>
+          <p>Let \(n \in \N^*\), \(p \in [0, 1]\) and \(X_1, \ldots, X_n\) be <b>independent</b> Bernoulli variables with the same parameter \(p\). Let</p>
+          <div class="fm">\[Y = X_1 + \cdots + X_n = \text{number of } X_i \text{ equal to } 1.\]</div>
+          <p>Then \(Y\) is <b>binomial-distributed with parameters \(n\) and \(p\)</b>, written \(Y \leadsto \mathrm{B}(n, p)\):</p>
+          <div class="fm">\[Y(\Omega) = \ent{0}{n}, \qquad \forall k \in \ent{0}{n},\ \P(Y = k) = \binom{n}{k} p^k (1 - p)^{n - k}, \qquad \E(Y) = np, \qquad \operatorname{Var}(Y) = np(1 - p).\]</div>
+          <p>The summary sheet also writes \(C_n^k\) for \(\binom{n}{k}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>to understand each piece</i></span>
+          <p><b>The distribution.</b> The result of the \(n\) trials is a list \((x_1, \ldots, x_n)\) of 0s and 1s. \((Y = k)\) occurs for the lists with exactly \(k\) ones: there are \(\binom{n}{k}\) of them (choose the \(k\) places of the successes, lesson 5). By independence, each one has probability \(p^k (1 - p)^{n - k}\). These lists are pairwise disjoint events, hence \(\P(Y = k) = \binom{n}{k} p^k (1 - p)^{n - k}\).</p>
+          <p><b>The sum.</b> By the binomial theorem, \(\sum_{k=0}^{n} \binom{n}{k} p^k (1 - p)^{n - k} = \big(p + (1 - p)\big)^n = 1^n = 1\).</p>
+          <p><b>The expectation.</b> By linearity, \(\E(Y) = \E(X_1) + \cdots + \E(X_n) = np\). Independence is not used here.</p>
+          <p><b>The variance.</b> The \(X_i\) are independent, so (summary sheet, property 6, accepted) \(\operatorname{Var}(Y) = \operatorname{Var}(X_1) + \cdots + \operatorname{Var}(X_n) = np(1 - p)\).</p>
+        </div>
+        <figure style="margin:0">
+          <div data-maths="law" data-opts='{"law":"binom","n":20,"p":"1/3","name":"Y","title":"Binomial distribution · change \\(n\\) and \\(p\\)"}'></div>
+          <figcaption class="fig-cap"><b>Figure 4</b> — \(\mathrm{B}(20, \frac{1}{3})\), the mark of the student who answers at random (DP exam 2023, ex. 6). The highest bars are at 6 and 7, tied: <span data-eq="y-7">\(\P(Y = 6) = \P(Y = 7) = \frac{211\,681\,280}{1\,162\,261\,467} \approx 0.18\)</span>, around <span data-eq="y-E">\(\E(Y) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>. Getting 10 or more at random is rare: <span data-eq="y-ge10">\(\P(Y \geq 10) \approx 0.092\)</span>. Change \(n\) and \(p\): the distribution moves with \(np\) and spreads with \(np(1 - p)\).</figcaption>
+        </figure>
+        <div class="prose">
+          <p><b>Example (exercise-class test of 2020).</b> You roll 5 ten-sided dice and score one point for each dice showing 1 or 2. The 5 dice are independent and each one scores with probability \(\frac{2}{10} = \frac{1}{5}\): the score \(Y\) follows \(\mathrm{B}\left(5, \frac{1}{5}\right)\).</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="b5-2">\(\P(Y = 2) = \binom{5}{2} \left(\frac{1}{5}\right)^2 \left(\frac{4}{5}\right)^3 = 10 \times \frac{1}{25} \times \frac{64}{125} = \frac{128}{625}\)</div><div class="fm" data-eq="b5-gt1">\(\P(Y > 1) = 1 - \P(Y = 0) - \P(Y = 1) = 1 - \frac{1\,024}{3\,125} - \frac{1\,280}{3\,125} = \frac{821}{3\,125}\)</div><div class="fm" data-eq="b5-V">\(\E(Y) = 5 \times \frac{1}{5} = 1, \qquad \operatorname{Var}(Y) = 5 \times \frac{1}{5} \times \frac{4}{5} = \frac{4}{5}\)</div></div>
+        <div class="box meth"><span class="tag">Method <i>recognizing a binomial distribution</i></span>
+          <ol>
+            <li>One trial with two outcomes (success, failure), with probability of success \(p\): a Bernoulli trial.</li>
+            <li>Repeated \(n\) times, <b>independently</b> and <b>identically</b> (draws with replacement, independent random answers).</li>
+            <li>\(Y\) counts the successes. Write the sentence: “\(Y\) is the number of successes in the repetition of \(n\) independent and identical Bernoulli trials with parameter \(p\), so \(Y \leadsto \mathrm{B}(n, p)\)”.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>DP exam of October 2023, ex. 6 = ex. 5.21 (official answer key)</i></span>
+          <p>An MCQ has 20 questions marked 0 or 1. The student answers at random, independently, right with probability \(\frac{1}{3}\). \(X_k\) is the mark at question \(k\), \(Y\) the total mark.</p>
+          <p>1(a) Let \(k \in \ent{1}{20}\). \(X_k(\Omega) = \{0, 1\}\), \(\P(X_k = 1) = \frac{1}{3}\), \(\P(X_k = 0) = \frac{2}{3}\): \(X_k\) is Bernoulli-distributed with the parameter \(\frac{1}{3}\).</p>
+          <p>1(b) <span data-eq="b13-E">\(\E(X_k) = 0 \times \P(X_k = 0) + 1 \times \P(X_k = 1) = \frac{1}{3}\)</span>; <span data-eq="b13-E2">\(\E(X_k^2) = 0^2 \times \P(X_k = 0) + 1^2 \times \P(X_k = 1) = \frac{1}{3}\)</span>; <span data-eq="b13-V">\(\operatorname{Var}(X_k) = \E(X_k^2) - \E(X_k)^2 = \frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</span>.<span class="c">“write the details”</span></p>
+          <p>2(a) The total mark is the sum of the marks: \(Y = X_1 + X_2 + \cdots + X_{20}\).</p>
+          <p>2(b) \(Y\) is the sum of 20 <b>independent</b> Bernoulli variables with the same parameter \(\frac{1}{3}\): it is the repetition of 20 independent and identical Bernoulli trials. So \(Y \leadsto \mathrm{B}\left(20, \frac{1}{3}\right)\), \(Y(\Omega) = \ent{0}{20}\) and<span class="c">the reason, then the parameters</span></p>
+          <div class="fm">\[\forall i \in \ent{0}{20}, \quad \P(Y = i) = \binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i}.\]</div>
+          <p>2(c) By the binomial theorem: \(\displaystyle\sum_{i=0}^{20} \P(Y = i) = \sum_{i=0}^{20} \binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i} = \left(\frac{1}{3} + \frac{2}{3}\right)^{20} = 1^{20} = 1\).</p>
+          <p>2(d) By linearity, <span data-eq="y-E">\(\E(Y) = \E(X_1) + \cdots + \E(X_{20}) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>. Since \(X_1, \ldots, X_{20}\) are independent, <span data-eq="y-V">\(\operatorname{Var}(Y) = \operatorname{Var}(X_1) + \cdots + \operatorname{Var}(X_{20}) = 20 \times \frac{2}{9} = \frac{40}{9}\)</span>.<span class="c">independence, for the variance</span></p>
+        </div>
+        <div class="prose">
+          <p><b>DP exam of October 2024, ex. 6.3 (recomputed answers).</b> Same plan with the gains \(Y_k \leadsto \text{Bernoulli}\left(\frac{3}{4}\right)\) of part 6: \(Z = Y_1 + \cdots + Y_{20}\) (the draws are with replacement, hence independent), \(Z \leadsto \mathrm{B}\left(20, \frac{3}{4}\right)\), \(\P(Z = i) = \binom{20}{i} \left(\frac{3}{4}\right)^i \left(\frac{1}{4}\right)^{20 - i}\) for \(i \in \ent{0}{20}\), the sum is \(\left(\frac{3}{4} + \frac{1}{4}\right)^{20} = 1\), <span data-eq="z20-E">\(\E(Z) = 20 \times \frac{3}{4} = 15\)</span> and <span data-eq="z20-V">\(\operatorname{Var}(Z) = 20 \times \frac{3}{16} = \frac{15}{4}\)</span>.</p>
+          <p>Older midterms: \(\mathrm{B}\left(10, \frac{1}{6}\right)\) in 2021 (<span data-eq="b10-E">\(\E = \frac{10}{6} = \frac{5}{3}\)</span>, <span data-eq="b10-V">\(\operatorname{Var} = 10 \times \frac{1}{6} \times \frac{5}{6} = \frac{25}{18}\)</span>); \(\mathrm{B}\left(5, \frac{2}{5}\right)\) in 2022 (<span data-eq="b525-E">\(\E = 5 \times \frac{2}{5} = 2\)</span>, <span data-eq="b525-V">\(\operatorname{Var} = 5 \times \frac{2}{5} \times \frac{3}{5} = \frac{6}{5}\)</span>).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the justification and the general term</span>
+          <ul>
+            <li>\(\P(Y = i)\) is <b>one</b> term, \(\binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i}\), not a sum: a student’s notes write \(\sum\) for this question of the exercise sheet.</li>
+            <li>Without “independent” and “same parameter”, the binomial distribution is not justified. Draws without replacement: the trials are no longer independent, it is no longer binomial (part 8).</li>
+            <li>Say it when an independence is debatable. In ex. 5.22, the 40 students of a class get the same chapter in the exam: their results are not independent. The sheet expects \(\mathrm{B}\left(40, \frac{3}{5}\right)\): write “assuming the students’ results are independent”.</li>
+            <li>Order of the parameters: \(\mathrm{B}(n, p)\), the number of trials first. \(\E(Y) = np\) need not be an integer (\(\frac{20}{3}\)).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">summary sheet § 2.2 · ex. 4.16, 4.18 and 5.23</span></div><h2>2-tuples of variables, and a look ahead</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A short part: no exam from 2016 to 2024 asked about a 2-tuple of random variables. Remember the definition of independence and the formula for the variance of a sum, used for the binomial distribution.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>joint distribution, independence</i></span>
+          <ul>
+            <li>The <b>distribution of the 2-tuple</b> \((X, Y)\) (joint distribution) is the list of the \(\P\big((X = x_i) \cap (Y = y_j)\big)\) for all \(x_i \in X(\Omega)\), \(y_j \in Y(\Omega)\): a table. The distributions of \(X\) and of \(Y\) are obtained by summing the rows and the columns.</li>
+            <li>\(X\) and \(Y\) are <b>independent</b> if, for all \(i\) and \(j\), \(\P\big((X = x_i) \cap (Y = y_j)\big) = \P(X = x_i)\,\P(Y = y_j)\).</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>sum of two variables (summary sheet, properties 2 and 6)</i></span>
+          <p>\(\E(X + Y) = \E(X) + \E(Y)\) always. If \(X\) and \(Y\) are independent, \(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (ex. 4.18).</b> One card is picked from a 32-card deck. \(X\) is the number of queens obtained (0 or 1), \(Y\) the number of hearts. \(X \leadsto \text{Bernoulli}\left(\frac{4}{32}\right) = \text{Bernoulli}\left(\frac{1}{8}\right)\), \(Y \leadsto \text{Bernoulli}\left(\frac{8}{32}\right) = \text{Bernoulli}\left(\frac{1}{4}\right)\).</p>
+        </div>
+        <div class="tbl"><table class="p7-joint">
+          <caption>Table 7.5 — The distribution of the 2-tuple \((X, Y)\) for one card (32 equally likely outcomes), with the distributions of \(X\) and \(Y\) in the margins</caption>
+          <thead><tr><th></th><th>\(Y = 0\)</th><th>\(Y = 1\)</th><th class="mg">distribution of \(X\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(X = 0\)</th><td data-eq="c1-00">\(\frac{21}{32}\)</td><td data-eq="c1-01">\(\frac{7}{32}\)</td><td class="mg">\(\frac{7}{8}\)</td></tr>
+            <tr><th>\(X = 1\)</th><td data-eq="c1-10">\(\frac{3}{32}\)</td><td data-eq="c1-11">\(\frac{1}{32}\)</td><td class="mg" data-eq="c1-X1">\(\frac{1}{8}\)</td></tr>
+            <tr><th class="mg">distribution of \(Y\)</th><td class="mg">\(\frac{3}{4}\)</td><td class="mg" data-eq="c1-Y1">\(\frac{1}{4}\)</td><td class="mg">\(1\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>ex. 4.18.1c: showing independence</i></span>
+          <p>Compare each cell of the table with the product of the margins:<span class="c">all four cells</span></p>
+          <p><span data-eq>\(\frac{7}{8} \times \frac{3}{4} = \frac{21}{32}\)</span>, <span data-eq>\(\frac{7}{8} \times \frac{1}{4} = \frac{7}{32}\)</span>, <span data-eq>\(\frac{1}{8} \times \frac{3}{4} = \frac{3}{32}\)</span>, <span data-eq="c1-X1Y1">\(\frac{1}{8} \times \frac{1}{4} = \frac{1}{32}\)</span>.</p>
+          <p>For all \(i, j \in \{0, 1\}\), \(\P\big((X = i) \cap (Y = j)\big) = \P(X = i)\,\P(Y = j)\): \(X\) and \(Y\) are independent. The suit of a card tells nothing about its rank.</p>
+        </div>
+        <div class="prose">
+          <p><b>With two cards</b> (ex. 4.18.2), there is only one queen of hearts: two queens and two hearts is impossible. <span data-eq="c2-22">\(\P\big((X = 2) \cap (Y = 2)\big) = 0\)</span>, whereas <span data-eq="c2-X2Y2">\(\P(X = 2)\,\P(Y = 2) = \frac{3}{248} \times \frac{7}{124} = \frac{21}{30\,752}\)</span>, which is not zero. One cell is enough: \(X\) and \(Y\) are not independent.</p>
+          <p><b>A look ahead: the hypergeometric distribution (ex. 4.16 and 5.23).</b> The number \(X\) of hearts in a 5-card hand (picked at once, so without replacement) is not binomial: \(\P(X = k) = \frac{\binom{8}{k} \binom{24}{5 - k}}{\binom{32}{5}}\) for \(k \in \ent{0}{5}\), and <span data-eq="h-E">\(\E(X) = \frac{5}{4}\)</span> (computed with the Vandermonde formula, lesson 5). In ex. 5.23, the probability of 2 boys out of 5 children is <span data-eq="bin523">\(\binom{5}{2} \times 0.46^2 \times 0.54^3 \approx 0.3332\)</span> with replacement (binomial distribution), and <span data-eq="hyp523">\(\frac{\binom{46}{2} \binom{54}{3}}{\binom{100}{5}} \approx 0.3410\)</span> without replacement in a group of 100 children with 46 boys (hypergeometric distribution). In a large group, both are close.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: proving or disproving independence</span>
+          <ul>
+            <li>To <b>prove</b> that two variables are independent, you need every cell. To <b>disprove</b> it, one cell is enough.</li>
+            <li>A zero cell in the table, with non-zero margins, disproves independence.</li>
+            <li>\(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\) only if \(X\) and \(Y\) are independent; \(\E(X + Y) = \E(X) + \E(Y)\) always.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>DP exams in the current format: random variables were worth <b>10 points out of 30</b> in October 2023 and <b>15 points out of 40</b> in October 2024, in two exercises that were the same from one year to the next.</li>
+            <li>A proof from the lecture, both times. 2023, ex. 5 (<b>4 points out of 30</b>): recall \(\E(X + Y)\) and \(\E(aX + b)\), then prove König–Huygens “using the previous question, highlighted in the computations”. 2024, ex. 5 (<b>6 points out of 40</b>): recall the formulas of \(\E(X)\) and \(\operatorname{Var}(X)\), then express and prove \(\E(aX + b)\) and \(\operatorname{Var}(aX + b)\). The 2022 midterm already asked for \(\E(aX + b)\) (ex. 7, 3 points out of 40).</li>
+            <li>The Bernoulli → binomial chain over 20 repetitions, both times. 2023, ex. 6 (<b>6 points out of 30</b>, ex. 5.21 of the sheet copied: \(\mathrm{B}\left(20, \frac{1}{3}\right)\), \(\E = \frac{20}{3}\), \(\operatorname{Var} = \frac{40}{9}\)). 2024, ex. 6 (<b>9 points out of 40</b>: distribution, expectation and variance of a ball number, then \(\text{Bernoulli}\left(\frac{3}{4}\right)\), then \(\mathrm{B}\left(20, \frac{3}{4}\right)\), \(\E = 15\), \(\operatorname{Var} = \frac{15}{4}\)). Instructions: “simplified fraction”, “write all the details of your computations, do not give results out of thin air”.</li>
+            <li>Older midterms: 2021, ex. 6 (5 points out of 30: Bernoulli, \(\mathrm{B}\left(10, \frac{1}{6}\right)\), a gain); 2022, ex. 5 (6.5 points out of 40: suggest a Bernoulli variable, \(\mathrm{B}\left(5, \frac{2}{5}\right)\), rank of the first white ball).</li>
+            <li>Never set (2016 to 2024): 2-tuples of variables, uniform distribution, cumulative distribution function, standardized variable, hypergeometric distribution. In the Monday MCQs (21 October 2024, 20 October 2025): possible values, distribution, \(\E(X)\), \(\E(X^2)\), and the König–Huygens formula to recognize.</li>
+            <li>This year’s exam: DP on <b>Wednesday 28 October at 2 pm</b>, 2 hr, no documents and no calculator. The three proofs of parts 3 to 5 and the chain of part 7 must be written without hesitation.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="maths:variables:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">End of the DP lessons</span><p>You now have the whole syllabus of the DP exam: counting (lesson 5), probability (lesson 6) and random variables. Before the exam, rewrite from memory the three proofs of parts 3 to 5, then redo the Bernoulli → binomial chain of part 7 with other numbers. <a href="index.html">Back to Maths home</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../data/en/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

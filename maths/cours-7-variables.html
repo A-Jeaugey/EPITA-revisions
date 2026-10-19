@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Variables aléatoires · Maths</title>
+<meta name="description" content="Maths, DP, cours 7 : variable aléatoire finie et loi, fonction de répartition, espérance et théorème de transfert, variance et écart type, les trois démonstrations à connaître (E(aX + b), Koenig-Huygens, Var(aX + b)), variable centrée réduite, lois uniforme, de Bernoulli et binomiale, couples de variables. Avec des diagrammes en bâtons exacts et la chaîne Bernoulli → binomiale des examens 2023 et 2024.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Figures propres au cours 7 (dessinées dans la page, aux couleurs du thème) */
+.p7-fig{margin:0;min-width:0}
+.p7-fig svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto}
+.p7-fig .ax{stroke:var(--rule);stroke-width:1.2}
+.p7-fig .st{stroke:var(--accent);stroke-width:2.6;fill:none}
+.p7-fig .jp{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 4}
+.p7-fig .dot{fill:var(--accent)}
+.p7-fig .hole{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+.p7-fig text{font-family:var(--font-ui);font-size:14px;fill:var(--ink)}
+.p7-fig text.mu{fill:var(--muted);font-size:13px}
+.p7-fig text.nm{font-family:var(--font-display);font-style:italic;font-size:19px}
+.p7-fig text.rd{fill:var(--red);font-size:13px}
+.p7-fig text.ac{fill:var(--accent);font-weight:600;font-size:13px}
+/* loi conjointe : marges en gris */
+.p7-joint td.mg,.p7-joint th.mg{background:var(--surface-2);color:var(--muted)}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · cours 7 : variables aléatoires">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · DP</b> — cours 7 sur 7</span><span>Source : cours 2, MiMo 3 · fiche « Variables aléatoires » · démonstrations à connaître § 2 · TD 2 § 4 et 5</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="7"></span><a href="index.html">Maths</a> · DP · Cours 7 sur 7</div>
+      <h1>Une loi, une espérance, <span class="w">une variance.</span></h1>
+      <p class="lead">Une variable aléatoire associe un nombre à chaque issue. Sa loi, son espérance et sa variance se calculent en fractions, et trois démonstrations sont à savoir rédiger. Aux deux derniers examens DP, ce chapitre a pesé un tiers des points ou plus (10 sur 30, puis 15 sur 40) : une démonstration de cours et la chaîne Bernoulli → binomiale sur 20 tirages.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 60 min</span></li>
+        <li><span><span class="k">Parties</span> 8, dont 3 démonstrations</span></li>
+        <li><span><span class="k">Cours</span> MiMo 3 · TD 2 § 4 et 5</span></li>
+        <li class="ex"><span><span class="k">Examen</span> démonstration et binomiale en 2023 et en 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="law" data-opts='{"x":["0","1","2"],"p":["1/4","1/2","1/4"],"name":"X_k","title":"Loi de \\(X_k\\) · examen DP 2024, ex. 6"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Une urne contient quatre boules numérotées 0, 1, 1 et 2 ; \(X_k\) est le numéro de la boule tirée. Chaque bâton porte une probabilité, le trait plein marque l’espérance <span data-eq="xk-E">\(\E(X_k) = 1\)</span>, les pointillés l’espérance plus ou moins l’écart type. Calcul détaillé en parties 2 et 4.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 7 · Variables aléatoires</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Variable aléatoire, loi</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Espérance</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Démonstration : \(\E(aX + b)\)</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Variance, Koenig-Huygens</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>\(\operatorname{Var}(aX + b)\), centrer, réduire</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Lois uniforme et de Bernoulli</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Loi binomiale</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Couples de variables</span></a></li>
+    </ol>
+    <p class="toc-note">Les numéros de parties sont entourés comme ceux des questions sur ta copie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Maths</a><a href="cours-6-probabilites.html">← Cours 6 : probabilités</a><a href="../qcm/index.html#maths">QCM de maths</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Variable aléatoire, loi</a></li><li><a href="#s2">Espérance</a></li><li><a href="#s3">Démonstration : E(aX + b)</a></li><li><a href="#s4">Variance, Koenig-Huygens</a></li>
+      <li><a href="#s5">Var(aX + b), centrer, réduire</a></li><li><a href="#s6">Lois uniforme et de Bernoulli</a></li><li><a href="#s7">Loi binomiale</a></li><li><a href="#s8">Couples de variables</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche « Variables aléatoires » § 1 · TD 2 ex. 4.15</span></div><h2>Variable aléatoire, loi, fonction de répartition</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Dans un jeu, ce qui compte souvent n’est pas l’issue elle-même mais un nombre qui en dépend : un gain, un score, un rang. Une <b>variable aléatoire</b> est ce nombre. Dans tout le cours, \((\Omega, \mathcal{P}(\Omega), \P)\) est un espace probabilisé fini (cours 6).</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>variable aléatoire</i></span>
+          <p>Une <b>variable aléatoire</b> est une fonction</p>
+          <div class="fm">\[X : \Omega \to \R, \quad \omega \mapsto X(\omega).\]</div>
+          <p>\(X(\Omega)\) est l’ensemble des valeurs possibles de \(X\). Comme \(\Omega\) est fini, \(X(\Omega)\) l’est aussi : on note \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\), valeurs distinctes. Pour un réel \(x\), \((X = x)\) est l’évènement \(\{\omega \in \Omega \mid X(\omega) = x\} = X^{-1}(\{x\})\). De même \((X \leq x)\), \((X \in B)\).</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>loi d’une variable aléatoire</i></span>
+          <p>La <b>loi</b> de \(X\) est donnée par :</p>
+          <ol>
+            <li>l’ensemble \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\) ;</li>
+            <li>les valeurs \(\P(X = x_1), \P(X = x_2), \ldots, \P(X = x_n)\).</li>
+          </ol>
+          <p>Formellement, c’est la fonction \(\P_X : \mathcal{P}(X(\Omega)) \to [0, 1]\), \(B \mapsto \P(X^{-1}(B)) = \P(X \in B)\), et \((X(\Omega), \mathcal{P}(X(\Omega)), \P_X)\) est un espace probabilisé.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>la somme fait 1</i></span>
+          <p>\(\displaystyle\sum_{i=1}^{n} \P(X = x_i) = 1\).</p>
+          <p class="muted">Preuve : les évènements \((X = x_1), \ldots, (X = x_n)\) sont deux à deux disjoints (une issue n’a qu’une image) et leur union est \(\Omega\) (chaque issue a une image). Ils forment une partition de \(\Omega\), donc la somme de leurs probabilités vaut \(\P(\Omega) = 1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (QCM du 21 octobre 2024, Q15-Q16).</b> On lance deux fois une pièce équilibrée. On gagne 4 points par pile et on perd 2 points par face ; \(X\) est le total. \(\Omega = \{PP, PF, FP, FF\}\) a 4 issues équiprobables : \(X(PP) = 8\), \(X(PF) = X(FP) = 2\), \(X(FF) = -4\). Donc <span data-eq="pc-omega">\(X(\Omega) = \{-4, 2, 8\}\)</span> et :</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Tableau 7.1 — La loi de \(X\), points gagnés en deux lancers</caption>
+          <thead><tr><th>\(x_i\)</th><th>\(-4\)</th><th>\(2\)</th><th>\(8\)</th></tr></thead>
+          <tbody><tr><th>\(\P(X = x_i)\)</th><td data-eq="pc-m4">\(\frac{1}{4}\)</td><td data-eq="pc-2">\(\frac{2}{4} = \frac{1}{2}\)</td><td data-eq="pc-8">\(\frac{1}{4}\)</td></tr></tbody>
+        </table></div>
+        <div class="calc" data-eq="pc-sum"><div class="fm">\(\frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1\)</div></div>
+        <div class="box def"><span class="tag">Définition <i>fonction de répartition</i></span>
+          <p>La <b>fonction de répartition</b> de \(X\) est \(F_X : \R \to [0, 1]\), \(F_X(x) = \P(X \leq x)\). Elle détermine aussi la loi : c’est une fonction en escalier qui monte de \(\P(X = x_i)\) en chaque valeur \(x_i\).</p>
+        </div>
+        <figure class="p7-fig">
+          <svg viewBox="0 0 440 215" role="img" aria-label="Fonction de répartition de X : 0 avant −4, 1/4 de −4 à 2, 3/4 de 2 à 8, puis 1 à partir de 8 ; chaque marche monte de la probabilité de la valeur.">
+            <line class="ax" x1="40" y1="170" x2="420" y2="170"/>
+            <line class="ax" x1="40" y1="170" x2="40" y2="18"/>
+            <line class="jp" x1="85" y1="170" x2="85" y2="135"/>
+            <line class="jp" x1="220" y1="135" x2="220" y2="65"/>
+            <line class="jp" x1="355" y1="65" x2="355" y2="30"/>
+            <line class="st" x1="40" y1="170" x2="85" y2="170"/>
+            <line class="st" x1="85" y1="135" x2="220" y2="135"/>
+            <line class="st" x1="220" y1="65" x2="355" y2="65"/>
+            <line class="st" x1="355" y1="30" x2="400" y2="30"/>
+            <circle class="hole" cx="85" cy="170" r="4.5"/><circle class="dot" cx="85" cy="135" r="4.5"/>
+            <circle class="hole" cx="220" cy="135" r="4.5"/><circle class="dot" cx="220" cy="65" r="4.5"/>
+            <circle class="hole" cx="355" cy="65" r="4.5"/><circle class="dot" cx="355" cy="30" r="4.5"/>
+            <text class="mu" x="85" y="190" text-anchor="middle">−4</text>
+            <text class="mu" x="175" y="190" text-anchor="middle">0</text>
+            <text class="mu" x="220" y="190" text-anchor="middle">2</text>
+            <text class="mu" x="355" y="190" text-anchor="middle">8</text>
+            <text class="mu" x="414" y="190" text-anchor="end">x</text>
+            <text class="mu" x="33" y="174" text-anchor="end">0</text>
+            <text class="mu" x="33" y="139" text-anchor="end">1/4</text>
+            <text class="mu" x="33" y="69" text-anchor="end">3/4</text>
+            <text class="mu" x="33" y="34" text-anchor="end">1</text>
+            <text class="rd" x="93" y="157">+ 1/4</text>
+            <text class="rd" x="228" y="104">+ 1/2</text>
+            <text class="rd" x="363" y="52">+ 1/4</text>
+            <text class="ac" x="250" y="118">F(x) = P(X ≤ x)</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 2</b> — La fonction de répartition du tableau 7.1 : <span data-eq="pc-F0">\(F_X(0) = \P(X \leq 0) = \P(X = -4) = \frac{1}{4}\)</span>, <span data-eq="pc-F2">\(F_X(2) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span>. Point plein : la valeur prise ; rond vide : la valeur exclue.</figcaption>
+        </figure>
+        <div class="box meth"><span class="tag">Méthode <i>donner la loi de \(X\)</i></span>
+          <ol>
+            <li>Écris \(X(\Omega)\) : toutes les valeurs possibles, sans en oublier.</li>
+            <li>Pour chaque valeur, décris l’évènement \((X = x_i)\) par une phrase, puis calcule sa probabilité (équiprobabilité, probabilités composées…).</li>
+            <li>Présente la loi dans un tableau.</li>
+            <li>Vérifie que la somme vaut 1.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>contrôle de novembre 2022, ex. 5.3 (corrigé officiel)</i></span>
+          <p>Une urne contient 3 boules blanches et 2 vertes. On les extrait une à une, sans remise. \(Z\) est le rang de la première boule blanche. On note \(B_i\) « la \(i\)-ième boule est blanche » et \(V_i\) « la \(i\)-ième boule est verte ».</p>
+          <p>Il n’y a que 2 boules vertes : la première blanche sort au plus tard au 3e tirage. <span data-eq="z-omega">\(Z(\Omega) = \{1, 2, 3\}\)</span>.<span class="c">d’abord \(Z(\Omega)\)</span></p>
+          <p><span data-eq="z-1">\(\P(Z = 1) = \P(B_1) = \frac{3}{5}\)</span>.</p>
+          <p><span data-eq="z-2">\(\P(Z = 2) = \P(V_1 \cap B_2) = \P(V_1)\,\P(B_2 \mid V_1) = \frac{2}{5} \times \frac{3}{4} = \frac{3}{10}\)</span>.<span class="c">probabilités composées</span></p>
+          <p><span data-eq="z-3">\(\P(Z = 3) = \P(V_1)\,\P(V_2 \mid V_1)\,\P(B_3 \mid V_1 \cap V_2) = \frac{2}{5} \times \frac{1}{4} \times 1 = \frac{1}{10}\)</span>.</p>
+          <div class="tbl"><table class="tv">
+            <thead><tr><th>\(k\)</th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th></tr></thead>
+            <tbody><tr><th>\(\P(Z = k)\)</th><td>\(\frac{3}{5}\)</td><td>\(\frac{3}{10}\)</td><td>\(\frac{1}{10}\)</td></tr></tbody>
+          </table></div>
+          <p>Vérification : <span data-eq="z-sum">\(\frac{3}{5} + \frac{3}{10} + \frac{1}{10} = \frac{6 + 3 + 1}{10} = 1\)</span>.<span class="c">la somme fait 1</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : une loi incomplète</span>
+          <ul>
+            <li>« Donner la loi de \(X\) », c’est donner \(X(\Omega)\) <b>et</b> toutes les probabilités. Au QCM du 20 octobre 2025 (Q17), ni \(X(\Omega)\) seul, ni le tableau seul n’était la bonne réponse.</li>
+            <li>Somme de deux dés : \(X(\Omega) = \ent{2}{12}\), soit 11 valeurs, et elles ne sont pas équiprobables : <span data-eq="som-2">\(\P(X = 2) = \frac{1}{36}\)</span> mais <span data-eq="som-7">\(\P(X = 7) = \frac{6}{36} = \frac{1}{6}\)</span> (QCM du 21 octobre 2024, Q18).</li>
+            <li>Une probabilité manque ? La somme fait 1 : si \(X(\Omega) = \{1, 2, 4\}\), \(\P(X = 1) = \frac{2}{5}\) et \(\P(X = 2) = \frac{1}{5}\), alors <span data-eq="q18-4">\(\P(X = 4) = 1 - \frac{2}{5} - \frac{1}{5} = \frac{2}{5}\)</span> (QCM du 20 octobre 2025, Q18).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">fiche § 2 · TD 2 ex. 4.13 et 4.14 · examen DP 2024, ex. 6.1</span></div><h2>Espérance, théorème de transfert, linéarité</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>espérance</i></span>
+          <p>L’<b>espérance</b> de \(X\), avec \(X(\Omega) = \{x_1, \ldots, x_n\}\), est</p>
+          <div class="fm">\[\E(X) = \sum_{i=1}^{n} x_i\,\P(X = x_i).\]</div>
+        </div>
+        <div class="prose">
+          <p>C’est la moyenne des valeurs de \(X\), chacune <b>pondérée par sa probabilité</b>. Si on répète l’expérience un grand nombre de fois, la moyenne des valeurs obtenues se rapproche de \(\E(X)\). Sur le diagramme en bâtons, c’est le point d’équilibre (figure 1). Un jeu est <b>équitable</b> quand l’espérance du gain vaut 0.</p>
+          <p>Pour les points des deux lancers (partie 1) : <span data-eq="pc-E">\(\E(X) = (-4) \times \frac{1}{4} + 2 \times \frac{1}{2} + 8 \times \frac{1}{4} = -1 + 1 + 2 = 2\)</span>. Pour un dé équilibré, \(T\) le numéro obtenu : <span data-eq="t-E">\(\E(T) = \frac{1 + 2 + 3 + 4 + 5 + 6}{6} = \frac{21}{6} = \frac{7}{2}\)</span>. L’espérance n’est pas forcément une valeur prise : aucun dé ne donne 3,5.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>de transfert</i></span>
+          <p>Pour toute fonction \(f : \R \to \R\),</p>
+          <div class="fm">\[\E\big(f(X)\big) = \sum_{i=1}^{n} f(x_i)\,\P(X = x_i).\]</div>
+          <p>On calcule \(\E(f(X))\) avec la loi de \(X\), sans chercher la loi de \(f(X)\). Le cas le plus utile : \(\E(X^2) = \sum_{i=1}^{n} x_i^2\,\P(X = x_i)\).</p>
+        </div>
+        <div class="box why"><span class="tag">Pourquoi c’est vrai <i>(pour comprendre ; énoncé et démontré dans les vidéos)</i></span>
+          <p>Soit \(y\) une valeur de \(f(X)\). L’évènement \((f(X) = y)\) est l’union disjointe des \((X = x_i)\) pour les \(x_i\) tels que \(f(x_i) = y\). Donc \(\E(f(X)) = \sum_{y} y\,\P(f(X) = y) = \sum_{y} \sum_{i \,:\, f(x_i) = y} f(x_i)\,\P(X = x_i)\), et chaque \(i\) apparaît une fois : c’est \(\sum_{i} f(x_i)\,\P(X = x_i)\).</p>
+        </div>
+        <div class="calc" data-eq="t-E2"><div class="fm">\(\E(T^2) = \frac{1^2 + 2^2 + 3^2 + 4^2 + 5^2 + 6^2}{6} = \frac{91}{6}\)</div></div>
+        <div class="box thm"><span class="tag">Théorème <i>linéarité de l’espérance</i></span>
+          <p>Soient \(X\) et \(Y\) deux variables aléatoires finies et \((a, b) \in \R^2\).</p>
+          <ul>
+            <li>\(\E(aX + b) = a\,\E(X) + b\) : démontré en partie 3.</li>
+            <li>\(\E(X + Y) = \E(X) + \E(Y)\) : énoncé dans les vidéos, admis (le document des démonstrations le dit). Par récurrence, \(\E(X_1 + \cdots + X_n) = \E(X_1) + \cdots + \E(X_n)\).</li>
+            <li>Une constante \(b\) a pour espérance \(b\) : \(\E(b) = b\).</li>
+          </ul>
+          <p>Aucune hypothèse d’indépendance n’est nécessaire.</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (TD 2 ex. 4.14).</b> Une urne contient quatre boules bleues numérotées de 1 à 4, trois rouges numérotées de 1 à 3 et deux vertes numérotées 1 et 2. On tire une boule au hasard : 9 issues équiprobables. \(X\) est le numéro tiré.</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Tableau 7.2 — TD 2 ex. 4.14 : la loi du numéro \(X\) (lois recalculées sur les 9 boules)</caption>
+          <thead><tr><th>\(k\)</th><th>\(1\)</th><th>\(2\)</th><th>\(3\)</th><th>\(4\)</th></tr></thead>
+          <tbody><tr><th>\(\P(X = k)\)</th><td data-eq="u-1">\(\frac{3}{9} = \frac{1}{3}\)</td><td data-eq="u-2">\(\frac{3}{9} = \frac{1}{3}\)</td><td data-eq="u-3">\(\frac{2}{9}\)</td><td data-eq="u-4">\(\frac{1}{9}\)</td></tr></tbody>
+        </table></div>
+        <div class="calc" data-eq="u-E"><div class="fm">\(\E(X) = 1 \times \frac{3}{9} + 2 \times \frac{3}{9} + 3 \times \frac{2}{9} + 4 \times \frac{1}{9} = \frac{3 + 6 + 6 + 4}{9} = \frac{19}{9}\)</div></div>
+        <div class="prose">
+          <p>Le jeu de l’exercice : on gagne 2 € si la boule est bleue et paire (bleues 2 et 4), 3 € si elle n’est pas bleue et paire (rouge 2, verte 2), rien sinon. Le gain \(Y\) vaut 0, 2 ou 3, avec <span data-eq="g-0">\(\P(Y = 0) = \frac{5}{9}\)</span>, <span data-eq="g-2">\(\P(Y = 2) = \frac{2}{9}\)</span>, <span data-eq="g-3">\(\P(Y = 3) = \frac{2}{9}\)</span>. Alors <span data-eq="g-E">\(\E(Y) = 0 \times \frac{5}{9} + 2 \times \frac{2}{9} + 3 \times \frac{2}{9} = \frac{10}{9}\)</span>. Si une partie coûte 1 €, le gain net est \(Y - 1\) et, par linéarité, <span data-eq="g-net">\(\E(Y - 1) = \frac{10}{9} - 1 = \frac{1}{9}\)</span> : le jeu est favorable au joueur.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP d’octobre 2024, ex. 6.1 (a) et (b), réponses recalculées</i></span>
+          <p>Quatre boules numérotées 0, 1, 1 et 2, indiscernables au toucher ; \(X_k\) est le numéro de la \(k\)-ième boule tirée, avec remise.</p>
+          <p>(a) Chaque tirage se fait parmi les 4 boules, de façon équiprobable. <span data-eq="xk-omega">\(X_k(\Omega) = \{0, 1, 2\}\)</span>, avec <span data-eq="xk-0">\(\P(X_k = 0) = \frac{1}{4}\)</span>, <span data-eq="xk-1">\(\P(X_k = 1) = \frac{2}{4} = \frac{1}{2}\)</span> (deux boules portent 1) et <span data-eq="xk-2">\(\P(X_k = 2) = \frac{1}{4}\)</span>. On a bien <span data-eq="xk-sum">\(\frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1\)</span>.<span class="c">loi + somme</span></p>
+          <p>(b) <span data-eq="xk-E">\(\E(X_k) = 0 \times \P(X_k = 0) + 1 \times \P(X_k = 1) + 2 \times \P(X_k = 2) = 0 \times \frac{1}{4} + 1 \times \frac{1}{2} + 2 \times \frac{1}{4} = 1\)</span>.<span class="c">rien de parachuté</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : oublier les poids</span>
+          <ul>
+            <li>L’espérance n’est pas la moyenne des valeurs : au TD 2 ex. 4.14, <span data-eq>\(\frac{1 + 2 + 3 + 4}{4} = \frac{5}{2}\)</span>, alors que \(\E(X) = \frac{19}{9}\).</li>
+            <li>\(\E(X^2) \neq (\E(X))^2\) : pour le dé, \(\E(T^2) = \frac{91}{6}\) mais <span data-eq>\(\left(\frac{7}{2}\right)^2 = \frac{49}{4}\)</span>. Au QCM du 21 octobre 2024 (Q20), avec \(\P(X = -1) = 0{,}4\), \(\P(X = 0) = 0{,}4\), \(\P(X = 2) = 0{,}2\) : <span data-eq="q20-E2">\(\E(X^2) = (-1)^2 \times 0{,}4 + 0^2 \times 0{,}4 + 2^2 \times 0{,}2 = 1{,}2\)</span>, alors que <span data-eq="q20-E">\(\E(X) = -0{,}4 + 0 + 0{,}4 = 0\)</span>.</li>
+            <li>Des notes d’élève donnent \(\E(2T - 6) = \frac{2}{7}\) au TD 2 ex. 4.13. Par linéarité, <span data-eq="x26-Elin">\(\E(2T - 6) = 2 \times \frac{7}{2} - 6 = 1\)</span>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">démonstrations à connaître § 2 · contrôle 2022 ex. 7 · examen DP 2024 ex. 5.2</span></div><h2>Démonstration : \(\E(aX + b) = a\,\E(X) + b\)</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Cette démonstration est tombée au contrôle de novembre 2022 (ex. 7, 3 points : « Montrer que \(\E(Y) = a\E(X) + b\) ») et à l’examen DP d’octobre 2024 (ex. 5.2). Le corrigé de 2022 répond « Voir cours ! » : la rédaction attendue est celle du document « Démonstrations à connaître », recopiée ci-dessous.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>espérance de \(aX + b\)</i></span>
+          <p>Soient \(X\) une variable aléatoire finie et \((a, b) \in \R^2\). Alors \(\E(aX + b) = a\,\E(X) + b\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>Demo_Proba, § 2</i></span>
+          <p>Soient \(X\) une variable aléatoire finie et \((a, b) \in \R^2\). Notons \(X(\Omega) = \{x_1, x_2, \ldots, x_n\}\) et considérons la variable aléatoire \(Y = aX + b\).</p>
+          <p>Cette variable aléatoire est de la forme \(Y = f(X)\) où \(f\) est la fonction \(x \mapsto ax + b\). Ainsi, d’après une proposition énoncée (et démontrée) dans une des vidéos,</p>
+          <div class="fm">\[\E(Y) = \sum_{i=1}^{n} \P(X = x_i)\,f(x_i) = \sum_{i=1}^{n} \P(X = x_i)\,(a\,x_i + b).\]</div>
+          <p>Or pour tout \(i \in \ent{1}{n}\), \(\P(X = x_i)\,(a\,x_i + b) = a\,\P(X = x_i)\,x_i + b\,\P(X = x_i)\). Ainsi,</p>
+          <div class="fm">\[\E(Y) = \sum_{i=1}^{n} \big(a\,\P(X = x_i)\,x_i + b\,\P(X = x_i)\big) = \sum_{i=1}^{n} \big(a\,\P(X = x_i)\,x_i\big) + \sum_{i=1}^{n} \big(b\,\P(X = x_i)\big).\]</div>
+          <p>Dans cette dernière expression, on peut factoriser \(a\) dans la première somme et \(b\) dans la seconde. On obtient :</p>
+          <div class="fm">\[\E(Y) = a \sum_{i=1}^{n} \P(X = x_i)\,x_i + b \sum_{i=1}^{n} \P(X = x_i).\]</div>
+          <p>Or ici, la première somme vaut \(\E(X)\), la seconde vaut \(1\). Finalement,</p>
+          <div class="fm">\[\E(aX + b) = a\,\E(X) + b.\]</div>
+        </div>
+        <div class="box why"><span class="tag">Deux précisions de rédaction</span>
+          <ul>
+            <li>La « proposition énoncée dans une des vidéos » est le <b>théorème de transfert</b> (partie 2). Sur ta copie, cite-le par son nom.</li>
+            <li>La seconde somme vaut 1 parce que c’est la somme des probabilités de la loi de \(X\) (partie 1). Dis-le en une phrase : c’est ce qui fait apparaître \(b\) seul.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p><b>Vérification sur un exemple (TD 2 ex. 4.13).</b> \(T\) est le numéro d’un dé équilibré et \(X = 2T - 6\). Les valeurs de \(X\) sont <span data-eq="x26-omega">\(X(\Omega) = \{-4, -2, 0, 2, 4, 6\}\)</span>, chacune de probabilité \(\frac{1}{6}\). Directement :</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="x26-E">\(\E(X) = \frac{-4 - 2 + 0 + 2 + 4 + 6}{6} = \frac{6}{6} = 1\)</div><div class="fm" data-eq="x26-Elin">\(2\,\E(T) - 6 = 2 \times \frac{7}{2} - 6 = 1\)</div></div>
+        <div class="prose"><p>Les deux calculs donnent 1 : la formule évite de chercher la loi de \(X\).</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>la version courte, sur une copie</i></span>
+          <p>Notons \(X(\Omega) = \{x_1, \ldots, x_n\}\). \(aX + b = f(X)\) avec \(f : x \mapsto ax + b\). Par le théorème de transfert,<span class="c">cité</span></p>
+          <div class="fm">\[\E(aX + b) = \sum_{i=1}^{n} (a x_i + b)\,\P(X = x_i) = a \sum_{i=1}^{n} x_i\,\P(X = x_i) + b \sum_{i=1}^{n} \P(X = x_i).\]</div>
+          <p>La première somme est \(\E(X)\) par définition. La seconde vaut 1, car c’est la somme des probabilités de la loi de \(X\).<span class="c">les deux sommes nommées</span></p>
+          <p>Donc \(\E(aX + b) = a\,\E(X) + b\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : démontrer en supposant le résultat</span>
+          <ul>
+            <li>« L’espérance est linéaire, donc \(\E(aX + b) = a\E(X) + b\) » n’est pas une démonstration : c’est l’énoncé lui-même. Il faut partir de la définition et du théorème de transfert.</li>
+            <li>\(\sum_{i=1}^{n} b\,\P(X = x_i) = b\), pas \(nb\) : on factorise \(b\), il reste la somme des probabilités.</li>
+            <li>Le \(b\) ne disparaît pas dans l’espérance : \(\E(aX + b) \neq a\,\E(X)\). Il disparaît dans la variance (partie 5).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche § 2 · démonstrations à connaître § 2 · examen DP 2023 ex. 5</span></div><h2>Variance, écart type, formule de Koenig-Huygens</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>variance, écart type</i></span>
+          <p>La <b>variance</b> de \(X\) et son <b>écart type</b> sont</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E\Big(\big(X - \E(X)\big)^2\Big) = \sum_{i=1}^{n} \big(x_i - \E(X)\big)^2\,\P(X = x_i), \qquad \sigma(X) = \sqrt{\operatorname{Var}(X)}.\]</div>
+          <p>Le TD et les sujets écrivent aussi \(\V(X)\) pour \(\operatorname{Var}(X)\), et \(\sigma_X\) pour \(\sigma(X)\).</p>
+        </div>
+        <div class="prose">
+          <p>La variance est la moyenne pondérée des carrés des écarts à l’espérance : elle mesure la <b>dispersion</b> de \(X\) autour de \(\E(X)\). Elle est toujours positive ou nulle, et nulle seulement si \(X\) ne prend qu’une valeur. L’écart type s’exprime dans la même unité que \(X\) (des euros, des points) : c’est lui qu’on lit sur un diagramme (pointillés de la figure 1).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>formule de Koenig-Huygens</i></span>
+          <p>Soit \(X\) une variable aléatoire finie. Alors \(\operatorname{Var}(X) = \E(X^2) - \big(\E(X)\big)^2\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>Demo_Proba, § 2, propriété 1 de la variance</i></span>
+          <p>Soient \(X\) une variable aléatoire finie et \((a, b) \in \R^2\). On sait que, par définition,</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E\Big(\big(X - \E(X)\big)^2\Big).\]</div>
+          <p>Or \(\big(X - \E(X)\big)^2 = X^2 - 2\,\E(X)\,X + \big(\E(X)\big)^2\). Ainsi, \(\operatorname{Var}(X) = \E\Big(X^2 - 2\,\E(X)\,X + \big(\E(X)\big)^2\Big)\).</p>
+          <p>On peut maintenant utiliser une propriété de l’espérance, énoncée dans une des vidéos mais pas démontrée ici : si \(X\) et \(Y\) sont deux variables aléatoires finies, alors</p>
+          <div class="fm">\[\E(X + Y) = \E(X) + \E(Y).\]</div>
+          <p>En appliquant cette propriété à la dernière expression de \(\operatorname{Var}(X)\), on déduit que</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - \E\big(2\,\E(X)\,X\big) + \E\Big(\big(\E(X)\big)^2\Big).\]</div>
+          <p>Dans cette expression, on remarque que :</p>
+          <p>(a) \(2\,\E(X)\,X\) est une variable aléatoire de la forme \(aX + b\) avec \(a = 2\,\E(X)\) et \(b = 0\). En effet, \(\E(X)\) doit être considérée comme une constante. Elle dépend de la loi de \(X\) mais pas de la valeur de \(X\). Si on tire \(X\) aléatoirement plusieurs fois, \(X\) prend des valeurs différentes mais \(\E(X)\) ne varie pas. Ainsi,</p>
+          <div class="fm">\[\E\big(2\,\E(X)\,X\big) = 2\,\E(X)\,\E(X) = 2\big(\E(X)\big)^2.\]</div>
+          <p>(b) \(\E\Big(\big(\E(X)\big)^2\Big)\) est l’espérance de la variable \(\big(\E(X)\big)^2\) qui est une variable constante. Son espérance a donc la valeur de cette constante, c’est-à-dire que :</p>
+          <div class="fm">\[\E\Big(\big(\E(X)\big)^2\Big) = \big(\E(X)\big)^2.\]</div>
+          <p>De ces deux remarques, on déduit que</p>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - 2\big(\E(X)\big)^2 + \big(\E(X)\big)^2 = \E(X^2) - \big(\E(X)\big)^2.\]</div>
+        </div>
+        <div class="box why"><span class="tag">Ce que la démonstration utilise</span>
+          <ul>
+            <li>\(\E(X + Y) = \E(X) + \E(Y)\), admis, appliqué à trois termes.</li>
+            <li>\(\E(aX + b) = a\,\E(X) + b\) (partie 3), avec \(a = 2\,\E(X)\) et \(b = 0\).</li>
+            <li>L’espérance d’une constante est cette constante.</li>
+          </ul>
+          <p>L’examen DP de 2023 demandait de « mettre en évidence dans les calculs » ces propriétés : écris-les à l’endroit où tu t’en sers.</p>
+        </div>
+        <div class="prose">
+          <p><b>Les deux formules sur le dé.</b> Avec \(\E(T) = \frac{7}{2}\) et \(\E(T^2) = \frac{91}{6}\) (partie 2) :</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="t-Vdef">\(\operatorname{Var}(T) = \frac{1}{6}\left[\left(\frac{5}{2}\right)^2 + \left(\frac{3}{2}\right)^2 + \left(\frac{1}{2}\right)^2 + \left(\frac{1}{2}\right)^2 + \left(\frac{3}{2}\right)^2 + \left(\frac{5}{2}\right)^2\right] = \frac{1}{6} \times \frac{70}{4} = \frac{35}{12}\)</div><div class="fm" data-eq="t-V">\(\operatorname{Var}(T) = \E(T^2) - \big(\E(T)\big)^2 = \frac{91}{6} - \frac{49}{4} = \frac{182 - 147}{12} = \frac{35}{12}\)</div><div class="fm" data-eq="t-sd">\(\sigma(T) = \sqrt{\frac{35}{12}} \approx 1{,}71\)</div></div>
+        <div class="prose"><p>Koenig-Huygens évite les écarts \(x_i - \E(X)\) quand \(\E(X)\) est une fraction : c’est la formule à utiliser sans calculatrice.</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP d’octobre 2023, ex. 5 (4 points)</i></span>
+          <p>1. Pour \(X\), \(Y\) variables aléatoires finies et \((a, b) \in \R^2\) : \(\E(X + Y) = \E(X) + \E(Y)\) et \(\E(aX + b) = a\,\E(X) + b\).</p>
+          <p>2. Par définition, \(\operatorname{Var}(X) = \E\big((X - \E(X))^2\big) = \E\big(X^2 - 2\E(X)X + \E(X)^2\big)\). \(\E(X)\) est une constante.<span class="c">dit une fois</span></p>
+          <div class="fm">\[\operatorname{Var}(X) \overset{\hl{\E(X+Y)}}{=} \E(X^2) + \E\big(-2\E(X)X\big) + \E\big(\E(X)^2\big) \overset{\hl{\E(aX+b)}}{=} \E(X^2) - 2\E(X)\E(X) + \E(X)^2 = \E(X^2) - \E(X)^2.\]</div>
+          <p>Au deuxième signe égal : \(\E(aX + b)\) avec \(a = -2\E(X)\), \(b = 0\), puis avec \(a = 0\), \(b = \E(X)^2\).<span class="c">les propriétés mises en évidence</span></p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 7.3 — Quatre lois des TD et des sujets : espérance, \(\E(X^2)\), variance par Koenig-Huygens (chaque valeur recalculée sur les issues)</caption>
+          <thead><tr><th>Variable</th><th>\(\E(X)\)</th><th>\(\E(X^2)\)</th><th>\(\operatorname{Var}(X)\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(X_k\), boules 0, 1, 1, 2 (examen DP 2024, ex. 6.1)</td><td data-eq="xk-E">\(1\)</td><td data-eq="xk-E2">\(0^2 \times \frac{1}{4} + 1^2 \times \frac{1}{2} + 2^2 \times \frac{1}{4} = \frac{3}{2}\)</td><td data-eq="xk-V">\(\frac{3}{2} - 1^2 = \frac{1}{2}\)</td></tr>
+            <tr><td>\(Z\), rang de la 1re blanche (contrôle 2022, ex. 5.3)</td><td data-eq="z-E">\(\frac{3}{5} + \frac{6}{10} + \frac{3}{10} = \frac{3}{2}\)</td><td data-eq="z-E2">\(\frac{3}{5} + \frac{12}{10} + \frac{9}{10} = \frac{27}{10}\)</td><td data-eq="z-V">\(\frac{27}{10} - \frac{9}{4} = \frac{9}{20}\)</td></tr>
+            <tr><td>points, deux tirages sans remise (TD 2 ex. 4.15)</td><td data-eq="t15-E">\(\frac{6}{5}\)</td><td data-eq="t15-E2">\(\frac{12}{5}\)</td><td data-eq="t15-V">\(\frac{12}{5} - \frac{36}{25} = \frac{24}{25}\)</td></tr>
+            <tr><td>numéro de la boule (TD 2 ex. 4.14)</td><td data-eq="u-E">\(\frac{19}{9}\)</td><td data-eq="u-E2">\(\frac{49}{9}\)</td><td data-eq="u-V">\(\frac{49}{9} - \frac{361}{81} = \frac{80}{81}\)</td></tr>
+            <tr><td>gain \(G\) : 5, 3 ou 0 avec \(\frac{1}{3}\) chacun (contrôle 2021, ex. 6)</td><td data-eq="g21-E">\(\frac{8}{3}\)</td><td data-eq="g21-E2">\(\frac{34}{3}\)</td><td data-eq="g21-V">\(\frac{34}{3} - \frac{64}{9} = \frac{38}{9}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Pour \(X_k\) : <span data-eq="xk-sd">\(\sigma(X_k) = \sqrt{\frac{1}{2}} = \frac{\sqrt{2}}{2} \approx 0{,}71\)</span>, les pointillés de la figure 1.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : le signe et les parenthèses</span>
+          <ul>
+            <li>\(\operatorname{Var}(X) = \E(X^2) - (\E(X))^2\), pas \(\E(X^2) + (\E(X))^2\) (case fausse du QCM du 20 octobre 2025, Q20), ni \((\E(X))^2 - \E(X^2)\).</li>
+            <li>\(\E(X^2) = \sum x_i^2\,\P(X = x_i)\) : on élève les <b>valeurs</b> au carré, pas les probabilités, et pas la somme \(\big(\sum x_i\,\P(X = x_i)\big)^2\).</li>
+            <li>Une variance négative est une erreur de calcul : recommence. Et l’écart type est \(\sqrt{\operatorname{Var}(X)}\), pas \(\operatorname{Var}(X)^2\).</li>
+            <li>Va jusqu’à la fraction simplifiée : des notes d’élève s’arrêtent à \(\frac{49}{9} - \left(\frac{19}{9}\right)^2\) au TD 2 ex. 4.14.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">démonstrations à connaître § 2 · examen DP 2024 ex. 5.3 · TD 2 ex. 4.13 et 4.17</span></div><h2>\(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\), variable centrée réduite</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>variance de \(aX + b\)</i></span>
+          <p>Soient \(X\) une variable aléatoire finie et \((a, b) \in \R^2\). Alors \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\). En conséquence, \(\sigma(aX + b) = |a|\,\sigma(X)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>Demo_Proba, § 2, propriété 2 de la variance</i></span>
+          <p>Pour démontrer la propriété 2, on commence par écrire la définition de la variance de \(aX + b\) :</p>
+          <div class="fm">\[\operatorname{Var}(aX + b) = \E\Big(\big((aX + b) - \E(aX + b)\big)^2\Big).\]</div>
+          <p>Or, comme \(\E(aX + b) = a\,\E(X) + b\), on a</p>
+          <div class="fm">\[(aX + b) - \E(aX + b) = aX + b - a\,\E(X) - b = a\big(X - \E(X)\big).\]</div>
+          <p>D’où</p>
+          <div class="fm">\[\operatorname{Var}(aX + b) = \E\Big(a^2\big(X - \E(X)\big)^2\Big) = a^2\,\E\Big(\big(X - \E(X)\big)^2\Big).\]</div>
+          <p>Mais l’espérance qui apparaît dans la dernière expression ci-dessus est justement la variance de \(X\). Ainsi, \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\).</p>
+        </div>
+        <div class="box why"><span class="tag">Une précision</span>
+          <p>Le passage \(\E\big(a^2 W\big) = a^2\,\E(W)\), avec \(W = (X - \E(X))^2\), est la partie 3 appliquée à la variable \(W\), avec le coefficient \(a^2\) et \(b = 0\). Écris-le si on te demande de « justifier chaque étape ».</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (TD 2 ex. 4.13).</b> \(X = 2T - 6\), avec \(\operatorname{Var}(T) = \frac{35}{12}\) (partie 4). Par le théorème, puis directement avec la loi de \(X\) (partie 3) :</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="x26-Vlin">\(\operatorname{Var}(2T - 6) = 2^2 \operatorname{Var}(T) = 4 \times \frac{35}{12} = \frac{35}{3}\)</div><div class="fm" data-eq="x26-V">\(\E(X^2) - \E(X)^2 = \frac{16 + 4 + 0 + 4 + 16 + 36}{6} - 1^2 = \frac{38}{3} - 1 = \frac{35}{3}\)</div></div>
+        <figure class="p7-fig">
+          <svg viewBox="0 0 440 250" role="img" aria-label="En haut, la loi de T : six bâtons de hauteur 1/6 en 1, 2, 3, 4, 5, 6. En bas, la loi de X = 2T − 6 : six bâtons de même hauteur en −4, −2, 0, 2, 4, 6. L’espérance passe de 3,5 à 1, l’écart type double.">
+            <text class="nm" x="44" y="34">T</text>
+            <text class="nm" x="44" y="146">X = 2T − 6</text>
+            <line class="lw-axis" x1="40" y1="95" x2="400" y2="95"/>
+            <line class="lw-axis" x1="40" y1="205" x2="400" y2="205"/>
+            <rect class="lw-bar" x="213" y="45" width="14" height="50"/><rect class="lw-bar" x="243" y="45" width="14" height="50"/><rect class="lw-bar" x="273" y="45" width="14" height="50"/>
+            <rect class="lw-bar" x="303" y="45" width="14" height="50"/><rect class="lw-bar" x="333" y="45" width="14" height="50"/><rect class="lw-bar" x="363" y="45" width="14" height="50"/>
+            <rect class="lw-bar" x="63" y="155" width="14" height="50"/><rect class="lw-bar" x="123" y="155" width="14" height="50"/><rect class="lw-bar" x="183" y="155" width="14" height="50"/>
+            <rect class="lw-bar" x="243" y="155" width="14" height="50"/><rect class="lw-bar" x="303" y="155" width="14" height="50"/><rect class="lw-bar" x="363" y="155" width="14" height="50"/>
+            <line class="lw-mu" x1="295" y1="30" x2="295" y2="95"/>
+            <line class="lw-sd" x1="243.8" y1="38" x2="243.8" y2="95"/><line class="lw-sd" x1="346.2" y1="38" x2="346.2" y2="95"/>
+            <line class="lw-mu" x1="220" y1="140" x2="220" y2="205"/>
+            <line class="lw-sd" x1="117.5" y1="148" x2="117.5" y2="205"/><line class="lw-sd" x1="322.5" y1="148" x2="322.5" y2="205"/>
+            <text class="lw-t" x="220" y="113" text-anchor="middle">1</text><text class="lw-t" x="250" y="113" text-anchor="middle">2</text><text class="lw-t" x="280" y="113" text-anchor="middle">3</text>
+            <text class="lw-t" x="310" y="113" text-anchor="middle">4</text><text class="lw-t" x="340" y="113" text-anchor="middle">5</text><text class="lw-t" x="370" y="113" text-anchor="middle">6</text>
+            <text class="lw-t" x="70" y="223" text-anchor="middle">−4</text><text class="lw-t" x="130" y="223" text-anchor="middle">−2</text><text class="lw-t" x="190" y="223" text-anchor="middle">0</text>
+            <text class="lw-t" x="250" y="223" text-anchor="middle">2</text><text class="lw-t" x="310" y="223" text-anchor="middle">4</text><text class="lw-t" x="370" y="223" text-anchor="middle">6</text>
+            <text class="rd" x="295" y="24" text-anchor="middle">E = 7/2</text>
+            <text class="rd" x="220" y="134" text-anchor="middle">E = 1</text>
+            <text class="mu" x="44" y="244">chaque bâton : probabilité 1/6</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 3</b> — Mêmes probabilités, valeurs multipliées par 2 puis décalées de 6 vers la gauche. L’espérance suit la transformation (\(\frac{7}{2}\) devient 1). Le décalage ne change pas la dispersion, la multiplication par 2 double l’écart type (<span data-eq="t-sd">\(\sigma(T) \approx 1{,}71\)</span>, <span data-eq="x26-sd">\(\sigma(X) = \sqrt{\frac{35}{3}} \approx 3{,}42\)</span>) : la variance est multipliée par \(2^2 = 4\).</figcaption>
+        </figure>
+        <div class="box def"><span class="tag">Définition <i>variable centrée réduite (TD 2 ex. 4.17★)</i></span>
+          <p>Si \(\operatorname{Var}(X) \neq 0\) (\(X\) n’est pas constante), la <b>variable centrée réduite</b> associée à \(X\) est \(\overline{X} = \dfrac{X - \E(X)}{\sigma_X}\). Alors \(\E(\overline{X}) = 0\) et \(\operatorname{Var}(\overline{X}) = 1\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration</span>
+          <p>\(\overline{X} = aX + b\) avec \(a = \frac{1}{\sigma_X}\) et \(b = -\frac{\E(X)}{\sigma_X}\), deux constantes. Par la partie 3, \(\E(\overline{X}) = \frac{\E(X)}{\sigma_X} - \frac{\E(X)}{\sigma_X} = 0\). Par le théorème ci-dessus, \(\operatorname{Var}(\overline{X}) = \frac{1}{\sigma_X^2} \operatorname{Var}(X) = \frac{\operatorname{Var}(X)}{\operatorname{Var}(X)} = 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP d’octobre 2024, ex. 5.3 (sujet sans corrigé)</i></span>
+          <p>\(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\) : elle ne dépend pas de \(b\).<span class="c">l’expression d’abord</span></p>
+          <p>Par définition, \(\operatorname{Var}(aX + b) = \E\big(((aX + b) - \E(aX + b))^2\big)\). D’après la question 2, \(\E(aX + b) = a\,\E(X) + b\), donc \((aX + b) - \E(aX + b) = a(X - \E(X))\).<span class="c">la question 2 citée</span></p>
+          <p>Ainsi \(\operatorname{Var}(aX + b) = \E\big(a^2 (X - \E(X))^2\big) = a^2\,\E\big((X - \E(X))^2\big)\), en appliquant encore la question 2 avec le coefficient \(a^2\) et \(b = 0\). La dernière espérance est \(\operatorname{Var}(X)\) : \(\operatorname{Var}(aX + b) = a^2 \operatorname{Var}(X)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : \(b\) disparaît, \(a\) est au carré</span>
+          <ul>
+            <li>\(\operatorname{Var}(aX + b) \neq a \operatorname{Var}(X) + b\), et \(\neq a^2 \operatorname{Var}(X) + b\). Le gain net \(Y - 1\) du TD 2 ex. 4.14 a la même variance que \(Y\) : <span data-eq="g-netV">\(\operatorname{Var}(Y - 1) = \operatorname{Var}(Y) = \frac{134}{81}\)</span>.</li>
+            <li>\(\operatorname{Var}(-X) = (-1)^2 \operatorname{Var}(X) = \operatorname{Var}(X)\) : une variance n’est jamais négative. Mais \(\sigma(-X) = |-1|\,\sigma(X)\).</li>
+            <li>\(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\) demande l’indépendance (partie 8). Avec \(Y = X = T\) : <span data-eq="t-V2T">\(\operatorname{Var}(2T) = 4 \times \frac{35}{12} = \frac{35}{3}\)</span>, pas \(2 \times \frac{35}{12}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">fiche § 3.1 · TD 2 ex. 5.19 et 5.20 · examens DP 2023 et 2024, ex. 6</span></div><h2>Lois uniforme et de Bernoulli</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>loi uniforme</i></span>
+          <p>\(X\) suit la <b>loi uniforme</b> sur \(\ent{1}{n}\) si \(X(\Omega) = \ent{1}{n}\) et \(\P(X = k) = \frac{1}{n}\) pour tout \(k \in \ent{1}{n}\). Alors</p>
+          <div class="fm">\[\E(X) = \frac{n + 1}{2}, \qquad \operatorname{Var}(X) = \frac{n^2 - 1}{12}.\]</div>
+          <p class="muted">La fiche de synthèse ne la cite pas ; elle est au TD 2 (ex. 5.19).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>TD 2 ex. 5.19, avec les deux sommes admises</i></span>
+          <p>On admet \(\sum_{k=1}^{n} k = \frac{n(n+1)}{2}\) et \(\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}\). Alors</p>
+          <div class="fm">\[\E(X) = \sum_{k=1}^{n} k \times \frac{1}{n} = \frac{1}{n} \times \frac{n(n+1)}{2} = \frac{n+1}{2}, \qquad \E(X^2) = \frac{1}{n} \sum_{k=1}^{n} k^2 = \frac{(n+1)(2n+1)}{6}.\]</div>
+          <p>Par Koenig-Huygens,</p>
+          <div class="fm">\[\operatorname{Var}(X) = \frac{(n+1)(2n+1)}{6} - \frac{(n+1)^2}{4} = \frac{(n+1)\big(2(2n+1) - 3(n+1)\big)}{12} = \frac{(n+1)(n-1)}{12} = \frac{n^2 - 1}{12}.\]</div>
+        </div>
+        <div class="prose">
+          <p>Pour un dé (\(n = 6\)) : <span data-eq="t-E">\(\E(T) = \frac{6 + 1}{2} = \frac{7}{2}\)</span> et <span data-eq="u6-V">\(\operatorname{Var}(T) = \frac{6^2 - 1}{12} = \frac{35}{12}\)</span>, comme en partie 4.</p>
+          <p><b>Attention, la version anglaise du TD 2 (ex. 5.19) porte sur \(\ent{0}{n}\)</b>, qui a \(n + 1\) valeurs. Si \(X\) est uniforme sur \(\ent{0}{n}\), \(X + 1\) est uniforme sur \(\ent{1}{n+1}\). Par les parties 3 et 5 : \(\E(X) = \frac{n + 2}{2} - 1 = \frac{n}{2}\) et \(\operatorname{Var}(X) = \frac{(n+1)^2 - 1}{12} = \frac{n(n+2)}{12}\) (formules vérifiées par énumération pour \(n\) de 1 à 20).</p>
+          <p><b>Exemple (TD 2 ex. 5.20).</b> Un professeur note chaque copie en lançant un dé à 20 faces : la note \(N_i\) suit la loi uniforme sur \(\ent{1}{20}\). <span data-eq="n20-E">\(\E(N_i) = \frac{20 + 1}{2} = \frac{21}{2}\)</span>, et les notes de 10 à 20 sont 11 valeurs : <span data-eq="n20-ge10">\(\P(N_i \geq 10) = \frac{11}{20}\)</span>.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>loi de Bernoulli</i></span>
+          <p>Soit \(p \in [0, 1]\). \(X\) suit la <b>loi de Bernoulli de paramètre \(p\)</b> si</p>
+          <div class="fm">\[X(\Omega) = \{0, 1\}, \qquad \P(X = 1) = p, \qquad \P(X = 0) = 1 - p.\]</div>
+          <p>On note \(X \leadsto \text{Bernoulli}(p)\). Alors \(\E(X) = p\) et \(\operatorname{Var}(X) = p(1 - p)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>le calcul à détailler à chaque fois</i></span>
+          <div class="fm">\[\E(X) = 0 \times (1 - p) + 1 \times p = p, \qquad \E(X^2) = 0^2 \times (1 - p) + 1^2 \times p = p,\]</div>
+          <div class="fm">\[\operatorname{Var}(X) = \E(X^2) - \big(\E(X)\big)^2 = p - p^2 = p(1 - p).\]</div>
+        </div>
+        <div class="prose">
+          <p>Une épreuve de Bernoulli n’a que deux issues utiles : <b>succès</b> (\(X = 1\)) ou <b>échec</b> (\(X = 0\)). Pour tout évènement \(A\), la variable qui vaut 1 si \(A\) est réalisé et 0 sinon suit la loi de Bernoulli de paramètre \(\P(A)\). Le contrôle de 2022 (ex. 5.1) demandait d’en proposer une : dans une urne de 3 boules blanches et 2 vertes, on tire une boule et \(X\) vaut 1 si elle est verte. \(X \leadsto \text{Bernoulli}\left(\frac{2}{5}\right)\), <span data-eq="b25-V">\(\operatorname{Var}(X) = \frac{2}{5} \times \frac{3}{5} = \frac{6}{25}\)</span>.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 7.4 — Les variables de Bernoulli des sujets</caption>
+          <thead><tr><th>Sujet</th><th>Succès</th><th>\(p\)</th><th>\(\E(X)\)</th><th>\(\operatorname{Var}(X)\)</th></tr></thead>
+          <tbody>
+            <tr><td>examen DP 2023, ex. 6</td><td>bonne réponse à une question du QCM</td><td>\(\frac{1}{3}\)</td><td data-eq="b13-E">\(\frac{1}{3}\)</td><td data-eq="b13-V">\(\frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</td></tr>
+            <tr><td>examen DP 2024, ex. 6.2</td><td>la boule porte 0 ou 1</td><td>\(\frac{3}{4}\)</td><td data-eq="b34-E">\(\frac{3}{4}\)</td><td data-eq="b34-V">\(\frac{3}{4} - \frac{9}{16} = \frac{3}{16}\)</td></tr>
+            <tr><td>contrôle 2022, ex. 5.1</td><td>la boule tirée est verte</td><td>\(\frac{2}{5}\)</td><td data-eq="b25-E">\(\frac{2}{5}\)</td><td data-eq="b25-V">\(\frac{2}{5} - \frac{4}{25} = \frac{6}{25}\)</td></tr>
+            <tr><td>contrôle 2021, ex. 6</td><td>le dé donne 1</td><td>\(\frac{1}{6}\)</td><td data-eq="b16-E">\(\frac{1}{6}\)</td><td data-eq="b16-V">\(\frac{1}{6} - \frac{1}{36} = \frac{5}{36}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP d’octobre 2024, ex. 6.2 (réponses recalculées)</i></span>
+          <p>On gagne un euro si la boule tirée porte 0 ou 1, rien sinon ; \(Y_k\) est le gain au \(k\)-ième tirage.</p>
+          <p>(a) \(Y_k(\Omega) = \{0, 1\}\) et \((Y_k = 1) = (X_k = 0) \sqcup (X_k = 1)\), union disjointe. Donc <span data-eq="yk-1">\(\P(Y_k = 1) = \P(X_k = 0) + \P(X_k = 1) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span> et <span data-eq="yk-0">\(\P(Y_k = 0) = 1 - \frac{3}{4} = \frac{1}{4}\)</span>.<span class="c">justifier</span></p>
+          <p>\(Y_k\) suit la loi de Bernoulli de paramètre \(\frac{3}{4}\) : \(Y_k \leadsto \text{Bernoulli}\left(\frac{3}{4}\right)\).<span class="c">nommer la loi et son paramètre</span></p>
+          <p>(b) <span data-eq="yk-E">\(\E(Y_k) = 0 \times \frac{1}{4} + 1 \times \frac{3}{4} = \frac{3}{4}\)</span>, <span data-eq="yk-E2">\(\E(Y_k^2) = 0^2 \times \frac{1}{4} + 1^2 \times \frac{3}{4} = \frac{3}{4}\)</span>, d’où <span data-eq="yk-V">\(\operatorname{Var}(Y_k) = \frac{3}{4} - \left(\frac{3}{4}\right)^2 = \frac{3}{16}\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : les valeurs et le paramètre</span>
+          <ul>
+            <li>Une variable de Bernoulli prend les valeurs 0 et 1, rien d’autre. Un gain de 2 € ou 0 € n’en est pas une : c’est \(2X\) avec \(X\) de Bernoulli.</li>
+            <li>Le paramètre est \(\P(X = 1)\), la probabilité du succès, pas celle de l’échec.</li>
+            <li>Uniforme sur \(\ent{0}{20}\) : 21 valeurs. <span data-eq="0a20">\(\P(X \geq 10) = \frac{11}{21}\)</span>, pas \(\frac{1}{2}\) (QCM du 6 octobre 2025).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Partie 7 <span class="ref">fiche § 3.2 · TD 2 ex. 5.21 · examens DP 2023 et 2024, ex. 6</span></div><h2>Loi binomiale : répéter une épreuve de Bernoulli</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On répète \(n\) fois la même épreuve de Bernoulli, de façon indépendante, et on compte les succès. C’est l’exercice de fin de chaque examen DP depuis 2023 : 20 questions de QCM, 20 tirages avec remise.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>loi binomiale (fiche de synthèse)</i></span>
+          <p>Soient \(n \in \N^*\), \(p \in [0, 1]\) et \(X_1, \ldots, X_n\) des variables de Bernoulli <b>indépendantes</b> de même paramètre \(p\). Posons</p>
+          <div class="fm">\[Y = X_1 + \cdots + X_n = \text{nombre de } X_i \text{ qui valent } 1.\]</div>
+          <p>Alors \(Y\) suit la <b>loi binomiale de paramètres \(n\) et \(p\)</b>, notée \(Y \leadsto \mathrm{B}(n, p)\) :</p>
+          <div class="fm">\[Y(\Omega) = \ent{0}{n}, \qquad \forall k \in \ent{0}{n},\ \P(Y = k) = \binom{n}{k} p^k (1 - p)^{n - k}, \qquad \E(Y) = np, \qquad \operatorname{Var}(Y) = np(1 - p).\]</div>
+          <p>La fiche écrit aussi \(C_n^k\) pour \(\binom{n}{k}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>pour comprendre chaque morceau</i></span>
+          <p><b>La loi.</b> Le résultat des \(n\) épreuves est une liste \((x_1, \ldots, x_n)\) de 0 et de 1. \((Y = k)\) est réalisé par les listes qui ont exactement \(k\) fois 1 : il y en a \(\binom{n}{k}\) (on choisit les \(k\) places des succès, cours 5). Par indépendance, chacune a la probabilité \(p^k (1 - p)^{n - k}\). Ces listes sont des évènements deux à deux disjoints, d’où \(\P(Y = k) = \binom{n}{k} p^k (1 - p)^{n - k}\).</p>
+          <p><b>La somme.</b> Par la formule du binôme de Newton, \(\sum_{k=0}^{n} \binom{n}{k} p^k (1 - p)^{n - k} = \big(p + (1 - p)\big)^n = 1^n = 1\).</p>
+          <p><b>L’espérance.</b> Par linéarité, \(\E(Y) = \E(X_1) + \cdots + \E(X_n) = np\). L’indépendance ne sert pas ici.</p>
+          <p><b>La variance.</b> Les \(X_i\) sont indépendantes, donc (fiche, propriété 6, admise) \(\operatorname{Var}(Y) = \operatorname{Var}(X_1) + \cdots + \operatorname{Var}(X_n) = np(1 - p)\).</p>
+        </div>
+        <figure style="margin:0">
+          <div data-maths="law" data-opts='{"law":"binom","n":20,"p":"1/3","name":"Y","title":"Loi binomiale · change \\(n\\) et \\(p\\)"}'></div>
+          <figcaption class="fig-cap"><b>Figure 4</b> — \(\mathrm{B}(20, \frac{1}{3})\), la note de l’étudiant qui répond au hasard (examen DP 2023, ex. 6). Les bâtons les plus hauts sont en 6 et en 7, à égalité : <span data-eq="y-7">\(\P(Y = 6) = \P(Y = 7) = \frac{211\,681\,280}{1\,162\,261\,467} \approx 0{,}18\)</span>, autour de <span data-eq="y-E">\(\E(Y) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>. Avoir la moyenne au hasard est rare : <span data-eq="y-ge10">\(\P(Y \geq 10) \approx 0{,}092\)</span>. Change \(n\) et \(p\) : la loi se déplace avec \(np\) et s’étale avec \(np(1 - p)\).</figcaption>
+        </figure>
+        <div class="prose">
+          <p><b>Exemple (contrôle de TD de 2020).</b> On lance 5 dés à 10 faces et on marque un point pour chaque dé qui donne 1 ou 2. Les 5 dés sont indépendants et chacun marque avec la probabilité \(\frac{2}{10} = \frac{1}{5}\) : le score \(Y\) suit \(\mathrm{B}\left(5, \frac{1}{5}\right)\).</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="b5-2">\(\P(Y = 2) = \binom{5}{2} \left(\frac{1}{5}\right)^2 \left(\frac{4}{5}\right)^3 = 10 \times \frac{1}{25} \times \frac{64}{125} = \frac{128}{625}\)</div><div class="fm" data-eq="b5-gt1">\(\P(Y > 1) = 1 - \P(Y = 0) - \P(Y = 1) = 1 - \frac{1\,024}{3\,125} - \frac{1\,280}{3\,125} = \frac{821}{3\,125}\)</div><div class="fm" data-eq="b5-V">\(\E(Y) = 5 \times \frac{1}{5} = 1, \qquad \operatorname{Var}(Y) = 5 \times \frac{1}{5} \times \frac{4}{5} = \frac{4}{5}\)</div></div>
+        <div class="box meth"><span class="tag">Méthode <i>reconnaître une loi binomiale</i></span>
+          <ol>
+            <li>Une même épreuve à deux issues (succès, échec), de probabilité de succès \(p\) : une épreuve de Bernoulli.</li>
+            <li>Répétée \(n\) fois, de façon <b>indépendante</b> et <b>identique</b> (tirages avec remise, réponses au hasard indépendantes).</li>
+            <li>\(Y\) compte les succès. Écris la phrase : « \(Y\) est le nombre de succès dans la répétition de \(n\) épreuves de Bernoulli indépendantes et identiques de paramètre \(p\), donc \(Y \leadsto \mathrm{B}(n, p)\) ».</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP d’octobre 2023, ex. 6 = TD 2 ex. 5.21 (corrigé officiel)</i></span>
+          <p>Un QCM a 20 questions notées 0 ou 1. L’étudiant répond au hasard, indépendamment, juste avec la probabilité \(\frac{1}{3}\). \(X_k\) est la note à la question \(k\), \(Y\) la note finale.</p>
+          <p>1(a) Soit \(k \in \ent{1}{20}\). \(X_k(\Omega) = \{0, 1\}\), \(\P(X_k = 1) = \frac{1}{3}\), \(\P(X_k = 0) = \frac{2}{3}\) : \(X_k\) suit la loi de Bernoulli de paramètre \(\frac{1}{3}\).</p>
+          <p>1(b) <span data-eq="b13-E">\(\E(X_k) = 0 \times \P(X_k = 0) + 1 \times \P(X_k = 1) = \frac{1}{3}\)</span> ; <span data-eq="b13-E2">\(\E(X_k^2) = 0^2 \times \P(X_k = 0) + 1^2 \times \P(X_k = 1) = \frac{1}{3}\)</span> ; <span data-eq="b13-V">\(\operatorname{Var}(X_k) = \E(X_k^2) - \E(X_k)^2 = \frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</span>.<span class="c">« ne surtout pas parachuter »</span></p>
+          <p>2(a) La note finale est la somme des notes : \(Y = X_1 + X_2 + \cdots + X_{20}\).</p>
+          <p>2(b) \(Y\) est la somme de 20 variables de Bernoulli <b>indépendantes</b> de même paramètre \(\frac{1}{3}\) : c’est la répétition de 20 épreuves de Bernoulli indépendantes et identiques. Donc \(Y \leadsto \mathrm{B}\left(20, \frac{1}{3}\right)\), \(Y(\Omega) = \ent{0}{20}\) et<span class="c">la justification, puis les paramètres</span></p>
+          <div class="fm">\[\forall i \in \ent{0}{20}, \quad \P(Y = i) = \binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i}.\]</div>
+          <p>2(c) Par la formule du binôme de Newton : \(\displaystyle\sum_{i=0}^{20} \P(Y = i) = \sum_{i=0}^{20} \binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i} = \left(\frac{1}{3} + \frac{2}{3}\right)^{20} = 1^{20} = 1\).</p>
+          <p>2(d) Par linéarité, <span data-eq="y-E">\(\E(Y) = \E(X_1) + \cdots + \E(X_{20}) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>. Comme \(X_1, \ldots, X_{20}\) sont indépendantes, <span data-eq="y-V">\(\operatorname{Var}(Y) = \operatorname{Var}(X_1) + \cdots + \operatorname{Var}(X_{20}) = 20 \times \frac{2}{9} = \frac{40}{9}\)</span>.<span class="c">l’indépendance, pour la variance</span></p>
+        </div>
+        <div class="prose">
+          <p><b>Examen DP d’octobre 2024, ex. 6.3 (réponses recalculées).</b> Même plan avec les gains \(Y_k \leadsto \text{Bernoulli}\left(\frac{3}{4}\right)\) de la partie 6 : \(Z = Y_1 + \cdots + Y_{20}\) (les tirages sont avec remise, donc indépendants), \(Z \leadsto \mathrm{B}\left(20, \frac{3}{4}\right)\), \(\P(Z = i) = \binom{20}{i} \left(\frac{3}{4}\right)^i \left(\frac{1}{4}\right)^{20 - i}\) pour \(i \in \ent{0}{20}\), la somme vaut \(\left(\frac{3}{4} + \frac{1}{4}\right)^{20} = 1\), <span data-eq="z20-E">\(\E(Z) = 20 \times \frac{3}{4} = 15\)</span> et <span data-eq="z20-V">\(\operatorname{Var}(Z) = 20 \times \frac{3}{16} = \frac{15}{4}\)</span>.</p>
+          <p>Contrôles plus anciens : \(\mathrm{B}\left(10, \frac{1}{6}\right)\) en 2021 (<span data-eq="b10-E">\(\E = \frac{10}{6} = \frac{5}{3}\)</span>, <span data-eq="b10-V">\(\operatorname{Var} = 10 \times \frac{1}{6} \times \frac{5}{6} = \frac{25}{18}\)</span>) ; \(\mathrm{B}\left(5, \frac{2}{5}\right)\) en 2022 (<span data-eq="b525-E">\(\E = 5 \times \frac{2}{5} = 2\)</span>, <span data-eq="b525-V">\(\operatorname{Var} = 5 \times \frac{2}{5} \times \frac{3}{5} = \frac{6}{5}\)</span>).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : la justification et le terme général</span>
+          <ul>
+            <li>\(\P(Y = i)\) est <b>un</b> terme, \(\binom{20}{i} \left(\frac{1}{3}\right)^i \left(\frac{2}{3}\right)^{20 - i}\), pas une somme : des notes d’élève écrivent \(\sum\) à cette question du TD.</li>
+            <li>Sans « indépendantes » et « même paramètre », la loi binomiale n’est pas justifiée. Tirages sans remise : les épreuves ne sont plus indépendantes, ce n’est plus une loi binomiale (partie 8).</li>
+            <li>Une indépendance discutable se dit. Au TD 2 ex. 5.22, les 40 élèves d’une classe ont le même chapitre à l’examen : leurs résultats ne sont pas indépendants. Le TD attend \(\mathrm{B}\left(40, \frac{3}{5}\right)\) : écris « en supposant les résultats des élèves indépendants ».</li>
+            <li>Ordre des paramètres : \(\mathrm{B}(n, p)\), le nombre d’épreuves d’abord. \(\E(Y) = np\) peut ne pas être entier (\(\frac{20}{3}\)).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Partie 8 <span class="ref">fiche § 2.2 · TD 2 ex. 4.16, 4.18 et 5.23</span></div><h2>Couples de variables, et une ouverture</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Partie courte : aucun sujet de 2016 à 2024 n’a demandé de couple de variables aléatoires. Retiens la définition de l’indépendance et la formule de la variance d’une somme, qui sert à la loi binomiale.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>loi conjointe, indépendance</i></span>
+          <ul>
+            <li>La <b>loi du couple</b> \((X, Y)\) (loi conjointe) est la donnée des \(\P\big((X = x_i) \cap (Y = y_j)\big)\) pour tous \(x_i \in X(\Omega)\), \(y_j \in Y(\Omega)\) : un tableau. Les lois de \(X\) et de \(Y\) s’obtiennent en sommant les lignes et les colonnes.</li>
+            <li>\(X\) et \(Y\) sont <b>indépendantes</b> si, pour tous \(i\) et \(j\), \(\P\big((X = x_i) \cap (Y = y_j)\big) = \P(X = x_i)\,\P(Y = y_j)\).</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>somme de deux variables (fiche, propriétés 2 et 6)</i></span>
+          <p>\(\E(X + Y) = \E(X) + \E(Y)\) toujours. Si \(X\) et \(Y\) sont indépendantes, \(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (TD 2 ex. 4.18).</b> On tire une carte d’un jeu de 32. \(X\) est le nombre de dames obtenues (0 ou 1), \(Y\) le nombre de cœurs. \(X \leadsto \text{Bernoulli}\left(\frac{4}{32}\right) = \text{Bernoulli}\left(\frac{1}{8}\right)\), \(Y \leadsto \text{Bernoulli}\left(\frac{8}{32}\right) = \text{Bernoulli}\left(\frac{1}{4}\right)\).</p>
+        </div>
+        <div class="tbl"><table class="p7-joint">
+          <caption>Tableau 7.5 — La loi du couple \((X, Y)\) pour une carte (32 issues équiprobables), et les lois de \(X\) et \(Y\) en marge</caption>
+          <thead><tr><th></th><th>\(Y = 0\)</th><th>\(Y = 1\)</th><th class="mg">loi de \(X\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(X = 0\)</th><td data-eq="c1-00">\(\frac{21}{32}\)</td><td data-eq="c1-01">\(\frac{7}{32}\)</td><td class="mg">\(\frac{7}{8}\)</td></tr>
+            <tr><th>\(X = 1\)</th><td data-eq="c1-10">\(\frac{3}{32}\)</td><td data-eq="c1-11">\(\frac{1}{32}\)</td><td class="mg" data-eq="c1-X1">\(\frac{1}{8}\)</td></tr>
+            <tr><th class="mg">loi de \(Y\)</th><td class="mg">\(\frac{3}{4}\)</td><td class="mg" data-eq="c1-Y1">\(\frac{1}{4}\)</td><td class="mg">\(1\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 2 ex. 4.18.1c : montrer l’indépendance</i></span>
+          <p>On compare chaque case du tableau au produit des marges :<span class="c">les quatre cases</span></p>
+          <p><span data-eq>\(\frac{7}{8} \times \frac{3}{4} = \frac{21}{32}\)</span>, <span data-eq>\(\frac{7}{8} \times \frac{1}{4} = \frac{7}{32}\)</span>, <span data-eq>\(\frac{1}{8} \times \frac{3}{4} = \frac{3}{32}\)</span>, <span data-eq="c1-X1Y1">\(\frac{1}{8} \times \frac{1}{4} = \frac{1}{32}\)</span>.</p>
+          <p>Pour tous \(i, j \in \{0, 1\}\), \(\P\big((X = i) \cap (Y = j)\big) = \P(X = i)\,\P(Y = j)\) : \(X\) et \(Y\) sont indépendantes. La couleur d’une carte ne renseigne pas sur son rang.</p>
+        </div>
+        <div class="prose">
+          <p><b>Avec deux cartes</b> (ex. 4.18.2), il n’y a qu’une dame de cœur : avoir deux dames et deux cœurs est impossible. <span data-eq="c2-22">\(\P\big((X = 2) \cap (Y = 2)\big) = 0\)</span>, alors que <span data-eq="c2-X2Y2">\(\P(X = 2)\,\P(Y = 2) = \frac{3}{248} \times \frac{7}{124} = \frac{21}{30\,752}\)</span>, non nul. Une seule case suffit : \(X\) et \(Y\) ne sont pas indépendantes.</p>
+          <p><b>Ouverture : la loi hypergéométrique (TD 2 ex. 4.16 et 5.23).</b> Le nombre \(X\) de cœurs dans une main de 5 cartes (tirage simultané, donc sans remise) n’est pas binomial : \(\P(X = k) = \frac{\binom{8}{k} \binom{24}{5 - k}}{\binom{32}{5}}\) pour \(k \in \ent{0}{5}\), et <span data-eq="h-E">\(\E(X) = \frac{5}{4}\)</span> (calcul par la formule de Vandermonde, cours 5). Au TD 2 ex. 5.23, la probabilité d’avoir 2 garçons sur 5 enfants vaut <span data-eq="bin523">\(\binom{5}{2} \times 0{,}46^2 \times 0{,}54^3 \approx 0{,}3332\)</span> avec remise (loi binomiale), et <span data-eq="hyp523">\(\frac{\binom{46}{2} \binom{54}{3}}{\binom{100}{5}} \approx 0{,}3410\)</span> sans remise dans un groupe de 100 enfants dont 46 garçons (loi hypergéométrique). Sur un grand groupe, les deux sont proches.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : prouver ou réfuter l’indépendance</span>
+          <ul>
+            <li>Pour <b>prouver</b> l’indépendance de deux variables, il faut toutes les cases. Pour la <b>réfuter</b>, une seule case suffit.</li>
+            <li>Une case nulle dans le tableau, avec des marges non nulles, réfute l’indépendance.</li>
+            <li>\(\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)\) seulement si \(X\) et \(Y\) sont indépendantes ; \(\E(X + Y) = \E(X) + \E(Y)\) toujours.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Examens DP de format actuel : les variables aléatoires ont fait <b>10 points sur 30</b> en octobre 2023 et <b>15 points sur 40</b> en octobre 2024, en deux exercices identiques d’une année à l’autre.</li>
+            <li>Une question de cours démontrée, les deux fois. 2023, ex. 5 (<b>4 points sur 30</b>) : rappeler \(\E(X + Y)\) et \(\E(aX + b)\), puis démontrer Koenig-Huygens « en utilisant la question précédente mise en évidence dans les calculs ». 2024, ex. 5 (<b>6 points sur 40</b>) : rappeler les formules de \(\E(X)\) et \(\operatorname{Var}(X)\), puis exprimer et démontrer \(\E(aX + b)\) et \(\operatorname{Var}(aX + b)\). Le contrôle de 2022 demandait déjà \(\E(aX + b)\) (ex. 7, 3 points sur 40).</li>
+            <li>La chaîne Bernoulli → binomiale sur 20 répétitions, les deux fois. 2023, ex. 6 (<b>6 points sur 30</b>, le TD 2 ex. 5.21 recopié : \(\mathrm{B}\left(20, \frac{1}{3}\right)\), \(\E = \frac{20}{3}\), \(\operatorname{Var} = \frac{40}{9}\)). 2024, ex. 6 (<b>9 points sur 40</b> : loi, espérance et variance d’un numéro de boule, puis \(\text{Bernoulli}\left(\frac{3}{4}\right)\), puis \(\mathrm{B}\left(20, \frac{3}{4}\right)\), \(\E = 15\), \(\operatorname{Var} = \frac{15}{4}\)). Consignes : « fraction simplifiée », « détailler tous vos calculs et ne surtout pas parachuter les résultats ».</li>
+            <li>Contrôles plus anciens : 2021, ex. 6 (5 points sur 30 : Bernoulli, \(\mathrm{B}\left(10, \frac{1}{6}\right)\), un gain) ; 2022, ex. 5 (6,5 points sur 40 : proposer une Bernoulli, \(\mathrm{B}\left(5, \frac{2}{5}\right)\), rang de la première boule blanche).</li>
+            <li>Jamais tombés (2016 à 2024) : couples de variables, loi uniforme, fonction de répartition, variable centrée réduite, loi hypergéométrique. Aux QCM du lundi (21 octobre 2024, 20 octobre 2025) : valeurs prises, loi, \(\E(X)\), \(\E(X^2)\), et la formule de Koenig-Huygens à reconnaître.</li>
+            <li>Examen de cette année : DP le <b>mercredi 28 octobre à 14 h</b>, 2 h, documents et calculatrice interdits. Les trois démonstrations des parties 3 à 5 et la chaîne de la partie 7 sont à savoir écrire sans hésiter.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-7-variables.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="maths:variables:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Fin du cours DP</span><p>Tu as tout le programme de l’examen DP : dénombrement (cours 5), probabilités (cours 6) et variables aléatoires. Avant l’épreuve, réécris de mémoire les trois démonstrations des parties 3 à 5, puis refais la chaîne Bernoulli → binomiale de la partie 7 avec d’autres nombres. <a href="index.html">Retour à l’accueil Maths</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
