@@ -422,7 +422,7 @@
       r`Inverser les rôles : \(\binom{p}{i}\) pour les vertes (il y en a \(p\)), \(\binom{n}{k-i}\) pour les rouges.`,
       r`« Sous la forme d’un entier » : finir le calcul jusqu’à 330.`],
     grading: '5 points pour l’exercice ; le sujet ne détaille pas les questions.',
-    official: true, note: 'Rédaction du corrigé officiel. Formule vérifiée par programme pour tous \(n, p \leq 10\) ; application recalculée.', near: ['p2024-dp-ex3'],
+    official: true, note: 'Rédaction du corrigé officiel. Formule vérifiée par programme pour tous \\(n, p \\leq 10\\) ; application recalculée.', near: ['p2024-dp-ex3'],
     chk: { q4: '330' } });
 
   add({ id: 'p2023-dp-ex4', exam: 'p2023-dp', ecue: 'dp', order: 4, src: 'Examen DP 2023 · Ex 4', pts: 5, lvl: 2, time: 14,

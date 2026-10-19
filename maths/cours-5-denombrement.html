@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dénombrement · Maths</title>
+<meta name="description" content="Maths, DP, cours 5 : cardinal, principes additif et multiplicatif, p-listes, factorielle et permutations, anagrammes, arrangements, combinaisons, choisir la formule, coefficients binomiaux, formule de Pascal, Vandermonde, binôme de Newton et double dénombrement. Avec le triangle de Pascal et l’arbre « quelle formule ? ».">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · cours 5 : dénombrement">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · DP</b> — cours 5 sur 7</span><span>Source : diapositives « Counting and Binomial Coefficients », fiche de synthèse, TD 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="5"></span><a href="index.html">Maths</a> · DP · Cours 5 sur 7</div>
+      <h1>Compter sans tout écrire, <span class="w">avec la bonne formule.</span></h1>
+      <p class="lead">Dénombrer, c’est trouver le nombre d’éléments d’un ensemble fini sans les énumérer. Quatre formules suffisent : \(n^p\), \(n!\), \(A_n^p\) et \(\binom{n}{p}\). Ce cours t’apprend à reconnaître la bonne, à combiner les cas (« au moins », « exactement », « mais pas »), puis à démontrer les identités sur les coefficients binomiaux. À l’examen DP, le dénombrement pèse 15 points sur 30 en 2023 et 18,5 sur 40 en 2024.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 60 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec le triangle de Pascal</span></li>
+        <li><span><span class="k">Cours</span> diapositives, fiche de synthèse · TD 1</span></li>
+        <li class="ex"><span><span class="k">Examen</span> trois exercices sur six en 2023 et en 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="choose" data-opts='{"title":"Quelle formule ? · réponds aux questions"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Les trois questions de la diapositive « How to choose the formula ». Clique sur « oui » ou « non » : la feuille atteinte donne la formule, ses modèles de tirage et des exemples calculés.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 5 · Dénombrement</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Cardinal, somme et produit</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>p-listes et « au moins un »</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Factorielle, permutations</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Arrangements</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Combinaisons</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Choisir le modèle</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Coefficients binomiaux, Pascal</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Binôme, double dénombrement</span></a></li>
+    </ol>
+    <p class="toc-note">Les numéros de parties sont entourés comme ceux des questions sur ta copie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Maths</a><a href="cours-6-probabilites.html">Cours 6 : les probabilités →</a><a href="../qcm/index.html#maths">QCM de maths</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Cardinal, somme et produit</a></li><li><a href="#s2">p-listes et « au moins un »</a></li><li><a href="#s3">Factorielle, permutations</a></li><li><a href="#s4">Arrangements</a></li>
+      <li><a href="#s5">Combinaisons</a></li><li><a href="#s6">Choisir le modèle</a></li><li><a href="#s7">Coefficients binomiaux, Pascal</a></li><li><a href="#s8">Binôme, double dénombrement</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">diapositives 3-4 · fiche § 1.1 · TD 1.1, 1.3</span></div><h2>Cardinal, principe additif, principe multiplicatif</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Résoudre un problème de dénombrement, c’est trouver le nombre d’éléments d’un ensemble. Deux principes font presque tout le travail : on <b>additionne</b> quand on découpe en cas qui ne se recouvrent pas, on <b>multiplie</b> quand on fait des choix successifs.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>cardinal</i></span>
+          <p>Le <b>cardinal</b> d’un ensemble fini \(E\) est son nombre d’éléments. C’est un entier, noté \(\card(E)\) ; on écrit aussi \(|E|\) ou \(\#E\). Par exemple \(\card(\{1, 2, 3, 4, 5\}) = 5\) et \(\card(\varnothing) = 0\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>principe additif (fiche § 1.1)</i></span>
+          <ul>
+            <li>Si \(A \cap B = \varnothing\) : \(\card(A \sqcup B) = \card(A) + \card(B)\). Le symbole \(\sqcup\) rappelle que l’union est disjointe.</li>
+            <li>Si \(A_1, \dots, A_n\) sont deux à deux disjoints : \(\card(A_1 \sqcup \cdots \sqcup A_n) = \card(A_1) + \cdots + \card(A_n)\). Une <b>partition</b> de \(E\) donne donc \(\card(E)\) comme somme des cardinaux de ses morceaux.</li>
+            <li>Formule du crible : \(\card(A \cup B) = \card(A) + \card(B) - \card(A \cap B)\).</li>
+            <li>Complémentaire : si \(A \subset E\), \(\card(E \setminus A) = \card(E) - \card(A)\).</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>principe multiplicatif</i></span>
+          <p>\(\card(A \times B) = \card(A) \times \card(B)\), et plus généralement \(\card(A_1 \times \cdots \times A_p) = \card(A_1) \times \cdots \times \card(A_p)\).</p>
+          <p>En pratique : si un objet se construit en \(p\) choix successifs, avec \(n_1\) possibilités pour le premier choix, puis \(n_2\) pour le deuxième <b>quel que soit le premier</b>, et ainsi de suite, il y a \(n_1 \times n_2 \times \cdots \times n_p\) objets.</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (TD 1.1).</b> \(A\) est l’ensemble des entiers naturels pairs inférieurs ou égaux à 60, \(B\) celui des multiples de 3. On écrit \(A = \{2k,\ k \in \ent{0}{30}\}\) et \(B = \{3k,\ k \in \ent{0}{20}\}\), donc \(\card(A) = 31\) et \(\card(B) = 21\). \(A \cap B\) est l’ensemble des multiples de 6 : \(\{6k,\ k \in \ent{0}{10}\}\), 11 éléments.</p>
+        </div>
+        <div class="calc"><div class="fm">\(\card(A \cup B) = \card(A) + \card(B) - \card(A \cap B)\) : <span data-eq>\(31 + 21 - 11 = 41\)</span></div><div class="fm">\(\card(A \times B) = \card(A) \times \card(B)\) : <span data-eq>\(31 \times 21 = 651\)</span></div></div>
+        <div class="prose">
+          <p><b>Principe multiplicatif (examen DP 2024).</b> Un code de digicode est une lettre parmi A, B, C, suivie de 3 chiffres. Lettre : 3 choix ; chaque chiffre : 10 choix. Il y a <span data-eq>\(3 \times 10 \times 10 \times 10 = 3\,000\)</span> codes.</p>
+        </div>
+        <div data-maths="venn" data-opts='{"names":["A","C"],"u":"E","expr":"A \\cap C","sizes":{"A":30,"C":25,"AC":13,"E":42},"edit":false,"title":"QCM 2025 : 42 élèves, 30 font de l’anglais, 25 du chinois"}'></div>
+        <div class="prose">
+          <p>Tous les élèves suivent au moins une langue, donc \(\card(A \cup C) = 42\). Le crible donne ceux qui suivent les deux : <span data-eq>\(30 + 25 - 42 = 13\)</span>. Le diagramme range les 42 élèves en trois zones disjointes : 17, 13 et 12.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>commencer par la contrainte</i></span>
+          <p>Le principe multiplicatif exige que le nombre de choix à chaque étape ne dépende pas des choix précédents. Commence donc par la position la plus contrainte.</p>
+          <p><b>TD 1 ex. 3.17.</b> Codes à 4 chiffres distincts qui finissent par un chiffre pair : le dernier chiffre d’abord (5 choix : 0, 2, 4, 6, 8), puis les trois autres, distincts entre eux et du dernier : 9, 8, 7 choix. Total : <span data-eq>\(5 \times 9 \times 8 \times 7 = 2\,520\)</span>. En partant de la gauche, le nombre de choix pour le dernier chiffre dépendrait des chiffres pairs déjà pris.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP 2023, exercice 1.2</i></span>
+          <p>(a) Un élément de \(A\) est soit hors de \(B\), soit dans \(B\) : \(A = (A \setminus B) \cup (A \cap B)\), et cette union est disjointe.<span class="c">le mot compte</span></p>
+          <p>Donc \(\card(A) = \card(A \setminus B) + \card(A \cap B)\).</p>
+          <p>(c) De même \(A \cup B = (A \setminus B) \cup B\), union disjointe. Donc \(\card(A \cup B) = \card(A \setminus B) + \card(B)\).</p>
+          <p>Avec (a) : \(\card(A \cup B) = \card(A) - \card(A \cap B) + \card(B)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : additionner des cas qui se recouvrent</span>
+          <ul>
+            <li>\(\card(A \cup B) = 31 + 21 = 52\) compte deux fois les 11 multiples de 6 : on ajoute seulement si les ensembles sont disjoints, sinon on retire \(\card(A \cap B)\).</li>
+            <li>On multiplie seulement si le nombre de choix ne dépend pas des choix d’avant : sinon, change l’ordre des choix ou découpe en cas.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Examen DP 2023, exercice 1 : <b>3 points sur 30</b> (\(\card(F \cup G)\) pour des ensembles disjoints, puis le crible démontré par une partition). Un problème de crible aux QCM hebdomadaires de 2024 et de 2025 (médailles, langues). La démonstration du crible à trois ensembles est dans le <a href="cours-2-ensembles.html#s8">cours 2, partie 8</a>.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">diapositives 6-7 · fiche § 1.3 · TD 2.7, 2.11, 3.17</span></div><h2>p-listes, applications, « au moins un »</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>p-liste</i></span>
+          <p>Soit \(F\) un ensemble à \(n\) éléments et \(p \in \N^*\). Une <b>p-liste</b> (ou <b>p-uplet</b>) d’éléments de \(F\) est un élément \((x_1, x_2, \dots, x_p)\) de \(F^p = F \times \cdots \times F\). L’ordre compte et un même élément peut revenir.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>fiche § 1.3, point 1</i></span>
+          <p>\(\card(F^p) = n^p\). Si \(\card(E) = p\) et \(\card(F) = n\), le nombre d’applications de \(E\) dans \(F\) est \(n^p\) : \(\card(F^E) = \card(F)^{\card(E)}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration</span>
+          <p>Notons \(e_1, \dots, e_p\) les éléments de \(E\). Une application \(f : E \to F\) est déterminée par la liste de ses images \((f(e_1), \dots, f(e_p))\). Chaque image se choisit parmi les \(n\) éléments de \(F\), sans contrainte : « each element of \(E\) has \(n\) possible images ». Par le principe multiplicatif, il y a \(n \times n \times \cdots \times n = n^p\) applications.</p>
+        </div>
+        <div class="prose">
+          <p><b>Les modèles.</b> Tirer successivement <b>avec remise</b> \(p\) boules parmi \(n\) ; écrire un mot de \(p\) lettres sur un alphabet de \(n\) lettres ; composer un code de \(p\) chiffres ; colorier \(p\) cases avec \(n\) couleurs. Exemple des diapositives : il y a <span data-eq>\(4^3 = 64\)</span> applications d’un ensemble à 3 éléments dans un ensemble à 4 éléments.</p>
+          <p><b>Exemple (TD 1 ex. 3.17).</b> Un cadenas à 4 chiffres a <span data-eq>\(10^4 = 10\,000\)</span> codes. Ceux qui finissent par un chiffre pair : 10 choix pour chacun des trois premiers chiffres, 5 pour le dernier, soit <span data-eq>\(10^3 \times 5 = 5\,000\)</span>.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>« au moins un » : passer par le contraire</i></span>
+          <ol>
+            <li>Écris le contraire : « au moins un 2 » devient « aucun 2 ».</li>
+            <li>Compte le contraire, souvent plus simple : sans le chiffre 2, il reste 9 chiffres par position, \(9^4\) codes.</li>
+            <li>Retire-le du total : <span data-eq>\(10^4 - 9^4 = 10\,000 - 6\,561 = 3\,439\)</span> codes contiennent au moins un 2.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 1 ex. 2.11, extrait de l’examen 2025</i></span>
+          <p>1. Un mot réponse est une 5-liste de lettres prises parmi les 6 lettres A à F : une lettre peut revenir. Il y a <span data-eq>\(6^5 = 7\,776\)</span> mots réponses.</p>
+          <p>3. On choisit la question bien répondue : 5 choix. Elle porte la bonne lettre : 1 choix. Les 4 autres portent chacune une des 5 mauvaises lettres : \(5^4\) choix. Total : <span data-eq>\(5 \times 5^4 = 3\,125\)</span>.<span class="c">un facteur par choix</span></p>
+          <p>4. Contraire : aucune bonne réponse, 5 lettres possibles à chaque question, \(5^5\) mots. Donc <span data-eq>\(6^5 - 5^5 = 7\,776 - 3\,125 = 4\,651\)</span> mots ont au moins une bonne réponse.</p>
+        </div>
+        <div class="note why"><span class="tag">En informatique <i>page Moodle « Dénombrement en informatique »</i></span>
+          <ul>
+            <li><b>Mots de passe.</b> Sur 62 caractères (26 minuscules, 26 majuscules, 10 chiffres), il y a \(62^8\) mots de passe de 8 caractères, soit <span data-eq>\(62^8 = 218\,340\,105\,584\,896\)</span>. Avec au moins un chiffre : <span data-eq>\(62^8 - 52^8 = 164\,880\,377\,053\,440\)</span>.</li>
+            <li><b>Sans caractère commun.</b> Mots de 4 minuscules sans aucune lettre du mot « chat » : il reste 22 lettres, <span data-eq>\(22^4 = 234\,256\)</span> mots ; avec au moins une lettre commune : <span data-eq>\(26^4 - 22^4 = 222\,720\)</span>.</li>
+            <li><b>Bits (TD 1 ex. 4.19).</b> Un mot de \(k\) bits prend \(2^k\) valeurs. 173 s’écrit 10101101 en binaire, sur 8 bits, car <span data-eq>\(2^7 = 128\)</span>, <span data-eq>\(2^8 = 256\)</span> et \(128 \leq 173 &lt; 256\). En général, \(x \geq 1\) s’écrit avec \(\lfloor \log_2 x \rfloor + 1\) bits.</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Piège : \(n^p\), pas \(p^n\) ; « au moins un » n’est pas un produit</span>
+          <ul>
+            <li>Trois tirages avec remise parmi 10 boules : <span data-eq>\(10^3 = 1\,000\)</span>, pas <span data-eq>\(3^{10} = 59\,049\)</span> (le QCM de 2024 le proposait). La base est le nombre de possibilités par choix, l’exposant le nombre de choix.</li>
+            <li>« Au moins un 2 » ne se compte pas \(4 \times 10^3\) (place du 2, puis le reste) : le code 2 2 0 0 serait compté deux fois. Passe par le contraire.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Examen DP 2024, exercice 2 (<b>6 points sur 40</b>) : <span data-eq>\(3 \times 10^3 = 3\,000\)</span> codes, dont <span data-eq>\(3 \times (10^3 - 9^3) = 813\)</span> contiennent au moins un 4. Extrait de l’examen 2025 (TD 1 ex. 2.11) : mots réponses et « au moins une bonne réponse ». Contrôle de 2020 : mots de 5 lettres sur 12, <span data-eq>\(12^5 - 11^5 = 87\,781\)</span> avec au moins un « l ».</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">diapositives 5, 8 · fiche § 1.2 · TD 2.8, 3.13</span></div><h2>Factorielle, permutations, anagrammes</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>factorielle (fiche § 1.2)</i></span>
+          <p>Pour tout \(n \in \N\) : \(n! = n \times (n-1) \times \cdots \times 2 \times 1\) si \(n \neq 0\), et \(0! = 1\). Exemple : <span data-eq>\(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\)</span>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>propriétés, pour tout \((n, p) \in \N^2\)</i></span>
+          <ul>
+            <li>\((n+1)! = (n+1) \times n!\)</li>
+            <li>\((n+p)! = (n+p) \times (n+p-1) \times \cdots \times (n+1) \times n!\)</li>
+            <li>Si \(p \leq n\) : \(\frac{n!}{(n-p)!} = n \times (n-1) \times \cdots \times (n-p+1)\), un produit de \(p\) facteurs.</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>permutation</i></span>
+          <p>Une <b>permutation</b> d’un ensemble \(F\) à \(n\) éléments est une façon de ranger <b>tous</b> ses éléments dans un ordre : une \(n\)-liste sans répétition de \(F^n\), ou encore une bijection de \(F\) dans \(F\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>fiche § 1.3, point 2</i></span>
+          <p>Un ensemble à \(n\) éléments a \(n!\) permutations.</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration</span>
+          <p>On remplit les \(n\) places une par une : \(n\) choix pour la première, \(n - 1\) pour la deuxième (un élément est déjà placé), et ainsi de suite jusqu’à 1 choix pour la dernière. Principe multiplicatif : \(n \times (n-1) \times \cdots \times 1 = n!\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemples.</b> 6 élèves sur 6 chaises : <span data-eq>\(6! = 720\)</span>. Anagrammes de « voiture » (7 lettres distinctes) : <span data-eq>\(7! = 5\,040\)</span>. <b>TD 1 ex. 3.13</b> : 4 livres d’algo, 6 de maths et 3 de physique, groupés par matière. On range les 3 matières (\(3!\) ordres), puis les livres dans chaque matière : <span data-eq>\(3! \times 4! \times 6! \times 3! = 622\,080\)</span>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>anagrammes avec lettres répétées</i></span>
+          <p>Un mot de \(n\) lettres où une lettre apparaît \(k_1\) fois, une autre \(k_2\) fois, etc., a \(\frac{n!}{k_1!\,k_2!\cdots}\) anagrammes.</p>
+          <p>Pourquoi : numérote les copies (\(a_1\), \(a_2\)…). Les \(n\) lettres deviennent distinctes : \(n!\) mots. Chaque vrai mot est obtenu \(k_1! \times k_2! \times \cdots\) fois, en permutant les copies numérotées entre elles. On divise.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 5.1 — Anagrammes (chaque nombre vérifié par énumération ou par programme)</caption>
+          <thead><tr><th>Mot</th><th>Lettres répétées</th><th>Anagrammes</th></tr></thead>
+          <tbody>
+            <tr><td>arranger (notes de cours)</td><td>r × 3, a × 2</td><td><span data-eq>\(\frac{8!}{3!\,2!} = 3\,360\)</span></td></tr>
+            <tr><td>tableau (contrôle 2019)</td><td>a × 2</td><td><span data-eq>\(\frac{7!}{2!} = 2\,520\)</span></td></tr>
+            <tr><td>babab (contrôle 2020)</td><td>b × 3, a × 2</td><td><span data-eq>\(\frac{5!}{3!\,2!} = 10\)</span></td></tr>
+            <tr><td>saperlipopette (TD 1 ex. 2.8)</td><td>p × 3, e × 3, t × 2</td><td><span data-eq>\(\frac{14!}{3!\,3!\,2!} = 1\,210\,809\,600\)</span></td></tr>
+            <tr><td>CASSANDRE (QCM 2024)</td><td>A × 2, S × 2</td><td><span data-eq>\(\frac{9!}{2!\,2!} = 90\,720\)</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 1 ex. 2.11, question 6</i></span>
+          <p>Le mot réponse contient un B, deux C et deux D : c’est une anagramme de BCCDD.</p>
+          <p>Si les 5 lettres étaient distinctes, il y aurait \(5!\) mots. Échanger les deux C, ou les deux D, ne change pas le mot : chaque mot est compté \(2! \times 2!\) fois.<span class="c">on justifie la division</span></p>
+          <p>Il y a <span data-eq>\(\frac{5!}{2!\,2!} = \frac{120}{4} = 30\)</span> mots réponses possibles.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : calculs de factorielles</span>
+          <ul>
+            <li>\((2n)!\) n’est pas \(2 \times 4 \times \cdots \times 2n\) (case cochée à tort au QCM de 2025) : ce produit vaut \(2^n \, n!\). Pour \(n = 3\) : <span data-eq>\(6! = 720\)</span> mais <span data-eq>\(2 \times 4 \times 6 = 48\)</span>.</li>
+            <li>\((n+1)! = (n+1) \times n!\), pas \(n! + 1\). Pour simplifier, écris le grand en fonction du petit : <span data-eq>\(\frac{(n+2)!}{n!} = (n+1)(n+2)\)</span>.</li>
+            <li>Compte les lettres : « tableau » en a 7. Le corrigé officiel de 2019 écrit \(\frac{5!}{2!} = 60\) ; la bonne réponse est \(\frac{7!}{2!} = 2\,520\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Les anagrammes ne sont pas tombées aux examens DP de 2023 et 2024. Elles sont au contrôle de 2019 (« table », « tableau »), à celui de 2020 (« babab »), aux QCM hebdomadaires de 2024 et 2025 (TEDDY, CASSANDRE, ANTOINE) et à l’extrait de l’examen 2025 (question 6 ci-dessus). Des factorielles à simplifier aussi, aux QCM de 2024 et de 2025 (\(\frac{18!}{16!}\), \(\frac{(n+2)!}{n!}\)).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">diapositives 9-11 · fiche § 1.3 · TD 2.7, 2.9</span></div><h2>Arrangements : choisir et ordonner</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>arrangement</i></span>
+          <p>Soit \(F\) un ensemble à \(n\) éléments et \(p \leq n\). Un <b>arrangement</b> de \(p\) éléments de \(F\) est une \(p\)-liste d’éléments <b>distincts</b> de \(F\) : on choisit \(p\) éléments et on les ordonne (« choosing and ordering »).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>fiche § 1.3, point 3</i></span>
+          <p>Le nombre d’arrangements de \(p\) éléments parmi \(n\) est</p>
+          <div class="fm">\[A_n^p = n \times (n-1) \times \cdots \times (n-p+1) = \frac{n!}{(n-p)!}.\]</div>
+          <p>C’est aussi le nombre d’applications <b>injectives</b> d’un ensemble \(E\) à \(p\) éléments dans \(F\). Si \(p > n\), il n’y en a aucune. Pour \(p = n\) : \(A_n^n = n!\), les permutations. La fiche note \(\mathcal{A}_n^p\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration</span>
+          <p>\(n\) choix pour le premier élément, \(n - 1\) pour le deuxième (différent du premier), …, \(n - p + 1\) pour le \(p\)-ième. Principe multiplicatif : \(n(n-1)\cdots(n-p+1)\), qui vaut \(\frac{n!}{(n-p)!}\) (fiche § 1.2). Pour une injection, les images \(f(e_1), \dots, f(e_p)\) doivent être distinctes : c’est le même décompte.</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemples (diapositives).</b> Une course de 10 coureurs a <span data-eq>\(A_{10}^{3} = 10 \times 9 \times 8 = 720\)</span> podiums. Il y a <span data-eq>\(A_5^3 = 5 \times 4 \times 3 = 60\)</span> injections de \(\{1, 2, 3\}\) dans \(\{a, b, c, d, e\}\). Codes à 4 chiffres distincts : <span data-eq>\(A_{10}^{4} = 10 \times 9 \times 8 \times 7 = 5\,040\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP 2023, exercice 2 (7 points)</i></span>
+          <p>Une course oppose 20 concurrents, dont Pierre et Jade ; le podium est le classement des trois premiers.</p>
+          <p>1. Pour le 1<sup>er</sup>, 20 possibilités ; pour le 2<sup>e</sup>, il en reste 19 ; pour le 3<sup>e</sup>, 18. Il y a <span data-eq>\(20 \times 19 \times 18 = A_{20}^{3} = 6\,840\)</span> podiums.<span class="c">une phrase par facteur</span></p>
+          <p>2. Jade est première : 19 choix pour le 2<sup>e</sup>, 18 pour le 3<sup>e</sup>, soit <span data-eq>\(19 \times 18 = 342\)</span> podiums.</p>
+          <p>3. Sans Pierre ni Jade : on choisit parmi les 18 autres, <span data-eq>\(18 \times 17 \times 16 = 4\,896\)</span> podiums.</p>
+          <p>4. Pierre en fait partie, pas Jade : 3 places possibles pour Pierre ; les deux autres places se remplissent avec 18 puis 17 coureurs (ni Pierre ni Jade). Total : <span data-eq>\(3 \times 18 \times 17 = 918\)</span>.</p>
+          <p>5. On passe par le complémentaire : au moins Jade ou Pierre, c’est tous les podiums sauf ceux sans l’un ni l’autre, <span data-eq>\(6\,840 - 4\,896 = 1\,944\)</span>.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>« X en fait partie, mais pas Y »</i></span>
+          <ol>
+            <li>Retire Y de l’ensemble des candidats.</li>
+            <li>Place X : compte ses positions possibles (3 places sur le podium).</li>
+            <li>Remplis les places restantes avec les candidats restants, sans X ni Y.</li>
+          </ol>
+        </div>
+        <div class="box trap"><span class="tag">Piège : arrangement ou combinaison</span>
+          <ul>
+            <li>Un podium est ordonné : \(A_{10}^3 = 720\). Les notes de cours d’un élève écrivent \(\binom{10}{3} = 120\) : c’est le nombre de groupes de 3 coureurs, sans le classement.</li>
+            <li>Mots réponses à lettres distinctes (TD 1 ex. 2.11) : on choisit 5 lettres parmi 6 et on les ordonne, <span data-eq>\(A_6^5 = 720\)</span>. La réponse \(5! = 120\) oublie le choix des lettres.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Examen DP 2023, exercice 2 : <b>7 points sur 30</b> (les podiums ci-dessus). Examen DP 2024, exercice 2 : digicode à chiffres distincts, <span data-eq>\(3 \times A_{10}^{3} = 2\,160\)</span> codes, puis <span data-eq>\(A_5^3 = 60\)</span> codes à chiffres distincts et impairs. Contrôle de 2020 : <span data-eq>\(A_{12}^{5} = 95\,040\)</span> mots de 5 lettres distinctes.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">diapositives 12-13 · fiche § 1.3, § 2.1 · TD 2.7, 2.9</span></div><h2>Combinaisons : choisir sans ordre</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>combinaison, coefficient binomial</i></span>
+          <p>Une <b>combinaison</b> de \(p\) éléments de \(F\) (à \(n\) éléments) est une <b>partie</b> de \(F\) à \(p\) éléments : on choisit sans ordre et sans répétition. Leur nombre est le <b>coefficient binomial</b> \(\binom{n}{p}\), qui se lit « \(p\) parmi \(n\) » et se note aussi \(C_n^p\) (\(n\) en bas).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>fiche § 1.3, point 4</i></span>
+          <p>Pour \(0 \leq p \leq n\) :</p>
+          <div class="fm">\[\binom{n}{p} = \frac{A_n^p}{p!} = \frac{n!}{p!\,(n-p)!}.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>par double dénombrement</i></span>
+          <p>Comptons les arrangements de \(p\) éléments de \(F\) de deux façons. D’un côté, il y en a \(A_n^p\). De l’autre, on peut choisir d’abord la partie à \(p\) éléments (\(\binom{n}{p}\) façons), puis ranger ses \(p\) éléments (\(p!\) façons). Donc \(A_n^p = \binom{n}{p} \times p!\), d’où la formule.</p>
+          <p>Exemple : <span data-eq>\(A_{10}^{3} = 720 = 3! \times \binom{10}{3} = 6 \times 120\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>Les modèles.</b> Tirer <b>simultanément</b> \(p\) boules parmi \(n\) ; former un groupe, un comité, une équipe sans postes ; une main de cartes. Exemples : parties à 3 éléments de \(\{a, b, c, d, e\}\), <span data-eq>\(\binom{5}{3} = 10\)</span> ; mains de 5 cartes dans un jeu de 52, <span data-eq>\(\binom{52}{5} = 2\,598\,960\)</span>, dans un jeu de 32, <span data-eq>\(\binom{32}{5} = 201\,376\)</span>.</p>
+          <p><b>Calcul détaillé et simplifié</b> (demandé au contrôle de cours 2023) : on simplifie par la plus grande factorielle du bas, puis on calcule.</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq>\[\binom{7}{3} = \frac{7!}{3!\,4!} = \frac{7 \times 6 \times 5}{3 \times 2 \times 1} = 35\]</div></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>contrôle 2022, exercice 4.1</i></span>
+          <p>Une classe de 20 élèves, 12 garçons et 8 filles, dont Pierre et Marie. On forme un comité de 3 élèves.</p>
+          <p>(a) Un comité est une partie à 3 éléments de la classe : l’ordre ne compte pas. Il y a <span data-eq>\(\binom{20}{3} = \frac{20 \times 19 \times 18}{3 \times 2 \times 1} = 1\,140\)</span> comités.<span class="c">on nomme le modèle</span></p>
+          <p>(b) Exactement 2 garçons et 1 fille : 2 garçons parmi 12, puis 1 fille parmi 8, <span data-eq>\(\binom{12}{2} \times \binom{8}{1} = 66 \times 8 = 528\)</span>.</p>
+          <p>(c) Au moins 2 filles : soit exactement 2 filles et 1 garçon, soit 3 filles. Ces deux cas sont disjoints : <span data-eq>\(\binom{8}{2}\binom{12}{1} + \binom{8}{3} = 336 + 56 = 392\)</span>.</p>
+          <p>(d) Pierre et Marie sont dedans : il reste 1 élève à choisir parmi les 18 autres, <span data-eq>\(\binom{18}{1} = 18\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : « au moins 2 » compté en une fois</span>
+          <p>« Je choisis 2 filles, puis n’importe qui parmi les 18 restants » donne <span data-eq>\(\binom{8}{2} \times \binom{18}{1} = 504\)</span>, faux : un comité de 3 filles y est compté 3 fois (une fois pour chaque paire de filles choisie « en premier »). On a bien <span data-eq>\(504 = 336 + 3 \times 56\)</span>. Découpe en cas disjoints, « exactement 2 », « exactement 3 », puis additionne.</p>
+        </div>
+        <div class="note why"><span class="tag">En informatique <i>nombre de comparaisons</i></span>
+          <p>Comparer chaque paire de \(n\) éléments (chercher un doublon) coûte \(\binom{n}{2} = \frac{n(n-1)}{2}\) comparaisons : <span data-eq>\(\binom{10}{2} = 45\)</span> pour 10 éléments, <span data-eq>\(\binom{1000}{2} = 499\,500\)</span> pour 1 000. Le tri par sélection fait aussi \((n-1) + (n-2) + \cdots + 1 = \frac{n(n-1)}{2}\) comparaisons : le temps est multiplié par 4 environ quand \(n\) double.</p>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Examen DP 2023, dernière question de l’exercice 2 : trois vélos identiques pour les trois premiers, <span data-eq>\(\binom{20}{3} = 1\,140\)</span> récompenses. Examen DP 2024, exercice 1 (<b>4 points sur 40</b>) : reconnaître \(\binom{32}{5}\) et des produits de combinaisons. Contrôle de 2022, exercice 4 (<b>6,5 points sur 40</b>) : les comités ci-dessus. Contrôle de 2019 : probabilités par tirages simultanés de 3 boules dans un sac.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">diapositives 18-19 · TD 2.9, 2.10, 3.18</span></div><h2>Choisir le modèle, combiner les cas</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Tout l’exercice est là : traduire l’énoncé en un modèle. La diapositive « How to choose the formula » pose trois questions : l’ordre compte-t-il ? la répétition est-elle permise ? prend-on tous les éléments ou seulement certains ? La diapositive ne donne que « l’ordre compte ⇒ \(A_n^p\) ou \(n!\) » et « l’ordre ne compte pas ⇒ \(\binom{n}{p}\) » : elle oublie le cas « ordre et répétition », \(n^p\), que donne le tableau suivant.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 5.2 — Les quatre dénombrements de référence (diapositive 19, fiche § 1.3) ; \(\card(E) = p\), \(\card(F) = n\)</caption>
+          <thead><tr><th>Ordre</th><th>Répétition</th><th>Formule</th><th>Objets comptés</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>oui</td><td>oui</td><td>\(n^p\)</td><td>\(p\)-listes, applications \(E \to F\), tirages successifs avec remise</td><td>codes à 4 chiffres : \(10^4\)</td></tr>
+            <tr><td>oui</td><td>non, tous</td><td>\(n!\)</td><td>permutations de \(F\)</td><td>6 élèves sur 6 chaises : \(6!\)</td></tr>
+            <tr><td>oui</td><td>non</td><td>\(A_n^p\)</td><td>arrangements, injections, tirages successifs sans remise</td><td>podiums de 10 coureurs : \(A_{10}^3\)</td></tr>
+            <tr><td>non</td><td>non</td><td>\(\binom{n}{p}\)</td><td>parties à \(p\) éléments, tirages simultanés</td><td>mains de 5 cartes parmi 32 : \(\binom{32}{5}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div data-maths="choose" data-opts='{"title":"Entraînement · sept situations tirées des sujets","situations":[{"t":"Examen DP 2023 : 20 coureurs. Combien de podiums (1<sup>er</sup>, 2<sup>e</sup>, 3<sup>e</sup>) ?","leaf":"arr","n":20,"p":3,"why":"Échanger le 1<sup>er</sup> et le 2<sup>e</sup> donne un autre podium : l’ordre compte. Un coureur n’a qu’une place : pas de répétition."},{"t":"Examen DP 2023, question 6 : on offre le même vélo à chacun des trois premiers. Combien de récompenses possibles ?","leaf":"comb","n":20,"p":3,"why":"Les vélos sont identiques : seul compte le groupe des trois récompensés, pas leur ordre."},{"t":"Examen DP 2024 : les 3 chiffres d’un digicode, qui peuvent se répéter. Combien de suites de chiffres ?","leaf":"list","n":10,"p":3,"why":"Le code se lit dans l’ordre et un chiffre peut revenir : une 3-liste de chiffres."},{"t":"TD 1 ex. 2.8 : combien d’anagrammes du mot « voiture » ?","leaf":"perm","n":7,"why":"On range les 7 lettres, toutes distinctes, sans en laisser."},{"t":"Examen DP 2024, exercice 1 : on tire 5 cartes une à une, sans remise, dans un jeu de 32.","leaf":"arr","n":32,"p":5,"why":"Une à une : l’ordre de sortie compte ; sans remise : pas de répétition. C’est \\(\\frac{32!}{27!}\\)."},{"t":"Contrôle de cours 2023 : on tire simultanément 7 boules parmi 10.","leaf":"comb","n":10,"p":7,"why":"Simultanément : pas d’ordre. Et \\(\\binom{10}{7} = \\binom{10}{3}\\) : tirer 7 boules revient à choisir les 3 qui restent."},{"t":"QCM 2024 : 3 tirages successifs avec remise parmi 10 boules.","leaf":"list","n":10,"p":3,"why":"Avec remise : une boule peut revenir. C’est \\(10^3\\), pas \\(3^{10}\\)."}]}'></div>
+        <div class="box meth"><span class="tag">Méthode <i>les cas composés</i></span>
+          <ul>
+            <li><b>« Exactement \(k\) de tel type »</b> : choisis séparément dans chaque groupe et multiplie (2 garçons parmi 12, 1 fille parmi 8).</li>
+            <li><b>« Au moins un »</b> : total moins « aucun ».</li>
+            <li><b>« Au moins \(k\) »</b> : somme des cas « exactement \(k\) », « exactement \(k + 1\) »…, qui sont disjoints.</li>
+            <li><b>« X mais pas Y »</b> : retire Y, place X, complète.</li>
+            <li><b>« X ou Y »</b> : total moins « ni X ni Y ».</li>
+          </ul>
+          <p>Écris toujours la phrase qui justifie l’addition (« ces cas sont disjoints ») ou la soustraction (« on passe par le complémentaire »).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP 2024, exercice 2 (6 points)</i></span>
+          <p>Un code est une lettre parmi A, B, C suivie de 3 chiffres. Résultats en nombres entiers.</p>
+          <p>1. Chiffres distincts : 3 choix pour la lettre, puis un arrangement de 3 chiffres parmi 10. <span data-eq>\(3 \times A_{10}^{3} = 3 \times 720 = 2\,160\)</span>.</p>
+          <p>2. Chiffres répétables : 3 choix pour la lettre, puis une 3-liste de chiffres. <span data-eq>\(3 \times 10^3 = 3\,000\)</span>.</p>
+          <p>3. La lettre est connue ; les chiffres sont distincts et impairs : un arrangement de 3 chiffres parmi 1, 3, 5, 7, 9. <span data-eq>\(A_5^3 = 5 \times 4 \times 3 = 60\)</span>.</p>
+          <p>4. Lettre inconnue (3 choix), chiffres 6, 2, 9 dans un ordre inconnu (\(3!\) ordres) : <span data-eq>\(3 \times 3! = 18\)</span>.<span class="c">l’ordre seul reste à choisir</span></p>
+          <p>5. Au moins un 4 : on passe par le complémentaire. Sans 4, chaque chiffre a 9 valeurs. <span data-eq>\(3 \times (10^3 - 9^3) = 3 \times 271 = 813\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>L’exercice à l’envers (examen DP 2024, exercice 1).</b> Dans un jeu de 32 cartes, on tire 5 cartes. Proposer une situation où le nombre de tirages est la formule donnée :</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 5.3 — Une situation pour chaque formule (vérifié par énumération des \(201\,376\) mains)</caption>
+          <thead><tr><th>Formule</th><th>Situation</th></tr></thead>
+          <tbody>
+            <tr><td><span data-eq>\(\frac{32!}{27!} = A_{32}^{5} = 24\,165\,120\)</span></td><td>on tire les 5 cartes une à une, sans remise : l’ordre compte</td></tr>
+            <tr><td>\(\binom{32}{5}\)</td><td>on tire les 5 cartes simultanément : une main</td></tr>
+            <tr><td><span data-eq>\(\binom{8}{3} \times \binom{8}{2} = 56 \times 28 = 1\,568\)</span></td><td>une main de 3 cœurs et 2 piques</td></tr>
+            <tr><td><span data-eq>\(\binom{7}{1} \times \binom{24}{3} = 7 \times 2\,024 = 14\,168\)</span></td><td>une main qui contient l’as de cœur et exactement deux cœurs : l’as (imposé), un des 7 autres cœurs, 3 cartes parmi les 24 qui ne sont pas des cœurs</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Piège : lire l’énoncé comme le correcteur</span>
+          <ul>
+            <li>Dernière formule : quatre facteurs pour cinq cartes. Une carte doit être imposée, sinon la situation proposée compte autre chose.</li>
+            <li>TD 1 ex. 3.18 et contrôle de 2022 : « Si Marie est la chef, alors Pierre fait partie du groupe ». Le corrigé de 2022 compte les groupes où Marie est chef <b>et</b> Pierre est dedans : <span data-eq>\(\binom{18}{2} + 18 \times 17 = 153 + 306 = 459\)</span>. Lue comme une implication (cours 1), la phrase est aussi vraie quand Marie n’est pas chef : <span data-eq>\(58\,140 - 18 \times \binom{17}{2} = 55\,692\)</span>. Écris la lecture que tu choisis.</li>
+            <li>Deux modèles peuvent avoir le même nombre : <span data-eq>\(\binom{10}{7} = \binom{10}{3} = 120\)</span> (contrôle de cours 2023 : tirer 7 boules ou en tirer 3).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Un exercice de dénombrement concret en plusieurs questions dans chaque examen DP : podiums en 2023 (<b>7 points sur 30</b>), digicode en 2024 (<b>6 points sur 40</b>), mots réponses en 2025 (extrait au TD 1). En 2024, s’y ajoute l’exercice à l’envers (<b>4 points</b>). Consignes à respecter : « Vous simplifierez vos résultats sans faire les calculs jusqu’au bout » (2023, \(20 \times 19 \times 18\) suffit) ; « sous la forme d’un nombre entier » (2024).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Partie 7 <span class="ref">diapositives 13-15 · fiche § 2.1 · TD 3.14</span></div><h2>Coefficients binomiaux : symétrie, Pascal, Vandermonde</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>fiche § 2.1, pour \(n \in \N\) et \(k \in \ent{0}{n}\)</i></span>
+          <ol>
+            <li>\(\binom{n}{0} = \binom{n}{n} = 1\) ;</li>
+            <li>si \(n \neq 0\), \(\binom{n}{1} = \binom{n}{n-1} = n\) ;</li>
+            <li><b>symétrie</b> : \(\binom{n}{k} = \binom{n}{n-k}\) ;</li>
+            <li><b>formule de Pascal</b> : \(\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}\), pour \(1 \leq k \leq n\).</li>
+          </ol>
+          <p class="muted">La fiche écrit la formule de Pascal « pour tout \(k \in \ent{0}{n}\) » ; pour \(k = 0\), \(\binom{n}{-1}\) n’est pas défini. Prends \(1 \leq k \leq n\), ou la convention \(\binom{n}{-1} = 0\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>symétrie (contrôle 2020, 4 points)</i></span>
+          <p><b>Par le calcul.</b> <span data-eq>\(\binom{n}{n-k} = \frac{n!}{(n-k)!\,(n-(n-k))!} = \frac{n!}{(n-k)!\,k!} = \binom{n}{k}\)</span>.</p>
+          <p><b>Par les ensembles.</b> Soit \(E\) un ensemble à \(n\) éléments. L’application \(A \mapsto \overline{A}\) (complémentaire dans \(E\)) associe à chaque partie à \(k\) éléments une partie à \(n - k\) éléments. Elle est bijective : elle est sa propre réciproque, car \(\overline{\overline{A}} = A\). Les deux ensembles de parties ont donc le même cardinal. En mots : choisir les \(k\) éléments qu’on prend revient à choisir les \(n - k\) qu’on laisse.</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>Pascal par les ensembles (TD 1 ex. 3.14, contrôle 2021)</i></span>
+          <p>Soit \(n \geq 2\) et \(k \in \ent{1}{n-1}\). Une urne contient \(n\) boules numérotées de 1 à \(n\) ; on en tire simultanément \(k\). Notons \(T\) l’ensemble des tirages : \(\card(T) = \binom{n}{k}\).</p>
+          <ul>
+            <li>\(T_1\), les tirages qui contiennent la boule 1 : une seule façon de prendre la boule 1, puis \(k - 1\) boules parmi les \(n - 1\) autres, donc \(\card(T_1) = \binom{n-1}{k-1}\).</li>
+            <li>\(T_2\), les tirages qui ne la contiennent pas : \(k\) boules parmi les \(n - 1\) autres, donc \(\card(T_2) = \binom{n-1}{k}\).</li>
+          </ul>
+          <p>Un tirage contient la boule 1 ou ne la contient pas : \(T = T_1 \cup T_2\), union disjointe. Donc \(\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}\). C’est la formule de la fiche, écrite au rang \(n\) au lieu de \(n + 1\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>Pascal par le calcul (corrigé 2021)</i></span>
+          <p>On réduit au même dénominateur \(k!\,(n-k)!\) : on multiplie la première fraction par \(\frac{k}{k}\), car \(k \times (k-1)! = k!\), et la seconde par \(\frac{n-k}{n-k}\), car \((n-k) \times (n-1-k)! = (n-k)!\).</p>
+          <div class="fm" data-eq>\[\binom{n-1}{k-1} + \binom{n-1}{k} = \frac{(n-1)!}{(k-1)!\,(n-k)!} + \frac{(n-1)!}{k!\,(n-1-k)!} = \frac{(n-1)!\,k}{k!\,(n-k)!} + \frac{(n-1)!\,(n-k)}{k!\,(n-k)!}\]</div>
+          <div class="fm" data-eq>\[\frac{(n-1)!\,k}{k!\,(n-k)!} + \frac{(n-1)!\,(n-k)}{k!\,(n-k)!} = \frac{(n-1)!\,(k + n - k)}{k!\,(n-k)!} = \frac{n!}{k!\,(n-k)!} = \binom{n}{k}\]</div>
+        </div>
+        <div data-maths="pascal" data-opts='{"n":6,"build":true,"modes":["pascal","sym"],"title":"Le triangle de Pascal, ligne par ligne"}'></div>
+        <div class="prose">
+          <p>Appuie sur « Suivant » : chaque ligne se calcule à partir de la précédente, sans factorielle (TD 1 ex. 3.14e). Une fois le triangle complet, clique sur un nombre : ses deux voisins du dessus s’allument, par exemple <span data-eq>\(\binom{5}{2} = \binom{4}{1} + \binom{4}{2} = 4 + 6 = 10\)</span>. Le bouton « Symétrie » montre que chaque ligne se lit de la même façon dans les deux sens.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>formule de Vandermonde</i></span>
+          <p>Soit \((n, p) \in \N^2\) et \(k \in \N\) avec \(k \leq n\) et \(k \leq p\). Alors</p>
+          <div class="fm">\[\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i} = \binom{n+p}{k}.\]</div>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP 2023, exercice 3 (5 points)</i></span>
+          <p>Une urne contient \(p\) boules vertes et \(n\) boules rouges ; on tire simultanément \(k\) boules.</p>
+          <p>1. Un tirage est une partie à \(k\) éléments des \(n + p\) boules : \(\binom{n+p}{k}\) tirages.</p>
+          <p>2. Avec \(i\) vertes et \(k - i\) rouges : \(i\) vertes parmi \(p\), puis \(k - i\) rouges parmi \(n\), soit \(\binom{p}{i}\binom{n}{k-i}\) tirages.</p>
+          <p>3. Pour prendre \(k\) boules, on peut prendre 0 verte et \(k\) rouges, ou 1 verte et \(k - 1\) rouges, …, ou \(k\) vertes et 0 rouge. Ces cas sont disjoints et couvrent tous les tirages.<span class="c">à écrire</span></p>
+          <p>Il y a donc \(\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i}\) tirages. Par la question 1, il y en a \(\binom{n+p}{k}\) : les deux nombres sont égaux.</p>
+          <p>4. Avec \(p = 4\), \(n = 7\), \(k = 4\) : <span data-eq>\(\sum_{i=0}^{4} \binom{4}{i}\binom{7}{4-i} = \binom{11}{4} = \frac{8 \times 9 \times 10 \times 11}{2 \times 3 \times 4} = 330\)</span>.</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq>\(\binom{4}{0}\binom{7}{4} + \binom{4}{1}\binom{7}{3} + \binom{4}{2}\binom{7}{2} + \binom{4}{3}\binom{7}{1} + \binom{4}{4}\binom{7}{0} = 35 + 140 + 126 + 28 + 1 = 330\)</div></div>
+        <div class="box trap"><span class="tag">Piège : notations et justifications</span>
+          <ul>
+            <li>\(\binom{n}{k}\) se note aussi \(C_n^k\), avec \(n\) <b>en bas</b> (TD 1, note 6) : \(C_{10}^{3} = 120\), et \(C_3^{10}\) n’a pas de sens.</li>
+            <li>Dans un double dénombrement, la phrase « ces cas sont disjoints » est notée : le corrigé anglais de 2023 l’ajoute (« These different cases are disjoint »).</li>
+            <li>Formule de Pascal : vérifie que \(k\) est entre 1 et \(n\) ; aux bords du triangle, les coefficients valent 1.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <p>Examen DP 2023, exercice 3 : <b>Vandermonde, 5 points sur 30</b>. Contrôle de 2021, exercice 5 : <b>Pascal par les tirages puis par le calcul, 5 points sur 30</b>. Contrôle de 2020, exercice 5 : <b>symétrie, 4 points sur 30</b>. Contrôles de cours : ce que compte \(\binom{n}{k}\) et sa formule, la symétrie (2022), \(\binom{7}{3}\) détaillé (2023). Contrôle de TD 2018 : \(\sum_{k=p}^{n} \binom{k}{p} = \binom{n+1}{p+1}\), par récurrence avec Pascal (par exemple <span data-eq>\(\binom{2}{2} + \binom{3}{2} + \binom{4}{2} + \binom{5}{2} = 1 + 3 + 6 + 10 = 20 = \binom{6}{3}\)</span>).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Partie 8 <span class="ref">diapositives 16-17 · fiche § 2.2 · TD 2.12, 3.15, 3.16</span></div><h2>Binôme de Newton, double dénombrement</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>formule du binôme (fiche § 2.2)</i></span>
+          <p>Pour tout \((x, y) \in \C^2\) et tout \(n \in \N\) :</p>
+          <div class="fm">\[(x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k = \binom{n}{0}x^n + \binom{n}{1}x^{n-1}y + \cdots + \binom{n}{n-1}x\,y^{n-1} + \binom{n}{n}y^n.\]</div>
+          <p class="muted">Le TD 1 et le corrigé de 2022 écrivent \(\sum_{k=0}^{n} \binom{n}{k} x^k y^{n-k}\) : c’est la même somme, par symétrie.</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>par les ensembles (AAV du TD 1)</i></span>
+          <p>\((x+y)^n = (x+y)(x+y)\cdots(x+y)\), avec \(n\) facteurs. Développer, c’est choisir dans chaque facteur \(x\) ou \(y\), puis multiplier : on obtient \(2^n\) produits.</p>
+          <p>Un produit vaut \(x^{n-k}y^k\) quand on a choisi \(y\) dans exactement \(k\) facteurs. Il y a autant de tels produits que de parties à \(k\) éléments de l’ensemble des \(n\) facteurs : \(\binom{n}{k}\). En regroupant les produits égaux, \((x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>par récurrence (TD 1 ex. 3.15)</i></span>
+          <p>Soit \((x, y) \in \C^2\). Pour \(n \in \N\), notons \(H_n\) : « \((x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k\) ».</p>
+          <p><b>Initialisation.</b> \((x+y)^0 = 1\) et \(\binom{0}{0}x^0y^0 = 1\) : \(H_0\) est vraie.</p>
+          <p><b>Hérédité.</b> Soit \(n \in \N\) tel que \(H_n\) soit vraie. Alors</p>
+          <div class="fm">\[(x+y)^{n+1} = (x+y)(x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n+1-k} y^k + \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^{k+1}.\]</div>
+          <p>Dans la seconde somme, on pose \(j = k + 1\) : elle devient \(\sum_{j=1}^{n+1} \binom{n}{j-1} x^{n+1-j} y^j\). On sépare le terme \(k = 0\) de la première somme (\(x^{n+1}\)) et le terme \(j = n + 1\) de la seconde (\(y^{n+1}\)). Pour \(1 \leq k \leq n\), les deux termes en \(x^{n+1-k}y^k\) s’ajoutent, et la formule de Pascal donne \(\binom{n}{k} + \binom{n}{k-1} = \binom{n+1}{k}\). Donc</p>
+          <div class="fm">\[(x+y)^{n+1} = x^{n+1} + \sum_{k=1}^{n} \binom{n+1}{k} x^{n+1-k} y^k + y^{n+1} = \sum_{k=0}^{n+1} \binom{n+1}{k} x^{n+1-k} y^k :\]</div>
+          <p>\(H_{n+1}\) est vraie. <b>Conclusion</b> : par récurrence, \(H_n\) est vraie pour tout \(n \in \N\).</p>
+        </div>
+        <div data-maths="pascal" data-opts='{"n":6,"mode":"row","modes":["row"],"row":4,"edit":false,"title":"Une ligne du triangle, un binôme"}'></div>
+        <div class="calc">
+          <div class="fm" data-eq>\((x+y)^4 = x^4 + 4x^3y + 6x^2y^2 + 4xy^3 + y^4\)</div>
+          <div class="fm" data-eq>\((a-b)^5 = a^5 - 5a^4b + 10a^3b^2 - 10a^2b^3 + 5ab^4 - b^5\)</div>
+        </div>
+        <div class="prose">
+          <p>Pour \((a - b)^5\), on applique le binôme à \(x = a\) et \(y = -b\) : les signes alternent, car \((-b)^k\) est positif pour \(k\) pair, négatif pour \(k\) impair (TD 1 ex. 3.15).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>conséquences du binôme, pour \(n \in \N\)</i></span>
+          <ul>
+            <li>avec \(x = y = 1\) : <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} = 2^n\)</span> ;</li>
+            <li>avec \(x = 1\), \(y = 2\) : <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} 2^k = 3^n\)</span> (TD 1 ex. 3.16) ;</li>
+            <li>avec \(x = 3\), \(y = 1\) : <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} 3^{n-k} = 4^n\)</span> (contrôle 2022) ;</li>
+            <li>avec \(x = 1\), \(y = -1\), pour \(n \geq 1\) : \(\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0\).</li>
+          </ul>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>\(\card(\mathcal{P}(E)) = 2^n\) (contrôle de cours 2023)</i></span>
+          <p>Soit \(E\) un ensemble à \(n\) éléments. Pour \(k \in \ent{0}{n}\), notons \(\mathcal{P}_k\) l’ensemble des parties de \(E\) à \(k\) éléments : \(\card(\mathcal{P}_k) = \binom{n}{k}\). Toute partie de \(E\) a un cardinal entre 0 et \(n\), et un seul : les \(\mathcal{P}_k\) forment une partition de \(\mathcal{P}(E)\). Donc \(\card(\mathcal{P}(E)) = \sum_{k=0}^{n} \binom{n}{k}\), qui vaut \((1+1)^n = 2^n\) par la formule du binôme.</p>
+          <p>Autre preuve : une partie est déterminée par le choix, pour chaque élément, « dedans » ou « dehors » : \(2 \times 2 \times \cdots \times 2 = 2^n\) parties.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>double dénombrement</i></span>
+          <p>Pour prouver qu’un nombre \(A\) est égal à un nombre \(B\), trouve un ensemble que \(A\) compte d’une façon et \(B\) d’une autre. Exemple (contrôle 2022, exercice 8) : colorier \(n\) cases avec 4 feutres. Directement : \(4^n\) coloriages. En découpant selon le nombre \(k\) de cases vertes : on choisit ces \(k\) cases (\(\binom{n}{k}\)), puis on colorie les \(n - k\) autres avec les 3 autres feutres (\(3^{n-k}\)) ; les cas sont disjoints. Donc \(\sum_{k=0}^{n} \binom{n}{k} 3^{n-k} = 4^n\). Pour \(n = 5\) : <span data-eq>\(\sum_{k=0}^{5} \binom{5}{k} 3^{5-k} = 4^5 = 1\,024\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen DP 2024, exercice 3 (8,5 points)</i></span>
+          <p>Teddy place 5 jetons, choisis parmi 9 numérotés, dans un hexagone, dont 2 dans un triangle collé à l’intérieur.</p>
+          <p>1. (a) Choix 1 : 2 jetons parmi 9 pour le triangle, puis 3 parmi les 7 restants pour le reste de l’hexagone. <span data-eq>\(N_1 = \binom{9}{2}\binom{7}{3} = 36 \times 35 = 1\,260\)</span>.</p>
+          <p>(b) Choix 2 : 5 jetons parmi 9 pour l’hexagone, puis 2 parmi ces 5 pour le triangle. <span data-eq>\(N_2 = \binom{9}{5}\binom{5}{2} = 126 \times 10 = 1\,260\)</span>.</p>
+          <p>(c) \(N_1 = N_2\) : les deux choix comptent les mêmes répartitions (2 jetons dans le triangle, 3 dans l’hexagone hors du triangle).<span class="c">on dit pourquoi</span></p>
+          <p>2. Avec \(n\) jetons, \(p\) dans l’hexagone dont \(k\) dans le triangle : choisir les \(p\) jetons de l’hexagone puis les \(k\) du triangle parmi eux donne \(\binom{n}{p}\binom{p}{k}\) ; choisir d’abord les \(k\) du triangle, puis les \(p - k\) autres jetons de l’hexagone parmi les \(n - k\) restants donne \(\binom{n}{k}\binom{n-k}{p-k}\). Le même ensemble est compté deux fois : les deux nombres sont égaux.</p>
+          <p>3. Par le calcul, les deux membres valent \(\frac{n!}{k!\,(p-k)!\,(n-p)!}\) :</p>
+          <div class="fm" data-eq>\[\binom{n}{p}\binom{p}{k} = \frac{n!}{p!\,(n-p)!} \times \frac{p!}{k!\,(p-k)!} = \frac{n!}{k!\,(p-k)!\,(n-p)!} = \frac{n!}{k!\,(n-k)!} \times \frac{(n-k)!}{(p-k)!\,(n-p)!} = \binom{n}{k}\binom{n-k}{p-k}\]</div>
+          <p>4. Par la question 2, puis le binôme :</p>
+          <div class="fm" data-eq>\[S_p = \sum_{k=0}^{p} \binom{n}{k}\binom{n-k}{p-k} = \sum_{k=0}^{p} \binom{n}{p}\binom{p}{k} = \binom{n}{p} \sum_{k=0}^{p} \binom{p}{k} = 2^p \binom{n}{p}\]</div>
+        </div>
+        <div class="prose">
+          <p><b>Un exemple « atypique » (contrôle 2019).</b> Un bureau est formé d’au moins un conseiller parmi \(n\), dont un président. Choisis le président (\(n\) choix), puis n’importe quelle partie des \(n - 1\) autres (\(2^{n-1}\)) : \(n\,2^{n-1}\) bureaux. Ou choisis la taille \(k\), le bureau (\(\binom{n}{k}\)), puis le président parmi ses \(k\) membres : \(\sum_{k=1}^{n} k\binom{n}{k}\). D’où \(\sum_{k=1}^{n} k\binom{n}{k} = n\,2^{n-1}\) ; pour \(n = 4\) : <span data-eq>\(\sum_{k=1}^{4} k\binom{4}{k} = 4 \times 2^3 = 32\)</span>.</p>
+        </div>
+        <div class="note why"><span class="tag">En informatique <i>complexité et appels récursifs</i></span>
+          <ul>
+            <li>Un algorithme qui essaie toutes les parties d’un ensemble de \(n\) éléments (force brute) en examine \(2^n\) : <span data-eq>\(2^{30} = 1\,073\,741\,824\)</span> pour 30 éléments. Chaque élément ajouté double le temps.</li>
+            <li>Une fonction qui s’appelle deux fois jusqu’à la profondeur 4 fait <span data-eq>\(1 + 2 + 4 + 8 + 16 = 2^5 - 1 = 31\)</span> appels. Le calcul naïf de <code>fib 10</code> (<code>fib n = fib (n-1) + fib (n-2)</code>) en fait 177 : c’est l’exemple de la motivation du TD 1.</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Piège : écrire le binôme</span>
+          <ul>
+            <li>La somme commence à \(k = 0\) : \(\sum_{k=1}^{n} \binom{n}{k} = 2^n - 1\) (on a retiré la partie vide).</li>
+            <li>Les exposants de \(x\) et de \(y\) ont pour somme \(n\) dans chaque terme. Le QCM de 2025 proposait \(\sum \binom{30}{i} x^i y^i\) et \(\sum x^i y^{30-i}\) pour \((x+y)^{30}\) : les deux sont faux (exposants, coefficients).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Examen DP 2023 (2 h, sur 30) : cardinal (3 points), podiums (7 points), Vandermonde (5 points), soit <b>15 points sur 30</b> de dénombrement.</li>
+            <li>Examen DP 2024 (2 h, sur 40) : situations pour des formules (4 points), digicode (6 points), Teddy et \(\binom{n}{p}\binom{p}{k}\) (8,5 points), soit <b>18,5 points sur 40</b>.</li>
+            <li>Contrôles de 2019 à 2022 : \(n\,2^{n-1}\) (2019), symétrie (2020, 4 points), Pascal (2021, 5 points), binôme et coloriage \(4^n\) (2022, 4 points).</li>
+            <li>Le binôme revient dans le cours 7 : la somme des probabilités d’une loi binomiale vaut \((p + (1 - p))^n = 1\), demandé en 2023 et en 2024.</li>
+            <li>Examen de cette année : DP en 2 h, semaine du 26 octobre, sur le dénombrement et les probabilités. La rédaction est notée : « La rigueur de votre rédaction sera prise en compte dans la note ».</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais compter les issues d’une expérience. Le cours 6, <a href="cours-6-probabilites.html">les probabilités</a>, s’en sert aussitôt : sous l’hypothèse d’équiprobabilité, une probabilité est le nombre de cas favorables divisé par le nombre de cas possibles.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
