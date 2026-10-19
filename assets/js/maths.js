@@ -85,7 +85,21 @@
      pascal.rows(n) → lignes 0 à n (tableaux de BigInt) ; pascal.relation(n, k) → { value, edge, left, right }.
      choose.tree, choose.at(chemin) → nœud ou feuille ('1' = oui, '0' = non : '100' = ordre, sans répétition,
        pas tous → A) ; choose.path(leaf) → chemin de cette feuille.
-   À faire (pas encore écrits) : courbe d'une fonction usuelle avec image directe ou réciproque d'un intervalle.
+     curve(el, { f: 'sin', fs: ['sq', 'abs', 'abs1', 'sqrt', 'inv', 'exp', 'ln', 'sin', 'cos'], dom: '[-pi, pi]',
+                      mode: 'image' | 'preimage', modes: ['image', 'preimage'], A: '[0, pi/2]', B: '[0, 1]', name: 'h',
+                      presets: [{ label, tex, f, dom, mode, A, B, name }], edit: true, title })
+                      courbe d'une fonction usuelle (x², |x|, |x − 1|, √x, 1/x, eˣ, ln, sin, cos) sur son ensemble de
+                      départ dom ; mode 'image' : l'élève règle A (menus des bornes, crochets ouvert / fermé), A est
+                      coloré sur l'axe des abscisses, f(A) sur l'axe des ordonnées ; mode 'preimage' : B est coloré
+                      sur l'axe des ordonnées (bande), f⁻¹(B) sur l'axe des abscisses. Bornes exactes en KaTeX (π/6,
+                      √2/2, e^π, ln 2, ±∞), justifiées morceau par morceau de stricte monotonie (tableau de
+                      variations) ; sin et cos : départ borné, réciproques exactes par le tableau des valeurs
+                      remarquables (arcsin, arccos des multiples de π/6 et π/4), jamais par échantillonnage.
+   COURBES (REV.maths.curve, calcul exact sans flottant pour les bornes)
+     num('3pi/4' | 'sqrt2/2' | 'e^2' | 'ln2' | '-inf' | '1/2') → nombre exact { k, … } ; set('[-pi, pi]' | ']0, +inf[' |
+       '{0, 1}' | 'R' | 'R+' | 'R*' | 'empty', unions avec U) → ensemble (liste d'intervalles { a, b, ac, bc }) ;
+       image(f, dom, A) → { set, steps, AE, inside } ou { error } ; preimage(f, dom, B) → { set, steps } ou { error } ;
+       tex(nombre), setTex(ensemble), same(ens1, ens2), fns (les neuf fonctions : f exacte, mono, inv, js).
 
    Textes affichés : REV.t('français') ; l'anglais est déclaré ci-dessous (REV.i18n.add). */
 (function () {
@@ -140,7 +154,7 @@
     'Effectifs incohérents : une zone aurait un effectif négatif.': 'Inconsistent sizes: a region would have a negative size.',
     'Expression illisible.': 'Cannot read the expression.',
     /* sagittal */
-    'Diagramme sagittal': 'Arrow diagram', 'Propriétés': 'Properties', 'Image directe': 'Direct image', 'Image réciproque': 'Inverse image', 'Modifier les flèches': 'Edit the arrows',
+    'Diagramme sagittal': 'Arrow diagram', 'Propriétés': 'Properties', 'Image directe': 'Direct image', 'Image réciproque': 'Reverse image', 'Modifier les flèches': 'Edit the arrows',
     '{f} est une application : chaque élément de {E} a exactement une image.': '{f} is a map: each element of {E} has exactly one image.',
     '{f} n’est pas une application : {x} n’a pas d’image.': '{f} is not a map: {x} has no image.',
     '{f} n’est pas une application : {x} a plusieurs images.': '{f} is not a map: {x} has several images.',
@@ -204,7 +218,22 @@
     'Listes croissantes de longueur 2 dans \\(\\ent{0}{4}\\)': 'Increasing lists of length 2 in \\(\\ent{0}{4}\\)',
     'Situation {i} / {n}': 'Situation {i} / {n}', 'Situation suivante': 'Next situation', 'Changer de réponse': 'Change the answer',
     'Bonne formule.': 'Right formula.', 'Ce n’est pas cette formule.': 'Not this formula.', 'La bonne : ': 'The right one: ',
-    'Toutes les situations sont faites : {ok} / {n} du premier coup.': 'All situations done: {ok} / {n} at the first attempt.'
+    'Toutes les situations sont faites : {ok} / {n} du premier coup.': 'All situations done: {ok} / {n} at the first attempt.',
+    /* courbe */
+    'Courbe et images d’intervalles': 'Curve and images of intervals', 'Fonction': 'Function', 'Ensemble de départ': 'Input set',
+    'Fonction inconnue.': 'Unknown function.', 'Choisis un ensemble de départ borné pour sin et cos.': 'Choose a bounded input set for sin and cos.',
+    'Valeur non exacte pour cette fonction : choisis une autre borne.': 'No exact value for this function: choose another end point.',
+    'Borne gauche de {S}': 'Left end of {S}', 'Borne droite de {S}': 'Right end of {S}',
+    'Borne gauche fermée (cliquer pour l’ouvrir)': 'Closed left end (click to open it)', 'Borne gauche ouverte (cliquer pour la fermer)': 'Open left end (click to close it)',
+    'Borne droite fermée (cliquer pour l’ouvrir)': 'Closed right end (click to open it)', 'Borne droite ouverte (cliquer pour la fermer)': 'Open right end (click to close it)',
+    'Borne gauche plus grande que la borne droite.': 'The left end is greater than the right end.',
+    'Courbe de {f} sur {E}': 'Graph of {f} on {E}', '{S}, sur l’axe des abscisses': '{S}, on the x-axis', '{S}, sur l’axe des ordonnées': '{S}, on the y-axis',
+    '{A} n’est pas une partie de l’ensemble de départ : {fA} n’est pas défini. Voici l’image de la partie de A qui est dans l’ensemble de départ.': '{A} is not a subset of the input set: {fA} is not defined. Here is the image of the part of A that lies in the input set.',
+    'On calcule l’image de chaque point.': 'Compute the image of each point.',
+    'Sur {P}, {f} est strictement croissante :': 'On {P}, {f} is strictly increasing:', 'Sur {P}, {f} est strictement décroissante :': 'On {P}, {f} is strictly decreasing:',
+    'Sur {P}, {f} est strictement croissante et prend les valeurs de {J} :': 'On {P}, {f} is strictly increasing and takes the values of {J}:',
+    'Sur {P}, {f} est strictement décroissante et prend les valeurs de {J} :': 'On {P}, {f} is strictly decreasing and takes the values of {J}:',
+    'aucune valeur de {B} n’y est prise.': 'it takes no value of {B} there.'
   });
 
   var esc = U.esc, MINUS = '−';
@@ -1556,6 +1585,634 @@
     return { el: el, path: function () { return path; } };
   }
 
+  /* ================================================================== 8 ter. COURBES : IMAGES D'INTERVALLES EXACTES */
+  /* Nombres exacts (bornes affichées) : { k: 'q', n, d } rationnel · { k: 'pi', n, d } (n/d)π · { k: 'rt', n, d, m } (n/d)√m
+     (m sans facteur carré) · { k: 'e', x } e^x (x rationnel ou multiple de π) · { k: 'ln', x, s } s·ln x · { k: 'inf', s } ±∞.
+     v : valeur approchée, seulement pour ranger les bornes et dessiner (deux nombres exacts distincts de ces formes ont
+     des valeurs très éloignées). Égalité : même écriture réduite (cle). */
+  var PI = Math.PI;
+  function igcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+  function nq(n, d) { d = d == null ? 1 : d; if (d < 0) { n = -n; d = -d; } var g = igcd(n, d); n /= g; d /= g; if (!n) d = 1; return { k: 'q', n: n, d: d, v: n / d }; }
+  function npi(n, d) { d = d == null ? 1 : d; if (!n) return nq(0); if (d < 0) { n = -n; d = -d; } var g = igcd(n, d); n /= g; d /= g; return { k: 'pi', n: n, d: d, v: n / d * PI }; }
+  function nrt(n, d, m) {
+    if (!n || !m) return nq(0);
+    var s = 1, r = m;
+    for (var f = 2; f * f <= r; f++) while (r % (f * f) === 0) { r /= f * f; s *= f; }
+    n *= s; if (r === 1) return nq(n, d);
+    if (d < 0) { n = -n; d = -d; } var g = igcd(n, d); n /= g; d /= g;
+    return { k: 'rt', n: n, d: d, m: r, v: n / d * Math.sqrt(r) };
+  }
+  function ninf(s) { return { k: 'inf', s: s, v: s * Infinity }; }
+  function nexp(x) {
+    if (!x) return null;
+    if (x.k === 'q' && x.n === 0) return nq(1);
+    if (x.k === 'q' || x.k === 'pi') return { k: 'e', x: x, v: Math.exp(x.v) };
+    if (x.k === 'ln') return x.s > 0 ? x.x : x.x.k === 'q' ? nq(x.x.d, x.x.n) : null;
+    if (x.k === 'inf') return x.s > 0 ? ninf(1) : nq(0);
+    return null;
+  }
+  function nln(x) {
+    if (!x || x.v <= 0) return null;
+    if (x.k === 'inf') return ninf(1);
+    if (x.k === 'e') return x.x;
+    if (x.k === 'q') { if (x.n === x.d) return nq(0); if (x.n < x.d) return { k: 'ln', x: nq(x.d, x.n), s: -1, v: -Math.log(x.d / x.n) }; }
+    if (x.k === 'q' || x.k === 'pi') return { k: 'ln', x: x, s: 1, v: Math.log(x.v) };
+    return null;
+  }
+  function ncle(x) {
+    if (!x) return '?';
+    switch (x.k) {
+      case 'q': case 'pi': return x.k + x.n + '/' + x.d;
+      case 'rt': return 'rt' + x.n + '/' + x.d + 'r' + x.m;
+      case 'e': return 'e(' + ncle(x.x) + ')';
+      case 'ln': return 'ln' + x.s + '(' + ncle(x.x) + ')';
+      case 'inf': return 'inf' + x.s;
+    }
+    return '?';
+  }
+  function neq(a, b) { return ncle(a) === ncle(b); }
+  function ncmp(a, b) { if (neq(a, b)) return 0; var d = a.v - b.v; return d < 0 ? -1 : d > 0 ? 1 : 0; }
+  function nneg(x) {
+    if (!x) return null;
+    switch (x.k) {
+      case 'q': return nq(-x.n, x.d);
+      case 'pi': return npi(-x.n, x.d);
+      case 'rt': return nrt(-x.n, x.d, x.m);
+      case 'ln': return { k: 'ln', x: x.x, s: -x.s, v: -x.v };
+      case 'inf': return ninf(-x.s);
+    }
+    return null;
+  }
+  /* somme de deux nombres de même sorte (rationnels, multiples de π), 0 neutre */
+  function nadd(a, b) {
+    if (!a || !b) return null;
+    if (a.k === 'q' && a.n === 0) return b;
+    if (b.k === 'q' && b.n === 0) return a;
+    if (a.k === 'q' && b.k === 'q') return nq(a.n * b.d + b.n * a.d, a.d * b.d);
+    if (a.k === 'pi' && b.k === 'pi') return npi(a.n * b.d + b.n * a.d, a.d * b.d);
+    return null;
+  }
+  /* écriture TeX d'un nombre exact */
+  function ntex(x) {
+    if (!x) return '?';
+    var sg = x.n < 0 ? '-' : '', a = Math.abs(x.n);
+    switch (x.k) {
+      case 'q': return sg + (x.d === 1 ? String(a) : '\\frac{' + a + '}{' + x.d + '}');
+      case 'pi': return sg + (x.d === 1 ? (a === 1 ? '' : a) + '\\pi' : '\\frac{' + (a === 1 ? '' : a) + '\\pi}{' + x.d + '}');
+      case 'rt': return sg + (x.d === 1 ? (a === 1 ? '' : a) + '\\sqrt{' + x.m + '}' : '\\frac{' + (a === 1 ? '' : a) + '\\sqrt{' + x.m + '}}{' + x.d + '}');
+      case 'e': return x.x.k === 'q' && x.x.n === 1 && x.x.d === 1 ? 'e' : 'e^{' + ntex(x.x) + '}';
+      case 'ln': return (x.s < 0 ? '-' : '') + '\\ln ' + (x.x.k === 'q' && x.x.d === 1 ? x.x.n : x.x.k === 'pi' && x.x.n === 1 && x.x.d === 1 ? '\\pi' : '\\left(' + ntex(x.x) + '\\right)');
+      case 'inf': return x.s > 0 ? '+\\infty' : '-\\infty';
+    }
+    return '?';
+  }
+  /* écriture en texte (menus, étiquettes du dessin) */
+  var SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+  function ntxt(x) {
+    if (!x) return '?';
+    var sg = x.n < 0 ? MINUS : '', a = Math.abs(x.n);
+    switch (x.k) {
+      case 'q': return sg + a + (x.d === 1 ? '' : '/' + x.d);
+      case 'pi': return sg + (a === 1 ? '' : a) + 'π' + (x.d === 1 ? '' : '/' + x.d);
+      case 'rt': return sg + (a === 1 ? '' : a) + '√' + x.m + (x.d === 1 ? '' : '/' + x.d);
+      case 'e':
+        if (x.x.k === 'q' && x.x.d === 1) return x.x.n === 1 ? 'e' : 'e' + String(x.x.n).split('').map(function (c) { return SUP[c]; }).join('');
+        return 'e^(' + ntxt(x.x) + ')';
+      case 'ln': return (x.s < 0 ? MINUS : '') + 'ln ' + ntxt(x.x);
+      case 'inf': return x.s > 0 ? '+∞' : MINUS + '∞';
+    }
+    return '?';
+  }
+  /* lecture : '-pi/2', '3pi/4', 'sqrt2/2', '-sqrt(3)/2', '2sqrt2', 'e', 'e^2', 'e^(pi/2)', 'ln2', '-ln(pi)', '1/2', '0.5', '+inf' */
+  function nparse(s) {
+    s = String(s).replace(/[\s  ]/g, '').replace(/[−–]/g, '-').replace(/\\pi|π/g, 'pi').replace(/\\sqrt|√/g, 'sqrt').replace(/\\infty|∞/g, 'inf').replace(/\\ln/g, 'ln').replace(/[{}]/g, '');
+    var m, sg;
+    if ((m = /^([+-]?)inf(?:ty)?$/.exec(s))) return ninf(m[1] === '-' ? -1 : 1);
+    if ((m = /^([+-]?)(\d*)pi(?:\/(\d+))?$/.exec(s))) return npi((m[1] === '-' ? -1 : 1) * (m[2] ? +m[2] : 1), m[3] ? +m[3] : 1);
+    if ((m = /^([+-]?)(\d*)sqrt\(?(\d+)\)?(?:\/(\d+))?$/.exec(s))) return nrt((m[1] === '-' ? -1 : 1) * (m[2] ? +m[2] : 1), m[4] ? +m[4] : 1, +m[3]);
+    if ((m = /^e(?:\^\(?([^()]+)\)?)?$/.exec(s))) { var ex = m[1] ? nparse(m[1]) : nq(1); return ex && (ex.k === 'q' || ex.k === 'pi') ? nexp(ex) : null; }
+    if ((m = /^([+-]?)ln\(?([^()]+)\)?$/.exec(s))) { var l = nln(nparse(m[2])); return l && m[1] === '-' ? nneg(l) : l; }
+    if ((m = /^([+-]?)(\d+)(?:\.(\d+))?(?:\/(\d+))?$/.exec(s))) {
+      sg = m[1] === '-' ? -1 : 1;
+      var den = m[3] ? Math.pow(10, m[3].length) : 1, num = +(m[2] + (m[3] || ''));
+      return nq(sg * num, den * (m[4] ? +m[4] : 1));
+    }
+    return null;
+  }
+  /* intervalles { a, b, ac, bc } (ac, bc : bornes fermées) ; un ensemble = liste triée d'intervalles disjoints */
+  function ivl(a, b, ac, bc) { return { a: a, b: b, ac: !!ac && a.k !== 'inf', bc: !!bc && b.k !== 'inf' }; }
+  function iempty(I) { var c = ncmp(I.a, I.b); return c > 0 || (c === 0 && !(I.ac && I.bc)); }
+  function ising(I) { return ncmp(I.a, I.b) === 0; }
+  function iinter(I, J) {
+    var ca = ncmp(I.a, J.a), cb = ncmp(I.b, J.b);
+    var a = ca > 0 ? I.a : J.a, ac = ca === 0 ? I.ac && J.ac : ca > 0 ? I.ac : J.ac;
+    var b = cb < 0 ? I.b : J.b, bc = cb === 0 ? I.bc && J.bc : cb < 0 ? I.bc : J.bc;
+    var r = { a: a, b: b, ac: ac, bc: bc };
+    return iempty(r) ? null : r;
+  }
+  function sunion(list) {
+    var l = list.filter(function (I) { return I && !iempty(I); }).slice().sort(function (I, J) { return ncmp(I.a, J.a) || (I.ac === J.ac ? 0 : I.ac ? -1 : 1); });
+    var out = [];
+    l.forEach(function (I) {
+      var c = out[out.length - 1];
+      if (c) {
+        var t = ncmp(I.a, c.b);
+        if (t < 0 || (t === 0 && (c.bc || I.ac))) {
+          var u = ncmp(I.b, c.b);
+          if (u > 0) { c.b = I.b; c.bc = I.bc; } else if (u === 0) c.bc = c.bc || I.bc;
+          return;
+        }
+      }
+      out.push({ a: I.a, b: I.b, ac: I.ac, bc: I.bc });
+    });
+    return out;
+  }
+  function sinter(S1, S2) { var out = []; S1.forEach(function (I) { S2.forEach(function (J) { var r = iinter(I, J); if (r) out.push(r); }); }); return sunion(out); }
+  function seq(S1, S2) {
+    if (S1.length !== S2.length) return false;
+    for (var i = 0; i < S1.length; i++) { var I = S1[i], J = S2[i]; if (!neq(I.a, J.a) || !neq(I.b, J.b) || I.ac !== J.ac || I.bc !== J.bc) return false; }
+    return true;
+  }
+  var REALS = function () { return [ivl(ninf(-1), ninf(1), false, false)]; };
+  /* lecture d'un ensemble : '[-pi, pi]', ']0, +inf[', '{0}', '{-1, 2}', 'R', 'R+', 'R-', 'R*', 'R+*', 'empty', unions avec U ou ∪ */
+  function sparseSet(src) {
+    var s = String(src).replace(/[  ]/g, ' ').replace(/\\R|ℝ/g, 'R').replace(/\\varnothing|\\emptyset|∅/g, 'empty').replace(/\\cup|∪/g, ' U ').replace(/\\left|\\right|\\\{|\\\}/g, function (m) { return m === '\\{' ? '{' : m === '\\}' ? '}' : ''; }).trim();
+    var parts = s.split(/\s+U\s+/), out = [];
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i].replace(/\s+/g, ''), m;
+      if (!p || p === 'empty') continue;
+      if (p === 'R') { out.push(REALS()[0]); continue; }
+      if (p === 'R+' || p === 'R^+') { out.push(ivl(nq(0), ninf(1), true, false)); continue; }
+      if (p === 'R-' || p === 'R^-') { out.push(ivl(ninf(-1), nq(0), false, true)); continue; }
+      if (p === 'R+*' || p === 'R^{+*}' || p === 'R^+*' || p === 'R*+') { out.push(ivl(nq(0), ninf(1), false, false)); continue; }
+      if (p === 'R*' || p === 'R^*') { out.push(ivl(ninf(-1), nq(0), false, false), ivl(nq(0), ninf(1), false, false)); continue; }
+      if ((m = /^\{(.*)\}$/.exec(p))) {
+        var els = m[1] ? m[1].split(',') : [];
+        for (var j = 0; j < els.length; j++) { var x = nparse(els[j]); if (!x || x.k === 'inf') return null; out.push(ivl(x, x, true, true)); }
+        continue;
+      }
+      if ((m = /^([\[\]])([^,]+),([^,]+)([\[\]])$/.exec(p))) {
+        var a = nparse(m[2]), b = nparse(m[3]);
+        if (!a || !b) return null;
+        out.push(ivl(a, b, m[1] === '[', m[4] === ']'));
+        continue;
+      }
+      return null;
+    }
+    return sunion(out);
+  }
+  /* écriture TeX d'un ensemble : ∅, ℝ, intervalles, singletons groupés entre accolades, réunions */
+  function stexSet(S) {
+    if (!S.length) return '\\varnothing';
+    var parts = [], pts = [];
+    function flush() { if (pts.length) { parts.push('\\{' + pts.join(', ') + '\\}'); pts = []; } }
+    S.forEach(function (I) {
+      if (ising(I)) { pts.push(ntex(I.a)); return; }
+      flush();
+      if (I.a.k === 'inf' && I.b.k === 'inf') { parts.push('\\R'); return; }
+      parts.push('\\left' + (I.ac ? '[' : ']') + ntex(I.a) + ', ' + ntex(I.b) + '\\right' + (I.bc ? ']' : '['));
+    });
+    flush();
+    return parts.join(' \\cup ');
+  }
+
+  /* fonctions usuelles : valeur exacte, monotonie par morceaux, réciproque sur un morceau, valeur approchée pour le dessin */
+  var ASIN = { 'q0/1': [0, 1], 'q1/2': [1, 6], 'rt1/2r2': [1, 4], 'rt1/2r3': [1, 3], 'q1/1': [1, 2] };
+  function nasin(y) {   /* arcsin d'une valeur du tableau (en multiple de π) ; sinon null */
+    if (!y) return null;
+    if (y.v < 0) { var r = nasin(nneg(y)); return r ? nneg(r) : null; }
+    var t = ASIN[ncle(y)];
+    return t ? npi(t[0], t[1]) : null;
+  }
+  function nacos(y) { var a = nasin(y); return a ? nadd(npi(1, 2), nneg(a)) : null; }
+  function SIN12(r) {   /* sin(rπ/12), r entier ; null si la valeur n'est pas dans le tableau */
+    r = ((r % 24) + 24) % 24;
+    if (r >= 12) { var v = SIN12(r - 12); return v ? nneg(v) : null; }
+    if (r > 6) r = 12 - r;
+    return { 0: nq(0), 2: nq(1, 2), 3: nrt(1, 2, 2), 4: nrt(1, 2, 3), 6: nq(1) }[r] || null;
+  }
+  function ntrig(x, shift) {
+    if (!x) return null;
+    if (x.k === 'q' && x.n === 0) return SIN12(shift);
+    if (x.k !== 'pi' || (12 * x.n) % x.d) return null;
+    return SIN12(12 * x.n / x.d + shift);
+  }
+  function piece(a, b, ac, bc, dir, k) { var p = ivl(a, b, ac, bc); p.dir = dir; p.k = k; return p; }
+  function trigPieces(cos) {
+    var out = [];
+    for (var k = -6; k <= 6; k++) {
+      var even = ((k % 2) + 2) % 2 === 0;
+      if (cos) out.push(piece(npi(k), npi(k + 1), true, true, even ? -1 : 1, k));
+      else out.push(piece(npi(2 * k - 1, 2), npi(2 * k + 1, 2), true, true, even ? 1 : -1, k));
+    }
+    return out;
+  }
+  var NI = ninf(-1), PI_ = ninf(1);
+  var CURVES = {
+    sq: { tex: 'x^2', f: function (x) {
+        if (x.k === 'q') return nq(x.n * x.n, x.d * x.d);
+        if (x.k === 'rt') return nq(x.n * x.n * x.m, x.d * x.d);
+        if (x.k === 'inf') return ninf(1);
+        if (x.k === 'e') return nexp(x.x.k === 'q' ? nq(2 * x.x.n, x.x.d) : npi(2 * x.x.n, x.x.d));
+        return null;
+      }, js: function (v) { return v * v; }, dom: REALS,
+      mono: function () { return [piece(NI, nq(0), false, true, -1), piece(nq(0), PI_, true, false, 1)]; },
+      inv: function (y, p) { var r = CURVES.sqrt.f(y); return p.dir < 0 ? nneg(r) : r; },
+      view: [-3, 3, -1, 9], xs: ['-inf', '-3', '-2', '-sqrt2', '-1', '-1/2', '0', '1/2', '1', 'sqrt2', '2', '3', '4', '+inf'], ys: ['-inf', '-1', '0', '1/4', '1', '2', '4', '9', '16', '+inf'],
+      doms: ['R', '[0, +inf[', ']-inf, 0]'] },
+    abs: { tex: '|x|', f: function (x) { return x.v < 0 ? nneg(x) : x; }, js: Math.abs, dom: REALS,
+      mono: function () { return [piece(NI, nq(0), false, true, -1), piece(nq(0), PI_, true, false, 1)]; },
+      inv: function (y, p) { return p.dir < 0 ? nneg(y) : y; },
+      view: [-3, 3, -1, 4], xs: ['-inf', '-3', '-2', '-1', '-1/2', '0', '1/2', '1', '2', '3', '+inf'], ys: ['-inf', '-1', '0', '1/2', '1', '2', '3', '+inf'],
+      doms: ['R', '[0, +inf['] },
+    abs1: { tex: '|x - 1|', f: function (x) { if (x.k === 'inf') return ninf(1); if (x.k !== 'q') return null; return nq(Math.abs(x.n - x.d), x.d); },
+      js: function (v) { return Math.abs(v - 1); }, dom: REALS,
+      mono: function () { return [piece(NI, nq(1), false, true, -1), piece(nq(1), PI_, true, false, 1)]; },
+      inv: function (y, p) { if (y.k !== 'q') return null; return p.dir < 0 ? nq(y.d - y.n, y.d) : nq(y.d + y.n, y.d); },
+      view: [-2, 4, -1, 4], xs: ['-inf', '-2', '-1', '0', '1/2', '1', '2', '3', '4', '+inf'], ys: ['-inf', '-2', '-1', '0', '1/2', '1', '2', '3', '+inf'],
+      doms: ['R', '[1, +inf[', ']-inf, 1]'] },
+    sqrt: { tex: '\\sqrt{x}', f: function (x) {
+        if (x.v < 0) return null;
+        if (x.k === 'q') return x.n === 0 ? nq(0) : nrt(1, x.d, x.n * x.d);
+        if (x.k === 'e') return nexp(x.x.k === 'q' ? nq(x.x.n, 2 * x.x.d) : npi(x.x.n, 2 * x.x.d));
+        if (x.k === 'inf') return ninf(1);
+        return null;
+      }, js: function (v) { return v < 0 ? NaN : Math.sqrt(v); }, dom: function () { return [ivl(nq(0), PI_, true, false)]; },
+      mono: function () { return [piece(nq(0), PI_, true, false, 1)]; },
+      inv: function (y) { return CURVES.sq.f(y); },
+      view: [-1, 9, -1, 3.5], xs: ['0', '1/4', '1', '2', '4', '9', '+inf'], ys: ['-inf', '-1', '0', '1/2', '1', '2', '3', '+inf'],
+      doms: ['[0, +inf['] },
+    inv: { tex: '\\frac{1}{x}', f: function (x) {
+        if (x.k === 'q') return x.n === 0 ? null : nq(x.d, x.n);
+        if (x.k === 'rt') return nrt(x.d, x.n * x.m, x.m);
+        if (x.k === 'e') return nexp(nneg(x.x));
+        if (x.k === 'inf') return nq(0);
+        return null;
+      }, js: function (v) { return v === 0 ? NaN : 1 / v; }, dom: function () { return [ivl(NI, nq(0), false, false), ivl(nq(0), PI_, false, false)]; },
+      mono: function () { return [piece(NI, nq(0), false, false, -1), piece(nq(0), PI_, false, false, -1)]; },
+      lim0: function (side) { return ninf(side === 'r' ? 1 : -1); },
+      inv: function (y) { return CURVES.inv.f(y); },
+      view: [-3, 3, -3, 3], xs: ['-inf', '-2', '-1', '-1/2', '0', '1/2', '1', '2', '+inf'], ys: ['-inf', '-2', '-1', '-1/2', '0', '1/2', '1', '2', '+inf'],
+      doms: ['R*', ']0, +inf['] },
+    exp: { tex: 'e^{x}', f: nexp, js: Math.exp, dom: REALS,
+      mono: function () { return [piece(NI, PI_, false, false, 1)]; },
+      inv: function (y) { return nln(y); },
+      view: [-3, 2.5, -1, 8], xs: ['-inf', '-2', '-1', '0', '1/2', '1', 'ln2', '2', 'pi/2', 'pi', '+inf'], ys: ['-inf', '-1', '0', '1/2', '1', '2', 'e', 'e^2', '+inf'],
+      doms: ['R'] },
+    ln: { tex: '\\ln x', f: nln, js: function (v) { return v > 0 ? Math.log(v) : NaN; }, dom: function () { return [ivl(nq(0), PI_, false, false)]; },
+      mono: function () { return [piece(nq(0), PI_, false, false, 1)]; },
+      lim0: function () { return ninf(-1); },
+      inv: function (y) { return nexp(y); },
+      view: [-1, 8, -3, 2.5], xs: ['0', 'e^-1', '1/2', '1', '2', 'e', 'pi', 'e^2', '+inf'], ys: ['-inf', '-2', '-1', '0', '1', '2', '+inf'],
+      doms: [']0, +inf['] },
+    sin: { tex: '\\sin x', f: function (x) { return ntrig(x, 0); }, js: Math.sin, trig: true, dom: REALS,
+      mono: function () { return trigPieces(false); },
+      inv: function (y, p) { var a = nasin(y); if (!a) return null; return ((p.k % 2) + 2) % 2 === 0 ? nadd(npi(p.k), a) : nadd(npi(p.k), nneg(a)); },
+      xs: ['-2pi', '-3pi/2', '-pi', '-5pi/6', '-3pi/4', '-2pi/3', '-pi/2', '-pi/3', '-pi/4', '-pi/6', '0', 'pi/6', 'pi/4', 'pi/3', 'pi/2', '2pi/3', '3pi/4', '5pi/6', 'pi', '3pi/2', '2pi'],
+      ys: ['-inf', '-2', '-1', '-sqrt3/2', '-sqrt2/2', '-1/2', '0', '1/2', 'sqrt2/2', 'sqrt3/2', '1', '2', '3', '4', '+inf'],
+      doms: ['[-pi, pi]', '[-pi/2, pi/2]', '[0, pi]', '[0, 2pi]', '[-2pi, 2pi]'] },
+    cos: { tex: '\\cos x', f: function (x) { return ntrig(x, 6); }, js: Math.cos, trig: true, dom: REALS,
+      mono: function () { return trigPieces(true); },
+      inv: function (y, p) { var a = nacos(y); if (!a) return null; return ((p.k % 2) + 2) % 2 === 0 ? nadd(npi(p.k), a) : nadd(npi(p.k + 1), nneg(a)); },
+      xs: null, ys: null, doms: ['[0, pi]', '[-pi, pi]', ']-pi, pi]', '[0, 2pi]', '[-2pi, 2pi]'] }
+  };
+  CURVES.cos.xs = CURVES.sin.xs; CURVES.cos.ys = CURVES.sin.ys;
+  var CURVE_IDS = ['sq', 'abs', 'abs1', 'sqrt', 'inv', 'exp', 'ln', 'sin', 'cos'];
+  /* valeur au bord d'un morceau : f(x) si x est dans le domaine (borne fermée ou fonction continue en x), sinon la limite */
+  function cval(F, x, side) {
+    if (x.k === 'q' && x.n === 0 && F.lim0) return F.lim0(side);
+    return F.f(x);
+  }
+  function cerr(m) { return { error: T(m) }; }
+  /* image d'un morceau de monotonie stricte P (intervalle non réduit à un point) */
+  function cpieceImage(F, P) {
+    var L = cval(F, P.a, 'r'), H = cval(F, P.b, 'l');
+    if (!L || !H) return null;
+    return P.dir > 0 ? ivl(L, H, P.ac, P.bc) : ivl(H, L, P.bc, P.ac);
+  }
+  /* départ réel : E ∩ domaine naturel ; les morceaux de monotonie qui le découpent */
+  function cpieces(F, E) {
+    var out = [];
+    F.mono().forEach(function (M) {
+      E.forEach(function (I) {
+        var P = iinter(I, M);
+        if (!P || (ising(P) && !ising(I))) return;
+        P.dir = M.dir; P.k = M.k; out.push(P);
+      });
+    });
+    return out;
+  }
+  function cimage(fid, dom, A) {
+    var F = CURVES[fid]; if (!F) return cerr('Fonction inconnue.');
+    var E = sinter(dom || F.dom(), F.dom()), AE = sinter(A, E), out = [], steps = [];
+    if (F.trig && AE.some(function (I) { return I.a.k === 'inf' || I.b.k === 'inf'; })) return cerr('Choisis un ensemble de départ borné pour sin et cos.');
+    var bad = false;
+    cpieces(F, AE).forEach(function (P) {
+      if (bad) return;
+      if (ising(P)) { var v = F.f(P.a); if (!v) { bad = true; return; } out.push(ivl(v, v, true, true)); steps.push({ P: P, point: true, J: ivl(v, v, true, true) }); return; }
+      var J = cpieceImage(F, P);
+      if (!J) { bad = true; return; }
+      out.push(J); steps.push({ P: P, dir: P.dir, J: J });
+    });
+    if (bad) return cerr('Valeur non exacte pour cette fonction : choisis une autre borne.');
+    return { set: sunion(out), steps: steps, E: E, AE: AE, inside: seq(sunion(A), AE) };
+  }
+  function cpreimage(fid, dom, B) {
+    var F = CURVES[fid]; if (!F) return cerr('Fonction inconnue.');
+    var E = sinter(dom || F.dom(), F.dom()), out = [], steps = [], bad = false;
+    if (F.trig && E.some(function (I) { return I.a.k === 'inf' || I.b.k === 'inf'; })) return cerr('Choisis un ensemble de départ borné pour sin et cos.');
+    cpieces(F, E).forEach(function (P) {
+      if (bad) return;
+      if (ising(P)) { var v = F.f(P.a); if (!v) { bad = true; return; } var inB = B.some(function (I) { return iinter(I, ivl(v, v, true, true)); }); if (inB) out.push(ivl(P.a, P.a, true, true)); steps.push({ P: P, point: true, X: inB ? [ivl(P.a, P.a, true, true)] : [] }); return; }
+      var J = cpieceImage(F, P);
+      if (!J) { bad = true; return; }
+      var X = [];
+      B.forEach(function (Bi) {
+        var K = iinter(J, Bi);
+        if (!K || bad) return;
+        var back = function (y) {
+          if (neq(y, J.a)) return P.dir > 0 ? P.a : P.b;
+          if (neq(y, J.b)) return P.dir > 0 ? P.b : P.a;
+          var x = F.inv(y, P); if (!x) bad = true; return x;
+        };
+        var xa = back(K.a), xb = back(K.b);
+        if (bad) return;
+        X.push(P.dir > 0 ? ivl(xa, xb, K.ac, K.bc) : ivl(xb, xa, K.bc, K.ac));
+      });
+      X = sunion(X);
+      out = out.concat(X);
+      steps.push({ P: P, dir: P.dir, J: J, X: X });
+    });
+    if (bad) return cerr('Valeur non exacte pour cette fonction : choisis une autre borne.');
+    return { set: sunion(out), steps: steps, E: E };
+  }
+
+  /* styles de l'outil courbe (maths.css ne les a pas) : injectés une fois, aux couleurs du thème */
+  function curveCSS() {
+    if (typeof document === 'undefined' || document.getElementById('maths-curve-css')) return;
+    var st = document.createElement('style');
+    st.id = 'maths-curve-css';
+    st.textContent = [
+      '.cvb .cv-ctl{display:grid;gap:.6rem}',
+      '.cvb .cv-fns{display:flex;flex-wrap:wrap;gap:6px}',
+      '.cvb .cv-fns .chip-btn{min-width:3rem}',
+      '.cvb .cv-fns .chip-btn[aria-pressed="true"] .katex{color:var(--surface)}',
+      '.cvb .cv-row{display:flex;flex-wrap:wrap;gap:8px;align-items:end}',
+      '.cvb .cv-row .fld{width:auto;min-width:8.5rem;flex:1 1 9rem}',
+      '.cvb .cv-iv{display:flex;flex-wrap:wrap;align-items:center;gap:6px}',
+      '.cvb .cv-iv .nm{font-family:var(--font-ui);font-size:.95rem;font-weight:600;min-width:2.2rem}',
+      '.cvb .cv-iv select{font:inherit;font-family:var(--font-ui);font-size:.98rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-bottom:2px solid var(--pen);border-radius:3px;padding:.3rem .4rem;min-height:40px;min-width:4.6rem}',
+      '.cvb .cv-br{font:inherit;font-family:var(--font-math);font-size:1.45rem;line-height:1;width:2.3rem;min-height:40px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--accent);cursor:pointer;padding:0}',
+      '.cvb .cv-br:disabled{color:var(--muted);opacity:.6;cursor:default}',
+      '.cvb .cv-br:focus-visible,.cvb .cv-iv select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}',
+      '.cvb .cv-cur{font-size:1.02rem;overflow-x:auto;overflow-y:hidden}',
+      '.cvb svg .cv-grid{stroke:var(--line);stroke-width:1}',
+      '.cvb svg .cv-ax{stroke:var(--rule);stroke-width:1.3}',
+      '.cvb svg .cv-c{fill:none;stroke:var(--muted);stroke-width:2;stroke-linejoin:round}',
+      '.cvb svg .cv-c.hl{stroke:var(--z1);stroke-width:4;stroke-linecap:round}',
+      '.cvb svg .cv-dot{fill:var(--z1)}',
+      '.cvb svg .cv-x{stroke:var(--z1);stroke-width:6;stroke-linecap:butt}',
+      '.cvb svg .cv-y{stroke:var(--z2);stroke-width:6;stroke-linecap:butt}',
+      '.cvb svg .cv-band{fill:var(--z2);fill-opacity:.12}',
+      '.cvb svg .cv-g{stroke-width:1.2;stroke-dasharray:4 4;fill:none}',
+      '.cvb svg .cv-g.x{stroke:var(--z1)} .cvb svg .cv-g.y{stroke:var(--z2)}',
+      '.cvb svg .cv-e{stroke-width:2.2}',
+      '.cvb svg .cv-e.x{stroke:var(--z1)} .cvb svg .cv-e.y{stroke:var(--z2)}',
+      '.cvb svg .cv-e.c.x{fill:var(--z1)} .cvb svg .cv-e.c.y{fill:var(--z2)} .cvb svg .cv-e.o{fill:var(--surface)}',
+      '.cvb svg .cv-t{font-family:var(--font-ui);font-size:13px;fill:var(--muted)}',
+      '.cvb svg .cv-t.x{fill:var(--z1);font-weight:600} .cvb svg .cv-t.y{fill:var(--z2);font-weight:600}',
+      '.cvb svg .cv-lab{font-family:var(--font-display);font-style:italic;font-size:15px;fill:var(--ink)}',
+      '.cvb .cv-key{display:flex;flex-wrap:wrap;gap:4px 16px;font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}',
+      '.cvb .cv-key i{display:inline-block;width:1rem;height:.32rem;margin-right:.35rem;vertical-align:.18rem;border-radius:1px}',
+      '.cvb .cv-key .kx{background:var(--z1)} .cvb .cv-key .ky{background:var(--z2)}',
+      '.cvb .cv-steps{margin:0;padding-left:1.2rem;display:grid;gap:.35rem}',
+      '.cvb .cv-steps li>div{overflow-x:auto;overflow-y:hidden;min-width:0}',
+      '.cvb .cv-res{overflow-x:auto;overflow-y:hidden;background:var(--surface-2);border-radius:var(--radius);padding:.35rem .6rem}',
+      '.katex .cvz1{color:var(--z1)} .katex .cvz2{color:var(--z2)}',
+      '@media (max-width:440px){.cvb .bench-body{padding:.8rem}.cvb .cv-iv select{min-width:4.2rem}}',
+      '@media print{.cvb .cv-ctl{display:none !important}.cvb .cv-res,.cvb .cv-cur,.cvb .cv-steps li>div{overflow:visible !important}}'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  /* ---------- courbe d'une fonction usuelle : image directe et image réciproque d'un intervalle ---------- */
+  var CV_TXT = { sq: 'x²', abs: '|x|', abs1: '|x − 1|', sqrt: '√x', inv: '1/x', exp: 'eˣ', ln: 'ln x', sin: 'sin x', cos: 'cos x' };
+  var CV_LAB = { sq: 'x^2', abs: '|x|', abs1: '|x-1|', sqrt: '\\sqrt{x}', inv: '\\tfrac{1}{x}', exp: 'e^x', ln: '\\ln x', sin: '\\sin x', cos: '\\cos x' };
+  function curve(el, o) {
+    o = o || {};
+    curveCSS();
+    var fs = (o.fs || CURVE_IDS).filter(function (k) { return CURVES[k]; });
+    var fid = CURVES[o.f] ? o.f : fs[0], name = o.name || 'f', edit = o.edit !== false;
+    var modes = o.modes || ['image', 'preimage'], mode = o.mode === 'preimage' ? 'preimage' : 'image';
+    var st = { dom: null, A: null, B: null, note: null };
+    var presets = o.presets || null, uid = ++vuid;
+    function setFrom(c) {
+      if (c.f && CURVES[c.f]) fid = c.f;
+      if (c.mode) mode = c.mode === 'preimage' ? 'preimage' : 'image';
+      if (c.name) name = c.name;
+      var F = CURVES[fid];
+      st.domSrc = c.dom || F.doms[0];
+      st.dom = sparseSet(st.domSrc) || F.dom();
+      var hull = function (S) { return S.length ? [ivl(S[0].a, S[S.length - 1].b, S[0].ac, S[S.length - 1].bc)] : S; };
+      var dA = st.dom.length === 1 ? st.dom : hull(st.dom);
+      st.A = c.A != null ? sparseSet(c.A) || dA : dA;
+      st.B = c.B != null ? sparseSet(c.B) || [ivl(nq(0), nq(1), true, true)] : [ivl(nq(0), nq(1), true, true)];
+    }
+    setFrom({ f: fid, dom: o.dom, A: o.A, B: o.B, mode: mode });
+    el.classList.add('bench', 'cvb');
+    var LABM = { image: T('Image directe'), preimage: T('Image réciproque') };
+    el.innerHTML = head(o.title || T('Courbe et images d’intervalles'), '') + '<div class="bench-body">' +
+      (edit ? '<div class="cv-ctl">' +
+        (fs.length > 1 ? '<div class="cv-fns" role="group" aria-label="' + esc(T('Fonction')) + '">' + fs.map(function (k) { return '<button type="button" class="chip-btn" data-f="' + k + '" aria-pressed="false">' + tx(CV_LAB[k]) + '</button>'; }).join('') + '</div>' : '') +
+        '<div class="cv-row"><label class="fld"><span>' + T('Ensemble de départ') + '</span><select data-k="dom"></select></label>' +
+        (modes.length > 1 ? '<div class="row" role="group">' + modes.map(function (m) { return '<button type="button" class="chip-btn" data-m="' + m + '" aria-pressed="false">' + LABM[m] + '</button>'; }).join('') + '</div>' : '') + '</div>' +
+        '<div class="cv-iv"><span class="nm"></span><button type="button" class="cv-br" data-b="l"></button><select data-k="lo"></select><span aria-hidden="true">,</span><select data-k="hi"></select><button type="button" class="cv-br" data-b="r"></button></div>' +
+        presetsHTML(presets, 'data-p') + '</div>' : '') +
+      '<div class="cv-cur"></div><div class="fig"></div><div class="cv-key"></div><div class="readout" aria-live="polite"></div></div>';
+    var fig = el.querySelector('.fig'), out = el.querySelector('.readout'), key = el.querySelector('.cv-key'), cur = el.querySelector('.cv-cur');
+    function F() { return CURVES[fid]; }
+    function setName() { return mode === 'image' ? 'A' : 'B'; }
+    function curSet() { return mode === 'image' ? st.A : st.B; }
+    function menuVals() {   /* valeurs proposées, plus les bornes du réglage courant si elles manquent */
+      var src = mode === 'image' ? F().xs : F().ys, vals = src.map(nparse).filter(Boolean);
+      var S = curSet();
+      if (S.length) [S[0].a, S[S.length - 1].b].forEach(function (x) { if (!vals.some(function (v) { return neq(v, x); })) vals.push(x); });
+      if (mode === 'image') st.dom.forEach(function (I) { [I.a, I.b].forEach(function (x) { if (!vals.some(function (v) { return neq(v, x); })) vals.push(x); }); });
+      return vals.sort(function (a, b) { return a.v - b.v; });
+    }
+    function syncCtl() {
+      if (!edit) return;
+      U.$$('[data-f]', el).forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === fid)); });
+      U.$$('[data-m]', el).forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-m') === mode)); });
+      var ds = el.querySelector('[data-k="dom"]'), doms = F().doms.slice();
+      if (doms.indexOf(st.domSrc) < 0) doms.unshift(st.domSrc);
+      ds.innerHTML = doms.map(function (d) { var S = sparseSet(d); return '<option value="' + esc(d) + '"' + (d === st.domSrc ? ' selected' : '') + '>' + esc(S ? setTxt(S) : d) + '</option>'; }).join('');
+      var S = curSet(), vals = menuVals(), lo = S.length ? S[0].a : vals[0], hi = S.length ? S[S.length - 1].b : vals[vals.length - 1];
+      el.querySelector('.cv-iv .nm').innerHTML = tx(setName() + ' =');
+      ['lo', 'hi'].forEach(function (k) {
+        var sel = el.querySelector('[data-k="' + k + '"]'), want = k === 'lo' ? lo : hi;
+        sel.setAttribute('aria-label', T(k === 'lo' ? 'Borne gauche de {S}' : 'Borne droite de {S}', { S: setName() }));
+        sel.innerHTML = vals.map(function (v, i) { return '<option value="' + i + '"' + (neq(v, want) ? ' selected' : '') + '>' + esc(ntxt(v)) + '</option>'; }).join('');
+        sel.__vals = vals;
+      });
+      var I0 = S.length ? S[0] : null, I1 = S.length ? S[S.length - 1] : null, lb = el.querySelector('[data-b="l"]'), rb = el.querySelector('[data-b="r"]');
+      var sing = S.length === 1 && ising(S[0]);
+      lb.textContent = sing ? '{' : I0 && I0.ac ? '[' : ']'; rb.textContent = sing ? '}' : I1 && I1.bc ? ']' : '[';
+      lb.disabled = sing || !I0 || I0.a.k === 'inf'; rb.disabled = sing || !I1 || I1.b.k === 'inf';
+      lb.setAttribute('aria-label', T(I0 && I0.ac ? 'Borne gauche fermée (cliquer pour l’ouvrir)' : 'Borne gauche ouverte (cliquer pour la fermer)'));
+      rb.setAttribute('aria-label', T(I1 && I1.bc ? 'Borne droite fermée (cliquer pour l’ouvrir)' : 'Borne droite ouverte (cliquer pour la fermer)'));
+    }
+    function setTxt(S) {   /* ensemble en texte, pour les menus */
+      if (!S.length) return '∅';
+      return S.map(function (I) { if (I.a.k === 'inf' && I.b.k === 'inf') return 'ℝ'; if (ising(I)) return '{' + ntxt(I.a) + '}'; return (I.ac ? '[' : ']') + ntxt(I.a) + ', ' + ntxt(I.b) + (I.bc ? ']' : '['); }).join(' ∪ ');
+    }
+    function fromCtl(which) {
+      var lo = el.querySelector('[data-k="lo"]'), hi = el.querySelector('[data-k="hi"]');
+      var a = lo.__vals[+lo.value], b = hi.__vals[+hi.value], S = curSet();
+      var ac = S.length && !ising(S[0]) ? S[0].ac : true, bc = S.length && !ising(S[S.length - 1]) ? S[S.length - 1].bc : true;
+      if (which === 'l') ac = !(S.length && S[0].ac);
+      if (which === 'r') bc = !(S.length && S[S.length - 1].bc);
+      st.note = null;
+      if (ncmp(a, b) > 0) { st.note = T('Borne gauche plus grande que la borne droite.'); draw(); return; }
+      var I = ivl(a, b, ac, bc);
+      if (ising(I)) { I.ac = I.bc = true; }
+      else if (iempty(I)) { I.ac = I.bc = true; }
+      if (mode === 'image') st.A = [I]; else st.B = [I];
+      draw();
+    }
+    function fset(S) { return stexSet(S); }
+    function fn() { return name; }
+    function defTex() { return fn() + ' : ' + fset(st.dom) + ' \\to \\R,\\ x \\mapsto ' + F().tex; }
+
+    /* ---- dessin ---- */
+    function draw() {
+      syncCtl();
+      var Fx = F(), S = curSet(), res = mode === 'image' ? cimage(fid, st.dom, st.A) : cpreimage(fid, st.dom, st.B);
+      var xSet = res.error ? [] : mode === 'image' ? res.AE : res.set, ySet = res.error ? [] : mode === 'image' ? res.set : st.B;
+      cur.innerHTML = tx(defTex());
+      /* fenêtre : celle de la fonction, élargie aux bornes finies utiles */
+      var v = Fx.view ? Fx.view.slice() : null;
+      if (Fx.trig) {
+        var d0 = st.dom[0].a.v, d1 = st.dom[st.dom.length - 1].b.v;
+        v = [d0 - 0.25, d1 + 0.25, -1.6, 1.6];
+      }
+      function fin(x) { return x.k !== 'inf' && isFinite(x.v); }
+      xSet.concat(mode === 'image' ? st.A : []).forEach(function (I) { [I.a, I.b].forEach(function (x) { if (fin(x)) { v[0] = Math.min(v[0], x.v - 0.3); v[1] = Math.max(v[1], x.v + 0.3); } }); });
+      ySet.forEach(function (I) { [I.a, I.b].forEach(function (y) { if (fin(y) && Math.abs(y.v) <= 40) { v[2] = Math.min(v[2], y.v - 0.4); v[3] = Math.max(v[3], y.v + 0.4); } }); });
+      /* place pour les étiquettes de l'axe des ordonnées, à gauche de l'axe */
+      if (v[0] <= 0 && v[1] > 0 && v[0] > -0.12 * v[1] / 0.88) v[0] = -0.12 * v[1] / 0.88;
+      var W = 420, H = 300, ml = 10, mr = 10, mt = 10, mb = 26;
+      var X = function (x) { return ml + (x - v[0]) / (v[1] - v[0]) * (W - ml - mr); }, Y = function (y) { return mt + (v[3] - y) / (v[3] - v[2]) * (H - mt - mb); };
+      var x0 = v[0] <= 0 && v[1] >= 0 ? X(0) : X(v[0]) + 34, y0 = v[2] <= 0 && v[3] >= 0 ? Y(0) : Y(v[2]);
+      var cid = 'cvclip' + uid, h = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(T('Courbe de {f} sur {E}', { f: 'x ↦ ' + CV_TXT[fid], E: setTxt(st.dom) })) + '">';
+      h += '<defs><clipPath id="' + cid + '"><rect x="' + ml + '" y="' + mt + '" width="' + (W - ml - mr) + '" height="' + (H - mt - mb) + '"/></clipPath></defs>';
+      /* quadrillage léger : entiers, ou multiples de π/2 */
+      var step = Fx.trig ? PI / 2 : (v[1] - v[0] > 12 ? 2 : 1);
+      for (var gx = Math.ceil(v[0] / step) * step; gx <= v[1]; gx += step) h += '<line class="cv-grid" x1="' + X(gx) + '" y1="' + mt + '" x2="' + X(gx) + '" y2="' + (H - mb) + '"/>';
+      var ystep = v[3] - v[2] > 14 ? 5 : v[3] - v[2] > 7 ? 2 : Fx.trig ? 0.5 : 1;
+      for (var gy = Math.ceil(v[2] / ystep) * ystep; gy <= v[3]; gy += ystep) h += '<line class="cv-grid" x1="' + ml + '" y1="' + Y(gy) + '" x2="' + (W - mr) + '" y2="' + Y(gy) + '"/>';
+      h += '<line class="cv-ax" x1="' + ml + '" y1="' + y0 + '" x2="' + (W - mr) + '" y2="' + y0 + '"/><line class="cv-ax" x1="' + x0 + '" y1="' + mt + '" x2="' + x0 + '" y2="' + (H - mb) + '"/>';
+      h += '<text class="cv-lab" x="' + (W - mr - 4) + '" y="' + (y0 - 6) + '" text-anchor="end">x</text><text class="cv-lab" x="' + (x0 + 6) + '" y="' + (mt + 12) + '">y</text>';
+      /* bande de B (image réciproque) */
+      if (mode === 'preimage') ySet.forEach(function (I) { var ya = Math.min(Math.max(I.a.v, v[2]), v[3]), yb = Math.min(Math.max(I.b.v, v[2]), v[3]); if (yb >= ya) h += '<rect class="cv-band" clip-path="url(#' + cid + ')" x="' + ml + '" y="' + Y(yb) + '" width="' + (W - ml - mr) + '" height="' + Math.max(1.5, Y(ya) - Y(yb)) + '"/>'; });
+      /* courbe sur l'ensemble de départ, coupée aux trous du domaine */
+      function path(a, b, cls) {
+        var lo = Math.max(a, v[0]), hi = Math.min(b, v[1]); if (!(hi > lo)) return '';
+        var n = 360, d = '', pen = false;
+        for (var i = 0; i <= n; i++) {
+          var x = lo + (hi - lo) * i / n, y = Fx.js(x);
+          if (!isFinite(y) || y > v[3] + 50 || y < v[2] - 50) { pen = false; continue; }
+          d += (pen ? 'L' : 'M') + X(x).toFixed(2) + ' ' + Y(y).toFixed(2); pen = true;
+        }
+        return d ? '<path class="cv-c' + (cls ? ' ' + cls : '') + '" clip-path="url(#' + cid + ')" d="' + d + '"/>' : '';
+      }
+      function inner(I) { var e = 1e-9 * Math.max(1, Math.abs(I.a.v), Math.abs(I.b.v)); return [I.a.k === 'inf' ? -1e9 : I.a.v + (I.ac ? 0 : e), I.b.k === 'inf' ? 1e9 : I.b.v - (I.bc ? 0 : e)]; }
+      st.dom.forEach(function (I) { var r = inner(I); h += path(r[0], r[1], ''); });
+      xSet.forEach(function (I) {
+        if (ising(I)) { var yy = Fx.js(I.a.v); if (isFinite(yy) && yy >= v[2] && yy <= v[3]) h += '<circle class="cv-dot" cx="' + X(I.a.v) + '" cy="' + Y(yy) + '" r="4.5"/>'; return; }
+        var r = inner(I); h += path(r[0], r[1], 'hl');
+      });
+      /* repères pointillés */
+      function vguide(x) { if (fin(x) && x.v >= v[0] && x.v <= v[1]) { var yy = Fx.js(x.v); var ty = isFinite(yy) ? Math.min(Math.max(Y(yy), mt), H - mb) : mt; h += '<line class="cv-g x" x1="' + X(x.v) + '" y1="' + y0 + '" x2="' + X(x.v) + '" y2="' + ty + '"/>'; } }
+      function hguide(y) { if (fin(y) && y.v >= v[2] && y.v <= v[3]) h += '<line class="cv-g y" x1="' + ml + '" y1="' + Y(y.v) + '" x2="' + (W - mr) + '" y2="' + Y(y.v) + '"/>'; }
+      xSet.forEach(function (I) { vguide(I.a); if (!ising(I)) vguide(I.b); });
+      ySet.forEach(function (I) { hguide(I.a); if (!ising(I)) hguide(I.b); });
+      /* les deux ensembles sur les axes : bornes pleines (fermées) ou creuses (ouvertes) */
+      function onAxis(S2, axis) {
+        S2.forEach(function (I) {
+          var lo = axis === 'x' ? Math.max(I.a.v, v[0]) : Math.max(I.a.v, v[2]), hi = axis === 'x' ? Math.min(I.b.v, v[1]) : Math.min(I.b.v, v[3]);
+          if (hi < lo) return;
+          if (!ising(I)) h += axis === 'x' ? '<line class="cv-x" x1="' + X(lo) + '" y1="' + y0 + '" x2="' + X(hi) + '" y2="' + y0 + '"/>' : '<line class="cv-y" x1="' + x0 + '" y1="' + Y(lo) + '" x2="' + x0 + '" y2="' + Y(hi) + '"/>';
+          [[I.a, I.ac], [I.b, I.bc]].forEach(function (e, j) {
+            if (j && ising(I)) return;
+            if (!fin(e[0])) return;
+            var cx = axis === 'x' ? X(e[0].v) : x0, cy = axis === 'x' ? y0 : Y(e[0].v);
+            if ((axis === 'x' && (e[0].v < v[0] || e[0].v > v[1])) || (axis === 'y' && (e[0].v < v[2] || e[0].v > v[3]))) return;
+            h += '<circle class="cv-e ' + axis + ' ' + (e[1] ? 'c' : 'o') + '" cx="' + cx + '" cy="' + cy + '" r="4.5"/>';
+          });
+        });
+      }
+      onAxis(ySet, 'y'); onAxis(xSet, 'x');
+      /* étiquettes : les bornes des deux ensembles d'abord, puis le quadrillage, sans chevauchement */
+      var xl = [], yl = [];
+      function labX(x, cls) { if (!fin(x) || x.v < v[0] || x.v > v[1]) return; var px = X(x.v), t = ntxt(x), w = 7 * t.length + 6; if (xl.some(function (q) { return Math.abs(q[0] - px) < (q[1] + w) / 2; })) return; xl.push([px, w]); h += '<text class="cv-t ' + cls + '" x="' + px + '" y="' + Math.min(y0 + 17, H - 6) + '" text-anchor="middle">' + esc(t) + '</text>'; }
+      function labY(y, cls) { if (!fin(y) || y.v < v[2] || y.v > v[3]) return; var py = Y(y.v); if (yl.some(function (q) { return Math.abs(q - py) < 14; })) return; yl.push(py); h += '<text class="cv-t ' + cls + '" x="' + (x0 - 6) + '" y="' + (py + 4.5) + '" text-anchor="end">' + esc(ntxt(y)) + '</text>'; }
+      xSet.forEach(function (I) { labX(I.a, 'x'); labX(I.b, 'x'); });
+      ySet.forEach(function (I) { labY(I.a, 'y'); labY(I.b, 'y'); });
+      yl.push(y0);
+      st.dom.forEach(function (I) { labX(I.a, ''); labX(I.b, ''); });
+      for (gx = Math.ceil(v[0] / step) * step; gx <= v[1]; gx += step) { var gq = Fx.trig ? npi(Math.round(2 * gx / PI), 2) : nq(Math.round(gx)); if (Math.abs(gx) > 1e-9) labX(gq, ''); }
+      for (gy = Math.ceil(v[2] / ystep) * ystep; gy <= v[3]; gy += ystep) if (Math.abs(gy) > 1e-9) labY(Fx.trig ? nq(Math.round(gy * 2), 2) : nq(Math.round(gy)), '');
+      fig.innerHTML = h + '</svg>';
+      var nm = setName();
+      key.innerHTML = '<span><i class="kx"></i>' + T('{S}, sur l’axe des abscisses', { S: tx(mode === 'image' ? 'A' : fn() + '^{-1}(B)') }) + '</span><span><i class="ky"></i>' + T('{S}, sur l’axe des ordonnées', { S: tx(mode === 'image' ? fn() + '(A)' : 'B') }) + '</span>';
+      /* lecture */
+      var t = '';
+      if (st.note) t += '<p class="err">' + esc(st.note) + '</p>';
+      if (res.error) { out.innerHTML = t + '<p class="err">' + esc(res.error) + '</p>'; return; }
+      var nameS = fn();
+      if (mode === 'image') {
+        if (!res.inside) t += '<p class="err">' + T('{A} n’est pas une partie de l’ensemble de départ : {fA} n’est pas défini. Voici l’image de la partie de A qui est dans l’ensemble de départ.', { A: tx('A = ' + fset(st.A)), fA: tx(nameS + '(A)') }) + '</p>';
+        var single = res.AE.every(ising);
+        if (single && res.AE.length) t += '<p>' + T('On calcule l’image de chaque point.') + '</p><div class="fm">' + tx(res.AE.map(function (I) { return nameS + '\\left(' + ntex(I.a) + '\\right) = ' + ntex(F().f(I.a)); }).join(',\\quad ')) + '</div>';
+        else if (res.steps.length) {
+          t += '<ol class="cv-steps">';
+          res.steps.forEach(function (s) {
+            if (s.point) return;
+            t += '<li>' + T(s.dir > 0 ? 'Sur {P}, {f} est strictement croissante :' : 'Sur {P}, {f} est strictement décroissante :', { P: tx(fset([s.P])), f: tx(nameS) }) + '<div>' + tx(nameS + '\\left(' + fset([s.P]) + '\\right) = ' + fset([s.J])) + '</div></li>';
+          });
+          t += '</ol>';
+        }
+        t += '<div class="cv-res">' + tx('\\htmlClass{cvz2}{' + nameS + '\\left(' + fset(st.A) + '\\right)} = \\htmlClass{cvz2}{' + fset(res.set) + '}', true) + '</div>';
+      } else {
+        t += '<ol class="cv-steps">';
+        res.steps.forEach(function (s) {
+          if (s.point) return;
+          t += '<li>' + T(s.dir > 0 ? 'Sur {P}, {f} est strictement croissante et prend les valeurs de {J} :' : 'Sur {P}, {f} est strictement décroissante et prend les valeurs de {J} :', { P: tx(fset([s.P])), f: tx(nameS), J: tx(fset([s.J])) }) +
+            (s.X.length ? '<div>' + tx(nameS + '(x) \\in ' + fset(st.B) + ' \\iff x \\in ' + fset(s.X)) + '</div>' : ' ' + T('aucune valeur de {B} n’y est prise.', { B: tx('B') })) + '</li>';
+        });
+        t += '</ol><div class="cv-res">' + tx('\\htmlClass{cvz1}{' + nameS + '^{-1}\\left(' + fset(st.B) + '\\right)} = \\htmlClass{cvz1}{' + fset(res.set) + '}', true) + '</div>';
+      }
+      out.innerHTML = t;
+    }
+    if (edit) {
+      U.$$('[data-f]', el).forEach(function (b) { b.addEventListener('click', function () { setFrom({ f: b.getAttribute('data-f'), mode: mode }); st.note = null; draw(); }); });
+      U.$$('[data-m]', el).forEach(function (b) { b.addEventListener('click', function () { mode = b.getAttribute('data-m'); st.note = null; draw(); }); });
+      el.querySelector('[data-k="dom"]').addEventListener('change', function (e) {
+        var d = e.target.value, S = sparseSet(d);
+        if (!S) return;
+        st.domSrc = d; st.dom = S;
+        if (mode === 'image') st.A = S.length === 1 ? S : [ivl(S[0].a, S[S.length - 1].b, S[0].ac, S[S.length - 1].bc)];
+        st.note = null; draw();
+      });
+      ['lo', 'hi'].forEach(function (k) { el.querySelector('[data-k="' + k + '"]').addEventListener('change', function () { fromCtl(null); }); });
+      U.$$('.cv-br', el).forEach(function (b) { b.addEventListener('click', function () { fromCtl(b.getAttribute('data-b')); var again = el.querySelector('[data-b="' + b.getAttribute('data-b') + '"]'); if (again && !again.disabled) again.focus({ preventScroll: true }); }); });
+      if (presets) U.$$('[data-p]', el).forEach(function (b) { b.addEventListener('click', function () { var p = presets[+b.getAttribute('data-p')]; setFrom({ f: p.f || fid, dom: p.dom, A: p.A, B: p.B, mode: p.mode || mode, name: p.name }); st.note = null; draw(); }); });
+    }
+    draw();
+    return { el: el, state: function () { return { f: fid, mode: mode, dom: st.dom, A: st.A, B: st.B }; }, result: function () { return mode === 'image' ? cimage(fid, st.dom, st.A) : cpreimage(fid, st.dom, st.B); } };
+  }
+
   /* ================================================================== 9. PAGE */
   /* numéro de partie entouré à la main : un cercle un peu irrégulier, toujours le même pour un numéro donné */
   function pnHTML(n) {
@@ -1566,7 +2223,7 @@
     }
     return '<svg viewBox="-16 -16 32 32" aria-hidden="true"><path d="M' + pts.join('L') + '"/></svg><b>' + n + '</b>';
   }
-  var MOUNT = { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose };
+  var MOUNT = { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose, curve: curve };
   function mount(root) {
     if (!root || root.nodeType !== 1) return;
     function all(sel) { var l = U.$$(sel, root); if (root.matches && root.matches(sel)) l.unshift(root); return l; }
@@ -1629,7 +2286,8 @@
     tree: { compute: tcompute }, law: { make: lawMake },
     arr: arr, count: count, countTex: countTex, intTex: intTex, leaves: LEAVES,
     pascal: { rows: pascalRows, relation: pascalRel }, choose: { tree: CHT, at: chAt, path: chPath },
-    tools: { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose },
+    curve: { num: nparse, set: sparseSet, image: cimage, preimage: cpreimage, tex: ntex, txt: ntxt, setTex: stexSet, same: seq, fns: CURVES, ids: CURVE_IDS },
+    tools: { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose, curve: curve },
     truth: truth, negate: negate, venn: venn, sagittal: sagittal, stepper: stepper, pn: pnHTML, mount: mount
   };
 })();
