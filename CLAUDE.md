@@ -38,6 +38,14 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   outils déclaratifs `<div data-archi="posed|divs|mults|groups|converter|drill|place|register|wheel|ieee"
   data-opts='{…}'>`, montés aussi quand ils sont ajoutés par script. Thème `archi.css` : fiche technique de
   processeur (Intel One Mono pour les nombres).
+- `mathrender.js` + `assets/vendor/katex/` (KaTeX 0.16.11 en copie locale, polices woff2) : `\( … \)` en ligne,
+  `\[ … \]` en bloc, rendus au chargement et pour tout contenu ajouté par script (jamais le texte d'un `script` ou
+  d'un `style`, sinon l'observateur boucle) ; `REV.math.render(el)`, `tex(src)`, macros du site (`\R`, `\card`, `\P`,
+  `\E`, `\V`, `\ent{a}{b}`). Une page qui affiche des formules (maths, QCM) charge `mathrender.js` seul.
+- `maths.js` (pages de maths, API en tête du fichier) : fractions exactes en BigInt, et outils `data-maths="truth|negate|
+  venn|sagittal|tree|law|pascal|choose|curve" data-opts='{…}'` (table de vérité, négation pas à pas, Venn, sagittal,
+  arbre pondéré et Bayes, loi et binomiale, triangle de Pascal, « quelle formule ? », courbe avec images directes et
+  réciproques exactes). Thème `maths.css` : copie double à carreaux en clair, tableau noir en sombre.
 
 ## Deux langues
 
@@ -117,6 +125,21 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   8 bits avec ERREUR en cas de dépassement ; extension de signe, BCD, Gray, ASCII jamais tombés. Le chapitre 2 du
   cours (flottants) et le TD 3 n’ont pas été fournis : le cours 4 suit la norme et les corrigés, et le dit. Coquilles
   du chapitre 1 relevées (0,4025 pour 0,40625, « 0 − 1 = 1 → on emprunte »…) : ne pas les recopier.
+- **Maths** (examen 1 : OBM et DP, mercredi 28 octobre) : cours `maths/cours-1-logique`, `-2-ensembles`, `-3-fonctions`,
+  `-4-raisonnement` (OBM), `-5-denombrement`, `-6-probabilites`, `-7-variables` (DP) (`data-done="maths:<chapitre>:sN"`) ;
+  exercices `window.MATHS_EX` (`data/maths/ex-annales.js` : sujets `p2024-dp`, `p2024-obm`, `p2023-dp`, `p2023-le`, puis
+  contrôles combinés 2018-2022 ; `ex-td.js` : séminaire `sem-…`, TD `td1-…`, `td2-…`, feuilles `tdx-…`, avec `near`),
+  sujets `MATHS_EXAMS` (`ecue`, `prog`, `progPts`), notions `MATHS_TOPICS` et `MATHS_ECUE` (`data/maths/exams.js`) ; QCM
+  `data/qcm/maths.js` (`maths-cN-…`) et `maths-annales.js` (`maths-p2024-dp-qN`…, `maths-mcq…`, `maths-td…`). Le QCM
+  accepte les suffixes `-dp`, `-obm`, `-le`. **Tout calcul est vérifié par programme** (sympy, fractions, énumération ;
+  `data-eq` relus par script). Sources : transcriptions Markdown + LaTeX des PDF du Moodle (faites par Gemini, à
+  revérifier) ; notes manuscrites d'un élève : jamais une source de vérité. Points vérifiés : DP 2023 et 2024 ont la même
+  architecture (dénombrement, identité binomiale, conditionnelles avec seuil, une démonstration à connaître, Bernoulli →
+  binomiale sur 20 tirages) ; relations binaires tombées 6 fois sur 6 depuis 2019 ; corrigé 2019 faux (« tableau » :
+  2 520 anagrammes) ; fiche « Probabilités conditionnelles » : formule des probabilités totales mal écrite. APIS (analyse)
+  relève de l'examen 2 (décembre) : chapitres à ajouter.
+- **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date et créneau, tiers-temps compris) ;
+  `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques

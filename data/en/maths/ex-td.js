@@ -576,7 +576,7 @@
   M['sem-3-22'] = {
     src: 'Seminar · Ex 5.22 (FR 3.22)', title: 'Study of x ↦ sin(4x)',
     intro: p(r`Let \(f : x \longmapsto \sin(4x)\). Let \(\mathcal{C}_f\) be the graph of \(f\).`),
-    questions: [r`Give the definition domain of \(f\).`, r`Prove that \(f\) is \(\dfrac{\pi}{2}\)-périodic.`, r`Is \(f\) an even function? an odd functio? Justify.`,
+    questions: [r`Give the definition domain of \(f\).`, r`Prove that \(f\) is \(\dfrac{\pi}{2}\)-periodic.`, r`Is \(f\) an even function? an odd functio? Justify.`,
       r`Explain why it is sufficient to study \(f\) on \(\left[0, \dfrac{\pi}{4}\right]\). How is it reflected on \(\mathcal{C}_f\)?`,
       r`Study of \(f\) on \(\left[0, \dfrac{\pi}{4}\right]\): compute the derivative of \(f\) on \(\left[0, \dfrac{\pi}{4}\right]\) and show that its sign changes at \(\dfrac{\pi}{8}\). Make the table of variations.`,
       r`Draw the graph of \(f\) on \(I = \left[-\dfrac{\pi}{4}, \dfrac{\pi}{4}\right]\).`,
