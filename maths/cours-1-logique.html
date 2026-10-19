@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logique · Maths</title>
+<meta name="description" content="Maths, OBM, cours 1 : assertions, connecteurs et tables de vérité, lois de De Morgan, implication, conditions nécessaire et suffisante, contraposée, quantificateurs, négation d’une phrase quantifiée, vrai ou faux. Avec une table de vérité qui se remplit et la négation pas à pas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · cours 1 : logique">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM</b> — cours 1 sur 7</span><span>Source : séminaire de rentrée, partie 1 · TD 1.1 à 1.7</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Maths</a> · OBM · Cours 1 sur 7</div>
+      <h1>Vrai ou faux, <span class="w">et sa négation.</span></h1>
+      <p class="lead">Une assertion est vraie ou fausse. Ce cours t’apprend à les combiner avec \(\neg\), \(\land\), \(\lor\), \(\Rightarrow\), \(\Leftrightarrow\), à quantifier avec \(\forall\) et \(\exists\), puis à écrire une négation sans te tromper : les examens de 2023 et de 2024 la demandent tous les deux.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec tables de vérité</span></li>
+        <li><span><span class="k">Cours</span> séminaire, partie 1 · TD 1.1 à 1.7</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un exercice de logique dans les 6 sujets de 2019 à 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="truth" data-opts='{"f":"P => Q","presets":["P => Q","P et Q","P ou Q","non P",["P => Q","non Q => non P"],["P => Q","Q => P"]],"title":"Table de vérité · tape ta formule"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Tape une formule (\(\Rightarrow\) s’écrit =&gt;) : la table se remplit, une ligne par combinaison de valeurs.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 1 · Logique</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Assertions, non, et, ou</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Lois de calcul, De Morgan</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>L’implication</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Condition nécessaire, suffisante</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Contraposée, négation, équivalence</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Les quantificateurs</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Nier une phrase quantifiée</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Vrai ou faux : prouver</span></a></li>
+    </ol>
+    <p class="toc-note">Les numéros de parties sont entourés comme ceux des questions sur ta copie. Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Maths</a><a href="cours-2-ensembles.html">Cours 2 : les ensembles →</a><a href="../qcm/index.html#maths">QCM de maths</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Assertions, non, et, ou</a></li><li><a href="#s2">Lois de calcul, De Morgan</a></li><li><a href="#s3">L’implication</a></li><li><a href="#s4">Condition nécessaire, suffisante</a></li>
+      <li><a href="#s5">Contraposée, négation, équivalence</a></li><li><a href="#s6">Les quantificateurs</a></li><li><a href="#s7">Nier une phrase quantifiée</a></li><li><a href="#s8">Vrai ou faux : prouver</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">séminaire § 1 · TD 1.1</span></div><h2>Assertions, négation, « et », « ou »</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Les maths s’écrivent avec des phrases dont on peut dire si elles sont vraies ou fausses. On les combine avec des <b>connecteurs logiques</b> : non, et, ou, puis (parties 3 et 5) implique et équivaut.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>assertion</i></span>
+          <p>Une <b>assertion</b> (ou proposition) est une phrase mathématique qui est <b>soit vraie, soit fausse</b>, jamais les deux : c’est le principe du <b>tiers exclu</b>. On les note \(P\), \(Q\), \(R\)… Une assertion peut dépendre d’une variable : \(P(x)\) : « \(x \leq 1\) » est vraie pour \(x = 0\), fausse pour \(x = 3\).</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>négation, conjonction, disjonction</i></span>
+          <ul>
+            <li>La <b>négation</b> \(\neg P\) (« non \(P\) ») est vraie quand \(P\) est fausse, fausse quand \(P\) est vraie. Donc \(\neg(\neg P) \Leftrightarrow P\).</li>
+            <li>La <b>conjonction</b> \(P \land Q\) (« \(P\) et \(Q\) ») est vraie <b>seulement</b> quand \(P\) et \(Q\) sont vraies toutes les deux.</li>
+            <li>La <b>disjonction</b> \(P \lor Q\) (« \(P\) ou \(Q\) ») est vraie dès qu’<b>au moins une</b> des deux est vraie.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Tableau 1.1 — Table de vérité des trois premiers connecteurs (V : vrai, F : faux). Avec deux assertions, il y a 4 lignes : une par combinaison.</caption>
+          <thead><tr><th class="var">\(P\)</th><th class="var">\(Q\)</th><th class="fin">\(\neg P\)</th><th class="fin">\(P \land Q\)</th><th class="fin">\(P \lor Q\)</th></tr></thead>
+          <tbody>
+            <tr><td class="var"><span class="V">V</span></td><td class="var"><span class="V">V</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+            <tr><td class="var"><span class="V">V</span></td><td class="var"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td></tr>
+            <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td></tr>
+            <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Exemple (TD 1.1).</b> Pour un réel \(x\), on pose \(P(x)\) : « \(x \leq 1\) », \(Q(x)\) : « \(-1 &lt; x \leq 2\) » et \(R(x)\) : « \(0 \leq x &lt; 4\) ». On prend \(x = -3\). On évalue d’abord chaque brique, puis on applique la table :</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.2 — TD 1.1, question 1, pour \(x = -3\)</caption>
+          <thead><tr><th>Assertion</th><th>Valeur</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>\(P(-3)\)</td><td>vraie</td><td>\(-3 \leq 1\)</td></tr>
+            <tr><td>\(\neg Q(-3)\)</td><td>vraie</td><td>\(Q(-3)\) est fausse, car \(-3 \leq -1\)</td></tr>
+            <tr><td>\(\neg Q(-3) \lor R(-3)\)</td><td>vraie</td><td>\(\neg Q(-3)\) est vraie : un des deux suffit</td></tr>
+            <tr><td>\(\neg Q(-3) \land R(-3)\)</td><td>fausse</td><td>\(R(-3)\) est fausse, car \(-3 &lt; 0\)</td></tr>
+            <tr><td>\(\neg P(-3) \land Q(-3)\)</td><td>fausse</td><td>\(\neg P(-3)\) est fausse</td></tr>
+            <tr><td>\(\neg R(-3) \land P(-3)\)</td><td>vraie</td><td>les deux sont vraies</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Pour \(x = -3\) : \(-3 &lt; 0\), donc \(R(-3)\) est fausse. Une conjonction n’est vraie que si ses deux termes le sont : \(\neg Q(-3) \land R(-3)\) est donc fausse.<span class="c">on cite la règle</span></p>
+          <p>En revanche \(-3 \leq -1\), donc \(Q(-3)\) est fausse et \(\neg Q(-3)\) est vraie. Une disjonction est vraie dès qu’un de ses termes l’est : \(\neg Q(-3) \lor R(-3)\) est vraie.</p>
+        </div>
+        <div data-maths="truth" data-opts='{"f":"non P et Q","quiz":true,"edit":false,"title":"À toi · remplis la colonne"}'></div>
+        <div class="box trap"><span class="tag">Piège : le « ou » des maths est inclusif</span>
+          <p>\(P \lor Q\) est vraie aussi quand \(P\) et \(Q\) sont <b>toutes les deux</b> vraies (première ligne du tableau). Au restaurant, « fromage ou dessert » veut dire l’un ou l’autre, pas les deux : c’est le « ou exclusif », qu’on verra en partie 5. Et on dit « conjonction » de deux assertions, pas « intersection » : l’intersection est pour les ensembles (cours 2).</p>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">notes p. 1 · TD 1.1</span></div><h2>Lois de calcul et lois de De Morgan</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On calcule avec les connecteurs comme avec les nombres : certaines écritures différentes disent exactement la même chose. Pour le prouver, on compare leurs tables de vérité.</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>assertions équivalentes</i></span>
+          <p>Deux assertions sont <b>équivalentes</b> quand elles ont la même valeur de vérité à <b>chaque ligne</b> de leur table. On écrit \(A \Leftrightarrow B\) (ou \(A \equiv B\)).</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>lois de calcul</i></span>
+          <ul>
+            <li>Commutativité : \(P \land Q \Leftrightarrow Q \land P\) et \(P \lor Q \Leftrightarrow Q \lor P\).</li>
+            <li>Associativité : \((P \land Q) \land R \Leftrightarrow P \land (Q \land R)\), qu’on écrit \(P \land Q \land R\) ; de même pour \(\lor\).</li>
+            <li>Distributivités : \(P \land (Q \lor R) \Leftrightarrow (P \land Q) \lor (P \land R)\) et \(P \lor (Q \land R) \Leftrightarrow (P \lor Q) \land (P \lor R)\).</li>
+            <li><b>Lois de De Morgan</b> : \(\neg(P \land Q) \Leftrightarrow \neg P \lor \neg Q\) et \(\neg(P \lor Q) \Leftrightarrow \neg P \land \neg Q\).</li>
+          </ul>
+        </div>
+        <div data-maths="truth" data-opts='{"f":["non (P et Q)","non P ou non Q"],"presets":[["non (P et Q)","non P ou non Q"],["non (P ou Q)","non P et non Q"],["non (P et Q)","non P et non Q"],["P et (Q ou R)","(P et Q) ou (P et R)"]],"title":"Deux formules, deux colonnes à comparer"}'></div>
+        <div class="prose">
+          <p><b>De Morgan en pratique.</b> Nier un « et » donne un « ou », nier un « ou » donne un « et ». La négation de « \(x > 0\) et \(x &lt; 1\) » est « \(x \leq 0\) ou \(x \geq 1\) ».</p>
+          <p><b>Exemple (TD 1.1, question 3) : les ensembles de vérité.</b> Avec les assertions de la partie 1, on cherche pour quels \(x\) chaque assertion est vraie, sous forme d’intervalle. \(Q(x) \land R(x)\) : \(0 \leq x \leq 2\). Donc \(P(x) \lor \big(Q(x) \land R(x)\big)\) est vraie pour \(x \in \,]-\infty, 1] \cup [0, 2] = \,]-\infty, 2]\).</p>
+          <p>De l’autre côté, \(P(x) \lor Q(x)\) donne \(]-\infty, 2]\) et \(P(x) \lor R(x)\) donne \(]-\infty, 4[\). Leur conjonction : \(]-\infty, 2]\). Même ensemble : c’est la distributivité de \(\lor\) sur \(\land\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Montrons que \(\neg(P \land Q) \Leftrightarrow \neg P \lor \neg Q\). On dresse la table de vérité des deux assertions (4 lignes, une par valeur du couple \((P, Q)\)).</p>
+          <p>Les colonnes de \(\neg(P \land Q)\) et de \(\neg P \lor \neg Q\) valent toutes les deux F, V, V, V : elles sont identiques ligne par ligne.<span class="c">la phrase de conclusion compte</span></p>
+          <p>Donc \(\neg(P \land Q) \Leftrightarrow \neg P \lor \neg Q\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : nier un « et » en gardant le « et »</span>
+          <p>\(\neg(P \land Q)\) n’est <b>pas</b> \(\neg P \land \neg Q\) : clique sur le troisième exemple ci-dessus, les colonnes diffèrent aux lignes 2 et 3. Pour « \(0 &lt; x &lt; 1\) », écrire « \(x \leq 0\) et \(x \geq 1\) » donne une assertion toujours fausse : la bonne négation est « \(x \leq 0\) ou \(x \geq 1\) ».</p>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">notes p. 1-3</span></div><h2>L’implication</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>implication</i></span>
+          <p>\(P \Rightarrow Q\) se lit « \(P\) implique \(Q\) » ou « si \(P\), alors \(Q\) ». Elle est <b>fausse dans un seul cas</b> : \(P\) vraie et \(Q\) fausse. Dans les trois autres cas, elle est vraie.</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Tableau 1.3 — Table de l’implication. Les deux dernières lignes surprennent : si \(P\) est fausse, \(P \Rightarrow Q\) est vraie.</caption>
+          <thead><tr><th class="var">\(P\)</th><th class="var">\(Q\)</th><th class="fin">\(P \Rightarrow Q\)</th></tr></thead>
+          <tbody>
+            <tr><td class="var"><span class="V">V</span></td><td class="var"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+            <tr class="hit"><td class="var"><span class="V">V</span></td><td class="var"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td></tr>
+            <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+            <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Une implication est une <b>promesse</b> : « si tu as plus de 10, tu valides ». Elle n’est rompue que si tu as plus de 10 sans valider. Si tu as moins de 10, la promesse n’a rien dit : elle reste tenue.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>à connaître</i></span>
+          <ul>
+            <li>\(P \Rightarrow Q \;\Leftrightarrow\; \neg P \lor Q\) (même table : vérifie-le ci-dessous).</li>
+            <li><b>Transitivité</b> : si \(P \Rightarrow Q\) et \(Q \Rightarrow R\), alors \(P \Rightarrow R\).</li>
+          </ul>
+        </div>
+        <div data-maths="truth" data-opts='{"f":["P => Q","non P ou Q"],"presets":[["P => Q","non P ou Q"],"((P => Q) et (Q => R)) => (P => R)",["P => Q","Q => P"]],"title":"L’implication et ses équivalents"}'></div>
+        <div class="box def"><span class="tag">Définition <i>réciproque</i></span>
+          <p>La <b>réciproque</b> de \(P \Rightarrow Q\) est \(Q \Rightarrow P\). L’implication n’est pas commutative : une implication vraie peut avoir une réciproque fausse.</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemples (notes du séminaire).</b> « \(n\) divisible par 4 \(\Rightarrow\) \(n\) pair » est vraie ; sa réciproque « \(n\) pair \(\Rightarrow\) \(n\) divisible par 4 » est fausse : \(n = 2\). De même, « \(x > 2 \Rightarrow x^2 > 4\) » est vraie, mais sa réciproque « \(x^2 > 4 \Rightarrow x > 2\) » est fausse.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>une implication fausse</i></span>
+          <p>Montrons que « \(\forall x \in \R,\ x^2 > 4 \Rightarrow x > 2\) » est fausse. Il suffit d’un contre-exemple : un \(x\) qui rend \(P\) vraie et \(Q\) fausse.</p>
+          <p>Prenons \(x = -3\) : \(x^2 = 9 > 4\), mais \(x > 2\) est faux.<span class="c">un nombre précis</span></p>
+          <p>L’implication est donc fausse pour \(x = -3\) : l’assertion est fausse.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : une implication ne dit pas que P est vraie</span>
+          <ul>
+            <li>« Si \(P\), alors \(Q\) » ne dit rien quand \(P\) est fausse. « Si \(1 = 2\), alors je suis pape » est une implication vraie.</li>
+            <li>Ne confonds pas une implication et sa réciproque : pour réfuter \(P \Rightarrow Q\), il faut \(P\) vraie <b>et</b> \(Q\) fausse, pas l’inverse.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">notes p. 2-3 · TD 1.2</span></div><h2>Condition nécessaire, condition suffisante</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>condition nécessaire, suffisante</i></span>
+          <p>Quand \(P \Rightarrow Q\) est vraie :</p>
+          <ul>
+            <li>\(P\) est une <b>condition suffisante</b> pour \(Q\) : il suffit que \(P\) soit vraie pour que \(Q\) le soit ;</li>
+            <li>\(Q\) est une <b>condition nécessaire</b> pour \(P\) : pour que \(P\) soit vraie, il faut que \(Q\) le soit.</li>
+          </ul>
+          <p>Si \(P \Leftrightarrow Q\), \(P\) est une condition <b>nécessaire et suffisante</b> pour \(Q\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Exemple (notes).</b> « \(n\) divisible par 4 » est une condition suffisante pour que \(n\) soit pair. « \(n\) pair » est une condition nécessaire pour que \(n\) soit divisible par 4, mais pas suffisante (\(n = 2\)).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>placer \(\Rightarrow\), \(\Leftarrow\) ou \(\Leftrightarrow\)</i></span>
+          <ol>
+            <li>Écris l’ensemble des \(x\) qui rendent vraie chaque assertion (un intervalle, une liste).</li>
+            <li>Si l’ensemble de gauche est inclus dans celui de droite, la flèche va de gauche à droite : \(\Rightarrow\). Dans l’autre sens : \(\Leftarrow\). Les deux : \(\Leftrightarrow\).</li>
+            <li>Pour chaque flèche refusée, garde un contre-exemple : il te servira de justification.</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.4 — TD 1.2, question 3 : le symbole à placer, et pourquoi (ensembles vérifiés par programme)</caption>
+          <thead><tr><th>Gauche</th><th>Symbole</th><th>Droite</th><th>Justification</th></tr></thead>
+          <tbody>
+            <tr><td>\(x^2 > 4\)</td><td>\(\Leftarrow\)</td><td>\(x > 2\)</td><td>\(x = -3\) vérifie la gauche, pas la droite</td></tr>
+            <tr><td>\(x = \pi\)</td><td>\(\Rightarrow\)</td><td>\(\sin(x) = 0\)</td><td>\(x = 0\) vérifie la droite, pas la gauche</td></tr>
+            <tr><td>\(\sqrt{x^2} = 1\)</td><td>\(\Leftarrow\)</td><td>\(x = 1\)</td><td>\(\sqrt{x^2} = |x|\) : \(x = -1\) convient aussi</td></tr>
+            <tr><td>\(\frac{x^2}{3} = 0\)</td><td>\(\Leftrightarrow\)</td><td>\(x = 0\)</td><td>un carré est nul seulement en 0</td></tr>
+            <tr><td>\(\frac{x^2}{3} = 1\)</td><td>\(\Leftarrow\)</td><td>\(x = \sqrt{3}\)</td><td>\(x = -\sqrt{3}\) convient aussi</td></tr>
+            <tr><td>\(e^{x+1} = 1\)</td><td>\(\Leftrightarrow\)</td><td>\(x = -1\)</td><td>\(e^{y} = 1 \Leftrightarrow y = 0\)</td></tr>
+            <tr><td>\(x &lt; 1\)</td><td>\(\Leftarrow\)</td><td>\(|x| &lt; 1\)</td><td>\(x = -5\) vérifie la gauche, pas la droite</td></tr>
+            <tr><td>\(x^2 - x > 0\)</td><td>\(\Leftarrow\)</td><td>\(x > 1\)</td><td>\(x^2 - x > 0 \Leftrightarrow x &lt; 0\) ou \(x > 1\)</td></tr>
+            <tr><td>\(\ln(x^2 + 1) = 0\)</td><td>\(\Leftrightarrow\)</td><td>\(x = 0\)</td><td>\(\ln(y) = 0 \Leftrightarrow y = 1\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>À l’examen d’octobre 2024</b> (exercice 1.1) : \(P\) : « \(x^2 > 4\) », c’est-à-dire \(x \in \,]-\infty, -2[\, \cup \,]2, +\infty[\). On compare \(P\) à cinq conditions.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.5 — Examen OBM 2024, exercice 1.1 : quelles implications sont vraies ? (inclusions vérifiées par programme)</caption>
+          <thead><tr><th>Condition</th><th>\(\cdots \Rightarrow P\) ?</th><th>\(P \Rightarrow \cdots\) ?</th></tr></thead>
+          <tbody>
+            <tr><td>(1) \(x > -2\)</td><td>non : \(x = 0\)</td><td>non : \(x = -3\)</td></tr>
+            <tr><td>(2) \(x &lt; -10\)</td><td><b>oui</b> : \(x^2 > 100 > 4\)</td><td>non : \(x = 3\)</td></tr>
+            <tr><td>(3) \(x > 1{,}9\)</td><td>non : \(x = 1{,}95\), \(x^2 = 3{,}8025\)</td><td>non : \(x = -3\)</td></tr>
+            <tr><td>(4) \(x &lt; -3\) ou \(x > 3\)</td><td><b>oui</b> : \(|x| > 3\), donc \(x^2 > 9\)</td><td>non : \(x = 2{,}5\)</td></tr>
+            <tr><td>(5) \(x &lt; -2\) ou \(x > 2\)</td><td><b>oui</b></td><td><b>oui</b> : c’est \(P\) elle-même</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>OBM 2024, 1.1</i></span>
+          <p>(a) Les conditions suffisantes de \(P\) sont (2), (4) et (5). Par exemple pour (4) : si \(x &lt; -3\) ou \(x > 3\), alors \(|x| > 3\), donc \(x^2 > 9 > 4\).</p>
+          <p>(b) La seule condition nécessaire de \(P\) est (5) : \(x^2 > 4 \Leftrightarrow |x| > 2\).<span class="c">les autres : un contre-exemple</span></p>
+          <p>(c) Négation de \(P \Rightarrow (5)\) : « \(x^2 > 4\) et \(-2 \leq x \leq 2\) ».</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : le sens de la flèche</span>
+          <p>La condition <b>nécessaire</b> est au bout de la flèche : dans \(P \Rightarrow Q\), c’est \(Q\). Retiens la phrase : « <i>pour que</i> \(P\), <i>il faut</i> \(Q\) ; <i>il suffit</i> de \(P\) <i>pour</i> \(Q\) ». Une condition nécessaire est souvent « plus large » que \(P\) : (1) et (3) ne sont ni l’une ni l’autre, car elles ne contiennent pas \(P\) et ne sont pas contenues dedans.</p>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">notes p. 3 · TD 1.2, 1.5</span></div><h2>Contraposée, négation d’une implication, équivalence</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>contraposée</i></span>
+          <p>La <b>contraposée</b> de \(P \Rightarrow Q\) est \(\neg Q \Rightarrow \neg P\). On nie les deux assertions <b>et</b> on échange leurs places.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème</span>
+          <p>Une implication et sa contraposée sont équivalentes : \((P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration à connaître <i>demandée à l’examen OBM 2024, 1.3b</i></span>
+          <p>On dresse la table de vérité de \(P \Rightarrow Q\) et de \(\neg Q \Rightarrow \neg P\) :</p>
+          <div class="tv-scroll"><table class="tv">
+            <thead><tr><th class="var">\(P\)</th><th class="var">\(Q\)</th><th class="sub">\(\neg Q\)</th><th class="sub">\(\neg P\)</th><th class="fin">\(P \Rightarrow Q\)</th><th class="fin">\(\neg Q \Rightarrow \neg P\)</th></tr></thead>
+            <tbody>
+              <tr><td class="var"><span class="V">V</span></td><td class="var"><span class="V">V</span></td><td class="sub"><span class="F">F</span></td><td class="sub"><span class="F">F</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+              <tr><td class="var"><span class="V">V</span></td><td class="var"><span class="F">F</span></td><td class="sub"><span class="V">V</span></td><td class="sub"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td><td class="fin"><span class="F">F</span></td></tr>
+              <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="V">V</span></td><td class="sub"><span class="F">F</span></td><td class="sub"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+              <tr><td class="var"><span class="F">F</span></td><td class="var"><span class="F">F</span></td><td class="sub"><span class="V">V</span></td><td class="sub"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td><td class="fin"><span class="V">V</span></td></tr>
+            </tbody>
+          </table></div>
+          <p>\(\neg Q \Rightarrow \neg P\) n’est fausse que si \(\neg Q\) est vraie et \(\neg P\) fausse, c’est-à-dire \(Q\) fausse et \(P\) vraie : exactement le seul cas où \(P \Rightarrow Q\) est fausse (ligne 2). Les deux dernières colonnes sont identiques, donc \((P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)\).</p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>négation d’une implication, équivalence</i></span>
+          <ul>
+            <li>\(\neg(P \Rightarrow Q) \Leftrightarrow P \land \neg Q\) : la négation d’une implication est un « et », <b>pas</b> une implication.</li>
+            <li>L’<b>équivalence</b> \(P \Leftrightarrow Q\) (« \(P\) si et seulement si \(Q\) ») signifie \(P \Rightarrow Q\) et \(Q \Rightarrow P\). Elle est vraie quand \(P\) et \(Q\) ont la même valeur.</li>
+            <li>\(\neg(P \Leftrightarrow Q) \Leftrightarrow (P \land \neg Q) \lor (\neg P \land Q)\) : exactement une des deux est vraie. C’est le <b>ou exclusif</b>.</li>
+          </ul>
+        </div>
+        <div data-maths="truth" data-opts='{"f":["P => Q","non Q => non P"],"presets":[["P => Q","non Q => non P"],["P => Q","Q => P"],["non (P => Q)","P et non Q"],["P <=> Q","(P => Q) et (Q => P)"],["non (P <=> Q)","(P et non Q) ou (non P et Q)"]],"title":"Contraposée, réciproque, négation"}'></div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.6 — Les quatre phrases autour de « si \(x > 2\), alors \(x^2 > 4\) » (pour un réel \(x\))</caption>
+          <thead><tr><th>Nom</th><th>Phrase</th><th>Vraie pour tout \(x\) ?</th></tr></thead>
+          <tbody>
+            <tr><td>implication</td><td>\(x > 2 \Rightarrow x^2 > 4\)</td><td>oui</td></tr>
+            <tr><td>contraposée</td><td>\(x^2 \leq 4 \Rightarrow x \leq 2\)</td><td>oui (équivalente)</td></tr>
+            <tr><td>réciproque</td><td>\(x^2 > 4 \Rightarrow x > 2\)</td><td>non : \(x = -3\)</td></tr>
+            <tr><td>négation</td><td>\(x > 2\) et \(x^2 \leq 4\)</td><td>jamais vraie</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Exemple (TD 1.2, question 4).</b> \(P(x)\) : « \(x^2 > 1 \Rightarrow (x &lt; -1\) ou \(x > 1)\) ». Sa négation est « \(x^2 > 1\) et \(-1 \leq x \leq 1\) » ; sa contraposée est « \(-1 \leq x \leq 1 \Rightarrow x^2 \leq 1\) ».</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>en langage courant (TD 1.5)</i></span>
+          <p>« S’il fait beau, alors je vais à la plage. »</p>
+          <p>Contraposée : « Si je ne vais pas à la plage, alors il ne fait pas beau. »<span class="c">on échange</span></p>
+          <p>Négation : « Il fait beau et je ne vais pas à la plage. »<span class="c">un « et »</span></p>
+          <p>« Tu peux sortir si et seulement si tu fais tes devoirs » a pour négation : « Tu peux sortir sans faire tes devoirs, ou tu fais tes devoirs et tu ne peux pas sortir. »</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : trois mots, trois sens</span>
+          <ul>
+            <li>La <b>réciproque</b> échange sans nier : \(Q \Rightarrow P\). Elle n’est pas équivalente à l’implication.</li>
+            <li>La <b>contraposée</b> échange et nie : \(\neg Q \Rightarrow \neg P\). Elle est équivalente.</li>
+            <li>La <b>négation</b> n’est pas une implication : « S’il fait beau, je ne vais pas à la plage » est faux comme négation.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">notes p. 3-4 · TD 1.3, 1.4</span></div><h2>Les quantificateurs \(\forall\) et \(\exists\)</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>quantificateurs</i></span>
+          <ul>
+            <li>\(\forall x \in E,\ P(x)\) : « pour tout \(x\) de \(E\), \(P(x)\) est vraie ». C’est le quantificateur <b>universel</b>.</li>
+            <li>\(\exists x \in E,\ P(x)\) : « il existe <b>au moins un</b> \(x\) de \(E\) tel que \(P(x)\) soit vraie ». C’est le quantificateur <b>existentiel</b>.</li>
+            <li>\(\exists !\, x \in E,\ P(x)\) : il en existe <b>un et un seul</b>.</li>
+          </ul>
+          <p>Sur un ensemble fini, \(\forall\) est un grand « et », \(\exists\) un grand « ou » : pour \(A = \{1, 2, 3\}\), \(\forall x \in A,\ P(x)\) signifie \(P(1) \land P(2) \land P(3)\).</p>
+        </div>
+        <div class="prose">
+          <p>La lettre quantifiée est <b>muette</b> : \(\forall x \in \R,\ x^2 \geq 0\) et \(\forall t \in \R,\ t^2 \geq 0\) disent la même chose. En revanche, <b>l’ordre des quantificateurs compte</b> :</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">vraie</span><div class="fm">\(\forall x \in \R,\ \exists y \in \R,\ y > x\)</div><p class="muted">Pour chaque \(x\), on choisit \(y\) en fonction de \(x\) : \(y = x + 1\).</p></div>
+          <div class="card"><span class="k">fausse</span><div class="fm">\(\exists y \in \R,\ \forall x \in \R,\ y > x\)</div><p class="muted">Un même \(y\) devrait dépasser tous les réels, \(x = y\) compris.</p></div>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>traduire une phrase</i></span>
+          <ol>
+            <li>Repère les mots « tout », « chaque » (\(\forall\)) et « il existe », « certains », « au moins un » (\(\exists\)) ; « aucun » est un \(\forall\) suivi d’une négation.</li>
+            <li>Écris les quantificateurs dans l’ordre où les choix se font : ce qu’on choisit en premier vient en premier.</li>
+            <li>Termine par l’assertion, avec ses connecteurs (\(\Rightarrow\) pour « si … alors », « seulement »).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.7 — Traductions à connaître, pour \(f : \R \to \R\) (séminaire 1.3, examens 2021 et 2023)</caption>
+          <thead><tr><th>Phrase</th><th>Traduction</th></tr></thead>
+          <tbody>
+            <tr><td>\(f\) s’annule au moins une fois</td><td>\(\exists x \in \R,\ f(x) = 0\)</td></tr>
+            <tr><td>\(f\) ne s’annule jamais</td><td>\(\forall x \in \R,\ f(x) \neq 0\)</td></tr>
+            <tr><td>\(f\) est constante</td><td>\(\exists a \in \R,\ \forall x \in \R,\ f(x) = a\)</td></tr>
+            <tr><td>\(f\) est majorée</td><td>\(\exists M \in \R,\ \forall x \in \R,\ f(x) \leq M\)</td></tr>
+            <tr><td>\(f\) est bornée</td><td>\(\exists (m, M) \in \R^2,\ \forall x \in \R,\ m \leq f(x) \leq M\)</td></tr>
+            <tr><td>\(f\) est paire / impaire</td><td>\(\forall x \in \R,\ f(-x) = f(x)\) / \(f(-x) = -f(x)\)</td></tr>
+            <tr><td>\(f\) est périodique</td><td>\(\exists T \in \R^*,\ \forall x \in \R,\ f(x + T) = f(x)\)</td></tr>
+            <tr><td>\(f\) n’est pas la fonction nulle</td><td>\(\exists x \in \R,\ f(x) \neq 0\)</td></tr>
+            <tr><td>\(f\) est positive sur \(\R^+\)</td><td>\(\forall x \in \R^+,\ f(x) \geq 0\), ou \(\forall x \in \R,\ x \geq 0 \Rightarrow f(x) \geq 0\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Exemple (TD 1.4, la mare).</b> \(M\) : ce qui est dans la mare, \(P\) : les poissons, \(R\) : ce qui est rouge. « Tous les poissons sont rouges » : \(\forall x \in M,\ x \in P \Rightarrow x \in R\). « Il n’y a que les poissons qui sont rouges » : \(\forall x \in M,\ x \in R \Rightarrow x \in P\). « Il existe un poisson qui n’est pas rouge » : \(\exists x \in P,\ x \notin R\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen LE 2023, exercice 2.1</i></span>
+          <p>Soit \(f : \R \to \R\).</p>
+          <p>(a) « \(f\) s’annule au moins une fois » : \(\exists x \in \R,\ f(x) = 0\).</p>
+          <p>(b) « \(f\) est constante » : \(\exists a \in \R,\ \forall x \in \R,\ f(x) = a\).<span class="c">\(a\) d’abord</span></p>
+          <p>(c) « \(f\) est majorée » : \(\exists M \in \R,\ \forall x \in \R,\ f(x) \leq M\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : inverser \(\forall\) et \(\exists\)</span>
+          <p>« \(\forall x \in \R,\ \exists a \in \R,\ f(x) = a\) » est vraie pour <b>toute</b> fonction (on prend \(a = f(x)\)) : ce n’est pas « \(f\) est constante ». Dans une définition, la constante (\(a\), \(M\), \(T\)) se choisit <b>avant</b> \(x\), donc son \(\exists\) vient en premier. Et « certains » veut dire « au moins un », jamais « un seul ».</p>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Partie 7 <span class="ref">notes p. 3 · TD 1.3, 1.6, 1.7</span></div><h2>Nier une phrase quantifiée</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>négation des quantificateurs</i></span>
+          <div class="fm">\[\neg\big(\forall x \in E,\ P(x)\big) \Leftrightarrow \exists x \in E,\ \neg P(x) \qquad \neg\big(\exists x \in E,\ P(x)\big) \Leftrightarrow \forall x \in E,\ \neg P(x)\]</div>
+          <p>« Ce n’est pas vrai pour tous » veut dire « c’est faux pour au moins un ». « Il n’en existe aucun » veut dire « c’est faux pour tous ».</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>nier en trois gestes</i></span>
+          <ol>
+            <li>Échange chaque \(\forall\) en \(\exists\) et chaque \(\exists\) en \(\forall\), <b>dans le même ordre</b>, en gardant les mêmes ensembles.</li>
+            <li>Nie l’assertion finale avec les règles des parties 2 et 5 : un « et » devient « ou », un « ou » devient « et », \(P \Rightarrow Q\) devient \(P \land \neg Q\).</li>
+            <li>Nie les relations : \(=\) devient \(\neq\), \(&lt;\) devient \(\geq\), \(\leq\) devient \(>\), \(\in\) devient \(\notin\).</li>
+          </ol>
+        </div>
+        <div data-maths="negate" data-opts='{"src":"\\exists (m, M) \\in \\R^2, \\forall x \\in \\R, m \\leq f(x) \\leq M","presets":[{"label":"f bornée","src":"\\exists (m, M) \\in \\R^2, \\forall x \\in \\R, m \\leq f(x) \\leq M"},{"label":"TD 1.6.1","src":"\\forall x \\in \\R, \\exists y \\in \\R, x + y > 0"},{"label":"examen 2023 : R","src":"(\\forall x \\in \\R, f(x) > 0) \\lor (\\forall x \\in \\R, f(x) < 0)"},{"label":"TD 1.7 (h)","src":"\\forall x \\in \\R, x > 5 \\Rightarrow (x - 1)(x - 6) < 0"},{"label":"examen 2024 : ε","src":"(\\forall \\varepsilon > 0, |a| \\leq \\varepsilon) \\Rightarrow a = 0"}],"title":"Négation pas à pas"}'></div>
+        <div class="prose">
+          <p>Appuie sur « Suivant » : chaque étape applique une seule règle, la partie qui change est surlignée. Tu peux taper ta propre phrase, en TeX ou avec les symboles \(\forall\) \(\exists\) \(\in\) \(\Rightarrow\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen LE 2023, exercice 2.2a</i></span>
+          <p>\(P\) : « \(\forall x \in \R,\ f(x) = 0\) », \(Q\) : « \(\exists x \in \R,\ f(x) = 0\) », \(R\) : « \((\forall x \in \R,\ f(x) > 0) \lor (\forall x \in \R,\ f(x) &lt; 0)\) ».</p>
+          <p>\(\neg P\) : « \(\exists x \in \R,\ f(x) \neq 0\) ».</p>
+          <p>\(\neg Q\) : « \(\forall x \in \R,\ f(x) \neq 0\) ».</p>
+          <p>\(\neg R\) : « \((\exists x \in \R,\ f(x) \leq 0) \land (\exists x \in \R,\ f(x) \geq 0)\) ».<span class="c">De Morgan, puis \(\neg\forall\)</span></p>
+        </div>
+        <div class="prose">
+          <p><b>À l’examen OBM 2024</b> (exercice 1.2b), avec \(P\) : « \(\forall x \in \R,\ \exists y \in \R,\ \cos(x) = y\) », \(Q\) : « \(\exists y \in \R,\ \forall x \in \R,\ x = \cos(y)\) » et \(R\) : « \(\exists x \in \R,\ \exists y \in \R,\ \cos(x) &lt; \cos(y)\) » :</p>
+        </div>
+        <div class="calc"><div class="fm">\(\neg P : \exists x \in \R,\ \forall y \in \R,\ \cos(x) \neq y\)</div><div class="fm">\(\neg Q : \forall y \in \R,\ \exists x \in \R,\ x \neq \cos(y)\)</div><div class="fm">\(\neg R : \forall x \in \R,\ \forall y \in \R,\ \cos(x) \geq \cos(y)\)</div></div>
+        <div class="box trap"><span class="tag">Piège : nier le domaine ou la mauvaise relation</span>
+          <ul>
+            <li>Le domaine d’un quantificateur ne se nie pas : la négation de « \(\forall \varepsilon > 0,\ \ldots\) » commence par « \(\exists \varepsilon > 0\) », pas par « \(\exists \varepsilon \leq 0\) ».</li>
+            <li>La négation de \(f(x) &lt; 0\) est \(f(x) \geq 0\), pas \(f(x) > 0\) : le cas \(f(x) = 0\) change de camp.</li>
+            <li>L’ordre des quantificateurs ne change pas : on échange leur type, pas leur place.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Partie 8 <span class="ref">séminaire § 4.2 · TD 1.5 à 1.7</span></div><h2>Vrai ou faux : preuve, témoin, contre-exemple</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>« Vraie ou fausse ? Justifier. » est la question la plus fréquente. La forme de la phrase dit ce qu’il faut écrire.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Tableau 1.8 — Ce qu’il faut écrire selon la phrase (séminaire, « Comment rédiger ? »)</caption>
+          <thead><tr><th>La phrase est…</th><th>Pour la prouver</th></tr></thead>
+          <tbody>
+            <tr><td>\(\forall x \in E,\ P(x)\), vraie</td><td>« Soit \(x \in E\) fixé. » puis une preuve qui marche pour ce \(x\) quelconque</td></tr>
+            <tr><td>\(\forall x \in E,\ P(x)\), fausse</td><td>un <b>contre-exemple</b> : un \(x\) précis pour lequel \(P(x)\) est fausse</td></tr>
+            <tr><td>\(\exists x \in E,\ P(x)\), vraie</td><td>un <b>témoin</b> : un \(x\) précis, et la vérification de \(P(x)\)</td></tr>
+            <tr><td>\(\exists x \in E,\ P(x)\), fausse</td><td>prouver sa négation \(\forall x \in E,\ \neg P(x)\)</td></tr>
+            <tr><td>\(P \Rightarrow Q\)</td><td>« Supposons \(P\) vraie. » puis montrer \(Q\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box def"><span class="tag">Définition <i>contre-exemple</i></span>
+          <p>Un <b>contre-exemple</b> à « \(\forall x \in E,\ P(x)\) » est un élément \(x_0 \in E\) tel que \(P(x_0)\) soit fausse. Un seul suffit pour prouver que la phrase est fausse ; aucun nombre d’exemples ne suffit pour prouver qu’elle est vraie.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 1.6</i></span>
+          <p>(1) « \(\forall x \in \R,\ \exists y \in \R,\ x + y > 0\) » est vraie. Soit \(x \in \R\) fixé. Posons \(y = 1 - x\) : alors \(x + y = 1 > 0\).<span class="c">\(y\) dépend de \(x\)</span></p>
+          <p>(2) « \(\forall x \in \R,\ \forall y \in \R,\ x + y > 0\) » est fausse : pour \(x = y = 0\), \(x + y = 0\).</p>
+          <p>(3) « \(\exists y \in \R,\ \forall x \in \R,\ x + y > 0\) » est fausse. Montrons sa négation, \(\forall y \in \R,\ \exists x \in \R,\ x + y \leq 0\). Soit \(y \in \R\) fixé ; avec \(x = -y\), \(x + y = 0 \leq 0\).</p>
+          <p>(4) « \(\exists x \in \R,\ \exists y \in \R,\ x + y > 0\) » est vraie : \(x = y = 1\) donne \(x + y = 2 > 0\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Examen OBM 2024, 1.2a.</b> \(P\) est vraie : pour \(x\) fixé, \(y = \cos(x)\) convient. \(Q\) est fausse : pour tout \(y\), \(\cos(y) \leq 1\), donc \(x = 2\) n’est jamais égal à \(\cos(y)\). \(R\) est vraie : \(\cos(\pi) = -1 &lt; 1 = \cos(0)\).</p>
+          <p><b>Négations en langage courant (TD 1.5).</b> « Toutes les vérités sont bonnes à dire » devient « certaines vérités ne sont pas bonnes à dire ». « Certains poissons sont rouges » devient « aucun poisson n’est rouge ». « Aucune piste criminelle n’est écartée » devient « au moins une piste criminelle est écartée ».</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège : un exemple ne prouve pas un \(\forall\)</span>
+          <ul>
+            <li>Vérifier \(P(1)\), \(P(2)\) et \(P(3)\) ne prouve pas \(\forall x \in \R,\ P(x)\) : il faut « Soit \(x \in \R\) fixé ».</li>
+            <li>Un contre-exemple se donne avec un nombre précis et se vérifie : « \(x = -3\) : \(x^2 = 9 > 4\) mais \(-3 \leq 2\) », pas « un \(x\) négatif ».</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Au partiel</span>
+          <ul>
+            <li>Un exercice de logique dans chacun des 6 sujets de 2019 à 2024. Examen LE d’octobre 2023 (1 h) : exercice 2, <b>6 points sur 20</b> (traduire trois phrases, nier trois assertions, cocher les implications vraies). Examen OBM d’octobre 2024 : exercice 1, <b>10 points sur 40</b> (implications vers et depuis \(x^2 > 4\), vrai ou faux et négation de trois phrases en \(\cos\), contraposée démontrée puis utilisée, inclusion d’ensembles).</li>
+            <li>Dans les contrôles de 2019 à 2022 : 2 à 4 points chaque fois (vrai ou faux de quatre phrases \(\forall\) / \(\exists\) en 2019, traductions en 2020 et 2021, définitions de relations à nier ou contraposer en 2022).</li>
+            <li>Ce qui revient : traduire avec des quantificateurs, nier (De Morgan, \(\neg\forall\), \(\neg(P \Rightarrow Q)\)), contraposée, et justifier un vrai ou faux par une preuve ou un contre-exemple. La rédaction est notée : « La rigueur de votre rédaction sera prise en compte dans la note ».</li>
+            <li>Examen de cette année : OBM en 2 h, semaine du 26 octobre. Le cours 4 (raisonnements) reprend la contraposée comme méthode de preuve.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-1-logique.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="maths:logique:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais combiner, quantifier et nier des assertions. Le cours 2, <a href="cours-2-ensembles.html">les ensembles</a>, reprend les mêmes règles : \(\cap\) pour « et », \(\cup\) pour « ou », le complémentaire pour « non ».</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

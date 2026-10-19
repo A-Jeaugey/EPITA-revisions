@@ -13,7 +13,7 @@ for l in open(os.path.join(REPO, 'index.html'), encoding='utf-8').read().split('
     elif not t.lower().startswith(DROP):
         lines.append(l)
 open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8').write('\n'.join(lines))
-files = sorted(os.path.relpath(os.path.join(d, f), REPO) for root in ['assets', 'data', 'elec', 'qcm', 'annales', 'fiches', 'taa', 'physique', 'caml', 'archi']
+files = sorted(os.path.relpath(os.path.join(d, f), REPO) for root in ['assets', 'data', 'elec', 'qcm', 'annales', 'fiches', 'taa', 'physique', 'caml', 'archi', 'maths']
                for d, _, fs in os.walk(os.path.join(REPO, root)) for f in fs)
 # la page d'accueil anglaise est une page ordinaire, publiée à son chemin
 files += sorted(f for f in os.listdir(REPO) if f.endswith('.en.html'))

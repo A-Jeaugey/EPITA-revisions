@@ -12,7 +12,7 @@ const warn = (m) => { problems++; console.log('  ✗ ' + m); };
 const info = (m) => console.log('  · ' + m);
 
 /* ---------- 1. pages ---------- */
-const PAGE_DIRS = ['', 'elec', 'taa', 'physique', 'caml', 'archi', 'qcm', 'annales', 'fiches'];
+const PAGE_DIRS = ['', 'elec', 'taa', 'physique', 'caml', 'archi', 'maths', 'qcm', 'annales', 'fiches'];
 const pages = [];
 PAGE_DIRS.forEach(d => fs.readdirSync(path.join(ROOT, d)).forEach(f => { if (/\.html$/.test(f) && !/\.en\.html$/.test(f)) pages.push(path.join(d, f)); }));
 const ids = html => new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
@@ -65,9 +65,9 @@ const list = d => fs.existsSync(path.join(ROOT, d)) ? fs.readdirSync(path.join(R
 // tous les fichiers français, puis tous les fichiers anglais
 win.QCM_BANK = []; win.QCM_TOPICS = {};
 require(path.join(ROOT, 'assets/js/qcm-engine.js'));
-['data', 'data/qcm', 'data/elec', 'data/taa', 'data/physique', 'data/caml', 'data/archi'].forEach(d => list(d).forEach(f => load(path.join(d, f))));
+['data', 'data/qcm', 'data/elec', 'data/taa', 'data/physique', 'data/caml', 'data/archi', 'data/maths'].forEach(d => list(d).forEach(f => load(path.join(d, f))));
 const qcmFr = JSON.parse(JSON.stringify(win.QCM_BANK));
-['data/en', 'data/en/qcm', 'data/en/elec', 'data/en/taa', 'data/en/physique', 'data/en/caml', 'data/en/archi'].forEach(d => list(d).forEach(f => load(path.join(d, f))));
+['data/en', 'data/en/qcm', 'data/en/elec', 'data/en/taa', 'data/en/physique', 'data/en/caml', 'data/en/archi', 'data/en/maths'].forEach(d => list(d).forEach(f => load(path.join(d, f))));
 
 console.log('QCM');
 const QEN = win.QCM_EN || {}, byId = {};
@@ -130,7 +130,7 @@ Object.values(groups).forEach(g => {
 });
 // éléments de données français sans aucun fichier anglais
 const enFiles = new Set(Object.keys(groups).concat(list('data/en/qcm').map(f => 'data/en/qcm/' + f)).map(f => f.replace(/\\/g, '/')));
-['data', 'data/qcm', 'data/elec', 'data/taa', 'data/physique', 'data/caml', 'data/archi'].forEach(d => list(d).forEach(f => {
+['data', 'data/qcm', 'data/elec', 'data/taa', 'data/physique', 'data/caml', 'data/archi', 'data/maths'].forEach(d => list(d).forEach(f => {
   const enf = (d.replace(/^data/, 'data/en') + '/' + f).replace(/\\/g, '/');
   if (!fs.existsSync(path.join(ROOT, enf))) warn(`${d}/${f} : pas de fichier ${enf}`);
 }));

@@ -103,7 +103,21 @@
         { id: 'theoremes', title: 'Thévenin, Norton, Millman', path: 'elec/cours-3-theoremes.html', sections: 8 }
       ]
     },
-    { id: 'maths', name: 'Mathématiques', short: 'Maths', status: 'soon', annales: 'Maths PC' },
+    {
+      id: 'maths', name: 'Mathématiques', short: 'Maths', code: 'S1 · ECUE OBM et DP',
+      course: 'Outils de base (OBM) · Dénombrement et probabilités (DP)', path: 'maths/index.html', dir: 'maths/', status: 'ready', annales: 'Maths PC',
+      exam: 'Examen 1, semaine du 26 octobre : OBM 2 h et DP 2 h · DM 20 %, contrôle de cours 20 %, examen 60 % · APIS à l’examen 2',
+      train: 'maths/entrainement.html', fiche: 'maths/fiche.html', open: 'Ouvrir les maths',
+      chapters: [
+        { id: 'logique', title: 'Logique', ecue: 'OBM', path: 'maths/cours-1-logique.html', sections: 8 },
+        { id: 'ensembles', title: 'Ensembles', ecue: 'OBM', path: 'maths/cours-2-ensembles.html', sections: 8 },
+        { id: 'fonctions', title: 'Fonctions', ecue: 'OBM', path: 'maths/cours-3-fonctions.html', sections: 8 },
+        { id: 'raisonnement', title: 'Raisonnements', ecue: 'OBM', path: 'maths/cours-4-raisonnement.html', sections: 8 },
+        { id: 'denombrement', title: 'Dénombrement', ecue: 'DP', path: 'maths/cours-5-denombrement.html', sections: 8 },
+        { id: 'probabilites', title: 'Probabilités', ecue: 'DP', path: 'maths/cours-6-probabilites.html', sections: 8 },
+        { id: 'variables', title: 'Variables aléatoires', ecue: 'DP', path: 'maths/cours-7-variables.html', sections: 8 }
+      ]
+    },
     {
       id: 'physique', name: 'Physique · Mécanique', short: 'Physique',
       course: 'Mécanique du point', path: 'physique/index.html', dir: 'physique/', status: 'ready', annales: 'Phys',
@@ -156,7 +170,9 @@
   var SUBJECTS_EN = {
     elec: { name: 'Electronics', short: 'Elec', course: 'Circuit analysis tools', open: 'Open Elec',
       exam: 'Written · no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
-    maths: { name: 'Mathematics', short: 'Maths' },
+    maths: { name: 'Mathematics', short: 'Maths', course: 'Basic mathematical tools (OBM) · Counting and probability (DP)', open: 'Open Maths',
+      exam: 'Exam 1, week of 26 October: OBM 2 hr and DP 2 hr · homework 20%, course test 20%, exam 60% · APIS in exam 2',
+      chapters: ['Logic', 'Sets', 'Functions', 'Reasoning', 'Counting', 'Probability', 'Random variables'] },
     physique: { name: 'Physics · Mechanics', short: 'Physics', course: 'Point mechanics', open: 'Open Physics',
       exam: 'Written · no calculator, no documents',
       chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy', 'Polar coordinates'] },
