@@ -24,7 +24,9 @@
   T['maths-injections'] = 'OBM · Injection, surjection, bijection';
   T['maths-usuelles'] = 'OBM · Fonctions usuelles';
   T['maths-raisonnement'] = 'OBM · Raisonnements';
-  T['maths-relations'] = 'OBM · Relations binaires';
+  T['maths-relations'] = 'OBM · Relations binaires (hors programme en 2026)';
+  /* notions hors programme cette année (mail du 19 octobre 2026) : décochées par défaut dans qcm/index.html */
+  window.QCM_OFF = (window.QCM_OFF || []).concat(['maths-relations']);
   T['maths-recurrence'] = 'OBM · Récurrence';
   T['maths-sommes'] = 'OBM · Sommes';
   T['maths-denombrement'] = 'DP · Dénombrement';

@@ -1,9 +1,11 @@
 /* Maths (examen 1 : OBM et DP) — exercices des sujets, corrigés.
    Source : $S/analysis/maths_midterms.md (§3 sujets, §5 rédaction attendue, §6 erreurs officielles, §7 pièges), relue
    sur les textes et les scans des sujets d’Epidocs/Past-Exams (Maths PC). Une fiche (kind: 'partiel') par exercice au
-   programme de l’examen 1 : d’abord les quatre sujets au format actuel (DP et OBM 2024, DP et LE 2023), puis les
-   exercices au programme des contrôles combinés 2022 à 2018 (2017 et 2016 n’en ont aucun).
-   Énoncés verbatim (formules en KaTeX \( … \)). Sujets 2024 et 2018 sans corrigé : réponses recalculées.
+   programme de l’examen 1 : d’abord les six sujets au format actuel (DP et OBM 2025, DP et OBM 2024, DP et LE 2023),
+   puis les exercices des contrôles combinés 2022 à 2018 (2017 et 2016 n’en ont aucun). Les fiches de relations
+   binaires (OBM 2024 ex. 4, LE 2023 ex. 4, 2022 ex. 3, 2021 ex. 1, 2020 ex. 2, 2019 ex. 4) sont gardées, mais ces
+   parties sont hors programme depuis le mail du 19 octobre 2026 (prog: false dans data/maths/exams.js).
+   Énoncés verbatim (formules en KaTeX \( … \)). Sujets 2025 (Moodle), 2024 et 2018 sans corrigé : réponses recalculées.
    Chaque résultat est recalculé par programme ($S/maths_data/verif_ex.py relit ce fichier et sa version anglaise :
    le champ chk de chaque fiche liste les valeurs attendues, que le script recalcule et retrouve dans le corrigé).
 
@@ -70,6 +72,277 @@
   };
 
   /* =====================================================================
+     Examen DP, octobre 2025 (promo 2030) — Moodle, sans corrigé : réponses recalculées
+     ===================================================================== */
+  var N25 = 'Sujet publié sur le Moodle (section « Documents de travail »), sans corrigé : correction rédigée sur le modèle des corrigés officiels, chaque résultat recalculé par programme (énumération exhaustive, fractions exactes).';
+  /* p2025 OBM ex. 3 : graphes de ln et de cos sur [−π, π] */
+  FIG.ln = plot({ x: [-0.6, 4.6], y: [-3.3, 1.9], w: 320, h: 220, xt: [1, 2, 3, 4], yt: [-3, -2, -1, 1], lines: [sample(Math.log, 0.045, 4.4, 90)], label: [[3.5, 1.65, 'ln']], aria: 'graphe de ln' });
+  FIG.cosPi = plot({ x: [-3.7, 3.7], y: [-1.5, 1.5], w: 340, h: 200, xt: [-3, -2, -1, 1, 2, 3], yt: [-1, 1], lines: [sample(Math.cos, -Math.PI, Math.PI, 90)], dots: [[-Math.PI, -1, true], [Math.PI, -1, true]], label: [[0.25, 1.25, 'cos']], aria: 'graphe de cos sur [−π, π]' });
+
+  add({ id: 'p2025-dp-ex1', exam: 'p2025-dp', ecue: 'dp', order: 1, src: 'Examen DP 2025 · Ex 1', pts: 7, lvl: 1, time: 20,
+    title: r`Cours et TD : formule du crible, binôme de Newton, cardinal de \(\mathcal{P}(E)\)`, topics: ['cardinal', 'binomial'],
+    intro: r`<p>Les deux questions sont indépendantes.</p>`,
+    questions: [
+      r`<b>1.</b> Dans une classe de 40 élèves, 25 parlent couramment l’anglais, 11 parlent couramment l’espagnol et 6 ne parlent ni anglais, ni espagnol.<p>Par la suite, on note \(C\) l’ensemble des élèves de la classe, \(A\) l’ensemble de ceux qui parlent anglais et \(E\) l’ensemble de ceux qui parlent espagnol.</p><p>(a) Traduire les données de l’énoncé à l’aide des 3 ensembles.</p><p>(b) Combien y a-t-il d’élèves qui parlent couramment à la fois l’anglais et l’espagnol ? On vous demande de justifier votre résultat à l’aide de formule(s) du cours que vous rappellerez.</p>`,
+      r`<b>2.</b> Autour du binôme de Newton<p>(a) Énoncer la formule du binôme de Newton.</p><p>(b) Application : soit \(E\) un ensemble à \(n\) éléments.</p><p>i. Combien y a-t-il de sous-ensembles de \(E\) à \(k\) éléments ?</p><p>ii. En utilisant les questions précédentes (2.(a) et 2.(b)(i)), calculer le cardinal de \(\mathcal{P}(E)\).</p>`],
+    hints: [
+      r`« Ni anglais, ni espagnol » : ce sont les élèves de \(C\) qui ne sont pas dans \(A \cup E\). Commence par \(\card(A \cup E)\).`,
+      r`Deux formules du cours : \(\card(Y \setminus X) = \card(Y) - \card(X)\) si \(X \subset Y\), et la formule du crible \(\card(A \cup E) = \card(A) + \card(E) - \card(A \cap E)\).`,
+      r`2.(b)(ii) : classe les parties de \(E\) selon leur nombre d’éléments \(k\), puis applique le binôme avec \(x = y = 1\).`],
+    solution: [
+      { t: 'Question 1(a) : traduire', html: M(r`<p>\(A \subset C\), \(E \subset C\), \(\card(C) = 40\), \(\card(A) = 25\), \(\card(E) = 11\) et \(\card\big(C \setminus (A \cup E)\big) = 6\) (les élèves qui ne parlent ni anglais ni espagnol forment le complémentaire de \(A \cup E\) dans \(C\)).</p>`) },
+      { t: 'Question 1(b) : complémentaire, puis crible', html: M(r`<p>On rappelle deux formules du cours, pour des ensembles finis :</p><p>• si \(X \subset Y\), alors \(Y = X \sqcup (Y \setminus X)\) (union disjointe), donc \(\card(Y \setminus X) = \card(Y) - \card(X)\) ;</p><p>• formule du crible : \(\card(A \cup E) = \card(A) + \card(E) - \card(A \cap E)\).</p><p>Comme \(A \cup E \subset C\), la première formule donne \(\card\big(C \setminus (A \cup E)\big) = \card(C) - \card(A \cup E)\), d’où \(\card(A \cup E) = 40 - 6 = 34\).</p><p>Par la formule du crible, \(\card(A \cap E) = \card(A) + \card(E) - \card(A \cup E) = 25 + 11 - 34 = 2\).</p><p>Ainsi, 2 élèves parlent couramment l’anglais et l’espagnol.</p>`) +
+        r`<p>Contrôle : 23 élèves parlent seulement anglais, 9 seulement espagnol, 2 les deux et 6 aucune des deux langues : \(23 + 9 + 2 + 6 = 40\). C’est l’exercice 2.13 du séminaire.</p>` },
+      { t: 'Question 2(a) : la formule du binôme', html: M(r`<p>Pour tous réels (ou complexes) \(x\) et \(y\) et pour tout \(n \in \N\) :</p><div class="fm">\[(x + y)^n = \sum_{k=0}^{n} \binom{n}{k} x^k y^{n-k}.\]</div>`) },
+      { t: 'Question 2(b) : le cardinal de P(E)', html: M(r`<p>i. Pour \(k \in \ent{0}{n}\), le nombre de sous-ensembles de \(E\) à \(k\) éléments est \(\dbinom{n}{k} = \dfrac{n!}{k!\,(n-k)!}\).</p><p>ii. Pour \(k \in \ent{0}{n}\), notons \(\mathcal{P}_k(E)\) l’ensemble des parties de \(E\) à \(k\) éléments. Toute partie de \(E\) a un cardinal \(k \in \ent{0}{n}\), et un seul : les ensembles \(\mathcal{P}_0(E), \ldots, \mathcal{P}_n(E)\) sont deux à deux disjoints et leur union est \(\mathcal{P}(E)\). Donc, d’après i,</p><div class="fm">\[\card(\mathcal{P}(E)) = \sum_{k=0}^{n} \card(\mathcal{P}_k(E)) = \sum_{k=0}^{n} \binom{n}{k} = \sum_{k=0}^{n} \binom{n}{k} 1^k\, 1^{n-k} = (1 + 1)^n = 2^n\]</div><p>par la formule du binôme appliquée à \(x = y = 1\).</p>`) +
+        r`<p>Exemple : \(E = \{2, 3, 4\}\) a \(1 + 3 + 3 + 1 = 8 = 2^3\) parties (examen OBM 2025, exercice 2).</p>` }],
+    answer: r`<ul><li>1(a) \(\card(C) = 40\), \(\card(A) = 25\), \(\card(E) = 11\), \(\card(C \setminus (A \cup E)) = 6\).</li><li>1(b) \(\card(A \cup E) = 40 - 6 = 34\), puis \(\card(A \cap E) = 25 + 11 - 34 = 2\) élèves.</li><li>2(a) \((x + y)^n = \sum_{k=0}^{n} \binom{n}{k} x^k y^{n-k}\).</li><li>2(b) i. \(\binom{n}{k}\) ; ii. \(\card(\mathcal{P}(E)) = \sum_{k=0}^{n} \binom{n}{k} = (1 + 1)^n = 2^n\).</li></ul>`,
+    traps: [
+      r`Oublier de retirer \(\card(A \cap E)\) : \(25 + 11 = 36\) dépasse les 34 élèves qui parlent au moins une langue.`,
+      r`Retirer les 6 élèves au mauvais endroit : \(25 + 11 - 6 = 30\) n’a pas de sens ; les 6 élèves sont hors de \(A \cup E\).`,
+      r`2.(b)(ii) : la somme commence à \(k = 0\) (la partie vide) et va jusqu’à \(k = n\) (\(E\) lui-même).`,
+      r`« Rappeler les formules » : les écrire avant de les utiliser, avec leurs hypothèses (\(X \subset Y\) ; ensembles finis).`],
+    grading: '7 points pour l’exercice ; le sujet ne détaille pas les questions. « La rigueur de votre rédaction sera prise en compte dans la note. »',
+    official: false, note: N25 + ' La question 1 est l’exercice 2.13 du séminaire, la question 2 l’exercice 1.6 du TD 1.', near: ['p2023-dp-ex1'],
+    chk: { union: '34', inter: '2', pe: '2^n' } });
+
+  add({ id: 'p2025-dp-ex2', exam: 'p2025-dp', ecue: 'dp', order: 2, src: 'Examen DP 2025 · Ex 2', pts: 7, lvl: 1, time: 15,
+    title: 'Les mots réponses d’un QCM', topics: ['denombrement'],
+    intro: r`<p>Un QCM comporte 5 questions. Pour chacune des 5 questions, il y a 6 propositions de réponses : \(A\), \(B\), \(C\), \(D\), \(E\) ou \(F\). Pour chaque question, il n’y a qu’une seule réponse correcte.</p><p>On suppose qu’un candidat passant ce qcm répond à toutes les questions posées en écrivant un « mot réponse » de 5 lettres prises parmi \(A\), \(B\), \(C\), \(D\), \(E\) et \(F\).</p><p>Par exemple, le mot réponse « BBADC » signifie que le candidat a répondu \(B\) aux questions 1 et 2, \(A\) à la question 3, \(D\) à la question 4 et \(C\) à la question 5.</p><p>Sauf mention contraire dans la question, le mot réponse peut avoir plusieurs fois la même lettre.</p>`,
+    questions: [
+      r`<b>1.</b> Combien y a-t-il de mots réponses possibles ? Justifier brièvement.`,
+      r`<b>2.</b> Combien y a-t-il de mots réponses n’ayant que des lettres distinctes ? Justifier brièvement.`,
+      r`<b>3.</b> Combien de mots réponses possibles ne contenant qu’une seule réponse correcte y a-t-il ? Justifier brièvement.`,
+      r`<b>4.</b> Combien de mots réponses avec au moins une réponse correcte y a-t-il ? Justifier brièvement.`,
+      r`<b>5.</b> Combien de mots réponses commençant par \(E\), sans \(A\) et composés de lettres distinctes y a t-il ? Justifier brièvement. <u>Faire le calcul jusqu’au bout.</u>`,
+      r`<b>6.</b> Il y a eu des fuites. On sait que le mot réponse contient un \(B\), deux \(C\) et deux \(D\). Combien y a-t-il de mots réponses possibles ? Justifier brièvement. <u>Faire le calcul jusqu’au bout.</u>`],
+    hints: [
+      r`Un mot réponse est une 5-liste de lettres de \(\{A, B, C, D, E, F\}\) : l’ordre compte (la position, c’est le numéro de la question).`,
+      r`« Une seule réponse correcte » : choisis la question bien répondue, puis une mauvaise lettre (5 choix) à chacune des 4 autres. « Au moins une » : passe par le contraire, « aucune ».`,
+      r`Question 6 : choisis les places des deux \(C\), puis celles des deux \(D\) ; le \(B\) prend la dernière place.`],
+    solution: [
+      { t: 'Questions 1 et 2 : listes, arrangements', html: M(r`<p>1. Un mot réponse est une 5-liste d’éléments de \(\{A, B, C, D, E, F\}\), qui a 6 éléments : chaque position a 6 choix, indépendamment des autres. Il y a \(6^5 = 7\,776\) mots réponses.</p><p>2. Les lettres sont distinctes et l’ordre compte : c’est un arrangement de 5 lettres parmi 6. Il y a \(A_6^5 = \dfrac{6!}{1!} = 6 \times 5 \times 4 \times 3 \times 2 = 720\) mots réponses.</p>`) },
+      { t: 'Questions 3 et 4 : une seule, au moins une réponse correcte', html: M(r`<p>3. On choisit la question bien répondue (5 choix) ; sa lettre est imposée (la bonne réponse, 1 choix) ; à chacune des 4 autres questions, on écrit l’une des 5 mauvaises lettres (\(5^4\) choix). Par le principe multiplicatif, il y a \(5 \times 1 \times 5^4 = 5^5 = 3\,125\) mots réponses.</p><p>4. On passe par le complémentaire. Un mot sans aucune réponse correcte a, à chaque question, l’une des 5 mauvaises lettres : il y en a \(5^5 = 3\,125\). Le nombre de mots avec au moins une réponse correcte est donc \(6^5 - 5^5 = 7\,776 - 3\,125 = 4\,651\).</p>`) +
+        r`<p>Que l’effectif de la question 3 soit égal à \(5^5\) est une coïncidence : \(\binom{5}{1} \times 5^4 = 5^5\).</p>` },
+      { t: 'Question 5 : commence par E, sans A, lettres distinctes', html: M(r`<p>La première lettre est \(E\) (1 choix). Les 4 lettres suivantes sont distinctes, différentes de \(E\) (lettres distinctes) et de \(A\) : elles sont prises dans \(\{B, C, D, F\}\), qui a 4 éléments. On range ces 4 lettres dans les 4 places restantes : \(4! = 24\) façons. Il y a 24 mots réponses.</p>`) },
+      { t: 'Question 6 : un B, deux C, deux D', html: M(r`<p>On choisit les 2 places des \(C\) parmi les 5 places (\(\binom{5}{2} = 10\) façons), puis les 2 places des \(D\) parmi les 3 places restantes (\(\binom{3}{2} = 3\) façons) ; le \(B\) occupe la dernière place. Il y a \(10 \times 3 = 30\) mots réponses.</p>`) +
+        r`<p>Autre écriture : \(\dfrac{5!}{1!\,2!\,2!} = \dfrac{120}{4} = 30\) (permutations des 5 lettres, divisées par les échanges des deux \(C\) et des deux \(D\)).</p>` }],
+    answer: r`<ul><li>1. \(6^5 = 7\,776\)</li><li>2. \(6 \times 5 \times 4 \times 3 \times 2 = 720\)</li><li>3. \(5 \times 5^4 = 3\,125\)</li><li>4. \(6^5 - 5^5 = 4\,651\)</li><li>5. \(4! = 24\)</li><li>6. \(\frac{5!}{2!\,2!} = 30\)</li></ul>`,
+    traps: [
+      r`Question 2 : \(5! = 120\) range 5 lettres données ; ici on choisit 5 lettres parmi 6, c’est \(A_6^5 = 720\).`,
+      r`Question 3 : \(5^4\) seul oublie de choisir la question bien répondue (facteur 5).`,
+      r`Question 4 : \(5 \times 6^4\) (« une bonne réponse quelque part, le reste libre ») compte plusieurs fois les mots qui ont plusieurs bonnes réponses.`,
+      r`Question 5 : \(5 \times 4 \times 3 \times 2\) oublie que \(A\) est interdit : il ne reste que 4 lettres pour 4 places.`,
+      r`Question 6 : \(5! = 120\) sans diviser par les échanges des deux \(C\) et des deux \(D\).`],
+    grading: '7 points pour l’exercice ; le sujet ne détaille pas les questions. Questions 5 et 6 : « Faire le calcul jusqu’au bout » (un entier, pas une formule).',
+    official: false, note: N25 + ' Exercice repris au TD 1 (exercice 2.11, « extrait de l’examen 2025 »).', near: ['p2024-dp-ex2', 'p2020-ex7'],
+    chk: { q1: '7776', q2: '720', q3: '3125', q4: '4651', q5: '24', q6: '30' } });
+
+  add({ id: 'p2025-dp-ex3', exam: 'p2025-dp', ecue: 'dp', order: 3, src: 'Examen DP 2025 · Ex 3', pts: 4.5, lvl: 2, time: 15,
+    title: r`Équipes avec capitaine : \(k\binom{n}{k} = n\binom{n-1}{k-1}\)`, topics: ['binomial', 'denombrement'],
+    intro: r`<p>Dans cet exercice, \(n\) est un entier supérieur à 2 et \(k\) est un entier naturel inférieur à \(n\).</p><p>Ousmane est blessé. Pour passer le temps, il imagine un ensemble de \(n\) joueurs. Il décide alors de compter le nombre d’équipes possibles composées de \(k\) joueurs avec un capitaine parmi eux.</p><p>Pour cela, il va compter ce nombre de deux façons différentes.</p><p>• Première façon : Ousmane choisit d’abord les \(k\) joueurs puis il choisit le capitaine parmi eux.</p><p>• Deuxième façon : Ousmane choisit d’abord le capitaine puis les autres joueurs.</p>`,
+    questions: [
+      r`<b>1.</b> Quel est le nombre \(N_1\) d’équipes quand Ousmane utilise la première façon ? Justifier brièvement.`,
+      r`<b>2.</b> Quel est le nombre \(N_2\) d’équipes quand Ousmane utilise la deuxième façon ? Justifier brièvement.`,
+      r`<b>3.</b> Vous venez de démontrer une formule. Laquelle ?`,
+      r`<b>4.</b> Redémontrer cette formule par le calcul.`],
+    hints: [
+      r`Une équipe est un ensemble de \(k\) joueurs (l’ordre ne compte pas) dont un seul est distingué : le capitaine.`,
+      r`Deuxième façon : une fois le capitaine choisi, il reste \(k - 1\) joueurs à choisir parmi les \(n - 1\) autres.`,
+      r`Question 4 : écris les deux membres avec des factorielles et simplifie \(\dfrac{k}{k!} = \dfrac{1}{(k-1)!}\) (il faut \(k \geq 1\)).`],
+    solution: [
+      { t: 'Questions 1 à 3 : compter de deux façons', html: M(r`<p>Soit \(k \in \ent{1}{n}\) (une équipe avec un capitaine a au moins un joueur).</p><p>1. Première façon : on choisit les \(k\) joueurs parmi les \(n\), sans ordre : \(\binom{n}{k}\) façons ; puis le capitaine parmi ces \(k\) joueurs : \(k\) façons. Donc \(N_1 = k\dbinom{n}{k}\).</p><p>2. Deuxième façon : on choisit le capitaine parmi les \(n\) joueurs : \(n\) façons ; puis les \(k - 1\) autres joueurs parmi les \(n - 1\) joueurs restants : \(\binom{n-1}{k-1}\) façons. Donc \(N_2 = n\dbinom{n-1}{k-1}\).</p><p>3. On a compté le même ensemble (les équipes de \(k\) joueurs avec un capitaine) de deux façons, donc \(N_1 = N_2\) : pour \(1 \leq k \leq n\),</p><div class="fm">\[k\binom{n}{k} = n\binom{n-1}{k-1}.\]</div>`) +
+        r`<p>Exemple : \(n = 5\), \(k = 3\) : \(3 \times \binom{5}{3} = 3 \times 10 = 30\) et \(5 \times \binom{4}{2} = 5 \times 6 = 30\).</p>` },
+      { t: 'Question 4 : par le calcul', html: M(r`<p>Soient \(n \in \N^*\) et \(k \in \ent{1}{n}\). Par définition des coefficients binomiaux :</p><div class="fm">\[k\binom{n}{k} = k \times \frac{n!}{k!\,(n-k)!} = \frac{n!}{(k-1)!\,(n-k)!}\]</div><p>car \(k! = k \times (k-1)!\). D’autre part, comme \((n-1) - (k-1) = n - k\) :</p><div class="fm">\[n\binom{n-1}{k-1} = n \times \frac{(n-1)!}{(k-1)!\,(n-k)!} = \frac{n!}{(k-1)!\,(n-k)!}\]</div><p>car \(n \times (n-1)! = n!\). Les deux membres sont égaux.</p>`) +
+        r`<p>Le cas \(k = 0\), permis par l’énoncé (« entier naturel inférieur à \(n\) »), n’a pas de sens ici : aucune équipe sans joueur n’a de capitaine. La formule reste vraie si l’on pose \(\binom{n-1}{-1} = 0\) (\(0 = 0\)). Vérifié par programme pour \(n \leq 15\), et par énumération des équipes pour \(n \leq 7\).</p>` }],
+    answer: r`<ul><li>1. \(N_1 = k\binom{n}{k}\).</li><li>2. \(N_2 = n\binom{n-1}{k-1}\).</li><li>3. \(k\binom{n}{k} = n\binom{n-1}{k-1}\) pour \(1 \leq k \leq n\).</li><li>4. Les deux membres valent \(\dfrac{n!}{(k-1)!\,(n-k)!}\).</li></ul>`,
+    traps: [
+      r`Deuxième façon : choisir les autres joueurs parmi \(n\) au lieu de \(n - 1\) (le capitaine est déjà pris), ou en choisir \(k\) au lieu de \(k - 1\).`,
+      r`Première façon : multiplier par \(k!\) (tous les ordres) au lieu de \(k\) : seul le capitaine est distingué.`,
+      r`« Justifier brièvement » : dire ce que l’on choisit, parmi quoi, et si l’ordre compte.`],
+    grading: '4,5 points pour l’exercice ; le sujet ne détaille pas les questions.',
+    official: false, note: N25 + ' Même architecture que l’exercice 3 de l’examen DP 2024 (double dénombrement, puis preuve par le calcul).', near: ['p2024-dp-ex3'],
+    chk: { ex: '30' } });
+
+  add({ id: 'p2025-dp-ex4', exam: 'p2025-dp', ecue: 'dp', order: 4, src: 'Examen DP 2025 · Ex 4', pts: 4, lvl: 1, time: 10,
+    title: 'Restaurant : dessert et formule « à la carte »', topics: ['conditionnelles', 'bayes'],
+    intro: r`<p>Au restaurant « Je donne tout », on constate que 15 % des clients mangent « à la carte » et 85 % choisissent un menu. Parmi les clients qui mangent « à la carte », 30 % prennent un dessert, contre 45 % des clients qui choisissent un menu.</p><p>On note \(C\) l’événement « Le client mange à la carte », \(M\) : « Le client choisit le menu » et \(D\) : « Le client prend un dessert ».</p><p><b>N.B. : vous justifierez vos résultats à l’aide d’une formule du cours.</b></p>`,
+    questions: [
+      r`<b>1.</b> On choisit au hasard un client. Quelle est la probabilité que ce client ait mangé un dessert ?<p>Vous donnerez votre résultat sous forme de pourcentage ou de fraction simplifiée</p>`,
+      r`<b>2.</b> On choisit au hasard un client qui a pris un dessert. Quelle est la probabilité qu’il ait choisi la formule « à la carte »`],
+    hints: [
+      r`« Parmi les clients qui mangent à la carte, 30 % » : c’est \(\P(D \mid C)\), pas \(\P(D \cap C)\).`,
+      r`\(\{C, M\}\) est une partition de \(\Omega\) : chaque client mange à la carte ou choisit un menu, pas les deux. Formule des probabilités totales.`,
+      r`Question 2 : on connaît \(D\), on cherche \(\P(C \mid D)\) : formule de Bayes.`],
+    solution: [
+      { t: 'Traduire l’énoncé', html: M(r`<p>L’énoncé donne : \(\P(C) = 0{,}15 = \dfrac{3}{20}\), \(\P(M) = 0{,}85 = \dfrac{17}{20}\), \(\P(D \mid C) = 0{,}30 = \dfrac{3}{10}\) et \(\P(D \mid M) = 0{,}45 = \dfrac{9}{20}\).</p>`) +
+        T('tree', { first: [{ n: 'C', p: '3/20' }, { n: 'M' }], second: { n: 'D', nb: '\\overline{D}', p: ['3/10', '9/20'] }, edit: false }) },
+      { t: 'Question 1 : probabilités totales', html: M(r`<p>Les événements \(C\) et \(M\) sont incompatibles et \(C \cup M = \Omega\) : \(\{C, M\}\) est une partition de \(\Omega\) (et \(\P(C) \neq 0\), \(\P(M) \neq 0\)). D’après la formule des probabilités totales :</p><div class="fm">\[\P(D) = \P(D \mid C)\,\P(C) + \P(D \mid M)\,\P(M) = 0{,}30 \times 0{,}15 + 0{,}45 \times 0{,}85 = 0{,}045 + 0{,}3825 = 0{,}4275.\]</div><p>La probabilité que le client ait pris un dessert est \(42{,}75\,\%\), soit \(\dfrac{171}{400}\).</p>`) },
+      { t: 'Question 2 : Bayes', html: M(r`<p>On cherche \(\P(C \mid D)\). Comme \(\P(D) \neq 0\), d’après la formule de Bayes :</p><div class="fm">\[\P(C \mid D) = \frac{\P(D \mid C)\,\P(C)}{\P(D)} = \frac{0{,}045}{0{,}4275} = \frac{450}{4\,275} = \frac{2}{19}.\]</div><p>La probabilité qu’il ait mangé à la carte est \(\dfrac{2}{19} \approx 10{,}5\,\%\).</p>`) }],
+    answer: r`<ul><li>1. \(\P(D) = 0{,}4275 = 42{,}75\,\% = \frac{171}{400}\).</li><li>2. \(\P(C \mid D) = \frac{2}{19} \approx 10{,}5\,\%\).</li></ul>`,
+    traps: [
+      r`Écrire \(\P(D \cap C) = 0{,}30\) : 30 % est une proportion parmi les clients « à la carte », c’est \(\P(D \mid C)\).`,
+      r`Faire la moyenne \(\frac{0{,}30 + 0{,}45}{2} = 37{,}5\,\%\) : il faut pondérer par \(\P(C)\) et \(\P(M)\).`,
+      r`Question 2 : répondre \(\P(D \mid C) = 0{,}30\) (l’autre sens) ; on sait que le client a pris un dessert, on divise par \(\P(D)\).`,
+      r`« À l’aide d’une formule du cours » : nommer la formule des probabilités totales (avec la partition \(\{C, M\}\)) et la formule de Bayes.`],
+    grading: '4 points pour l’exercice ; le sujet ne détaille pas les questions. Résultats justifiés par une formule du cours.',
+    official: false, note: N25 + ' Même exercice, avec d’autres nombres, qu’aux examens DP 2023 et 2024 (exercice 4), sans la question de seuil.', near: ['p2024-dp-ex4', 'p2023-dp-ex4'],
+    chk: { pd: '171/400', bayes: '2/19' } });
+
+  add({ id: 'p2025-dp-ex5', exam: 'p2025-dp', ecue: 'dp', order: 5, src: 'Examen DP 2025 · Ex 5', pts: 5, lvl: 2, time: 15,
+    title: r`Cours : démontrer \(\E(aX + b) = a\E(X) + b\) et \(\mathrm{Var}(aX + b) = a^2\,\mathrm{Var}(X)\)`, topics: ['esperance', 'demonstrations'],
+    intro: r`<p>Soient \(X\) une variable aléatoire finie telle que \(X(\Omega) = \{x_1, x_2, \cdots, x_n\}\) et \((a, b) \in \R^2\).</p>`,
+    questions: [
+      r`<b>1.</b> Rappeler les formules donnant l’espérance et la variance de \(X\) respectivement notées : \(\E(X)\) et \(\mathrm{Var}(X)\).`,
+      r`<b>2.</b> Exprimer \(\E(aX + b)\) en fonction de \(a\), \(b\) et \(\E(X)\). Démontrer cette formule.`,
+      r`<b>3.</b> Exprimer \(\mathrm{Var}(aX + b)\) en fonction de \(a\), \(b\) et \(\mathrm{Var}(X)\). Démontrer cette formule.`],
+    hints: [
+      r`Énoncé identique à l’exercice 5 de l’examen DP 2024 : ce sont deux démonstrations du document « Démonstrations à connaître ».`,
+      r`Pour \(\E(aX + b)\) : \(aX + b = f(X)\) avec \(f : x \mapsto ax + b\) ; théorème de transfert, puis coupe la somme en deux.`,
+      r`Pour la variance : écris la définition, puis remarque que \((aX + b) - \E(aX + b) = a\big(X - \E(X)\big)\).`],
+    solution: [
+      { t: 'Question 1 : les définitions', html: M(r`<div class="fm">\[\E(X) = \sum_{i=1}^{n} x_i\,\P(X = x_i) \qquad \mathrm{Var}(X) = \E\big((X - \E(X))^2\big) = \sum_{i=1}^{n} \big(x_i - \E(X)\big)^2\,\P(X = x_i)\]</div>`) },
+      { t: 'Question 2 : espérance de aX + b', html: r`<p>Formule : \(\E(aX + b) = a\E(X) + b\).</p>` +
+        M(r`<p>Notons \(Y = aX + b\). On a \(Y = f(X)\), où \(f\) est la fonction \(x \mapsto ax + b\). D’après le théorème de transfert (admis dans le cours),</p><div class="fm">\[\E(Y) = \sum_{i=1}^{n} f(x_i)\,\P(X = x_i) = \sum_{i=1}^{n} (a x_i + b)\,\P(X = x_i).\]</div><p>Or, pour tout \(i \in \ent{1}{n}\), \((a x_i + b)\,\P(X = x_i) = a\,x_i\,\P(X = x_i) + b\,\P(X = x_i)\). En coupant la somme en deux, puis en factorisant \(a\) dans la première et \(b\) dans la seconde :</p><div class="fm">\[\E(Y) = a \sum_{i=1}^{n} x_i\,\P(X = x_i) + b \sum_{i=1}^{n} \P(X = x_i).\]</div><p>La première somme vaut \(\E(X)\). La seconde vaut 1, car les événements \((X = x_i)\), \(i \in \ent{1}{n}\), forment un système complet d’événements. Finalement, \(\E(aX + b) = a\E(X) + b\).</p>`) },
+      { t: 'Question 3 : variance de aX + b', html: r`<p>Formule : \(\mathrm{Var}(aX + b) = a^2\,\mathrm{Var}(X)\) ; elle ne dépend pas de \(b\).</p>` +
+        M(r`<p>Par définition, \(\mathrm{Var}(aX + b) = \E\Big(\big((aX + b) - \E(aX + b)\big)^2\Big)\). Or, d’après la question 2, \(\E(aX + b) = a\E(X) + b\), donc</p><div class="fm">\[(aX + b) - \E(aX + b) = aX + b - a\E(X) - b = a\big(X - \E(X)\big).\]</div><p>D’où \(\mathrm{Var}(aX + b) = \E\Big(a^2\big(X - \E(X)\big)^2\Big)\). En appliquant la question 2 à la variable \(\big(X - \E(X)\big)^2\), avec le coefficient \(a^2\) et la constante 0, on obtient \(\mathrm{Var}(aX + b) = a^2\,\E\Big(\big(X - \E(X)\big)^2\Big)\). L’espérance obtenue est la variance de \(X\) : \(\mathrm{Var}(aX + b) = a^2\,\mathrm{Var}(X)\).</p>`) +
+        r`<p>Application : à l’exercice 6, \(\mathrm{Var}(2X + 1) = 4\,\mathrm{Var}(X)\).</p>` }],
+    answer: r`<ul><li>1. \(\E(X) = \sum_{i=1}^{n} x_i \P(X = x_i)\) ; \(\mathrm{Var}(X) = \sum_{i=1}^{n} (x_i - \E(X))^2 \P(X = x_i)\).</li><li>2. \(\E(aX + b) = a\E(X) + b\), par transfert et linéarité de la somme.</li><li>3. \(\mathrm{Var}(aX + b) = a^2\,\mathrm{Var}(X)\), qui ne dépend pas de \(b\).</li></ul>`,
+    traps: [
+      r`\(\mathrm{Var}(aX + b) \neq a\,\mathrm{Var}(X) + b\) : le décalage \(b\) ne change pas la dispersion et \(a\) passe au carré.`,
+      r`Oublier de dire pourquoi \(\sum_i \P(X = x_i) = 1\).`,
+      r`Écrire la formule de Koenig-Huygens comme définition de la variance : la définition est \(\E\big((X - \E(X))^2\big)\).`,
+      r`« Exprimer en fonction de \(a\), \(b\)… » : donner la formule d’abord, puis la démontrer.`],
+    grading: '5 points pour l’exercice ; le sujet ne détaille pas les questions. Les deux preuves sont celles du document « Démonstrations à connaître ».',
+    official: false, note: N25 + ' Énoncé mot pour mot celui de l’exercice 5 de l’examen DP 2024 : la démonstration de \(\E(aX + b)\) et \(\mathrm{Var}(aX + b)\) est tombée deux années de suite.', near: ['p2024-dp-ex5', 'p2023-dp-ex5', 'p2022-ex7'],
+    chk: {} });
+
+  add({ id: 'p2025-dp-ex6', exam: 'p2025-dp', ecue: 'dp', order: 6, src: 'Examen DP 2025 · Ex 6', pts: 12.5, lvl: 2, time: 30,
+    title: r`Dé et urne : loi, \(Y = 2X + 1\), Bernoulli, binomiale sur 8 tirages`, topics: ['variables', 'esperance', 'lois'],
+    intro: r`<p>Les parties A et B sont indépendantes.</p>`,
+    questions: [
+      r`<b>Partie A.</b> On lance un dé classique et équilibré. Si le résultat est 1, 3 ou 4, on ne marque rien. Si le résultat est 2 ou 6, on marque 1 point. Si le résultat est 5, on gagne 2 points. On note \(X\) la variable aléatoire égale au nombre de points obtenus lors d’un lancer.<p>1. Donner la loi de \(X\).</p><p>2. Calculer l’espérance et la variance de \(X\).</p><p>3. Soit \(Y = 2X + 1\). Quelle est la loi de \(Y\), son espérance et sa variance ?</p>`,
+      r`<b>Partie B.</b> Une urne contient \(n\) boules blanches et 3 boules rouges, indiscernables au toucher. On tire au hasard une boule de l’urne, on note sa couleur puis on la replace dans l’urne.<p>1. Déterminer \(n\) pour que la probabilité d’avoir une boule rouge soit égale à \(\dfrac{3}{11}\).</p><p>2. On suppose \(n = 6\). Si la boule tirée est blanche, on marque 1 point, sinon on marque aucun point. On note \(Y\) la variable aléatoire égale au nombre de points obtenu sur ce tirage.</p><p>(a) Donner la loi de \(Y\) son espérance et sa variance.</p><p>(b) On effectue 8 tirages successifs, dans les mêmes conditions. Ces tirages sont supposés indépendants. Pour \(k \in \ent{1}{8}\), on note \(Y_k\) le nombre de points obtenus au \(k\)-ième tirage.</p><p>On note \(Z = Y_1 + Y_2 + \ldots + Y_8\).</p><p>i. Donner \(Z(\Omega)\) ainsi que \(\P(Z = i)\) pour tout \(i \in Z(\Omega)\). Vous justifierez vos résultats.</p><p>ii. Trouver \(\P(Z \leq 7)\). Simplifier le plus possible votre résultat.</p>`],
+    hints: [
+      r`Partie A : les 6 faces sont équiprobables ; \(\P(X = 0) = \P(\{1, 3, 4\})\). La loi, c’est \(X(\Omega)\) et toutes les probabilités.`,
+      r`\(Y = 2X + 1\) : chaque valeur \(x\) de \(X\) donne la valeur \(2x + 1\) de \(Y\), avec la même probabilité. Pour \(\E(Y)\) et \(\mathrm{Var}(Y)\), utilise l’exercice 5.`,
+      r`Partie B : \(Z\) est la somme de 8 variables de Bernoulli indépendantes de même paramètre. Pour \(\P(Z \leq 7)\), passe par l’événement contraire \((Z = 8)\).`],
+    solution: [
+      { t: 'Partie A, question 1 : loi de X', html: M(r`<p>Le dé est équilibré : les 6 issues de \(\Omega = \ent{1}{6}\) sont équiprobables. \(X(\Omega) = \{0, 1, 2\}\) et</p><div class="fm">\[\P(X = 0) = \P(\{1, 3, 4\}) = \frac{3}{6} = \frac{1}{2}, \quad \P(X = 1) = \P(\{2, 6\}) = \frac{2}{6} = \frac{1}{3}, \quad \P(X = 2) = \P(\{5\}) = \frac{1}{6}.\]</div><p>Contrôle : \(\dfrac{1}{2} + \dfrac{1}{3} + \dfrac{1}{6} = 1\).</p>`) +
+        T('law', { x: [0, 1, 2], p: ['1/2', '1/3', '1/6'], name: 'X', edit: false }) },
+      { t: 'Partie A, question 2 : espérance et variance de X', html: M(r`<div class="fm">\[\E(X) = 0 \times \frac{1}{2} + 1 \times \frac{1}{3} + 2 \times \frac{1}{6} = \frac{1}{3} + \frac{1}{3} = \frac{2}{3}.\]</div><div class="fm">\[\E(X^2) = 0^2 \times \frac{1}{2} + 1^2 \times \frac{1}{3} + 2^2 \times \frac{1}{6} = \frac{1}{3} + \frac{2}{3} = 1.\]</div><p>Par la formule de Koenig-Huygens, \(\mathrm{Var}(X) = \E(X^2) - \big(\E(X)\big)^2 = 1 - \dfrac{4}{9} = \dfrac{5}{9}\).</p>`) },
+      { t: 'Partie A, question 3 : Y = 2X + 1', html: M(r`<p>\(Y(\Omega) = \{2 \times 0 + 1,\ 2 \times 1 + 1,\ 2 \times 2 + 1\} = \{1, 3, 5\}\). Comme \(x \mapsto 2x + 1\) est injective, \((Y = 2x + 1) = (X = x)\) pour chaque valeur \(x\) de \(X\) :</p><div class="fm">\[\P(Y = 1) = \P(X = 0) = \frac{1}{2}, \quad \P(Y = 3) = \P(X = 1) = \frac{1}{3}, \quad \P(Y = 5) = \P(X = 2) = \frac{1}{6}.\]</div><p>D’après l’exercice 5 (avec \(a = 2\) et \(b = 1\)) : \(\E(Y) = 2\E(X) + 1 = \dfrac{4}{3} + 1 = \dfrac{7}{3}\) et \(\mathrm{Var}(Y) = 2^2\,\mathrm{Var}(X) = 4 \times \dfrac{5}{9} = \dfrac{20}{9}\).</p>`) +
+        r`<p>Vérification directe : \(\E(Y) = \frac{1}{2} + \frac{3}{3} + \frac{5}{6} = \frac{7}{3}\) et \(\E(Y^2) = \frac{1}{2} + \frac{9}{3} + \frac{25}{6} = \frac{23}{3}\), donc \(\mathrm{Var}(Y) = \frac{23}{3} - \frac{49}{9} = \frac{20}{9}\).</p>` },
+      { t: 'Partie B, question 1 : le nombre de boules blanches', html: M(r`<p>L’urne contient \(n + 3\) boules indiscernables : on est en situation d’équiprobabilité, et la probabilité d’avoir une boule rouge est \(\dfrac{3}{n + 3}\). Pour \(n \in \N\) :</p><div class="fm">\[\frac{3}{n + 3} = \frac{3}{11} \iff n + 3 = 11 \iff n = 8.\]</div><p>Il faut 8 boules blanches.</p>`) },
+      { t: 'Partie B, question 2(a) : loi de Y', html: M(r`<p>Avec \(n = 6\), l’urne contient 9 boules, dont 6 blanches. \(Y(\Omega) = \{0, 1\}\), \(\P(Y = 1) = \dfrac{6}{9} = \dfrac{2}{3}\) et \(\P(Y = 0) = \dfrac{3}{9} = \dfrac{1}{3}\) : \(Y\) suit la loi de Bernoulli de paramètre \(\dfrac{2}{3}\).</p><p>\(\E(Y) = 0 \times \dfrac{1}{3} + 1 \times \dfrac{2}{3} = \dfrac{2}{3}\) ; \(\E(Y^2) = \dfrac{2}{3}\), donc \(\mathrm{Var}(Y) = \dfrac{2}{3} - \dfrac{4}{9} = \dfrac{2}{9}\) (c’est \(p(1 - p)\)).</p>`) },
+      { t: 'Partie B, question 2(b) : la binomiale', html: M(r`<p>i. Chaque \(Y_k\) suit la loi de Bernoulli de paramètre \(\dfrac{2}{3}\) (même urne, mêmes conditions, question 2(a)), et les \(Y_k\) sont indépendantes car les tirages le sont. \(Z = Y_1 + \cdots + Y_8\) est donc la somme de 8 variables de Bernoulli indépendantes de même paramètre \(\dfrac{2}{3}\) : \(Z\) suit la loi binomiale \(\mathcal{B}\left(8, \dfrac{2}{3}\right)\). Ainsi \(Z(\Omega) = \ent{0}{8}\) et</p><div class="fm">\[\forall i \in \ent{0}{8}, \quad \P(Z = i) = \binom{8}{i} \left(\frac{2}{3}\right)^i \left(\frac{1}{3}\right)^{8-i} = \binom{8}{i} \frac{2^i}{3^8}.\]</div><p>ii. L’événement contraire de \((Z \leq 7)\) est \((Z = 8)\). Donc</p><div class="fm">\[\P(Z \leq 7) = 1 - \P(Z = 8) = 1 - \binom{8}{8} \left(\frac{2}{3}\right)^8 \left(\frac{1}{3}\right)^0 = 1 - \frac{256}{6\,561} = \frac{6\,305}{6\,561}.\]</div>`) +
+        r`<p>\(\P(Z \leq 7) \approx 0{,}961\). En sommant \(\P(Z = 0) + \cdots + \P(Z = 7)\), on trouve la même valeur, avec huit termes à calculer.</p>` +
+        T('law', { law: 'binom', n: 8, p: '2/3', name: 'Z', edit: false }) }],
+    answer: r`<ul><li>A1. \(X(\Omega) = \{0, 1, 2\}\), probabilités \(\frac{1}{2}, \frac{1}{3}, \frac{1}{6}\).</li><li>A2. \(\E(X) = \frac{2}{3}\), \(\mathrm{Var}(X) = \frac{5}{9}\).</li><li>A3. \(Y(\Omega) = \{1, 3, 5\}\), probabilités \(\frac{1}{2}, \frac{1}{3}, \frac{1}{6}\) ; \(\E(Y) = \frac{7}{3}\), \(\mathrm{Var}(Y) = \frac{20}{9}\).</li><li>B1. \(n = 8\).</li><li>B2(a) \(Y\) suit la loi de Bernoulli de paramètre \(\frac{2}{3}\) ; \(\E(Y) = \frac{2}{3}\), \(\mathrm{Var}(Y) = \frac{2}{9}\).</li><li>B2(b) \(Z \sim \mathcal{B}(8, \frac{2}{3})\), \(Z(\Omega) = \ent{0}{8}\), \(\P(Z = i) = \binom{8}{i} \frac{2^i}{3^8}\) ; \(\P(Z \leq 7) = 1 - \frac{256}{6561} = \frac{6305}{6561}\).</li></ul>`,
+    traps: [
+      r`\(\mathrm{Var}(2X + 1) \neq 2\,\mathrm{Var}(X) + 1\) : c’est \(4\,\mathrm{Var}(X)\) (exercice 5).`,
+      r`La lettre \(Y\) sert deux fois (partie A, puis partie B) : ce sont deux variables différentes, les parties sont indépendantes.`,
+      r`\(\P(Z \leq 7) = 1 - \P(Z = 7)\) est faux : le contraire de \((Z \leq 7)\) est \((Z \geq 8) = (Z = 8)\).`,
+      r`Justifier la binomiale : « somme de variables de Bernoulli <b>indépendantes</b> de <b>même paramètre</b> ». Et \(Z(\Omega)\) contient 0.`,
+      r`B1 : la probabilité d’une boule rouge est \(\frac{3}{n + 3}\), pas \(\frac{3}{n}\) (qui donnerait \(n = 11\)).`],
+    grading: '12,5 points pour l’exercice ; le sujet ne détaille pas les questions.',
+    official: false, note: N25 + ' Coquilles de l’énoncé, sans effet sur les réponses : « on marque aucun point » (lire « on ne marque aucun point ») et la lettre \(Y\) réutilisée dans la partie B.', near: ['p2024-dp-ex6', 'p2023-dp-ex6', 'p2021-ex6'],
+    chk: { x0: '1/2', x1: '1/3', x2: '1/6', ex: '2/3', ex2: '~1', vx: '5/9', ey: '7/3', vy: '20/9', n: '~8', p: '2/3', vb: '2/9', z8: '256/6561', z7: '6305/6561' } });
+
+  /* =====================================================================
+     Examen OBM, octobre 2025 (promo 2030) — Moodle, sans corrigé ; exercices 4 à 6 hors programme
+     ===================================================================== */
+  add({ id: 'p2025-obm-ex1', exam: 'p2025-obm', ecue: 'obm', order: 1, src: 'Examen OBM 2025 · Ex 1', pts: 12, lvl: 2, time: 40,
+    title: r`Logique : implications, quantificateurs, densité de \(\Q\), inclusion dans \(\Z\)`, topics: ['logique', 'quantificateurs', 'raisonnement', 'ensembles'],
+    intro: r`<p>Les questions sont indépendantes.</p>`,
+    questions: [
+      r`<b>1.</b> Soit \(a\) et \(b\) deux réels. On considère les assertions :<p>\(P_1\) : « \(a = b\) », \(P_2\) : « \(a^2 = b^2\) », \(P_3\) : « \(a = -b\) », \(P_4\) : « \((a - b)(a + b) = 0\) », \(P_5\) : « \(a = b\) ou \(a = -b\) » et \(P_6\) : « \(a = 0\) ou \(b = 0\) »</p><p>(a) Quelles sont les implications du type \(P_1 \Longrightarrow\) ……… vraies pour tous \(a\) et \(b\) réels ?</p><p>(b) Parmi les assertions \(P_2\), \(P_3\), \(P_4\), \(P_5\) et \(P_6\), identifier celles qui impliquent \(P_1\) pour tous réels \(a\) et \(b\).</p><p>(c) Parmi les assertions \(P_1\), \(P_3\), \(P_4\), \(P_5\) et \(P_6\), identifier celles qui impliquent \(P_2\) pour tous réels \(a\) et \(b\).</p><p>(d) Parmi les assertions \(P_1\), \(P_3\), \(P_4\), \(P_5\) et \(P_6\), identifier celles qui sont équivalentes à \(P_2\) pour tous réels \(a\) et \(b\).</p>`,
+      r`<b>2.</b> Traduire à l’aide de quantificateurs les phrases suivantes en indiquant si elles sont vraies ou fausses et en justifiant.<p>(a) « Le carré de tout réel est positif »</p><p>(b) « Certains réels sont strictement supérieurs à leur carré »</p><p>(c) « Il y a un réel égal au carré de tous les autres »</p>`,
+      r`<b>3.</b> On rappelle que \(\Q = \left\{\dfrac{a}{b},\ a \in \Z,\ b \in \Z^*\right\}\) l’ensemble des nombres rationnels.<p>Soit l’assertion « (P) : \(\forall (p, q) \in \Q^2,\ \big(p \lt q \Longrightarrow (\exists c \in \Q,\ p \lt c \lt q)\big)\) »</p><p>(a) Démontrer que l’assertion (P) est vraie par un raisonnement direct en prenant grand soin de votre rédaction.</p><p>Indice : on pourra penser à \(\dfrac{p + q}{2}\)</p><p>(b) Donner la négation de (P).</p>`,
+      r`<b>4.</b> Soient \(A = \{x \in \Z,\ x \geq 5\}\) et \(B = \{x \in \Z,\ (x - 1)(x - 5) \geq 0\}\). On note \(\overline{B}\) le complémentaire de \(B\) dans \(\Z\).<p>(a) Remplir les pointillés pour que la phrase mathématique soit correcte :</p><p>a) …… \(\in A\), &nbsp; b) ……… \(\not\subset A \cup B\), &nbsp; c) ……… \(\in A \cap B\), &nbsp; d) ……… \(\subset \overline{B}\)</p><p>(b) De quel ensemble commun \(A\) et \(B\) sont-ils des sous-ensembles ?</p><p>(c) Montrer que \(A \subset B\). Rédiger en suivant les règles de rédaction vues en séminaire.</p><p>(d) A-t-on \(B \subset A\) ? Justifier.</p>`],
+    hints: [
+      r`Question 1 : \(P_2\), \(P_4\) et \(P_5\) disent la même chose (\(a^2 - b^2 = (a - b)(a + b)\), puis « un produit est nul si et seulement si l’un des facteurs l’est »). Une implication fausse se réfute par un seul couple \((a, b)\) : essaie \((1, -1)\), \((1, 1)\), \((0, 1)\).`,
+      r`Question 3(a) : première ligne « Soit \((p, q) \in \Q^2\) fixé. », deuxième ligne « Supposons \(p \lt q\). » Puis pose \(c = \frac{p + q}{2}\) et montre trois choses : \(c \in \Q\), \(p \lt c\) et \(c \lt q\).`,
+      r`Question 4 : \((x - 1)(x - 5) \geq 0\) si et seulement si \(x \leq 1\) ou \(x \geq 5\) (tableau de signes). Donc \(\overline{B} = \{2, 3, 4\}\).`],
+    solution: [
+      { t: 'Question 1 : implications entre les six assertions', html: r`<p>Pour tous réels \(a\) et \(b\) : \(a^2 = b^2 \iff a^2 - b^2 = 0 \iff (a - b)(a + b) = 0 \iff (a - b = 0 \text{ ou } a + b = 0) \iff (a = b \text{ ou } a = -b)\). Donc \(P_2\), \(P_4\) et \(P_5\) sont équivalentes.</p>` +
+        M(r`<p>(a) Les implications vraies sont \(P_1 \Rightarrow P_2\), \(P_1 \Rightarrow P_4\) et \(P_1 \Rightarrow P_5\). Soient \(a\) et \(b\) deux réels. Supposons \(P_1\) vraie : \(a = b\). Alors \(a^2 = b^2\), donc \(P_2\) est vraie ; comme \(P_2\), \(P_4\) et \(P_5\) sont équivalentes, \(P_4\) et \(P_5\) sont vraies aussi. En revanche, \(P_1 \Rightarrow P_3\) et \(P_1 \Rightarrow P_6\) sont fausses : pour \(a = b = 1\), \(P_1\) est vraie, mais \(1 \neq -1\) et ni \(a\) ni \(b\) n’est nul.</p><p>(b) Aucune. Pour \((a, b) = (1, -1)\), \(P_2\), \(P_3\), \(P_4\) et \(P_5\) sont vraies, mais \(1 \neq -1\) : \(P_1\) est fausse. Pour \((a, b) = (0, 1)\), \(P_6\) est vraie et \(P_1\) est fausse.</p><p>(c) \(P_1\), \(P_3\), \(P_4\) et \(P_5\) impliquent \(P_2\). Pour \(P_1\) : voir (a). Pour \(P_3\) : soient \(a\) et \(b\) deux réels ; supposons \(a = -b\) ; alors \(a^2 = (-b)^2 = b^2\). Pour \(P_4\) et \(P_5\) : elles sont équivalentes à \(P_2\). En revanche, \(P_6 \Rightarrow P_2\) est fausse : pour \((a, b) = (0, 1)\), \(P_6\) est vraie et \(0^2 \neq 1^2\).</p><p>(d) \(P_4\) et \(P_5\) sont équivalentes à \(P_2\) (calcul ci-dessus). \(P_1\) ne l’est pas, car \(P_2 \Rightarrow P_1\) est fausse (\((a, b) = (1, -1)\)) ; \(P_3\) non plus, car \(P_2 \Rightarrow P_3\) est fausse (\((a, b) = (1, 1)\)) ; \(P_6\) non plus (question c).</p>`) },
+      { t: 'Question 2 : traduire, vrai ou faux', html: M(r`<p>(a) « \(\forall x \in \R,\ x^2 \geq 0\) » (positif signifie ici \(\geq 0\)). Vraie. Soit \(x \in \R\) fixé. Si \(x \geq 0\), \(x^2 = x \times x\) est un produit de deux réels positifs, donc \(x^2 \geq 0\). Si \(x \lt 0\), \(x^2 = (-x) \times (-x)\) avec \(-x \gt 0\), donc \(x^2 \geq 0\). Ainsi \(\forall x \in \R,\ x^2 \geq 0\).</p><p>(b) « \(\exists x \in \R,\ x \gt x^2\) ». Vraie : pour \(x = \dfrac{1}{2}\), \(x^2 = \dfrac{1}{4} \lt \dfrac{1}{2} = x\).</p><p>(c) « \(\exists x \in \R,\ \forall y \in \R \setminus \{x\},\ x = y^2\) ». Fausse. Montrons sa négation : « \(\forall x \in \R,\ \exists y \in \R \setminus \{x\},\ x \neq y^2\) ».</p><p>Soit \(x \in \R\) fixé. Posons \(y_1 = |x| + 1\) et \(y_2 = -(|x| + 1)\). Ces deux réels sont distincts (\(y_1 \gt 0 \gt y_2\)), donc l’un des deux au moins est différent de \(x\) ; notons-le \(y\). Alors \(y \in \R \setminus \{x\}\) et \(y^2 = (|x| + 1)^2 = |x|^2 + 2|x| + 1 \gt |x| \geq x\), donc \(y^2 \neq x\). La négation est vraie : la phrase (c) est fausse.</p>`) +
+        r`<p>Pour (c), un seul \(x\) qui échoue ne suffit pas : la phrase commence par \(\exists x\), il faut montrer que <b>chaque</b> réel \(x\) échoue. C’est la négation que l’on démontre. La phrase reste fausse si l’on traduit « tous les autres » par \(\forall y \in \R\).</p>` },
+      { t: 'Question 3(a) : la densité de Q, preuve directe', html: M(r`<p>Soit \((p, q) \in \Q^2\) fixé. Supposons \(p \lt q\). Montrons qu’il existe \(c \in \Q\) tel que \(p \lt c \lt q\).</p><p>Comme \(p \in \Q\) et \(q \in \Q\), il existe \(a \in \Z\), \(b \in \Z^*\), \(a' \in \Z\) et \(b' \in \Z^*\) tels que \(p = \dfrac{a}{b}\) et \(q = \dfrac{a'}{b'}\).</p><p>Posons \(c = \dfrac{p + q}{2}\).</p><p>• \(c \in \Q\). En effet, \(c = \dfrac{1}{2}\left(\dfrac{a}{b} + \dfrac{a'}{b'}\right) = \dfrac{ab' + a'b}{2bb'}\). Or \(ab' + a'b \in \Z\) (sommes et produits d’entiers) et \(2bb' \in \Z^*\) (produit d’entiers non nuls, car \(b \neq 0\) et \(b' \neq 0\)). Donc \(c \in \Q\).</p><p>• \(p \lt c\). En effet, \(c - p = \dfrac{p + q}{2} - p = \dfrac{q - p}{2}\). Or \(q - p \gt 0\) car \(p \lt q\), donc \(c - p \gt 0\), c’est-à-dire \(p \lt c\).</p><p>• \(c \lt q\). En effet, \(q - c = q - \dfrac{p + q}{2} = \dfrac{q - p}{2} \gt 0\), donc \(c \lt q\).</p><p>Ainsi, il existe \(c \in \Q\) tel que \(p \lt c \lt q\) : on a montré \(p \lt q \Longrightarrow (\exists c \in \Q,\ p \lt c \lt q)\).</p><p>Comme \((p, q)\) est un élément quelconque de \(\Q^2\), l’assertion (P) est vraie.</p>`, 'preuve directe') +
+        r`<p>Les deux premières lignes suivent les règles du séminaire : « Soit … fixé » pour le \(\forall\), « Supposons … » pour l’implication. On ne nomme pas \(c\) le numérateur de \(q\) : la lettre \(c\) est déjà prise par l’énoncé.</p>` },
+      { t: 'Question 3(b) : la négation', html: M(r`<p>\(\neg(P)\) : « \(\exists (p, q) \in \Q^2,\ \big(p \lt q \text{ et } (\forall c \in \Q,\ c \leq p \text{ ou } c \geq q)\big)\) ».</p>`) +
+        r`<p>On nie de gauche à droite : \(\forall\) devient \(\exists\) ; la négation de « \(P \Rightarrow Q\) » est « \(P\) et non \(Q\) » ; \(\exists c\) devient \(\forall c\) ; la négation de « \(p \lt c\) et \(c \lt q\) » est « \(c \leq p\) ou \(c \geq q\) » (De Morgan).</p>` },
+      { t: 'Question 4 : les ensembles A et B', html: r`<p>Tableau de signes : \(x - 1\) et \(x - 5\) sont tous deux positifs si \(x \geq 5\), tous deux négatifs si \(x \leq 1\), de signes contraires si \(1 \lt x \lt 5\). Donc \(B = \{x \in \Z,\ x \leq 1 \text{ ou } x \geq 5\} = \{\ldots, -1, 0, 1\} \cup \{5, 6, 7, \ldots\}\) et \(\overline{B} = \{2, 3, 4\}\). Par exemple \(3 \notin B\) : \((3 - 1)(3 - 5) = -4 \lt 0\).</p>` +
+        M(r`<p>(a) Des réponses possibles (d’autres conviennent) : a) \(5 \in A\) ; b) \(\{3\} \not\subset A \cup B\) ; c) \(5 \in A \cap B\) ; d) \(\{2, 3\} \subset \overline{B}\).</p><p>(b) \(A\) et \(B\) sont des sous-ensembles de \(\Z\).</p><p>(c) Soit \(x \in A\) fixé. Alors \(x \in \Z\) et \(x \geq 5\). Ainsi \(x - 5 \geq 0\) et \(x - 1 \geq 4 \gt 0\). Or le produit de deux réels positifs est positif, donc \((x - 1)(x - 5) \geq 0\). D’où \(x \in B\). On a montré que tout élément de \(A\) est dans \(B\) : \(A \subset B\).</p><p>(d) Non. \(0 \in \Z\) et \((0 - 1)(0 - 5) = 5 \geq 0\), donc \(0 \in B\). Mais \(0 \lt 5\), donc \(0 \notin A\). Ainsi \(B \not\subset A\).</p>`, '4(c) et 4(d)') +
+        r`<p>Pour b) et d), les pointillés précèdent \(\not\subset\) et \(\subset\) : on attend un <b>ensemble</b> (\(\{3\}\)), pas un élément. Comme \(A \subset B\), on a \(A \cup B = B\) et \(A \cap B = A\).</p>` }],
+    answer: r`<ul><li>1(a) \(P_1 \Rightarrow P_2\), \(P_1 \Rightarrow P_4\), \(P_1 \Rightarrow P_5\) ; 1(b) aucune ; 1(c) \(P_1\), \(P_3\), \(P_4\), \(P_5\) ; 1(d) \(P_4\) et \(P_5\).</li><li>2(a) \(\forall x \in \R,\ x^2 \geq 0\) : vraie ; 2(b) \(\exists x \in \R,\ x \gt x^2\) : vraie (\(x = \frac{1}{2}\)) ; 2(c) \(\exists x \in \R,\ \forall y \in \R \setminus \{x\},\ x = y^2\) : fausse.</li><li>3(a) \(c = \frac{p + q}{2} = \frac{ab' + a'b}{2bb'} \in \Q\) et \(p \lt c \lt q\) ; 3(b) \(\exists (p, q) \in \Q^2,\ p \lt q \text{ et } (\forall c \in \Q,\ c \leq p \text{ ou } c \geq q)\).</li><li>4(a) par exemple \(5\), \(\{3\}\), \(5\), \(\{2, 3\}\) ; 4(b) \(\Z\) ; 4(c) soit \(x \in A\) fixé… ; 4(d) non : \(0 \in B\) et \(0 \notin A\). \(\overline{B} = \{2, 3, 4\}\).</li></ul>`,
+    traps: [
+      r`1(b) : « aucune » est une réponse. \(P_5 \Rightarrow P_1\) est fausse : « \(a = b\) ou \(a = -b\) » n’impose pas \(a = b\).`,
+      r`1(c) et 1(d) : « impliquer » n’est pas « être équivalent ». \(P_1\) et \(P_3\) impliquent \(P_2\) sans lui être équivalentes.`,
+      r`2(c) : « tous les autres » se traduit par \(\forall y \in \R \setminus \{x\}\), et l’ordre est \(\exists x\) puis \(\forall y\). Pour prouver qu’elle est fausse, il faut traiter tous les \(x\), pas un seul.`,
+      r`3(a) : montrer \(c \in \Q\) avec les définitions (\(b \neq 0\) et \(b' \neq 0\) donnent \(2bb' \neq 0\)), pas « la moyenne de deux rationnels est rationnelle » sans preuve. Un exemple chiffré ne démontre rien.`,
+      r`3(b) : la négation de l’implication est « \(p \lt q\) et … », jamais une implication ; et non\((p \lt c \lt q)\) est « \(c \leq p\) ou \(c \geq q\) ».`,
+      r`4(c) : la première ligne est « Soit \(x \in A\) fixé. », pas « Soit \(x \in \Z\) » ; finir par la conclusion \(A \subset B\).`],
+    grading: '12 points pour l’exercice ; le sujet ne détaille pas les questions. La rédaction de 3(a) et de 4(c) est notée explicitement (« en prenant grand soin de votre rédaction », « Rédiger en suivant les règles de rédaction vues en séminaire »).',
+    official: false, note: N25 + ' Rédaction modèle selon les règles du séminaire (§ 4.2 « Comment rédiger ? »).', near: ['p2024-obm-ex1', 'p2023-le-ex2'],
+    chk: { a: '~2,4,5', b: '~none', c: '~1,3,4,5', d: '~4,5', s2a: '~true', s2b: '~true', s2c: '~false', bbar: '{2,3,4}', ce: '~0' } });
+
+  add({ id: 'p2025-obm-ex2', exam: 'p2025-obm', ecue: 'obm', order: 2, src: 'Examen OBM 2025 · Ex 2', pts: 4.5, lvl: 1, time: 15,
+    title: r`La fonction \(A \mapsto \card(A)\) sur \(\mathcal{P}(\{2, 3, 4\})\)`, topics: ['injections', 'ensembles'],
+    intro: '',
+    questions: [
+      r`<b>1.</b> Soient \(F\) et \(G\) deux ensembles et \(f : F \longrightarrow G\)<p>(a) Rappeler la définition mathématique (avec les quantificateurs) de « \(f\) est injective de \(F\) vers \(G\) »</p><p>(b) Rappeler la définition mathématique (avec les quantificateurs) de « \(f\) est surjective de \(F\) vers \(G\) »</p>`,
+      r`<b>2.</b> Soient \(E = \{2, 3, 4\}\). On définit la fonction \(f : \mathcal{P}(E) \longrightarrow \N,\ A \longmapsto \card(A)\).<p>(a) Donner \(\mathcal{P}(E)\)</p><p>(b) Remplir le tableau de valeurs de la fonction \(f\) (une ligne \(A\), une ligne \(f(A)\)).</p><p>(c) \(f\) est-elle injective ? Justifier.</p><p>(d) \(f\) est-elle surjective ? Justifier.</p><p>(e) Déterminer \(I \subset \mathcal{P}(E)\) et \(J \subset \N\) tels que \(f : I \longrightarrow J\) soit injective, non surjective. (Les ensembles \(I\) et \(J\) doivent contenir au moins deux éléments).</p><p>(f) Déterminer \(I' \subset \mathcal{P}(E)\) et \(J' \subset \N\) tels que \(f : I' \longrightarrow J'\) soit surjective, non injective. (Les ensembles \(I'\) et \(J'\) doivent contenir au moins deux éléments).</p>`],
+    hints: [
+      r`\(\mathcal{P}(E)\) contient toutes les parties de \(E\), y compris \(\varnothing\) et \(E\) : \(2^3 = 8\) éléments.`,
+      r`Non injective : deux parties distinctes de même cardinal. Non surjective : un entier naturel qui n’est le cardinal d’aucune partie de \(E\).`,
+      r`Pour (e) et (f), il faut aussi \(f(I) \subset J\) : l’image de chaque élément de \(I\) doit être dans \(J\).`],
+    solution: [
+      { t: 'Question 1 : définitions', html: M(r`<p>(a) \(f\) est injective de \(F\) vers \(G\) si : \(\forall (x, x') \in F^2,\ f(x) = f(x') \Longrightarrow x = x'\).</p><p>(b) \(f\) est surjective de \(F\) vers \(G\) si : \(\forall y \in G,\ \exists x \in F,\ y = f(x)\).</p>`) },
+      { t: 'Question 2(a)-(b) : P(E) et le tableau', html: M(r`<p>(a) \(\mathcal{P}(E) = \big\{\varnothing, \{2\}, \{3\}, \{4\}, \{2, 3\}, \{2, 4\}, \{3, 4\}, \{2, 3, 4\}\big\}\) : \(2^3 = 8\) parties.</p>`) +
+        '<div class="tbl"><table><thead><tr><th scope="row">\\(A\\)</th><td>\\(\\varnothing\\)</td><td>\\(\\{2\\}\\)</td><td>\\(\\{3\\}\\)</td><td>\\(\\{4\\}\\)</td><td>\\(\\{2, 3\\}\\)</td><td>\\(\\{2, 4\\}\\)</td><td>\\(\\{3, 4\\}\\)</td><td>\\(\\{2, 3, 4\\}\\)</td></tr></thead><tbody><tr><th scope="row">\\(f(A)\\)</th><td>0</td><td>1</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td><td>3</td></tr></tbody></table></div>' },
+      { t: 'Question 2(c)-(d) : injective, surjective', html: M(r`<p>(c) \(f\) n’est pas injective : \(f(\{2\}) = f(\{3\}) = 1\) et \(\{2\} \neq \{3\}\).</p><p>(d) \(f\) n’est pas surjective : \(4 \in \N\) n’a pas d’antécédent, car toute partie de \(E\) a au plus 3 éléments. D’après le tableau, \(f(\mathcal{P}(E)) = \{0, 1, 2, 3\} \neq \N\).</p>`) },
+      { t: 'Question 2(e)-(f) : restreindre', html: M(r`<p>(e) Prenons \(I = \{\varnothing, \{2\}\}\) et \(J = \{0, 1, 2\}\). On a \(f(\varnothing) = 0\) et \(f(\{2\}) = 1\) : les deux éléments de \(I\) ont des images distinctes, qui sont dans \(J\), donc \(f : I \to J\) est injective. Elle n’est pas surjective : \(2 \in J\) n’a pas d’antécédent dans \(I\).</p><p>(f) Prenons \(I' = \{\{2\}, \{3\}, \{2, 3\}\}\) et \(J' = \{1, 2\}\). On a \(f(I') = \{1, 2\} = J'\) : \(f : I' \to J'\) est surjective. Elle n’est pas injective : \(f(\{2\}) = f(\{3\}) = 1\) avec \(\{2\} \neq \{3\}\).</p>`) +
+        r`<p>D’autres choix conviennent : en (e), des parties de cardinaux deux à deux distincts et un \(J\) qui contient une valeur de plus ; en (f), deux parties de même cardinal dans \(I'\), et \(J' = f(I')\).</p>` }],
+    answer: r`<ul><li>1(a) \(\forall (x, x') \in F^2,\ f(x) = f(x') \Rightarrow x = x'\) ; 1(b) \(\forall y \in G,\ \exists x \in F,\ y = f(x)\).</li><li>2(a) 8 parties : \(\varnothing\), \(\{2\}\), \(\{3\}\), \(\{4\}\), \(\{2, 3\}\), \(\{2, 4\}\), \(\{3, 4\}\), \(\{2, 3, 4\}\) ; 2(b) images 0, 1, 1, 1, 2, 2, 2, 3.</li><li>2(c) non injective : \(f(\{2\}) = f(\{3\})\) ; 2(d) non surjective : 4 n’a pas d’antécédent, \(f(\mathcal{P}(E)) = \{0, 1, 2, 3\}\).</li><li>2(e) \(I = \{\varnothing, \{2\}\}\), \(J = \{0, 1, 2\}\) ; 2(f) \(I' = \{\{2\}, \{3\}, \{2, 3\}\}\), \(J' = \{1, 2\}\).</li></ul>`,
+    traps: [
+      r`Oublier \(\varnothing\) ou \(E\) dans \(\mathcal{P}(E)\) : il y a 8 parties, pas 6.`,
+      r`Les éléments de \(\mathcal{P}(E)\) sont des ensembles : écrire \(\{2\}\), pas \(2\) ; \(I\) est un ensemble de parties, \(\{\varnothing, \{2\}\}\).`,
+      r`Surjectivité « vers \(\N\) » : un seul entier sans antécédent suffit (4, ou 5…), pas « \(f\) ne prend que quatre valeurs ».`,
+      r`(e) et (f) : vérifier \(f(I) \subset J\), sinon \(f : I \to J\) n’est pas une fonction.`],
+    grading: '4,5 points pour l’exercice ; le sujet ne détaille pas les questions.',
+    official: false, note: N25 + ' Même plan que l’exercice 2 de l’examen OBM 2024 (tableau, injective, surjective, restrictions).', near: ['p2024-obm-ex2'],
+    chk: { card: '~8', img: '{0,1,2,3}', inj: '~false', surj: '~false', e: '~ok', f: '~ok' } });
+
+  add({ id: 'p2025-obm-ex3', exam: 'p2025-obm', ecue: 'obm', order: 3, src: 'Examen OBM 2025 · Ex 3', pts: 5, lvl: 1, time: 15,
+    title: r`Images directes et réciproques : définitions, fonction sur \(\ent{0}{10}\), ln et cos`, topics: ['images', 'usuelles'],
+    intro: '',
+    questions: [
+      r`<b>1.</b> Soient \(E\) et \(F\) deux ensembles et \(f : E \longrightarrow F\).<p>(a) Soit \(A \subset E\). Donner la définition mathématique de \(f(A)\).</p><p>(b) Soit \(B \subset F\). Donner la définition mathématique de \(f^{-1}(B)\).</p>`,
+      r`<b>2.</b> Application 1. On définit la fonction \(f : \ent{0}{10} \longrightarrow \N\) telle que \[\forall n \in \ent{0}{10},\ f(n) = n + 1 \text{ si } n \text{ pair et } 0 \text{ sinon}\]<p>Donner \(f(\{1, 2, 3\})\) et \(f^{-1}(\{0\})\).</p>`,
+      r`<b>3.</b> Application 2 : compléter le tableau suivant.<p>N.B. : nous vous conseillons de dessiner le graphe des fonctions concernées au brouillon ! Bien sûr, la fonction ln est la fonction \(x \mapsto \ln(x)\) et la fonction cos est \(x \mapsto \cos(x)\).</p><div class="tbl"><table><thead><tr><th scope="col">\(f\)</th><th scope="col">\(\ln : \R^{+*} \to \R\)</th><th scope="col">\(\cos : [-\pi, \pi] \to \R\)</th></tr></thead><tbody><tr><th scope="row">\(f\left(\left]0, \frac{\pi}{2}\right]\right)\)</th><td></td><td></td></tr><tr><th scope="row">\(f^{-1}(\{0\})\)</th><td></td><td></td></tr><tr><th scope="row">\(f^{-1}(\{-1\})\)</th><td></td><td></td></tr><tr><th scope="row">\(f^{-1}(]-\infty, 0])\)</th><td></td><td></td></tr></tbody></table></div>`],
+    hints: [
+      r`\(f(A)\) est une partie de \(F\) (les images), \(f^{-1}(B)\) une partie de \(E\) (les antécédents).`,
+      r`Application 1 : calcule \(f(1)\), \(f(2)\), \(f(3)\) ; puis cherche tous les \(n \in \ent{0}{10}\) tels que \(f(n) = 0\) : si \(n\) est pair, \(f(n) = n + 1 \geq 1\).`,
+      r`ln est strictement croissante sur \(]0, +\infty[\) et tend vers \(-\infty\) en 0. cos est paire sur \([-\pi, \pi]\), croissante sur \([-\pi, 0]\), décroissante sur \([0, \pi]\). Une image réciproque se cherche dans l’ensemble de départ.`],
+    solution: [
+      { t: 'Question 1 : définitions', html: M(r`<p>(a) \(f(A) = \{f(x),\ x \in A\} = \{y \in F,\ \exists x \in A,\ y = f(x)\}\).</p><p>(b) \(f^{-1}(B) = \{x \in E,\ f(x) \in B\}\).</p>`) },
+      { t: 'Question 2 : une fonction sur ⟦0, 10⟧', html: M(r`<p>\(1\) et \(3\) sont impairs, donc \(f(1) = f(3) = 0\) ; \(2\) est pair, donc \(f(2) = 2 + 1 = 3\). Ainsi \(f(\{1, 2, 3\}) = \{f(1), f(2), f(3)\} = \{0, 3\}\).</p><p>Soit \(n \in \ent{0}{10}\). Si \(n\) est pair, \(f(n) = n + 1 \geq 1\), donc \(f(n) \neq 0\). Si \(n\) est impair, \(f(n) = 0\). Donc \(f^{-1}(\{0\}) = \{n \in \ent{0}{10},\ f(n) = 0\} = \{1, 3, 5, 7, 9\}\).</p>`) },
+      { t: 'Question 3 : colonne ln', html: FIG.ln + M(r`<p>ln est continue et strictement croissante sur \(]0, +\infty[\), avec \(\ln(x) \to -\infty\) quand \(x \to 0^+\), et \(\ln(1) = 0\).</p><p>\(\ln\left(\left]0, \frac{\pi}{2}\right]\right) = \left]-\infty, \ln\left(\frac{\pi}{2}\right)\right]\) (borne de droite atteinte en \(\frac{\pi}{2}\), borne de gauche jamais atteinte) ; \(\ln^{-1}(\{0\}) = \{1\}\) ; \(\ln^{-1}(\{-1\}) = \{e^{-1}\} = \left\{\frac{1}{e}\right\}\) ; \(\ln^{-1}(]-\infty, 0]) = ]0, 1]\) (\(\ln(x) \leq 0 \iff 0 \lt x \leq 1\)).</p>`) },
+      { t: 'Question 3 : colonne cos', html: FIG.cosPi + M(r`<p>Sur \([-\pi, \pi]\), cos est continue et paire ; elle croît de \(-1\) à 1 sur \([-\pi, 0]\) et décroît de 1 à \(-1\) sur \([0, \pi]\).</p><p>\(\cos\left(\left]0, \frac{\pi}{2}\right]\right) = [0, 1[\) : cos est strictement décroissante sur \(\left[0, \frac{\pi}{2}\right]\), la valeur \(\cos\left(\frac{\pi}{2}\right) = 0\) est atteinte, la valeur \(\cos(0) = 1\) ne l’est pas car 0 est exclu.</p><p>\(\cos^{-1}(\{0\}) = \left\{-\frac{\pi}{2}, \frac{\pi}{2}\right\}\) ; \(\cos^{-1}(\{-1\}) = \{-\pi, \pi\}\) ; \(\cos^{-1}(]-\infty, 0]) = \left[-\pi, -\frac{\pi}{2}\right] \cup \left[\frac{\pi}{2}, \pi\right]\).</p>`) }],
+    answer: r`<ul><li>1(a) \(f(A) = \{f(x),\ x \in A\}\) ; 1(b) \(f^{-1}(B) = \{x \in E,\ f(x) \in B\}\).</li><li>2. \(f(\{1, 2, 3\}) = \{0, 3\}\) ; \(f^{-1}(\{0\}) = \{1, 3, 5, 7, 9\}\).</li></ul>` +
+      '<div class="tbl"><table><thead><tr><th scope="col">\\(f\\)</th><th scope="col">\\(\\ln : \\R^{+*} \\to \\R\\)</th><th scope="col">\\(\\cos : [-\\pi, \\pi] \\to \\R\\)</th></tr></thead><tbody><tr><th scope="row">\\(f(]0, \\frac{\\pi}{2}])\\)</th><td>\\(]-\\infty, \\ln(\\frac{\\pi}{2})]\\)</td><td>\\([0, 1[\\)</td></tr><tr><th scope="row">\\(f^{-1}(\\{0\\})\\)</th><td>\\(\\{1\\}\\)</td><td>\\(\\{-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\}\\)</td></tr><tr><th scope="row">\\(f^{-1}(\\{-1\\})\\)</th><td>\\(\\{\\frac{1}{e}\\}\\)</td><td>\\(\\{-\\pi, \\pi\\}\\)</td></tr><tr><th scope="row">\\(f^{-1}(]-\\infty, 0])\\)</th><td>\\(]0, 1]\\)</td><td>\\([-\\pi, -\\frac{\\pi}{2}] \\cup [\\frac{\\pi}{2}, \\pi]\\)</td></tr></tbody></table></div>',
+    traps: [
+      r`\(\cos\left(\left]0, \frac{\pi}{2}\right]\right) = [0, 1[\), pas \([0, 1]\) : l’intervalle est ouvert en 0, la valeur 1 n’est pas atteinte.`,
+      r`\(\cos^{-1}(\{0\})\) a deux éléments sur \([-\pi, \pi]\) : \(-\frac{\pi}{2}\) et \(\frac{\pi}{2}\). Ne pas répondre \(\left\{\frac{\pi}{2} + k\pi,\ k \in \Z\right\}\) : la fonction est définie sur \([-\pi, \pi]\) seulement.`,
+      r`\(\ln^{-1}(]-\infty, 0]) = ]0, 1]\) : 0 n’est pas dans l’ensemble de départ.`,
+      r`\(f^{-1}(\{0\})\) est un ensemble d’antécédents (\(\{1, 3, 5, 7, 9\}\)), pas une valeur ; et 0 n’en fait pas partie (\(f(0) = 1\)).`],
+    grading: '5 points pour l’exercice ; le sujet ne détaille pas le barème. Seuls les résultats sont demandés au tableau.',
+    official: false, note: N25 + ' Même tableau qu’à l’examen OBM 2024 (exercice 3), avec ln au lieu d’exp et cos sur \\([-\\pi, \\pi]\\) au lieu de \\([0, \\pi]\\).', near: ['p2024-obm-ex3'],
+    chk: { img: '{0,3}', pre: '{1,3,5,7,9}', l1: ']-\\infty,\\ln(\\pi/2)]', l2: '{1}', l3: '{1/e}', l4: ']0,1]', c1: '[0,1[', c2: '{-\\pi/2,\\pi/2}', c3: '{-\\pi,\\pi}', c4: '[-\\pi,-\\pi/2]\\cup[\\pi/2,\\pi]' } });
+
+  /* =====================================================================
      Examen DP, octobre 2024 (promo 2029) — sans corrigé : réponses recalculées
      ===================================================================== */
   var N24 = 'Les annales n’ont pas de corrigé de ce sujet : correction rédigée sur le modèle des corrigés officiels de 2023, chaque résultat recalculé par programme (énumération exhaustive).';
@@ -131,7 +404,7 @@
       r`Question 5 : \(3 \times 3 \times 10^2\) (« le 4 à l’une des 3 places, le reste libre ») compte plusieurs fois les codes 44x, 4x4… et dépasse le vrai total.`,
       r`« Sous la forme d’un nombre entier » : ici il faut finir le calcul (2 160, pas \(3 \times A_{10}^3\)).`],
     grading: '6 points pour l’exercice ; le sujet ne détaille pas les questions. Chaque réponse doit être justifiée brièvement.',
-    official: false, note: N24, near: ['p2023-dp-ex2'],
+    official: false, note: N24, near: ['p2023-dp-ex2', 'p2025-dp-ex2'],
     chk: { q1: '2160', q2: '3000', q3: '60', q4: '18', q5: '813' } });
 
   add({ id: 'p2024-dp-ex3', exam: 'p2024-dp', ecue: 'dp', order: 3, src: 'Examen DP 2024 · Ex 3', pts: 8.5, lvl: 3, time: 25,
@@ -159,7 +432,7 @@
       r`« Sans calcul » : une explication par le dénombrement est attendue, pas les factorielles (elles sont pour la question 3).`,
       r`Question 4 : \(\binom{n}{p}\) ne dépend pas de \(k\) : il sort de la somme.`],
     grading: '8,5 points pour l’exercice ; le sujet ne détaille pas les questions.',
-    official: false, note: N24, near: ['p2023-dp-ex3', 'p2022-ex8'],
+    official: false, note: N24, near: ['p2023-dp-ex3', 'p2022-ex8', 'p2025-dp-ex3'],
     chk: { n1: '1260', n2: '1260', a: '36', b: '35', c: '126' } });
 
   add({ id: 'p2024-dp-ex4', exam: 'p2024-dp', ecue: 'dp', order: 4, src: 'Examen DP 2024 · Ex 4', pts: 6.5, lvl: 2, time: 15,
@@ -186,7 +459,7 @@
       r`Question 3 : diviser par \(\P(C)\) au lieu de \(\P(V)\) (on sait que l’élève valide).`,
       r`Question 4 : oublier que la proportion des autres devient \(1 - p\).`],
     grading: '6,5 points pour l’exercice ; le sujet ne détaille pas les questions. Résultats en fractions simplifiées.',
-    official: false, note: N24 + ' Même exercice, avec d’autres nombres, qu’à l’examen DP 2023 (exercice 4).', near: ['p2023-dp-ex4'],
+    official: false, note: N24 + ' Même exercice, avec d’autres nombres, qu’à l’examen DP 2023 (exercice 4).', near: ['p2023-dp-ex4', 'p2025-dp-ex4'],
     chk: { pv: '11/25', bayes: '8/11', seuil: '2/3' } });
 
   add({ id: 'p2024-dp-ex5', exam: 'p2024-dp', ecue: 'dp', order: 5, src: 'Examen DP 2024 · Ex 5', pts: 6, lvl: 2, time: 15,
@@ -212,7 +485,7 @@
       r`Oublier de dire pourquoi \(\sum_i \P(X = x_i) = 1\).`,
       r`Écrire « Koenig-Huygens » sans le démontrer quand l’énoncé dit « Démontrer ».`],
     grading: '6 points pour l’exercice ; le sujet ne détaille pas les questions. Les deux preuves sont celles du document « Démonstrations à connaître ».',
-    official: false, note: N24 + ' Les preuves reprennent le document officiel « Démonstrations à connaître » du cours 2.', near: ['p2022-ex7', 'p2023-dp-ex5'],
+    official: false, note: N24 + ' Les preuves reprennent le document officiel « Démonstrations à connaître » du cours 2.', near: ['p2022-ex7', 'p2023-dp-ex5', 'p2025-dp-ex5'],
     chk: {} });
 
   add({ id: 'p2024-dp-ex6', exam: 'p2024-dp', ecue: 'dp', order: 6, src: 'Examen DP 2024 · Ex 6', pts: 9, lvl: 2, time: 22,
@@ -239,7 +512,7 @@
       r`\(\P(Z = i)\) est un seul terme \(\binom{20}{i} p^i (1-p)^{20-i}\), pas une somme.`,
       r`Coquille de l’énoncé : « \(k \in \ent{1}{n}\) » à la question 2, lire \(\ent{1}{20}\).`],
     grading: '9 points pour l’exercice ; le sujet ne détaille pas les questions. Calculs détaillés exigés en 1(b) et 1(c).',
-    official: false, note: N24 + ' Même architecture que l’exercice 6 de l’examen DP 2023.', near: ['p2023-dp-ex6'],
+    official: false, note: N24 + ' Même architecture que l’exercice 6 de l’examen DP 2023.', near: ['p2023-dp-ex6', 'p2025-dp-ex6'],
     chk: { e: '1', e2: '3/2', v: '1/2', py: '3/4', vy: '3/16', ez: '15', vz: '15/4' } });
 
   /* =====================================================================

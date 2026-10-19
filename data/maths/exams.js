@@ -1,17 +1,24 @@
 /* Maths (examen 1 : OBM et DP) — notions et sujets connus.
    MATHS_TOPICS : notions (filtres de l’entraînement, tableau des annales, QCM), ids fixés par le brief de la section.
    MATHS_ECUE   : l’ECUE de chaque notion ('obm' ou 'dp' ; null pour « hors programme »).
-   MATHS_EXAMS  : les 11 sujets, du plus récent au plus ancien. Depuis octobre 2023, deux épreuves séparées par ECUE
-     (clés p2024-dp, p2024-obm, p2023-dp, p2023-le ; LE = « logique et ensembles », l’ancêtre d’OBM) ; avant, un
+   MATHS_EXAMS  : les 13 sujets, du plus récent au plus ancien. Depuis octobre 2023, deux épreuves séparées par ECUE
+     (clés p2025-dp, p2025-obm, p2024-dp, p2024-obm, p2023-dp, p2023-le ; LE = « logique et ensembles », l’ancêtre
+     d’OBM) ; avant, un
      contrôle combiné par an (p2022 … p2016), surtout de l’analyse. Clé pAAAA = année de l’automne où le sujet a été
      posé (promo = AAAA + 5, dossier Epidocs).
      Champs : key, ecue ('obm' | 'dp' | 'mixte'), title, meta, progPts (part du barème au programme de l’examen 1
      cette année), note (ce qui distingue le sujet), files (PDF des annales Epidocs, vérifiés sur disque dans un clone
-     de Past-Exams), parts : { ex, t, pts, topics, card (fiche d’exercice de data/maths/ex-annales.js), prog }.
-     Hors programme (prog: false) : analyse (dérivées, limites, développements limités, valeurs intermédiaires),
-     intégrales, suites, nombres complexes. Le séminaire 2026 (programme d’OBM) ne contient ni complexes ni
-     intégrales ; les intégrales relèvent d’APIS (examen 2).
-     Source : $S/analysis/maths_midterms.md (§0.2, §3, §4, §6). */
+     de Past-Exams ; liste vide pour les sujets 2025, publiés sur le Moodle et absents d’Epidocs), parts : { ex, t,
+     pts, topics, card (fiche d’exercice de data/maths/ex-annales.js), prog }.
+     Hors programme (prog: false, notion 'hors-programme') : analyse (dérivées, limites, développements limités, valeurs
+     intermédiaires), intégrales, suites, nombres complexes, et relations binaires. Le mail de la professeure du
+     19 octobre 2026 le confirme : « le programme d’OBM n’était pas le même (les exercices 4, 5 et 6 ne font plus partie
+     du programme) » (OBM 2025 : relations, intégrales, complexes). Les parties de relations binaires des anciens
+     sujets gardent leur notion 'relations' (avec 'hors-programme') et leur fiche ; MATHS_ECUE.relations vaut null.
+     Le séminaire 2026 (programme d’OBM) ne contient ni complexes ni intégrales ; les intégrales relèvent d’APIS
+     (examen 2). L’exercice 4.27 du séminaire garde une relation, mais comme exercice de raisonnement (assertions
+     quantifiées à prouver), sans le vocabulaire réflexive / symétrique / antisymétrique / transitive.
+     Sources : $S/analysis/maths_midterms.md (§0.2, §3, §4, §6) ; sujets 2025 : $S/exam2025/dp.pdf et obm.pdf. */
 (function () {
   window.MATHS_TOPICS = {
     'logique': 'Logique : connecteurs, implication',
@@ -23,7 +30,7 @@
     'injections': 'Injection, surjection, bijection',
     'usuelles': 'Fonctions usuelles',
     'raisonnement': 'Raisonnements : contraposée, double inclusion',
-    'relations': 'Relations binaires',
+    'relations': 'Relations binaires (hors programme en 2026)',
     'recurrence': 'Récurrence',
     'sommes': 'Sommes',
     'denombrement': 'Dénombrement',
@@ -40,7 +47,7 @@
   };
   window.MATHS_ECUE = {
     'logique': 'obm', 'quantificateurs': 'obm', 'ensembles': 'obm', 'cardinal': 'obm', 'fonctions': 'obm', 'images': 'obm',
-    'injections': 'obm', 'usuelles': 'obm', 'raisonnement': 'obm', 'relations': 'obm', 'recurrence': 'obm', 'sommes': 'obm',
+    'injections': 'obm', 'usuelles': 'obm', 'raisonnement': 'obm', 'relations': null, 'recurrence': 'obm', 'sommes': 'obm',
     'denombrement': 'dp', 'binomial': 'dp', 'probabilites': 'dp', 'conditionnelles': 'dp', 'independance': 'dp', 'bayes': 'dp',
     'variables': 'dp', 'esperance': 'dp', 'lois': 'dp', 'demonstrations': 'dp',
     'hors-programme': null
@@ -56,8 +63,30 @@
   }
 
   window.MATHS_EXAMS = [
+    { key: 'p2025-dp', ecue: 'dp', title: 'Examen DP d’octobre 2025', meta: 'promo 2030 · 2 h · 40 points ramenés sur 20', progPts: '40 / 40',
+      note: 'Le dernier sujet DP, et le plus proche de ton examen : même durée, et le même plan qu’en 2023 et 2024 (cours et crible, dénombrement concret, double dénombrement, probabilités totales et Bayes, démonstration de cours, loi binomiale). L’exercice 5 est exactement la démonstration de 2024 : \\(\\E(aX + b)\\) et \\(\\mathrm{Var}(aX + b)\\). L’exercice 1.1 est l’exercice 2.13 du séminaire, l’exercice 2 l’extrait cité au TD 1 (exercice 2.11). Nouveauté : la binomiale porte sur 8 tirages et se termine par \\(\\P(Z \\leq 7)\\), à calculer par l’événement contraire. Sujet publié sur le Moodle (section « Documents de travail »), sans corrigé : toutes les réponses du site sont recalculées par programme.',
+      files: [],
+      parts: [
+        { ex: '1', t: 'Cours et TD : crible (élèves anglais et espagnol), binôme de Newton, \\(\\card(\\mathcal{P}(E)) = 2^n\\)', pts: 7, topics: ['cardinal', 'binomial'], card: 'p2025-dp-ex1', prog: true },
+        { ex: '2', t: 'Mots réponses d’un QCM : 5-listes, arrangements, au moins une bonne réponse, anagrammes', pts: 7, topics: ['denombrement'], card: 'p2025-dp-ex2', prog: true },
+        { ex: '3', t: 'Équipes avec capitaine : \\(k\\binom{n}{k} = n\\binom{n-1}{k-1}\\) par double dénombrement, puis par le calcul', pts: 4.5, topics: ['binomial', 'denombrement'], card: 'p2025-dp-ex3', prog: true },
+        { ex: '4', t: 'Restaurant : desserts, probabilités totales, Bayes', pts: 4, topics: ['conditionnelles', 'bayes'], card: 'p2025-dp-ex4', prog: true },
+        { ex: '5', t: 'Cours : espérance et variance, \\(\\E(aX+b)\\) et \\(\\mathrm{Var}(aX+b)\\) démontrées', pts: 5, topics: ['esperance', 'demonstrations'], card: 'p2025-dp-ex5', prog: true },
+        { ex: '6', t: 'Dé : loi, espérance, variance, \\(Y = 2X + 1\\) ; urne : Bernoulli, binomiale sur 8 tirages', pts: 12.5, topics: ['variables', 'esperance', 'lois'], card: 'p2025-dp-ex6', prog: true }] },
+
+    { key: 'p2025-obm', ecue: 'obm', title: 'Examen OBM d’octobre 2025', meta: 'promo 2030 · 2 h 30 · 40 points ramenés sur 20', progPts: '21,5 / 40',
+      note: 'Le dernier sujet OBM. La professeure l’a écrit dans son mail du 19 octobre 2026 : le programme n’était pas le même, les exercices 4 (relations binaires), 5 (intégrales) et 6 (nombres complexes) n’en font plus partie ; ton examen OBM dure 2 h. Les exercices 1 à 3 sont au programme : logique (12 points), injectivité et surjectivité de \\(A \\mapsto \\card(A)\\), images directes et réciproques. La rédaction est notée explicitement : « en prenant grand soin de votre rédaction » (densité de \\(\\Q\\)) et « Rédiger en suivant les règles de rédaction vues en séminaire » (inclusion). Sujet publié sur le Moodle (section « Documents de travail »), sans corrigé : toutes les réponses du site sont recalculées.',
+      files: [],
+      parts: [
+        { ex: '1', t: 'Logique : implications entre six assertions, quantificateurs, densité de \\(\\Q\\) par preuve directe, inclusion dans \\(\\Z\\)', pts: 12, topics: ['logique', 'quantificateurs', 'raisonnement', 'ensembles'], card: 'p2025-obm-ex1', prog: true },
+        { ex: '2', t: 'Fonction \\(A \\mapsto \\card(A)\\) sur \\(\\mathcal{P}(\\{2, 3, 4\\})\\) : définitions, injectivité, surjectivité, restrictions', pts: 4.5, topics: ['injections', 'ensembles'], card: 'p2025-obm-ex2', prog: true },
+        { ex: '3', t: 'Définitions de \\(f(A)\\) et \\(f^{-1}(B)\\), fonction sur \\(\\ent{0}{10}\\), tableau d’images par ln et cos', pts: 5, topics: ['images', 'usuelles'], card: 'p2025-obm-ex3', prog: true },
+        { ex: '4', t: 'Relation \\(A \\mathrel{\\mathcal{R}} B \\Leftrightarrow \\card(A) \\leq \\card(B)\\) sur \\(\\mathcal{P}(\\ent{0}{50})\\)', pts: 4, topics: ['relations', 'hors-programme'], prog: false },
+        { ex: '5', t: 'Intégrales : primitive, intégration par parties, changement de variable', pts: 5.5, topics: HP, prog: false },
+        { ex: '6', t: 'Nombres complexes : questions de cours et exercices types', pts: 9, topics: HP, prog: false }] },
+
     { key: 'p2024-dp', ecue: 'dp', title: 'Examen DP d’octobre 2024', meta: 'promo 2029 · 2 h · 40 points ramenés sur 20', progPts: '40 / 40',
-      note: 'Le sujet le plus proche de ton examen DP : même durée, même plan que l’examen DP 2023 pour les exercices 2 à 6 (dénombrement concret, identité binomiale, probabilités conditionnelles avec seuil, démonstration de cours, binomiale sur 20 tirages). Nouveauté : l’exercice 1 demande d’inventer une situation de tirage pour une formule donnée. Les annales n’ont pas de corrigé : toutes les réponses du site sont recalculées par programme. Coquille de l’énoncé : « k ∈ ⟦1, n⟧ » à l’exercice 6.2, lire ⟦1, 20⟧.',
+      note: 'Très proche de ton examen DP, comme le sujet 2025 : même durée, même plan que l’examen DP 2023 pour les exercices 2 à 6 (dénombrement concret, identité binomiale, probabilités conditionnelles avec seuil, démonstration de cours, binomiale sur 20 tirages). Nouveauté : l’exercice 1 demande d’inventer une situation de tirage pour une formule donnée. Les annales n’ont pas de corrigé : toutes les réponses du site sont recalculées par programme. Coquille de l’énoncé : « k ∈ ⟦1, n⟧ » à l’exercice 6.2, lire ⟦1, 20⟧.',
       files: files('2029/PC/DP', std(2029, ['s'])),
       parts: [
         { ex: '1', t: 'Proposer une situation de tirage de 5 cartes pour quatre formules données', pts: 4, topics: ['denombrement', 'binomial'], card: 'p2024-dp-ex1', prog: true },
@@ -67,14 +96,14 @@
         { ex: '5', t: 'Cours : espérance et variance, \\(\\E(aX+b)\\) et \\(\\mathrm{Var}(aX+b)\\) démontrées', pts: 6, topics: ['esperance', 'demonstrations'], card: 'p2024-dp-ex5', prog: true },
         { ex: '6', t: 'Urne 0, 1, 1, 2 : loi, espérance, variance, Bernoulli, binomiale sur 20 tirages', pts: 9, topics: ['variables', 'esperance', 'lois'], card: 'p2024-dp-ex6', prog: true }] },
 
-    { key: 'p2024-obm', ecue: 'obm', title: 'Examen OBM d’octobre 2024', meta: 'promo 2029 · 2 h 30 · 40 points ramenés sur 20', progPts: '24 / 40',
-      note: 'Le premier examen OBM, sans corrigé dans les annales : les réponses du site sont recalculées. Il durait 2 h 30 et contenait 16 points d’intégrales (exercice 5) et de nombres complexes (exercice 6), absents du séminaire 2026 : ton examen OBM dure 2 h et porte sur le séminaire seul. Les exercices 1 à 4 sont au programme : logique (10 points), images et injectivité sur un produit cartésien, tableau d’images par exp et cos, relation \\(|a| \\leq |b|\\).',
+    { key: 'p2024-obm', ecue: 'obm', title: 'Examen OBM d’octobre 2024', meta: 'promo 2029 · 2 h 30 · 40 points ramenés sur 20', progPts: '20 / 40',
+      note: 'Le premier examen OBM, sans corrigé dans les annales : les réponses du site sont recalculées. Il durait 2 h 30 et contenait 16 points d’intégrales (exercice 5) et de nombres complexes (exercice 6), absents du séminaire 2026 : ton examen OBM dure 2 h et porte sur le séminaire seul. Les exercices 1 à 3 sont au programme : logique (10 points), images et injectivité sur un produit cartésien, tableau d’images par exp et cos. L’exercice 4 (relation \\(|a| \\leq |b|\\)) ne l’est plus : les relations binaires sont sorties du programme (mail du 19 octobre 2026).',
       files: files('2029/PC/OBM', std(2029, ['s'])),
       parts: [
         { ex: '1', t: 'Logique : conditions nécessaires et suffisantes, quantificateurs, contraposée, double inclusion', pts: 10, topics: ['logique', 'quantificateurs', 'raisonnement', 'ensembles'], card: 'p2024-obm-ex1', prog: true },
         { ex: '2', t: 'Fonction \\((x, y) \\mapsto x + y\\) sur \\(E \\times F\\) : images, injectivité, surjectivité, restrictions', pts: 7, topics: ['images', 'injections', 'ensembles'], card: 'p2024-obm-ex2', prog: true },
         { ex: '3', t: 'Tableau d’images directes et réciproques par exp et cos', pts: 3, topics: ['images', 'usuelles'], card: 'p2024-obm-ex3', prog: true },
-        { ex: '4', t: 'Relation \\(a \\mathrel{\\mathcal{R}} b \\Leftrightarrow |a| \\leq |b|\\) sur \\(\\R\\)', pts: 4, topics: ['relations'], card: 'p2024-obm-ex4', prog: true },
+        { ex: '4', t: 'Relation \\(a \\mathrel{\\mathcal{R}} b \\Leftrightarrow |a| \\leq |b|\\) sur \\(\\R\\)', pts: 4, topics: ['relations', 'hors-programme'], card: 'p2024-obm-ex4', prog: false },
         { ex: '5', t: 'Intégrales : primitive, intégration par parties, changement de variable', pts: 6, topics: HP, prog: false },
         { ex: '6', t: 'Nombres complexes : questions de cours et exercices types', pts: 10, topics: HP, prog: false }] },
 
@@ -89,33 +118,33 @@
         { ex: '5', t: 'Cours : \\(\\E(X + Y)\\), \\(\\E(aX + b)\\) et \\(\\mathrm{Var}(X) = \\E(X^2) - (\\E(X))^2\\) démontrée', pts: 4, topics: ['esperance', 'demonstrations'], card: 'p2023-dp-ex5', prog: true },
         { ex: '6', t: 'QCM de 20 questions au hasard : Bernoulli, binomiale', pts: 6, topics: ['variables', 'esperance', 'lois'], card: 'p2023-dp-ex6', prog: true }] },
 
-    { key: 'p2023-le', ecue: 'obm', title: 'Examen LE d’octobre 2023', meta: 'promo 2028 · 1 h · 20 points', progPts: '18 / 20',
-      note: 'Examen « logique et ensembles », l’ancêtre de l’OBM, en 1 h seulement. Corrigé officiel en français et en anglais, juste (énoncés anglais repris sur le site). L’exercice 1 (équation du second degré dans \\(\\mathbb{C}\\)) est hors programme. La relation de l’exercice 4 est réflexive, transitive et antisymétrique : c’est une relation d’ordre, ce que le corrigé ne dit pas.',
+    { key: 'p2023-le', ecue: 'obm', title: 'Examen LE d’octobre 2023', meta: 'promo 2028 · 1 h · 20 points', progPts: '14 / 20',
+      note: 'Examen « logique et ensembles », l’ancêtre de l’OBM, en 1 h seulement. Corrigé officiel en français et en anglais, juste (énoncés anglais repris sur le site). Les exercices 1 (équation du second degré dans \\(\\mathbb{C}\\)) et 4 (relation binaire, sortie du programme en 2026) sont hors programme. La relation de l’exercice 4 est réflexive, transitive et antisymétrique : c’est une relation d’ordre, ce que le corrigé ne dit pas.',
       files: files('2028/PC/LE', std(2028, ['s', 'c', 'ce'])),
       parts: [
         { ex: '1', t: 'Équation du second degré dans \\(\\mathbb{C}\\), forme exponentielle', pts: 2, topics: HP, prog: false },
         { ex: '2', t: 'Logique : traduire, nier, cocher les implications vraies', pts: 6, topics: ['quantificateurs', 'logique'], card: 'p2023-le-ex2', prog: true },
         { ex: '3', t: 'Ensembles et fonctions : définitions, fonction à construire, \\(x \\mapsto |x - 1|\\)', pts: 8, topics: ['images', 'injections', 'usuelles'], card: 'p2023-le-ex3', prog: true },
-        { ex: '4', t: 'Relation \\(a \\mathrel{\\mathcal{R}} b \\Leftrightarrow \\exists n \\in \\N,\\ b = a^n\\)', pts: 4, topics: ['relations'], card: 'p2023-le-ex4', prog: true }] },
+        { ex: '4', t: 'Relation \\(a \\mathrel{\\mathcal{R}} b \\Leftrightarrow \\exists n \\in \\N,\\ b = a^n\\)', pts: 4, topics: ['relations', 'hors-programme'], card: 'p2023-le-ex4', prog: false }] },
 
-    { key: 'p2022', ecue: 'mixte', title: 'Contrôle S1 de novembre 2022', meta: 'promo 2027 · 3 h · 40 points ramenés sur 20', progPts: '35 / 40',
-      note: 'Le dernier contrôle combiné, et le plus proche du programme actuel : seul l’exercice 1 (intégrales) est hors programme. Corrigé officiel juste. L’exercice 4.2 est l’exercice 3.18 du TD 1 ; sa question (d) se lit de deux façons (voir la fiche). Coquille du corrigé : « E(X) » et « V(X) » pour la variable Y à l’exercice 5.',
+    { key: 'p2022', ecue: 'mixte', title: 'Contrôle S1 de novembre 2022', meta: 'promo 2027 · 3 h · 40 points ramenés sur 20', progPts: '31 / 40',
+      note: 'Le dernier contrôle combiné, et le plus proche du programme actuel : seuls l’exercice 1 (intégrales) et l’exercice 3 (relations binaires, sorties du programme en 2026) sont hors programme. Corrigé officiel juste. L’exercice 4.2 est l’exercice 3.18 du TD 1 ; sa question (d) se lit de deux façons (voir la fiche). Coquille du corrigé : « E(X) » et « V(X) » pour la variable Y à l’exercice 5.',
       files: files('2027', [['Sujet', 'midterm-2027-s1-maths-subject.pdf'], ['Corrigé', 'midterm-2027-s1-maths-correction-fr.pdf']]),
       parts: [
         { ex: '1', t: 'Intégrales', pts: 5, topics: HP, prog: false },
         { ex: '2', t: 'Ensembles et fonctions : images, \\(x \\mapsto |x| + 1\\), composée d’injections, de surjections', pts: 8.5, topics: ['images', 'injections', 'fonctions'], card: 'p2022-ex2', prog: true },
-        { ex: '3', t: 'Relations : réflexive, antisymétrique, transitive, négations, relation d’ordre', pts: 4, topics: ['relations', 'quantificateurs'], card: 'p2022-ex3', prog: true },
+        { ex: '3', t: 'Relations : réflexive, antisymétrique, transitive, négations, relation d’ordre', pts: 4, topics: ['relations', 'quantificateurs', 'hors-programme'], card: 'p2022-ex3', prog: false },
         { ex: '4', t: 'Comités et groupes de responsables dans une classe de 20', pts: 6.5, topics: ['denombrement'], card: 'p2022-ex4', prog: true },
         { ex: '5', t: 'Urne : Bernoulli, binomiale, rang de la première boule blanche', pts: 6.5, topics: ['variables', 'esperance', 'lois'], card: 'p2022-ex5', prog: true },
         { ex: '6', t: 'Deux boîtes de sucettes : probabilités totales, Bayes', pts: 2.5, topics: ['conditionnelles', 'bayes'], card: 'p2022-ex6', prog: true },
         { ex: '7', t: 'Démonstration : \\(\\E(aX + b) = a\\E(X) + b\\)', pts: 3, topics: ['esperance', 'demonstrations'], card: 'p2022-ex7', prog: true },
         { ex: '8', t: 'Binôme et coloriage : \\(\\sum \\binom{n}{k} 3^{n-k} = 4^n\\)', pts: 4, topics: ['binomial', 'denombrement'], card: 'p2022-ex8', prog: true }] },
 
-    { key: 'p2021', ecue: 'mixte', title: 'Contrôle S1 de novembre 2021', meta: 'promo 2026 · 3 h · 30 points ramenés sur 20', progPts: '25,5 / 30',
-      note: 'Le seul sujet des annales qui existe aussi en anglais (énoncé anglais officiel repris sur le site). Seul l’exercice 3 (intégrales) est hors programme. Corrigé officiel en français, juste ; il arrondit les probabilités de l’exercice 7 (0,40 et 0,62) alors que les valeurs exactes sont 159/400 et 33/53.',
+    { key: 'p2021', ecue: 'mixte', title: 'Contrôle S1 de novembre 2021', meta: 'promo 2026 · 3 h · 30 points ramenés sur 20', progPts: '22,5 / 30',
+      note: 'Le seul sujet des annales qui existe aussi en anglais (énoncé anglais officiel repris sur le site). Les exercices 1 (relation binaire, sortie du programme en 2026) et 3 (intégrales) sont hors programme. Corrigé officiel en français, juste ; il arrondit les probabilités de l’exercice 7 (0,40 et 0,62) alors que les valeurs exactes sont 159/400 et 33/53.',
       files: files('2026', std(2026, ['s', 'se', 'c'])),
       parts: [
-        { ex: '1', t: 'Relation \\(x^2 \\leq y^2\\) : est-ce une relation d’ordre ?', pts: 3, topics: ['relations'], card: 'p2021-ex1', prog: true },
+        { ex: '1', t: 'Relation \\(x^2 \\leq y^2\\) : est-ce une relation d’ordre ?', pts: 3, topics: ['relations', 'hors-programme'], card: 'p2021-ex1', prog: false },
         { ex: '2', t: 'Traduire trois phrases avec des quantificateurs', pts: 3, topics: ['quantificateurs'], card: 'p2021-ex2', prog: true },
         { ex: '3', t: 'Intégrales', pts: 4.5, topics: HP, prog: false },
         { ex: '4', t: 'Fonction de \\(\\N\\) dans \\(\\N\\) : injectivité, surjectivité, images', pts: 3.5, topics: ['images', 'injections'], card: 'p2021-ex4', prog: true },
@@ -124,26 +153,26 @@
         { ex: '7', t: 'Test de dépistage : probabilités totales, Bayes', pts: 4, topics: ['conditionnelles', 'bayes'], card: 'p2021-ex7', prog: true },
         { ex: '8', t: 'Somme géométrique par récurrence', pts: 2, topics: ['recurrence', 'sommes'], card: 'p2021-ex8', prog: true }] },
 
-    { key: 'p2020', ecue: 'mixte', title: 'Contrôle 1 de novembre 2020', meta: 'promo 2025 · 3 h · 30 points ramenés sur 20', progPts: '25 / 30',
-      note: 'Corrigé manuscrit, juste. Seul l’exercice 3 (dérivée, intégrales) est hors programme. La relation « habiter à moins de 5 min » des exercices 1 et 2 est imprécise : un élève est à moins de 5 min de lui-même, il faut donc lire « camarade » comme « autre élève » (voir la fiche).',
+    { key: 'p2020', ecue: 'mixte', title: 'Contrôle 1 de novembre 2020', meta: 'promo 2025 · 3 h · 30 points ramenés sur 20', progPts: '21 / 30',
+      note: 'Corrigé manuscrit, juste. Les exercices 2 (relation d’ordre : les relations binaires sont sorties du programme en 2026) et 3 (dérivée, intégrales) sont hors programme ; l’exercice 1 reste au programme, car il s’agit surtout de traduire des phrases avec des quantificateurs. La relation « habiter à moins de 5 min » des exercices 1 et 2 est imprécise : un élève est à moins de 5 min de lui-même, il faut donc lire « camarade » comme « autre élève » (voir la fiche).',
       files: files('2025', std(2025, ['s', 'c'])),
       parts: [
         { ex: '1', t: 'Traduire des phrases sur une relation entre élèves', pts: 3, topics: ['quantificateurs', 'relations'], card: 'p2020-ex1', prog: true },
-        { ex: '2', t: 'Cette relation est-elle une relation d’ordre ?', pts: 4, topics: ['relations'], card: 'p2020-ex2', prog: true },
+        { ex: '2', t: 'Cette relation est-elle une relation d’ordre ?', pts: 4, topics: ['relations', 'hors-programme'], card: 'p2020-ex2', prog: false },
         { ex: '3', t: 'Dérivée et intégrales', pts: 5, topics: HP, prog: false },
         { ex: '4', t: 'Fonction \\(x \\mapsto (x - 2)^2 - 1\\) : rendre injective, rendre surjective', pts: 3, topics: ['injections', 'usuelles'], card: 'p2020-ex4', prog: true },
         { ex: '5', t: 'Symétrie des coefficients binomiaux : par le calcul, par les parties', pts: 4, topics: ['binomial'], card: 'p2020-ex5', prog: true },
         { ex: '6', t: 'Récurrence : \\(\\frac{2^n}{n!} \\leq \\frac{9}{2}\\left(\\frac{2}{3}\\right)^n\\)', pts: 4, topics: ['recurrence'], card: 'p2020-ex6', prog: true },
         { ex: '7', t: 'Mots de 5 lettres, avec ou sans répétition, anagrammes', pts: 7, topics: ['denombrement'], card: 'p2020-ex7', prog: true }] },
 
-    { key: 'p2019', ecue: 'mixte', title: 'Contrôle 1 d’octobre 2019', meta: 'promo 2024 · 3 h · 20,5 points annoncés', progPts: '16,5 / 20,5',
-      note: 'Le corrigé officiel contient trois erreurs, corrigées sur le site : « tableau » a 7 lettres, donc 7!/2! = 2 520 anagrammes (pas 60) ; à l’exercice 7, \\(\\P_B(A) = 3/4\\) (le corrigé divise par P(A) et trouve 3/7) ; à l’exercice 8, la probabilité d’être malade sans être vacciné est 47/200 = 23,5 % (le corrigé trouve 15,6 %). Les points annoncés font 20,5 (exercice 2 : 4 points au sujet, 3,5 au corrigé). L’exercice 2 (dérivée, intégrales) est hors programme.',
+    { key: 'p2019', ecue: 'mixte', title: 'Contrôle 1 d’octobre 2019', meta: 'promo 2024 · 3 h · 20,5 points annoncés', progPts: '15 / 20,5',
+      note: 'Le corrigé officiel contient trois erreurs, corrigées sur le site : « tableau » a 7 lettres, donc 7!/2! = 2 520 anagrammes (pas 60) ; à l’exercice 7, \\(\\P_B(A) = 3/4\\) (le corrigé divise par P(A) et trouve 3/7) ; à l’exercice 8, la probabilité d’être malade sans être vacciné est 47/200 = 23,5 % (le corrigé trouve 15,6 %). Les points annoncés font 20,5 (exercice 2 : 4 points au sujet, 3,5 au corrigé). Les exercices 2 (dérivée, intégrales) et 4 (relation d’équivalence : les relations binaires sont sorties du programme en 2026) sont hors programme.',
       files: files('2024', std(2024, ['s', 'c'])),
       parts: [
         { ex: '1', t: 'Vrai ou faux : quatre assertions quantifiées sur \\(x + y^2 = 0\\)', pts: 2, topics: ['quantificateurs'], card: 'p2019-ex1', prog: true },
         { ex: '2', t: 'Dérivée et intégrales', pts: 4, topics: HP, prog: false },
         { ex: '3', t: 'Injectivité et surjectivité de \\(x \\mapsto 2x + 4\\) et \\(x \\mapsto \\frac{x}{2} + 2\\)', pts: 2, topics: ['injections'], card: 'p2019-ex3', prog: true },
-        { ex: '4', t: 'Relation d’équivalence sur \\(\\Z \\times \\Z^*\\)', pts: 1.5, topics: ['relations'], card: 'p2019-ex4', prog: true },
+        { ex: '4', t: 'Relation d’équivalence sur \\(\\Z \\times \\Z^*\\)', pts: 1.5, topics: ['relations', 'hors-programme'], card: 'p2019-ex4', prog: false },
         { ex: '5', t: 'Tirages de balles, anagrammes, bureaux d’une association', pts: 3, topics: ['denombrement'], card: 'p2019-ex5', prog: true },
         { ex: '6', t: 'Trois balles tirées dans un sac de trois couleurs', pts: 3, topics: ['probabilites', 'denombrement'], card: 'p2019-ex6', prog: true },
         { ex: '7', t: 'Dé à 8 faces : indépendance et incompatibilité', pts: 2, topics: ['independance', 'probabilites'], card: 'p2019-ex7', prog: true },

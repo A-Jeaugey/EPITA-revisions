@@ -559,7 +559,7 @@
         p(r`Contrôle : 23 parlent seulement anglais, 9 seulement espagnol, 2 les deux, 6 aucune : \(23 + 9 + 2 + 6 = 40\).`) }],
     answer: p(r`\(\card(E \sqcup F) = \card E + \card F\) ; \(\card(A \cup B) = \card A + \card B - \card(A \cap B)\) ; 2 élèves parlent les deux langues.`),
     traps: [r`Oublier de retirer \(\card(A \cap B)\) : \(25 + 11 = 36\) dépasse les 34 élèves qui parlent au moins une langue.`, r`Écrire la formule générale du crible pour répondre à la question 1 : pour des ensembles disjoints, on attend \(\card E + \card F\).`],
-    note: NOTE_SEM, near: ['p2023-dp-ex1']
+    note: NOTE_SEM, near: ['p2025-dp-ex1', 'p2023-dp-ex1']
   });
 
   /* =====================================================================================================
@@ -1139,7 +1139,7 @@
       p(r`Troisième idée, par récurrence : ajouter un élément à \(E\) double le nombre de parties (celles qui ne le contiennent pas, et les mêmes auxquelles on l’ajoute).`) }],
     answer: p(r`\(\card \mathcal{P}(E) = 2^n\).`),
     traps: [r`Oublier la partie vide ou \(E\) lui-même (\(k = 0\) et \(k = n\)).`],
-    note: NOTE_TD1
+    note: NOTE_TD1, near: ['p2025-dp-ex1']
   });
 
   add({
@@ -1231,7 +1231,7 @@
       model(p(r`4. On passe par le complémentaire. Un mot sans aucune bonne réponse a, à chaque question, l’une des 5 mauvaises lettres : il y en a \(5^5\).`) + p(r`Le nombre de mots avec au moins une bonne réponse est donc \(6^5 - 5^5 = 7\,776 - 3\,125 = 4\,651\).`)) }],
     answer: p('7 776 ; 720 ; 3 125 ; 4 651 ; 24 ; 30.'),
     traps: [r`Répondre \(5! = 120\) à la question 2 : il y a 6 lettres pour 5 places, c’est \(A_6^5 = 720\).`, r`« Au moins une correcte » par \(5 \times 6^4\) : on compte plusieurs fois les mots qui ont plusieurs bonnes réponses.`, r`Question 6 : \(5!\) sans diviser par les répétitions des C et des D.`],
-    note: NOTE_TD1, near: ['p2024-dp-ex2']
+    note: NOTE_TD1, near: ['p2025-dp-ex2', 'p2024-dp-ex2']
   });
 
   add({
