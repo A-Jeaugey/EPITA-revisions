@@ -96,7 +96,7 @@
       id: 'elec', name: 'Électronique', short: 'Élec', code: 'SI-S1-ELEC-1-OAC',
       course: 'Outils d’analyse de circuits', path: 'elec/index.html', dir: 'elec/', status: 'ready',
       train: 'elec/entrainement.html', fiche: 'elec/fiche.html', open: 'Ouvrir l’élec',
-      exam: 'Écrit · sans calculatrice ni document',
+      exam: 'Jeudi 29 octobre, 10 h 10 · 1 h, sans calculatrice ni document',
       chapters: [
         { id: 'bases', title: 'Les bases', path: 'elec/cours-1-bases.html', sections: 8 },
         { id: 'lois', title: 'Lois fondamentales', path: 'elec/cours-2-lois.html', sections: 8 },
@@ -106,7 +106,7 @@
     {
       id: 'maths', name: 'Mathématiques', short: 'Maths', code: 'S1 · ECUE OBM et DP',
       course: 'Outils de base (OBM) · Dénombrement et probabilités (DP)', path: 'maths/index.html', dir: 'maths/', status: 'ready', annales: 'Maths PC',
-      exam: 'Examen 1, semaine du 26 octobre : OBM 2 h et DP 2 h · DM 20 %, contrôle de cours 20 %, examen 60 % · APIS à l’examen 2',
+      exam: 'Mercredi 28 octobre : OBM à 9 h 50, DP à 14 h (2 h chacun) · DM 20 %, contrôle de cours 20 %, examen 60 % · APIS à l’examen 2',
       train: 'maths/entrainement.html', fiche: 'maths/fiche.html', open: 'Ouvrir les maths',
       chapters: [
         { id: 'logique', title: 'Logique', ecue: 'OBM', path: 'maths/cours-1-logique.html', sections: 8 },
@@ -122,7 +122,7 @@
       id: 'physique', name: 'Physique · Mécanique', short: 'Physique',
       course: 'Mécanique du point', path: 'physique/index.html', dir: 'physique/', status: 'ready', annales: 'Phys',
       train: 'physique/entrainement.html', fiche: 'physique/fiche.html', open: 'Ouvrir la physique',
-      exam: 'Écrit · sans calculatrice ni document',
+      exam: 'Mardi 27 octobre, 13 h 15 · 1 h 30, sans calculatrice ni document',
       chapters: [
         { id: 'cinematique', title: 'Cinématique cartésienne', path: 'physique/cours-1-cinematique.html', sections: 8 },
         { id: 'dynamique', title: 'Forces et lois de Newton', path: 'physique/cours-2-dynamique.html', sections: 8 },
@@ -133,7 +133,7 @@
     {
       id: 'taa', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
       course: 'Types algébriques abstraits', path: 'taa/index.html', dir: 'taa/', status: 'ready',
-      exam: 'Écrit sur le sujet · 1 h cette année d’après le Moodle (30 min, noté sur 10, en 2024)',
+      exam: 'Mardi 27 octobre, 8 h 40 · 1 h, écrit sur le sujet',
       annalesId: 'algo', train: 'taa/entrainement.html', fiche: 'taa/fiche.html', open: 'Ouvrir TAA',
       chapters: [
         { id: 'types', title: 'Les types abstraits', path: 'taa/cours-1-types.html', sections: 8 },
@@ -144,7 +144,7 @@
     {
       id: 'caml', name: 'Algo · Caml', short: 'Caml', code: 'ALGO-S1 · ECUE Caml',
       course: 'Caml et récursivité', path: 'caml/index.html', dir: 'caml/', status: 'ready',
-      exam: 'Écrit · 1 h 30 · fin octobre',
+      exam: 'Mardi 27 octobre, 10 h 15 · 1 h 30, écrit',
       annalesId: 'algo', train: 'caml/entrainement.html', fiche: 'caml/fiche.html', open: 'Ouvrir Caml',
       chapters: [
         { id: 'bases', title: 'Les bases du langage', path: 'caml/cours-1-bases.html', sections: 8 },
@@ -156,7 +156,7 @@
     {
       id: 'archi', name: 'Architecture · Numération', short: 'Archi',
       course: 'Architecture des ordinateurs · Numération', path: 'archi/index.html', dir: 'archi/', status: 'ready', annales: 'Archi',
-      exam: 'Examen 1 h, date non publiée · tests Moodle 10 %',
+      exam: 'Jeudi 29 octobre, 12 h 40 · examen 1 h · tests Moodle 10 %',
       train: 'archi/entrainement.html', fiche: 'archi/fiche.html', open: 'Ouvrir l’archi',
       chapters: [
         { id: 'bases', title: 'Bases de numération', path: 'archi/cours-1-bases.html', sections: 8 },
@@ -169,21 +169,21 @@
   /* textes anglais du registre */
   var SUBJECTS_EN = {
     elec: { name: 'Electronics', short: 'Elec', course: 'Circuit analysis tools', open: 'Open Elec',
-      exam: 'Written · no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
+      exam: 'Thursday 29 October, 10:10 am · 1 hr, no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
     maths: { name: 'Mathematics', short: 'Maths', course: 'Basic mathematical tools (OBM) · Counting and probability (DP)', open: 'Open Maths',
-      exam: 'Exam 1, week of 26 October: OBM 2 hr and DP 2 hr · homework 20%, course test 20%, exam 60% · APIS in exam 2',
+      exam: 'Wednesday 28 October: OBM at 9:50 am, DP at 2 pm (2 hr each) · homework 20%, course test 20%, exam 60% · APIS in exam 2',
       chapters: ['Logic', 'Sets', 'Functions', 'Reasoning', 'Counting', 'Probability', 'Random variables'] },
     physique: { name: 'Physics · Mechanics', short: 'Physics', course: 'Point mechanics', open: 'Open Physics',
-      exam: 'Written · no calculator, no documents',
+      exam: 'Tuesday 27 October, 1:15 pm · 1 hr 30 min, no calculator, no documents',
       chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy', 'Polar coordinates'] },
     taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
-      exam: 'Written, on the exam paper · 1 hr this year according to Moodle (30 min, out of 10, in 2024)',
+      exam: 'Tuesday 27 October, 8:40 am · 1 hr, written on the exam paper',
       chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
     caml: { name: 'Algo · Caml', short: 'Caml', course: 'Caml and recursion', open: 'Open Caml',
-      exam: 'Written · 1 hr 30 min · end of October',
+      exam: 'Tuesday 27 October, 10:15 am · 1 hr 30 min, written',
       chapters: ['Language basics', 'Recursion', 'Lists', 'Higher-order functions'] },
     archi: { name: 'Architecture · Numeration', short: 'Archi', course: 'Computer architecture · Numeration', open: 'Open Archi',
-      exam: 'Exam 1 hr, date not published · Moodle tests 10%',
+      exam: 'Thursday 29 October, 12:40 pm · 1 hr exam · Moodle tests 10%',
       chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {
@@ -270,8 +270,20 @@
   };
 
   /* ---------- dates d'examen (saisies par l'élève) ---------- */
+  /* examens de la semaine du 26 octobre 2026 (planning EPITA, promo 2031 S1) : date et début du créneau. Les créneaux
+     comptent le tiers-temps : la durée de l’épreuve vaut les trois quarts du créneau. */
+  var OFFICIAL = {
+    taa: { date: '2026-10-27', start: '8:40', end: '10:00' },
+    caml: { date: '2026-10-27', start: '10:15', end: '12:15' },
+    physique: { date: '2026-10-27', start: '13:15', end: '15:15' },
+    maths: { date: '2026-10-28', start: '9:50', end: '16:40' },
+    elec: { date: '2026-10-29', start: '10:10', end: '11:30' },
+    archi: { date: '2026-10-29', start: '12:40', end: '14:00' }
+  };
   var exams = {
-    get: function (sid) { return load().exams[sid] || ''; },
+    /* date saisie par l’élève, sinon la date officielle de l’examen (OFFICIAL) */
+    get: function (sid) { return load().exams[sid] || (OFFICIAL[sid] && OFFICIAL[sid].date) || ''; },
+    official: function (sid) { return OFFICIAL[sid] || null; },
     set: function (sid, iso) { update(function (d) { if (iso) d.exams[sid] = iso; else delete d.exams[sid]; }); },
     daysLeft: function (iso) {
       if (!iso) return null;
