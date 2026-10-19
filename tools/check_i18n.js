@@ -97,7 +97,7 @@ const leaves = (o, p, out) => {
   if (o && typeof o === 'object') Object.keys(o).forEach(k => leaves(o[k], p ? p + '.' + k : k, out));
   return out;
 };
-const SKIP_FIELD = /(^|\.)(id|exam|kind|key|topics|spec|svg|img|url|card|cat|cats|ref|type|unit|lvl|time|pts|order|official|same|also|keep|c|s)(\.|$)/;
+const SKIP_FIELD = /(^|\.)(id|exam|kind|key|topics|spec|svg|img|url|card|cat|cats|ref|type|unit|lvl|time|pts|order|official|same|also|keep|c|s|ecue|chk)(\.|$)/;
 const groups = {};
 patches.forEach(({ file, target, map, key, before }) => {
   if (!target) { warn(`${file} : cible absente (fichier français non chargé ?)`); return; }

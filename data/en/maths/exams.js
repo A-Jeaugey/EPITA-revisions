@@ -10,7 +10,7 @@
     'cardinal': 'Cardinality, inclusion-exclusion',
     'fonctions': 'Functions, composition',
     'images': 'Direct image, pre-image',
-    'injections': 'Injection, surjection, bijection',
+    'injections': 'Injective, surjective, bijective functions',
     'usuelles': 'Basic functions',
     'raisonnement': 'Reasoning: contrapositive, double inclusion',
     'relations': 'Binary relations',
