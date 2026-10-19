@@ -19,7 +19,14 @@
   'use strict';
   var r = String.raw;
   var X = window.MATHS_EX = window.MATHS_EX || [];
-  function add(o) { o.kind = 'partiel'; X.push(o); }
+  /* une question est rendue dans une grille (li > div) : le texte de tête va dans un <p>, sinon chaque morceau de texte
+     et chaque formule deviendraient une ligne à part */
+  function wrapQ(q) {
+    if (/^\s*<(p|div|ul|ol|table)\b/.test(q)) return q;
+    var m = /<(p|div|ul|ol|table)\b/.exec(q), i = m ? m.index : q.length;
+    return '<p>' + q.slice(0, i) + '</p>' + q.slice(i);
+  }
+  function add(o) { o.kind = 'partiel'; o.questions = (o.questions || []).map(wrapQ); X.push(o); }
   function M(html, tag) { return '<div class="box model"><span class="tag">Rédaction modèle' + (tag ? ' <i>' + tag + '</i>' : '') + '</span>' + html + '</div>'; }
   function T(name, o) { return '<div data-maths="' + name + '" data-opts=\'' + JSON.stringify(o).replace(/'/g, '&#39;') + '\'></div>'; }
 
@@ -48,7 +55,7 @@
   function sample(f, a, b, n) { var o = []; for (var i = 0; i <= n; i++) { var x = a + (b - a) * i / n; o.push([x, f(x)]); } return o; }
   var STAIRS = [-3, -2, -1, 0, 1, 2];
   var FIG = window.MATHS_FIG = {
-    plot: plot,
+    plot: plot, wrapQ: wrapQ,
     /* p2018 ex. 1 : f(x) = ⌊x/2⌋ dessinée sur [−6, 6[ (point plein à gauche, creux à droite) */
     stairs: plot({ x: [-6.6, 6.6], y: [-3.6, 3.2], w: 360, h: 220, xt: range(-6, 6), yt: range(-3, 3), lines: STAIRS.map(function (k) { return [[2 * k, k], [2 * k + 2, k]]; }),
       dots: STAIRS.map(function (k) { return [2 * k, k, true]; }).concat(STAIRS.map(function (k) { return [2 * k + 2, k, false]; })), aria: 'graphe en escalier' }),
