@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Maths</title>
+<meta name="description" content="Maths, exam 1: one method per type of exercise of the OBM and DP papers, each with an example taken from a paper, its model answer and its traps. Negation, necessary and sufficient conditions, contrapositive and double inclusion, direct images and pre-images, injectivity and surjectivity with restriction, relations, choosing the counting model, double counting, total probability and Bayes with a threshold, binomial distribution, proofs to know, checklist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Methods: one section per type of exercise of the papers, in the order of the exams (OBM, then DP). Each example comes
+   from a paper; its numbers are recomputed by a program (data-eq). */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;width:30px;height:28px;font-family:var(--font-hand);font-size:1.5rem;font-weight:700;color:var(--red);flex:none}
+.kicker .mk{width:38px;height:38px;font-size:1.8rem}
+.ex-src{font-family:var(--font-ui);font-size:.8rem;letter-spacing:.04em;color:var(--exam);font-weight:600}
+.toc-grp{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.7rem .4rem .2rem}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.2rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-ui);font-size:.85rem;color:var(--muted)}
+.check-t{font-family:var(--font-ui);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.4rem}
+.demo td:first-child{min-width:10rem}
+.demo td{vertical-align:top}
+.tv-mini td,.tv-mini th{text-align:center}
+</style>
+</head>
+<body data-resume="Maths · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM and DP</b> — exam methods</span><span>Examples: OBM, LE and DP exams 2023 and 2024</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="11"></span><a href="index.html">Maths</a> · Methods</div>
+      <h1>One method per type of exercise, <span class="w">and what to write on the paper.</span></h1>
+      <p class="lead">The 2023 and 2024 papers ask the same questions from one year to the next. Each method takes a few steps, with an example from a paper and its model answer: the rigour of the write-up is marked, the answer alone is not enough.</p>
+      <ul class="feats">
+        <li><span><span class="k">OBM</span> methods 1 to 6</span></li>
+        <li><span><span class="k">DP</span> methods 7 to 11</span></li>
+        <li class="ex"><span><span class="k">Examples</span> all from the papers</span></li>
+        <li><span><span class="k">Then</span> the checklist, the traps</span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Contents of the methods">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li class="toc-grp">OBM · morning</li>
+      <li><a href="#negation"><span class="pn" data-n="1"></span><span>Negating a quantified statement</span></a></li>
+      <li><a href="#cn-cs"><span class="pn" data-n="2"></span><span>Necessary, sufficient conditions</span></a></li>
+      <li><a href="#raisonnements"><span class="pn" data-n="3"></span><span>Contrapositive, double inclusion</span></a></li>
+      <li><a href="#images"><span class="pn" data-n="4"></span><span>Direct images and pre-images</span></a></li>
+      <li><a href="#injectivite"><span class="pn" data-n="5"></span><span>Injective, surjective, restricting</span></a></li>
+      <li><a href="#relations"><span class="pn" data-n="6"></span><span>Binary relations</span></a></li>
+      <li class="toc-grp">DP · afternoon</li>
+      <li><a href="#modele"><span class="pn" data-n="7"></span><span>Choosing the counting model</span></a></li>
+      <li><a href="#double-denombrement"><span class="pn" data-n="8"></span><span>An identity by double counting</span></a></li>
+      <li><a href="#conditionnelles"><span class="pn" data-n="9"></span><span>Total probability, Bayes, threshold</span></a></li>
+      <li><a href="#binomiale"><span class="pn" data-n="10"></span><span>Distribution, expectation, binomial</span></a></li>
+      <li><a href="#demonstrations"><span class="pn" data-n="11"></span><span>The proofs you have to know</span></a></li>
+      <li class="toc-grp">Before handing in</li>
+      <li><a href="#copie"><span class="mk">✓</span><span>The checklist</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>The traps</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">Two-sided summary sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Contents of the methods</summary><ol>
+      <li><a href="#negation">Negating a quantified statement</a></li><li><a href="#cn-cs">Necessary, sufficient conditions</a></li><li><a href="#raisonnements">Contrapositive, double inclusion</a></li>
+      <li><a href="#images">Direct images and pre-images</a></li><li><a href="#injectivite">Injective, surjective, restricting</a></li><li><a href="#relations">Binary relations</a></li>
+      <li><a href="#modele">Choosing the counting model</a></li><li><a href="#double-denombrement">An identity by double counting</a></li><li><a href="#conditionnelles">Total probability, Bayes, threshold</a></li>
+      <li><a href="#binomiale">Distribution, expectation, binomial</a></li><li><a href="#demonstrations">The proofs you have to know</a></li><li><a href="#copie">The checklist</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="negation">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Method 1 · OBM <span class="ref">LE 2023 ex. 2 · OBM 2024 ex. 1.2 · <a href="cours-1-logique.html#s7">lesson 1, part 7</a></span></div><h2>Negating a quantified statement</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Swap each quantifier</b>: \(\forall\) becomes \(\exists\), \(\exists\) becomes \(\forall\). The set that follows does not change: \(\forall x \in \R^+\) becomes \(\exists x \in \R^+\).</p></div></li>
+          <li><div><p><b>Keep the order</b> of the quantifiers and of the variables.</p></div></li>
+          <li><div><p><b>Negate the final property</b>: \(=\) becomes \(\neq\), \(\leq\) becomes \(>\), “and” becomes “or” (and conversely), \(P \Rightarrow Q\) becomes \(P \land \neg Q\). A double inequality \(m \leq f(x) \leq M\) becomes \(f(x) < m\) or \(f(x) > M\).</p></div></li>
+          <li><div><p><b>True or false?</b> A true \(\forall\) is proved (“Let \(x \in \R\)”); a false \(\forall\) is disproved by a counterexample with numbers; a true \(\exists\) is proved by a witness.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · OBM exam 2024, exercise 1.2</p>
+        <div class="prose"><p>\(P\): “\(\forall x \in \R, \exists y \in \R, \cos(x) = y\)”, \(Q\): “\(\exists y \in \R, \forall x \in \R, x = \cos(y)\)”, \(R\): “\(\exists x \in \R, \exists y \in \R, \cos(x) < \cos(y)\)”. Are they true? Give their negations.</p></div>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>\(P\) is true: let \(x \in \R\); \(y = \cos(x)\) works.</p>
+          <p>\(Q\) is false: let \(y \in \R\); for \(x = \cos(y) + 1\), \(x \neq \cos(y)\). No \(y\) works for all \(x\).</p>
+          <p>\(R\) is true: for \(x = \pi\) and \(y = 0\), <span data-eq>\(\cos(\pi) = -1 < 1 = \cos(0)\)</span>.</p>
+          <p>\(\neg P\): \(\exists x \in \R, \forall y \in \R, \cos(x) \neq y\).</p>
+          <p>\(\neg Q\): \(\forall y \in \R, \exists x \in \R, x \neq \cos(y)\).</p>
+          <p>\(\neg R\): \(\forall x \in \R, \forall y \in \R, \cos(x) \geq \cos(y)\).</p>
+        </div>
+        <div class="note keep"><span class="tag">LE 2023, exercise 2.2</span><p>\(R\): “\((\forall x \in \R, f(x) > 0) \lor (\forall x \in \R, f(x) < 0)\)” has the negation \((\exists x \in \R, f(x) \leq 0) \land (\exists x \in \R, f(x) \geq 0)\): De Morgan on the “or”, then each block negated.</p></div>
+        <div data-maths="negate" data-opts='{"src":"\\forall x \\in \\R, \\exists y \\in \\R, \\cos(x) = y","presets":[{"label":"OBM 2024: P","src":"\\forall x \\in \\R, \\exists y \\in \\R, \\cos(x) = y"},{"label":"OBM 2024: Q","src":"\\exists y \\in \\R, \\forall x \\in \\R, x = \\cos(y)"},{"label":"LE 2023: R","src":"(\\forall x \\in \\R, f(x) > 0) \\lor (\\forall x \\in \\R, f(x) < 0)"},{"label":"f bounded","src":"\\exists (m, M) \\in \\R^2, \\forall x \\in \\R, m \\leq f(x) \\leq M"}],"title":"Negation step by step"}'></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Changing the set: the negation of \(\forall x \in \R^+, f(x) \geq 0\) is \(\exists x \in \R^+, f(x) < 0\), not \(\exists x \in \R^-\).</li>
+          <li>Negating \(\leq\) into \(<\): the negation of \(f(x) \leq M\) is \(f(x) > M\).</li>
+          <li>Swapping the quantifiers: \(\forall x\,\exists y\) (\(y\) depends on \(x\)) and \(\exists y\,\forall x\) (one \(y\) for all) do not mean the same thing.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="cn-cs">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Method 2 · OBM <span class="ref">OBM 2024 ex. 1.1 · LE 2023 ex. 2.2b · <a href="cours-1-logique.html#s4">lesson 1, part 4</a></span></div><h2>Necessary and sufficient conditions: placing ⇒, ⇐ or ⇔</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Write the set of \(x\)</b> satisfying each condition (solve).</p></div></li>
+          <li><div><p><b>Compare the sets</b>: if the left one is included in the right one, the implication \(\text{left} \Rightarrow \text{right}\) is true. Equal: \(\Leftrightarrow\).</p></div></li>
+          <li><div><p><b>Justify a false implication</b> with a counterexample: an \(x\) satisfying the left side but not the right one.</p></div></li>
+          <li><div><p><b>Vocabulary</b>: if \(P \Rightarrow Q\), \(P\) is a <b>sufficient</b> condition for \(Q\) and \(Q\) a <b>necessary</b> condition for \(P\).</p></div></li>
+        </ol>
+        <p class="ex-src">Example · OBM exam 2024, exercise 1.1</p>
+        <div class="prose"><p>\(P\): “\(x^2 > 4\)”. Propositions: (1) \(x > -2\); (2) \(x < -10\); (3) \(x > 1.9\); (4) \(x < -3\) or \(x > 3\); (5) \(x < -2\) or \(x > 2\). Which implications “… ⇒ P” are true? Which “P ⇒ …”? Negate the true implications of the second type.</p></div>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>\(x^2 > 4 \iff x \in \left]-\infty, -2\right[ \cup \left]2, +\infty\right[\). The sets of the propositions are \(\left]-2, +\infty\right[\), \(\left]-\infty, -10\right[\), \(\left]1.9, +\infty\right[\), \(\left]-\infty, -3\right[ \cup \left]3, +\infty\right[\) and \(\left]-\infty, -2\right[ \cup \left]2, +\infty\right[\).</p>
+          <p>a) True: (2) ⇒ P, (4) ⇒ P and (5) ⇒ P (inclusions). False: (1) ⇒ P (\(x = 0\)) and (3) ⇒ P (\(x = 2\), <span data-eq>\(2^2 = 4\)</span> is not \(> 4\)).</p>
+          <p>b) Only P ⇒ (5) is true (equal sets). P ⇒ (1), P ⇒ (3) are false (\(x = -3\)); P ⇒ (2), P ⇒ (4) are false (\(x = 2.5\), <span data-eq>\(2.5^2 = 6.25\)</span>).</p>
+          <p>c) The negation of “P ⇒ (5)” is “\(x^2 > 4\) and \(-2 \leq x \leq 2\)”.</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The arrow goes from the small set to the large one: \(x > 3 \Rightarrow x^2 > 4\), not the converse.</li>
+          <li>The negation of an implication is not an implication: \(\neg(P \Rightarrow Q) \iff P \land \neg Q\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="raisonnements">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Method 3 · OBM <span class="ref">OBM 2024 ex. 1.3 and 1.4 · <a href="cours-4-raisonnement.html#s4">lesson 4, parts 3 and 4</a></span></div><h2>Contrapositive and double inclusion</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Contrapositive</b> of \(A \Rightarrow B\): \(\neg B \Rightarrow \neg A\). It is equivalent: \((A \Rightarrow B) \iff (\neg A \lor B) \iff (B \lor \neg A) \iff (\neg B \Rightarrow \neg A)\), or a truth table. The <b>converse</b> \(B \Rightarrow A\) is not.</p></div></li>
+          <li><div><p><b>Proof by contrapositive</b>: write the contrapositive in full, then “Assume \(\neg B\)” and reach \(\neg A\).</p></div></li>
+          <li><div><p><b>Proving \(A \subset B\)</b>: first line “Let \(x \in A\) be given.”, then show \(x \in B\). For \(A = B\): both inclusions. For \(B \not\subset A\): an element of \(B\) not in \(A\).</p></div></li>
+        </ol>
+        <p class="ex-src">Example · OBM exam 2024, exercise 1.3 (c) and (d)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>We want to show \((\forall \varepsilon > 0, |a| \leq \varepsilon) \Rightarrow a = 0\). Its contrapositive is: \(a \neq 0 \Rightarrow \exists \varepsilon > 0, |a| > \varepsilon\).</p>
+          <p>Assume \(a \neq 0\). Let \(\varepsilon = \frac{|a|}{2}\). Then \(\varepsilon > 0\) and \(|a| > \frac{|a|}{2} = \varepsilon\). The contrapositive is true, so the implication is too.</p>
+          <p>(d) The converse is true: if \(a = 0\), for all \(\varepsilon > 0\), \(|a| = 0 \leq \varepsilon\).</p>
+        </div>
+        <p class="ex-src">Example · OBM exam 2024, exercise 1.4</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>\(A = \{(x, y, z) \in \R^3,\ x = y = z\}\) and \(B = \{(x, y, z) \in \R^3,\ 2x - y - z = 0\}\) are subsets of \(\R^3\).</p>
+          <p>Let \((x, y, z) \in A\) be given. Then \(y = x\) and \(z = x\), so \(2x - y - z = 2x - x - x = 0\): \((x, y, z) \in B\). Thus \(A \subset B\).</p>
+          <p>\(B \not\subset A\): <span data-eq>\(2 \times 1 - 2 - 0 = 0\)</span>, so \((1, 2, 0) \in B\), but \(1 \neq 2\), so \((1, 2, 0) \notin A\).</p>
+        </div>
+        <div data-maths="truth" data-opts='{"f":["A => B","!B => !A"],"edit":false,"title":"An implication and its contrapositive · same column"}'></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Mixing up the contrapositive (\(\neg B \Rightarrow \neg A\), equivalent) and the converse (\(B \Rightarrow A\)).</li>
+          <li>Proving an inclusion on an example: you need an <b>arbitrary</b> element (“Let … be given”).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="images">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Method 4 · OBM <span class="ref">LE 2023 ex. 3 · OBM 2024 ex. 2 and 3 · <a href="cours-3-fonctions.html#s2">lesson 3, parts 2 and 3</a></span></div><h2>Direct images and pre-images</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definitions <i>asked in every OBM exam</i></span>
+          <p>Let \(f : E \to F\), \(A \subset E\) and \(B \subset F\). \(f(A) = \{f(x),\ x \in A\} = \{y \in F,\ \exists x \in A,\ y = f(x)\}\), a subset of \(F\). \(f^{-1}(B) = \{x \in E,\ f(x) \in B\}\), a subset of \(E\), defined even if \(f\) is not bijective.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Finite set</b>: tabulate \(f\). \(f(A)\): the values taken on \(A\). \(f^{-1}(B)\): the elements of the input set whose image is in \(B\); it may be empty.</p></div></li>
+          <li><div><p><b>Interval</b>: draw the graph on the input set, cut it into pieces where it is strictly monotonic, take the values at the endpoints. An endpoint is closed if it is reached, open otherwise.</p></div></li>
+          <li><div><p><b>Pre-image</b>: solve \(f(x) \in B\) <b>in the input set only</b>.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · OBM exam 2024, exercise 2: \(f : E \times F \to \N\), \((x, y) \mapsto x + y\), \(E = \{2, 3, 4\}\), \(F = \{1, 2, 3\}\)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>Table: \(f(2, 1) = 3\), \(f(2, 2) = 4\), \(f(2, 3) = 5\), \(f(3, 1) = 4\), \(f(3, 2) = 5\), \(f(3, 3) = 6\), \(f(4, 1) = 5\), \(f(4, 2) = 6\), \(f(4, 3) = 7\).</p>
+          <p><span data-eq="obm24-fEF">\(f(E \times F) = \{3, 4, 5, 6, 7\}\)</span>; \(f(\{(2, 2), (4, 3)\}) = \{4, 7\}\); \(f^{-1}(\{1\}) = \varnothing\); \(f^{-1}(\{6\}) = \{(3, 3), (4, 2)\}\).</p>
+        </div>
+        <p class="ex-src">Example · OBM exam 2024, exercise 3: complete the table</p>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>\(\exp : \R \to \R\)</th><th>\(\cos : [0, \pi] \to \R\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(f(\{0\})\)</th><td>\(\{1\}\)</td><td>\(\{1\}\)</td></tr>
+            <tr><th>\(f([0, \frac{\pi}{2}])\)</th><td>\([1, e^{\pi/2}]\)</td><td>\([0, 1]\)</td></tr>
+            <tr><th>\(f^{-1}(\{0\})\)</th><td>\(\varnothing\)</td><td>\(\{\frac{\pi}{2}\}\)</td></tr>
+            <tr><th>\(f^{-1}(\{-1\})\)</th><td>\(\varnothing\)</td><td>\(\{\pi\}\)</td></tr>
+            <tr><th>\(f^{-1}(]-\infty, 0])\)</th><td>\(\varnothing\)</td><td>\([\frac{\pi}{2}, \pi]\)</td></tr>
+          </tbody>
+        </table></div>
+        <div data-maths="curve" data-opts='{"f":"cos","fs":["exp","cos","abs1","sq","sin"],"dom":"[0, pi]","mode":"preimage","B":"]-inf, 0]","title":"Reading an image or a pre-image on the graph","presets":[{"label":"OBM 2024: cos⁻¹(]−∞, 0])","f":"cos","dom":"[0, pi]","mode":"preimage","B":"]-inf, 0]"},{"label":"OBM 2024: exp([0, π/2])","f":"exp","mode":"image","A":"[0, pi/2]"},{"label":"LE 2023: g([−1, 3])","f":"abs1","mode":"image","A":"[-1, 3]","name":"g"},{"label":"LE 2023: g⁻¹([0, 1])","f":"abs1","mode":"preimage","B":"[0, 1]","name":"g"}]}'></div>
+        <p class="ex-src">Example · LE exam 2023, exercise 3.2: building a function</p>
+        <div class="prose"><p>Draw \(f : \{a, b, c, d\} \to \ent{1}{5}\) such that \(f(\{a, b\}) = \{1, 2\}\), \(f^{-1}(\{5\}) = \varnothing\) and \(f^{-1}(\{2\}) = \{b, c\}\). First place what is imposed: \(f(b) = f(c) = 2\), so \(f(a) = 1\); \(f(d)\) is neither 2 nor 5: 1, 3 or 4. <span data-eq="le23-f">Exactly 3 functions work</span>, for example:</p></div>
+        <div data-maths="sagittal" data-opts='{"E":["a","b","c","d"],"F":["1","2","3","4","5"],"f":{"a":"1","b":"2","c":"2","d":"4"},"mode":"props","title":"LE 2023 ex. 3.2 · one solution"}'></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Endpoints: \(\exp(]0, \pi]) = ]1, e^{\pi}]\), since 0 is excluded so 1 is too.</li>
+          <li>The input set: \(\sin^{-1}([0, 1])\) on \([-\pi, \pi]\) is \(\{-\pi\} \cup [0, \pi]\), because \(\sin(-\pi) = 0\).</li>
+          <li>\(f^{-1}(B)\) is a set, not the inverse function; \(f^{-1}(\{y\}) = \varnothing\) is possible.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="injectivite">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Method 5 · OBM <span class="ref">LE 2023 ex. 3.3 · OBM 2024 ex. 2.2 · <a href="cours-3-fonctions.html#s6">lesson 3, parts 4 to 6</a></span></div><h2>Injective, surjective, then restricting</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definitions</span>
+          <p>\(f : E \to F\) is <b>injective</b> if \(\forall (x, x') \in E^2,\ f(x) = f(x') \Rightarrow x = x'\); <b>surjective</b> if \(\forall y \in F,\ \exists x \in E,\ y = f(x)\); <b>bijective</b> if it is both.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Not injective</b>: two distinct elements with the same image, with numbers. <b>Injective</b>: “Let \((x, x') \in E^2\) such that \(f(x) = f(x')\)”, then reach \(x = x'\); or “strictly monotonic on the interval”.</p></div></li>
+          <li><div><p><b>Not surjective</b>: a value of \(F\) with no pre-image. <b>Surjective</b>: “Let \(y \in F\)”, then set an \(x\) and check \(f(x) = y\).</p></div></li>
+          <li><div><p><b>Restricting</b>: to make \(f\) injective, reduce the <b>input set</b> to an interval where it is strictly monotonic; to make it surjective, reduce the <b>output set</b> to the image \(f(E)\). Always give both sets and the reason.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · LE exam 2023, exercise 3.3: \(g : \R \to \R\), \(x \mapsto |x - 1|\)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>(c) \(g\) is not injective: <span data-eq>\(g(0) = |0 - 1| = 1\)</span> and <span data-eq>\(g(2) = |2 - 1| = 1\)</span>, with \(0 \neq 2\). On \(I_1 = [1, +\infty[\), \(g(x) = x - 1\) is strictly increasing: \(g : I_1 \to J_1 = \R\) is injective.</p>
+          <p>(d) \(g\) is not surjective: for all \(x \in \R\), \(g(x) \geq 0\), so \(-2\) has no pre-image. \(g : I_2 = \R \to J_2 = \R^+\) is surjective: let \(y \geq 0\); for \(x = y + 1\), \(g(x) = |y| = y\).</p>
+        </div>
+        <p class="ex-src">Example · OBM exam 2024, exercise 2.2 (c) to (f): \(f(x, y) = x + y\) on \(E \times F\)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>(c) \(f\) is not injective: \(f(2, 2) = f(3, 1) = 4\) and \((2, 2) \neq (3, 1)\). (d) It is not surjective onto \(\N\): 0 has no pre-image (all the images are \(\geq 3\)).</p>
+          <p>(e) \(I = \{(2, 1), (2, 2)\}\), \(J = \{3, 4, 5\}\): images 3 and 4 are distinct, 5 has no pre-image. (f) \(I' = \{(2, 1), (2, 2), (3, 1)\}\), \(J' = \{3, 4\}\): 3 and 4 are reached, and \(f(2, 2) = f(3, 1)\).</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>“Increasing so injective”: it must be <b>strictly</b> monotonic.</li>
+          <li>Surjectivity depends on the output set: \(x \mapsto x^2\) is surjective from \(\R\) onto \(\R^+\), not onto \(\R\).</li>
+          <li>A restriction given without both sets, or without a reason.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="relations">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Method 6 · OBM <span class="ref">OBM 2024 ex. 4 · LE 2023 ex. 4 · <a href="cours-4-raisonnement.html#s6">lesson 4, part 6</a></span></div><h2>Binary relations: the four properties</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definitions <i>from the 2022 and 2023 answer keys</i></span>
+          <ul>
+            <li>\(\mathcal{R}\) reflexive: \(\forall x \in E,\ x \mathrel{\mathcal{R}} x\).</li>
+            <li>symmetric: \(\forall (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y \Rightarrow y \mathrel{\mathcal{R}} x\).</li>
+            <li>antisymmetric: \(\forall (x, y) \in E^2,\ (x \mathrel{\mathcal{R}} y \text{ and } y \mathrel{\mathcal{R}} x) \Rightarrow x = y\).</li>
+            <li>transitive: \(\forall (x, y, z) \in E^3,\ (x \mathrel{\mathcal{R}} y \text{ and } y \mathrel{\mathcal{R}} z) \Rightarrow x \mathrel{\mathcal{R}} z\).</li>
+            <li><b>Order</b> relation: reflexive, antisymmetric, transitive. <b>Equivalence</b> relation: reflexive, symmetric, transitive.</li>
+          </ul>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Recall the definition</b> before each property (OBM 2024: “After recalling the definition”).</p></div></li>
+          <li><div><p><b>True property</b>: “Let … be given”, then the proof. <b>False</b>: a counterexample with numbers, which satisfies the hypothesis and not the conclusion.</p></div></li>
+          <li><div><p><b>Conclude</b>: order relation, equivalence relation, or neither.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · OBM exam 2024, exercise 4: on \(\R\), \(a \mathrel{\mathcal{R}} b \iff |a| \leq |b|\)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>Reflexive: let \(a \in \R\); \(|a| \leq |a|\), so \(a \mathrel{\mathcal{R}} a\).</p>
+          <p>Not symmetric: \(1 \mathrel{\mathcal{R}} 2\) since \(1 \leq 2\), but \(2 \leq 1\) is false: we do not have \(2 \mathrel{\mathcal{R}} 1\).</p>
+          <p>Not antisymmetric: \(-1 \mathrel{\mathcal{R}} 1\) and \(1 \mathrel{\mathcal{R}} -1\) (since \(|-1| = |1|\)), but \(-1 \neq 1\).</p>
+          <p>Transitive: let \(a, b, c\) be real numbers with \(|a| \leq |b|\) and \(|b| \leq |c|\); then \(|a| \leq |c|\).</p>
+          <p>It is neither an order relation nor an equivalence relation.</p>
+        </div>
+        <div class="note keep"><span class="tag">LE 2023 · \(a \mathrel{\mathcal{R}} b \iff \exists n \in \N,\ b = a^n\) on \(\N^*\)</span><p>Reflexive (\(a = a^1\)), not symmetric (<span data-eq>\(8 = 2^3\)</span>, so \(2 \mathrel{\mathcal{R}} 8\), but 2 is not a power of 8), transitive (\(c = b^p = a^{np}\)), antisymmetric (question 4): it is an order relation, which the answer key does not say.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Antisymmetric is not the opposite of symmetric: a relation may be neither (above).</li>
+          <li>Negations: not reflexive \(\exists x \in E,\ \neg(x \mathrel{\mathcal{R}} x)\); not antisymmetric \(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y,\ y \mathrel{\mathcal{R}} x \text{ and } x \neq y\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="modele">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Method 7 · DP <span class="ref">DP 2023 ex. 2 · DP 2024 ex. 1 and 2 · <a href="cours-5-denombrement.html#s6">lesson 5, part 6</a></span></div><h2>Choosing the counting model</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Does the order matter?</b> Podium, code, distinct positions, successive draws: yes. Group, hand, simultaneous draw: no.</p></div></li>
+          <li><div><p><b>Repetition allowed?</b> With replacement, repeated digits: \(n^p\). Without: \(A_n^p = \frac{n!}{(n-p)!}\), or \(n!\) if everything is placed. Without order: \(\binom{n}{p} = \frac{n!}{p!\,(n-p)!}\).</p></div></li>
+          <li><div><p><b>Combined cases</b>: “at least” through the complement; “X but not Y”: place X, then complete without Y; “exactly”: product of the choices in each category; several disjoint cases: sum.</p></div></li>
+          <li><div><p><b>Write one sentence per factor</b> and give the result in the requested form (product, whole number).</p></div></li>
+        </ol>
+        <p class="ex-src">Example · DP exam 2023, exercise 2: 20 cyclists, including Pierre and Jade</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <ol>
+            <li>The order matters and a cyclist has only one place: 20 choices for the 1<sup>st</sup>, 19 for the 2<sup>nd</sup>, 18 for the 3<sup>rd</sup>, so <span data-eq="dp23-1">\(20 \times 19 \times 18 = 6{,}840\)</span> podiums.</li>
+            <li>Jade is first: <span data-eq="dp23-2">\(19 \times 18 = 342\)</span>.</li>
+            <li>Without Pierre and without Jade: 18 cyclists, <span data-eq="dp23-3">\(18 \times 17 \times 16 = 4{,}896\)</span>.</li>
+            <li>Pierre but not Jade: Pierre has 3 places, then 18 and 17 choices among the others: <span data-eq="dp23-4">\(3 \times 18 \times 17 = 918\)</span>.</li>
+            <li>At least Jade or Pierre: through the complement, <span data-eq="dp23-5">\(20 \times 19 \times 18 - 18 \times 17 \times 16 = 1{,}944\)</span>.</li>
+            <li>The three bikes are identical: the order no longer matters, <span data-eq="dp23-6">\(\binom{20}{3} = \frac{20 \times 19 \times 18}{3!} = 1{,}140\)</span>.</li>
+          </ol>
+        </div>
+        <div class="note keep"><span class="tag">DP 2024, exercise 2 · door code: one letter out of A, B, C, then 3 digits</span><p>Distinct digits: <span data-eq="dp24-1">\(3 \times A_{10}^{3} = 3 \times 720 = 2{,}160\)</span>. Repetitions allowed: <span data-eq="dp24-2">\(3 \times 10^3 = 3{,}000\)</span>. Known letter, distinct odd digits: <span data-eq="dp24-3">\(A_5^3 = 60\)</span>. Digits 6, 2, 9 in an unknown order, unknown letter: <span data-eq="dp24-4">\(3 \times 3! = 18\)</span>. At least one 4: <span data-eq="dp24-5">\(3 \times (10^3 - 9^3) = 813\)</span>.</p></div>
+        <div data-maths="choose" data-opts='{"title":"Which formula? · answer the questions"}'></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Podium versus identical bikes: \(A_{20}^3\) against \(\binom{20}{3}\). Distinct positions versus “two assistants”.</li>
+          <li>With replacement: \(n^p\), neither \(A_n^p\) nor \(p^n\).</li>
+          <li>“At least one” counted as \(\binom{\cdot}{1} \times \dots\): the cases with several are counted twice. Go through the complement.</li>
+          <li>Anagrams with repeated letters: divide by the factorials of the repetitions (“tableau”: <span data-eq>\(\frac{7!}{2!} = 2{,}520\)</span>).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="double-denombrement">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Method 8 · DP <span class="ref">DP 2023 ex. 3 · DP 2024 ex. 3 · <a href="cours-5-denombrement.html#s8">lesson 5, parts 7 and 8</a></span></div><h2>An identity by double counting</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Name the set</b> that both sides count (the draws of \(k\) balls, the token configurations).</p></div></li>
+          <li><div><p><b>Count it in one go</b>: that is one side.</p></div></li>
+          <li><div><p><b>Count it in steps or by cases</b>: that is the other side. For a sum, say the cases are <b>disjoint</b> and cover everything.</p></div></li>
+          <li><div><p><b>Conclude</b>: “we counted the same set in two ways”. If asked, prove it again by computation, with factorials.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · DP exam 2023, exercise 3: \(p\) green balls, \(n\) red ones, \(k\) balls drawn simultaneously</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>There are \(\binom{n+p}{k}\) possible draws. For \(i \in \ent{0}{k}\), there are \(\binom{p}{i}\binom{n}{k-i}\) draws with \(i\) green and \(k - i\) red balls.</p>
+          <p>To take \(k\) balls, we can take 0 green and \(k\) red ones, or 1 green and \(k - 1\) red ones, …, up to \(k\) green and 0 red. These different cases are disjoint and cover all the draws. Hence \(\displaystyle\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i} = \binom{n+p}{k}\).</p>
+          <p>Application: <span data-eq="dp23-vdm">\(\sum_{i=0}^{4} \binom{4}{i}\binom{7}{4-i} = \binom{11}{4} = 330\)</span>.</p>
+        </div>
+        <p class="ex-src">Example · DP exam 2024, exercise 3: 9 tokens, 5 in the hexagon including 2 in the triangle</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>Choice 1: 2 tokens for the triangle, then 3 of the 7 left: <span data-eq="dp24-n1">\(N_1 = \binom{9}{2}\binom{7}{3} = 36 \times 35 = 1{,}260\)</span>. Choice 2: 5 tokens for the hexagon, then 2 of them for the triangle: <span data-eq="dp24-n2">\(N_2 = \binom{9}{5}\binom{5}{2} = 126 \times 10 = 1{,}260\)</span>. We count the same configurations, hence \(N_1 = N_2\).</p>
+          <p>In general, \(\binom{n}{p}\binom{p}{k} = \binom{n}{k}\binom{n-k}{p-k}\): both sides equal \(\frac{n!}{k!\,(p-k)!\,(n-p)!}\). Then \(S_p = \sum_{k=0}^{p} \binom{n}{k}\binom{n-k}{p-k} = \binom{n}{p}\sum_{k=0}^{p}\binom{p}{k} = 2^p\binom{n}{p}\).</p>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Forgetting to say the cases are disjoint: the English answer key writes it (“These different cases are disjoint”).</li>
+          <li>A sum starting at the wrong index: \(\sum_{k=1}^{n}\binom{n}{k} = 2^n - 1\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="conditionnelles">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="9"></span>Method 9 · DP <span class="ref">DP 2023 ex. 4 · DP 2024 ex. 4 · <a href="cours-6-probabilites.html#s7">lesson 6, parts 7 and 8</a></span></div><h2>Total probability, Bayes, the “threshold” question</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Translate the statement</b>: name the events, then write each piece of data: \(\P(S) = \dots\), \(\P(V \mid S) = \dots\), \(\P(V \mid \overline{S}) = \dots\). “If …, the probability” is a conditional probability.</p></div></li>
+          <li><div><p><b>Law of total probability</b>: announce the partition \(\{S, \overline{S}\}\), write \(V = (V \cap S) \cup (V \cap \overline{S})\), a disjoint union, then the formula in letters, the numbers, the simplified fraction.</p></div></li>
+          <li><div><p><b>Bayes</b>: “We are looking for \(\P(S \mid V)\)”, then \(\frac{\P(V \cap S)}{\P(V)} = \frac{\P(V \mid S)\P(S)}{\P(V)}\).</p></div></li>
+          <li><div><p><b>Threshold</b>: let \(p = \P(S)\), write \(\P(V) = ap + b(1 - p)\), solve the inequality, conclude with a proportion between 0 and 1.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · DP exam 2023, exercise 4: support classes \(S\), passing \(V\)</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>1. \(\P(S) = 0.1\), \(\P(V \mid S) = 0.8\) and \(\P(V \mid \overline{S}) = 0.3\).</p>
+          <p>2. Since \(\{S, \overline{S}\}\) is a partition of \(\Omega\), \(V = (V \cap S) \cup (V \cap \overline{S})\) (disjoint union). Hence</p>
+          <div class="fm" data-eq="dp23-pv">\[\P(V) = \P(V \mid S)\P(S) + \P(V \mid \overline{S})\P(\overline{S}) = 0.8 \times 0.1 + 0.3 \times 0.9 = 0.35 = \frac{7}{20}.\]</div>
+          <p>3. We are looking for \(\P(S \mid V)\):</p>
+          <div class="fm" data-eq="dp23-bayes">\[\P(S \mid V) = \frac{\P(V \cap S)}{\P(V)} = \frac{\P(V \mid S)\P(S)}{\P(V)} = \frac{0.08}{0.35} = \frac{8}{35}.\]</div>
+          <p>4. With \(p = \P(S)\): \(\P(V) = 0.8p + 0.3(1 - p) = 0.5p + 0.3\). We want \(0.5p + 0.3 \geq 0.75\), that is <span data-eq="dp23-seuil">\(p \geq \frac{0.45}{0.5} = 0.9\)</span>: at least 90% of the students in the support classes.</p>
+        </div>
+        <div data-maths="tree" data-opts='{"first":[{"n":"S","p":"1/10"},{"n":"\\overline{S}"}],"second":{"n":"V","nb":"\\overline{V}","p":["4/5","3/10"]},"edit":false,"title":"Probability tree · DP 2023, ex. 4"}'></div>
+        <div class="note keep"><span class="tag">DP 2024, exercise 4 · same plan</span><p>\(\P(C) = \frac{2}{5}\), \(\P(V \mid C) = \frac{4}{5}\), \(\P(V \mid \overline{C}) = \frac{1}{5}\). <span data-eq="dp24-pv">\(\P(V) = \frac{4}{5} \times \frac{2}{5} + \frac{1}{5} \times \frac{3}{5} = \frac{11}{25}\)</span>; <span data-eq="dp24-bayes">\(\P(C \mid V) = \frac{8/25}{11/25} = \frac{8}{11}\)</span>; \(0.8p + 0.2(1 - p) \geq 0.6\) gives <span data-eq="dp24-seuil">\(p \geq \frac{2}{3}\)</span>.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>\(\P(A \mid B)\) divides by \(\P(B)\), not by \(\P(A)\) (mistake in the official 2019 answer key).</li>
+          <li>Percentages: 1% = 0.01. Check that a total probability stays between 0 and 1.</li>
+          <li>Giving an approximate value when the paper asks for a simplified fraction.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 -->
+    <section class="sec" id="binomiale">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="10"></span>Method 10 · DP <span class="ref">DP 2023 ex. 6 · DP 2024 ex. 6 · <a href="cours-7-variables.html#s7">lesson 7, parts 1, 2, 6 and 7</a></span></div><h2>Distribution, expectation, variance, spotting a binomial</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Giving the distribution of \(X\)</b> means giving \(X(\Omega)\) <b>and</b> each \(\P(X = x_i)\); check that they add up to 1.</p></div></li>
+          <li><div><p><b>Show the details</b>: \(\E(X) = \sum x_i \P(X = x_i)\), \(\E(X^2) = \sum x_i^2 \P(X = x_i)\), then \(\V(X) = \E(X^2) - (\E(X))^2\) (König-Huygens). “Do not just drop the results.”</p></div></li>
+          <li><div><p><b>Bernoulli</b>: \(X(\Omega) = \{0, 1\}\), \(\P(X = 1) = p\); \(\E = p\), \(\V = p(1 - p)\).</p></div></li>
+          <li><div><p><b>Binomial</b>: “\(Y = X_1 + \dots + X_n\) is the sum of \(n\) <b>independent</b> Bernoulli variables with the same parameter \(p\)”; \(Y(\Omega) = \ent{0}{n}\), \(\P(Y = i) = \binom{n}{i}p^i(1 - p)^{n - i}\); sum equal to 1 by the binomial theorem; \(\E(Y) = np\), \(\V(Y) = np(1 - p)\) (independence).</p></div></li>
+        </ol>
+        <p class="ex-src">Example · DP exam 2024, exercise 6: balls 0, 1, 1, 2, twenty draws with replacement</p>
+        <div class="box model"><span class="tag">Model answer</span>
+          <p>1. \(X_k(\Omega) = \{0, 1, 2\}\), \(\P(X_k = 0) = \frac{1}{4}\), \(\P(X_k = 1) = \frac{2}{4} = \frac{1}{2}\), \(\P(X_k = 2) = \frac{1}{4}\).</p>
+          <p><span data-eq="dp24-e">\(\E(X_k) = 0 \times \frac{1}{4} + 1 \times \frac{1}{2} + 2 \times \frac{1}{4} = 1\)</span>; <span data-eq="dp24-e2">\(\E(X_k^2) = 0^2 \times \frac{1}{4} + 1^2 \times \frac{1}{2} + 2^2 \times \frac{1}{4} = \frac{3}{2}\)</span>; <span data-eq="dp24-v">\(\V(X_k) = \frac{3}{2} - 1^2 = \frac{1}{2}\)</span>.</p>
+          <p>2. \(Y_k = 1\) if the ball shows 0 or 1, 0 otherwise: <span data-eq="dp24-yk">\(\P(Y_k = 1) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span>. \(Y_k\) is Bernoulli-distributed with the parameter \(\frac{3}{4}\): \(\E(Y_k) = \frac{3}{4}\), <span data-eq="dp24-vyk">\(\V(Y_k) = \frac{3}{4} \times \frac{1}{4} = \frac{3}{16}\)</span>.</p>
+          <p>3. \(Z = Y_1 + \dots + Y_{20}\) is the sum of 20 independent Bernoulli variables with the parameter \(\frac{3}{4}\): \(Z \sim \mathcal{B}\left(20, \frac{3}{4}\right)\), \(\P(Z = i) = \binom{20}{i}\left(\frac{3}{4}\right)^i\left(\frac{1}{4}\right)^{20 - i}\) for \(i \in \ent{0}{20}\), and \(\sum_{i=0}^{20}\P(Z = i) = \left(\frac{3}{4} + \frac{1}{4}\right)^{20} = 1\) by the binomial theorem. <span data-eq="dp24-ez">\(\E(Z) = 20 \times \frac{3}{4} = 15\)</span>; <span data-eq="dp24-vz">\(\V(Z) = 20 \times \frac{3}{16} = \frac{15}{4}\)</span>.</p>
+        </div>
+        <div data-maths="law" data-opts='{"law":"binom","n":20,"p":"3/4","name":"Z","edit":false,"title":"Distribution of Z · DP 2024, ex. 6"}'></div>
+        <div class="note keep"><span class="tag">DP 2023, exercise 6 · an MCQ of 20 questions, one chance in 3</span><p>\(X_k \sim\) Bernoulli\(\left(\frac{1}{3}\right)\): <span data-eq="dp23-vx">\(\V(X_k) = \frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</span>; \(Y \sim \mathcal{B}\left(20, \frac{1}{3}\right)\): <span data-eq="dp23-ey">\(\E(Y) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>, <span data-eq="dp23-vy">\(\V(Y) = 20 \times \frac{2}{9} = \frac{40}{9}\)</span>.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>\(\P(Y = k)\) is <b>one</b> term \(\binom{n}{k}p^k(1-p)^{n-k}\), not a sum.</li>
+          <li>\(\E(X^2) = \sum x_i^2\P(X = x_i)\), not \(\left(\sum x_i\P(X = x_i)\right)^2\); \(\V = \E(X^2) - (\E(X))^2\), with a minus.</li>
+          <li>Forgetting “independent” to justify the binomial distribution and the additivity of variances.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 11 -->
+    <section class="sec" id="demonstrations">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="11"></span>Method 11 · DP and OBM <span class="ref">DP 2023 ex. 5 · DP 2024 ex. 5 · 2022 test ex. 7</span></div><h2>The proofs you have to know</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Every DP exam since 2023 has a proof from the lecture (4 points out of 30, then 6 out of 40). The expected write-up is the one of the document “Theorems and proofs”: quote each property where you use it (“highlighted in the computations”). The full proofs are in the lessons.</p></div>
+        <div class="tbl"><table class="demo">
+          <thead><tr><th>Statement</th><th>The idea, in one line</th><th>Asked</th></tr></thead>
+          <tbody>
+            <tr><td>\(\E(aX + b) = a\E(X) + b\) · <a href="cours-7-variables.html#s3">lesson 7, part 3</a></td><td>Transfer with \(f(x) = ax + b\), split the sum, then \(\sum x_i\P(X = x_i) = \E(X)\) and \(\sum \P(X = x_i) = 1\).</td><td>2022, 2024</td></tr>
+            <tr><td>\(\mathrm{Var}(X) = \E(X^2) - (\E(X))^2\) · <a href="cours-7-variables.html#s4">lesson 7, part 4</a></td><td>Expand \((X - \E(X))^2\), linearity; \(\E(X)\) is a constant.</td><td>2023</td></tr>
+            <tr><td>\(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\) · <a href="cours-7-variables.html#s5">lesson 7, part 5</a></td><td>\((aX + b) - \E(aX + b) = a(X - \E(X))\), then take \(a^2\) out.</td><td>2024</td></tr>
+            <tr><td>Law of total probability · <a href="cours-6-probabilites.html#s7">lesson 6, part 7</a></td><td>\(A = \bigsqcup (A \cap B_i)\) disjoint, additivity, then \(\P(A \cap B_i) = \P(A \mid B_i)\P(B_i)\).</td><td>Tutorial 2</td></tr>
+            <tr><td>Properties of \(\P\) · <a href="cours-6-probabilites.html#s3">lesson 6, part 3</a></td><td>\(A = A \sqcup \varnothing\); \(A = (A \setminus B) \sqcup (A \cap B)\); \(A \cup B = (A \setminus B) \sqcup (A \cap B) \sqcup (B \setminus A)\).</td><td>course test</td></tr>
+            <tr><td>Inclusion-exclusion \(\card(A \cup B)\) · <a href="cours-2-ensembles.html#s8">lesson 2, part 8</a></td><td>\(A \cup B = (A \setminus B) \sqcup B\) and \(\card(A) = \card(A \setminus B) + \card(A \cap B)\).</td><td>DP 2023</td></tr>
+            <tr><td>Pascal, symmetry · <a href="cours-5-denombrement.html#s7">lesson 5, part 7</a></td><td>The draws contain ball 1 or not; \(A \mapsto \overline{A}\); or with factorials.</td><td>2020, 2021</td></tr>
+            <tr><td>\(\sum \binom{n}{k} = 2^n\), binomial theorem · <a href="cours-5-denombrement.html#s8">lesson 5, part 8</a></td><td>The subsets of \(E\) sorted by their cardinality; binomial theorem with \(x = y = 1\).</td><td>2022</td></tr>
+            <tr><td>Composition of injections, of surjections · <a href="cours-3-fonctions.html#s7">lesson 3, part 7</a></td><td>\(g(f(x)) = g(f(x'))\) gives \(f(x) = f(x')\), then \(x = x'\); a pre-image of \(y\) under \(g\), then under \(f\).</td><td>2022</td></tr>
+            <tr><td>Contrapositive, contradiction, induction · <a href="cours-4-raisonnement.html#s4">lesson 4, parts 4, 5 and 7</a></td><td>\(n^2\) even \(\Rightarrow n\) even; \(\sqrt{2}\) irrational; base case, induction step, conclusion.</td><td>OBM 2024, 2020, 2021</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>König-Huygens, DP 2023 ex. 5</i></span>
+          <p>By definition, \(\mathrm{Var}(X) = \E\left((X - \E(X))^2\right) = \E\left(X^2 - 2\E(X)X + (\E(X))^2\right)\).</p>
+          <p>By the formula \(\E(X + Y) = \E(X) + \E(Y)\): \(\mathrm{Var}(X) = \E(X^2) - \E(2\E(X)X) + \E\left((\E(X))^2\right)\).</p>
+          <p>By the formula \(\E(aX + b) = a\E(X) + b\) with \(a = 2\E(X)\), \(b = 0\): \(\E(2\E(X)X) = 2(\E(X))^2\). And \((\E(X))^2\) is a constant: its expectation is \((\E(X))^2\).</p>
+          <p>So \(\mathrm{Var}(X) = \E(X^2) - 2(\E(X))^2 + (\E(X))^2 = \E(X^2) - (\E(X))^2\).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ checklist -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>The last minutes</div><h2>Before handing in your paper</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Read each exercise again with this list. It follows the instructions of the papers and what the answer keys write. Nothing is saved.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Untick all</button></div>
+        <ul class="check" id="check">
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">Both exams</li>
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Requested form</b>: simplified fraction, whole number, product, or “without doing the computation to the end”.</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>A justification</b> for each answer: a sentence, a formula, or a counterexample with numbers.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>In pen</b>, nothing in pencil; a tidy paper (one-point penalty out of 20).</label></li>
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">OBM</li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>Definitions</b> with their quantifiers and their sets (\(f(A)\), \(f^{-1}(B)\), injective, surjective, properties of a relation).</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Negations</b>: quantifiers swapped, sets kept, \(\leq\) turned into \(>\), “and” into “or”.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Restrictions</b>: both sets given, with the reason (strict monotonicity, image).</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>Intervals</b>: each bracket checked (endpoint reached or not), pre-image looked for in the input set.</label></li>
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">DP</li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>Counting</b>: the model named (order, repetition), one sentence per factor, “at least” through the complement.</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>Probability</b>: events named, data translated, partition announced, the formula in letters before the numbers.</label></li>
+          <li><input type="checkbox" id="c10"><label for="c10"><b>Random variables</b>: \(X(\Omega)\) and all the probabilities, sum 1, \(\E\) and \(\V\) in detail, “independent” written for the binomial.</label></li>
+          <li><input type="checkbox" id="c11"><label for="c11"><b>Proof</b>: each property quoted where it is used, up to the formula of the statement.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ traps -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>To read the day before</div><h2>The traps, topic by topic</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Logic and reasoning</span><ul>
+            <li>\(\neg(P \Rightarrow Q)\) is \(P \land \neg Q\), neither \(\neg P \Rightarrow \neg Q\) nor \(P \Rightarrow \neg Q\).</li>
+            <li>Contrapositive \(\neg Q \Rightarrow \neg P\) (equivalent) against converse \(Q \Rightarrow P\).</li>
+            <li>“Some” means at least one; the negation of “some fishes are red” is “no fish is red”.</li>
+            <li>Induction: the base case is not always 0 (<span data-eq>\(2^5 = 32 < 37 = 6 \times 5 + 7\)</span>, whereas <span data-eq>\(2^6 = 64 \geq 43 = 6 \times 6 + 7\)</span>).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Sets and functions</span><ul>
+            <li>\(\in\) links an element to a set, \(\subset\) two sets: \(\{3\} \subset \{1, 2, 3\}\), \(\{3\} \in \mathcal{P}(A)\).</li>
+            <li>\(\card(\{\varnothing\}) = 1\); \(E \times F \neq F \times E\).</li>
+            <li>A missing or double arrow in a diagram: it is not a function.</li>
+            <li>\(h \circ f = h \circ g\) does not imply \(f = g\); \(g \circ f\) only exists if the output set of \(f\) is included in the input set of \(g\).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Counting</span><ul>
+            <li>“If Marie is the leader then Pierre is part of it” (Tutorial 1 ex. 3.18, 2022 test): the answer key reads “Marie leader and Pierre in it” (459), logic gives 55,692. Write your reading.</li>
+            <li>\((2n)! \neq 2 \times 4 \times \dots \times 2n\) (which is \(2^n n!\)); \((n+1)! = (n+1) \times n!\).</li>
+            <li>\(\binom{10}{7} = \binom{10}{3}\): two models may have the same answer. \(\binom{n}{k}\) is also written \(C_n^k\).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Probability and random variables</span><ul>
+            <li>Incompatible (\(A \cap B = \varnothing\)) is not independent (\(\P(A \cap B) = \P(A)\P(B)\)).</li>
+            <li>Indistinguishable dice: the 21 pairs are not equally likely, \(\P(\text{at least one 6}) = \frac{11}{36}\).</li>
+            <li>Defining \(\P\) by the singletons: the sum must be 1.</li>
+            <li>\(\E(aX + b) = a\E(X) + b\) but \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\): \(b\) disappears, \(a\) is squared.</li>
+            <li>A whole number “between 0 and 20”: 21 values, <span data-eq="uni21">\(\P(X \geq 10) = \frac{11}{21}\)</span>, not \(\frac{1}{2}\).</li>
+          </ul></div>
+        </div>
+        <div class="note exam"><span class="tag">Mistakes in the official documents: do not copy them</span><ul>
+          <li>2019 answer key: “tableau” has 7 letters, <span data-eq>\(\frac{7!}{2!} = 2{,}520\)</span> anagrams (not 60); \(\P_B(A) = \frac{3}{4}\) (not \(\frac{3}{7}\)); ill and not vaccinated <span data-eq>\(\frac{0.94 \times 0.1}{0.4} = \frac{47}{200}\)</span>.</li>
+          <li>Seminar 4.27.3: “\(a \mathrel{\mathcal{R}} b \Rightarrow a \mathrel{\mathcal{R}} b\)”: read \(a \mathrel{\mathcal{R}} b \Rightarrow b \mathrel{\mathcal{R}} a\) (symmetry).</li>
+          <li>Counting summary sheet: Pascal \(\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}\) holds for \(1 \leq k \leq n\). Basic functions handout: \(\ln(a^n) = n\ln(a)\) only for \(a > 0\).</li>
+        </ul><p><a href="annales.html#erreurs">All the mistakes found →</a></p></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  /* the checklist (nothing is saved) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' checked'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>
