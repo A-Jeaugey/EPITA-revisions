@@ -1343,6 +1343,7 @@
       '.pcb .pc-key .ka{box-shadow:inset 0 0 0 3px var(--z2)} .pcb .pc-key .kb{box-shadow:inset 0 0 0 3px var(--z3)} .pcb .pc-key .kt{background:var(--accent)}',
       '.katex .pz2{color:var(--z2)} .katex .pz3{color:var(--z3)}',
       '.pcb .pc-in{display:flex;flex-wrap:wrap;gap:8px;align-items:end} .pcb .pc-in .fld{width:9rem}',
+      '@media (max-width:440px){.pcb .pc th,.pcb .pc td{min-width:2.15rem}.pcb .pc button{padding:0 .2rem;font-size:.95rem}.pcb .bench-body,.chb .bench-body{padding:.8rem}}',
       '.chb .ch-tree,.chb .ch-tree ul{list-style:none;margin:0;padding:0}',
       '.chb .ch-tree ul{margin:.35rem 0 0 .55rem;padding-left:1rem;border-left:1.5px solid var(--line);display:grid;gap:.35rem}',
       '.chb .ch-tree li{position:relative;min-width:0}',
@@ -1397,7 +1398,7 @@
           if (k > n) { h += '<td class="void"></td>'; continue; }
           var c = [];
           if (later) c.push('later');
-          if (build && n === shown && !later && shown > 0) c.push('new');
+          if (build && n === shown && !later && shown > 0 && !pick && rowPick == null) c.push('new');
           if (pick && pick[0] === n && pick[1] === k && mode !== 'row') c.push('tgt');
           if (rel && !rel.edge && rel.left.n === n && rel.left.k === k) c.push('pa');
           if (rel && !rel.edge && rel.right.n === n && rel.right.k === k) c.push('pb');

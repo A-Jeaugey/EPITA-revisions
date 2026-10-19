@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Counting · Maths</title>
+<meta name="description" content="Maths, DP, lesson 5: cardinal number, sum and product rules, p-tuples, factorial and permutations, anagrams, arrangements, combinations, choosing the formula, binomial coefficients, Pascal’s formula, Vandermonde’s identity, binomial theorem and double counting. With Pascal’s triangle and the “which formula?” tree.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · lesson 5: counting">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · DP</b> — lesson 5 of 7</span><span>Source: slides “Counting and Binomial Coefficients”, summary sheet, exercise sheet 1</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="5"></span><a href="index.html">Maths</a> · DP · Lesson 5 of 7</div>
+      <h1>Counting without listing, <span class="w">with the right formula.</span></h1>
+      <p class="lead">Counting means finding the number of elements of a finite set without listing them. Four formulas are enough: \(n^p\), \(n!\), \(A_n^p\) and \(\binom{n}{p}\). This lesson shows you how to recognise the right one, how to combine cases (“at least”, “exactly”, “but not”), and how to prove the identities on binomial coefficients. In the DP exam, counting is worth 15 points out of 30 in 2023 and 18.5 out of 40 in 2024.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 60 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with Pascal’s triangle</span></li>
+        <li><span><span class="k">Course</span> slides, summary sheet · sheet 1</span></li>
+        <li class="ex"><span><span class="k">Exam</span> three exercises out of six in 2023 and in 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0;align-self:start">
+      <div data-maths="choose" data-opts='{"title":"Which formula? · answer the questions"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — The three questions of the slide “How to choose the formula”. Click “yes” or “no”: the leaf you reach gives the formula, its picking models and worked examples.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 5 · Counting</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Cardinal number, sum and product</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>p-tuples and “at least one”</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Factorial, permutations</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Arrangements</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Combinations</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Choosing the model</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Binomial coefficients, Pascal</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Binomial theorem, double counting</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="cours-6-probabilites.html">Lesson 6: probability →</a><a href="../qcm/index.html#maths">Maths MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Cardinal number, sum and product</a></li><li><a href="#s2">p-tuples and “at least one”</a></li><li><a href="#s3">Factorial, permutations</a></li><li><a href="#s4">Arrangements</a></li>
+      <li><a href="#s5">Combinations</a></li><li><a href="#s6">Choosing the model</a></li><li><a href="#s7">Binomial coefficients, Pascal</a></li><li><a href="#s8">Binomial theorem, double counting</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">slides 3-4 · summary § 1.1 · sheet 1, ex. 1.1, 1.3</span></div><h2>Cardinal number, sum rule, product rule</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Solving a counting problem means finding the number of elements of a set. Two rules do almost all the work: you <b>add</b> when you split into cases that do not overlap, you <b>multiply</b> when you make successive choices.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>cardinal number</i></span>
+          <p>The <b>cardinal number</b> (cardinality) of a finite set \(E\) is its number of elements. It is an integer, written \(\card(E)\); you also see \(|E|\) or \(\#E\). For example \(\card(\{1, 2, 3, 4, 5\}) = 5\) and \(\card(\varnothing) = 0\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>sum rule (summary § 1.1)</i></span>
+          <ul>
+            <li>If \(A \cap B = \varnothing\): \(\card(A \sqcup B) = \card(A) + \card(B)\). The symbol \(\sqcup\) reminds you that the union is disjoint.</li>
+            <li>If \(A_1, \dots, A_n\) are pairwise disjoint: \(\card(A_1 \sqcup \cdots \sqcup A_n) = \card(A_1) + \cdots + \card(A_n)\). So a <b>partition</b> of \(E\) gives \(\card(E)\) as the sum of the cardinal numbers of its pieces.</li>
+            <li>Inclusion-exclusion formula: \(\card(A \cup B) = \card(A) + \card(B) - \card(A \cap B)\).</li>
+            <li>Complement: if \(A \subset E\), \(\card(E \setminus A) = \card(E) - \card(A)\).</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>product rule</i></span>
+          <p>\(\card(A \times B) = \card(A) \times \card(B)\), and more generally \(\card(A_1 \times \cdots \times A_p) = \card(A_1) \times \cdots \times \card(A_p)\).</p>
+          <p>In practice: if an object is built by \(p\) successive choices, with \(n_1\) possibilities for the first choice, then \(n_2\) for the second <b>whatever the first one was</b>, and so on, there are \(n_1 \times n_2 \times \cdots \times n_p\) objects.</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (sheet 1, ex. 1.1).</b> \(A\) is the set of even natural numbers smaller than or equal to 60, \(B\) the set of multiples of 3. We write \(A = \{2k,\ k \in \ent{0}{30}\}\) and \(B = \{3k,\ k \in \ent{0}{20}\}\), so \(\card(A) = 31\) and \(\card(B) = 21\). \(A \cap B\) is the set of multiples of 6: \(\{6k,\ k \in \ent{0}{10}\}\), 11 elements.</p>
+        </div>
+        <div class="calc"><div class="fm">\(\card(A \cup B) = \card(A) + \card(B) - \card(A \cap B)\): <span data-eq>\(31 + 21 - 11 = 41\)</span></div><div class="fm">\(\card(A \times B) = \card(A) \times \card(B)\): <span data-eq>\(31 \times 21 = 651\)</span></div></div>
+        <div class="prose">
+          <p><b>Product rule (2024 DP exam).</b> A door code is a letter among A, B, C, followed by 3 digits. Letter: 3 choices; each digit: 10 choices. There are <span data-eq>\(3 \times 10 \times 10 \times 10 = 3{,}000\)</span> codes.</p>
+        </div>
+        <div data-maths="venn" data-opts='{"names":["A","C"],"u":"E","expr":"A \\cap C","sizes":{"A":30,"C":25,"AC":13,"E":42},"edit":false,"title":"2025 MCQ: 42 students, 30 take English, 25 take Chinese"}'></div>
+        <div class="prose">
+          <p>Every student takes at least one language, so \(\card(A \cup C) = 42\). The inclusion-exclusion formula gives those who take both: <span data-eq>\(30 + 25 - 42 = 13\)</span>. The diagram splits the 42 students into three disjoint regions: 17, 13 and 12.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>start with the constraint</i></span>
+          <p>The product rule requires the number of choices at each step not to depend on the previous choices. So start with the most constrained position.</p>
+          <p><b>Sheet 1, ex. 3.17.</b> 4-digit codes with distinct digits whose last digit is even: the last digit first (5 choices: 0, 2, 4, 6, 8), then the three others, distinct from each other and from the last one: 9, 8, 7 choices. Total: <span data-eq>\(5 \times 9 \times 8 \times 7 = 2{,}520\)</span>. Starting from the left, the number of choices for the last digit would depend on the even digits already used.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2023 DP exam, exercise 1.2</i></span>
+          <p>(a) An element of \(A\) is either outside \(B\) or in \(B\): \(A = (A \setminus B) \cup (A \cap B)\), and this union is disjoint.<span class="c">the word matters</span></p>
+          <p>So \(\card(A) = \card(A \setminus B) + \card(A \cap B)\).</p>
+          <p>(c) Likewise \(A \cup B = (A \setminus B) \cup B\), a disjoint union. So \(\card(A \cup B) = \card(A \setminus B) + \card(B)\).</p>
+          <p>With (a): \(\card(A \cup B) = \card(A) - \card(A \cap B) + \card(B)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: adding cases that overlap</span>
+          <ul>
+            <li>\(\card(A \cup B) = 31 + 21 = 52\) counts the 11 multiples of 6 twice: you just add only if the sets are disjoint, otherwise you subtract \(\card(A \cap B)\).</li>
+            <li>You multiply only if the number of choices does not depend on the earlier choices: otherwise, change the order of the choices or split into cases.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2023 DP exam, exercise 1: <b>3 points out of 30</b> (\(\card(F \cup G)\) for disjoint sets, then the inclusion-exclusion formula proved with a partition). An inclusion-exclusion problem in the weekly MCQs of 2024 and 2025 (medals, languages). The proof for three sets is in <a href="cours-2-ensembles.html#s8">lesson 2, part 8</a>.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">slides 6-7 · summary § 1.3 · sheet 1, ex. 2.7, 2.11, 3.17</span></div><h2>p-tuples, functions, “at least one”</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>p-tuple</i></span>
+          <p>Let \(F\) be a set with \(n\) elements and \(p \in \N^*\). A <b>p-tuple</b> (or <b>p-list</b>) of elements of \(F\) is an element \((x_1, x_2, \dots, x_p)\) of \(F^p = F \times \cdots \times F\). Order matters and the same element may occur several times.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>summary § 1.3, point 1</i></span>
+          <p>\(\card(F^p) = n^p\). If \(\card(E) = p\) and \(\card(F) = n\), the number of functions from \(E\) to \(F\) is \(n^p\): \(\card(F^E) = \card(F)^{\card(E)}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>Let \(e_1, \dots, e_p\) be the elements of \(E\). A function \(f : E \to F\) is determined by the list of its images \((f(e_1), \dots, f(e_p))\). Each image is chosen among the \(n\) elements of \(F\), with no constraint: “each element of \(E\) has \(n\) possible images”. By the product rule, there are \(n \times n \times \cdots \times n = n^p\) functions.</p>
+        </div>
+        <div class="prose">
+          <p><b>The models.</b> Successively pick \(p\) balls out of \(n\) <b>with replacement</b>; write a word of \(p\) letters on an alphabet of \(n\) letters; make a code of \(p\) digits; colour \(p\) cells with \(n\) colours. Example from the slides: there are <span data-eq>\(4^3 = 64\)</span> functions from a 3-element set to a 4-element set.</p>
+          <p><b>Example (sheet 1, ex. 3.17).</b> A 4-digit padlock has <span data-eq>\(10^4 = 10{,}000\)</span> codes. Those whose last digit is even: 10 choices for each of the first three digits, 5 for the last one, that is <span data-eq>\(10^3 \times 5 = 5{,}000\)</span>.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>“at least one”: use the complement</i></span>
+          <ol>
+            <li>Write the opposite: “at least one 2” becomes “no 2”.</li>
+            <li>Count the opposite, often easier: without the digit 2, 9 digits remain for each position, \(9^4\) codes.</li>
+            <li>Subtract it from the total: <span data-eq>\(10^4 - 9^4 = 10{,}000 - 6{,}561 = 3{,}439\)</span> codes contain at least one 2.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>sheet 1, ex. 2.11, from the 2025 exam</i></span>
+          <p>1. An “answering word” is a 5-tuple of letters taken from the 6 letters A to F: a letter may occur several times. There are <span data-eq>\(6^5 = 7{,}776\)</span> answering words.</p>
+          <p>3. Choose the question answered correctly: 5 choices. It gets the right letter: 1 choice. The 4 other questions each get one of the 5 wrong letters: \(5^4\) choices. Total: <span data-eq>\(5 \times 5^4 = 3{,}125\)</span>.<span class="c">one factor per choice</span></p>
+          <p>4. Complement: no correct choice, 5 possible letters for each question, \(5^5\) words. So <span data-eq>\(6^5 - 5^5 = 7{,}776 - 3{,}125 = 4{,}651\)</span> words have at least one correct choice.</p>
+        </div>
+        <div class="note why"><span class="tag">In computer science <i>Moodle page “Counting in computer science”</i></span>
+          <ul>
+            <li><b>Passwords.</b> On 62 characters (26 lower-case letters, 26 upper-case letters, 10 digits), there are \(62^8\) passwords of 8 characters, that is <span data-eq>\(62^8 = 218{,}340{,}105{,}584{,}896\)</span>. With at least one digit: <span data-eq>\(62^8 - 52^8 = 164{,}880{,}377{,}053{,}440\)</span>.</li>
+            <li><b>No common character.</b> Words of 4 lower-case letters with no letter of the word “chat”: 22 letters remain, <span data-eq>\(22^4 = 234{,}256\)</span> words; with at least one common letter: <span data-eq>\(26^4 - 22^4 = 222{,}720\)</span>.</li>
+            <li><b>Bits (sheet 1, ex. 4.19).</b> A \(k\)-bit word takes \(2^k\) values. 173 is 10101101 in binary, on 8 bits, because <span data-eq>\(2^7 = 128\)</span>, <span data-eq>\(2^8 = 256\)</span> and \(128 \leq 173 &lt; 256\). In general, \(x \geq 1\) is written with \(\lfloor \log_2 x \rfloor + 1\) bits.</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Trap: \(n^p\), not \(p^n\); “at least one” is not a product</span>
+          <ul>
+            <li>Three picks with replacement out of 10 balls: <span data-eq>\(10^3 = 1{,}000\)</span>, not <span data-eq>\(3^{10} = 59{,}049\)</span> (offered in the 2024 MCQ). The base is the number of possibilities for each choice, the exponent the number of choices.</li>
+            <li>“At least one 2” is not \(4 \times 10^3\) (position of the 2, then the rest): the code 2 2 0 0 would be counted twice. Use the complement.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2024 DP exam, exercise 2 (<b>6 points out of 40</b>): <span data-eq>\(3 \times 10^3 = 3{,}000\)</span> codes, of which <span data-eq>\(3 \times (10^3 - 9^3) = 813\)</span> contain at least one 4. From the 2025 exam (sheet 1, ex. 2.11): answering words and “at least one correct choice”. 2020 midterm: 5-letter words on 12 letters, <span data-eq>\(12^5 - 11^5 = 87{,}781\)</span> with at least one “l”.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">slides 5, 8 · summary § 1.2 · sheet 1, ex. 2.8, 3.13</span></div><h2>Factorial, permutations, anagrams</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>factorial (summary § 1.2)</i></span>
+          <p>For every \(n \in \N\): \(n! = n \times (n-1) \times \cdots \times 2 \times 1\) if \(n \neq 0\), and \(0! = 1\). Example: <span data-eq>\(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\)</span>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>properties, for every \((n, p) \in \N^2\)</i></span>
+          <ul>
+            <li>\((n+1)! = (n+1) \times n!\)</li>
+            <li>\((n+p)! = (n+p) \times (n+p-1) \times \cdots \times (n+1) \times n!\)</li>
+            <li>If \(p \leq n\): \(\frac{n!}{(n-p)!} = n \times (n-1) \times \cdots \times (n-p+1)\), a product of \(p\) factors.</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>permutation</i></span>
+          <p>A <b>permutation</b> of a set \(F\) with \(n\) elements is an ordering of <b>all</b> its elements: an \(n\)-tuple of \(F^n\) without repetition, or a bijection from \(F\) to \(F\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>summary § 1.3, point 2</i></span>
+          <p>A set with \(n\) elements has \(n!\) permutations.</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>Fill the \(n\) places one by one: \(n\) choices for the first one, \(n - 1\) for the second one (one element is already placed), and so on down to 1 choice for the last one. Product rule: \(n \times (n-1) \times \cdots \times 1 = n!\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Examples.</b> 6 students on 6 chairs: <span data-eq>\(6! = 720\)</span>. Anagrams of “computer” (8 distinct letters): <span data-eq>\(8! = 40{,}320\)</span>. <b>Sheet 1, ex. 3.13</b>: 4 algo books, 6 maths books and 3 physics books, grouped by subject. Order the 3 subjects (\(3!\) orders), then the books inside each subject: <span data-eq>\(3! \times 4! \times 6! \times 3! = 622{,}080\)</span>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>anagrams with repeated letters</i></span>
+          <p>A word of \(n\) letters where one letter occurs \(k_1\) times, another one \(k_2\) times, etc., has \(\frac{n!}{k_1!\,k_2!\cdots}\) anagrams.</p>
+          <p>Why: number the copies (\(a_1\), \(a_2\)…). The \(n\) letters become distinct: \(n!\) words. Each real word is obtained \(k_1! \times k_2! \times \cdots\) times, by permuting the numbered copies among themselves. Divide.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 5.1 — Anagrams (each number checked by enumeration or by a program)</caption>
+          <thead><tr><th>Word</th><th>Repeated letters</th><th>Anagrams</th></tr></thead>
+          <tbody>
+            <tr><td>arranger (lecture notes)</td><td>r × 3, a × 2</td><td><span data-eq>\(\frac{8!}{3!\,2!} = 3{,}360\)</span></td></tr>
+            <tr><td>tableau (2019 midterm)</td><td>a × 2</td><td><span data-eq>\(\frac{7!}{2!} = 2{,}520\)</span></td></tr>
+            <tr><td>babab (2020 midterm)</td><td>b × 3, a × 2</td><td><span data-eq>\(\frac{5!}{3!\,2!} = 10\)</span></td></tr>
+            <tr><td>mathematician (sheet 1, ex. 2.8)</td><td>a × 3, m × 2, t × 2, i × 2</td><td><span data-eq>\(\frac{13!}{3!\,2!\,2!\,2!} = 129{,}729{,}600\)</span></td></tr>
+            <tr><td>CASSANDRE (2024 MCQ)</td><td>A × 2, S × 2</td><td><span data-eq>\(\frac{9!}{2!\,2!} = 90{,}720\)</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>sheet 1, ex. 2.11, question 6</i></span>
+          <p>The answering word contains one B, two C and two D: it is an anagram of BCCDD.</p>
+          <p>If the 5 letters were distinct, there would be \(5!\) words. Swapping the two C, or the two D, does not change the word: each word is counted \(2! \times 2!\) times.<span class="c">justify the division</span></p>
+          <p>There are <span data-eq>\(\frac{5!}{2!\,2!} = \frac{120}{4} = 30\)</span> possible answering words.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: computing with factorials</span>
+          <ul>
+            <li>\((2n)!\) is not \(2 \times 4 \times \cdots \times 2n\) (box wrongly ticked in the 2025 MCQ): that product equals \(2^n \, n!\). For \(n = 3\): <span data-eq>\(6! = 720\)</span> but <span data-eq>\(2 \times 4 \times 6 = 48\)</span>.</li>
+            <li>\((n+1)! = (n+1) \times n!\), not \(n! + 1\). To simplify, write the larger one in terms of the smaller one: <span data-eq>\(\frac{(n+2)!}{n!} = (n+1)(n+2)\)</span>.</li>
+            <li>Count the letters: “tableau” has 7. The official 2019 answer key writes \(\frac{5!}{2!} = 60\); the right answer is \(\frac{7!}{2!} = 2{,}520\).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>Anagrams were not asked in the 2023 and 2024 DP exams. They appear in the 2019 midterm (“table”, “tableau”), in the 2020 midterm (“babab”), in the weekly MCQs of 2024 and 2025 (TEDDY, CASSANDRE, ANTOINE) and in the extract of the 2025 exam (question 6 above). Factorials to simplify too, in the 2024 and 2025 MCQs (\(\frac{18!}{16!}\), \(\frac{(n+2)!}{n!}\)).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">slides 9-11 · summary § 1.3 · sheet 1, ex. 2.7, 2.9</span></div><h2>Arrangements: choosing and ordering</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>arrangement</i></span>
+          <p>Let \(F\) be a set with \(n\) elements and \(p \leq n\). A <b>\(p\)-element arrangement</b> of \(F\) is a \(p\)-tuple of <b>distinct</b> elements of \(F\): you choose \(p\) elements and order them (“choosing and ordering”, an ordered selection).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>summary § 1.3, point 3</i></span>
+          <p>The number of arrangements of \(p\) elements out of \(n\) is</p>
+          <div class="fm">\[A_n^p = n \times (n-1) \times \cdots \times (n-p+1) = \frac{n!}{(n-p)!}.\]</div>
+          <p>It is also the number of <b>injective</b> functions from a set \(E\) with \(p\) elements to \(F\). If \(p > n\), there is none. For \(p = n\): \(A_n^n = n!\), the permutations. The summary sheet writes \(\mathcal{A}_n^p\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>\(n\) choices for the first element, \(n - 1\) for the second one (different from the first), …, \(n - p + 1\) for the \(p\)-th one. Product rule: \(n(n-1)\cdots(n-p+1)\), which equals \(\frac{n!}{(n-p)!}\) (summary § 1.2). For an injection, the images \(f(e_1), \dots, f(e_p)\) must be distinct: it is the same count.</p>
+        </div>
+        <div class="prose">
+          <p><b>Examples (slides).</b> A race with 10 runners has <span data-eq>\(A_{10}^{3} = 10 \times 9 \times 8 = 720\)</span> podiums. There are <span data-eq>\(A_5^3 = 5 \times 4 \times 3 = 60\)</span> injective functions from \(\{1, 2, 3\}\) to \(\{a, b, c, d, e\}\). 4-digit codes with distinct digits: <span data-eq>\(A_{10}^{4} = 10 \times 9 \times 8 \times 7 = 5{,}040\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2023 DP exam, exercise 2 (7 points)</i></span>
+          <p>A race has 20 competitors, including Pierre and Jade; the podium is the ranking of the first three.</p>
+          <p>1. For the 1st place, 20 possibilities; for the 2nd, 19 are left; for the 3rd, 18. There are <span data-eq>\(20 \times 19 \times 18 = A_{20}^{3} = 6{,}840\)</span> podiums.<span class="c">one sentence per factor</span></p>
+          <p>2. Jade is first: 19 choices for the 2nd place, 18 for the 3rd, that is <span data-eq>\(19 \times 18 = 342\)</span> podiums.</p>
+          <p>3. Neither Pierre nor Jade: choose among the 18 others, <span data-eq>\(18 \times 17 \times 16 = 4{,}896\)</span> podiums.</p>
+          <p>4. Pierre is on it, Jade is not: 3 possible places for Pierre; the two other places are filled with 18 then 17 runners (neither Pierre nor Jade). Total: <span data-eq>\(3 \times 18 \times 17 = 918\)</span>.</p>
+          <p>5. Use the complement: at least Jade or Pierre means all the podiums except those with neither of them, <span data-eq>\(6{,}840 - 4{,}896 = 1{,}944\)</span>.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>“X is in it, but not Y”</i></span>
+          <ol>
+            <li>Remove Y from the set of candidates.</li>
+            <li>Place X: count its possible positions (3 places on the podium).</li>
+            <li>Fill the remaining places with the remaining candidates, without X or Y.</li>
+          </ol>
+        </div>
+        <div class="box trap"><span class="tag">Trap: arrangement or combination</span>
+          <ul>
+            <li>A podium is ordered: \(A_{10}^3 = 720\). A student’s lecture notes write \(\binom{10}{3} = 120\): that is the number of groups of 3 runners, without the ranking.</li>
+            <li>Answering words with distinct letters (sheet 1, ex. 2.11): you choose 5 letters out of 6 and order them, <span data-eq>\(A_6^5 = 720\)</span>. The answer \(5! = 120\) forgets the choice of the letters.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2023 DP exam, exercise 2: <b>7 points out of 30</b> (the podiums above). 2024 DP exam, exercise 2: door code with distinct digits, <span data-eq>\(3 \times A_{10}^{3} = 2{,}160\)</span> codes, then <span data-eq>\(A_5^3 = 60\)</span> codes with distinct odd digits. 2020 midterm: <span data-eq>\(A_{12}^{5} = 95{,}040\)</span> words of 5 distinct letters.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">slides 12-13 · summary § 1.3, § 2.1 · sheet 1, ex. 2.7, 2.9</span></div><h2>Combinations: choosing without order</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>combination, binomial coefficient</i></span>
+          <p>A <b>\(p\)-element combination</b> of \(F\) (with \(n\) elements) is a <b>subset</b> of \(F\) with \(p\) elements: an unordered choice, without repetition. Their number is the <b>binomial coefficient</b> \(\binom{n}{p}\), read “\(n\) choose \(p\)” and also written \(C_n^p\) (\(n\) at the bottom).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>summary § 1.3, point 4</i></span>
+          <p>For \(0 \leq p \leq n\):</p>
+          <div class="fm">\[\binom{n}{p} = \frac{A_n^p}{p!} = \frac{n!}{p!\,(n-p)!}.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>by double counting</i></span>
+          <p>Count the \(p\)-element arrangements of \(F\) in two ways. On the one hand, there are \(A_n^p\) of them. On the other hand, you can first choose the subset with \(p\) elements (\(\binom{n}{p}\) ways), then order its \(p\) elements (\(p!\) ways). So \(A_n^p = \binom{n}{p} \times p!\), which gives the formula.</p>
+          <p>Example: <span data-eq>\(A_{10}^{3} = 720 = 3! \times \binom{10}{3} = 6 \times 120\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>The models.</b> <b>Simultaneously</b> pick \(p\) balls out of \(n\); form a group, a committee, a team without positions; a hand of cards. Examples: 3-element subsets of \(\{a, b, c, d, e\}\), <span data-eq>\(\binom{5}{3} = 10\)</span>; 5-card hands from a 52-card deck, <span data-eq>\(\binom{52}{5} = 2{,}598{,}960\)</span>, from a 32-card deck, <span data-eq>\(\binom{32}{5} = 201{,}376\)</span>.</p>
+          <p><b>Detailed and simplified computation</b> (asked in the 2023 course test): cancel the largest factorial of the denominator, then compute.</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq>\[\binom{7}{3} = \frac{7!}{3!\,4!} = \frac{7 \times 6 \times 5}{3 \times 2 \times 1} = 35\]</div></div>
+        <div class="box model"><span class="tag">Model answer <i>2022 midterm, exercise 4.1</i></span>
+          <p>A class of 20 students, 12 boys and 8 girls, including Pierre and Marie. We form a committee of 3 students.</p>
+          <p>(a) A committee is a 3-element subset of the class: order does not matter. There are <span data-eq>\(\binom{20}{3} = \frac{20 \times 19 \times 18}{3 \times 2 \times 1} = 1{,}140\)</span> committees.<span class="c">name the model</span></p>
+          <p>(b) Exactly 2 boys and 1 girl: 2 boys out of 12, then 1 girl out of 8, <span data-eq>\(\binom{12}{2} \times \binom{8}{1} = 66 \times 8 = 528\)</span>.</p>
+          <p>(c) At least 2 girls: either exactly 2 girls and 1 boy, or 3 girls. These two cases are disjoint: <span data-eq>\(\binom{8}{2}\binom{12}{1} + \binom{8}{3} = 336 + 56 = 392\)</span>.</p>
+          <p>(d) Pierre and Marie are in it: 1 student remains to be chosen out of the 18 others, <span data-eq>\(\binom{18}{1} = 18\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: “at least 2” counted in one go</span>
+          <p>“I choose 2 girls, then anyone among the 18 remaining students” gives <span data-eq>\(\binom{8}{2} \times \binom{18}{1} = 504\)</span>, which is wrong: a committee of 3 girls is counted 3 times (once for each pair of girls chosen “first”). Indeed <span data-eq>\(504 = 336 + 3 \times 56\)</span>. Split into disjoint cases, “exactly 2”, “exactly 3”, then add.</p>
+        </div>
+        <div class="note why"><span class="tag">In computer science <i>number of comparisons</i></span>
+          <p>Comparing every pair of \(n\) elements (looking for a duplicate) costs \(\binom{n}{2} = \frac{n(n-1)}{2}\) comparisons: <span data-eq>\(\binom{10}{2} = 45\)</span> for 10 elements, <span data-eq>\(\binom{1000}{2} = 499{,}500\)</span> for 1,000. Selection sort also makes \((n-1) + (n-2) + \cdots + 1 = \frac{n(n-1)}{2}\) comparisons: the time is multiplied by about 4 when \(n\) doubles.</p>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2023 DP exam, last question of exercise 2: three identical bikes for the first three, <span data-eq>\(\binom{20}{3} = 1{,}140\)</span> possible rewards. 2024 DP exam, exercise 1 (<b>4 points out of 40</b>): recognise \(\binom{32}{5}\) and products of combinations. 2022 midterm, exercise 4 (<b>6.5 points out of 40</b>): the committees above. 2019 midterm: probabilities with simultaneous picks of 3 balls from a bag.</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">slides 18-19 · sheet 1, ex. 2.9, 2.10, 3.18</span></div><h2>Choosing the model, combining cases</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The whole exercise is there: translating the text into a model. The slide “How to choose the formula” asks three questions: does order matter? is repetition allowed? are we choosing all elements or only some? The slide only gives “order matters ⇒ \(A_n^p\) or \(n!\)” and “order does not matter ⇒ \(\binom{n}{p}\)”: it forgets the case “order and repetition”, \(n^p\), which the next slide’s table gives.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>reference counting formulas (summary § 1.3), to be stated</i></span>
+          <p>Let \(E\) and \(F\) be two finite sets, \(p = \card(E)\) and \(n = \card(F)\).</p>
+          <ol>
+            <li>The number of functions from \(E\) to \(F\) is \(n^p\); it is also the number of \(p\)-tuples of \(F^p\).</li>
+            <li>The number of permutations of \(F\) is \(n!\).</li>
+            <li>If \(p \leq n\), the number of injective functions from \(E\) to \(F\) is \(A_n^p = \frac{n!}{(n-p)!}\); it is also the number of \(p\)-tuples of \(F^p\) without repetition.</li>
+            <li>If \(p \leq n\), the number of subsets of \(F\) with \(p\) elements is \(\binom{n}{p} = \frac{n!}{p!\,(n-p)!}\).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 5.2 — The four reference counting formulas (slide 19, summary § 1.3); \(\card(E) = p\), \(\card(F) = n\)</caption>
+          <thead><tr><th>Order</th><th>Repetition</th><th>Formula</th><th>What it counts</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>yes</td><td>yes</td><td>\(n^p\)</td><td>\(p\)-tuples, functions \(E \to F\), successive picks with replacement</td><td>4-digit codes: \(10^4\)</td></tr>
+            <tr><td>yes</td><td>no, all</td><td>\(n!\)</td><td>permutations of \(F\)</td><td>6 students on 6 chairs: \(6!\)</td></tr>
+            <tr><td>yes</td><td>no</td><td>\(A_n^p\)</td><td>arrangements, injective functions, successive picks without replacement</td><td>podiums of 10 runners: \(A_{10}^3\)</td></tr>
+            <tr><td>no</td><td>no</td><td>\(\binom{n}{p}\)</td><td>\(p\)-element subsets, simultaneous picks</td><td>5-card hands out of 32: \(\binom{32}{5}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div data-maths="choose" data-opts='{"title":"Practice · seven situations from past papers","situations":[{"t":"2023 DP exam: 20 runners. How many podiums (1st, 2nd, 3rd)?","leaf":"arr","n":20,"p":3,"why":"Swapping the 1st and the 2nd gives another podium: order matters. A runner has only one place: no repetition."},{"t":"2023 DP exam, question 6: the same bike is offered to each of the first three. How many possible rewards?","leaf":"comb","n":20,"p":3,"why":"The bikes are identical: only the group of the three winners matters, not their order."},{"t":"2024 DP exam: the 3 digits of a door code, which may repeat. How many sequences of digits?","leaf":"list","n":10,"p":3,"why":"The code is read in order and a digit may come back: a 3-tuple of digits."},{"t":"Sheet 1, ex. 2.8: how many anagrams of the word “computer”?","leaf":"perm","n":8,"why":"We order the 8 letters, all distinct, leaving none out."},{"t":"2024 DP exam, exercise 1: 5 cards are picked one by one, without replacement, from a 32-card deck.","leaf":"arr","n":32,"p":5,"why":"One by one: the order of the draw matters; without replacement: no repetition. It is \\(\\frac{32!}{27!}\\)."},{"t":"2023 course test: 7 balls are picked simultaneously out of 10.","leaf":"comb","n":10,"p":7,"why":"Simultaneously: no order. And \\(\\binom{10}{7} = \\binom{10}{3}\\): picking 7 balls is the same as choosing the 3 that stay."},{"t":"2024 MCQ: 3 successive picks with replacement out of 10 balls.","leaf":"list","n":10,"p":3,"why":"With replacement: a ball may come back. It is \\(10^3\\), not \\(3^{10}\\)."}]}'></div>
+        <div class="box meth"><span class="tag">Method <i>combined cases</i></span>
+          <ul>
+            <li><b>“Exactly \(k\) of some kind”</b>: choose separately in each group and multiply (2 boys out of 12, 1 girl out of 8).</li>
+            <li><b>“At least one”</b>: total minus “none”.</li>
+            <li><b>“At least \(k\)”</b>: sum of the cases “exactly \(k\)”, “exactly \(k + 1\)”…, which are disjoint.</li>
+            <li><b>“X but not Y”</b>: remove Y, place X, complete.</li>
+            <li><b>“X or Y”</b>: total minus “neither X nor Y”.</li>
+          </ul>
+          <p>Always write the sentence that justifies the sum (“these cases are disjoint”) or the subtraction (“we use the complement”).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2024 DP exam, exercise 2 (6 points)</i></span>
+          <p>A code is a letter among A, B, C followed by 3 digits. Results as integers.</p>
+          <p>1. Distinct digits: 3 choices for the letter, then an arrangement of 3 digits out of 10. <span data-eq>\(3 \times A_{10}^{3} = 3 \times 720 = 2{,}160\)</span>.</p>
+          <p>2. Digits may repeat: 3 choices for the letter, then a 3-tuple of digits. <span data-eq>\(3 \times 10^3 = 3{,}000\)</span>.</p>
+          <p>3. The letter is known; the digits are distinct and odd: an arrangement of 3 digits out of 1, 3, 5, 7, 9. <span data-eq>\(A_5^3 = 5 \times 4 \times 3 = 60\)</span>.</p>
+          <p>4. Unknown letter (3 choices), digits 6, 2, 9 in an unknown order (\(3!\) orders): <span data-eq>\(3 \times 3! = 18\)</span>.<span class="c">only the order is left</span></p>
+          <p>5. At least one 4: use the complement. Without 4, each digit has 9 values. <span data-eq>\(3 \times (10^3 - 9^3) = 3 \times 271 = 813\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>The reverse exercise (2024 DP exam, exercise 1).</b> From a 32-card deck, 5 cards are picked. Suggest a situation where the number of possible picks is the given formula:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 5.3 — A situation for each formula (checked by enumerating the \(201{,}376\) hands)</caption>
+          <thead><tr><th>Formula</th><th>Situation</th></tr></thead>
+          <tbody>
+            <tr><td><span data-eq>\(\frac{32!}{27!} = A_{32}^{5} = 24{,}165{,}120\)</span></td><td>the 5 cards are picked one by one, without replacement: order matters</td></tr>
+            <tr><td>\(\binom{32}{5}\)</td><td>the 5 cards are picked simultaneously: a hand</td></tr>
+            <tr><td><span data-eq>\(\binom{8}{3} \times \binom{8}{2} = 56 \times 28 = 1{,}568\)</span></td><td>a hand of 3 hearts and 2 spades</td></tr>
+            <tr><td><span data-eq>\(\binom{7}{1} \times \binom{24}{3} = 7 \times 2{,}024 = 14{,}168\)</span></td><td>a hand that contains the ace of hearts and exactly two hearts: the ace (imposed), one of the 7 other hearts, 3 cards out of the 24 that are not hearts</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Trap: reading the text like the marker</span>
+          <ul>
+            <li>Last formula: four factors for five cards. One card must be imposed, otherwise your situation counts something else.</li>
+            <li>Sheet 1, ex. 3.18 and 2022 midterm: “If Mary is the board’s chief, then I want to be in the board too”. The 2022 answer key counts the boards where Mary is chief <b>and</b> Peter is on the board: <span data-eq>\(\binom{18}{2} + 18 \times 17 = 153 + 306 = 459\)</span>. Read as an implication (lesson 1), the sentence is also true when Mary is not chief: <span data-eq>\(58{,}140 - 18 \times \binom{17}{2} = 55{,}692\)</span>. Write down the reading you choose.</li>
+            <li>Two models can give the same number: <span data-eq>\(\binom{10}{7} = \binom{10}{3} = 120\)</span> (2023 course test: picking 7 balls or picking 3).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>A concrete counting exercise with several questions in every DP exam: podiums in 2023 (<b>7 points out of 30</b>), door code in 2024 (<b>6 points out of 40</b>), answering words in 2025 (extract in sheet 1). In 2024, there is also the reverse exercise (<b>4 points</b>). Follow the instructions: “simplify your results without doing the whole computation” (2023, \(20 \times 19 \times 18\) is enough); “as an integer” (2024).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">slides 13-15 · summary § 2.1 · sheet 1, ex. 3.14</span></div><h2>Binomial coefficients: symmetry, Pascal, Vandermonde</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>summary § 2.1, for \(n \in \N\) and \(k \in \ent{0}{n}\)</i></span>
+          <ol>
+            <li>\(\binom{n}{0} = \binom{n}{n} = 1\);</li>
+            <li>if \(n \neq 0\), \(\binom{n}{1} = \binom{n}{n-1} = n\);</li>
+            <li><b>symmetry</b>: \(\binom{n}{k} = \binom{n}{n-k}\);</li>
+            <li><b>Pascal’s formula</b>: \(\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}\), for \(1 \leq k \leq n\).</li>
+          </ol>
+          <p class="muted">The summary sheet states Pascal’s formula “for every \(k \in \ent{0}{n}\)”; for \(k = 0\), \(\binom{n}{-1}\) is not defined. Take \(1 \leq k \leq n\), or the convention \(\binom{n}{-1} = 0\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>symmetry (2020 midterm, 4 points)</i></span>
+          <p><b>By computation.</b> <span data-eq>\(\binom{n}{n-k} = \frac{n!}{(n-k)!\,(n-(n-k))!} = \frac{n!}{(n-k)!\,k!} = \binom{n}{k}\)</span>.</p>
+          <p><b>With sets.</b> Let \(E\) be a set with \(n\) elements. The map \(A \mapsto \overline{A}\) (complement in \(E\)) sends each \(k\)-element subset to an \((n - k)\)-element subset. It is bijective: it is its own inverse, because \(\overline{\overline{A}} = A\). So the two sets of subsets have the same cardinal number. In words: choosing the \(k\) elements you take is the same as choosing the \(n - k\) you leave.</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Pascal with sets (sheet 1, ex. 3.14, 2021 midterm)</i></span>
+          <p>Let \(n \geq 2\) and \(k \in \ent{1}{n-1}\). A box contains \(n\) balls numbered 1 to \(n\); we simultaneously pick \(k\) of them. Let \(T\) be the set of possible results: \(\card(T) = \binom{n}{k}\).</p>
+          <ul>
+            <li>\(T_1\), the results that contain the 1-ball: one way to take the 1-ball, then \(k - 1\) balls out of the \(n - 1\) others, so \(\card(T_1) = \binom{n-1}{k-1}\).</li>
+            <li>\(T_2\), the results that do not contain it: \(k\) balls out of the \(n - 1\) others, so \(\card(T_2) = \binom{n-1}{k}\).</li>
+          </ul>
+          <p>A result either contains the 1-ball or does not: \(T = T_1 \cup T_2\), a disjoint union. So \(\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}\). It is the formula of the summary sheet, written for \(n\) instead of \(n + 1\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Pascal by computation (2021 answer key)</i></span>
+          <p>Use the common denominator \(k!\,(n-k)!\): multiply the first fraction by \(\frac{k}{k}\), because \(k \times (k-1)! = k!\), and the second one by \(\frac{n-k}{n-k}\), because \((n-k) \times (n-1-k)! = (n-k)!\).</p>
+          <div class="fm" data-eq>\[\begin{aligned} \binom{n-1}{k-1} + \binom{n-1}{k} &amp;= \frac{(n-1)!}{(k-1)!\,(n-k)!} + \frac{(n-1)!}{k!\,(n-1-k)!} \\ &amp;= \frac{(n-1)!\,k}{k!\,(n-k)!} + \frac{(n-1)!\,(n-k)}{k!\,(n-k)!} \\ &amp;= \frac{(n-1)!\,(k + n - k)}{k!\,(n-k)!} = \frac{n!}{k!\,(n-k)!} = \binom{n}{k} \end{aligned}\]</div>
+        </div>
+        <div data-maths="pascal" data-opts='{"n":6,"build":true,"modes":["pascal","sym"],"title":"Pascal’s triangle, row by row"}'></div>
+        <div class="prose">
+          <p>Press “Next”: each row is computed from the previous one, without any factorial (sheet 1, ex. 3.14e). Once the triangle is complete, click a number: its two neighbours above light up, for example <span data-eq>\(\binom{5}{2} = \binom{4}{1} + \binom{4}{2} = 4 + 6 = 10\)</span>. The “Symmetry” button shows that each row reads the same both ways.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>Vandermonde’s identity</i></span>
+          <p>Let \((n, p) \in \N^2\) and \(k \in \N\) with \(k \leq n\) and \(k \leq p\). Then</p>
+          <div class="fm">\[\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i} = \binom{n+p}{k}.\]</div>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2023 DP exam, exercise 3 (5 points)</i></span>
+          <p>A box contains \(p\) green balls and \(n\) red balls; we simultaneously pick \(k\) balls.</p>
+          <p>1. A result is a \(k\)-element subset of the \(n + p\) balls: \(\binom{n+p}{k}\) possible results.</p>
+          <p>2. With \(i\) green and \(k - i\) red balls: \(i\) green balls out of \(p\), then \(k - i\) red balls out of \(n\), that is \(\binom{p}{i}\binom{n}{k-i}\) results.</p>
+          <p>3. To take \(k\) balls, we can take 0 green and \(k\) red balls, or 1 green and \(k - 1\) red balls, …, or \(k\) green and 0 red balls. These different cases are disjoint and cover all the results.<span class="c">write it</span></p>
+          <p>So there are \(\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i}\) results. By question 1, there are \(\binom{n+p}{k}\) of them: the two numbers are equal.</p>
+          <p>4. With \(p = 4\), \(n = 7\), \(k = 4\): <span data-eq>\(\sum_{i=0}^{4} \binom{4}{i}\binom{7}{4-i} = \binom{11}{4} = \frac{8 \times 9 \times 10 \times 11}{2 \times 3 \times 4} = 330\)</span>.</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq>\(\binom{4}{0}\binom{7}{4} + \binom{4}{1}\binom{7}{3} + \binom{4}{2}\binom{7}{2} + \binom{4}{3}\binom{7}{1} + \binom{4}{4}\binom{7}{0} = 35 + 140 + 126 + 28 + 1 = 330\)</div></div>
+        <div class="box trap"><span class="tag">Trap: notations and justifications</span>
+          <ul>
+            <li>\(\binom{n}{k}\) is also written \(C_n^k\), with \(n\) <b>at the bottom</b> (sheet 1, note 6): \(C_{10}^{3} = 120\), and \(C_3^{10}\) makes no sense.</li>
+            <li>In a double counting, the sentence “these cases are disjoint” earns points: the 2023 English answer key adds it (“These different cases are disjoint”).</li>
+            <li>Pascal’s formula: check that \(k\) is between 1 and \(n\); on the edges of the triangle, the coefficients are 1.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <p>2023 DP exam, exercise 3: <b>Vandermonde, 5 points out of 30</b>. 2021 midterm, exercise 5: <b>Pascal with the picks then by computation, 5 points out of 30</b>. 2020 midterm, exercise 5: <b>symmetry, 4 points out of 30</b>. Course tests: what \(\binom{n}{k}\) counts and its formula, symmetry (2022), \(\binom{7}{3}\) in detail (2023). 2018 tutorial test: \(\sum_{k=p}^{n} \binom{k}{p} = \binom{n+1}{p+1}\), by induction with Pascal (for example <span data-eq>\(\binom{2}{2} + \binom{3}{2} + \binom{4}{2} + \binom{5}{2} = 1 + 3 + 6 + 10 = 20 = \binom{6}{3}\)</span>).</p>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">slides 16-17 · summary § 2.2 · sheet 1, ex. 2.12, 3.15, 3.16</span></div><h2>Binomial theorem, double counting</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>binomial theorem (summary § 2.2)</i></span>
+          <p>For every \((x, y) \in \C^2\) and every \(n \in \N\):</p>
+          <div class="fm">\[\begin{aligned} (x+y)^n &amp;= \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k \\ &amp;= \binom{n}{0}x^n + \binom{n}{1}x^{n-1}y + \cdots + \binom{n}{n-1}x\,y^{n-1} + \binom{n}{n}y^n. \end{aligned}\]</div>
+          <p class="muted">Sheet 1 and the 2022 answer key write \(\sum_{k=0}^{n} \binom{n}{k} x^k y^{n-k}\): it is the same sum, by symmetry.</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>with sets (learning outcomes of sheet 1)</i></span>
+          <p>\((x+y)^n = (x+y)(x+y)\cdots(x+y)\), with \(n\) factors. Expanding means choosing \(x\) or \(y\) in each factor, then multiplying: you get \(2^n\) products.</p>
+          <p>A product equals \(x^{n-k}y^k\) when \(y\) was chosen in exactly \(k\) factors. There are as many such products as \(k\)-element subsets of the set of the \(n\) factors: \(\binom{n}{k}\). Grouping equal products, \((x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>by induction (sheet 1, ex. 3.15)</i></span>
+          <p>Let \((x, y) \in \C^2\). For \(n \in \N\), let \(H_n\) be: “\((x+y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k\)”.</p>
+          <p><b>Base case.</b> \((x+y)^0 = 1\) and \(\binom{0}{0}x^0y^0 = 1\): \(H_0\) is true.</p>
+          <p><b>Induction step.</b> Let \(n \in \N\) be such that \(H_n\) is true. Then</p>
+          <div class="fm">\[\begin{aligned} (x+y)^{n+1} &amp;= (x+y)(x+y)^n \\ &amp;= \sum_{k=0}^{n} \binom{n}{k} x^{n+1-k} y^k + \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^{k+1}. \end{aligned}\]</div>
+          <p>In the second sum, set \(j = k + 1\): it becomes \(\sum_{j=1}^{n+1} \binom{n}{j-1} x^{n+1-j} y^j\). Take out the term \(k = 0\) of the first sum (\(x^{n+1}\)) and the term \(j = n + 1\) of the second one (\(y^{n+1}\)). For \(1 \leq k \leq n\), the two terms in \(x^{n+1-k}y^k\) add up, and Pascal’s formula gives \(\binom{n}{k} + \binom{n}{k-1} = \binom{n+1}{k}\). So</p>
+          <div class="fm">\[\begin{aligned} (x+y)^{n+1} &amp;= x^{n+1} + \sum_{k=1}^{n} \binom{n+1}{k} x^{n+1-k} y^k + y^{n+1} \\ &amp;= \sum_{k=0}^{n+1} \binom{n+1}{k} x^{n+1-k} y^k. \end{aligned}\]</div>
+          <p>So \(H_{n+1}\) is true. <b>Conclusion</b>: by induction, \(H_n\) is true for every \(n \in \N\).</p>
+        </div>
+        <div data-maths="pascal" data-opts='{"n":6,"mode":"row","modes":["row"],"row":4,"edit":false,"title":"One row of the triangle, one binomial"}'></div>
+        <div class="calc">
+          <div class="fm" data-eq>\((x+y)^4 = x^4 + 4x^3y + 6x^2y^2 + 4xy^3 + y^4\)</div>
+          <div class="fm" data-eq>\((a-b)^5 = a^5 - 5a^4b + 10a^3b^2 - 10a^2b^3 + 5ab^4 - b^5\)</div>
+        </div>
+        <div class="prose">
+          <p>For \((a - b)^5\), apply the binomial theorem with \(x = a\) and \(y = -b\): the signs alternate, because \((-b)^k\) is positive for even \(k\), negative for odd \(k\) (sheet 1, ex. 3.15).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>consequences of the binomial theorem, for \(n \in \N\)</i></span>
+          <ul>
+            <li>with \(x = y = 1\): <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} = 2^n\)</span>;</li>
+            <li>with \(x = 1\), \(y = 2\): <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} 2^k = 3^n\)</span> (sheet 1, ex. 3.16);</li>
+            <li>with \(x = 3\), \(y = 1\): <span data-eq>\(\sum_{k=0}^{n} \binom{n}{k} 3^{n-k} = 4^n\)</span> (2022 midterm);</li>
+            <li>with \(x = 1\), \(y = -1\), for \(n \geq 1\): \(\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0\).</li>
+          </ul>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>\(\card(\mathcal{P}(E)) = 2^n\) (2023 course test)</i></span>
+          <p>Let \(E\) be a set with \(n\) elements. For \(k \in \ent{0}{n}\), let \(\mathcal{P}_k\) be the set of \(k\)-element subsets of \(E\): \(\card(\mathcal{P}_k) = \binom{n}{k}\). Every subset of \(E\) has a cardinal number between 0 and \(n\), and only one: the \(\mathcal{P}_k\) form a partition of the power set \(\mathcal{P}(E)\). So \(\card(\mathcal{P}(E)) = \sum_{k=0}^{n} \binom{n}{k}\), which equals \((1+1)^n = 2^n\) by the binomial theorem.</p>
+          <p>Another proof: a subset is determined by choosing, for each element, “in” or “out”: \(2 \times 2 \times \cdots \times 2 = 2^n\) subsets.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>double counting</i></span>
+          <p>To prove that a number \(A\) equals a number \(B\), find a set that \(A\) counts in one way and \(B\) in another. Example (2022 midterm, exercise 8): colour \(n\) cells with 4 felt pens. Directly: \(4^n\) colourings. Splitting by the number \(k\) of green cells: choose these \(k\) cells (\(\binom{n}{k}\)), then colour the \(n - k\) others with the 3 other pens (\(3^{n-k}\)); the cases are disjoint. So \(\sum_{k=0}^{n} \binom{n}{k} 3^{n-k} = 4^n\). For \(n = 5\): <span data-eq>\(\sum_{k=0}^{5} \binom{5}{k} 3^{5-k} = 4^5 = 1{,}024\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>2024 DP exam, exercise 3 (8.5 points)</i></span>
+          <p>Teddy places 5 tokens, chosen among 9 numbered ones, in a hexagon, 2 of them in a triangle glued inside.</p>
+          <p>1. (a) Choice 1: 2 tokens out of 9 for the triangle, then 3 out of the 7 remaining ones for the rest of the hexagon. <span data-eq>\(N_1 = \binom{9}{2}\binom{7}{3} = 36 \times 35 = 1{,}260\)</span>.</p>
+          <p>(b) Choice 2: 5 tokens out of 9 for the hexagon, then 2 out of these 5 for the triangle. <span data-eq>\(N_2 = \binom{9}{5}\binom{5}{2} = 126 \times 10 = 1{,}260\)</span>.</p>
+          <p>(c) \(N_1 = N_2\): both choices count the same placements (2 tokens in the triangle, 3 in the hexagon outside the triangle).<span class="c">say why</span></p>
+          <p>2. With \(n\) tokens, \(p\) in the hexagon, \(k\) of them in the triangle: choosing the \(p\) tokens of the hexagon, then the \(k\) of the triangle among them gives \(\binom{n}{p}\binom{p}{k}\); choosing first the \(k\) tokens of the triangle, then the \(p - k\) other tokens of the hexagon among the \(n - k\) remaining ones gives \(\binom{n}{k}\binom{n-k}{p-k}\). The same set is counted twice: the two numbers are equal.</p>
+          <p>3. By computation, both sides equal \(\frac{n!}{k!\,(p-k)!\,(n-p)!}\):</p>
+          <div class="fm" data-eq>\[\binom{n}{p}\binom{p}{k} = \frac{n!}{p!\,(n-p)!} \times \frac{p!}{k!\,(p-k)!} = \frac{n!}{k!\,(p-k)!\,(n-p)!}\]</div>
+          <div class="fm" data-eq>\[\binom{n}{k}\binom{n-k}{p-k} = \frac{n!}{k!\,(n-k)!} \times \frac{(n-k)!}{(p-k)!\,(n-p)!} = \frac{n!}{k!\,(p-k)!\,(n-p)!}\]</div>
+          <p>4. By question 2, then the binomial theorem:</p>
+          <div class="fm" data-eq>\[\begin{aligned} S_p &amp;= \sum_{k=0}^{p} \binom{n}{k}\binom{n-k}{p-k} = \sum_{k=0}^{p} \binom{n}{p}\binom{p}{k} \\ &amp;= \binom{n}{p} \sum_{k=0}^{p} \binom{p}{k} = 2^p \binom{n}{p} \end{aligned}\]</div>
+        </div>
+        <div class="prose">
+          <p><b>An “atypical” example (2019 midterm).</b> A board is made of at least one councillor out of \(n\), one of whom is the president. Choose the president (\(n\) choices), then any subset of the \(n - 1\) others (\(2^{n-1}\)): \(n\,2^{n-1}\) boards. Or choose the size \(k\), the board (\(\binom{n}{k}\)), then the president among its \(k\) members: \(\sum_{k=1}^{n} k\binom{n}{k}\). Hence \(\sum_{k=1}^{n} k\binom{n}{k} = n\,2^{n-1}\); for \(n = 4\): <span data-eq>\(\sum_{k=1}^{4} k\binom{4}{k} = 4 \times 2^3 = 32\)</span>.</p>
+        </div>
+        <div class="note why"><span class="tag">In computer science <i>complexity and recursive calls</i></span>
+          <ul>
+            <li>An algorithm that tries every subset of a set of \(n\) elements (brute force) examines \(2^n\) of them: <span data-eq>\(2^{30} = 1{,}073{,}741{,}824\)</span> for 30 elements. Each extra element doubles the time.</li>
+            <li>A function that calls itself twice down to depth 4 makes <span data-eq>\(1 + 2 + 4 + 8 + 16 = 2^5 - 1 = 31\)</span> calls. The naive computation of <code>fib 10</code> (<code>fib n = fib (n-1) + fib (n-2)</code>) makes 177: it is the example given in the introduction of sheet 1.</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Trap: writing the binomial theorem</span>
+          <ul>
+            <li>The sum starts at \(k = 0\): \(\sum_{k=1}^{n} \binom{n}{k} = 2^n - 1\) (the empty subset is left out).</li>
+            <li>In each term, the exponents of \(x\) and \(y\) add up to \(n\). The 2025 MCQ offered \(\sum \binom{30}{i} x^i y^i\) and \(\sum x^i y^{30-i}\) for \((x+y)^{30}\): both are wrong (exponents, coefficients).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>2023 DP exam (2 h, out of 30): cardinal number (3 points), podiums (7 points), Vandermonde (5 points), that is <b>15 points out of 30</b> of counting.</li>
+            <li>2024 DP exam (2 h, out of 40): situations for formulas (4 points), door code (6 points), Teddy and \(\binom{n}{p}\binom{p}{k}\) (8.5 points), that is <b>18.5 points out of 40</b>.</li>
+            <li>2019 to 2022 midterms: \(n\,2^{n-1}\) (2019), symmetry (2020, 4 points), Pascal (2021, 5 points), binomial theorem and \(4^n\) colourings (2022, 4 points).</li>
+            <li>The binomial theorem comes back in lesson 7: the probabilities of a binomial distribution add up to \((p + (1 - p))^n = 1\), asked in 2023 and in 2024.</li>
+            <li>This year’s exam: DP in 2 h, week of 26 October, on counting and probability. Your wording is marked: “The rigour of your wording will be taken into account in the mark”.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-5-denombrement.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="maths:denombrement:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can count the outcomes of an experiment. Lesson 6, <a href="cours-6-probabilites.html">probability</a>, uses it at once: under equiprobability, a probability is the number of positive cases divided by the number of possible cases.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
