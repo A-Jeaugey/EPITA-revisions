@@ -17,7 +17,7 @@ REV.i18n.topics({
   'maths-injections': 'OBM · Injection, surjection, bijection',
   'maths-usuelles': 'OBM · Basic functions',
   'maths-raisonnement': 'OBM · Reasoning',
-  'maths-relations': 'OBM · Binary relations',
+  'maths-relations': 'OBM · Binary relations (not examined in 2026)',
   'maths-recurrence': 'OBM · Induction',
   'maths-sommes': 'OBM · Sums',
   'maths-denombrement': 'DP · Counting',

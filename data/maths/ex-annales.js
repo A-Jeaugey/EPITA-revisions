@@ -214,7 +214,7 @@
       r`Écrire la formule de Koenig-Huygens comme définition de la variance : la définition est \(\E\big((X - \E(X))^2\big)\).`,
       r`« Exprimer en fonction de \(a\), \(b\)… » : donner la formule d’abord, puis la démontrer.`],
     grading: '5 points pour l’exercice ; le sujet ne détaille pas les questions. Les deux preuves sont celles du document « Démonstrations à connaître ».',
-    official: false, note: N25 + ' Énoncé mot pour mot celui de l’exercice 5 de l’examen DP 2024 : la démonstration de \(\E(aX + b)\) et \(\mathrm{Var}(aX + b)\) est tombée deux années de suite.', near: ['p2024-dp-ex5', 'p2023-dp-ex5', 'p2022-ex7'],
+    official: false, note: N25 + ' Énoncé mot pour mot celui de l’exercice 5 de l’examen DP 2024 : la démonstration de \\(\\E(aX + b)\\) et \\(\\mathrm{Var}(aX + b)\\) est tombée deux années de suite.', near: ['p2024-dp-ex5', 'p2023-dp-ex5', 'p2022-ex7'],
     chk: {} });
 
   add({ id: 'p2025-dp-ex6', exam: 'p2025-dp', ecue: 'dp', order: 6, src: 'Examen DP 2025 · Ex 6', pts: 12.5, lvl: 2, time: 30,
@@ -246,7 +246,7 @@
       r`Justifier la binomiale : « somme de variables de Bernoulli <b>indépendantes</b> de <b>même paramètre</b> ». Et \(Z(\Omega)\) contient 0.`,
       r`B1 : la probabilité d’une boule rouge est \(\frac{3}{n + 3}\), pas \(\frac{3}{n}\) (qui donnerait \(n = 11\)).`],
     grading: '12,5 points pour l’exercice ; le sujet ne détaille pas les questions.',
-    official: false, note: N25 + ' Coquilles de l’énoncé, sans effet sur les réponses : « on marque aucun point » (lire « on ne marque aucun point ») et la lettre \(Y\) réutilisée dans la partie B.', near: ['p2024-dp-ex6', 'p2023-dp-ex6', 'p2021-ex6'],
+    official: false, note: N25 + ' Coquilles de l’énoncé, sans effet sur les réponses : « on marque aucun point » (lire « on ne marque aucun point ») et la lettre \\(Y\\) réutilisée dans la partie B.', near: ['p2024-dp-ex6', 'p2023-dp-ex6', 'p2021-ex6'],
     chk: { x0: '1/2', x1: '1/3', x2: '1/6', ex: '2/3', ex2: '~1', vx: '5/9', ey: '7/3', vy: '20/9', n: '~8', p: '2/3', vb: '2/9', z8: '256/6561', z7: '6305/6561' } });
 
   /* =====================================================================
