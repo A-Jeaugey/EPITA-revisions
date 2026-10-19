@@ -695,7 +695,10 @@
     var err = null;
     first.forEach(function (b) { if (b.raw != null && b.raw !== '' && !b.p) err = T('Probabilité illisible : « {v} ».', { v: b.raw }); });
     var miss = first.filter(function (b) { return !b.p; });
-    if (!err && miss.length === 1) miss[0].p = fr.sub(F(1), fr.sum(first.filter(function (b) { return b.p; }).map(function (b) { return b.p; })));
+    if (!err && miss.length === 1) {
+      var rest = fr.sub(F(1), fr.sum(first.filter(function (b) { return b.p; }).map(function (b) { return b.p; })));
+      if (rest.n < Z) err = T('Les probabilités des branches issues d’un même nœud doivent avoir pour somme 1.'); else miss[0].p = rest;
+    }
     else if (!err && miss.length > 1) err = T('Les probabilités des branches issues d’un même nœud doivent avoir pour somme 1.');
     var sec = o.second || {}, cond = (sec.p || []).map(function (v) { var f = frac(v); if (!f && !err) err = T('Probabilité illisible : « {v} ».', { v: v }); return f; });
     var all = first.map(function (b) { return b.p; }).concat(cond);
