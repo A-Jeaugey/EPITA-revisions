@@ -72,7 +72,8 @@
     }
   }
 
-  function skip(el) { return !el || (el.closest && el.closest('.katex, .no-math, [data-no-math]')); }
+  /* jamais le texte d'un script ou d'une feuille de style : rendu, il déclencherait l'observateur sans fin */
+  function skip(el) { return !el || (el.closest && el.closest('script, style, textarea, noscript, .katex, .no-math, [data-no-math]')); }
   function has(el) { var t = el.textContent || ''; return t.indexOf('\\(') >= 0 || t.indexOf('\\[') >= 0; }
   var busy = false;
   function render(el) {

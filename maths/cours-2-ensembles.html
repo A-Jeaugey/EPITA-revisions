@@ -595,6 +595,8 @@
 /* Cours 2 : droite des intervalles et exercice « ∈, ∉, ⊂ ou ⊄ ». Résultats vérifiés par programme (sympy). */
 (function () {
   'use strict';
+  /* délimiteurs KaTeX fabriqués à l’exécution : le texte du script ne doit pas contenir de délimiteur, sinon mathrender.js le prend pour une formule */
+  var BS = String.fromCharCode(92), LP = BS + '(', RP = BS + ')';
   var R = window.REV;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function head(t) { return '<div class="bench-head"><span class="bh-t"><span>' + t + '</span></span></div>'; }
@@ -636,21 +638,21 @@
   function ivlTex(segs) {
     return segs.map(function (s) {
       var lo = s[0] === '-inf' ? '{-\\infty}' : (s[0] < 0 ? '{' + s[0] + '}' : s[0]), hi = s[2] === 'inf' ? '+\\infty' : s[2];
-      return (s[1] ? '[' : ']') + lo + ', ' + hi + (s[3] ? ']' : '[');
+      return (s[1] ? '[' : BS + ',]') + lo + ', ' + hi + (s[3] ? ']' : '[' + BS + ',');
     }).join(' \\cup ');
   }
   document.querySelectorAll('[data-ivl]').forEach(function (el) {
     var o = data(el, 'data-ivl'); if (!o) return;
     o.label = R.t('Droite réelle avec les intervalles A, B, C et le résultat de l’opération choisie');
     el.innerHTML = head(o.title) + '<div class="bench-body"><div class="ops presets" role="group" aria-label="' + esc(R.t('Opérations')) + '">' +
-      o.ops.map(function (p, i) { return '<button type="button" class="chip-btn" data-k="' + i + '" aria-pressed="false">\\(' + p.tex + '\\)</button>'; }).join('') +
+      o.ops.map(function (p, i) { return '<button type="button" class="chip-btn" data-k="' + i + '" aria-pressed="false">' + LP + p.tex + RP + '</button>'; }).join('') +
       '</div><div class="fig"></div><div class="readout" aria-live="polite"></div></div>';
     var fig = el.querySelector('.fig'), out = el.querySelector('.readout');
     function show(k) {
       fig.innerHTML = svgIvl(o, k);
       el.querySelectorAll('[data-k]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-k') === k)); });
       var p = o.ops[k];
-      out.innerHTML = '<p>\\(' + p.tex + ' = ' + ivlTex(p.res) + '\\)</p><p class="hint">' + p.why + '</p>';
+      out.innerHTML = '<p>' + LP + p.tex + ' = ' + ivlTex(p.res) + RP + '</p><p class="hint">' + p.why + '</p>';
     }
     el.querySelectorAll('[data-k]').forEach(function (b) { b.addEventListener('click', function () { show(+b.getAttribute('data-k')); }); });
     show(o.ops.length - 2);
@@ -662,7 +664,7 @@
   document.querySelectorAll('[data-q]').forEach(function (el) {
     var o = data(el, 'data-q'); if (!o) return;
     el.innerHTML = head(o.title) + '<div class="bench-body"><p>' + o.intro + '</p><ol>' + o.items.map(function (it, i) {
-      return '<li data-i="' + i + '"><div class="lhs">\\(' + it.l + ' \\;\\ldots\\; ' + it.r + '\\)<span class="ans"> → \\(' + it.l + ' ' + TEX[it.ok[0]] + ' ' + it.r + '\\)</span></div>' +
+      return '<li data-i="' + i + '"><div class="lhs">' + LP + it.l + ' \\;\\ldots\\; ' + it.r + RP + '<span class="ans"> → ' + LP + it.l + ' ' + TEX[it.ok[0]] + ' ' + it.r + RP + '</span></div>' +
         '<div class="sym" role="group" aria-label="' + esc(R.t('Symbole')) + '">' + ['in', 'notin', 'sub', 'notsub'].map(function (s) { return '<button type="button" class="chip-btn" data-s="' + s + '" aria-label="' + esc(LAB[s]) + '">' + SYM[s] + '</button>'; }).join('') + '</div><p class="fb" aria-live="polite"></p></li>';
     }).join('') + '</ol><div class="row ctrls-row"><button type="button" class="btn" data-a="all">' + R.t('Voir les réponses') + '</button><span class="cnt"></span></div></div>';
     var done = {};
@@ -675,7 +677,7 @@
           li.querySelectorAll('[data-s]').forEach(function (x) { x.classList.remove('ok', 'no'); });
           if (it.ok.indexOf(s) >= 0) { cls = 'ok'; msg = '<b class="ok">' + R.t('Juste.') + '</b> '; done[li.getAttribute('data-i')] = true; }
           else if (it.also.indexOf(s) >= 0) { cls = 'no'; msg = '<b class="mid">' + R.t('Vrai, mais ce n’est pas la réponse attendue.') + '</b> '; done[li.getAttribute('data-i')] = false; }
-          else if (!it.set && (s === 'sub' || s === 'notsub')) { cls = 'no'; msg = '<b class="no">' + R.t('Mal écrit :') + '</b> \\(' + it.l + '\\) ' + R.t('n’est pas un ensemble, on ne parle pas d’inclusion.') + ' '; done[li.getAttribute('data-i')] = false; }
+          else if (!it.set && (s === 'sub' || s === 'notsub')) { cls = 'no'; msg = '<b class="no">' + R.t('Mal écrit :') + '</b> ' + LP + it.l + RP + ' ' + R.t('n’est pas un ensemble, on ne parle pas d’inclusion.') + ' '; done[li.getAttribute('data-i')] = false; }
           else { cls = 'no'; msg = '<b class="no">' + R.t('Faux.') + '</b> '; done[li.getAttribute('data-i')] = false; }
           b.classList.add(cls);
           fb.innerHTML = msg + it.why;
