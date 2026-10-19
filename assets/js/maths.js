@@ -63,8 +63,29 @@
                       arbre pondéré en fractions : chemin cliqué, probabilités totales, formule de Bayes.
      law(el, { x, p } | { law, n, p, a, b }, { name: 'X', edit: true, title })
                       diagramme en bâtons, espérance, variance, écart type (exacts, puis valeur approchée).
-   À faire (pas encore écrits) : triangle de Pascal, arbre « quelle formule de dénombrement ? », courbe d'une fonction
-   usuelle avec image directe ou réciproque d'un intervalle.
+     pascal(el, { n: 6, pick: [5, 2], row: 4, mode: 'pascal' | 'sym' | 'row', modes: ['pascal', 'sym', 'row'],
+                      build: false, edit: true, title })
+                      triangle de Pascal en tableau n \ k (comme le cours) ; un clic sur un nombre :
+                      'pascal' : ses deux « parents » (au-dessus à gauche, au-dessus) colorés et la relation
+                      C(n, k) = C(n−1, k−1) + C(n−1, k) en nombres ; 'sym' : son symétrique C(n, n−k) ;
+                      'row' : la ligne (row : celle choisie au départ), sa somme 2^n et le développement de
+                      (x + y)^n. build : les lignes se
+                      construisent une par une (Précédent / Suivant), avec le calcul de chaque case.
+                      edit : champ « dernière ligne » (0 à 12). Les cases au-dessus de la diagonale sont hachurées.
+     choose(el, { situations: [{ t, leaf, n, p, why }], examples: { arr: [{ t, n, p }], … }, title })
+                      arbre « quelle formule ? » (diapositive « How to choose the formula ») : l'ordre compte ?
+                      répétition ? tous les éléments ? → n^p (leaf 'list'), n! ('perm'), A_n^p ('arr'), C(n, p)
+                      ('comb'), et C(n+p−1, p) ('multi', hors du cours : listes croissantes du TD 1 ex. 4.20).
+                      Un clic sur une réponse suit la branche ; la feuille atteinte donne la formule, les modèles
+                      de tirage et des exemples calculés exactement. situations : exercice (« Situation 2 / 5 ») ;
+                      t et why en HTML (formules \( … \)) ; la réponse est jugée et le nombre calculé.
+   DÉNOMBREMENT (REV.maths, BigInt)
+     arr(n, p) → A_n^p (0 si p > n) ; count(leaf, n, p) → le nombre d'une feuille de l'arbre ; countTex(leaf, n, p) →
+       « A_{10}^{3} = 10 \times 9 \times 8 = 720 » (milliers séparés : \, en français, {,} en anglais) ; intTex(x).
+     pascal.rows(n) → lignes 0 à n (tableaux de BigInt) ; pascal.relation(n, k) → { value, edge, left, right }.
+     choose.tree, choose.at(chemin) → nœud ou feuille ('1' = oui, '0' = non : '100' = ordre, sans répétition,
+       pas tous → A) ; choose.path(leaf) → chemin de cette feuille.
+   À faire (pas encore écrits) : courbe d'une fonction usuelle avec image directe ou réciproque d'un intervalle.
 
    Textes affichés : REV.t('français') ; l'anglais est déclaré ci-dessous (REV.i18n.add). */
 (function () {
@@ -143,7 +164,47 @@
     'La somme des probabilités vaut {s}, pas 1.': 'The probabilities add up to {s}, not 1.',
     'Paramètres illisibles.': 'Cannot read the parameters.',
     'Espérance': 'Expected value', 'Variance (Koenig-Huygens)': 'Variance (König–Huygens)', 'Écart type': 'Standard deviation',
-    'trait plein : espérance ; pointillés : espérance ± écart type.': 'solid line: expected value; dashed: expected value ± standard deviation.'
+    'trait plein : espérance ; pointillés : espérance ± écart type.': 'solid line: expected value; dashed: expected value ± standard deviation.',
+    /* triangle de Pascal */
+    'Triangle de Pascal': 'Pascal’s triangle', 'Pascal': 'Pascal', 'Symétrie': 'Symmetry', 'Somme d’une ligne': 'Sum of a row',
+    'Dernière ligne n': 'Last row n', 'Entre 0 et 12.': 'Between 0 and 12.',
+    'Clique sur un nombre du triangle.': 'Click a number in the triangle.',
+    'Clique sur un nombre : ses deux voisins du dessus s’allument.': 'Click a number: its two neighbours above light up.',
+    'Clique sur un nombre : son symétrique dans la ligne s’allume.': 'Click a number: its mirror image in the row lights up.',
+    'Clique sur une ligne : sa somme et le développement du binôme.': 'Click a row: its sum and the binomial expansion.',
+    'Relation de Pascal : le nombre est la somme du nombre au-dessus à gauche et du nombre au-dessus.': 'Pascal’s formula: the number is the sum of the number above on the left and the number above.',
+    'Bord du triangle : \\(\\binom{n}{0} = \\binom{n}{n} = 1\\).': 'Edge of the triangle: \\(\\binom{n}{0} = \\binom{n}{n} = 1\\).',
+    'Symétrie : choisir les {k} éléments qu’on prend revient à choisir les {m} qu’on laisse.': 'Symmetry: choosing the {k} elements you take is the same as choosing the {m} you leave.',
+    'Ligne {n} : la somme vaut \\(2^{{n}}\\), le nombre de parties d’un ensemble à {n} éléments.': 'Row {n}: the sum is \\(2^{{n}}\\), the number of subsets of a set with {n} elements.',
+    'Ligne {n} : la somme vaut \\(2^{{n}}\\) (une seule partie : l’ensemble vide).': 'Row {n}: the sum is \\(2^{{n}}\\) (a single subset: the empty set).',
+    'Les coefficients de la ligne sont ceux de la formule du binôme :': 'The numbers of the row are the coefficients of the binomial theorem:',
+    'Ligne {n} : les bords valent 1, chaque autre case est la somme des deux cases au-dessus d’elle.': 'Row {n}: the edges are 1, every other cell is the sum of the two cells above it.',
+    'Ligne 0 : \\(\\binom{0}{0} = 1\\) (une seule partie de l’ensemble vide : lui-même).': 'Row 0: \\(\\binom{0}{0} = 1\\) (the empty set has a single subset: itself).',
+    'au-dessus à gauche': 'above on the left', 'au-dessus': 'above', 'le nombre choisi': 'the chosen number',
+    /* arbre « quelle formule ? » */
+    'Quelle formule ?': 'Which formula?', 'oui': 'yes', 'non': 'no',
+    'L’ordre compte ?': 'Does order matter?', 'Répétition possible ?': 'Is repetition allowed?', 'Tous les éléments ?': 'Are we choosing all the elements?',
+    'Échange deux éléments : obtiens-tu un autre résultat ? Podium, code, mot : oui. Main de cartes, comité : non.': 'Swap two elements: do you get a different result? Podium, code, word: yes. Hand of cards, committee: no.',
+    'Un élément peut-il revenir ? Tirage avec remise, chiffres d’un code : oui. Personnes distinctes, sans remise : non.': 'Can an element come back? Picking with replacement, digits of a code: yes. Distinct people, without replacement: no.',
+    'Range-t-on les n éléments, sans en laisser (p = n) ?': 'Do we order all n elements, leaving none out (p = n)?',
+    'p-listes (p-uplets)': 'p-tuples (p-lists)', 'permutations': 'permutations', 'arrangements': 'arrangements', 'combinaisons': 'combinations',
+    'combinaisons avec répétition (hors du cours)': 'combinations with repetition (not in the lecture)',
+    'applications de E dans F ; tirages successifs avec remise ; mots, codes, mots de passe.': 'functions from E to F; successive picks with replacement; words, codes, passwords.',
+    'bijections de F dans F ; ranger n objets ; anagrammes d’un mot aux lettres distinctes.': 'bijections from F to F; ordering n objects; anagrams of a word with distinct letters.',
+    'applications injectives ; tirages successifs sans remise ; podiums, postes distincts.': 'injective functions; successive picks without replacement; podiums, distinct positions.',
+    'parties à p éléments ; tirages simultanés ; mains de cartes, comités, groupes.': 'subsets with p elements; simultaneous picks; hands of cards, committees, groups.',
+    'listes croissantes (TD 1, exercice 4.20) ; pas au programme de l’examen.': 'increasing lists (exercise sheet 1, exercise 4.20); not in the exam syllabus.',
+    'Modèles : ': 'Models: ', 'Exemples': 'Examples', 'Réponds aux questions de l’arbre, en partant du haut.': 'Answer the questions of the tree, starting from the top.',
+    'Codes à 4 chiffres': '4-digit codes', 'Applications d’un ensemble à 3 éléments dans un ensemble à 4 éléments': 'Functions from a 3-element set to a 4-element set',
+    'Mots réponses d’un QCM de 5 questions à 6 lettres (TD 1 ex. 2.11)': '“Answering words” of a 5-question MCQ with 6 letters (exercise 2.11)',
+    '6 élèves sur 6 chaises': '6 students on 6 chairs', 'Anagrammes de « computer »': 'Anagrams of “computer”',
+    'Podiums d’une course de 10 coureurs': 'Podiums of a 10-runner race', 'Codes à 4 chiffres distincts': '4-digit codes with distinct digits',
+    'Un président et un trésorier parmi 100 adhérents': 'A president and a treasurer out of 100 members',
+    'Mains de 5 cartes dans un jeu de 32': '5-card hands from a 32-card deck', 'Comités de 3 élèves parmi 20': '3-student committees out of 20',
+    'Listes croissantes de longueur 2 dans \\(\\ent{0}{4}\\)': 'Increasing lists of length 2 in \\(\\ent{0}{4}\\)',
+    'Situation {i} / {n}': 'Situation {i} / {n}', 'Situation suivante': 'Next situation', 'Changer de réponse': 'Change the answer',
+    'Bonne formule.': 'Right formula.', 'Ce n’est pas cette formule.': 'Not this formula.', 'La bonne : ': 'The right one: ',
+    'Toutes les situations sont faites : {ok} / {n} du premier coup.': 'All situations done: {ok} / {n} at the first attempt.'
   });
 
   var esc = U.esc, MINUS = '−';
@@ -1199,6 +1260,301 @@
     return { el: el, make: function () { return lawMake(cfg.law ? cfg : { x: cfg.x, p: cfg.pList }); } };
   }
 
+  /* ================================================================== 8 bis. DÉNOMBREMENT (exact, BigInt) */
+  function arr(n, p) { n = big(n); p = big(p); if (p < Z || p > n) return Z; var r = ONE; for (var i = Z; i < p; i++) r *= n - i; return r; }
+  /* entier → TeX, milliers séparés (\, en français, {,} en anglais) */
+  function intTex(x) {
+    var s = big(x).toString(), neg = s.charAt(0) === '-'; if (neg) s = s.slice(1);
+    if (s.length > 3) s = s.replace(/\B(?=(\d{3})+(?!\d))/g, EN ? '{,}' : '\\,');
+    return (neg ? '-' : '') + s;
+  }
+  var LEAVES = ['list', 'perm', 'arr', 'comb', 'multi'];
+  function count(leaf, n, p) {
+    n = big(n); p = big(p == null ? n : p);
+    switch (leaf) {
+      case 'list': return n ** p;
+      case 'perm': return fact(n);
+      case 'arr': return arr(n, p);
+      case 'comb': return binom(n, p);
+      case 'multi': return binom(n + p - ONE, p);
+    }
+    return null;
+  }
+  function prodTex(n, p) { var t = []; for (var i = 0; i < p; i++) t.push(String(n - i)); return t.join(' \\times '); }
+  /* « A_{10}^{3} = 10 \times 9 \times 8 = 720 » : la formule, son calcul quand il est court, le résultat */
+  function countTex(leaf, n, p) {
+    n = Number(n); p = p == null ? n : Number(p);
+    var v = intTex(count(leaf, n, p)), mid = '';
+    switch (leaf) {
+      case 'list': return n + '^{' + p + '} = ' + v;
+      case 'perm': return n + '! = ' + (n >= 2 && n <= 6 ? prodTex(n, n) + ' = ' : '') + v;
+      case 'arr':
+        if (p >= 2 && p <= 6) mid = prodTex(n, p) + ' = ';
+        else if (p > 6) mid = '\\frac{' + n + '!}{' + (n - p) + '!} = ';
+        return 'A_{' + n + '}^{' + p + '} = ' + mid + v;
+      case 'comb':
+        var q = Math.min(p, n - p);
+        if (q >= 2 && q <= 5) mid = '\\frac{' + prodTex(n, q) + '}{' + q + '!} = ';
+        else if (q > 5) mid = '\\frac{' + n + '!}{' + p + '!\\,' + (n - p) + '!} = ';
+        return '\\binom{' + n + '}{' + p + '} = ' + mid + v;
+      case 'multi': return '\\binom{' + n + ' + ' + p + ' - 1}{' + p + '} = \\binom{' + (n + p - 1) + '}{' + p + '} = ' + v;
+    }
+    return '';
+  }
+  function pascalRows(N) { var rows = []; for (var n = 0; n <= N; n++) { var r = []; for (var k = 0; k <= n; k++) r.push(binom(n, k)); rows.push(r); } return rows; }
+  function pascalRel(n, k) {
+    var o = { n: n, k: k, value: binom(n, k), edge: k === 0 || k === n };
+    if (!o.edge) { o.left = { n: n - 1, k: k - 1, v: binom(n - 1, k - 1) }; o.right = { n: n - 1, k: k, v: binom(n - 1, k) }; }
+    return o;
+  }
+  /* arbre « quelle formule ? » : chemin '1' = oui, '0' = non */
+  var CHT = { q: 'order', y: { q: 'rep', y: { leaf: 'list' }, n: { q: 'all', y: { leaf: 'perm' }, n: { leaf: 'arr' } } },
+    n: { q: 'rep', y: { leaf: 'multi' }, n: { leaf: 'comb' } } };
+  function chAt(path) { var nd = CHT; for (var i = 0; i < path.length; i++) { if (!nd || nd.leaf) return null; nd = path.charAt(i) === '1' ? nd.y : nd.n; } return nd || null; }
+  function chPath(leaf) {
+    var found = null;
+    (function walk(nd, p) { if (found) return; if (nd.leaf) { if (nd.leaf === leaf) found = p; return; } walk(nd.y, p + '1'); walk(nd.n, p + '0'); })(CHT, '');
+    return found;
+  }
+
+  /* styles des deux outils (maths.css ne les a pas) : injectés une fois, aux couleurs du thème */
+  function toolCSS() {
+    if (typeof document === 'undefined' || document.getElementById('maths-denomb-css')) return;
+    var st = document.createElement('style');
+    st.id = 'maths-denomb-css';
+    st.textContent = [
+      '.pcb .pc-scroll{overflow-x:auto;min-width:0}',
+      '.pcb table.pc{border-collapse:collapse;margin:0 auto;font-family:var(--font-ui);font-variant-numeric:tabular-nums}',
+      '.pcb .pc th,.pcb .pc td{padding:0;text-align:center;border:1px solid var(--line);min-width:2.5rem;height:2.4rem}',
+      '.pcb .pc thead th,.pcb .pc tbody th{background:var(--surface-2);color:var(--muted);font-weight:500;font-size:.9rem;padding:0 .3rem}',
+      '.pcb .pc thead th:first-child{font-size:.82rem}',
+      '.pcb .pc td.void{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--line) 6px 7px)}',
+      '.pcb .pc button{font:inherit;font-weight:600;font-size:1rem;width:100%;min-height:2.4rem;padding:0 .35rem;border:0;background:transparent;color:var(--ink);cursor:pointer}',
+      '.pcb .pc tbody th button{font-weight:500;color:var(--muted)}',
+      '.pcb .pc button:hover{background:var(--accent-soft)}',
+      '.pcb .pc button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}',
+      '.pcb .pc td.row{background:var(--accent-soft)}',
+      '.pcb .pc td.pa{box-shadow:inset 0 0 0 3px var(--z2)} .pcb .pc td.pb{box-shadow:inset 0 0 0 3px var(--z3)}',
+      '.pcb .pc td.tgt button,.pcb .pc td.mir button{background:var(--accent);color:var(--on-accent)}',
+      '.pcb .pc td.new button{color:var(--accent)} .pcb .pc td.new{background:var(--accent-soft)}',
+      '.pcb .pc td.later button{visibility:hidden}',
+      '.pcb .pc-key{display:flex;flex-wrap:wrap;gap:4px 16px;font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}',
+      '.pcb .pc-key i{display:inline-block;width:.9rem;height:.9rem;margin-right:.35rem;vertical-align:-.1rem;border-radius:2px}',
+      '.pcb .pc-key .ka{box-shadow:inset 0 0 0 3px var(--z2)} .pcb .pc-key .kb{box-shadow:inset 0 0 0 3px var(--z3)} .pcb .pc-key .kt{background:var(--accent)}',
+      '.katex .pz2{color:var(--z2)} .katex .pz3{color:var(--z3)}',
+      '.pcb .pc-in{display:flex;flex-wrap:wrap;gap:8px;align-items:end} .pcb .pc-in .fld{width:9rem}',
+      '.chb .ch-tree,.chb .ch-tree ul{list-style:none;margin:0;padding:0}',
+      '.chb .ch-tree ul{margin:.35rem 0 0 .55rem;padding-left:1rem;border-left:1.5px solid var(--line);display:grid;gap:.35rem}',
+      '.chb .ch-tree li{position:relative;min-width:0}',
+      '.chb .ch-tree ul>li::before{content:"";position:absolute;left:-1rem;top:1.15rem;width:.8rem;border-top:1.5px solid var(--line)}',
+      '.chb .ch-q{font-family:var(--font-ui);font-weight:600;font-size:.98rem;line-height:1.3}',
+      '.chb .ch-h{display:block;font-weight:400;font-size:.84rem;color:var(--muted);margin-top:.1rem}',
+      '.chb .ch-br{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .6rem}',
+      '.chb .ch-a{font:inherit;font-family:var(--font-ui);font-size:.88rem;font-weight:600;min-height:34px;min-width:3.2rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;padding:.15rem .7rem}',
+      '.chb .ch-a:hover{border-color:var(--accent)}',
+      '.chb .ch-a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
+      '.chb .ch-a[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}',
+      '.chb .ch-leaf{font-size:1.02rem;padding:.1rem .45rem;border-radius:var(--radius);border:1px dashed transparent}',
+      '.chb .ch-leaf.off{color:var(--muted)}',
+      '.chb li.on>.ch-br>.ch-leaf{border-color:var(--accent);background:var(--accent-soft)}',
+      '.chb li.dim{opacity:.42}',
+      '.chb li.on>ul{border-left-color:var(--accent)}',
+      '.chb .ch-card{border-top:1px solid var(--line);padding-top:.8rem;display:grid;gap:.45rem}',
+      '.chb .ch-card ul{margin:0;padding-left:1.2rem;display:grid;gap:.3rem}',
+      '.chb .ch-card li>div{overflow-x:auto;overflow-y:hidden}',
+      '.chb .ch-sit{background:var(--surface-2);border-radius:var(--radius);padding:.7rem .9rem;display:grid;gap:.35rem}',
+      '.chb .ch-sit .lbl{color:var(--exam)}',
+      '@media print{.pcb .pc td.later button{visibility:visible}.pcb .pc-scroll,.chb .ch-card li>div{overflow:visible !important}.chb li.dim{opacity:1}}'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  /* ---------- triangle de Pascal ---------- */
+  function pascal(el, o) {
+    o = o || {};
+    toolCSS();
+    var N = Math.max(0, Math.min(12, o.n == null ? 6 : +o.n)), mode = o.mode || 'pascal';
+    var modes = o.modes || ['pascal', 'sym', 'row'], build = !!o.build, edit = o.edit !== false;
+    var pick = o.pick ? [+o.pick[0], +o.pick[1]] : null, rowPick = o.row != null && +o.row <= N ? +o.row : null, st = null, shown = N;
+    var LAB = { pascal: T('Pascal'), sym: T('Symétrie'), row: T('Somme d’une ligne') };
+    el.classList.add('bench', 'pcb');
+    el.innerHTML = head(o.title || T('Triangle de Pascal'), '') + '<div class="bench-body">' +
+      ((modes.length > 1 || edit) ? '<div class="pc-in">' + (modes.length > 1 ? '<div class="row" role="group">' + modes.map(function (m) { return '<button type="button" class="chip-btn" data-m="' + m + '" aria-pressed="' + (m === mode) + '">' + LAB[m] + '</button>'; }).join('') + '</div>' : '') +
+        (edit ? '<label class="fld"><span>' + T('Dernière ligne n') + '</span><input type="number" min="0" max="12" value="' + N + '"></label>' : '') + '</div>' : '') +
+      '<div class="pc-scroll"></div><div class="pc-key"></div><div class="readout" aria-live="polite"></div></div>';
+    var box = el.querySelector('.pc-scroll'), out = el.querySelector('.readout'), key = el.querySelector('.pc-key');
+    if (pick && (pick[0] > N || pick[1] > pick[0] || pick[1] < 0)) pick = null;
+    function b(n, k) { return '\\binom{' + n + '}{' + k + '}'; }
+    function draw() {
+      var rows = pascalRows(N), rel = pick && mode === 'pascal' ? pascalRel(pick[0], pick[1]) : null;
+      var h = '<table class="pc"><thead><tr><th scope="col">' + tx('n \\backslash k') + '</th>';
+      for (var k = 0; k <= N; k++) h += '<th scope="col">' + k + '</th>';
+      h += '</tr></thead><tbody>';
+      rows.forEach(function (r, n) {
+        var later = build && n > shown;
+        h += '<tr><th scope="row">' + (mode === 'row' && !later ? '<button type="button" data-row="' + n + '" aria-label="n = ' + n + '">' + n + '</button>' : n) + '</th>';
+        for (var k = 0; k <= N; k++) {
+          if (k > n) { h += '<td class="void"></td>'; continue; }
+          var c = [];
+          if (later) c.push('later');
+          if (build && n === shown && !later && shown > 0) c.push('new');
+          if (pick && pick[0] === n && pick[1] === k && mode !== 'row') c.push('tgt');
+          if (rel && !rel.edge && rel.left.n === n && rel.left.k === k) c.push('pa');
+          if (rel && !rel.edge && rel.right.n === n && rel.right.k === k) c.push('pb');
+          if (pick && mode === 'sym' && pick[0] === n && pick[0] - pick[1] === k && k !== pick[1]) c.push('mir');
+          if (mode === 'row' && rowPick === n) c.push('row');
+          h += '<td' + (c.length ? ' class="' + c.join(' ') + '"' : '') + '><button type="button" data-n="' + n + '" data-k="' + k + '"' + (later ? ' tabindex="-1" aria-hidden="true"' : '') + ' aria-label="C(' + n + ', ' + k + ') = ' + r[k] + '">' + r[k].toString() + '</button></td>';
+        }
+        h += '</tr>';
+      });
+      box.innerHTML = h + '</tbody></table>';
+      key.innerHTML = rel && !rel.edge ? '<span><i class="kt"></i>' + T('le nombre choisi') + '</span><span><i class="ka"></i>' + T('au-dessus à gauche') + '</span><span><i class="kb"></i>' + T('au-dessus') + '</span>' : '';
+      say();
+    }
+    function say() {
+      var t = '';
+      if (build && !pick && rowPick == null) {
+        var n = shown;
+        if (n === 0) t = '<p>' + mathify(T('Ligne 0 : \\(\\binom{0}{0} = 1\\) (une seule partie de l’ensemble vide : lui-même).')) + '</p>';
+        else {
+          var parts = [];
+          for (var k = 0; k <= n; k++) parts.push(k === 0 || k === n ? '1' : binom(n - 1, k - 1) + ' + ' + binom(n - 1, k) + ' = ' + binom(n, k));
+          t = '<p>' + T('Ligne {n} : les bords valent 1, chaque autre case est la somme des deux cases au-dessus d’elle.', { n: n }) + '</p><div class="fm">' + tx(parts.join(',\\quad '), true) + '</div>';
+        }
+      } else if (mode === 'row') {
+        if (rowPick == null) t = '<p class="hint">' + T('Clique sur une ligne : sa somme et le développement du binôme.') + '</p>';
+        else {
+          var m = rowPick, terms = [], poly = [];
+          for (var j = 0; j <= m; j++) {
+            terms.push(binom(m, j).toString());
+            var c = binom(m, j), xp = m - j, yp = j, mono = (xp ? 'x' + (xp > 1 ? '^{' + xp + '}' : '') : '') + (yp ? 'y' + (yp > 1 ? '^{' + yp + '}' : '') : '');
+            poly.push((c === ONE && mono ? '' : c.toString()) + mono);
+          }
+          t = '<p>' + mathify(T(m ? 'Ligne {n} : la somme vaut \\(2^{{n}}\\), le nombre de parties d’un ensemble à {n} éléments.' : 'Ligne {n} : la somme vaut \\(2^{{n}}\\) (une seule partie : l’ensemble vide).', { n: m })) + '</p>' +
+            '<div class="fm">' + tx('\\sum_{k=0}^{' + m + '} ' + b(m, 'k') + ' = ' + terms.join(' + ') + ' = ' + intTex(ONE << BigInt(m)) + ' = 2^{' + m + '}', true) + '</div>' +
+            '<p>' + T('Les coefficients de la ligne sont ceux de la formule du binôme :') + '</p><div class="fm">' + tx('(x + y)^{' + m + '} = ' + poly.join(' + '), true) + '</div>';
+        }
+      } else if (!pick) t = '<p class="hint">' + T(mode === 'sym' ? 'Clique sur un nombre : son symétrique dans la ligne s’allume.' : 'Clique sur un nombre : ses deux voisins du dessus s’allument.') + '</p>';
+      else if (mode === 'sym') {
+        var n2 = pick[0], k2 = pick[1];
+        t = '<p>' + T('Symétrie : choisir les {k} éléments qu’on prend revient à choisir les {m} qu’on laisse.', { k: k2, m: n2 - k2 }) + '</p><div class="fm">' + tx(b(n2, k2) + ' = ' + b(n2, n2 - k2) + ' = ' + intTex(binom(n2, k2)), true) + '</div>';
+      } else {
+        var r = pascalRel(pick[0], pick[1]);
+        if (r.edge) t = '<p>' + mathify(T('Bord du triangle : \\(\\binom{n}{0} = \\binom{n}{n} = 1\\).')) + '</p><div class="fm">' + tx(b(r.n, r.k) + ' = 1', true) + '</div>';
+        else t = '<p>' + T('Relation de Pascal : le nombre est la somme du nombre au-dessus à gauche et du nombre au-dessus.') + '</p><div class="fm">' +
+          tx(b(r.n, r.k) + ' = \\htmlClass{pz2}{' + b(r.left.n, r.left.k) + '} + \\htmlClass{pz3}{' + b(r.right.n, r.right.k) + '} = \\htmlClass{pz2}{' + intTex(r.left.v) + '} + \\htmlClass{pz3}{' + intTex(r.right.v) + '} = ' + intTex(r.value), true) + '</div>';
+      }
+      out.innerHTML = t;
+    }
+    box.addEventListener('click', function (e) {
+      var bt = e.target.closest('button'); if (!bt) return;
+      if (bt.hasAttribute('data-row')) { rowPick = +bt.getAttribute('data-row'); draw(); var f = box.querySelector('[data-row="' + rowPick + '"]'); if (f) f.focus({ preventScroll: true }); return; }
+      var n = +bt.getAttribute('data-n'), k = +bt.getAttribute('data-k');
+      if (build && n > shown) return;
+      if (mode === 'row') rowPick = n; else pick = pick && pick[0] === n && pick[1] === k ? null : [n, k];
+      draw();
+      var g = box.querySelector('[data-n="' + n + '"][data-k="' + k + '"]'); if (g) g.focus({ preventScroll: true });
+    });
+    U.$$('[data-m]', el).forEach(function (bt) {
+      bt.addEventListener('click', function () { mode = bt.getAttribute('data-m'); U.$$('[data-m]', el).forEach(function (x) { x.setAttribute('aria-pressed', String(x === bt)); }); if (mode === 'row' && rowPick == null && pick) rowPick = pick[0]; draw(); });
+    });
+    var inp = el.querySelector('input[type="number"]');
+    if (inp) inp.addEventListener('input', function () {
+      var v = parseInt(inp.value, 10);
+      if (isNaN(v) || v < 0 || v > 12) { out.innerHTML = '<p class="err">' + T('Entre 0 et 12.') + '</p>'; return; }
+      N = v; if (pick && pick[0] > N) pick = null; if (rowPick != null && rowPick > N) rowPick = null;
+      if (st) { shown = Math.min(shown, N); st.setTotal(N); } else shown = N;
+      draw();
+    });
+    if (build) { shown = 0; st = stepper(el, N, function (k) { shown = k; pick = null; rowPick = null; draw(); }, 0); }
+    else draw();
+    return { el: el, rows: function () { return pascalRows(N); } };
+  }
+
+  /* ---------- arbre « quelle formule ? » ---------- */
+  var CHQ = {
+    order: ['L’ordre compte ?', 'Échange deux éléments : obtiens-tu un autre résultat ? Podium, code, mot : oui. Main de cartes, comité : non.'],
+    rep: ['Répétition possible ?', 'Un élément peut-il revenir ? Tirage avec remise, chiffres d’un code : oui. Personnes distinctes, sans remise : non.'],
+    all: ['Tous les éléments ?', 'Range-t-on les n éléments, sans en laisser (p = n) ?']
+  };
+  var CHL = {
+    list: { tex: 'n^p', name: 'p-listes (p-uplets)', what: 'applications de E dans F ; tirages successifs avec remise ; mots, codes, mots de passe.',
+      ex: [{ t: 'Codes à 4 chiffres', n: 10, p: 4 }, { t: 'Applications d’un ensemble à 3 éléments dans un ensemble à 4 éléments', n: 4, p: 3 }, { t: 'Mots réponses d’un QCM de 5 questions à 6 lettres (TD 1 ex. 2.11)', n: 6, p: 5 }] },
+    perm: { tex: 'n!', name: 'permutations', what: 'bijections de F dans F ; ranger n objets ; anagrammes d’un mot aux lettres distinctes.',
+      ex: [{ t: '6 élèves sur 6 chaises', n: 6 }, { t: 'Anagrammes de « computer »', n: 8 }] },
+    arr: { tex: 'A_n^p = \\frac{n!}{(n-p)!}', name: 'arrangements', what: 'applications injectives ; tirages successifs sans remise ; podiums, postes distincts.',
+      ex: [{ t: 'Podiums d’une course de 10 coureurs', n: 10, p: 3 }, { t: 'Codes à 4 chiffres distincts', n: 10, p: 4 }, { t: 'Un président et un trésorier parmi 100 adhérents', n: 100, p: 2 }] },
+    comb: { tex: '\\binom{n}{p} = \\frac{n!}{p!\\,(n-p)!}', name: 'combinaisons', what: 'parties à p éléments ; tirages simultanés ; mains de cartes, comités, groupes.',
+      ex: [{ t: 'Mains de 5 cartes dans un jeu de 32', n: 32, p: 5 }, { t: 'Comités de 3 élèves parmi 20', n: 20, p: 3 }] },
+    multi: { tex: '\\binom{n+p-1}{p}', name: 'combinaisons avec répétition (hors du cours)', what: 'listes croissantes (TD 1, exercice 4.20) ; pas au programme de l’examen.',
+      ex: [{ t: 'Listes croissantes de longueur 2 dans \\(\\ent{0}{4}\\)', n: 5, p: 2 }] }
+  };
+  function choose(el, o) {
+    o = o || {};
+    toolCSS();
+    var sits = o.situations || null, si = 0, path = '', firstTry = true, scored = false, score = 0, done = false, examples = o.examples || {};
+    el.classList.add('bench', 'chb');
+    el.innerHTML = head(o.title || T('Quelle formule ?'), '') + '<div class="bench-body">' +
+      (sits ? '<div class="ch-sit" aria-live="polite"></div>' : '') + '<div class="ch-tree-box"></div><div class="readout ch-card" aria-live="polite"></div></div>' +
+      (sits ? '<div class="ctrls"><div class="row"><button type="button" class="btn" data-a="redo">' + T('Changer de réponse') + '</button><button type="button" class="btn primary" data-a="next">' + T('Situation suivante') + '</button><span class="cnt"></span></div></div>' : '');
+    var treeBox = el.querySelector('.ch-tree-box'), out = el.querySelector('.ch-card'), sitBox = el.querySelector('.ch-sit');
+    function leafTex(l) { return tx(CHL[l].tex); }
+    function nodeHTML(nd, p) {
+      if (nd.leaf) return '';
+      var q = CHQ[nd.q], h = '<div class="ch-q">' + T(q[0]) + '<span class="ch-h">' + mathify(T(q[1])) + '</span></div><ul>';
+      [['1', nd.y, T('oui')], ['0', nd.n, T('non')]].forEach(function (br) {
+        var bp = p + br[0], on = path.indexOf(bp) === 0, dim = path.length > p.length && path.indexOf(p) === 0 && path.charAt(p.length) !== br[0];
+        h += '<li class="' + (on ? 'on' : '') + (dim ? ' dim' : '') + '"><div class="ch-br"><button type="button" class="ch-a" data-p="' + bp + '" aria-pressed="' + on + '">' + br[2] + '</button>' +
+          (br[1].leaf ? '<span class="ch-leaf' + (br[1].leaf === 'multi' ? ' off' : '') + '">' + leafTex(br[1].leaf) + '</span>' : '') + '</div>' + nodeHTML(br[1], bp) + '</li>';
+      });
+      return h + '</ul>';
+    }
+    function exLine(e, leaf) { return '<li>' + mathify(T(e.t)) + '<div>' + tx(countTex(leaf, e.n, e.p)) + '</div></li>'; }
+    function draw(focus) {
+      treeBox.innerHTML = '<div class="ch-tree">' + nodeHTML(CHT, '') + '</div>';
+      var nd = chAt(path), t = '';
+      if (sits) {
+        var s = sits[si];
+        sitBox.innerHTML = done ? '<p><b>' + T('Toutes les situations sont faites : {ok} / {n} du premier coup.', { ok: score, n: sits.length }) + '</b></p>'
+          : '<span class="lbl">' + T('Situation {i} / {n}', { i: si + 1, n: sits.length }) + '</span><div>' + mathify(s.t) + '</div>';
+        if (!done && nd && nd.leaf) {
+          var good = nd.leaf === s.leaf;
+          t = '<p class="' + (good ? 'okmsg' : 'err') + '">' + T(good ? 'Bonne formule.' : 'Ce n’est pas cette formule.') + '</p>' +
+            (s.why ? '<p>' + mathify(s.why) + '</p>' : '') +
+            '<div class="fm">' + (good ? '' : '<span class="hint">' + T('La bonne : ') + '</span>') + tx(countTex(s.leaf, s.n, s.p), true) + '</div>';
+          if (good) { var nx = el.querySelector('[data-a="next"]'); if (nx) nx.disabled = false; }
+        } else if (!done) t = '<p class="hint">' + T('Réponds aux questions de l’arbre, en partant du haut.') + '</p>';
+        var c = el.querySelector('.cnt'); if (c) c.textContent = score + ' / ' + sits.length;
+      } else if (nd && nd.leaf) {
+        var L = CHL[nd.leaf], ex = examples[nd.leaf] || L.ex;
+        t = '<p><b>' + T(L.name) + '</b></p><div class="fm">' + tx(L.tex, true) + '</div><p>' + T('Modèles : ') + T(L.what) + '</p>' +
+          '<p class="lbl">' + T('Exemples') + '</p><ul>' + ex.map(function (e) { return exLine(e, nd.leaf); }).join('') + '</ul>';
+      } else t = '<p class="hint">' + T('Réponds aux questions de l’arbre, en partant du haut.') + '</p>';
+      out.innerHTML = t;
+      if (focus) { var f = treeBox.querySelector('[data-p="' + focus + '"]'); if (f) f.focus({ preventScroll: true }); }
+    }
+    treeBox.addEventListener('click', function (e) {
+      var bt = e.target.closest('[data-p]'); if (!bt || done) return;
+      var p = bt.getAttribute('data-p');
+      if (sits && chAt(path) && chAt(path).leaf && chAt(path).leaf === sits[si].leaf) return;   /* réponse juste : figée */
+      path = path === p ? p.slice(0, -1) : p;
+      var nd = chAt(path);
+      if (sits && nd && nd.leaf) { if (nd.leaf !== sits[si].leaf) firstTry = false; else if (firstTry && !scored) { score++; scored = true; } }
+      draw(p);
+    });
+    if (sits) {
+      el.querySelector('.ctrls').addEventListener('click', function (e) {
+        var bt = e.target.closest('[data-a]'); if (!bt) return;
+        if (bt.getAttribute('data-a') === 'redo') { if (done) { si = 0; score = 0; done = false; firstTry = true; scored = false; } path = ''; draw(); return; }
+        if (si < sits.length - 1) { si++; path = ''; firstTry = true; scored = false; } else done = true;
+        bt.disabled = true; draw();
+      });
+      el.querySelector('[data-a="next"]').disabled = true;
+    }
+    draw();
+    return { el: el, path: function () { return path; } };
+  }
+
   /* ================================================================== 9. PAGE */
   /* numéro de partie entouré à la main : un cercle un peu irrégulier, toujours le même pour un numéro donné */
   function pnHTML(n) {
@@ -1209,7 +1565,7 @@
     }
     return '<svg viewBox="-16 -16 32 32" aria-hidden="true"><path d="M' + pts.join('L') + '"/></svg><b>' + n + '</b>';
   }
-  var MOUNT = { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law };
+  var MOUNT = { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose };
   function mount(root) {
     if (!root || root.nodeType !== 1) return;
     function all(sel) { var l = U.$$(sel, root); if (root.matches && root.matches(sel)) l.unshift(root); return l; }
@@ -1270,7 +1626,9 @@
     sets: { parse: sparse, zones: szones, tex: stex, name: sname, zoneCounts: zoneCounts },
     fn: { props: fprops, image: fimage, preimage: fpre },
     tree: { compute: tcompute }, law: { make: lawMake },
-    tools: { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law },
+    arr: arr, count: count, countTex: countTex, intTex: intTex, leaves: LEAVES,
+    pascal: { rows: pascalRows, relation: pascalRel }, choose: { tree: CHT, at: chAt, path: chPath },
+    tools: { truth: truth, negate: negate, venn: venn, sagittal: sagittal, tree: tree, law: law, pascal: pascal, choose: choose },
     truth: truth, negate: negate, venn: venn, sagittal: sagittal, stepper: stepper, pn: pnHTML, mount: mount
   };
 })();
