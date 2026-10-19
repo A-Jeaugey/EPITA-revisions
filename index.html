@@ -196,17 +196,19 @@ a.tool:hover{border-color:var(--accent)}
     });
   }
   /* matières prêtes, la plus urgente d’abord (date de partiel saisie), sinon dans l’ordre du registre */
+  /* heure de début officielle (minutes), pour départager deux examens le même jour ; sans heure : en dernier */
+  function startMin(id) { var o = R.exams.official && R.exams.official(id); if (!o || !o.start || R.exams.get(id) !== o.date) return 1e4; var t = o.start.split(':'); return +t[0] * 60 + +t[1]; }
   function byUrgency() {
     return R.subjects.filter(function (s) { return s.status === 'ready'; }).map(function (s, i) {
       var d = R.exams.daysLeft(R.exams.get(s.id)); return { s: s, d: d === null || d < 0 ? 999 : d, i: i };
-    }).sort(function (a, b) { return a.d - b.d || a.i - b.i; }).map(function (x) { return x.s; });
+    }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id) || a.i - b.i; }).map(function (x) { return x.s; });
   }
 
   /* ---- compte à rebours ---- */
   function renderCount() {
     var box = $('#count'), ready = R.subjects.filter(function (s) { return s.status === 'ready'; });
     var dated = ready.map(function (s) { return { s: s, iso: R.exams.get(s.id), d: R.exams.daysLeft(R.exams.get(s.id)) }; })
-      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d; });
+      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id); });
     var html = '<span class="eyebrow">Compte à rebours</span>';
     if (dated.length) {
       var n = dated[0];
