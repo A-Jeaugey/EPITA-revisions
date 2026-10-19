@@ -100,7 +100,10 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   (`phys-cN-…`) et `physique-annales.js` (`phys-pAAAA-…`, `p2018s` pour le sujet de mai 2018). Points vérifiés :
   les 7 anciens sujets ne portent que sur la cinématique (forces, 2e loi, énergie : jamais tombés) ; Frénet, abscisse
   curviligne, produit vectoriel hors programme cette année ; le cours anglais dit « Newton's second law », poids W⃗,
-  énergie cinétique E_k. Programme du partiel 1 non publié : le site suppose les TD 1 à 5.
+  énergie cinétique E_k. Programme du partiel 1 envoyé par le prof (octobre 2026) : cinématique cartésienne, 2e loi, conditions
+  particulières (sommet : v_y = 0), forces du cours et des TD, travail, Ec, Ep, EM, théorèmes de l'énergie cinétique et mécanique (et
+  lequel choisir), projections et normes. **Coordonnées polaires et mouvement circulaire hors partiel 1** (chapitre 4, TD 5 ; parties
+  `prog: false`, notions du QCM décochées via `window.QCM_OFF`).
 - **Caml** (Caml et récursivité) : cours `caml/cours-1-bases`, `-2-recursivite`, `-3-listes`, `-4-ordre-superieur`
   (`data-done="caml:<chapitre>:sN"`, chapitres bases, recursivite, listes, ordre) ; exercices `window.CAML_EX`
   (`data/caml/ex-annales.js` : 28 fiches des sujets 2017-2024, ids `pAAAA-exN`, `p2019d` = contrôle S1# d’avril 2019 ;

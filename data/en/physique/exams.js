@@ -10,7 +10,7 @@
     'nature': 'Nature of motion',
     'tir': 'Projectiles and free fall',
     'circulaire': 'Circular motion',
-    'polaire': 'Polar coordinates',
+    'polaire': 'Polar coordinates (not in midterm 1)',
     'forces': 'Forces and force diagrams',
     'newton': 'Newton’s laws',
     'plan-incline': 'Inclined plane',
@@ -24,23 +24,23 @@
       note: 'No official answer key: the past exams contain a marked student script (10.5/20). This is the format closest to what can be expected this year: lecture questions, then two exercises. Question 2.a of exercise 3 imposes a wrong expression (see the exercise page).',
       files: [{ t: 'Paper (marked student script, 10.5/20, French)' }],
       parts: [
-        { t: 'Lecture questions (MCQ, several answers possible; question 4, in cylindrical coordinates, is not on the syllabus)' },
+        { t: 'Lecture questions (MCQ, several answers possible; not on the syllabus: question 4, in cylindrical coordinates, and questions 5 and 6, in polar coordinates)' },
         { t: 'Kinematics in Cartesian coordinates: a ball launched from a height' },
-        { t: 'Kinematics in polar and Cartesian coordinates: crankshaft' }] },
+        { t: 'Crankshaft: part 2, in Cartesian coordinates, is on the syllabus; part 1, in polar coordinates, is not' }] },
 
-    p2021: { title: 'Midterm of November 2021', meta: 'class of 2026 · duration not given · 20 points',
-      note: 'Handwritten official answer key, with a marking scheme “given as an indication”. The paper also exists in English. The whole paper is on this year’s syllabus; in lecture question 1, the key circles a wrong answer.',
+    p2021: { title: 'Midterm of November 2021', meta: 'class of 2026 · duration not given · 20 points', progPts: '≈ 8.5 / 20',
+      note: 'Handwritten official answer key, with a marking scheme “given as an indication”. The paper also exists in English. Polar coordinates (exercises 2 and 4) are not in this year’s midterm 1; in lecture question 1, the key circles a wrong answer.',
       files: [
         { t: 'Paper (English)', url: PE + '2026/midterm-2026-s1-phys-subject-en.pdf' },
         { t: 'Paper (French)', url: PE + '2026/midterm-2026-s1-phys-subject-fr.pdf' },
         { t: 'Answer key with marking scheme (French)', url: PE + '2026/midterm-2026-s1-phys-correction-fr.pdf' }],
       parts: [
         { t: 'Lecture questions (MCQ, 5 questions)' },
-        { t: 'Cartesian and polar coordinates' },
+        { t: 'Polar basis, derivatives, velocity in polar coordinates (not in midterm 1)' },
         { t: 'Motion of a projectile' },
-        { t: 'Acceleration in polar coordinates' }] },
+        { t: 'Acceleration in polar coordinates (not in midterm 1)' }] },
 
-    p2020: { title: 'Midterm 1, 2020-2021', meta: 'class of 2025 · duration not given · 20 points',
+    p2020: { title: 'Midterm 1, 2020-2021', meta: 'class of 2025 · duration not given · 20 points', progPts: '≈ 11.5 / 20',
       note: 'The past exams only have the official answer key, handwritten on the paper (the statement can still be read). It is wrong in question 2 of exercise 2. Exercise 3 (cylindrical coordinates, Frenet’s basis) is not on this year’s syllabus.',
       files: [{ t: 'Answer key, written on the paper (French)' }],
       parts: [
@@ -83,7 +83,7 @@
       parts: [
         { ex: 'MCQ', t: 'MCQ, 8 questions (questions 4, 6 and 7 are not on the syllabus)' },
         { t: 'Circular motion of centre C(1 ; 2)' },
-        { t: 'Spiral in polar coordinates (Q1-3; Q4, Frenet’s basis, not on the syllabus)' },
+        { t: 'Spiral in polar coordinates (not in midterm 1; Q4, Frenet’s basis, not on the syllabus)' },
         { t: 'Frenet’s basis: velocity, acceleration, curvature radius' }] }
   }, 'key');
 })();

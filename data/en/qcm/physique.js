@@ -17,9 +17,9 @@ REV.i18n.topics({
   'phys-newton': 'Newton’s laws',
   'phys-travail': 'Work and power',
   'phys-energie': 'Energy: Ek, Ep, EM',
-  'phys-polaires': 'Polar coordinates and basis',
-  'phys-polaires-va': 'Polar velocity and acceleration',
-  'phys-circulaire': 'Circular motion',
+  'phys-polaires': 'Polar coordinates and basis (not in midterm 1)',
+  'phys-polaires-va': 'Polar velocity and acceleration (not in midterm 1)',
+  'phys-circulaire': 'Circular motion in polar coordinates (not in midterm 1)',
   'phys-unites': 'Units and dimensional consistency'
 });
 (function () {

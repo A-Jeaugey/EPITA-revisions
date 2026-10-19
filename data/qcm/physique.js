@@ -22,9 +22,11 @@
   T['phys-newton'] = 'Lois de Newton';
   T['phys-travail'] = 'Travail et puissance';
   T['phys-energie'] = 'Énergie : Ec, Ep, EM';
-  T['phys-polaires'] = 'Coordonnées et base polaires';
-  T['phys-polaires-va'] = 'Vitesse et accélération en polaires';
-  T['phys-circulaire'] = 'Mouvement circulaire';
+  T['phys-polaires'] = 'Coordonnées et base polaires (hors partiel 1)';
+  T['phys-polaires-va'] = 'Vitesse et accélération en polaires (hors partiel 1)';
+  T['phys-circulaire'] = 'Mouvement circulaire en polaires (hors partiel 1)';
+  /* absentes de la liste des notions du partiel 1 envoyée par le prof : décochées par défaut dans qcm/index.html */
+  window.QCM_OFF = (window.QCM_OFF || []).concat(['phys-polaires', 'phys-polaires-va', 'phys-circulaire']);
   T['phys-unites'] = 'Unités et homogénéité';
 
   var C1 = 'physique/cours-1-cinematique.html', C2 = 'physique/cours-2-dynamique.html',
