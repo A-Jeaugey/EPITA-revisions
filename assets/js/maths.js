@@ -1683,6 +1683,11 @@
     }
     return '?';
   }
+  /* étiquette SVG : comme ntxt, avec un vrai exposant pour e^(π/2) */
+  function nsvg(x) {
+    if (x && x.k === 'e' && !(x.x.k === 'q' && x.x.d === 1)) return 'e<tspan baseline-shift="super" font-size="75%">' + esc(ntxt(x.x)) + '</tspan>';
+    return esc(ntxt(x));
+  }
   /* lecture : '-pi/2', '3pi/4', 'sqrt2/2', '-sqrt(3)/2', '2sqrt2', 'e', 'e^2', 'e^(pi/2)', 'ln2', '-ln(pi)', '1/2', '0.5', '+inf' */
   function nparse(s) {
     s = String(s).replace(/[\s  ]/g, '').replace(/[−–]/g, '-').replace(/\\pi|π/g, 'pi').replace(/\\sqrt|√/g, 'sqrt').replace(/\\infty|∞/g, 'inf').replace(/\\ln/g, 'ln').replace(/[{}]/g, '');
@@ -1966,6 +1971,7 @@
       '.cvb .cv-br:disabled{color:var(--muted);opacity:.6;cursor:default}',
       '.cvb .cv-br:focus-visible,.cvb .cv-iv select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}',
       '.cvb .cv-cur{font-size:1.02rem;overflow-x:auto;overflow-y:hidden}',
+      '.cvb .fig svg{max-width:500px;margin:0 auto}',
       '.cvb svg .cv-grid{stroke:var(--line);stroke-width:1}',
       '.cvb svg .cv-ax{stroke:var(--rule);stroke-width:1.3}',
       '.cvb svg .cv-c{fill:none;stroke:var(--muted);stroke-width:2;stroke-linejoin:round}',
@@ -2009,7 +2015,7 @@
     function setFrom(c) {
       if (c.f && CURVES[c.f]) fid = c.f;
       if (c.mode) mode = c.mode === 'preimage' ? 'preimage' : 'image';
-      if (c.name) name = c.name;
+      name = c.name || o.name || 'f';
       var F = CURVES[fid];
       st.domSrc = c.dom || F.doms[0];
       st.dom = sparseSet(st.domSrc) || F.dom();
@@ -2018,7 +2024,7 @@
       st.A = c.A != null ? sparseSet(c.A) || dA : dA;
       st.B = c.B != null ? sparseSet(c.B) || [ivl(nq(0), nq(1), true, true)] : [ivl(nq(0), nq(1), true, true)];
     }
-    setFrom({ f: fid, dom: o.dom, A: o.A, B: o.B, mode: mode });
+    setFrom({ f: fid, dom: o.dom, A: o.A, B: o.B, mode: mode, name: o.name });
     el.classList.add('bench', 'cvb');
     var LABM = { image: T('Image directe'), preimage: T('Image réciproque') };
     el.innerHTML = head(o.title || T('Courbe et images d’intervalles'), '') + '<div class="bench-body">' +
@@ -2112,7 +2118,7 @@
       var ystep = v[3] - v[2] > 14 ? 5 : v[3] - v[2] > 7 ? 2 : Fx.trig ? 0.5 : 1;
       for (var gy = Math.ceil(v[2] / ystep) * ystep; gy <= v[3]; gy += ystep) h += '<line class="cv-grid" x1="' + ml + '" y1="' + Y(gy) + '" x2="' + (W - mr) + '" y2="' + Y(gy) + '"/>';
       h += '<line class="cv-ax" x1="' + ml + '" y1="' + y0 + '" x2="' + (W - mr) + '" y2="' + y0 + '"/><line class="cv-ax" x1="' + x0 + '" y1="' + mt + '" x2="' + x0 + '" y2="' + (H - mb) + '"/>';
-      h += '<text class="cv-lab" x="' + (W - mr - 4) + '" y="' + (y0 - 6) + '" text-anchor="end">x</text><text class="cv-lab" x="' + (x0 + 6) + '" y="' + (mt + 12) + '">y</text>';
+      h += '<text class="cv-lab" x="' + (W - mr - 4) + '" y="' + (y0 - 6) + '" text-anchor="end">x</text><text class="cv-lab" x="' + (x0 + 9) + '" y="' + (mt + 11) + '">y</text>';
       /* bande de B (image réciproque) */
       if (mode === 'preimage') ySet.forEach(function (I) { var ya = Math.min(Math.max(I.a.v, v[2]), v[3]), yb = Math.min(Math.max(I.b.v, v[2]), v[3]); if (yb >= ya) h += '<rect class="cv-band" clip-path="url(#' + cid + ')" x="' + ml + '" y="' + Y(yb) + '" width="' + (W - ml - mr) + '" height="' + Math.max(1.5, Y(ya) - Y(yb)) + '"/>'; });
       /* courbe sur l'ensemble de départ, coupée aux trous du domaine */
@@ -2155,8 +2161,8 @@
       onAxis(ySet, 'y'); onAxis(xSet, 'x');
       /* étiquettes : les bornes des deux ensembles d'abord, puis le quadrillage, sans chevauchement */
       var xl = [], yl = [];
-      function labX(x, cls) { if (!fin(x) || x.v < v[0] || x.v > v[1]) return; var px = X(x.v), t = ntxt(x), w = 7 * t.length + 6; if (xl.some(function (q) { return Math.abs(q[0] - px) < (q[1] + w) / 2; })) return; xl.push([px, w]); h += '<text class="cv-t ' + cls + '" x="' + px + '" y="' + Math.min(y0 + 17, H - 6) + '" text-anchor="middle">' + esc(t) + '</text>'; }
-      function labY(y, cls) { if (!fin(y) || y.v < v[2] || y.v > v[3]) return; var py = Y(y.v); if (yl.some(function (q) { return Math.abs(q - py) < 14; })) return; yl.push(py); h += '<text class="cv-t ' + cls + '" x="' + (x0 - 6) + '" y="' + (py + 4.5) + '" text-anchor="end">' + esc(ntxt(y)) + '</text>'; }
+      function labX(x, cls) { if (!fin(x) || x.v < v[0] || x.v > v[1]) return; var px = X(x.v), t = ntxt(x), w = 7 * t.length + 6; if (xl.some(function (q) { return Math.abs(q[0] - px) < (q[1] + w) / 2; })) return; xl.push([px, w]); h += '<text class="cv-t ' + cls + '" x="' + px + '" y="' + Math.min(y0 + 17, H - 6) + '" text-anchor="middle">' + nsvg(x) + '</text>'; }
+      function labY(y, cls) { if (!fin(y) || y.v < v[2] || y.v > v[3]) return; var py = Y(y.v); if (yl.some(function (q) { return Math.abs(q - py) < 14; })) return; yl.push(py); h += '<text class="cv-t ' + cls + '" x="' + (x0 - 6) + '" y="' + (py + 4.5) + '" text-anchor="end">' + nsvg(y) + '</text>'; }
       xSet.forEach(function (I) { labX(I.a, 'x'); labX(I.b, 'x'); });
       ySet.forEach(function (I) { labY(I.a, 'y'); labY(I.b, 'y'); });
       yl.push(y0);
@@ -2207,7 +2213,7 @@
       });
       ['lo', 'hi'].forEach(function (k) { el.querySelector('[data-k="' + k + '"]').addEventListener('change', function () { fromCtl(null); }); });
       U.$$('.cv-br', el).forEach(function (b) { b.addEventListener('click', function () { fromCtl(b.getAttribute('data-b')); var again = el.querySelector('[data-b="' + b.getAttribute('data-b') + '"]'); if (again && !again.disabled) again.focus({ preventScroll: true }); }); });
-      if (presets) U.$$('[data-p]', el).forEach(function (b) { b.addEventListener('click', function () { var p = presets[+b.getAttribute('data-p')]; setFrom({ f: p.f || fid, dom: p.dom, A: p.A, B: p.B, mode: p.mode || mode, name: p.name }); st.note = null; draw(); }); });
+      if (presets) U.$$('[data-p]', el).forEach(function (b) { b.addEventListener('click', function () { var p = presets[+b.getAttribute('data-p')]; setFrom({ f: p.f || fid, dom: p.dom, A: p.A, B: p.B, mode: p.mode || mode, name: p.name || 'f' }); st.note = null; draw(); }); });
     }
     draw();
     return { el: el, state: function () { return { f: fid, mode: mode, dom: st.dom, A: st.A, B: st.B }; }, result: function () { return mode === 'image' ? cimage(fid, st.dom, st.A) : cpreimage(fid, st.dom, st.B); } };
