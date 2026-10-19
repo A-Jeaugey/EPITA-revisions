@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · Maths</title>
+<meta name="description" content="Maths, examen 1 : une méthode par type d’exercice des sujets OBM et DP, chacune avec un exemple tiré d’un sujet, sa rédaction modèle et ses pièges. Négation, conditions nécessaires et suffisantes, contraposée et double inclusion, images directes et réciproques, injectivité et surjectivité avec restriction, relations, choix du modèle de dénombrement, double dénombrement, probabilités totales et Bayes avec seuil, loi binomiale, démonstrations à connaître, liste à cocher.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Méthodes : une section par type d’exercice des sujets, dans l’ordre des examens (OBM, puis DP). Chaque exemple vient
+   d’un sujet ; ses nombres sont recalculés par programme (data-eq). */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;width:30px;height:28px;font-family:var(--font-hand);font-size:1.5rem;font-weight:700;color:var(--red);flex:none}
+.kicker .mk{width:38px;height:38px;font-size:1.8rem}
+.ex-src{font-family:var(--font-ui);font-size:.8rem;letter-spacing:.04em;color:var(--exam);font-weight:600}
+.toc-grp{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.7rem .4rem .2rem}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.2rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-ui);font-size:.85rem;color:var(--muted)}
+.check-t{font-family:var(--font-ui);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.4rem}
+.demo td:first-child{min-width:10rem}
+.demo td{vertical-align:top}
+.tv-mini td,.tv-mini th{text-align:center}
+</style>
+</head>
+<body data-resume="Maths · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM et DP</b> — méthodes d’examen</span><span>Exemples : examens OBM, LE et DP 2023 et 2024</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="11"></span><a href="index.html">Maths</a> · Méthodes</div>
+      <h1>Une méthode par exercice type, <span class="w">et ce qu’on écrit sur la copie.</span></h1>
+      <p class="lead">Les sujets 2023 et 2024 reposent les mêmes questions d’une année à l’autre. Chaque méthode tient en quelques étapes, avec un exemple tiré d’un sujet et sa rédaction modèle : la rigueur de la rédaction est notée, la réponse seule ne suffit pas.</p>
+      <ul class="feats">
+        <li><span><span class="k">OBM</span> méthodes 1 à 6</span></li>
+        <li><span><span class="k">DP</span> méthodes 7 à 11</span></li>
+        <li class="ex"><span><span class="k">Exemples</span> tous tirés des sujets</span></li>
+        <li><span><span class="k">Puis</span> la liste à cocher, les pièges</span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li class="toc-grp">OBM · le matin</li>
+      <li><a href="#negation"><span class="pn" data-n="1"></span><span>Nier un énoncé quantifié</span></a></li>
+      <li><a href="#cn-cs"><span class="pn" data-n="2"></span><span>Conditions nécessaires, suffisantes</span></a></li>
+      <li><a href="#raisonnements"><span class="pn" data-n="3"></span><span>Contraposée, double inclusion</span></a></li>
+      <li><a href="#images"><span class="pn" data-n="4"></span><span>Images directes et réciproques</span></a></li>
+      <li><a href="#injectivite"><span class="pn" data-n="5"></span><span>Injective, surjective, restreindre</span></a></li>
+      <li><a href="#relations"><span class="pn" data-n="6"></span><span>Relations binaires</span></a></li>
+      <li class="toc-grp">DP · l’après-midi</li>
+      <li><a href="#modele"><span class="pn" data-n="7"></span><span>Choisir le modèle de dénombrement</span></a></li>
+      <li><a href="#double-denombrement"><span class="pn" data-n="8"></span><span>Identité par double dénombrement</span></a></li>
+      <li><a href="#conditionnelles"><span class="pn" data-n="9"></span><span>Probabilités totales, Bayes, seuil</span></a></li>
+      <li><a href="#binomiale"><span class="pn" data-n="10"></span><span>Loi, espérance, binomiale</span></a></li>
+      <li><a href="#demonstrations"><span class="pn" data-n="11"></span><span>Les démonstrations à connaître</span></a></li>
+      <li class="toc-grp">Avant de rendre</li>
+      <li><a href="#copie"><span class="mk">✓</span><span>La liste à cocher</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>Les pièges</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Accueil Maths</a><a href="entrainement.html">Entraînement →</a><a href="fiche.html">Fiche recto verso</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire des méthodes</summary><ol>
+      <li><a href="#negation">Nier un énoncé quantifié</a></li><li><a href="#cn-cs">Conditions nécessaires, suffisantes</a></li><li><a href="#raisonnements">Contraposée, double inclusion</a></li>
+      <li><a href="#images">Images directes et réciproques</a></li><li><a href="#injectivite">Injective, surjective, restreindre</a></li><li><a href="#relations">Relations binaires</a></li>
+      <li><a href="#modele">Choisir le modèle de dénombrement</a></li><li><a href="#double-denombrement">Identité par double dénombrement</a></li><li><a href="#conditionnelles">Probabilités totales, Bayes, seuil</a></li>
+      <li><a href="#binomiale">Loi, espérance, binomiale</a></li><li><a href="#demonstrations">Les démonstrations à connaître</a></li><li><a href="#copie">La liste à cocher</a></li><li><a href="#pieges">Les pièges</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="negation">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Méthode 1 · OBM <span class="ref">LE 2023 ex. 2 · OBM 2024 ex. 1.2 · <a href="cours-1-logique.html#s7">cours 1, partie 7</a></span></div><h2>Nier un énoncé quantifié</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Échange chaque quantificateur</b> : \(\forall\) devient \(\exists\), \(\exists\) devient \(\forall\). L’ensemble qui suit ne change pas : \(\forall x \in \R^+\) devient \(\exists x \in \R^+\).</p></div></li>
+          <li><div><p><b>Garde l’ordre</b> des quantificateurs et des variables.</p></div></li>
+          <li><div><p><b>Nie la propriété finale</b> : \(=\) devient \(\neq\), \(\leq\) devient \(>\), « et » devient « ou » (et inversement), \(P \Rightarrow Q\) devient \(P \land \neg Q\). Une double inégalité \(m \leq f(x) \leq M\) devient \(f(x) < m\) ou \(f(x) > M\).</p></div></li>
+          <li><div><p><b>Vrai ou faux ?</b> Un \(\forall\) vrai se prouve (« Soit \(x \in \R\) ») ; un \(\forall\) faux se réfute par un contre-exemple chiffré ; un \(\exists\) vrai se prouve par un témoin.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 1.2</p>
+        <div class="prose"><p>\(P\) : « \(\forall x \in \R, \exists y \in \R, \cos(x) = y\) », \(Q\) : « \(\exists y \in \R, \forall x \in \R, x = \cos(y)\) », \(R\) : « \(\exists x \in \R, \exists y \in \R, \cos(x) < \cos(y)\) ». Sont-elles vraies ? Donner leurs négations.</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>\(P\) est vraie : soit \(x \in \R\) ; \(y = \cos(x)\) convient.</p>
+          <p>\(Q\) est fausse : soit \(y \in \R\) ; pour \(x = \cos(y) + 1\), on a \(x \neq \cos(y)\). Aucun \(y\) ne convient pour tous les \(x\).</p>
+          <p>\(R\) est vraie : pour \(x = \pi\) et \(y = 0\), <span data-eq>\(\cos(\pi) = -1 < 1 = \cos(0)\)</span>.</p>
+          <p>\(\neg P\) : \(\exists x \in \R, \forall y \in \R, \cos(x) \neq y\).</p>
+          <p>\(\neg Q\) : \(\forall y \in \R, \exists x \in \R, x \neq \cos(y)\).</p>
+          <p>\(\neg R\) : \(\forall x \in \R, \forall y \in \R, \cos(x) \geq \cos(y)\).</p>
+        </div>
+        <div class="note keep"><span class="tag">LE 2023, exercice 2.2</span><p>\(R\) : « \((\forall x \in \R, f(x) > 0) \lor (\forall x \in \R, f(x) < 0)\) » a pour négation \((\exists x \in \R, f(x) \leq 0) \land (\exists x \in \R, f(x) \geq 0)\) : De Morgan sur le « ou », puis chaque bloc nié.</p></div>
+        <div data-maths="negate" data-opts='{"src":"\\forall x \\in \\R, \\exists y \\in \\R, \\cos(x) = y","presets":[{"label":"OBM 2024 : P","src":"\\forall x \\in \\R, \\exists y \\in \\R, \\cos(x) = y"},{"label":"OBM 2024 : Q","src":"\\exists y \\in \\R, \\forall x \\in \\R, x = \\cos(y)"},{"label":"LE 2023 : R","src":"(\\forall x \\in \\R, f(x) > 0) \\lor (\\forall x \\in \\R, f(x) < 0)"},{"label":"f bornée","src":"\\exists (m, M) \\in \\R^2, \\forall x \\in \\R, m \\leq f(x) \\leq M"}],"title":"Négation pas à pas"}'></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Changer l’ensemble : la négation de \(\forall x \in \R^+, f(x) \geq 0\) est \(\exists x \in \R^+, f(x) < 0\), pas \(\exists x \in \R^-\).</li>
+          <li>Nier \(\leq\) en \(<\) : la négation de \(f(x) \leq M\) est \(f(x) > M\).</li>
+          <li>Inverser les quantificateurs : \(\forall x\,\exists y\) (\(y\) dépend de \(x\)) et \(\exists y\,\forall x\) (un même \(y\) pour tous) n’ont pas le même sens.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="cn-cs">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Méthode 2 · OBM <span class="ref">OBM 2024 ex. 1.1 · LE 2023 ex. 2.2b · <a href="cours-1-logique.html#s4">cours 1, partie 4</a></span></div><h2>Conditions nécessaires et suffisantes : placer ⇒, ⇐ ou ⇔</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Écris l’ensemble des \(x\)</b> qui vérifient chaque condition (on résout).</p></div></li>
+          <li><div><p><b>Compare les ensembles</b> : si celui de gauche est inclus dans celui de droite, l’implication \(\text{gauche} \Rightarrow \text{droite}\) est vraie. Égaux : \(\Leftrightarrow\).</p></div></li>
+          <li><div><p><b>Justifie une implication fausse</b> par un contre-exemple : un \(x\) qui vérifie la gauche sans la droite.</p></div></li>
+          <li><div><p><b>Vocabulaire</b> : si \(P \Rightarrow Q\), \(P\) est une condition <b>suffisante</b> pour \(Q\) et \(Q\) une condition <b>nécessaire</b> pour \(P\).</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 1.1</p>
+        <div class="prose"><p>\(P\) : « \(x^2 > 4\) ». Propositions : (1) \(x > -2\) ; (2) \(x < -10\) ; (3) \(x > 1{,}9\) ; (4) \(x < -3\) ou \(x > 3\) ; (5) \(x < -2\) ou \(x > 2\). Quelles implications « … ⇒ P » sont vraies ? Lesquelles « P ⇒ … » ? Nier les implications vraies du second type.</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>\(x^2 > 4 \iff x \in \left]-\infty, -2\right[ \cup \left]2, +\infty\right[\). Les ensembles des propositions sont \(\left]-2, +\infty\right[\), \(\left]-\infty, -10\right[\), \(\left]1{,}9 ; +\infty\right[\), \(\left]-\infty, -3\right[ \cup \left]3, +\infty\right[\) et \(\left]-\infty, -2\right[ \cup \left]2, +\infty\right[\).</p>
+          <p>a) Vraies : (2) ⇒ P, (4) ⇒ P et (5) ⇒ P (inclusions). Fausses : (1) ⇒ P (\(x = 0\)) et (3) ⇒ P (\(x = 2\), <span data-eq>\(2^2 = 4\)</span> n’est pas \(> 4\)).</p>
+          <p>b) Seule P ⇒ (5) est vraie (ensembles égaux). P ⇒ (1), P ⇒ (3) sont fausses (\(x = -3\)) ; P ⇒ (2), P ⇒ (4) sont fausses (\(x = 2{,}5\), <span data-eq>\(2{,}5^2 = 6{,}25\)</span>).</p>
+          <p>c) La négation de « P ⇒ (5) » est « \(x^2 > 4\) et \(-2 \leq x \leq 2\) ».</p>
+        </div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>La flèche va du petit ensemble vers le grand : \(x > 3 \Rightarrow x^2 > 4\), pas l’inverse.</li>
+          <li>La négation d’une implication n’est pas une implication : \(\neg(P \Rightarrow Q) \iff P \land \neg Q\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="raisonnements">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Méthode 3 · OBM <span class="ref">OBM 2024 ex. 1.3 et 1.4 · <a href="cours-4-raisonnement.html#s4">cours 4, parties 3 et 4</a></span></div><h2>Contraposée et double inclusion</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Contraposée</b> de \(A \Rightarrow B\) : \(\neg B \Rightarrow \neg A\). Elle lui est équivalente : \((A \Rightarrow B) \iff (\neg A \lor B) \iff (B \lor \neg A) \iff (\neg B \Rightarrow \neg A)\), ou une table de vérité. La <b>réciproque</b> \(B \Rightarrow A\) ne l’est pas.</p></div></li>
+          <li><div><p><b>Prouver par contraposée</b> : écris la contraposée en entier, puis « Supposons \(\neg B\) » et arrive à \(\neg A\).</p></div></li>
+          <li><div><p><b>Prouver \(A \subset B\)</b> : première ligne « Soit \(x \in A\) fixé. », puis montrer \(x \in B\). Pour \(A = B\) : les deux inclusions. Pour \(B \not\subset A\) : un élément de \(B\) hors de \(A\).</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 1.3 (c) et (d)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>On veut montrer \((\forall \varepsilon > 0, |a| \leq \varepsilon) \Rightarrow a = 0\). Sa contraposée est : \(a \neq 0 \Rightarrow \exists \varepsilon > 0, |a| > \varepsilon\).</p>
+          <p>Supposons \(a \neq 0\). Posons \(\varepsilon = \frac{|a|}{2}\). Alors \(\varepsilon > 0\) et \(|a| > \frac{|a|}{2} = \varepsilon\). La contraposée est vraie, donc l’implication aussi.</p>
+          <p>(d) La réciproque est vraie : si \(a = 0\), pour tout \(\varepsilon > 0\), \(|a| = 0 \leq \varepsilon\).</p>
+        </div>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 1.4</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>\(A = \{(x, y, z) \in \R^3,\ x = y = z\}\) et \(B = \{(x, y, z) \in \R^3,\ 2x - y - z = 0\}\) sont des parties de \(\R^3\).</p>
+          <p>Soit \((x, y, z) \in A\) fixé. Alors \(y = x\) et \(z = x\), donc \(2x - y - z = 2x - x - x = 0\) : \((x, y, z) \in B\). Ainsi \(A \subset B\).</p>
+          <p>\(B \not\subset A\) : <span data-eq>\(2 \times 1 - 2 - 0 = 0\)</span>, donc \((1, 2, 0) \in B\), mais \(1 \neq 2\), donc \((1, 2, 0) \notin A\).</p>
+        </div>
+        <div data-maths="truth" data-opts='{"f":["A => B","!B => !A"],"edit":false,"title":"Une implication et sa contraposée · même colonne"}'></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Confondre contraposée (\(\neg B \Rightarrow \neg A\), équivalente) et réciproque (\(B \Rightarrow A\)).</li>
+          <li>Montrer une inclusion sur un exemple : il faut un élément <b>quelconque</b> (« Soit … fixé »).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="images">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Méthode 4 · OBM <span class="ref">LE 2023 ex. 3 · OBM 2024 ex. 2 et 3 · <a href="cours-3-fonctions.html#s2">cours 3, parties 2 et 3</a></span></div><h2>Images directes et réciproques</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définitions <i>demandées à chaque examen OBM</i></span>
+          <p>Soient \(f : E \to F\), \(A \subset E\) et \(B \subset F\). \(f(A) = \{f(x),\ x \in A\} = \{y \in F,\ \exists x \in A,\ y = f(x)\}\), une partie de \(F\). \(f^{-1}(B) = \{x \in E,\ f(x) \in B\}\), une partie de \(E\), définie même si \(f\) n’est pas bijective.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Ensemble fini</b> : tabule \(f\). \(f(A)\) : les valeurs prises sur \(A\). \(f^{-1}(B)\) : les éléments de départ dont l’image est dans \(B\) ; il peut être vide.</p></div></li>
+          <li><div><p><b>Intervalle</b> : trace le graphe sur l’ensemble de départ, découpe en morceaux de stricte monotonie, prends les valeurs aux bornes. Une borne est fermée si elle est atteinte, ouverte sinon.</p></div></li>
+          <li><div><p><b>Image réciproque</b> : résous \(f(x) \in B\) <b>dans l’ensemble de départ seulement</b>.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 2 : \(f : E \times F \to \N\), \((x, y) \mapsto x + y\), \(E = \{2, 3, 4\}\), \(F = \{1, 2, 3\}\)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Tableau : \(f(2, 1) = 3\), \(f(2, 2) = 4\), \(f(2, 3) = 5\), \(f(3, 1) = 4\), \(f(3, 2) = 5\), \(f(3, 3) = 6\), \(f(4, 1) = 5\), \(f(4, 2) = 6\), \(f(4, 3) = 7\).</p>
+          <p><span data-eq="obm24-fEF">\(f(E \times F) = \{3, 4, 5, 6, 7\}\)</span> ; \(f(\{(2, 2), (4, 3)\}) = \{4, 7\}\) ; \(f^{-1}(\{1\}) = \varnothing\) ; \(f^{-1}(\{6\}) = \{(3, 3), (4, 2)\}\).</p>
+        </div>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 3 : compléter le tableau</p>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>\(\exp : \R \to \R\)</th><th>\(\cos : [0, \pi] \to \R\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(f(\{0\})\)</th><td>\(\{1\}\)</td><td>\(\{1\}\)</td></tr>
+            <tr><th>\(f([0, \frac{\pi}{2}])\)</th><td>\([1, e^{\pi/2}]\)</td><td>\([0, 1]\)</td></tr>
+            <tr><th>\(f^{-1}(\{0\})\)</th><td>\(\varnothing\)</td><td>\(\{\frac{\pi}{2}\}\)</td></tr>
+            <tr><th>\(f^{-1}(\{-1\})\)</th><td>\(\varnothing\)</td><td>\(\{\pi\}\)</td></tr>
+            <tr><th>\(f^{-1}(]-\infty, 0])\)</th><td>\(\varnothing\)</td><td>\([\frac{\pi}{2}, \pi]\)</td></tr>
+          </tbody>
+        </table></div>
+        <div data-maths="curve" data-opts='{"f":"cos","fs":["exp","cos","abs1","sq","sin"],"dom":"[0, pi]","mode":"preimage","B":"]-inf, 0]","title":"Lire une image ou une image réciproque sur le graphe","presets":[{"label":"OBM 2024 : cos⁻¹(]−∞, 0])","f":"cos","dom":"[0, pi]","mode":"preimage","B":"]-inf, 0]"},{"label":"OBM 2024 : exp([0, π/2])","f":"exp","mode":"image","A":"[0, pi/2]"},{"label":"LE 2023 : g([−1, 3])","f":"abs1","mode":"image","A":"[-1, 3]","name":"g"},{"label":"LE 2023 : g⁻¹([0, 1])","f":"abs1","mode":"preimage","B":"[0, 1]","name":"g"}]}'></div>
+        <p class="ex-src">Exemple · examen LE 2023, exercice 3.2 : construire une fonction</p>
+        <div class="prose"><p>Dessiner \(f : \{a, b, c, d\} \to \ent{1}{5}\) telle que \(f(\{a, b\}) = \{1, 2\}\), \(f^{-1}(\{5\}) = \varnothing\) et \(f^{-1}(\{2\}) = \{b, c\}\). On place d’abord ce qui est imposé : \(f(b) = f(c) = 2\), donc \(f(a) = 1\) ; \(f(d)\) n’est ni 2 ni 5 : 1, 3 ou 4. <span data-eq="le23-f">Exactement 3 fonctions conviennent</span>, par exemple :</p></div>
+        <div data-maths="sagittal" data-opts='{"E":["a","b","c","d"],"F":["1","2","3","4","5"],"f":{"a":"1","b":"2","c":"2","d":"4"},"mode":"props","title":"LE 2023 ex. 3.2 · une solution"}'></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Les bornes : \(\exp(]0, \pi]) = ]1, e^{\pi}]\), car 0 est exclu donc 1 aussi.</li>
+          <li>Le domaine : \(\sin^{-1}([0, 1])\) sur \([-\pi, \pi]\) vaut \(\{-\pi\} \cup [0, \pi]\), car \(\sin(-\pi) = 0\).</li>
+          <li>\(f^{-1}(B)\) est un ensemble, pas la bijection réciproque ; \(f^{-1}(\{y\}) = \varnothing\) est possible.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="injectivite">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Méthode 5 · OBM <span class="ref">LE 2023 ex. 3.3 · OBM 2024 ex. 2.2 · <a href="cours-3-fonctions.html#s6">cours 3, parties 4 à 6</a></span></div><h2>Injective, surjective, puis restreindre</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définitions</span>
+          <p>\(f : E \to F\) est <b>injective</b> si \(\forall (x, x') \in E^2,\ f(x) = f(x') \Rightarrow x = x'\) ; <b>surjective</b> si \(\forall y \in F,\ \exists x \in E,\ y = f(x)\) ; <b>bijective</b> si elle est les deux.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Non injective</b> : deux éléments distincts de même image, chiffrés. <b>Injective</b> : « Soit \((x, x') \in E^2\) tel que \(f(x) = f(x')\) », puis arriver à \(x = x'\) ; ou « strictement monotone sur l’intervalle ».</p></div></li>
+          <li><div><p><b>Non surjective</b> : une valeur de \(F\) sans antécédent. <b>Surjective</b> : « Soit \(y \in F\) », puis poser un \(x\) et vérifier \(f(x) = y\).</p></div></li>
+          <li><div><p><b>Restreindre</b> : pour rendre \(f\) injective, réduis le <b>départ</b> à un intervalle de stricte monotonie ; pour la rendre surjective, réduis l’<b>arrivée</b> à l’image \(f(E)\). Donne toujours les deux ensembles et la raison.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen LE 2023, exercice 3.3 : \(g : \R \to \R\), \(x \mapsto |x - 1|\)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>(c) \(g\) n’est pas injective : <span data-eq>\(g(0) = |0 - 1| = 1\)</span> et <span data-eq>\(g(2) = |2 - 1| = 1\)</span>, avec \(0 \neq 2\). Sur \(I_1 = [1, +\infty[\), \(g(x) = x - 1\) est strictement croissante : \(g : I_1 \to J_1 = \R\) est injective.</p>
+          <p>(d) \(g\) n’est pas surjective : pour tout \(x \in \R\), \(g(x) \geq 0\), donc \(-2\) n’a pas d’antécédent. \(g : I_2 = \R \to J_2 = \R^+\) est surjective : soit \(y \geq 0\) ; pour \(x = y + 1\), \(g(x) = |y| = y\).</p>
+        </div>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 2.2 (c) à (f) : \(f(x, y) = x + y\) sur \(E \times F\)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>(c) \(f\) n’est pas injective : \(f(2, 2) = f(3, 1) = 4\) et \((2, 2) \neq (3, 1)\). (d) Elle n’est pas surjective vers \(\N\) : 0 n’a pas d’antécédent (toutes les images sont \(\geq 3\)).</p>
+          <p>(e) \(I = \{(2, 1), (2, 2)\}\), \(J = \{3, 4, 5\}\) : images 3 et 4 distinctes, 5 sans antécédent. (f) \(I' = \{(2, 1), (2, 2), (3, 1)\}\), \(J' = \{3, 4\}\) : 3 et 4 sont atteints, et \(f(2, 2) = f(3, 1)\).</p>
+        </div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>« Croissante donc injective » : il faut <b>strictement</b> monotone.</li>
+          <li>La surjectivité dépend de l’arrivée : \(x \mapsto x^2\) est surjective de \(\R\) sur \(\R^+\), pas sur \(\R\).</li>
+          <li>Restriction donnée sans ses deux ensembles, ou sans raison.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="relations">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Méthode 6 · OBM <span class="ref">OBM 2024 ex. 4 · LE 2023 ex. 4 · <a href="cours-4-raisonnement.html#s6">cours 4, partie 6</a></span></div><h2>Relations binaires : les quatre propriétés</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définitions <i>d’après les corrigés 2022 et 2023</i></span>
+          <ul>
+            <li>\(\mathcal{R}\) réflexive : \(\forall x \in E,\ x \mathrel{\mathcal{R}} x\).</li>
+            <li>symétrique : \(\forall (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y \Rightarrow y \mathrel{\mathcal{R}} x\).</li>
+            <li>antisymétrique : \(\forall (x, y) \in E^2,\ (x \mathrel{\mathcal{R}} y \text{ et } y \mathrel{\mathcal{R}} x) \Rightarrow x = y\).</li>
+            <li>transitive : \(\forall (x, y, z) \in E^3,\ (x \mathrel{\mathcal{R}} y \text{ et } y \mathrel{\mathcal{R}} z) \Rightarrow x \mathrel{\mathcal{R}} z\).</li>
+            <li>Relation d’<b>ordre</b> : réflexive, antisymétrique, transitive. Relation d’<b>équivalence</b> : réflexive, symétrique, transitive.</li>
+          </ul>
+        </div>
+        <ol class="steps">
+          <li><div><p><b>Rappelle la définition</b> avant chaque propriété (OBM 2024 : « Après avoir rappelé la définition »).</p></div></li>
+          <li><div><p><b>Propriété vraie</b> : « Soit … fixé », puis la preuve. <b>Fausse</b> : un contre-exemple chiffré, qui vérifie l’hypothèse et pas la conclusion.</p></div></li>
+          <li><div><p><b>Conclus</b> : relation d’ordre, d’équivalence, ou ni l’une ni l’autre.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen OBM 2024, exercice 4 : sur \(\R\), \(a \mathrel{\mathcal{R}} b \iff |a| \leq |b|\)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Réflexive : soit \(a \in \R\) ; \(|a| \leq |a|\), donc \(a \mathrel{\mathcal{R}} a\).</p>
+          <p>Non symétrique : \(1 \mathrel{\mathcal{R}} 2\) car \(1 \leq 2\), mais \(2 \leq 1\) est faux : on n’a pas \(2 \mathrel{\mathcal{R}} 1\).</p>
+          <p>Non antisymétrique : \(-1 \mathrel{\mathcal{R}} 1\) et \(1 \mathrel{\mathcal{R}} -1\) (car \(|-1| = |1|\)), mais \(-1 \neq 1\).</p>
+          <p>Transitive : soient \(a, b, c\) réels avec \(|a| \leq |b|\) et \(|b| \leq |c|\) ; alors \(|a| \leq |c|\).</p>
+          <p>Ce n’est ni une relation d’ordre, ni une relation d’équivalence.</p>
+        </div>
+        <div class="note keep"><span class="tag">LE 2023 · \(a \mathrel{\mathcal{R}} b \iff \exists n \in \N,\ b = a^n\) sur \(\N^*\)</span><p>Réflexive (\(a = a^1\)), non symétrique (<span data-eq>\(8 = 2^3\)</span>, donc \(2 \mathrel{\mathcal{R}} 8\), mais 2 n’est pas une puissance de 8), transitive (\(c = b^p = a^{np}\)), antisymétrique (question 4) : c’est une relation d’ordre, ce que le corrigé ne dit pas.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Antisymétrique n’est pas le contraire de symétrique : une relation peut n’être ni l’une ni l’autre (ci-dessus).</li>
+          <li>Négations : non réflexive \(\exists x \in E,\ \neg(x \mathrel{\mathcal{R}} x)\) ; non antisymétrique \(\exists (x, y) \in E^2,\ x \mathrel{\mathcal{R}} y,\ y \mathrel{\mathcal{R}} x \text{ et } x \neq y\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="modele">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Méthode 7 · DP <span class="ref">DP 2023 ex. 2 · DP 2024 ex. 1 et 2 · <a href="cours-5-denombrement.html#s6">cours 5, partie 6</a></span></div><h2>Choisir le modèle de dénombrement</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>L’ordre compte-t-il ?</b> Podium, code, postes distincts, tirages successifs : oui. Groupe, main, tirage simultané : non.</p></div></li>
+          <li><div><p><b>Répétition permise ?</b> Avec remise, chiffres qui se répètent : \(n^p\). Sans : \(A_n^p = \frac{n!}{(n-p)!}\), ou \(n!\) si on place tout. Sans ordre : \(\binom{n}{p} = \frac{n!}{p!\,(n-p)!}\).</p></div></li>
+          <li><div><p><b>Cas composés</b> : « au moins » par le complémentaire ; « X mais pas Y » : place X, puis complète sans Y ; « exactement » : produit des choix dans chaque catégorie ; plusieurs cas disjoints : somme.</p></div></li>
+          <li><div><p><b>Rédige une phrase par facteur</b> et donne le résultat sous la forme demandée (produit, entier).</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen DP 2023, exercice 2 : 20 cyclistes, dont Pierre et Jade</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <ol>
+            <li>L’ordre compte et un coureur n’a qu’une place : 20 choix pour le 1<sup>er</sup>, 19 pour le 2<sup>e</sup>, 18 pour le 3<sup>e</sup>, soit <span data-eq="dp23-1">\(20 \times 19 \times 18 = 6\,840\)</span> podiums.</li>
+            <li>Jade est première : <span data-eq="dp23-2">\(19 \times 18 = 342\)</span>.</li>
+            <li>Sans Pierre ni Jade : 18 coureurs, <span data-eq="dp23-3">\(18 \times 17 \times 16 = 4\,896\)</span>.</li>
+            <li>Pierre mais pas Jade : Pierre a 3 places, puis 18 et 17 choix parmi les autres : <span data-eq="dp23-4">\(3 \times 18 \times 17 = 918\)</span>.</li>
+            <li>Au moins Jade ou Pierre : on passe par le complémentaire, <span data-eq="dp23-5">\(20 \times 19 \times 18 - 18 \times 17 \times 16 = 1\,944\)</span>.</li>
+            <li>Les trois vélos sont identiques : l’ordre n’a plus d’importance, <span data-eq="dp23-6">\(\binom{20}{3} = \frac{20 \times 19 \times 18}{3!} = 1\,140\)</span>.</li>
+          </ol>
+        </div>
+        <div class="note keep"><span class="tag">DP 2024, exercice 2 · digicode : une lettre parmi A, B, C, puis 3 chiffres</span><p>Chiffres distincts : <span data-eq="dp24-1">\(3 \times A_{10}^{3} = 3 \times 720 = 2\,160\)</span>. Répétitions permises : <span data-eq="dp24-2">\(3 \times 10^3 = 3\,000\)</span>. Lettre connue, chiffres distincts et impairs : <span data-eq="dp24-3">\(A_5^3 = 60\)</span>. Chiffres 6, 2, 9 dans un ordre inconnu, lettre inconnue : <span data-eq="dp24-4">\(3 \times 3! = 18\)</span>. Au moins un 4 : <span data-eq="dp24-5">\(3 \times (10^3 - 9^3) = 813\)</span>.</p></div>
+        <div data-maths="choose" data-opts='{"title":"Quelle formule ? · réponds aux questions"}'></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Podium et vélos identiques : \(A_{20}^3\) contre \(\binom{20}{3}\). Postes distincts contre « deux assistants ».</li>
+          <li>Avec remise : \(n^p\), ni \(A_n^p\) ni \(p^n\).</li>
+          <li>« Au moins un » compté comme \(\binom{\cdot}{1} \times \dots\) : on compte deux fois les cas à plusieurs. Passe par le complémentaire.</li>
+          <li>Anagrammes à lettres répétées : divise par les factorielles des répétitions (« tableau » : <span data-eq>\(\frac{7!}{2!} = 2\,520\)</span>).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="double-denombrement">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Méthode 8 · DP <span class="ref">DP 2023 ex. 3 · DP 2024 ex. 3 · <a href="cours-5-denombrement.html#s8">cours 5, parties 7 et 8</a></span></div><h2>Une identité par double dénombrement</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Nomme l’ensemble</b> que les deux membres comptent (les tirages de \(k\) boules, les configurations de jetons).</p></div></li>
+          <li><div><p><b>Compte-le d’un seul coup</b> : c’est un membre.</p></div></li>
+          <li><div><p><b>Compte-le par étapes ou par cas</b> : c’est l’autre membre. Pour une somme, dis que les cas sont <b>disjoints</b> et couvrent tout.</p></div></li>
+          <li><div><p><b>Conclus</b> : « on a compté le même ensemble de deux façons ». Si on te le demande, refais la preuve par le calcul, en factorielles.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen DP 2023, exercice 3 : \(p\) boules vertes, \(n\) rouges, tirage simultané de \(k\) boules</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Il y a \(\binom{n+p}{k}\) tirages possibles. Pour \(i \in \ent{0}{k}\), il y a \(\binom{p}{i}\binom{n}{k-i}\) tirages avec \(i\) vertes et \(k - i\) rouges.</p>
+          <p>Pour prendre \(k\) boules, on peut prendre 0 verte et \(k\) rouges, ou 1 verte et \(k - 1\) rouges, …, jusqu’à \(k\) vertes et 0 rouge. Ces cas sont disjoints et couvrent tous les tirages. On en déduit \(\displaystyle\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i} = \binom{n+p}{k}\).</p>
+          <p>Application : <span data-eq="dp23-vdm">\(\sum_{i=0}^{4} \binom{4}{i}\binom{7}{4-i} = \binom{11}{4} = 330\)</span>.</p>
+        </div>
+        <p class="ex-src">Exemple · examen DP 2024, exercice 3 : 9 jetons, 5 dans l’hexagone dont 2 dans le triangle</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>Choix 1 : 2 jetons pour le triangle, puis 3 parmi les 7 restants : <span data-eq="dp24-n1">\(N_1 = \binom{9}{2}\binom{7}{3} = 36 \times 35 = 1\,260\)</span>. Choix 2 : 5 jetons pour l’hexagone, puis 2 d’entre eux pour le triangle : <span data-eq="dp24-n2">\(N_2 = \binom{9}{5}\binom{5}{2} = 126 \times 10 = 1\,260\)</span>. On compte les mêmes configurations, d’où \(N_1 = N_2\).</p>
+          <p>En général, \(\binom{n}{p}\binom{p}{k} = \binom{n}{k}\binom{n-k}{p-k}\) : les deux membres valent \(\frac{n!}{k!\,(p-k)!\,(n-p)!}\). Puis \(S_p = \sum_{k=0}^{p} \binom{n}{k}\binom{n-k}{p-k} = \binom{n}{p}\sum_{k=0}^{p}\binom{p}{k} = 2^p\binom{n}{p}\).</p>
+        </div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Oublier de dire que les cas sont disjoints : le corrigé anglais l’écrit (« These different cases are disjoint »).</li>
+          <li>Une somme qui commence au mauvais indice : \(\sum_{k=1}^{n}\binom{n}{k} = 2^n - 1\).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="conditionnelles">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="9"></span>Méthode 9 · DP <span class="ref">DP 2023 ex. 4 · DP 2024 ex. 4 · <a href="cours-6-probabilites.html#s7">cours 6, parties 7 et 8</a></span></div><h2>Probabilités totales, Bayes, question « seuil »</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Traduis l’énoncé</b> : nomme les évènements, puis écris chaque donnée : \(\P(S) = \dots\), \(\P(V \mid S) = \dots\), \(\P(V \mid \overline{S}) = \dots\). « Si … alors la probabilité » est une probabilité conditionnelle.</p></div></li>
+          <li><div><p><b>Probabilités totales</b> : annonce la partition \(\{S, \overline{S}\}\), écris \(V = (V \cap S) \cup (V \cap \overline{S})\), union disjointe, puis la formule littérale, les nombres, la fraction simplifiée.</p></div></li>
+          <li><div><p><b>Bayes</b> : « On cherche \(\P(S \mid V)\) », puis \(\frac{\P(V \cap S)}{\P(V)} = \frac{\P(V \mid S)\P(S)}{\P(V)}\).</p></div></li>
+          <li><div><p><b>Seuil</b> : pose \(p = \P(S)\), écris \(\P(V) = ap + b(1 - p)\), résous l’inéquation, conclus par une proportion entre 0 et 1.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen DP 2023, exercice 4 : soutien \(S\), validation \(V\)</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>1. \(\P(S) = 0{,}1\), \(\P(V \mid S) = 0{,}8\) et \(\P(V \mid \overline{S}) = 0{,}3\).</p>
+          <p>2. Comme \(\{S, \overline{S}\}\) forme une partition de \(\Omega\), \(V = (V \cap S) \cup (V \cap \overline{S})\) (union disjointe). D’où</p>
+          <div class="fm" data-eq="dp23-pv">\[\P(V) = \P(V \mid S)\P(S) + \P(V \mid \overline{S})\P(\overline{S}) = 0{,}8 \times 0{,}1 + 0{,}3 \times 0{,}9 = 0{,}35 = \frac{7}{20}.\]</div>
+          <p>3. On cherche \(\P(S \mid V)\) :</p>
+          <div class="fm" data-eq="dp23-bayes">\[\P(S \mid V) = \frac{\P(V \cap S)}{\P(V)} = \frac{\P(V \mid S)\P(S)}{\P(V)} = \frac{0{,}08}{0{,}35} = \frac{8}{35}.\]</div>
+          <p>4. Avec \(p = \P(S)\) : \(\P(V) = 0{,}8p + 0{,}3(1 - p) = 0{,}5p + 0{,}3\). On veut \(0{,}5p + 0{,}3 \geq 0{,}75\), soit <span data-eq="dp23-seuil">\(p \geq \frac{0{,}45}{0{,}5} = 0{,}9\)</span> : au moins 90 % des élèves en soutien.</p>
+        </div>
+        <div data-maths="tree" data-opts='{"first":[{"n":"S","p":"1/10"},{"n":"\\overline{S}"}],"second":{"n":"V","nb":"\\overline{V}","p":["4/5","3/10"]},"edit":false,"title":"Arbre pondéré · DP 2023, ex. 4"}'></div>
+        <div class="note keep"><span class="tag">DP 2024, exercice 4 · même plan</span><p>\(\P(C) = \frac{2}{5}\), \(\P(V \mid C) = \frac{4}{5}\), \(\P(V \mid \overline{C}) = \frac{1}{5}\). <span data-eq="dp24-pv">\(\P(V) = \frac{4}{5} \times \frac{2}{5} + \frac{1}{5} \times \frac{3}{5} = \frac{11}{25}\)</span> ; <span data-eq="dp24-bayes">\(\P(C \mid V) = \frac{8/25}{11/25} = \frac{8}{11}\)</span> ; \(0{,}8p + 0{,}2(1 - p) \geq 0{,}6\) donne <span data-eq="dp24-seuil">\(p \geq \frac{2}{3}\)</span>.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>\(\P(A \mid B)\) divise par \(\P(B)\), pas par \(\P(A)\) (erreur du corrigé officiel de 2019).</li>
+          <li>Pourcentages : 1 % = 0,01. Vérifie qu’une probabilité totale reste entre 0 et 1.</li>
+          <li>Donner une valeur approchée quand le sujet demande une fraction simplifiée.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 -->
+    <section class="sec" id="binomiale">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="10"></span>Méthode 10 · DP <span class="ref">DP 2023 ex. 6 · DP 2024 ex. 6 · <a href="cours-7-variables.html#s7">cours 7, parties 1, 2, 6 et 7</a></span></div><h2>Loi, espérance, variance, reconnaître une binomiale</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Donner la loi de \(X\)</b>, c’est donner \(X(\Omega)\) <b>et</b> chaque \(\P(X = x_i)\) ; vérifie que leur somme vaut 1.</p></div></li>
+          <li><div><p><b>Détaille</b> : \(\E(X) = \sum x_i \P(X = x_i)\), \(\E(X^2) = \sum x_i^2 \P(X = x_i)\), puis \(\V(X) = \E(X^2) - (\E(X))^2\) (Koenig-Huygens). « Ne surtout pas parachuter les résultats. »</p></div></li>
+          <li><div><p><b>Bernoulli</b> : \(X(\Omega) = \{0, 1\}\), \(\P(X = 1) = p\) ; \(\E = p\), \(\V = p(1 - p)\).</p></div></li>
+          <li><div><p><b>Binomiale</b> : « \(Y = X_1 + \dots + X_n\) est la somme de \(n\) variables de Bernoulli <b>indépendantes</b> de même paramètre \(p\) » ; \(Y(\Omega) = \ent{0}{n}\), \(\P(Y = i) = \binom{n}{i}p^i(1 - p)^{n - i}\) ; somme égale à 1 par le binôme ; \(\E(Y) = np\), \(\V(Y) = np(1 - p)\) (indépendance).</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen DP 2024, exercice 6 : boules 0, 1, 1, 2, vingt tirages avec remise</p>
+        <div class="box model"><span class="tag">Rédaction modèle</span>
+          <p>1. \(X_k(\Omega) = \{0, 1, 2\}\), \(\P(X_k = 0) = \frac{1}{4}\), \(\P(X_k = 1) = \frac{2}{4} = \frac{1}{2}\), \(\P(X_k = 2) = \frac{1}{4}\).</p>
+          <p><span data-eq="dp24-e">\(\E(X_k) = 0 \times \frac{1}{4} + 1 \times \frac{1}{2} + 2 \times \frac{1}{4} = 1\)</span> ; <span data-eq="dp24-e2">\(\E(X_k^2) = 0^2 \times \frac{1}{4} + 1^2 \times \frac{1}{2} + 2^2 \times \frac{1}{4} = \frac{3}{2}\)</span> ; <span data-eq="dp24-v">\(\V(X_k) = \frac{3}{2} - 1^2 = \frac{1}{2}\)</span>.</p>
+          <p>2. \(Y_k = 1\) si la boule porte 0 ou 1, 0 sinon : <span data-eq="dp24-yk">\(\P(Y_k = 1) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}\)</span>. \(Y_k\) suit la loi de Bernoulli de paramètre \(\frac{3}{4}\) : \(\E(Y_k) = \frac{3}{4}\), <span data-eq="dp24-vyk">\(\V(Y_k) = \frac{3}{4} \times \frac{1}{4} = \frac{3}{16}\)</span>.</p>
+          <p>3. \(Z = Y_1 + \dots + Y_{20}\) est la somme de 20 variables de Bernoulli indépendantes de paramètre \(\frac{3}{4}\) : \(Z \sim \mathcal{B}\left(20, \frac{3}{4}\right)\), \(\P(Z = i) = \binom{20}{i}\left(\frac{3}{4}\right)^i\left(\frac{1}{4}\right)^{20 - i}\) pour \(i \in \ent{0}{20}\), et \(\sum_{i=0}^{20}\P(Z = i) = \left(\frac{3}{4} + \frac{1}{4}\right)^{20} = 1\) par la formule du binôme. <span data-eq="dp24-ez">\(\E(Z) = 20 \times \frac{3}{4} = 15\)</span> ; <span data-eq="dp24-vz">\(\V(Z) = 20 \times \frac{3}{16} = \frac{15}{4}\)</span>.</p>
+        </div>
+        <div data-maths="law" data-opts='{"law":"binom","n":20,"p":"3/4","name":"Z","edit":false,"title":"Loi de Z · DP 2024, ex. 6"}'></div>
+        <div class="note keep"><span class="tag">DP 2023, exercice 6 · QCM de 20 questions, une chance sur 3</span><p>\(X_k \sim\) Bernoulli\(\left(\frac{1}{3}\right)\) : <span data-eq="dp23-vx">\(\V(X_k) = \frac{1}{3} - \frac{1}{9} = \frac{2}{9}\)</span> ; \(Y \sim \mathcal{B}\left(20, \frac{1}{3}\right)\) : <span data-eq="dp23-ey">\(\E(Y) = 20 \times \frac{1}{3} = \frac{20}{3}\)</span>, <span data-eq="dp23-vy">\(\V(Y) = 20 \times \frac{2}{9} = \frac{40}{9}\)</span>.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>\(\P(Y = k)\) est <b>un</b> terme \(\binom{n}{k}p^k(1-p)^{n-k}\), pas une somme.</li>
+          <li>\(\E(X^2) = \sum x_i^2\P(X = x_i)\), pas \(\left(\sum x_i\P(X = x_i)\right)^2\) ; \(\V = \E(X^2) - (\E(X))^2\), avec un moins.</li>
+          <li>Oublier « indépendantes » pour justifier la binomiale et l’additivité des variances.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 11 -->
+    <section class="sec" id="demonstrations">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="11"></span>Méthode 11 · DP et OBM <span class="ref">DP 2023 ex. 5 · DP 2024 ex. 5 · contrôle 2022 ex. 7</span></div><h2>Les démonstrations à connaître</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Chaque examen DP depuis 2023 contient une démonstration de cours (4 points sur 30, puis 6 sur 40). La rédaction attendue est celle du document « Démonstrations à connaître » : cite chaque propriété au moment où tu l’utilises (« mise en évidence dans les calculs »). Les preuves complètes sont dans les cours.</p></div>
+        <div class="tbl"><table class="demo">
+          <thead><tr><th>Énoncé</th><th>L’idée, en une ligne</th><th>Tombé</th></tr></thead>
+          <tbody>
+            <tr><td>\(\E(aX + b) = a\E(X) + b\) · <a href="cours-7-variables.html#s3">cours 7, partie 3</a></td><td>Transfert avec \(f(x) = ax + b\), on sépare la somme, puis \(\sum x_i\P(X = x_i) = \E(X)\) et \(\sum \P(X = x_i) = 1\).</td><td>2022, 2024</td></tr>
+            <tr><td>\(\mathrm{Var}(X) = \E(X^2) - (\E(X))^2\) · <a href="cours-7-variables.html#s4">cours 7, partie 4</a></td><td>On développe \((X - \E(X))^2\), linéarité ; \(\E(X)\) est une constante.</td><td>2023</td></tr>
+            <tr><td>\(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\) · <a href="cours-7-variables.html#s5">cours 7, partie 5</a></td><td>\((aX + b) - \E(aX + b) = a(X - \E(X))\), puis on sort \(a^2\).</td><td>2024</td></tr>
+            <tr><td>Probabilités totales · <a href="cours-6-probabilites.html#s7">cours 6, partie 7</a></td><td>\(A = \bigsqcup (A \cap B_i)\) disjointe, additivité, puis \(\P(A \cap B_i) = \P(A \mid B_i)\P(B_i)\).</td><td>TD 2</td></tr>
+            <tr><td>Propriétés de \(\P\) · <a href="cours-6-probabilites.html#s3">cours 6, partie 3</a></td><td>\(A = A \sqcup \varnothing\) ; \(A = (A \setminus B) \sqcup (A \cap B)\) ; \(A \cup B = (A \setminus B) \sqcup (A \cap B) \sqcup (B \setminus A)\).</td><td>contrôle de cours</td></tr>
+            <tr><td>Crible \(\card(A \cup B)\) · <a href="cours-2-ensembles.html#s8">cours 2, partie 8</a></td><td>\(A \cup B = (A \setminus B) \sqcup B\) et \(\card(A) = \card(A \setminus B) + \card(A \cap B)\).</td><td>DP 2023</td></tr>
+            <tr><td>Pascal, symétrie · <a href="cours-5-denombrement.html#s7">cours 5, partie 7</a></td><td>Les tirages contiennent la boule 1 ou non ; \(A \mapsto \overline{A}\) ; ou par les factorielles.</td><td>2020, 2021</td></tr>
+            <tr><td>\(\sum \binom{n}{k} = 2^n\), binôme · <a href="cours-5-denombrement.html#s8">cours 5, partie 8</a></td><td>Les parties de \(E\) rangées selon leur cardinal ; binôme avec \(x = y = 1\).</td><td>2022</td></tr>
+            <tr><td>Composée d’injections, de surjections · <a href="cours-3-fonctions.html#s7">cours 3, partie 7</a></td><td>\(g(f(x)) = g(f(x'))\) donne \(f(x) = f(x')\), puis \(x = x'\) ; un antécédent de \(y\) par \(g\), puis par \(f\).</td><td>2022</td></tr>
+            <tr><td>Contraposée, absurde, récurrence · <a href="cours-4-raisonnement.html#s4">cours 4, parties 4, 5 et 7</a></td><td>\(n^2\) pair \(\Rightarrow n\) pair ; \(\sqrt{2}\) irrationnel ; initialisation, hérédité, conclusion.</td><td>OBM 2024, 2020, 2021</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>Koenig-Huygens, DP 2023 ex. 5</i></span>
+          <p>Par définition, \(\mathrm{Var}(X) = \E\left((X - \E(X))^2\right) = \E\left(X^2 - 2\E(X)X + (\E(X))^2\right)\).</p>
+          <p>Par la formule \(\E(X + Y) = \E(X) + \E(Y)\) : \(\mathrm{Var}(X) = \E(X^2) - \E(2\E(X)X) + \E\left((\E(X))^2\right)\).</p>
+          <p>Par la formule \(\E(aX + b) = a\E(X) + b\) avec \(a = 2\E(X)\), \(b = 0\) : \(\E(2\E(X)X) = 2(\E(X))^2\). Et \((\E(X))^2\) est une constante : son espérance vaut \((\E(X))^2\).</p>
+          <p>Donc \(\mathrm{Var}(X) = \E(X^2) - 2(\E(X))^2 + (\E(X))^2 = \E(X^2) - (\E(X))^2\).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>Les dernières minutes</div><h2>Avant de rendre la copie</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Relis chaque exercice avec cette liste. Elle reprend les consignes des sujets et ce que les corrigés écrivent. Rien n’est enregistré.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Tout décocher</button></div>
+        <ul class="check" id="check">
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">Les deux examens</li>
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Forme demandée</b> : fraction simplifiée, entier, produit, ou « sans faire les calculs jusqu’au bout ».</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Justification</b> à chaque réponse : une phrase, une formule, ou un contre-exemple chiffré.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Au stylo</b>, rien au crayon de papier ; copie propre (malus d’un point sur 20).</label></li>
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">OBM</li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>Définitions</b> avec leurs quantificateurs et leurs ensembles (\(f(A)\), \(f^{-1}(B)\), injective, surjective, propriétés d’une relation).</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Négations</b> : quantificateurs échangés, ensembles gardés, \(\leq\) devenu \(>\), « et » devenu « ou ».</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Restrictions</b> : les deux ensembles donnés, avec la raison (stricte monotonie, image).</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>Intervalles</b> : chaque crochet vérifié (borne atteinte ou non), image réciproque cherchée dans le départ.</label></li>
+          <li class="check-t" style="display:block;background:none;border:0;padding:0">DP</li>
+          <li><input type="checkbox" id="c8"><label for="c8"><b>Dénombrement</b> : le modèle nommé (ordre, répétition), une phrase par facteur, « au moins » par le complémentaire.</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9"><b>Probabilités</b> : évènements nommés, données traduites, partition annoncée, formule littérale avant les nombres.</label></li>
+          <li><input type="checkbox" id="c10"><label for="c10"><b>Variables</b> : \(X(\Omega)\) et toutes les probabilités, somme 1, \(\E\) et \(\V\) détaillées, « indépendantes » écrit pour la binomiale.</label></li>
+          <li><input type="checkbox" id="c11"><label for="c11"><b>Démonstration</b> : chaque propriété citée là où elle sert, jusqu’à la formule de l’énoncé.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>À relire la veille</div><h2>Les pièges, thème par thème</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Logique et raisonnement</span><ul>
+            <li>\(\neg(P \Rightarrow Q)\) est \(P \land \neg Q\), ni \(\neg P \Rightarrow \neg Q\) ni \(P \Rightarrow \neg Q\).</li>
+            <li>Contraposée \(\neg Q \Rightarrow \neg P\) (équivalente) contre réciproque \(Q \Rightarrow P\).</li>
+            <li>« Certains » veut dire au moins un ; la négation de « certains poissons sont rouges » est « aucun poisson n’est rouge ».</li>
+            <li>Récurrence : le rang initial n’est pas toujours 0 (<span data-eq>\(2^5 = 32 < 37 = 6 \times 5 + 7\)</span>, alors que <span data-eq>\(2^6 = 64 \geq 43 = 6 \times 6 + 7\)</span>).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Ensembles et fonctions</span><ul>
+            <li>\(\in\) relie un élément à un ensemble, \(\subset\) deux ensembles : \(\{3\} \subset \{1, 2, 3\}\), \(\{3\} \in \mathcal{P}(A)\).</li>
+            <li>\(\card(\{\varnothing\}) = 1\) ; \(E \times F \neq F \times E\).</li>
+            <li>Une flèche manquante ou double dans un diagramme : ce n’est pas une fonction.</li>
+            <li>\(h \circ f = h \circ g\) n’entraîne pas \(f = g\) ; \(g \circ f\) n’existe que si l’arrivée de \(f\) est incluse dans le départ de \(g\).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Dénombrement</span><ul>
+            <li>« Si Marie est chef alors Pierre en fait partie » (TD 1 ex. 3.18, contrôle 2022) : le corrigé lit « Marie chef et Pierre dedans » (459), la logique donne 55 692. Écris ta lecture.</li>
+            <li>\((2n)! \neq 2 \times 4 \times \dots \times 2n\) (qui vaut \(2^n n!\)) ; \((n+1)! = (n+1) \times n!\).</li>
+            <li>\(\binom{10}{7} = \binom{10}{3}\) : deux modèles peuvent avoir la même réponse. \(\binom{n}{k}\) se note aussi \(C_n^k\).</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Probabilités et variables</span><ul>
+            <li>Incompatibles (\(A \cap B = \varnothing\)) n’est pas indépendants (\(\P(A \cap B) = \P(A)\P(B)\)).</li>
+            <li>Dés indiscernables : les 21 paires ne sont pas équiprobables, \(\P(\text{au moins un 6}) = \frac{11}{36}\).</li>
+            <li>Définir \(\P\) par les singletons : la somme doit faire 1.</li>
+            <li>\(\E(aX + b) = a\E(X) + b\) mais \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\) : \(b\) disparaît, \(a\) au carré.</li>
+            <li>Un entier « entre 0 et 20 » : 21 valeurs, <span data-eq>\(\P(X \geq 10) = \frac{11}{21}\)</span>, pas \(\frac{1}{2}\).</li>
+          </ul></div>
+        </div>
+        <div class="note exam"><span class="tag">Erreurs des documents officiels : ne les recopie pas</span><ul>
+          <li>Corrigé 2019 : « tableau » a 7 lettres, <span data-eq>\(\frac{7!}{2!} = 2\,520\)</span> anagrammes (pas 60) ; \(\P_B(A) = \frac{3}{4}\) (pas \(\frac{3}{7}\)) ; malade non vacciné <span data-eq>\(\frac{0{,}94 \times 0{,}1}{0{,}4} = \frac{47}{200}\)</span>.</li>
+          <li>Séminaire 4.27.3 : « \(a \mathrel{\mathcal{R}} b \Rightarrow a \mathrel{\mathcal{R}} b\) » : lire \(a \mathrel{\mathcal{R}} b \Rightarrow b \mathrel{\mathcal{R}} a\) (symétrie).</li>
+          <li>Fiche de dénombrement : Pascal \(\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}\) vaut pour \(1 \leq k \leq n\). Polycopié des fonctions usuelles : \(\ln(a^n) = n\ln(a)\) seulement pour \(a > 0\).</li>
+        </ul><p><a href="annales.html#erreurs">Toutes les erreurs relevées →</a></p></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  /* la liste à cocher (rien n’est enregistré) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' vérifiés'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche Maths · Révisions S1</title>
+<meta name="description" content="La fiche de révision de maths de l’examen 1, imprimable recto verso en A4 : au recto l’OBM (logique, quantificateurs, ensembles, fonctions, images, injectivité, fonctions usuelles, raisonnements, relations), au verso le DP (dénombrement, coefficients binomiaux, Pascal, binôme, Vandermonde, probabilités totales, Bayes, espérance, variance, Koenig-Huygens, Bernoulli, binomiale), avec les démonstrations à connaître et les pièges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Fiche : deux feuilles, OBM au recto et DP au verso, des cases en colonnes. À l’impression : une page A4 par feuille,
+   aucune case coupée, aucune formule coupée ni défilante (les formules sont en ligne et courtes). */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.4rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:46em;margin-top:.4rem}
+.side-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap;margin:6px 0 10px}
+.side-h h2{font-size:1.6rem}
+.side-h span{font-family:var(--font-ui);font-size:.86rem;color:var(--muted)}
+.a4{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:16px;columns:3 300px;column-gap:14px;margin-bottom:40px}
+.fb{break-inside:avoid;border:1px solid var(--line);border-top:2px solid var(--rule);padding:.55rem .65rem;margin:0 0 12px;display:grid;gap:.35rem;background:var(--bg);min-width:0}
+.fb>*{min-width:0}
+.fb h3{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0}
+.fb h3 a{color:inherit;text-decoration:none}
+.fb h3 a:hover{text-decoration:underline}
+.fb.hot{border-top-color:var(--exam);background:var(--exam-soft)}
+.fb.hot h3{color:var(--exam)}
+.fb.trapb{border-top-color:var(--red);background:var(--red-soft)}
+.fb.trapb h3{color:var(--red)}
+.fb.demo{border-top-color:var(--proof);background:var(--proof-soft)}
+.fb.demo h3{color:var(--proof)}
+.fb p,.fb li{font-size:.9rem;line-height:1.42}
+.fb ul{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.fb .katex{font-size:1em}
+.fb .muted{font-size:.84rem}
+.mt{width:100%;border-collapse:collapse;font-size:.86rem}
+.mt th,.mt td{padding:.12rem .3rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mt th{font-family:var(--font-ui);font-size:.66rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mt tr:last-child td{border-bottom:0}
+.mt.c td,.mt.c th{text-align:center}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress,.top p,.top .eyebrow{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 1.5mm}
+  .top h1{font-size:13pt;margin:0}
+  .side-h{margin:0 0 1.5mm}
+  .side-h h2{font-size:11pt}
+  .side-h span{font-size:7pt}
+  .a4{border:0;padding:0;columns:3;column-gap:3mm;margin:0;background:#fff}
+  .side.dp{break-before:page}
+  .fb{padding:1.3mm 1.7mm;margin-bottom:2mm;gap:.6mm;background:#fff!important;border-color:#999!important}
+  .fb p,.fb li,.mt{font-size:8.6pt;line-height:1.32}
+  .fb .muted{font-size:7.2pt}
+  .fb h3{font-size:7.4pt}
+  .fb ul{gap:.15mm}
+  .mt th,.mt td{padding:.15mm .7mm}
+  .mt th{font-size:6.4pt}
+  .katex{font-size:1em!important}
+  .fb .katex{white-space:nowrap}   /* à l’impression, une formule ne se coupe jamais (KaTeX couperait après =) */
+}
+</style>
+</head>
+<body data-resume="Maths · fiche de révision">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Maths</a> · Fiche</div><h1>Les maths de l’examen 1 sur une fiche</h1><p>À relire la veille et le matin du 28 octobre. Deux pages A4 à l’impression : l’OBM au recto, le DP au verso. Chaque titre de case renvoie à la partie du cours.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="methodes.html">Méthodes détaillées</a></div>
+  </div>
+
+  <div class="side obm">
+  <div class="side-h"><h2>Recto · OBM</h2><span>mercredi 28 octobre, 9 h 50 · 2 h · le séminaire</span></div>
+  <div class="a4 obm">
+    <section class="fb hot"><h3><a href="index.html#obm">À l’examen OBM</a></h3>
+      <ul>
+        <li>À chaque sujet (LE 2023, OBM 2024) : définitions de \(f(A)\) et \(f^{-1}(B)\) ; images sur un ensemble fini et sur des intervalles ; injective, surjective, puis restreindre ; une relation (4 points) ; négations ; implications entre conditions.</li>
+        <li>La rédaction est notée : définition, quantificateurs, preuve ou contre-exemple chiffré.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-1-logique.html#s3">Connecteurs</a></h3>
+      <ul>
+        <li>\(P \Rightarrow Q\) n’est fausse que si \(P\) vraie et \(Q\) fausse ; \((P \Rightarrow Q) \iff (\neg P \lor Q)\).</li>
+        <li>\(\neg(P \land Q) \iff \neg P \lor \neg Q\) ; \(\neg(P \lor Q) \iff \neg P \land \neg Q\) (De Morgan).</li>
+        <li>\(\neg(P \Rightarrow Q) \iff P \land \neg Q\) : ce n’est pas une implication.</li>
+        <li>Contraposée \(\neg Q \Rightarrow \neg P\) : équivalente. Réciproque \(Q \Rightarrow P\) : non.</li>
+        <li>\(P \Rightarrow Q\) : \(P\) condition <b>suffisante</b> pour \(Q\), \(Q\) condition <b>nécessaire</b> pour \(P\). On place ⇒ du petit ensemble de vérité vers le grand.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-1-logique.html#s7">Quantificateurs</a></h3>
+      <ul>
+        <li>\(\neg(\forall x \in E, P(x)) \iff \exists x \in E, \neg P(x)\) ; \(\neg(\exists x \in E, P(x)) \iff \forall x \in E, \neg P(x)\). Ensembles gardés.</li>
+        <li>\(\leq\) se nie en \(>\) ; \(m \leq f(x) \leq M\) en \(f(x) < m\) ou \(f(x) > M\).</li>
+        <li>L’ordre compte : \(\forall x\, \exists y,\ y > x\) vraie ; \(\exists y\, \forall x,\ y > x\) fausse.</li>
+        <li>Bornée : \(\exists (m, M) \in \R^2, \forall x \in \R, m \leq f(x) \leq M\). Majorée : \(\exists M \in \R, \forall x \in \R, f(x) \leq M\).</li>
+        <li>Constante : \(\exists c \in \R, \forall x \in \R, f(x) = c\). Périodique : \(\exists T \in \R^*, \forall x \in \R, f(x + T) = f(x)\).</li>
+        <li>Vrai ou faux : un \(\forall\) se prouve (« Soit \(x\) ») ou se réfute par un contre-exemple ; un \(\exists\) se prouve par un témoin.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-2-ensembles.html#s3">Ensembles</a></h3>
+      <ul>
+        <li>\(\in\) : élément dans ensemble ; \(\subset\) : ensemble dans ensemble. \(\{3\} \subset \{1, 2, 3\}\), \(\{3\} \in \mathcal{P}(A)\), \(\varnothing \subset A\).</li>
+        <li>\(A \subset B \iff \forall x \in A, x \in B\) ; \(A = B\) : double inclusion.</li>
+        <li>\(\overline{A \cup B} = \overline{A} \cap \overline{B}\) ; \(\overline{A \cap B} = \overline{A} \cup \overline{B}\) ; \(A \setminus B = A \cap \overline{B}\).</li>
+        <li>\(\card(A \times B) = \card(A)\card(B)\) ; \(\card(\mathcal{P}(E)) = 2^{\card(E)}\) ; \(E \times F \neq F \times E\).</li>
+        <li>Crible : \(\card(A \cup B) =\) \(\card(A) + \card(B) - \card(A \cap B)\) ; à trois : \(+\card(A \cap B \cap C)\) après les trois intersections deux à deux.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-3-fonctions.html#s2">Images</a></h3>
+      <ul>
+        <li>\(f(A) = \{f(x),\ x \in A\}\), soit \(\{y \in F,\ \exists x \in A,\ y = f(x)\}\) : une partie de \(F\).</li>
+        <li>\(f^{-1}(B) = \{x \in E,\ f(x) \in B\}\), partie de \(E\) : existe même si \(f\) n’est pas bijective ; peut être vide.</li>
+        <li>Intervalle : morceaux de stricte monotonie, borne fermée si atteinte : \(\exp(]0, \pi]) = ]1, e^{\pi}]\).</li>
+        <li>Résoudre dans le départ : sur \([-\pi, \pi]\), \(\sin^{-1}([0, 1])\) vaut \(\{-\pi\} \cup [0, \pi]\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-3-fonctions.html#s4">Injective, surjective</a></h3>
+      <ul>
+        <li>Injective : \(\forall (x, x') \in E^2,\ f(x) = f(x') \Rightarrow x = x'\). Non : \(f(a) = f(b)\) avec \(a \neq b\), chiffrés.</li>
+        <li>Surjective : \(\forall y \in F,\ \exists x \in E,\ y = f(x)\). Non : un \(y\) sans antécédent.</li>
+        <li>Bijective : \(\forall y \in F,\ \exists !\, x \in E,\ y = f(x)\).</li>
+        <li>Rendre injective : réduire le départ (stricte monotonie). Surjective : réduire l’arrivée à \(f(E)\).</li>
+        <li>Composée de deux injections : injection ; de deux surjections : surjection. \(h \circ f = h \circ g \not\Rightarrow f = g\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-3-fonctions.html#s8">Fonctions usuelles</a></h3>
+      <ul>
+        <li>\(\ln(ab) = \ln a + \ln b\), \(\ln(a^n) = n\ln a\) pour \(a, b > 0\) ; \(e^{a+b} = e^a e^b\), \(e^x > 0\).</li>
+        <li>\(\sqrt{a^2} = |a|\) ; \(|a + b| \leq |a| + |b|\) ; \(\cos\) paire, \(\sin\) impaire.</li>
+        <li>\(\tan' = 1 + \tan^2 = \frac{1}{\cos^2}\) ; \(\arctan : \R \to ]-\frac{\pi}{2}, \frac{\pi}{2}[\), \(\arctan'(y) = \frac{1}{1 + y^2}\).</li>
+        <li>\(\arctan 1 = \frac{\pi}{4}\), \(\arctan \sqrt{3} = \frac{\pi}{3}\), \(\arctan \frac{1}{\sqrt{3}} = \frac{\pi}{6}\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-raisonnement.html#s1">Raisonnements</a></h3>
+      <ul>
+        <li>\(\forall x \in E, P(x)\) : « Soit \(x \in E\) fixé. » ; \(P \Rightarrow Q\) : « Supposons \(P\). » ; \(A \subset B\) : « Soit \(x \in A\) fixé. »</li>
+        <li>Contraposée : supposer \(\neg Q\), arriver à \(\neg P\). Absurde : supposer \(\neg P\), arriver à une contradiction.</li>
+        <li>Récurrence : \(\mathcal{P}(n)\) posée ; initialisation au bon rang ; hérédité \(\mathcal{P}(n) \Rightarrow \mathcal{P}(n+1)\) ; conclusion.</li>
+        <li>\(\sum_{k=1}^{n} k = \frac{n(n+1)}{2}\) ; \(\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}\) ; \(\sum_{k=0}^{n} q^k = \frac{1 - q^{n+1}}{1 - q}\) si \(q \neq 1\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-raisonnement.html#s6">Relations</a></h3>
+      <ul>
+        <li>Réflexive : \(\forall x,\ x \mathrel{\mathcal{R}} x\). Symétrique : \(x \mathrel{\mathcal{R}} y \Rightarrow y \mathrel{\mathcal{R}} x\).</li>
+        <li>Antisymétrique : \((x \mathrel{\mathcal{R}} y \text{ et } y \mathrel{\mathcal{R}} x) \Rightarrow x = y\). Transitive : \((x \mathrel{\mathcal{R}} y \text{ et } y \mathrel{\mathcal{R}} z) \Rightarrow x \mathrel{\mathcal{R}} z\).</li>
+        <li>Ordre : réflexive, antisymétrique, transitive (\(\leq\)). Équivalence : réflexive, symétrique, transitive (congruence modulo 3).</li>
+        <li>Rappeler la définition, puis preuve ou contre-exemple chiffré. \(|a| \leq |b|\) : ni ordre, ni équivalence.</li>
+      </ul></section>
+
+    <section class="fb demo"><h3><a href="methodes.html#demonstrations">Démonstrations à connaître</a></h3>
+      <ul>
+        <li>\(g \circ f\) injective : \(g(f(x)) = g(f(x'))\) donne \(f(x) = f(x')\), donc \(x = x'\).</li>
+        <li>\(g \circ f\) surjective : un antécédent de \(y\) par \(g\), puis un antécédent de celui-ci par \(f\).</li>
+        <li>\((\forall \varepsilon > 0, |a| \leq \varepsilon) \Rightarrow a = 0\) : contraposée, \(\varepsilon = \frac{|a|}{2}\).</li>
+        <li>\(n^2\) pair \(\Rightarrow\) \(n\) pair : contraposée, \(n = 2k + 1\) donne \(n^2 = 2(2k^2 + 2k) + 1\).</li>
+        <li>\(\sqrt{2}\) irrationnel : absurde avec \(\frac{p}{q}\) irréductible.</li>
+      </ul></section>
+
+    <section class="fb trapb"><h3><a href="methodes.html#pieges">Pièges OBM</a></h3>
+      <ul>
+        <li>Négation qui change l’ensemble, ou \(\leq\) nié en \(<\).</li>
+        <li>« Croissante donc injective » : il faut <b>strictement</b>.</li>
+        <li>Surjective dépend de l’arrivée : \(x^2\) l’est sur \(\R^+\), pas sur \(\R\).</li>
+        <li>Antisymétrique n’est pas « non symétrique ».</li>
+        <li>\(\card(\{\varnothing\}) = 1\) ; une flèche manquante ou double : pas une fonction.</li>
+      </ul></section>
+  </div>
+  </div>
+
+  <div class="side dp">
+  <div class="side-h"><h2>Verso · DP</h2><span>mercredi 28 octobre, 14 h · 2 h · cours 1 et 2</span></div>
+  <div class="a4 dp">
+    <section class="fb hot"><h3><a href="index.html#dp">À l’examen DP</a></h3>
+      <ul>
+        <li>2023 et 2024, même plan : dénombrement concret ; identité binomiale par double dénombrement ; conditionnelles (totales, Bayes, seuil) ; démonstration de cours ; Bernoulli puis binomiale sur 20 tirages.</li>
+        <li>Fractions simplifiées, calculs détaillés, « ne surtout pas parachuter ».</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-5-denombrement.html#s6">Choisir la formule</a></h3>
+      <table class="mt">
+        <thead><tr><th>Situation</th><th>Nombre</th></tr></thead>
+        <tbody>
+          <tr><td>ordre, répétition (avec remise, codes)</td><td>\(n^p\)</td></tr>
+          <tr><td>ordre, tous, sans répétition</td><td>\(n!\)</td></tr>
+          <tr><td>ordre, sans répétition (podium, postes)</td><td>\(A_n^p = \frac{n!}{(n-p)!}\)</td></tr>
+          <tr><td>sans ordre (groupe, main, simultané)</td><td>\(\binom{n}{p} = \frac{n!}{p!\,(n-p)!}\)</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>« Au moins » : total moins le complémentaire. « Exactement » : produit des choix par catégorie.</li>
+        <li>Anagrammes : \(\frac{n!}{k_1!\,k_2!\cdots}\). \(A_{10}^3 = 720\) mais \(\binom{10}{3} = 120\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-5-denombrement.html#s7">Coefficients binomiaux</a></h3>
+      <ul>
+        <li>\(\binom{n}{0} = \binom{n}{n} = 1\), \(\binom{n}{1} = n\) ; symétrie \(\binom{n}{k} = \binom{n}{n-k}\).</li>
+        <li>Pascal (\(1 \leq k \leq n\)) : \(\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}\).</li>
+        <li>Binôme : \((x + y)^n = \sum_{k=0}^{n} \binom{n}{k} x^{n-k} y^k\) ; \(\sum_{k=0}^{n} \binom{n}{k} = 2^n\).</li>
+        <li>Vandermonde : \(\sum_{i=0}^{k} \binom{p}{i}\binom{n}{k-i} = \binom{n+p}{k}\).</li>
+        <li>\(\binom{n}{p}\binom{p}{k} = \binom{n}{k}\binom{n-k}{p-k}\) (DP 2024).</li>
+      </ul>
+      <table class="mt c">
+        <thead><tr><th>\(n\)</th><th>ligne \(n\) du triangle</th><th>somme</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>1 3 3 1</td><td>8</td></tr>
+          <tr><td>4</td><td>1 4 6 4 1</td><td>16</td></tr>
+          <tr><td>5</td><td>1 5 10 10 5 1</td><td>32</td></tr>
+        </tbody>
+      </table></section>
+
+    <section class="fb"><h3><a href="cours-6-probabilites.html#s2">Probabilités</a></h3>
+      <ul>
+        <li>\(\P : \mathcal{P}(\Omega) \to [0, 1]\), \(\P(\Omega) = 1\), \(\P(A \sqcup B) = \P(A) + \P(B)\) si \(A \cap B = \varnothing\).</li>
+        <li>\(\P(\varnothing) = 0\) ; \(\P(\overline{A}) = 1 - \P(A)\) ; \(\P(A \cup B) = \P(A) + \P(B) - \P(A \cap B)\).</li>
+        <li>Équiprobabilité : \(\P(A) = \frac{\card(A)}{\card(\Omega)}\).</li>
+        <li>\(\P(A \mid B) = \frac{\P(A \cap B)}{\P(B)}\) si \(\P(B) \neq 0\) ; \(\P(A \cap B) = \P(A \mid B)\P(B)\).</li>
+        <li>Indépendants : \(\P(A \cap B) = \P(A)\P(B)\). Incompatibles : \(A \cap B = \varnothing\). Ce n’est pas pareil.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-6-probabilites.html#s7">Probabilités totales, Bayes</a></h3>
+      <ul>
+        <li>« Comme \(\{S, \overline{S}\}\) forme une partition de \(\Omega\), \(V = (V \cap S) \sqcup (V \cap \overline{S})\) » :</li>
+        <li>\(\P(V) = \P(V \mid S)\P(S) + \P(V \mid \overline{S})\P(\overline{S})\).</li>
+        <li>Bayes : \(\P(S \mid V) = \frac{\P(V \mid S)\P(S)}{\P(V)}\).</li>
+        <li>Seuil : \(\P(V) = ap + b(1 - p) \geq s \iff p \geq \frac{s - b}{a - b}\) (si \(a > b\)). DP 2023 : <span data-eq>\(\frac{0{,}75 - 0{,}3}{0{,}8 - 0{,}3} = 0{,}9\)</span>.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-7-variables.html#s2">Variables aléatoires</a></h3>
+      <ul>
+        <li>Loi : \(X(\Omega)\) <b>et</b> les \(\P(X = x_i)\), de somme 1.</li>
+        <li>\(\E(X) = \sum x_i \P(X = x_i)\) ; transfert : \(\E(f(X)) = \sum f(x_i)\P(X = x_i)\).</li>
+        <li>\(\mathrm{Var}(X) = \E((X - \E(X))^2)\), puis Koenig-Huygens : \(\mathrm{Var}(X) = \E(X^2) - (\E(X))^2\) ; \(\sigma(X) = \sqrt{\mathrm{Var}(X)}\).</li>
+        <li>\(\E(aX + b) = a\E(X) + b\) ; \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\) ; \(\E(X + Y) = \E(X) + \E(Y)\).</li>
+        <li>\(X, Y\) indépendantes : \(\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-7-variables.html#s7">Bernoulli, binomiale</a></h3>
+      <ul>
+        <li>Bernoulli(\(p\)) : \(X(\Omega) = \{0, 1\}\), \(\P(X = 1) = p\) ; \(\E = p\), \(\mathrm{Var} = p(1 - p)\).</li>
+        <li>\(Y = X_1 + \dots + X_n\), Bernoulli(\(p\)) <b>indépendantes</b> : \(Y \sim \mathcal{B}(n, p)\), \(Y(\Omega) = \ent{0}{n}\).</li>
+        <li>\(\P(Y = k) = \binom{n}{k} p^k (1 - p)^{n-k}\) ; somme 1 par le binôme ; \(\E(Y) = np\), \(\mathrm{Var}(Y) = np(1 - p)\).</li>
+        <li>DP 2024 : \(\mathcal{B}(20, \frac{3}{4})\), <span data-eq>\(\E = 20 \times \frac{3}{4} = 15\)</span>, <span data-eq>\(\mathrm{Var} = 20 \times \frac{3}{4} \times \frac{1}{4} = \frac{15}{4}\)</span>.</li>
+        <li>Uniforme sur \(\{1, \dots, n\}\) : \(\E = \frac{n+1}{2}\), \(\mathrm{Var} = \frac{n^2 - 1}{12}\).</li>
+      </ul></section>
+
+    <section class="fb demo"><h3><a href="methodes.html#demonstrations">Démonstrations à connaître</a></h3>
+      <ul>
+        <li>\(\E(aX + b)\) : transfert avec \(x \mapsto ax + b\), somme séparée, \(\sum \P(X = x_i) = 1\).</li>
+        <li>Koenig-Huygens : développer \((X - \E(X))^2\), linéarité, \(\E(X)\) constante.</li>
+        <li>\(\mathrm{Var}(aX + b)\) : \((aX + b) - \E(aX + b) = a(X - \E(X))\).</li>
+        <li>Probabilités totales : \(A = \bigsqcup (A \cap B_i)\), additivité.</li>
+        <li>\(\P(\varnothing) = 0\) : \(A = A \sqcup \varnothing\). \(\P(A) = \P(A \setminus B) + \P(A \cap B)\).</li>
+        <li>Pascal : les tirages contiennent la boule 1 ou non. \(\sum \binom{n}{k} = 2^n\) : parties par cardinal.</li>
+      </ul></section>
+
+    <section class="fb trapb"><h3><a href="methodes.html#pieges">Pièges DP</a></h3>
+      <ul>
+        <li>Podium \(A_n^3\) contre vélos identiques \(\binom{n}{3}\) ; avec remise \(n^p\), pas \(p^n\).</li>
+        <li>« Au moins un » compté directement : doublons. Complémentaire.</li>
+        <li>\(\P(A \mid B)\) divise par \(\P(B)\) ; 1 % = 0,01.</li>
+        <li>\(\mathrm{Var} = \E(X^2) - (\E(X))^2\), avec un moins ; \(b\) disparaît de \(\mathrm{Var}(aX + b)\).</li>
+        <li>\(\P(Y = k)\) est un seul terme, pas une somme.</li>
+      </ul></section>
+  </div>
+  </div>
+</div>
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

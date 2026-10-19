@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annales · Maths</title>
+<meta name="description" content="Maths, examen 1 : les 11 sujets retrouvés (examens DP et OBM 2024, DP et LE 2023, contrôles 2016 à 2022), exercice par exercice : notions de chaque sujet, parties hors programme, PDF d’origine, corrigés détaillés, questions de QCM tirées de chaque sujet, et les erreurs des corrigés officiels.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Annales Maths : filtre par examen (OBM, DP), matrice notions × sujets, format, puis une fiche par sujet (format
+   actuel, anciens contrôles) et les erreurs des documents officiels. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.chip{font-family:var(--font-ui);font-size:.84rem;border:1px solid var(--line);border-radius:3px;padding:.2rem .6rem;color:var(--muted);text-decoration:none;background:var(--surface)}
+a.chip{color:var(--exam);border-color:var(--exam)}
+.ecf{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--sh-h,52px));z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px}
+.ecf .wrapx{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fchip{font:inherit;font-family:var(--font-ui);font-size:.86rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:3px;padding:.24rem .7rem;cursor:pointer;min-height:36px}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main.ann{display:grid;gap:56px;padding-block:40px 96px}
+main.ann>section{display:grid;gap:16px;min-width:0;scroll-margin-top:120px}
+.sec-t{display:grid;gap:.35rem;padding-top:.8rem;border-top:2px solid var(--rule)}
+.sec-t p{max-width:70ch;color:var(--muted)}
+.matrix td,.matrix th{text-align:center;white-space:nowrap;vertical-align:middle;padding:.42rem .45rem}
+.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:normal;min-width:11rem}
+.matrix thead a{color:inherit}
+.matrix .yr{font-family:var(--font-ui);font-size:.68rem;color:var(--muted);letter-spacing:0;text-transform:none}
+.matrix .tot{font-family:var(--font-ui);font-size:.82rem;font-weight:700}
+.matrix tr.never td:first-child{color:var(--warn)}
+.matrix tr.never td.nv{color:var(--warn);font-family:var(--font-ui);font-size:.8rem;text-align:left}
+.matrix tr.hp td:first-child{color:var(--muted);font-style:italic}
+.matrix .new{background:var(--exam-soft)}
+.matrix .ec{font-family:var(--font-ui);font-size:.7rem;color:var(--muted);font-weight:600}
+.dot{color:var(--accent);font-size:1.05rem}
+.dot.off{color:var(--muted)}
+.fmt td,.fmt th{vertical-align:middle}
+.fmt td.c{text-align:center;white-space:nowrap}
+.fmt .mono{font-family:var(--font-ui);font-size:.88rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fmt tr.cut td{border-top:2px solid var(--exam)}
+.pbar{display:inline-block;vertical-align:middle;width:70px;height:8px;background:var(--surface-2);margin-right:8px}
+.pbar i{display:block;height:100%;background:var(--accent)}
+.grp{display:grid;gap:18px}
+.grp>h3{font-size:1.3rem;margin:0}
+.grp>p{color:var(--muted);max-width:70ch}
+.exam-c{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:120px;min-width:0}
+.exam-c.now{border-top-color:var(--exam)}
+.exam-c.target{box-shadow:0 0 0 2px var(--accent-soft);border-color:var(--accent)}
+.exam-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.exam-h h4{margin:0;font-size:1.35rem}
+.exam-h .meta{font-family:var(--font-ui);font-size:.84rem;color:var(--muted)}
+.exam-b{padding:12px 16px 16px;display:grid;gap:12px}
+.exam-b>*{min-width:0}
+.prog{font-family:var(--font-ui);font-size:.82rem;color:var(--exam);border:1px solid var(--exam);border-radius:3px;padding:.08rem .55rem;justify-self:start}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.parts li{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:.55rem .7rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg)}
+.parts li.off{opacity:.6;border-style:dashed}
+.parts .n{font-family:var(--font-ui);font-size:.84rem;color:var(--muted)}
+.parts .p{font-family:var(--font-ui);font-size:.84rem;color:var(--muted);white-space:nowrap}
+.parts .pt{display:grid;gap:4px;min-width:0}
+.parts .pt a{font-size:.95rem}
+.parts .hp{font-family:var(--font-ui);font-size:.74rem;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 .4rem;margin-left:4px;white-space:nowrap}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.files .btn{font-size:.9rem}
+@media (max-width:560px){.parts li{grid-template-columns:40px minmax(0,1fr)}.parts .p{grid-column:2}}
+.errs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.errs{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-resume="Maths · annales">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · OBM et DP</b> — annales</span><span>Epidocs Past-Exams · Maths PC</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="11"></span><a href="index.html">Maths</a> · Annales</div>
+      <h1>Les 11 sujets, <span class="w">exercice par exercice.</span></h1>
+      <p class="lead">Depuis octobre 2023, deux examens séparés : DP et LE (devenu OBM). Avant, un contrôle combiné par an, surtout de l’analyse. Les parties hors programme de l’examen 1 sont grisées ; tout le reste est corrigé pas à pas dans l’entraînement, chaque réponse recalculée. Les corrigés officiels contiennent des erreurs : elles sont relevées en bas de page.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</header>
+
+<div class="ecf" id="ecf"><div class="wrapx" role="group" aria-label="Filtrer par examen"><span class="lbl">Examen</span>
+  <button type="button" class="fchip" data-e="" aria-pressed="true">Les deux</button>
+  <button type="button" class="fchip" data-e="obm" aria-pressed="false">OBM · le matin</button>
+  <button type="button" class="fchip" data-e="dp" aria-pressed="false">DP · l’après-midi</button>
+</div></div>
+
+<main class="wrapx ann">
+  <section id="matrice" aria-labelledby="t-mx">
+    <div class="sec-t"><div class="eyebrow">Vue d’ensemble</div><h2 id="t-mx">Quelles notions, quel sujet</h2><p>● la notion sert dans au moins un exercice au programme du sujet (survole le point pour voir lesquels) ; ○ une partie hors programme. Sous chaque sujet, la part du barème encore au programme. Les quatre colonnes colorées ont le format actuel.</p></div>
+    <div class="tbl"><table class="matrix" id="matrix"></table></div>
+  </section>
+
+  <section id="format" aria-labelledby="t-fmt">
+    <div class="sec-t"><div class="eyebrow">Évolution</div><h2 id="t-fmt">Le format, d’un sujet à l’autre</h2><p>Jusqu’en 2022, un contrôle de 3 h mêlant analyse, logique, fonctions, dénombrement et probabilités. Depuis 2023, un examen par ECUE ; cette année, OBM et DP durent 2 h chacun.</p></div>
+    <div class="tbl"><table class="fmt" id="fmt"></table></div>
+  </section>
+
+  <section id="sujets" aria-labelledby="t-ex">
+    <div class="sec-t"><div class="eyebrow">Sujets</div><h2 id="t-ex">Chaque sujet</h2></div>
+    <div class="grp"><h3>Format actuel : 2023 et 2024</h3><p>Les quatre sujets à faire en priorité, en temps réel et sans calculatrice. Les sujets 2024 n’ont pas de corrigé dans les annales : les réponses du site sont recalculées.</p><div id="now" class="grp"></div></div>
+    <div class="grp"><h3>Anciens contrôles : 2016 à 2022</h3><p>Des contrôles de 3 h, combinés : seuls leurs exercices de logique, d’ensembles, de fonctions, de dénombrement et de probabilités sont au programme de l’examen 1.</p><div id="old" class="grp"></div></div>
+  </section>
+
+  <section id="erreurs" aria-labelledby="t-err">
+    <div class="sec-t"><div class="eyebrow">À ne pas recopier</div><h2 id="t-err">Les erreurs des documents officiels</h2><p>Relevées en refaisant chaque calcul. Les fiches de l’entraînement donnent la bonne réponse et le disent.</p></div>
+    <div class="errs">
+      <div class="note trap"><span class="tag">Corrigés des sujets</span><ul>
+        <li><b>2019, ex. 5</b> : anagrammes de « tableau » : le corrigé écrit \(\frac{5!}{2!} = 60\). Le mot a 7 lettres, dont deux a : <span data-eq>\(\frac{7!}{2!} = 2\,520\)</span>.</li>
+        <li><b>2019, ex. 7</b> : le corrigé divise par \(\P(A) = 0{,}7\) et trouve \(\P_B(A) = \frac{3}{7}\). On divise par <span data-eq>\(\P(B) = 0{,}05 + 0{,}1 + 0{,}05 + 0{,}2 = 0{,}4\)</span> : <span data-eq>\(\P_B(A) = \frac{0{,}3}{0{,}4} = \frac{3}{4}\)</span>. La conclusion (non indépendants) reste juste.</li>
+        <li><b>2019, ex. 8</b> : probabilité d’être malade sans être vacciné : le corrigé divise par 0,6 et trouve environ 15,6 %. Juste : <span data-eq>\(\frac{0{,}94 \times 0{,}1}{0{,}4} = \frac{47}{200}\)</span>, soit 23,5 %.</li>
+        <li><b>2020, ex. 1</b> : « tout élève a au moins un camarade à moins de 5 min » traduit sans \(e' \neq e\) : l’assertion devient toujours vraie (chaque élève est à 0 min de lui-même).</li>
+        <li><b>2022, ex. 5</b> et <b>DP 2023, ex. 6</b> : « E(X) », « V(X) » écrits pour une autre variable (\(Y\), \(X_k\)) : coquilles sans effet sur les nombres.</li>
+        <li><b>DP 2024, ex. 6.2</b> : « \(k \in \ent{1}{n}\) » dans l’énoncé : lire \(\ent{1}{20}\). <b>Ex. 1.4</b> : \(\binom{7}{1}\binom{24}{3}\) ne choisit que 4 cartes sur 5 : la situation doit imposer une carte.</li>
+      </ul></div>
+      <div class="note trap"><span class="tag">Cours, fiches et TD</span><ul>
+        <li><b>Séminaire 4.27.3</b> (FR et EN) : « \(a \mathrel{\mathcal{R}} b \Rightarrow a \mathrel{\mathcal{R}} b\) » est une tautologie : lire \(a \mathrel{\mathcal{R}} b \Rightarrow b \mathrel{\mathcal{R}} a\) (symétrie).</li>
+        <li><b>Fiche « Probabilités conditionnelles »</b> : le dernier terme des probabilités totales est écrit \(\P(A \cap B_n)\P(B_n)\) : lire \(\P(A \mid B_n)\P(B_n)\).</li>
+        <li><b>Fiche « Dénombrement »</b> : Pascal énoncé pour \(k \in \ent{0}{n}\) ; \(\binom{n}{k-1}\) n’a de sens que pour \(1 \leq k \leq n\) (ou avec \(\binom{n}{-1} = 0\)).</li>
+        <li><b>Polycopié des fonctions usuelles</b> : \(\ln(a^n) = n\ln(a)\) « pour \(a \in \R\) » : il faut \(a > 0\).</li>
+        <li><b>Démonstrations à connaître, preuve 3</b> : « Soit \(A \in \mathcal{P}(\Omega)\) » sans introduire \(B\) : lire « Soit \((A, B) \in \mathcal{P}(\Omega)^2\) ».</li>
+        <li><b>TD 2, ex. 5.19</b> : la feuille anglaise porte sur \(\ent{0}{n}\) (\(\E = \frac{n}{2}\), \(\V = \frac{n(n+2)}{12}\)), la française sur \(\{1, \dots, n\}\) (\(\E = \frac{n+1}{2}\), \(\V = \frac{n^2 - 1}{12}\)) : chaque version a sa réponse.</li>
+      </ul></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../data/qcm/maths-annales.js"></script>
+<script src="../data/maths/exams.js"></script>
+<script src="../data/maths/ex-annales.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, E = window.MATHS_EXAMS || [], TOP = window.MATHS_TOPICS || {}, TEC = window.MATHS_ECUE || {}, EX = window.MATHS_EX || [];
+  var BANK = R.quiz.bank().filter(function (q) { return q.s === 'maths'; });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  var NOW = { 'p2024-dp': 1, 'p2024-obm': 1, 'p2023-dp': 1, 'p2023-le': 1 };
+  var EC = { obm: 'OBM', dp: 'DP', mixte: 'mixte' };
+  var sel = '';
+  function esc(s) { return U.esc(String(s)); }
+  function pts(v) { return String(v).replace('.', ','); }
+  function short(e) { var y = e.key.slice(1, 5), k = e.key.slice(6); return k ? k.toUpperCase() + ' ' + y : y; }
+  function inProg(e) { return (e.parts || []).filter(function (p) { return p.prog !== false; }); }
+  function strip(h) { return String(h).replace(/<[^>]+>/g, '').replace(/\\\(|\\\)/g, ''); }
+  /* un sujet est montré pour OBM s’il est OBM ou mixte (et a une partie OBM) ; de même pour DP */
+  function partEc(p) { var t = (p.topics || []).filter(function (x) { return TEC[x]; }); return t.length ? TEC[t[0]] : null; }
+  function examIn(e) { return !sel || e.ecue === sel || (e.ecue === 'mixte' && inProg(e).some(function (p) { return partEc(p) === sel; })) || (e.ecue === 'mixte' && !inProg(e).length); }
+  function partIn(p) { return !sel || p.prog === false || (p.topics || []).some(function (t) { return TEC[t] === sel; }); }
+  function qcmN(e) { return BANK.filter(function (q) { return R.quiz.ids(q).some(function (id) { return id.indexOf('maths-' + e.key + '-') === 0; }); }).length; }
+  var nCards = {}; E.forEach(function (e) { inProg(e).forEach(function (p) { if (p.card && BY[p.card]) nCards[p.card] = 1; }); });
+  document.getElementById('chips').innerHTML = '<span class="chip">' + E.length + ' sujets</span><span class="chip">4 au format actuel</span><span class="chip">' + Object.keys(nCards).length + ' exercices au programme corrigés</span><a class="chip" href="entrainement.html#partiel">corrigés détaillés →</a><a class="chip" href="#erreurs">erreurs officielles →</a>';
+
+  function paint() {
+    var ES = E.filter(examIn);
+    /* matrice notions × sujets */
+    var head = '<thead><tr><th>Notion</th>' + ES.map(function (e) { return '<th class="' + (NOW[e.key] ? 'new' : '') + '"><a href="#' + e.key + '" title="' + esc(e.title) + '">' + short(e) + '</a>' + (e.progPts ? '<br><span class="yr">' + esc(e.progPts) + '</span>' : '') + '</th>'; }).join('') + '<th>Sujets</th></tr></thead>';
+    var body = Object.keys(TOP).filter(function (t) { return !sel || TEC[t] === sel || t === 'hors-programme'; }).map(function (t) {
+      var hp = t === 'hors-programme', n = 0;
+      var cells = ES.map(function (e) {
+        var ps = hp ? (e.parts || []).filter(function (p) { return p.prog === false; }) : inProg(e).filter(function (p) { return (p.topics || []).indexOf(t) >= 0; });
+        if (ps.length) n++;
+        return '<td class="' + (NOW[e.key] ? 'new' : '') + '">' + (ps.length ? '<span class="dot' + (hp ? ' off' : '') + '" title="' + esc(ps.map(function (p) { return 'Ex. ' + p.ex + ' : ' + strip(p.t); }).join(' · ')) + '">' + (hp ? '○' : '●') + '</span>' : '') + '</td>';
+      }).join('');
+      if (!n) return '<tr class="never"><td>' + esc(TOP[t]) + '</td><td class="nv" colspan="' + (ES.length + 1) + '">jamais tombé dans ces sujets</td></tr>';
+      return '<tr' + (hp ? ' class="hp"' : '') + '><td>' + esc(TOP[t]) + (hp ? '' : ' <span class="ec">' + EC[TEC[t]] + '</span>') + '</td>' + cells + '<td class="tot">' + n + ' / ' + ES.length + '</td></tr>';
+    }).join('');
+    document.getElementById('matrix').innerHTML = head + '<tbody>' + body + '</tbody>';
+    /* format */
+    function dur(e) { var m = /(\d h(?: \d+)?)/.exec(e.meta || ''); return m ? m[1] : '—'; }
+    function frac(e) { var m = /([\d,]+)\s*\/\s*([\d,]+)/.exec(e.progPts || ''); return m ? parseFloat(m[1].replace(',', '.')) / parseFloat(m[2].replace(',', '.')) : 0; }
+    document.getElementById('fmt').innerHTML = '<thead><tr><th>Sujet</th><th>Examen</th><th>Durée</th><th>Barème par exercice</th><th>Au programme</th></tr></thead><tbody>' + ES.map(function (e) {
+      return '<tr' + (e.key === 'p2022' ? ' class="cut"' : '') + '><td><a href="#' + e.key + '">' + esc(e.title) + '</a></td><td class="c mono">' + EC[e.ecue] + '</td><td class="c mono">' + esc(dur(e)) + '</td><td class="mono">' + e.parts.map(function (p) { return pts(p.pts); }).join(' + ') + '</td><td class="mono"><span class="pbar" aria-hidden="true"><i style="width:' + Math.round(100 * frac(e)) + '%"></i></span>' + esc(e.progPts || '') + '</td></tr>';
+    }).join('') + '</tbody>';
+    /* une carte par sujet */
+    function cardHTML(e) {
+      var nq = qcmN(e);
+      var files = (e.files || []).map(function (f) { return '<a class="btn" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.t) + ' ↗</a>'; }).join('');
+      var parts = (e.parts || []).map(function (p) {
+        var c = p.card && BY[p.card], off = p.prog === false, dim = !off && !partIn(p);
+        var link = c && !off ? '<a href="entrainement.html#' + c.id + '">Corrigé détaillé : ' + c.title + ' →</a>' : '';
+        return '<li class="' + (off || dim ? 'off' : '') + '"><span class="n">Ex. ' + esc(p.ex) + '</span><span class="pt"><span>' + p.t + (off ? ' <span class="hp">hors programme</span>' : dim ? ' <span class="hp">' + EC[partEc(p)] + '</span>' : '') + '</span>' + link + '</span><span class="p">' + (p.pts ? pts(p.pts) + ' pts' : '') + '</span></li>';
+      }).join('');
+      return '<article class="exam-c' + (NOW[e.key] ? ' now' : '') + '" id="' + e.key + '"><div class="exam-h"><h4>' + esc(e.title) + '</h4><span class="meta">' + esc(e.meta || '') + '</span></div><div class="exam-b">' +
+        (e.progPts ? '<span class="prog">Au programme cette année : ' + esc(e.progPts) + '</span>' : '') +
+        (e.note ? '<p>' + e.note + '</p>' : '') + '<ul class="parts">' + parts + '</ul>' +
+        '<div class="files">' + files + (nq ? '<a class="btn primary" href="../qcm/index.html#maths-' + e.key + '">Ses ' + nq + ' questions dans le QCM</a>' : '') + '</div></div></article>';
+    }
+    document.getElementById('now').innerHTML = ES.filter(function (e) { return NOW[e.key]; }).map(cardHTML).join('');
+    document.getElementById('old').innerHTML = ES.filter(function (e) { return !NOW[e.key]; }).map(cardHTML).join('');
+    U.$$('#ecf [data-e]').forEach(function (b) { b.setAttribute('aria-pressed', String((b.dataset.e || '') === sel)); });
+  }
+  U.$$('#ecf [data-e]').forEach(function (b) { b.addEventListener('click', function () { sel = b.dataset.e || ''; paint(); }); });
+  function goHash() {
+    var h = (location.hash || '').slice(1);
+    if (h === 'obm' || h === 'dp') { sel = h; paint(); return; }
+    var t = h && document.getElementById(h);
+    if (!t && h && E.some(function (e) { return e.key === h; })) { sel = ''; paint(); t = document.getElementById(h); }
+    if (!t) return;
+    U.$$('.exam-c.target').forEach(function (x) { x.classList.remove('target'); });
+    if (t.classList.contains('exam-c')) t.classList.add('target');
+    setTimeout(function () { t.scrollIntoView(); }, 50);
+  }
+  paint(); goHash();
+  window.addEventListener('hashchange', goHash);
+})();
+</script>
+</body>
+</html>
