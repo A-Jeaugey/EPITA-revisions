@@ -172,7 +172,7 @@ main.ann>section{display:grid;gap:16px;min-width:0;scroll-margin-top:120px}
   function paint() {
     var ES = E.filter(examIn);
     var head = '<thead><tr><th>Topic</th>' + ES.map(function (e) { return '<th class="' + (NOW[e.key] ? 'new' : '') + '"><a href="#' + e.key + '" title="' + esc(e.title) + '">' + short(e) + '</a>' + (e.progPts ? '<br><span class="yr">' + esc(e.progPts) + '</span>' : '') + '</th>'; }).join('') + '<th>Papers</th></tr></thead>';
-    var body = Object.keys(TOP).filter(function (t) { return !sel || TEC[t] === sel || t === 'hors-programme'; }).map(function (t) {
+    var body = Object.keys(TOP).filter(function (t) { return (TEC[t] !== null || t === 'hors-programme') && (!sel || TEC[t] === sel || t === 'hors-programme'); }).map(function (t) {
       var hp = t === 'hors-programme', n = 0;
       var cells = ES.map(function (e) {
         var ps = hp ? (e.parts || []).filter(function (p) { return p.prog === false; }) : inProg(e).filter(function (p) { return (p.topics || []).indexOf(t) >= 0; });
