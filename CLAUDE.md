@@ -138,7 +138,7 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   binomiale sur 20 tirages) ; relations binaires tombées 6 fois sur 6 depuis 2019 ; corrigé 2019 faux (« tableau » :
   2 520 anagrammes) ; fiche « Probabilités conditionnelles » : formule des probabilités totales mal écrite. APIS (analyse)
   relève de l'examen 2 (décembre) : chapitres à ajouter.
-- **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date et créneau, tiers-temps compris) ;
+- **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
   d’Epidocs/Past-Exams.

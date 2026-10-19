@@ -192,7 +192,8 @@ a.stat:hover{border-color:var(--accent)}
     images: [[3, 2], [3, 3]], injections: [[3, 4], [3, 5], [3, 6]], usuelles: [[3, 3], [3, 8]], raisonnement: [[4, 1], [4, 3], [4, 4]], relations: [[4, 6]], recurrence: [[4, 7]], sommes: [[4, 8]],
     denombrement: [[5, 4], [5, 5], [5, 6]], binomial: [[5, 7], [5, 8]], probabilites: [[6, 2], [6, 4]], conditionnelles: [[6, 5], [6, 7]], independance: [[6, 6]], bayes: [[6, 8]],
     variables: [[7, 1]], esperance: [[7, 2], [7, 4]], lois: [[7, 6], [7, 7]], demonstrations: [[7, 3], [7, 4], [7, 5]] };
-  var st = { ecue: null, topic: null, kind: null, lvl: 0, state: null };
+  var st = { ecue: null, topic: null, kind: null, lvl: 0, state: null, nostar: false };
+  function starred(e) { return e.kind !== 'partiel' && e.src.indexOf('★') >= 0; }
   function key(ex) { return 'maths-' + ex.id; }
   function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
   function esc(s) { return U.esc(String(s)); }
@@ -200,7 +201,7 @@ a.stat:hover{border-color:var(--accent)}
   function pts(v) { return String(v); }
   function stOk(e, s) { var x = state(e); return s === 'todo' ? !x : x === s; }
   function inEcue(e) { return !st.ecue || e.ecue === st.ecue; }
-  function shown(e) { return inEcue(e) && (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)); }
+  function shown(e) { return inEcue(e) && (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)) && (!st.nostar || !starred(e)); }
 
   function paintStats() {
     var ok = 0, rv = 0, np = 0;
@@ -216,7 +217,8 @@ a.stat:hover{border-color:var(--accent)}
     $('#fTopic').innerHTML = '<span class="lbl">Topic</span>' + chip('data-t', '', !st.topic, 'All', base.length) +
       topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), base.filter(function (e) { return has(e, t); }).length); }).join('');
     $('#fKind').innerHTML = '<span class="lbl">Source</span>' + chip('data-k', '', !st.kind, 'All') +
-      KINDS.map(function (k) { var n = base.filter(function (e) { return prov(e) === k.id; }).length; return n ? chip('data-k', k.id, st.kind === k.id, k.t, n) : ''; }).join('');
+      KINDS.map(function (k) { var n = base.filter(function (e) { return prov(e) === k.id; }).length; return n ? chip('data-k', k.id, st.kind === k.id, k.t, n) : ''; }).join('') +
+      '<button type=\"button\" class=\"fchip\" id=\"fStar\" title=\"Your teacher asks you to redo every exercise of the worksheets that has no star\" aria-pressed=\"' + st.nostar + '\">Without ★<span class=\"n\">' + base.filter(starred).length + '</span></button>';
     $('#fLvl').innerHTML = '<span class="lbl">Level</span>' + chip('data-l', 0, !st.lvl, 'All') +
       [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), base.filter(function (e) { return e.lvl === l; }).length); }).join('');
     $('#fState').innerHTML = '<span class="lbl">Status</span>' + chip('data-s', '', !st.state, 'All') +
@@ -225,6 +227,7 @@ a.stat:hover{border-color:var(--accent)}
     $$('#fEcue [data-e]').forEach(function (b) { b.addEventListener('click', function () { st.ecue = b.dataset.e || null; if (st.topic && st.ecue && TEC[st.topic] !== st.ecue) st.topic = null; repaint(); }); });
     $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
     $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });
+    $('#fStar').addEventListener('click', function () { st.nostar = !st.nostar; repaint(); });
     $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; repaint(); }); });
     $$('#fState [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.state = b.dataset.s || null; repaint(); }); });
   }
