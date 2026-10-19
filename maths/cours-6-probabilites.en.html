@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Probability · Maths</title>
+<meta name="description" content="Maths, DP, lesson 6: sample set and events, probability function and probability space, properties with their proofs (proofs you have to know), equiprobability, conditional probability, independence, law of total probability and Bayes’ formula with their proofs, the “threshold” question of the exams. With a probability tree in fractions and a Venn diagram.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* Figures of lesson 6 (drawn in the page, in the theme colours) */
+.p6-fig{margin:0;min-width:0}
+.p6-fig svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto}
+.p6-fig .om{fill:none;stroke:var(--rule);stroke-width:1.2}
+.p6-fig .z1{fill:var(--z1);fill-opacity:.16}
+.p6-fig .z2{fill:var(--z2);fill-opacity:.16}
+.p6-fig .z3{fill:var(--z3);fill-opacity:.34}
+.p6-fig .s1{fill:none;stroke:var(--z1);stroke-width:2}
+.p6-fig .s2{fill:none;stroke:var(--z2);stroke-width:2}
+.p6-fig .ln{fill:none;stroke:var(--ink);stroke-width:1.6}
+.p6-fig .cut{stroke:var(--rule);stroke-width:1.4;stroke-dasharray:6 4}
+.p6-fig .ax{stroke:var(--rule);stroke-width:1.2}
+.p6-fig .cv{stroke:var(--accent);stroke-width:2.6;fill:none}
+.p6-fig .th{stroke:var(--red);stroke-width:1.5;stroke-dasharray:5 4}
+.p6-fig .ok{stroke:var(--ok);stroke-width:5;stroke-linecap:round}
+.p6-fig text{font-family:var(--font-ui);font-size:14px;fill:var(--ink)}
+.p6-fig text.mu{fill:var(--muted);font-size:13px}
+.p6-fig text.nm{font-family:var(--font-display);font-style:italic;font-size:20px}
+.p6-fig text.n1{fill:var(--z1)} .p6-fig text.n2{fill:var(--z2)} .p6-fig text.rd{fill:var(--red)} .p6-fig text.ac{fill:var(--accent);font-weight:600}
+/* sample set of two dice: 36 pairs */
+.p6-dice{border-collapse:collapse;margin:0 auto;font-family:var(--font-ui);font-variant-numeric:tabular-nums;font-size:.86rem}
+.p6-dice th,.p6-dice td{width:2.7rem;height:2.1rem;text-align:center;border:1px solid var(--line);padding:0}
+.p6-dice th{background:var(--surface-2);color:var(--muted);font-weight:600}
+.p6-dice td{color:var(--muted)}
+.p6-dice td.hit{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.p6-dice th.corner{border:0;background:none}
+/* bar of the positive tests */
+.p6-bar{display:flex;height:30px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.p6-bar span{display:block;height:100%}
+.p6-bar .m{background:var(--red)} .p6-bar .s{background:var(--accent);opacity:.35}
+.p6-leg{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--font-ui);font-size:.86rem;color:var(--muted);margin-top:.45rem}
+.p6-leg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+@media print{.p6-dice td.hit{background:#e6ebfb}}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths · lesson 6: probability">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · DP</b> — lesson 6 of 7</span><span>Source: lecture 2, MiMos 1 and 2 · summary sheets · theorems and proofs · exercises 2, § 1 to 3</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="6"></span><a href="index.html">Maths</a> · DP · Lesson 6 of 7</div>
+      <h1>Compute a probability, <span class="w">then turn it around.</span></h1>
+      <p class="lead">A sample set, events, a probability function that satisfies two axioms: everything else can be proved. This lesson goes up to conditional probabilities, the law of total probability and Bayes’ formula. The exercise “translate, total probability, Bayes, threshold” was set in both of the last two DP exams.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 60 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with 4 proofs</span></li>
+        <li><span><span class="k">Course</span> MiMos 1 and 2 · exercises 2, § 1 to 3</span></li>
+        <li class="ex"><span><span class="k">Exam</span> total probability and Bayes in 2023 and in 2024</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-maths="tree" data-opts='{"first":[{"n":"M","p":"1/100"},{"n":"\\overline{M}"}],"second":{"n":"T","nb":"\\overline{T}","p":["19/20","1/10"]},"title":"Probability tree · medical test"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — A disease affects 1% of a population (\(M\)). The test is positive (\(T\)) for 95% of sick people and for 10% of healthy people. Change the values, click a leaf: total probability and Bayes, in fractions. A positive test only means a <span data-eq="test-MsT">\(\frac{19}{217} \approx 8.8\,\%\)</span> risk of being sick (part 8).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 6 · Probability</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Sample set and events</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Probability, probability space</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Properties, with proofs</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Equiprobability</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Conditional probability</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Independence</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Total probability</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Bayes, the “threshold” question</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Maths home</a><a href="cours-7-variables.html">Lesson 7: random variables →</a><a href="../qcm/index.html#maths">Maths MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Sample set and events</a></li><li><a href="#s2">Probability, probability space</a></li><li><a href="#s3">Properties, with proofs</a></li><li><a href="#s4">Equiprobability</a></li>
+      <li><a href="#s5">Conditional probability</a></li><li><a href="#s6">Independence</a></li><li><a href="#s7">Total probability</a></li><li><a href="#s8">Bayes, the “threshold” question</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">summary sheet “Probability space” § 1.1 · ex. 1.2</span></div><h2>Random experiment, sample set, events</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>random experiment</b> is an experiment whose outcome cannot be predicted with certainty: rolling a dice, drawing a hand of cards, picking a student at random. Each possible result is an <b>outcome</b>, written \(\omega\). In this lesson, there are only finitely many outcomes.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>sample set, event</i></span>
+          <ul>
+            <li>The <b>sample set</b> (or sample space) \(\Omega\) is the set of all outcomes. It is finite: \(\Omega = \{\omega_1, \ldots, \omega_n\}\).</li>
+            <li>An <b>event</b> is a subset of \(\Omega\): \(A \subset \Omega\). We say that \(A\) occurs when the outcome obtained belongs to \(A\).</li>
+            <li>An <b>elementary event</b> contains only one outcome: it is a singleton \(\{\omega\}\).</li>
+            <li>\(\mathcal{P}(\Omega)\), the power set of \(\Omega\), is the set of all events. \(\Omega\) is the certain event, \(\varnothing\) the impossible event.</li>
+          </ul>
+        </div>
+        <div class="prose">
+          <p>Events are sets: they are combined with the operations of lesson 2. Each operation has its sentence. In the table, we roll a dice: \(\Omega = \ent{1}{6}\), \(A\) “getting an even number” \(= \{2, 4, 6\}\) and \(B\) “getting at least 4” \(= \{4, 5, 6\}\).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.1 — The language of events</caption>
+          <thead><tr><th>Sentence</th><th>Notation</th><th>On the dice</th></tr></thead>
+          <tbody>
+            <tr><td>“\(A\) and \(B\)”</td><td>\(A \cap B\)</td><td data-eq="de-AinterB">\(\{4, 6\}\)</td></tr>
+            <tr><td>“\(A\) or \(B\)” (at least one of them)</td><td>\(A \cup B\)</td><td data-eq="de-AunionB">\(\{2, 4, 5, 6\}\)</td></tr>
+            <tr><td>“not \(A\)”: the complement</td><td>\(\overline{A} = \Omega \setminus A\)</td><td data-eq="de-Abar">\(\{1, 3, 5\}\)</td></tr>
+            <tr><td>“\(A\) but not \(B\)”</td><td>\(A \setminus B = A \cap \overline{B}\)</td><td data-eq="de-AmoinsB">\(\{2\}\)</td></tr>
+            <tr><td>“\(A\) implies \(B\)”</td><td>\(A \subset B\)</td><td>“getting 6” implies \(B\)</td></tr>
+            <tr><td>“\(A\) and \(B\) cannot occur together”</td><td>\(A \cap B = \varnothing\)</td><td>“getting 1” and \(B\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box def"><span class="tag">Definition <i>incompatible events, partition</i></span>
+          <ul>
+            <li>\(A\) and \(B\) are <b>incompatible</b> (mutually exclusive, disjoint) if \(A \cap B = \varnothing\).</li>
+            <li>\(A_1, \ldots, A_p\) are <b>pairwise disjoint</b> if \(A_i \cap A_j = \varnothing\) for all \(i \neq j\).</li>
+            <li>They form a <b>partition</b> of \(\Omega\) (mutually exclusive collectively exhaustive events) if they are pairwise disjoint and their union is \(\Omega\): \(\Omega = A_1 \sqcup A_2 \sqcup \cdots \sqcup A_p\). Each outcome then belongs to one and only one \(A_i\). The symbol \(\sqcup\) denotes a union of disjoint sets.</li>
+            <li>For any event \(A\), \((A, \overline{A})\) is a partition of \(\Omega\): it is the one used in total probability exercises (part 7).</li>
+          </ul>
+        </div>
+        <div data-maths="venn" data-opts='{"n":2,"names":["A","B"],"u":"\\Omega","expr":"A \\setminus B","title":"Events · shade or type an expression"}'></div>
+        <div class="prose">
+          <p>Type <code>!(A|B)</code>: the region outside both circles, “neither \(A\) nor \(B\)”. Then type <code>!A &amp; !B</code>: the same regions. This is De Morgan’s law, \(\overline{A \cup B} = \overline{A} \cap \overline{B}\) (lesson 2).</p>
+          <p><b>Example (ex. 1.2): describing the sample set.</b> A box contains 5 red and 6 white marbles. To get equally likely outcomes, <b>number</b> the marbles from 1 to 11 (the red ones from 1 to 5). The form of \(\Omega\) depends on the way of drawing (lesson 5).</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.2 — Ex. 1.2: the sample set of each experiment (cardinal numbers recomputed by enumeration)</caption>
+          <thead><tr><th>Experiment</th><th>An outcome</th><th>\(\card(\Omega)\)</th><th>Each outcome</th></tr></thead>
+          <tbody>
+            <tr><td>tossing a coin</td><td>\(H\) or \(T\)</td><td>\(2\)</td><td>\(\frac{1}{2}\)</td></tr>
+            <tr><td>rolling a dice</td><td>an integer in \(\ent{1}{6}\)</td><td>\(6\)</td><td>\(\frac{1}{6}\)</td></tr>
+            <tr><td>two dice of different colours</td><td>a 2-tuple of \(\ent{1}{6}^2\)</td><td data-eq>\(6^2 = 36\)</td><td>\(\frac{1}{36}\)</td></tr>
+            <tr><td>3 marbles with replacement</td><td>a 3-tuple of \(\ent{1}{11}^3\)</td><td data-eq="card-avec">\(11^3 = 1\,331\)</td><td>\(\frac{1}{1\,331}\)</td></tr>
+            <tr><td>3 marbles simultaneously</td><td>a 3-element subset of \(\ent{1}{11}\)</td><td data-eq="card-simul">\(\binom{11}{3} = 165\)</td><td>\(\frac{1}{165}\)</td></tr>
+            <tr><td>3 marbles successively, without replacement</td><td>a 3-tuple of distinct elements</td><td data-eq="card-succ">\(11 \times 10 \times 9 = 990\)</td><td>\(\frac{1}{990}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>simultaneously drawing 3 marbles</i></span>
+          <p>Number the marbles from 1 to 11, the red ones from 1 to 5.<span class="c">distinct objects</span></p>
+          <p>An outcome is a 3-element subset of \(\ent{1}{11}\): \(\Omega = \{X \subset \ent{1}{11} \mid \card(X) = 3\}\), and \(\card(\Omega) = \binom{11}{3} = 165\).</p>
+          <p>The marbles cannot be distinguished by touch: the 165 outcomes are equally likely, each with probability \(\frac{1}{165}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: a sample set with repetitions</span>
+          <ul>
+            <li>“\(\Omega = \{R, R, R, W, \ldots\}\)” is not a set: an element appears only once in a set. And the sample set \(\{R, W\}\) does not give equally likely outcomes (5 red, 6 white). Number identical objects.</li>
+            <li>Incompatible is not complementary. \(A\) and \(\overline{A}\) are incompatible and their union is \(\Omega\). “Getting 1” and “getting 2” are incompatible without being complementary.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">summary sheet “Probability space” § 1.2 · ex. 1.1</span></div><h2>Probability function, probability space</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>probability function, probability space</i></span>
+          <p>Let \(\Omega\) be a finite set. A <b>probability function</b> on \(\Omega\) is a function \(\P : \mathcal{P}(\Omega) \to [0, 1]\) that satisfies the two axioms:</p>
+          <ol>
+            <li>\(\P(\Omega) = 1\);</li>
+            <li>for any pair of <b>disjoint</b> events \((A, B) \in [\mathcal{P}(\Omega)]^2\), \(\P(A \sqcup B) = \P(A) + \P(B)\).</li>
+          </ol>
+          <p>The 3-tuple \((\Omega, \mathcal{P}(\Omega), \P)\) is a <b>probability space</b>.</p>
+        </div>
+        <div class="prose">
+          <p>Exercises 2 (ex. 1.1) start from the three <b>Kolmogorov’s axioms</b>: \(f(\Omega) = 1\), \(f(A) \geq 0\) for every \(A\), and additivity for two disjoint events. It is the same thing: with these three axioms, one proves that \(f\) takes its values in \([0, 1]\) (part 3). Such an \(f\) is called a probability function, and \((\Omega, \mathcal{P}(\Omega), f)\) a probability space.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>a probability function is determined by the singletons</i></span>
+          <p>If \(\Omega = \{\omega_1, \ldots, \omega_n\}\), for any event \(A\):</p>
+          <div class="fm">\[\P(A) = \sum_{\omega \in A} \P(\{\omega\}).\]</div>
+          <p>Conversely, numbers \(p_1, \ldots, p_n\) that are <b>non-negative and add up to 1</b> define one and only one probability function on \(\Omega\) such that \(\P(\{\omega_i\}) = p_i\) for every \(i\). The first statement is proved in part 3 (property 2).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>defining a probability function, or checking that you have one</i></span>
+          <ol>
+            <li>Give the probability \(p_i\) of each outcome \(\omega_i\).</li>
+            <li>Check that each \(p_i\) is non-negative and that \(p_1 + \cdots + p_n = 1\).</li>
+            <li>The probability of an event is the sum of the probabilities of its outcomes.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Example (midterm, October 2019, ex. 7).</b> A loaded 8-sided dice has the following distribution.</p>
+        </div>
+        <div class="tbl"><table class="tv">
+          <caption>Table 6.3 — The 8-sided dice of 2019: the probability of each side</caption>
+          <thead><tr><th>side</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+          <tbody><tr><th>\(\P\)</th><td>\(0.05\)</td><td>\(0.1\)</td><td>\(0.05\)</td><td>\(0.2\)</td><td>\(0.1\)</td><td>\(0.3\)</td><td>\(0.1\)</td><td>\(0.1\)</td></tr></tbody>
+        </table></div>
+        <div class="calc" data-eq><div class="fm">\(0.05 + 0.1 + 0.05 + 0.2 + 0.1 + 0.3 + 0.1 + 0.1 = 1\)</div></div>
+        <div class="prose">
+          <p>The eight numbers are non-negative and add up to 1: this is a probability function. Let \(A\) be “the side is even” \(= \{2, 4, 6, 8\}\) and \(B\) “the side is at most 4” \(= \{1, 2, 3, 4\}\):</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="d8-A">\(\P(A) = \P(\{2\}) + \P(\{4\}) + \P(\{6\}) + \P(\{8\}) = 0.1 + 0.2 + 0.3 + 0.1 = 0.7 = \frac{7}{10}\)</div><div class="fm" data-eq="d8-B">\(\P(B) = 0.05 + 0.1 + 0.05 + 0.2 = 0.4 = \frac{2}{5}\)</div></div>
+        <div class="prose">
+          <p><b>In the Monday MCQs.</b> On 7 October 2024: \(\P(\{1\}) = 0.3\) and \(\P(\{k\}) = \frac{0.7}{5}\) for \(k \in \ent{2}{6}\). <span data-eq>\(0.3 + 5 \times \frac{0.7}{5} = 1\)</span>: this is a probability function. On 6 October 2025: \(\P(\{1\}) = 0.1\) and \(0.3\) for each of the five other sides. <span data-eq="qcm25-sum">\(0.1 + 5 \times 0.3 = 1.6\)</span>, and \(1.6 \neq 1\): this is not one.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>check, then compute</i></span>
+          <p>On \(\Omega = \ent{1}{6}\), let \(\P(\{1\}) = 0.3\) and \(\P(\{k\}) = 0.14\) for \(k \in \ent{2}{6}\).</p>
+          <p>These six numbers are non-negative and <span data-eq>\(0.3 + 5 \times 0.14 = 1\)</span>: they define a probability function on \(\Omega\).<span class="c">both conditions</span></p>
+          <p>“Getting an even number” is \(\{2, 4, 6\} = \{2\} \sqcup \{4\} \sqcup \{6\}\), hence <span data-eq="truq-pair">\(\P(\{2, 4, 6\}) = 0.14 + 0.14 + 0.14 = 0.42 = \frac{21}{50}\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: adding events that overlap</span>
+          <ul>
+            <li>\(\P(A \cup B) = \P(A) + \P(B)\) only holds if \(A\) and \(B\) are <b>disjoint</b> (a wrong box ticked in the MCQ of 7 October 2024). On a fair dice, with \(A\) “even” and \(B\) “at least 4”: <span data-eq>\(\P(A) + \P(B) = \frac{1}{2} + \frac{1}{2} = 1\)</span>, whereas <span data-eq>\(\P(A \cup B) = \frac{4}{6} = \frac{2}{3}\)</span>.</li>
+            <li>A probability is never negative and never greater than 1: always check that your results are consistent.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">theorems and proofs § 1 · ex. 1.1</span></div><h2>Properties of a probability function, with proofs</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>You know these properties well, you have seen them before. The purpose here is to see that they can be proved using the two axioms only. The Moodle document “Theorems and proofs” gives them, written as below: lecture questions may ask for them.</p>
+        </div>
+        <div class="box thm"><span class="tag">Proposition <i>properties of a probability function</i></span>
+          <p>Let \((\Omega, \mathcal{P}(\Omega), \P)\) be a probability space.</p>
+          <ol>
+            <li>\(\P(\varnothing) = 0\).</li>
+            <li>If \(\Omega = \{\omega_1, \omega_2, \ldots, \omega_n\}\), the values \(\P(\{\omega_1\}), \P(\{\omega_2\}), \ldots, \P(\{\omega_n\})\) enable one to define the function \(\P\).</li>
+            <li>\(\forall (A, B) \in [\mathcal{P}(\Omega)]^2,\ \P(A) = \P(A \setminus B) + \P(A \cap B)\).</li>
+            <li>\(\forall (A, B) \in [\mathcal{P}(\Omega)]^2,\ \P(A \cup B) + \P(A \cap B) = \P(A) + \P(B)\).</li>
+          </ol>
+        </div>
+        <div class="box proof"><span class="tag">Proof you have to know <i>Theorems and proofs, § 1</i></span>
+          <p>From the definition of a probability function, we know that: (i) \(\P(\Omega) = 1\); (ii) for all \((A, B) \in [\mathcal{P}(\Omega)]^2\) such that \(A \cap B = \varnothing\), \(\P(A \sqcup B) = \P(A) + \P(B)\). Now, let us prove the four properties.</p>
+          <p><b>1.</b> For any set \(A \in \mathcal{P}(\Omega)\), we have \(A \cap \varnothing = \varnothing\). Thus, by using the second axiom satisfied by the function \(\P\), we get:</p>
+          <div class="fm">\[\P(A \sqcup \varnothing) = \P(A) + \P(\varnothing).\]</div>
+          <p>However, \(A \sqcup \varnothing = A\). Hence \(\P(A) = \P(A) + \P(\varnothing)\), which implies: \(\P(\varnothing) = 0\).</p>
+          <p><b>2.</b> We have to show that for all \(A \in \mathcal{P}(\Omega)\), the value of \(\P(A)\) can be determined. Let \(A \in \mathcal{P}(\Omega)\). Since \(\Omega\) is a finite set, \(A \subset \Omega\) is a finite set too. We can hence enumerate its elements and write \(A\) with the form</p>
+          <div class="fm">\[A = \{x_1, x_2, \ldots, x_p\} \quad \text{with} \quad \card(A) = p.\]</div>
+          <p>Thus, \(A\) can be expressed as the disjoint union \(A = \{x_1\} \sqcup \{x_2\} \sqcup \cdots \sqcup \{x_p\}\). By using the second axiom satisfied by the function \(\P\), we get:</p>
+          <div class="fm">\[\P(A) = \P(\{x_1\}) + \P(\{x_2\}) + \cdots + \P(\{x_p\}).\]</div>
+          <p><b>3.</b> Let \((A, B) \in [\mathcal{P}(\Omega)]^2\). \(A\) can be written as the disjoint union \(A = (A \setminus B) \sqcup (A \cap B)\). Thus,</p>
+          <div class="fm">\[\P(A) = \P(A \setminus B) + \P(A \cap B).\]</div>
+          <p><b>4.</b> Let \((A, B) \in [\mathcal{P}(\Omega)]^2\). The set \(A \cup B\) can be written as the disjoint union \(A \cup B = (A \setminus B) \sqcup (A \cap B) \sqcup (B \setminus A)\). We hence get:</p>
+          <div class="fm">\[\P(A \cup B) = \P(A \setminus B) + \P(A \cap B) + \P(B \setminus A).\]</div>
+          <p>Furthermore, using property 3,</p>
+          <div class="fm">\[\begin{cases} \P(A) = \P(A \setminus B) + \P(A \cap B) \\ \P(B) = \P(B \setminus A) + \P(A \cap B) \end{cases}\]</div>
+          <p>By summing these two relations, we get:</p>
+          <div class="fm">\[\P(A) + \P(B) = \underbrace{\P(A \setminus B) + \P(A \cap B) + \P(B \setminus A)}_{\P(A \cup B)} + \P(A \cap B).\]</div>
+          <p>Thus, \(\P(A \cup B) + \P(A \cap B) = \P(A) + \P(B)\).</p>
+        </div>
+        <figure class="p6-fig">
+          <svg viewBox="0 0 400 240" role="img" aria-label="Venn diagram: the sample set Ω contains A and B, which overlap; A ∪ B is cut into A \ B, A ∩ B and B \ A.">
+            <defs><clipPath id="p6-clipA"><circle cx="155" cy="128" r="88"/></clipPath></defs>
+            <rect class="om" x="6" y="6" width="388" height="228" rx="10"/>
+            <circle class="z1" cx="155" cy="128" r="88"/>
+            <circle class="z2" cx="245" cy="128" r="88"/>
+            <circle class="z3" cx="245" cy="128" r="88" clip-path="url(#p6-clipA)"/>
+            <circle class="s1" cx="155" cy="128" r="88"/>
+            <circle class="s2" cx="245" cy="128" r="88"/>
+            <text class="nm n1" x="84" y="44">A</text>
+            <text class="nm n2" x="306" y="44">B</text>
+            <text class="nm" x="376" y="32" text-anchor="end">Ω</text>
+            <text x="112" y="133" text-anchor="middle">A \ B</text>
+            <text x="200" y="133" text-anchor="middle">A ∩ B</text>
+            <text x="288" y="133" text-anchor="middle">B \ A</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 2</b> — \(A \cup B\) cut into three disjoint pieces. \(A\) contains two of them (property 3), and so does \(B\): adding \(\P(A)\) and \(\P(B)\) counts \(A \cap B\) twice (property 4).</figcaption>
+        </figure>
+        <div class="box why"><span class="tag">Two points of wording</span>
+          <ul>
+            <li>In property 3, the document writes “Let \(A \in \mathcal{P}(\Omega)\)” without introducing \(B\). Write “Let \((A, B) \in [\mathcal{P}(\Omega)]^2\)”.</li>
+            <li>In properties 2 and 4, axiom (ii) is used with more than two sets. This is allowed: step by step (by induction), it extends to any finite family of pairwise disjoint events.</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>other consequences of the axioms (ex. 1.1)</i></span>
+          <p>For any events \(A\), \(B\), \(C\):</p>
+          <ul>
+            <li>\(\P(\overline{A}) = 1 - \P(A)\);</li>
+            <li>\(0 \leq \P(A) \leq 1\);</li>
+            <li>if \(A \subset B\): \(\P(B \setminus A) = \P(B) - \P(A)\) and \(\P(A) \leq \P(B)\) (a probability function is increasing);</li>
+            <li><b>inclusion-exclusion formula</b> (property 4 rewritten): \(\P(A \cup B) = \P(A) + \P(B) - \P(A \cap B)\);</li>
+            <li>with three events: \(\P(A \cup B \cup C) = \P(A) + \P(B) + \P(C) - \P(A \cap B) - \P(A \cap C) - \P(B \cap C) + \P(A \cap B \cap C)\).</li>
+          </ul>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>of the first three points</i></span>
+          <p>\(\Omega = A \sqcup \overline{A}\), hence \(1 = \P(\Omega) = \P(A) + \P(\overline{A})\), so \(\P(\overline{A}) = 1 - \P(A)\).</p>
+          <p>If \(A \subset B\), then \(B = A \sqcup (B \setminus A)\), hence \(\P(B) = \P(A) + \P(B \setminus A)\). Since \(\P(B \setminus A) \geq 0\), we get \(\P(A) \leq \P(B)\). With \(B = \Omega\): \(\P(A) \leq \P(\Omega) = 1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (MCQ of 29 September 2025).</b> In a group of 42 students, 30 study English (\(A\)), 25 study Chinese (\(C\)), and each of them studies at least one of the two languages: \(\P(A \cup C) = 1\). We pick a student at random. By inclusion-exclusion:</p>
+        </div>
+        <div class="calc" data-eq="langues"><div class="fm">\(\P(A \cap C) = \P(A) + \P(C) - \P(A \cup C) = \frac{30}{42} + \frac{25}{42} - 1 = \frac{13}{42}\)</div></div>
+        <div class="prose"><p>13 students study both languages.</p></div>
+        <div class="box model"><span class="tag">Model answer <i>lecture question</i></span>
+          <p>Let us prove that \(\P(\overline{A}) = 1 - \P(A)\). Let \(A \in \mathcal{P}(\Omega)\).</p>
+          <p>\(A \cap \overline{A} = \varnothing\) and \(A \sqcup \overline{A} = \Omega\).<span class="c">disjoint: we may add</span></p>
+          <p>By the second axiom, \(\P(A) + \P(\overline{A}) = \P(\Omega) = 1\), hence \(\P(\overline{A}) = 1 - \P(A)\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: subtracting without an inclusion</span>
+          <ul>
+            <li>\(\P(A \setminus B) = \P(A) - \P(B)\) is false in general: it is \(\P(A) - \P(A \cap B)\) (property 3). On the dice, with \(A\) “even” and \(B\) “at least 4”: <span data-eq="de-AmoinsB-p">\(\P(A \setminus B) = \P(\{2\}) = \frac{1}{6}\)</span>, but <span data-eq>\(\P(A) - \P(B) = \frac{1}{2} - \frac{1}{2} = 0\)</span>.</li>
+            <li>\(\P(B \setminus A) = \P(B) - \P(A)\) requires \(A \subset B\). In inclusion-exclusion, do not forget \(- \P(A \cap B)\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">summary sheet § 2 · exercises 2, § 2 · “Probability Exercises”</span></div><h2>Equiprobability: counting to compute</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>equiprobability</i></span>
+          <p>There is <b>equiprobability</b> when all outcomes have the same probability, \(\frac{1}{\card(\Omega)}\). We also say that \(\P\) is the uniform distribution on \(\Omega\). Then, for any event \(A\):</p>
+          <div class="fm">\[\P(A) = \frac{\card(A)}{\card(\Omega)} = \frac{\text{number of positive cases}}{\text{number of possible cases}}.\]</div>
+        </div>
+        <div class="prose">
+          <p>This is property 2 of part 3: \(\P(A)\) is the sum of \(\card(A)\) terms, all equal to \(\frac{1}{\card(\Omega)}\). Computing a probability becomes a counting problem (lesson 5).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>computing under equiprobability</i></span>
+          <ol>
+            <li>Describe \(\Omega\): does order matter? is there replacement? (lesson 5).</li>
+            <li>Justify equiprobability with the wording: “fair dice”, “at random”, “cannot be distinguished by touch”.</li>
+            <li>Count \(\card(\Omega)\) and \(\card(A)\) with the <b>same model</b>: subsets with subsets, lists with lists.</li>
+            <li>Divide and simplify. For “at least one”, use the complement: \(\P(A) = 1 - \P(\overline{A})\).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.4 — Examples from exercises 2 and the exercise sheet, each result checked by enumerating all the outcomes</caption>
+          <thead><tr><th>Experiment</th><th>Event</th><th>Probability</th></tr></thead>
+          <tbody>
+            <tr><td>two dice (36 pairs)</td><td>both numbers are equal</td><td data-eq="dbl">\(\frac{6}{36} = \frac{1}{6}\)</td></tr>
+            <tr><td>two dice</td><td>even sum</td><td data-eq="sompaire">\(\frac{18}{36} = \frac{1}{2}\)</td></tr>
+            <tr><td>two dice</td><td>sum at most 8</td><td data-eq="som8">\(\frac{26}{36} = \frac{13}{18}\)</td></tr>
+            <tr><td>two dice</td><td>highest number at most 4</td><td data-eq="max4">\(\frac{4^2}{36} = \frac{4}{9}\)</td></tr>
+            <tr><td>5-card hand from a 32-card deck</td><td>exactly one ace</td><td data-eq="un-as">\(\frac{4 \times \binom{28}{4}}{\binom{32}{5}} = \frac{2\,925}{7\,192}\)</td></tr>
+            <tr><td>5-card hand from a 32-card deck</td><td>the queen of clubs</td><td data-eq="dame-trefle">\(\frac{\binom{31}{4}}{\binom{32}{5}} = \frac{5}{32}\)</td></tr>
+            <tr><td>a dice rolled 4 times</td><td>at least one 6</td><td data-eq="4lancers">\(1 - \left(\frac{5}{6}\right)^4 = \frac{671}{1\,296}\)</td></tr>
+            <tr><td>3 balls out of 7 red and 5 green</td><td>at least one green</td><td data-eq="urne-verte">\(1 - \frac{\binom{7}{3}}{\binom{12}{3}} = \frac{37}{44}\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl" style="padding:.8rem .5rem 0"><table class="p6-dice" aria-label="The 36 pairs of two dice; the 11 pairs that contain a 6 are highlighted">
+          <thead><tr><th class="corner"></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td>1,1</td><td>1,2</td><td>1,3</td><td>1,4</td><td>1,5</td><td class="hit">1,6</td></tr>
+            <tr><th>2</th><td>2,1</td><td>2,2</td><td>2,3</td><td>2,4</td><td>2,5</td><td class="hit">2,6</td></tr>
+            <tr><th>3</th><td>3,1</td><td>3,2</td><td>3,3</td><td>3,4</td><td>3,5</td><td class="hit">3,6</td></tr>
+            <tr><th>4</th><td>4,1</td><td>4,2</td><td>4,3</td><td>4,4</td><td>4,5</td><td class="hit">4,6</td></tr>
+            <tr><th>5</th><td>5,1</td><td>5,2</td><td>5,3</td><td>5,4</td><td>5,5</td><td class="hit">5,6</td></tr>
+            <tr><th>6</th><td class="hit">6,1</td><td class="hit">6,2</td><td class="hit">6,3</td><td class="hit">6,4</td><td class="hit">6,5</td><td class="hit">6,6</td></tr>
+          </tbody>
+          <caption>Figure 3 — The 36 pairs (first dice in rows, second dice in columns), all equally likely. 11 of them contain a 6.</caption>
+        </table></div>
+        <div class="prose">
+          <p><b>Poincaré’s dice (ex. 1.3).</b> We roll two indistinguishable dice: does “getting at least one 6” have probability \(\frac{11}{36}\) or \(\frac{6}{21}\)? Even if they look the same, the dice are two distinct objects: imagine them with different colours. The 36 pairs are equally likely, 11 of them contain a 6: <span data-eq="poincare">\(\P = \frac{11}{36}\)</span>. The computation \(\frac{6}{21}\) assumes that the 21 unordered pairs are equally likely. This is wrong: the pair \(\{5, 6\}\) comes from two 2-tuples, \((5, 6)\) and \((6, 5)\), whereas the pair \(\{6, 6\}\) comes from only one.</p>
+          <p><b>Birthdays (ex. 1.4).</b> With \(N\) persons and 365 equally likely days, the complement of “at least two persons have the same birthday” is “the \(N\) days are distinct”: \(\P = 1 - \frac{A_{365}^{N}}{365^N}\). From \(N = 23\) on, this probability exceeds \(\frac{1}{2}\) (<span data-eq="anniv23">\(\approx 0.507\)</span>).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>ex. 2.5, at least one ace</i></span>
+          <p>An outcome is a 5-card hand, that is, a 5-element subset of the 32-card deck: <span data-eq="mains">\(\card(\Omega) = \binom{32}{5} = 201\,376\)</span>.</p>
+          <p>The hand is picked at random: there is equiprobability.<span class="c">say it</span></p>
+          <p>Let \(A\) be “the hand contains at least one ace”. Its complement \(\overline{A}\) is “no ace”: the 5 cards are taken among the 28 cards that are not aces, hence <span data-eq="aucun-as-nb">\(\card(\overline{A}) = \binom{28}{5} = 98\,280\)</span>.</p>
+          <p>Thus <span data-eq="au-moins-un-as">\(\P(A) = 1 - \P(\overline{A}) = 1 - \frac{98\,280}{201\,376} = \frac{1\,841}{3\,596} \approx 0.512\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: outcomes that are not equally likely</span>
+          <ul>
+            <li>Indistinguishable dice: count 2-tuples, not unordered pairs (\(\frac{11}{36}\), not \(\frac{6}{21}\)).</li>
+            <li>“At least one ace” is not \(4 \times \binom{31}{4}\) (one ace, then any 4 cards): a hand with two aces is counted twice. Use the complement.</li>
+            <li>“An integer between 0 and 20”: there are 21 of them. <span data-eq="0a20">\(\P(\text{at least } 10) = \frac{11}{21}\)</span>, not \(\frac{1}{2}\) (MCQ of 6 October 2025).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">summary sheet “Conditional probabilities” § 1 · exercises 2, § 3</span></div><h2>Conditional probability, chain rule, probability trees</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Knowing that \(B\) occurred changes the chances of \(A\): only the outcomes in \(B\) are left. A fair dice gives an even number: the probability that it is a 6 is no longer \(\frac{1}{6}\). Three outcomes are left, 2, 4 and 6: it is \(\frac{1}{3}\).</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>conditional probability</i></span>
+          <p>Let \(A\) and \(B\) be two events, with \(\P(B) \neq 0\). The <b>conditional probability of \(A\) given \(B\)</b> is</p>
+          <div class="fm">\[\P(A \mid B) = \frac{\P(A \cap B)}{\P(B)}.\]</div>
+          <p>It is also written \(\P_B(A)\), in particular on trees.</p>
+        </div>
+        <div class="calc" data-eq="6pair"><div class="fm">\(\P(\{6\} \mid \{2, 4, 6\}) = \frac{\P(\{6\})}{\P(\{2, 4, 6\})} = \frac{1/6}{1/2} = \frac{1}{3}\)</div></div>
+        <div class="box thm"><span class="tag">Theorem <i>given \(B\), we still have a probability function</i></span>
+          <p>If \(\P(B) \neq 0\), the mapping \(A \mapsto \P(A \mid B)\) is a probability function on \(\Omega\). In particular \(\P(\overline{A} \mid B) = 1 - \P(A \mid B)\).</p>
+          <p class="muted">Proof: \(\P(\Omega \mid B) = \frac{\P(B)}{\P(B)} = 1\); if \(A_1\) and \(A_2\) are disjoint, \((A_1 \sqcup A_2) \cap B = (A_1 \cap B) \sqcup (A_2 \cap B)\), and we divide by \(\P(B)\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>chain rule (intersection of events)</i></span>
+          <p>When the conditional probabilities are defined:</p>
+          <div class="fm">\[\P(A \cap B) = \P(A \mid B)\,\P(B) = \P(B \mid A)\,\P(A),\]</div>
+          <div class="fm">\[\P(A_1 \cap A_2 \cap \cdots \cap A_n) = \P(A_1)\,\P(A_2 \mid A_1)\,\P(A_3 \mid A_1 \cap A_2) \cdots \P(A_n \mid A_1 \cap \cdots \cap A_{n-1}).\]</div>
+          <p>The first line is the definition, multiplied by the denominator. The summary sheet writes the second one in reverse order, from \(A_n\) to \(A_1\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Example (“Probability Exercises”, ex. 4).</b> An urn contains 5 red balls and 3 blue balls. Two balls are drawn without replacement. \(R_1\): “the 1st one is red”, \(R_2\): “the 2nd one is red”. Given \(R_1\), 7 balls are left, 4 of them red: \(\P(R_2 \mid R_1) = \frac{4}{7}\).</p>
+        </div>
+        <div class="calc" data-eq="urne-RR"><div class="fm">\(\P(R_1 \cap R_2) = \P(R_1)\,\P(R_2 \mid R_1) = \frac{5}{8} \times \frac{4}{7} = \frac{5}{14}\)</div></div>
+        <div class="box meth"><span class="tag">Method <i>the probability tree</i></span>
+          <ol>
+            <li>First level: a partition, for example \(A\) and \(\overline{A}\), with their probabilities.</li>
+            <li>After the branch \(A\), write the probabilities <b>given \(A\)</b>: \(\P(B \mid A)\) and \(\P(\overline{B} \mid A)\). The branches leaving one node add up to 1.</li>
+            <li>The probability of a path is the product of its branches: it is the probability of the intersection, \(\P(A \cap B) = \P(A)\,\P(B \mid A)\).</li>
+            <li>The probability of an event is the sum of the paths that lead to it (part 7).</li>
+          </ol>
+        </div>
+        <div data-maths="tree" data-opts='{"first":[{"n":"R_1","p":"5/8"},{"n":"\\overline{R_1}"}],"second":{"n":"R_2","nb":"\\overline{R_2}","p":["4/7","5/7"]},"title":"Probability tree · two draws without replacement"}'></div>
+        <div class="prose">
+          <p>The second draw depends on the first one: given \(\overline{R_1}\), 5 red balls out of 7 are left. The tool also gives \(\P(R_2) = \frac{5}{8}\): the second ball is red with the same probability as the first one.</p>
+          <p><b>Example (ex. 3.12, ANAC points).</b> 60% of the students get points with sport (\(S\)), 50% with communication activities (\(C\)), and one third of the students doing sport also do communication activities: \(\P(C \mid S) = \frac{1}{3}\).</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="anac-SC">\(\P(S \cap C) = \P(C \mid S)\,\P(S) = \frac{1}{3} \times \frac{3}{5} = \frac{1}{5}\)</div><div class="fm" data-eq="anac-union">\(\P(S \cup C) = \P(S) + \P(C) - \P(S \cap C) = \frac{3}{5} + \frac{1}{2} - \frac{1}{5} = \frac{9}{10}\)</div><div class="fm" data-eq="anac-aucun">\(\P(\overline{S} \cap \overline{C}) = 1 - \P(S \cup C) = 1 - \frac{9}{10} = \frac{1}{10}\)</div></div>
+        <div class="prose"><p>10% of the students get no point.</p></div>
+        <div class="box model"><span class="tag">Model answer <i>“Conditional Probability”, ex. 4</i></span>
+          <p>We draw 2 cards successively, without replacement, from a 52-card deck. \(A\): “the first card is a heart”, \(B\): “the second card is a heart”.</p>
+          <p>Given \(A\), 51 cards are left, 12 of them hearts, picked at random: <span data-eq="coeurs-BsA">\(\P(B \mid A) = \frac{12}{51} = \frac{4}{17}\)</span>.<span class="c">the new sample set</span></p>
+          <p>Hence <span data-eq="coeurs-AB">\(\P(A \cap B) = \P(B \mid A)\,\P(A) = \frac{4}{17} \times \frac{1}{4} = \frac{1}{17}\)</span>.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: \(\P(A \mid B)\) is not \(\P(B \mid A)\)</span>
+          <ul>
+            <li>In a 52-card deck: <span data-eq="roi-sachant-coeur">\(\P(\text{king} \mid \text{heart}) = \frac{1}{13}\)</span>, but <span data-eq="coeur-sachant-roi">\(\P(\text{heart} \mid \text{king}) = \frac{1}{4}\)</span>. Always divide by the probability of what is <b>known</b>, the event after the bar.</li>
+            <li>The official solution of 2019 (ex. 7) computes \(\P_B(A) = \frac{0.3}{0.7}\): it divides by \(\P(A)\). With \(\P(B) = 0.4\), <span data-eq="d8-AsachantB">\(\P_B(A) = \frac{0.3}{0.4} = \frac{3}{4}\)</span>.</li>
+            <li>“Given” is not “and”: “a student attends tutoring and passes” is \(\P(S \cap V)\), “given that he attends tutoring, he passes” is \(\P(V \mid S)\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">summary sheet § 1.2 · ex. 3.7 · “Conditional Probability”, part A</span></div><h2>Independence</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>independent events</i></span>
+          <p>Two events \(A\) and \(B\) are <b>independent</b> if</p>
+          <div class="fm">\[\P(A \cap B) = \P(A)\,\P(B).\]</div>
+          <p>Then, if \(\P(B) \neq 0\), \(\P(A \mid B) = \P(A)\), and if \(\P(A) \neq 0\), \(\P(B \mid A) = \P(B)\): knowing that one occurred does not alter the chances of the other.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>independence and complements</i></span>
+          <p>If \(A\) and \(B\) are independent, then \(A\) and \(\overline{B}\) are independent, and so are \(\overline{A}\) and \(\overline{B}\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>“Conditional Probability”, ex. 2</i></span>
+          <p>Assume that \(A\) and \(B\) are independent. By property 3 of part 3, \(\P(A) = \P(A \setminus B) + \P(A \cap B)\), and \(A \setminus B = A \cap \overline{B}\). Hence</p>
+          <div class="fm">\[\P(A \cap \overline{B}) = \P(A) - \P(A \cap B) = \P(A) - \P(A)\,\P(B) = \P(A)\big(1 - \P(B)\big) = \P(A)\,\P(\overline{B}).\]</div>
+          <p>\(A\) and \(\overline{B}\) are independent. Apply this result to the pair \((\overline{B}, A)\), which is independent: \(\overline{B}\) and \(\overline{A}\) are independent.</p>
+        </div>
+        <div class="box def"><span class="tag">Definition <i>mutual independence</i></span>
+          <p>\(A\), \(B\), \(C\) are <b>mutually independent</b> if they are pairwise independent <b>and</b> \(\P(A \cap B \cap C) = \P(A)\,\P(B)\,\P(C)\). Pairwise is not enough.</p>
+        </div>
+        <div class="prose">
+          <p><b>Counterexample (sheet, ex. 2).</b> Toss a fair coin twice: \(A\) “first toss is heads”, \(B\) “second toss is heads”, \(C\) “both tosses give the same result”. Each has probability \(\frac{1}{2}\), and each intersection of two of them is one 2-tuple out of four, with probability \(\frac{1}{4} = \frac{1}{2} \times \frac{1}{2}\): they are pairwise independent. But \(A \cap B \cap C = \{(H, H)\}\) and <span data-eq="pc-ABC">\(\P(A \cap B \cap C) = \frac{1}{4}\)</span>, whereas <span data-eq="pc-AxBxC">\(\P(A)\,\P(B)\,\P(C) = \frac{1}{2} \times \frac{1}{2} \times \frac{1}{2} = \frac{1}{8}\)</span>: they are not mutually independent.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.5 — Incompatible or independent: two unrelated notions</caption>
+          <thead><tr><th></th><th>Incompatible</th><th>Independent</th></tr></thead>
+          <tbody>
+            <tr><th>Definition</th><td>\(A \cap B = \varnothing\)</td><td>\(\P(A \cap B) = \P(A)\,\P(B)\)</td></tr>
+            <tr><th>Depends on</th><td>the sets only</td><td>the probability function \(\P\)</td></tr>
+            <tr><th>Meaning</th><td>they cannot occur together</td><td>one tells nothing about the other</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>If \(\P(A) > 0\) and \(\P(B) > 0\), two incompatible events are <b>never</b> independent: \(\P(A \cap B) = 0\), whereas \(\P(A)\,\P(B) > 0\). Knowing that \(A\) occurred tells a lot: \(B\) will not occur.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.6 — Ex. 3.7: \(A\) “even” and \(B\) “multiple of 5”, number picked at random (equiprobability)</caption>
+          <thead><tr><th></th><th>in \(\ent{1}{20}\)</th><th>in \(\ent{1}{21}\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(\P(A)\)</th><td data-eq="td37-20-A">\(\frac{10}{20} = \frac{1}{2}\)</td><td data-eq="td37-21-A">\(\frac{10}{21}\)</td></tr>
+            <tr><th>\(\P(B)\)</th><td data-eq="td37-20-B">\(\frac{4}{20} = \frac{1}{5}\)</td><td data-eq="td37-21-B">\(\frac{4}{21}\)</td></tr>
+            <tr><th>\(\P(A \cap B)\), \(A \cap B = \{10, 20\}\)</th><td data-eq="td37-20-AB">\(\frac{2}{20} = \frac{1}{10}\)</td><td data-eq="td37-21-AB">\(\frac{2}{21} = \frac{42}{441}\)</td></tr>
+            <tr><th>\(\P(A)\,\P(B)\)</th><td data-eq="td37-20-AxB">\(\frac{1}{2} \times \frac{1}{5} = \frac{1}{10}\)</td><td data-eq="td37-21-AxB">\(\frac{10}{21} \times \frac{4}{21} = \frac{40}{441}\)</td></tr>
+            <tr><th>Conclusion</th><td>independent</td><td>not independent</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>ex. 3.7</i></span>
+          <p>The number is picked at random in \(\ent{1}{20}\): equiprobability. \(A = \{2, 4, \ldots, 20\}\) (10 elements), \(B = \{5, 10, 15, 20\}\), \(A \cap B = \{10, 20\}\).</p>
+          <p>(a) \(A \cap B \neq \varnothing\): \(A\) and \(B\) are not incompatible.<span class="c">one common element is enough</span></p>
+          <p>(b) <span data-eq>\(\P(A)\,\P(B) = \frac{10}{20} \times \frac{4}{20} = \frac{1}{10}\)</span> and <span data-eq>\(\P(A \cap B) = \frac{2}{20} = \frac{1}{10}\)</span>: equal, so \(A\) and \(B\) are independent.</p>
+          <p>In \(\ent{1}{21}\): <span data-eq>\(\P(A \cap B) = \frac{2}{21} = \frac{42}{441}\)</span> and <span data-eq>\(\frac{42}{441} \neq \frac{40}{441}\)</span> \(= \P(A)\,\P(B)\): they are no longer independent.</p>
+        </div>
+        <div class="prose">
+          <p><b>Midterm, October 2019, ex. 7 (2 points).</b> With the 8-sided dice of part 2: <span data-eq="d8-AB">\(\P(A \cap B) = \P(\{2, 4\}) = 0.1 + 0.2 = 0.3\)</span>, but <span data-eq="d8-AxB">\(\P(A)\,\P(B) = 0.7 \times 0.4 = 0.28\)</span>. \(A\) and \(B\) are not independent, and not incompatible either (\(\P(A \cap B) \neq 0\)).</p>
+          <p><b>Two dice (sheet, ex. 1).</b> \(A\) “the first dice is even”, \(B\) “the sum is 7”, \(C\) “the sum is 8”. <span data-eq="c1-AB">\(\P(A \cap B) = \frac{3}{36} = \frac{1}{12}\)</span> <span data-eq="c1-AxB">\(= \frac{1}{2} \times \frac{1}{6}\)</span>: independent. <span data-eq="c1-AC">\(\P(A \cap C) = \frac{3}{36} = \frac{1}{12}\)</span>, but <span data-eq="c1-AxC">\(\P(A)\,\P(C) = \frac{1}{2} \times \frac{5}{36} = \frac{5}{72}\)</span>: not independent.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: three confusions</span>
+          <ul>
+            <li>Independent is not incompatible, nor the other way round. To prove independence, compute \(\P(A \cap B)\) and \(\P(A)\,\P(B)\) and compare them.</li>
+            <li>Independence depends on \(\P\): the same “even” and “multiple of 5” are independent in \(\ent{1}{20}\), not in \(\ent{1}{21}\).</li>
+            <li>Draws without replacement are not independent. With two cards drawn without replacement, \(\P(B \mid A) = \frac{4}{17}\) whereas <span data-eq="coeurs-B">\(\P(B) = \frac{1}{4}\)</span>. With replacement, \(\P(B \mid A) = \frac{1}{4} = \P(B)\): independent.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">summary sheet § 2 · ex. 3.8 to 3.10 · DP exams 2023 and 2024</span></div><h2>Law of total probability</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>We often know the chances of \(A\) <b>in each case</b> (with tutoring, without tutoring) and the proportion of each case. The law of total probability puts the pieces back together.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>law of total probability</i></span>
+          <p>Let \((B_1, \ldots, B_n)\) be a partition of \(\Omega\) (mutually exclusive collectively exhaustive events) with \(\P(B_i) \neq 0\) for every \(i\), and \(A\) an event. Then</p>
+          <div class="fm">\[\P(A) = \sum_{i=1}^{n} \P(A \cap B_i) = \sum_{i=1}^{n} \P(A \mid B_i)\,\P(B_i).\]</div>
+          <p>With the partition \((B, \overline{B})\): \(\P(A) = \P(A \mid B)\,\P(B) + \P(A \mid \overline{B})\,\P(\overline{B})\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>ex. 3.8: “Which statement is given by the law of total probability? Prove it”</i></span>
+          <p>Let \(A \in \mathcal{P}(\Omega)\). Since \((B_1, \ldots, B_n)\) is a partition of \(\Omega\), \(\Omega = B_1 \sqcup \cdots \sqcup B_n\). Hence, since \(\cap\) distributes over \(\cup\),</p>
+          <div class="fm">\[A = A \cap \Omega = (A \cap B_1) \cup (A \cap B_2) \cup \cdots \cup (A \cap B_n).\]</div>
+          <p>This union is disjoint: for \(i \neq j\), \((A \cap B_i) \cap (A \cap B_j) \subset B_i \cap B_j = \varnothing\). By additivity of \(\P\) (extended to \(n\) pairwise disjoint events),</p>
+          <div class="fm">\[\P(A) = \P(A \cap B_1) + \cdots + \P(A \cap B_n).\]</div>
+          <p>Finally, for every \(i\), \(\P(B_i) \neq 0\) and, by definition of conditional probability, \(\P(A \cap B_i) = \P(A \mid B_i)\,\P(B_i)\). Hence \(\P(A) = \sum_{i=1}^{n} \P(A \mid B_i)\,\P(B_i)\).</p>
+        </div>
+        <figure class="p6-fig">
+          <svg viewBox="0 0 420 220" role="img" aria-label="Ω cut into three strips B1, B2, B3; the event A crosses the three strips and is cut into A ∩ B1, A ∩ B2, A ∩ B3.">
+            <defs>
+              <clipPath id="p6-b1"><rect x="10" y="10" width="140" height="200"/></clipPath>
+              <clipPath id="p6-b2"><rect x="150" y="10" width="130" height="200"/></clipPath>
+              <clipPath id="p6-b3"><rect x="280" y="10" width="130" height="200"/></clipPath>
+            </defs>
+            <rect class="om" x="10" y="10" width="400" height="200" rx="8"/>
+            <line class="cut" x1="150" y1="10" x2="150" y2="210"/>
+            <line class="cut" x1="280" y1="10" x2="280" y2="210"/>
+            <ellipse class="z1" cx="212" cy="128" rx="168" ry="54" clip-path="url(#p6-b1)"/>
+            <ellipse class="z2" cx="212" cy="128" rx="168" ry="54" clip-path="url(#p6-b2)"/>
+            <ellipse class="z3" cx="212" cy="128" rx="168" ry="54" clip-path="url(#p6-b3)"/>
+            <ellipse class="ln" cx="212" cy="128" rx="168" ry="54"/>
+            <text class="nm" x="80" y="40" text-anchor="middle">B₁</text>
+            <text class="nm" x="215" y="40" text-anchor="middle">B₂</text>
+            <text class="nm" x="345" y="40" text-anchor="middle">B₃</text>
+            <text class="nm" x="56" y="86" text-anchor="middle">A</text>
+            <text x="100" y="133" text-anchor="middle">A ∩ B₁</text>
+            <text x="215" y="133" text-anchor="middle">A ∩ B₂</text>
+            <text x="330" y="133" text-anchor="middle">A ∩ B₃</text>
+            <text class="nm" x="400" y="202" text-anchor="end">Ω</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 4</b> — The partition \((B_1, B_2, B_3)\) cuts \(A\) into three disjoint pieces: \(\P(A)\) is the sum of their probabilities.</figcaption>
+        </figure>
+        <div class="box why"><span class="tag">A typo in the summary sheet</span>
+          <p>The French summary sheet “Probabilités conditionnelles” (p. 2) writes the last term \(\P(A \cap B_n)\,\P(B_n)\). Read \(\P(A \mid B_n)\,\P(B_n)\), as in the sum \(\sum \P(A \mid B_i)\,\P(B_i)\) on the same line.</p>
+        </div>
+        <div class="prose">
+          <p><b>DP exam, October 2023, ex. 4.</b> The probability that a student attends maths tutoring (\(S\)) is 10%. If he attends, he passes the maths unit (\(V\)) with probability 80%; otherwise, 30%. Results as simplified fractions.</p>
+        </div>
+        <div data-maths="tree" data-opts='{"first":[{"n":"S","p":"1/10"},{"n":"\\overline{S}"}],"second":{"n":"V","nb":"\\overline{V}","p":["4/5","3/10"]},"title":"Probability tree · DP exam 2023, ex. 4"}'></div>
+        <div class="box model"><span class="tag">Model answer <i>official solution, DP exam 2023, ex. 4.1 and 4.2</i></span>
+          <p>1. \(\P(S) = 0.1\), \(\P(V \mid S) = 0.8\), \(\P(V \mid \overline{S}) = 0.3\).<span class="c">translate first</span></p>
+          <p>2. Since \(\{S, \overline{S}\}\) is a partition of \(\Omega\), we have \(V = (V \cap S) \cup (V \cap \overline{S})\) (disjoint union).<span class="c">state the partition</span></p>
+          <p>Hence <span data-eq="soutien-V">\(\P(V) = \P(V \cap S) + \P(V \cap \overline{S}) = \P(V \mid S)\,\P(S) + \P(V \mid \overline{S})\,\P(\overline{S}) = 0.8 \times 0.1 + 0.3 \times 0.9 = 0.35 = \frac{7}{20}\)</span>.</p>
+        </div>
+        <div class="prose">
+          <p><b>A partition into three (“Conditional Probability”, ex. 5).</b> Three machines produce 50%, 30% and 20% of the parts, with defect rates 1%, 2% and 3% (\(D\)):</p>
+        </div>
+        <div class="calc" data-eq="usine-D"><div class="fm">\(\P(D) = 0.01 \times 0.5 + 0.02 \times 0.3 + 0.03 \times 0.2 = 0.017 = \frac{17}{1\,000}\)</div></div>
+        <div class="prose">
+          <p><b>A compound event (ex. 3.9).</b> 5% of the posters are defective (\(D\)). A perfect poster is accepted (\(A\)) with probability 0.96, a defective one is rejected with probability 0.98. “Error from the quality checking service” = \((D \cap A) \sqcup (\overline{D} \cap \overline{A})\): apply the same idea to both pieces.</p>
+        </div>
+        <div class="calc" data-eq="affiche-err"><div class="fm">\(\P(\text{error}) = \P(A \mid D)\,\P(D) + \P(\overline{A} \mid \overline{D})\,\P(\overline{D}) = 0.02 \times 0.05 + 0.04 \times 0.95 = \frac{39}{1\,000}\)</div></div>
+        <div class="box trap"><span class="tag">Trap: four mistakes that cost points</span>
+          <ul>
+            <li>Writing the sum without stating the partition: the official solution states it before the formula.</li>
+            <li>1% = 0.01: some students’ notes copy 0.1, 0.2, 0.3 and find \(\P(D) = 0.17\), ten times too much. A result greater than 1 must alert you.</li>
+            <li>\(\P(V \mid \overline{S}) \neq 1 - \P(V \mid S)\): it is \(\P(\overline{V} \mid S)\) that equals \(1 - \P(V \mid S)\) (part 5).</li>
+            <li>No calculator: compute with fractions, \(0.8 \times 0.1 = \frac{8}{100}\), and simplify at the end.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">summary sheet § 1.3 and 2 · ex. 3.10 · sheet ex. 7 · DP exams 2023 and 2024</span></div><h2>Bayes’ formula, the “threshold” question</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The wording gives \(\P(A \mid B)\) (the test is positive for 95% of sick people); the question asks for \(\P(B \mid A)\) (you test positive: what is the risk of being sick?). Bayes’ formula turns the conditional probability around.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>Bayes’ formula</i></span>
+          <p>If \(\P(A) \neq 0\) and \(\P(B) \neq 0\):</p>
+          <div class="fm">\[\P(B \mid A) = \frac{\P(A \mid B)\,\P(B)}{\P(A)}.\]</div>
+          <p>If \((B_1, \ldots, B_n)\) is a partition of \(\Omega\) with \(\P(B_i) \neq 0\), for every \(k \in \ent{1}{n}\):</p>
+          <div class="fm">\[\P(B_k \mid A) = \frac{\P(A \mid B_k)\,\P(B_k)}{\sum_{i=1}^{n} \P(A \mid B_i)\,\P(B_i)}.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>By definition, \(\P(B \mid A) = \frac{\P(A \cap B)}{\P(A)}\), and by the chain rule, \(\P(A \cap B) = \P(A \mid B)\,\P(B)\): replace the numerator. With a partition, also replace the denominator \(\P(A)\) using the law of total probability (part 7).</p>
+        </div>
+        <div class="prose">
+          <p><b>The medical test (“Conditional Probability”, ex. 7, figure 1).</b> \(\P(M) = \frac{1}{100}\), \(\P(T \mid M) = \frac{95}{100}\), \(\P(T \mid \overline{M}) = \frac{10}{100}\).</p>
+        </div>
+        <div class="calc"><div class="fm" data-eq="test-T">\(\P(T) = \P(T \mid M)\,\P(M) + \P(T \mid \overline{M})\,\P(\overline{M}) = \frac{95}{100} \times \frac{1}{100} + \frac{10}{100} \times \frac{99}{100} = \frac{217}{2\,000}\)</div><div class="fm" data-eq="test-MsT">\(\P(M \mid T) = \frac{\P(T \mid M)\,\P(M)}{\P(T)} = \frac{19/2\,000}{217/2\,000} = \frac{19}{217} \approx 0.088\)</div></div>
+        <div class="prose">
+          <p>Less than 9%: the disease is rare, and healthy people are so numerous that their 10% of false positives outnumber the true positives. Out of 2,000 persons:</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Table 6.7 — The test on 2,000 persons (exact numbers)</caption>
+          <thead><tr><th></th><th>positive test</th><th>negative test</th><th>total</th></tr></thead>
+          <tbody>
+            <tr><th>sick</th><td>19</td><td>1</td><td>20</td></tr>
+            <tr><th>healthy</th><td>198</td><td>1,782</td><td>1,980</td></tr>
+            <tr><th>total</th><td><b>217</b></td><td>1,783</td><td>2,000</td></tr>
+          </tbody>
+        </table></div>
+        <div>
+          <div class="p6-bar" role="img" aria-label="The 217 positive tests: 19 sick, 198 healthy"><span class="m" style="width:8.76%"></span><span class="s" style="width:91.24%"></span></div>
+          <div class="p6-leg"><span><i style="background:var(--red)"></i>19 sick</span><span><i style="background:var(--accent);opacity:.35"></i>198 healthy</span><span>among the 217 positive tests</span></div>
+        </div>
+        <div class="prose">
+          <p><b>The “threshold” question.</b> The exam adds a 4th question: what proportion \(p\) would be needed to reach a goal? Keep the conditional probabilities and replace \(\P(S)\) with the unknown \(p\). \(\P(V)\) becomes an affine function of \(p\).</p>
+        </div>
+        <figure class="p6-fig">
+          <svg viewBox="0 0 440 250" role="img" aria-label="Line P(V) = 0.5p + 0.3 for p between 0 and 1; it reaches 0.75 at p = 0.9.">
+            <line class="ax" x1="50" y1="210" x2="410" y2="210"/>
+            <line class="ax" x1="50" y1="210" x2="50" y2="20"/>
+            <line class="th" x1="50" y1="75" x2="410" y2="75"/>
+            <line class="th" x1="356" y1="75" x2="356" y2="210"/>
+            <line class="ok" x1="356" y1="210" x2="390" y2="210"/>
+            <line class="cv" x1="50" y1="156" x2="390" y2="66"/>
+            <text class="mu" x="42" y="214" text-anchor="end">0</text>
+            <text class="mu" x="42" y="160" text-anchor="end">0.3</text>
+            <text class="rd" x="42" y="79" text-anchor="end">0.75</text>
+            <text class="mu" x="42" y="34" text-anchor="end">1</text>
+            <text class="mu" x="50" y="230" text-anchor="middle">0</text>
+            <text class="mu" x="390" y="230" text-anchor="middle">1</text>
+            <text class="ac" x="356" y="246" text-anchor="middle">p = 9/10</text>
+            <text class="ac" x="235" y="152" text-anchor="middle">P(V) = 0.5p + 0.3</text>
+            <text class="mu" x="420" y="214">p</text>
+          </svg>
+          <figcaption class="fig-cap"><b>Figure 5</b> — DP exam 2023, ex. 4.4: \(\P(V)\) increases with \(p\) and reaches \(\frac{3}{4}\) at \(p = \frac{9}{10}\). The green segment: the values of \(p\) that work.</figcaption>
+        </figure>
+        <div class="box model"><span class="tag">Model answer <i>DP exam, October 2024, ex. 4 (answers recomputed, no official solution)</i></span>
+          <p>40% of the students learn their maths lecture (\(C\)). They pass the year (\(V\)) with probability 80%, the others with 20%.</p>
+          <p>1. \(\P(C) = \frac{2}{5}\), \(\P(V \mid C) = \frac{4}{5}\), \(\P(V \mid \overline{C}) = \frac{1}{5}\).</p>
+          <p>2. \(\{C, \overline{C}\}\) is a partition of \(\Omega\), hence <span data-eq="cours-V">\(\P(V) = \P(V \mid C)\,\P(C) + \P(V \mid \overline{C})\,\P(\overline{C}) = \frac{4}{5} \times \frac{2}{5} + \frac{1}{5} \times \frac{3}{5} = \frac{11}{25}\)</span>.</p>
+          <p>3. We look for \(\P(C \mid V)\). <span data-eq="cours-CsV">\(\P(C \mid V) = \frac{\P(V \mid C)\,\P(C)}{\P(V)} = \frac{8/25}{11/25} = \frac{8}{11}\)</span>.<span class="c">Bayes, quoted</span></p>
+          <p>4. With \(\P(C) = p\): \(\P(V) = \frac{4}{5}p + \frac{1}{5}(1 - p) = \frac{3}{5}p + \frac{1}{5}\). Then <span data-eq="seuil24">\(\P(V) \geq \frac{3}{5} \iff \frac{3}{5}p \geq \frac{2}{5} \iff p \geq \frac{2}{3}\)</span>.</p>
+          <p>At least two thirds of the students would have to learn their lecture.<span class="c">end with a sentence</span></p>
+        </div>
+        <div class="prose">
+          <p><b>DP exam, October 2023, ex. 4.3 and 4.4 (official solution).</b> <span data-eq="soutien-SsV">\(\P(S \mid V) = \frac{\P(V \cap S)}{\P(V)} = \frac{\P(V \mid S)\,\P(S)}{\P(V)} = \frac{0.08}{0.35} = \frac{8}{35}\)</span>. Threshold: \(\P(V) = 0.8p + 0.3(1 - p) = 0.5p + 0.3\), and <span data-eq="seuil23">\(0.5p + 0.3 \geq 0.75 \iff p \geq 0.9\)</span>: at least 90% of the students should attend tutoring.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: what Bayes turns around</span>
+          <ul>
+            <li>\(\P(T \mid M) = 95\,\%\) does not give \(\P(M \mid T)\): here <span data-eq="test-MsT">\(\P(M \mid T) = \frac{19}{217}\)</span>. First write “We look for \(\P(\ldots \mid \ldots)\)”: what is known goes after the bar.</li>
+            <li>The denominator in Bayes’ formula is the probability of what is known, \(\P(A)\), computed with the law of total probability.</li>
+            <li>Threshold question: \(p\) is a probability, so \(p \in [0, 1]\). If you find \(p \geq 1.2\), no proportion works: say so. End with a sentence (“at least 90%”).</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>DP exams in the current format: a conditional probability exercise in four questions (translate, total probability, Bayes, threshold) both times. October 2023: ex. 4, <b>5 points out of 30</b> (tutoring and passing). October 2024: ex. 4, <b>6.5 points out of 40</b> (learning the lecture and passing). Same plan, different data. Instructions: “simplified fraction”, results “justified properly”.</li>
+            <li>Midterms from 2018 to 2022: total probability or Bayes four times out of five. 2018, ex. 8 (3 points, vaccine); 2019, ex. 8 (3 points, vaccine); 2021, ex. 7 (4 points, medical test: “give a partition”, “literal formula”, then the values); 2022, ex. 6 (2.5 points, two boxes of sweets: <span data-eq="boites-citron">\(\P(\text{lemon}) = \frac{7}{16}\)</span>, <span data-eq="boites-AsC">\(\P(A \mid \text{lemon}) = \frac{2}{7}\)</span>).</li>
+            <li>Equiprobability alone: 2018, ex. 7 (2 points, cards) and 2019, ex. 6 (3 points, balls); never in the 2023 and 2024 DP exams. Independence: 2019, ex. 7 only (2 points).</li>
+            <li>Lecture questions: in the lecture test of October 2023, 6 points out of 20 to complete \(\P(A \cup B)\), \(\P(\Omega)\), \(\P(\varnothing)\), \(\P(A \mid B)\) and define “independent” and “partition”. The proofs of part 3 have never been set in the exam; those of lesson 7 (expectation, variance) were set in 2022, 2023 and 2024.</li>
+            <li>This year’s exam: DP, 2 hr, week of 26 October, no documents and no calculator. Random variables (lesson 7) are part of it.</li>
+          </ul>
+        </div>
+        <div data-check-ref="maths/cours-6-probabilites.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="maths:probabilites:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can model an experiment and compute probabilities, conditional ones included. Lesson 7, <a href="cours-7-variables.html">random variables</a>, maps each outcome to a number: distribution, expectation, variance, and the proofs that have been set in every exam since 2022.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/maths.js"></script>
+<script src="../data/en/qcm/maths.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
