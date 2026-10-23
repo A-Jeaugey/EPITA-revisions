@@ -19,6 +19,7 @@ Tout le site existe en français et en anglais (section anglophone) : bouton **F
 | `caml/` | Algo · Caml et récursivité : accueil, 4 chapitres (bases, récursivité, listes, ordre supérieur) avec réponses de Caml vérifiées et dérouleur d’appels, méthodes, entraînement (sujets 2017-2024, séminaire et TD corrigés), annales commentées, fiche A4 |
 | `archi/` | Architecture · Numération : accueil (test Moodle et examen), 4 chapitres (bases et conversions, opérations posées, entiers signés et non signés, IEEE 754) avec outils pas à pas, méthodes, entraînement (sujets 2016-2025, TD, générateurs), annales commentées, fiche A4 |
 | `maths/` | Maths, examen 1 (OBM et DP) : accueil (les deux examens du 28 octobre), 7 chapitres (logique, ensembles, fonctions, raisonnement (relations hors programme en 2026) ; dénombrement, probabilités, variables aléatoires) avec démonstrations à connaître et outils interactifs, méthodes, entraînement (sujets 2018-2024, séminaire, TD, générateurs), annales commentées, fiche A4 recto verso |
+| `piloter/` | Méthodologie de travail et gestion de groupe : une page qui résume les ateliers (Tuckman, Belbin, D.E.S.C., Thomas-Kilmann, courbe de l’oubli, VAK, Eisenhower, Pomodoro…), et un QCM de mises en situation. |
 | `taa/` | Algo · Types algébriques abstraits : accueil, 3 chapitres (types abstraits, listes, piles et files), méthodes, entraînement avec générateurs, annales commentées, fiche A4 |
 
 Les autres matières (APIS, archi après la numération, programmation…) arrivent quand leurs cours sont ajoutés ; leurs annales

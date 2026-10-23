@@ -141,6 +141,11 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   binomiale sur 20 tirages) ; relations binaires tombées à chaque sujet de 2019 à 2025, mais **hors programme en 2026** (mail de la prof du 19 octobre : ex. 4 à 6 d'OBM 2025 retirés, donc aussi intégrales et complexes ; parties `prog: false`, notion `relations` sans ECUE, décochée par défaut au QCM via `window.QCM_OFF`) ; règles de rédaction du séminaire (§ 4.2) « très importantes » d'après la prof ; DP 2025 reprend la démonstration de 2024 (E(aX+b), Var(aX+b)) ; l'entraînement a un filtre « Sans les ★ » (la prof : refaire les exercices non étoilés) ; corrigé 2019 faux (« tableau » :
   2 520 anagrammes) ; fiche « Probabilités conditionnelles » : formule des probabilités totales mal écrite. APIS (analyse)
   relève de l'examen 2 (décembre) : chapitres à ajouter.
+- **Piloter S1** (méthodologie de travail et gestion de groupe, ateliers Edvia) : une seule page `piloter/index.html` (résumé
+  des ateliers, sert aussi de fiche à l'impression ; `data-done="piloter:methodo|groupe:sN"`, 5 parties chacun), thème
+  `piloter.css` (paperboard d'atelier) ; QCM `data/qcm/piloter.js` (`pil-mt-NN`, `pil-gg-NN`, mises en situation, `ref` vers
+  `piloter/index.html#mtN|ggN`). Examen : deux QCM de 40 questions sans point négatif, jeudi 29 octobre (14 h 15, 15 h 30).
+  Supports des ateliers 5 (gestion de groupe, méthodologie en français) publiés le 24 octobre : à intégrer.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone

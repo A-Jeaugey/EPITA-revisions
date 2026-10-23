@@ -72,7 +72,7 @@ a.step:hover{border-color:var(--accent)}
 .subj.soon{background:transparent;border-style:dashed}
 .subj.soon h3{color:var(--muted)}
 .subj-elec{--c:var(--s-elec)}
-.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-taa,.subj-caml{--c:var(--s-algo)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-piloter{--c:var(--s-piloter)} .subj-taa,.subj-caml{--c:var(--s-algo)}
 .chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
 .chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
 .chapters a:hover{border-color:var(--c)}
@@ -169,6 +169,7 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/qcm/archi-annales.js"></script>
 <script src="data/qcm/maths.js"></script>
 <script src="data/qcm/maths-annales.js"></script>
+<script src="data/qcm/piloter.js"></script>
 <script src="data/taa/exams.js"></script>
 <script src="data/taa/ex-annales.js"></script>
 <script src="data/taa/ex-externes.js"></script>
@@ -289,14 +290,14 @@ a.tool:hover{border-color:var(--accent)}
         '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
         '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">prêt</span></div>' +
         '<span class="code">' + (s.code ? s.code + ' · ' : '') + s.course + '</span>' +
-        '<p>' + s.exam + '. ' + nChap(s) + ', des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM et les ' + nAnn + ' sujets de partiel retrouvés.</p>' +
+        '<p>' + s.exam + '. ' + nChap(s) + ', des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM' + (nAnn ? ' et les ' + nAnn + ' sujets de partiel retrouvés' : '') + '.</p>' +
         '<ul class="chapters">' + chapters + '</ul>' +
         '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Ouvrir') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Entraînement</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Fiche</a>' : '') + '</div>' +
         '</div><div class="meters">' +
         meter('Cours compris', p.pctRead, p.read + ' / ' + p.sections) +
         meter('QCM bien ancrés', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
         meter('QCM déjà vus', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
-        meter('Exercices réussis', NEX ? p.ex.ok / NEX : 0, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) +
+        (NEX ? meter('Exercices réussis', p.ex.ok / NEX, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) : '') +
         '</div></article>';
     }).join('');
   }

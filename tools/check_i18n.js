@@ -12,7 +12,7 @@ const warn = (m) => { problems++; console.log('  ✗ ' + m); };
 const info = (m) => console.log('  · ' + m);
 
 /* ---------- 1. pages ---------- */
-const PAGE_DIRS = ['', 'elec', 'taa', 'physique', 'caml', 'archi', 'maths', 'qcm', 'annales', 'fiches'];
+const PAGE_DIRS = ['', 'elec', 'taa', 'physique', 'caml', 'archi', 'maths', 'piloter', 'qcm', 'annales', 'fiches'];
 const pages = [];
 PAGE_DIRS.forEach(d => fs.readdirSync(path.join(ROOT, d)).forEach(f => { if (/\.html$/.test(f) && !/\.en\.html$/.test(f)) pages.push(path.join(d, f)); }));
 const ids = html => new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));

@@ -164,6 +164,16 @@
         { id: 'entiers', title: 'Entiers signés et non signés', path: 'archi/cours-3-entiers.html', sections: 8 },
         { id: 'flottants', title: 'Nombres à virgule flottante', path: 'archi/cours-4-flottants.html', sections: 8 }
       ]
+    },
+    {
+      id: 'piloter', name: 'Méthodo · Gestion de groupe', short: 'Méthodo', code: 'Piloter S1',
+      course: 'Méthodologie de travail · Gestion de groupe', path: 'piloter/index.html', dir: 'piloter/', status: 'ready',
+      exam: 'Jeudi 29 octobre : méthodologie à 14 h 15, gestion de groupe à 15 h 30 · deux QCM de 40 questions, sans point négatif',
+      fiche: 'piloter/index.html', open: 'Ouvrir la méthodo',
+      chapters: [
+        { id: 'methodo', title: 'Méthodologie de travail', path: 'piloter/index.html#methodo', sections: 5 },
+        { id: 'groupe', title: 'Gestion de groupe', path: 'piloter/index.html#groupe', sections: 5 }
+      ]
     }
   ];
   /* textes anglais du registre */
@@ -184,7 +194,10 @@
       chapters: ['Language basics', 'Recursion', 'Lists', 'Higher-order functions'] },
     archi: { name: 'Architecture · Numeration', short: 'Archi', course: 'Computer architecture · Numeration', open: 'Open Archi',
       exam: 'Thursday 29 October, 1 pm · 1 hr exam · Moodle tests 10%',
-      chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] }
+      chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] },
+    piloter: { name: 'Study skills · Group management', short: 'Study skills', course: 'Working methodology · Group management', open: 'Open study skills',
+      exam: 'Thursday 29 October: working methodology at 2:15 pm, group management at 3:30 pm · two 40-question MCQs, no negative marking',
+      chapters: ['Working methodology', 'Group management'] }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {
     var e = SUBJECTS_EN[s.id]; if (!e) return;
@@ -278,7 +291,8 @@
     physique: { date: '2026-10-27', start: '13:15', end: '14:45' },
     maths: { date: '2026-10-28', start: '10:30', end: '16:00' },
     elec: { date: '2026-10-29', start: '10:30', end: '11:30' },
-    archi: { date: '2026-10-29', start: '13:00', end: '14:00' }
+    archi: { date: '2026-10-29', start: '13:00', end: '14:00' },
+    piloter: { date: '2026-10-29', start: '14:15', end: '16:15' }
   };
   var exams = {
     /* date saisie par l’élève, sinon la date officielle de l’examen (OFFICIAL) */
