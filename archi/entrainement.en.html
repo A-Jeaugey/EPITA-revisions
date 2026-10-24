@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Practice · Archi</title>
-<meta name="description" content="Archi: the exercises of the 10 papers (2016 to 2025) and of tutorials 1 and 2, filtered by topic, source, level and status, with hints and step-by-step solutions; and five generators that make new exercises without end, as hard as the papers: conversions, written operations, the 8-bit table, IEEE 754.">
+<meta name="description" content="Archi: the exercises of the 10 papers (2016 to 2025) and of tutorials 1 to 3, filtered by topic, source, level and status, with hints and step-by-step solutions; and five generators that make new exercises without end, as hard as the papers: conversions, written operations, the 8-bit table, IEEE 754.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@400;600;700&family=Sofia+Sans+Condensed:wght@700;800&family=Sofia+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
@@ -116,12 +116,12 @@ a.stat:hover{border-color:var(--accent)}
 <div id="shell"></div>
 
 <header class="hero">
-  <div class="doc-strip"><span><b>Archi · Numeration</b> — practice</span><span>10 papers (2016-2025) · tutorials 1 and 2 · generators</span></div>
+  <div class="doc-strip"><span><b>Archi · Numeration</b> — practice</span><span>10 papers (2016-2025) · tutorials 1 to 3 · generators</span></div>
   <div class="hero-in single">
     <div>
       <div class="eyebrow"><span class="nib" data-n="9"></span><a href="index.html">Archi</a> · Practice</div>
       <h1>The real exercises, <span class="w">then new ones without end.</span></h1>
-      <p class="lead">The exercises of the 10 papers that are still on the syllabus and those of tutorials 1 and 2, with step-by-step solutions: do them on paper, ask for a hint if you are stuck, then open the solution. Below, five generators make exercises as hard as the papers, as many as you want.</p>
+      <p class="lead">The exercises of the 10 papers that are still on the syllabus and those of tutorials 1 to 3, with step-by-step solutions: do them on paper, ask for a hint if you are stuck, then open the solution. Below, five generators make exercises as hard as the papers, as many as you want.</p>
       <div class="stats" id="stats"></div>
     </div>
   </div>
@@ -162,14 +162,16 @@ a.stat:hover{border-color:var(--accent)}
 <script src="../data/en/archi/ex-annales.js"></script>
 <script src="../data/archi/ex-td.js"></script>
 <script src="../data/en/archi/ex-td.js"></script>
+<script src="../data/archi/ex-td3.js"></script>
+<script src="../data/en/archi/ex-td3.js"></script>
 <script>
 (function () {
   'use strict';
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, A = R.archi;
   /* ================================================================ the exercises */
-  var KINDS = [{ id: 'partiel', t: 'Exam papers' }, { id: 'td1', t: 'Tutorial 1' }, { id: 'td2', t: 'Tutorial 2' }];
-  function prov(e) { return e.kind === 'partiel' ? 'partiel' : /^td1-/.test(e.id) ? 'td1' : 'td2'; }
-  var KORD = { partiel: 1, td1: 2, td2: 3 };
+  var KINDS = [{ id: 'partiel', t: 'Exam papers' }, { id: 'td1', t: 'Tutorial 1' }, { id: 'td2', t: 'Tutorial 2' }, { id: 'td3', t: 'Tutorial 3' }];
+  function prov(e) { return e.kind === 'partiel' ? 'partiel' : (/^td\d/.exec(e.id) || ['td2'])[0]; }
+  var KORD = { partiel: 1, td1: 2, td2: 3, td3: 4 };
   /* papers from the most recent to the oldest, then the tutorials in order */
   var EX = (window.ARCHI_EX || []).slice().sort(function (a, b) {
     var ka = KORD[prov(a)], kb = KORD[prov(b)];
@@ -206,7 +208,7 @@ a.stat:hover{border-color:var(--accent)}
   function paintStats() {
     var ok = 0, rv = 0, np = 0;
     EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
-    $('#stats').innerHTML = '<div class="stat"><b>' + np + '</b><span>exercises from the papers</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>from tutorials 1 and 2</span></div><div class="stat"><b>' + ok + '</b><span>solved</span></div><div class="stat"><b>' + rv + '</b><span>to review</span></div><a class="stat" href="#infini"><b>∞</b><span>generated exercises</span></a>';
+    $('#stats').innerHTML = '<div class="stat"><b>' + np + '</b><span>exercises from the papers</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>from tutorials 1 to 3</span></div><div class="stat"><b>' + ok + '</b><span>solved</span></div><div class="stat"><b>' + rv + '</b><span>to review</span></div><a class="stat" href="#infini"><b>∞</b><span>generated exercises</span></a>';
   }
   function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
   function paintFilters() {
@@ -220,7 +222,7 @@ a.stat:hover{border-color:var(--accent)}
     $('#fState').innerHTML = '<span class="lbl">Status</span>' + chip('data-s', '', !st.state, 'All') +
       STATES.map(function (s) { return chip('data-s', s.id, st.state === s.id, s.t, EX.filter(function (e) { return stOk(e, s.id); }).length); }).join('');
     var ieee = st.topic && /^ieee-/.test(st.topic), td = st.kind && st.kind !== 'partiel';
-    $('#fnote').innerHTML = ieee || td ? 'Tutorial 3 (floating point) was not given to us: for IEEE 754, there are the exercises 4 of the 2023 to 2025 papers and the <a href="#gen-enc">generators</a>.' : '';
+    $('#fnote').innerHTML = ieee || td ? 'Tutorial 3: only exercises 1 to 4 are on the exam syllabus; exercises 5 and 6 are not included here.' : '';
     $('#filters').hidden = !EX.length;
     $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
     $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });

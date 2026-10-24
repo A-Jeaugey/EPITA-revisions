@@ -102,7 +102,7 @@
     </ol></details>
 
     <div class="note why" style="margin-bottom:8px"><span class="tag">Where this chapter comes from</span>
-      <p>Chapter 2 of the course (floating-point number systems) was not given to us: this page follows the IEEE 754 standard, the 2023 to 2025 exams and their answer keys (2023 and 2025). If your course says otherwise, your course is what counts.</p>
+      <p>This page follows Chapter 2 of the course (“Floating-Point Numbers”, version of 18 July 2026) and the Tutorial 3 key, published on Moodle on 24 October: their five-step methods (parts 3 and 4), their examples and their notation. The other examples come from the 2023 to 2025 exams and their answer keys.</p>
     </div>
 
     <!-- ============================================================ 1 -->
@@ -192,7 +192,17 @@
             <li>M = <span class="bn">1001 0…</span> means 1.1001…<sub>2</sub>: the leading 1 is missing, and you must put it back to read the value.</li>
           </ul>
         </div>
-        <p class="muted" style="font-size:.9rem">Vocabulary: the English exams only use the letters S, E and M and the words “single-precision” and “double-precision” (“single-precision IEEE-754 representations”, “double-precision IEEE-754 words”). Sign, biased exponent, bias, mantissa and hidden bit are the usual textbook terms (the standard itself says significand rather than mantissa).</p>
+        <div class="tbl"><table>
+          <caption>Table 4.2 b — Field sizes and bias by precision (Chapter 2, II.1)</caption>
+          <thead><tr><th></th><th>S (bits)</th><th>E (bits)</th><th>M (bits)</th><th>Total (bits)</th><th>Bias</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Half precision</th><td>1</td><td>5</td><td>10</td><td>16</td><td>15</td></tr>
+            <tr><th scope="row">Single precision</th><td>1</td><td>8</td><td>23</td><td>32</td><td>127</td></tr>
+            <tr><th scope="row">Double precision</th><td>1</td><td>11</td><td>52</td><td>64</td><td>1,023</td></tr>
+            <tr><th scope="row">Quadruple precision</th><td>1</td><td>15</td><td>112</td><td>128</td><td>16,383</td></tr>
+          </tbody>
+        </table></div>
+        <p class="muted" style="font-size:.9rem">Only single and double precision come up in the exams and in Tutorial 3. Vocabulary of Chapter 2: sign <var>s</var>, mantissa <var>m</var> (or significand), exponent <var>e</var>, bias; the fields S, E, M; normalized mantissa (it starts with “1.”) and denormalized mantissa. The course writes a normalized number as (−1)<sup>S</sup> × (1.M)<sub>2</sub> × 2<sup>E − bias</sup>.</p>
         <div data-check-ref="archi/cours-4-flottants.html#s2" data-n="3"></div>
       </div>
       <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="archi:flottants:s2"></button></div>
@@ -220,6 +230,11 @@
             <p class="xl"><span class="vi">0</span> <span class="cu">1000 0101</span> <span class="bl">0000 1101 1000 0000 0000 000</span><br>= <span class="bn" data-k="wb">0100 0010 1000 0110 1100 0000 0000 0000</span> = <b><span class="bn" data-k="hex">4286 C000</span></b></p></div></li>
         </ol>
         <div class="xl" data-ie="single" data-x="67.375" style="border-left-color:var(--exam)">On the exam paper: <b class="ie-cs">S</b> <span class="cp" data-k="s">0</span> · <b class="ie-ce">E</b> <span class="cp" data-k="ef">10000101</span> · <b class="ie-cm">M</b> <span class="cp" data-k="m">00001101100000000000000</span></div>
+        <div class="note keep"><span class="tag">The course method (Chapter 2, III.1)</span>
+          <ol><li>Determine the value of S according to the sign of the decimal number.</li><li>Convert the absolute value of the decimal number into its binary form (it can be a fraction).</li><li>Normalize the binary form. From this normalization, you can easily deduce M and <var>e</var>.</li><li>Work out E according to <var>e</var> and the bias: E = <var>e</var> + bias.</li><li>Write down the final result in its binary form.</li></ol>
+          <p>These are the steps above, with M and <var>e</var> read together at normalization. Example from the course: <span class="bn">−145.625</span>. S = 1; 145.625 = <span class="bn">1001 0001.101<sub>2</sub></span> = <span class="bn">(1.0010001101)<sub>2</sub></span> × 2<sup>7</sup>, so M = <span class="bn">00100011010…0</span> and <var>e</var> = 7; E = 7 + 127 = 6 + 128 = <span class="bn">1000 0110<sub>2</sub></span>; result: <span class="bn" style="white-space:normal;overflow-wrap:anywhere">1 10000110 00100011010000000000000</span>.</p>
+          <p><b>The tip from the key</b>: 127 = 128 − 1 and 128 = <span class="bn">1000 0000<sub>2</sub></span>, so E = (<var>e</var> − 1) + 128 is written without any division: a leading 1, then <var>e</var> − 1 in the 7 bits on the right (6 = <span class="bn">110<sub>2</sub></span> gives <span class="bn">1000 0110</span>). In double precision: 1023 = 1024 − 1, and 1024 = <span class="bn">100 0000 0000<sub>2</sub></span>. Exercises 1 and 2 of <a href="entrainement.html#td3-ex1">Tutorial 3</a> drill this method.</p>
+        </div>
         <div class="prose">
           <p><b>Your turn.</b> The tool repeats these steps for any number. It starts from 0.09375 (2025-2026 exam), which is less than 1: the point moves to the right and the exponent is negative.</p>
         </div>
@@ -254,6 +269,10 @@
           <li><div><p><b>Put the 1 back</b> before the point: the value is 1.M × 2<sup><var>e</var></sup>. The trailing 0s of M do not count.</p>
             <p class="xl"><span data-k="norm"><span class="bn">1.0100 0101<sub>2</sub></span> × 2<sup>8</sup></span> = <span data-eq><span class="bn">1 0100 0101<sub>2</sub></span> = <span class="bn" data-k="val">325</span></span>.</p></div></li>
         </ol>
+        <div class="note keep"><span class="tag">The course method (Chapter 2, III.2)</span>
+          <ol><li>Determine the sign of the number according to the value of S.</li><li>Work out <var>e</var> according to E and the bias: <var>e</var> = E − bias.</li><li>Determine the value of <var>m</var> in its binary form: <var>m</var> = (1.M)<sub>2</sub>.</li><li>Write down the result in the following form: ± <var>m</var> × 2<sup><var>e</var></sup>.</li><li>Simplify if necessary by (re)moving the point and convert into decimal.</li></ol>
+          <p>First of all, look at E: if it holds only 0s or only 1s, this is not a normalized number (part 6). Exercises 3 and 4 of <a href="entrainement.html#td3-ex3">Tutorial 3</a> mix both cases.</p>
+        </div>
         <div class="note trap"><span class="tag">Pitfall: in single precision, E straddles two hexadecimal digits</span>
           <p>1 + 8 = 9 bits: S and E do not fill a whole number of hexadecimal digits. In <span class="bn">43A2</span>, the 4 (<span class="bn">0100</span>) holds S and the first 3 bits of E, and the last bit of E is the first bit of the A (<span class="bn">1010</span>). Always split in binary, never directly on the hexadecimal digits.</p>
         </div>
@@ -306,6 +325,9 @@
         <div class="prose" data-ie="double">
           <p><b>A negative word.</b> <span class="bn" data-k="hex">C029 0000 0000 0000</span> starts with C ≥ 8: S = 1 and E = <span data-eq><span class="bn">C02<sub>16</sub></span> − <span class="bn">800<sub>16</sub></span> = <span class="bn">402<sub>16</sub></span> = <span data-k="eb">1026</span></span>, so <var>e</var> = 3. M starts with 9 = <span class="bn">1001</span>: the value is <span data-eq>−<span class="bn">1.1001<sub>2</sub></span> × 2<sup>3</sup> = −<span class="bn">1100.1<sub>2</sub></span> = <span data-k="val">−12.5</span></span>, the number from part 2.</p>
         </div>
+        <div class="prose">
+          <p><b>The example from the course</b> (Chapter 2, III.2): <span class="bn">2401 8000 0000 0000<sub>16</sub></span> = <span class="bn">0010 0100 0000 0001 1000 0…0<sub>2</sub></span>. S = 0 → positive; <var>e</var> = E − bias = <span class="bn">010 0100 0000<sub>2</sub></span> − 1023 = 576 − 1023 = −447; <var>m</var> = (1.M)<sub>2</sub> = <span class="bn">(1.00011)<sub>2</sub></span>; +<var>m</var> × 2<sup><var>e</var></sup> = <span class="bn">(1.00011)<sub>2</sub></span> × 2<sup>−447</sup> = <span class="bn">(100011)<sub>2</sub></span> × 2<sup>−452</sup> = <b>35 × 2<sup>−452</sup></b>.</p>
+        </div>
         <div class="prose"><p>The tool decodes the word from the 2025-2026 exam. On a narrow screen, the 64 bits run over several lines, still in groups of 4.</p></div>
         <div data-archi="ieee" data-opts='{"fmt":"double","hex":"2844 0000 0000 0000","title":"Decoding a 64-bit word"}'></div>
         <div class="prose" data-ie="double" data-x="67.375">
@@ -345,7 +367,7 @@
           <p><b>Zero.</b> 0 cannot be written 1.M × 2<sup><var>e</var></sup>: it has its own code, E = 0 and M = 0. The sign gives two zeros, +0 and −0 (<span class="bn">0000 0000</span> and <span class="bn">8000 0000</span> in single precision), equal in value.</p>
           <p><b>Infinities.</b> E all ones and M = 0: +∞ if S = 0, −∞ if S = 1. This is the result of a calculation that goes beyond the largest representable number, or of 1 / 0. In single precision: <span class="bn">7F80 0000</span> and <span class="bn">FF80 0000</span>.</p>
           <p><b>NaN</b> (<i>Not a Number</i>). E all ones and M ≠ 0: this is the result of 0 / 0, or of the square root of a negative number. <b>A single 1 bit in M is enough</b>: <span class="bn">7FF0 0001 0000 0000</span> is a NaN (2025-2026 exam). The sign of a NaN does not matter: the 2023 answer key writes “NaN” for <span class="bn">FFFF 0000 0000 0000</span>, which has S = 1.</p>
-          <p><b>Denormalized numbers.</b> The smallest positive normalized number is 1.0 × 2<sup>−1022</sup> (E = 1). Below it, E = 0 and M ≠ 0 encode <b>denormalized</b> numbers (also called subnormal): no hidden 1, and the exponent stays that of E = 1, i.e. −1022 (−126 in single precision). They fill the gap between 0 and the smallest normalized number.</p>
+          <p><b>Denormalized numbers.</b> The smallest positive normalized number is 1.0 × 2<sup>−1022</sup> (E = 1). Below it, E = 0 and M ≠ 0 encode <b>denormalized</b> numbers: no hidden 1, <var>m</var> = (0.M)<sub>2</sub>, and the exponent is fixed: <var>e</var> = 1 − bias, that is −1022 in double precision (−126 in single), the one of E = 1. They fill the gap between 0 and the smallest normalized number. The course notes that converting them is even easier: the exponent is constant and the mantissa does not have to be normalized.</p>
         </div>
         <div class="calc" data-ie="double"><div>denormalized, double: ±0.M × 2<sup>−1022</sup></div><div>denormalized, single: ±0.M × 2<sup>−126</sup></div><div><span class="bn" data-k="hex">000A 8000 0000 0000</span>: E = 0, M = <span class="bn">1010 1000 0…</span></div><div class="r"><span data-eq><span class="bn">0.1010 1<sub>2</sub></span> × 2<sup>−1022</sup> = <span class="bn">1 0101<sub>2</sub></span> × 2<sup>−1027</sup> = <span data-k="val">21 × 2<sup>−1027</sup></span></span></div></div>
         <div data-archi="ieee" data-opts='{"fmt":"double","hex":"000A 8000 0000 0000","input":false,"title":"2023 exam: E = 0"}'></div>
@@ -404,7 +426,7 @@
         </table></div>
         <div data-archi="ieee" data-opts='{"fmt":"single","value":"0.1","title":"0.1 in single precision"}'></div>
         <div class="note why"><span class="tag">Round or truncate?</span>
-          <p>We do not have Chapter 2 or Tutorial 3: we do not know whether your course rounds to nearest, as the standard does, or truncates, like the “<var>n</var> digits after the point” of Chapter 1. The exams do not settle it: all their numbers are exact. If an exercise gives you a number like 0.1, apply your course’s rule.</p>
+          <p>Chapter 2 says nothing about rounding: all the numbers in its examples, in Tutorial 3 (exercises 1 to 4) and in the exams are exact. The standard rounds to nearest; the “<var>n</var> digits after the point” of Chapter 1 are truncated. If an exercise gives you a number like 0.1, say which rule you apply.</p>
         </div>
         <div class="prose">
           <p><b>How many decimal digits?</b> 24 significant binary digits give about 7 decimal digits (<span data-eq="a">2<sup>−23</sup> ≈ 1.19 × 10<sup>−7</sup></span>); in double precision, 53 binary digits give 15 to 16 decimal digits (<span data-eq="a">2<sup>−52</sup> ≈ 2.22 × 10<sup>−16</sup></span>). Integers also run out of room: in single precision, every integer up to <span data-eq>2<sup>24</sup> = 16,777,216</span> is exact, but <span data-ie="single" data-x="16777217"><span data-eq>16,777,217 = 2<sup>24</sup> + 1</span> needs 25 significant digits. The extra bit is worth exactly half: it is a tie, so it is rounded to even, and the word <span class="bn" data-k="hex">4B80 0000</span> is worth <span data-k="dv">16,777,216</span></span>.</p>

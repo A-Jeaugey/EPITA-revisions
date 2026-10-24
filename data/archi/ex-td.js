@@ -1,11 +1,12 @@
 /* Archi — exercices des TD 1 « Bases de numération » et TD 2 « Encodage d’entiers » (Moodle 2026-27, David Bouchet).
    Une fiche par exercice, kind 'td', exam null, ids td<N>-ex<M>. Les exercices longs sont coupés : td1-ex2a et
    td1-ex2b (questions 2.1 et 2.2 : deux tableaux de 12 conversions), td1-ex3a … td1-ex3e (questions 3.1 à 3.5 :
-   une sorte d’opération par fiche, pour le filtre par notion). Le TD 3 n’est pas fourni : aucune fiche.
+   une sorte d’opération par fiche, pour le filtre par notion). Le TD 3 est dans data/archi/ex-td3.js.
    - Énoncés verbatim (TD_01.pdf, TD_02.pdf, tableaux relus sur les pages), signe moins « − ». Coquilles des
      énoncés signalées dans la fiche (<p class="sol-note">) : « en hexadécimale » (TD 2, 3.2 et 3.3), « positif »
      non défini pour 0 (TD 2, 3.4 et 3.5).
-   - Aucun corrigé officiel des TD : corrections rédigées. Chaque résultat est recalculé deux fois (fractions
+   - Corrections rédigées, puis confrontées aux corrigés officiels publiés le 24 octobre 2026 (TD_01_Corrige.pdf,
+     TD_02_Corrige.pdf) : tous les résultats concordent. Chaque résultat est recalculé deux fois (fractions
      exactes en Python ; REV.archi sous node), ce que montrent les outils compris. « n chiffres après la virgule » :
      on tronque, comme le cours et les corrigés des sujets ; la fiche dit quand l’arrondi donnerait autre chose.
    - Corrigés : la méthode du cours, puis l’outil de assets/js/archi.js qui montre le calcul :
@@ -290,7 +291,7 @@
     P: 'Positif', N: 'Négatif', yes: 'Oui', no: 'Non', reads: function (v) { return 'le mot se lit ' + v; },
     operation: 'Opération', binres: 'Résultat binaire', decval: 'Valeur décimale', u: 'Non signée', s: 'Signée', err: 'ERREUR'
   };
-  var NOTE = 'Pas de corrigé officiel du TD : correction rédigée, chaque résultat recalculé par programme (fractions exactes).';
+  var NOTE = 'Correction rédigée et recalculée par programme (fractions exactes), conforme au corrigé officiel du TD publié sur le Moodle.';
 
   /* ================================================================== fiches */
   function add(ex) { X.push(fmt(ex)); }
@@ -324,7 +325,7 @@
       pw(2, 10) + ' = 1 024, pas 1 000 ; l’écart grandit : ' + pw(2, 20) + ' = 1 048 576, pas 1 000 000.',
       'Un zéro de trop ou de moins après la virgule : ' + pw(2, -4) + ' = 0,0625 (pas 0,625). ' + pw(2, '−<var>n</var>') + ' a exactement <var>n</var> chiffres après la virgule.',
       pw(2, '−<var>n</var>') + ' n’est pas négatif : c’est 1 / ' + pw(2, '<var>n</var>') + ', un nombre entre 0 et 1.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
 
   /* ---------------------------------------------------------------- TD 1 · Exercice 2.1 */
@@ -360,7 +361,7 @@
       'Multiplier tout le produit : après 0,42 × 16 = 6,72, on garde le chiffre 6 et on continue avec 0,72, pas avec 6,72.',
       '603 → 25B : un reste de 11 s’écrit B en base 16 (« 2511 » est faux).',
       'Les restes des divisions se lisent du dernier au premier ; les parties entières des multiplications, du premier au dernier.'],
-    official: false, note: NOTE + ' « 5 (ou 3) chiffres après la virgule » : on tronque, comme le cours et les corrigés de sujets ; ici l’arrondi donnerait le même résultat.'
+    official: true, note: NOTE + ' « 5 (ou 3) chiffres après la virgule » : on tronque, comme le cours et les corrigés de sujets ; ici l’arrondi donnerait le même résultat.'
   });
 
   /* ---------------------------------------------------------------- TD 1 · Exercice 2.2 */
@@ -391,7 +392,7 @@
       '8,DECA : chaque chiffre donne exactement 4 bits, zéros compris (C = 1100, A = 1010).',
       'A4C,148₁₆ : 0,148₁₆ ne vaut pas 0,148 mais 1/16 + 4/256 + 8/4 096 = 0,080078125.',
       '3 129 se lit « trois mille cent vingt-neuf » : l’espace sépare les milliers (en anglais, c’est une virgule : 3,129).'],
-    official: false, note: NOTE + ' « n chiffres après la virgule » : on tronque, comme le cours et les corrigés de sujets ; pour 92,47, l’arrondi donnerait 5C,7852.'
+    official: true, note: NOTE + ' « n chiffres après la virgule » : on tronque, comme le cours et les corrigés de sujets ; pour 92,47, l’arrondi donnerait 5C,7852.'
   });
 
   /* ---------------------------------------------------------------- TD 1 · Exercice 3 (une fiche par question) */
@@ -416,7 +417,7 @@
       'Oublier la dernière retenue : 10101010 + 11001110 a 9 chiffres (1 0111 1000), pas 8.',
       'Dans une colonne qui vaut 4 = 100₂, retenir 1 au lieu de 10₂.',
       'Aligner 101 à gauche : les nombres s’alignent à droite, sur le chiffre des unités.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
   add({
     id: 'td1-ex3b', exam: null, kind: 'td', order: 15, src: 'TD 1 · Ex 3.2', title: 'Soustractions binaires',
@@ -437,7 +438,7 @@
       'Ajouter l’emprunt au chiffre du haut de la colonne suivante et au chiffre du bas : l’emprunt se reporte une seule fois (le cours le met en bas).',
       'Une colonne « 0 − (1 + 1) » : c’est 0 − 10₂ ; on emprunte, 10 − 10 = 0, et l’emprunt continue.',
       'Ne pas vérifier : une addition (résultat + nombre du bas) suffit à retrouver le nombre du haut.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
   add({
     id: 'td1-ex3c', exam: null, kind: 'td', order: 16, src: 'TD 1 · Ex 3.3', title: 'Multiplications binaires',
@@ -458,7 +459,7 @@
     traps: [
       'Sauter une ligne de 0 sans décaler la suivante : le produit partiel du chiffre de poids ' + pw(2, '<var>k</var>') + ' est décalé de <var>k</var> rangs, que les lignes de 0 soient écrites ou non.',
       'Oublier les retenues de l’addition finale (trois 1 dans une colonne : on pose 1, on retient 1).'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
   add({
     id: 'td1-ex3d', exam: null, kind: 'td', order: 17, src: 'TD 1 · Ex 3.4', title: 'Divisions binaires avec chiffres après la virgule',
@@ -479,7 +480,7 @@
       'Oublier un 0 au quotient quand le reste partiel est plus petit que le diviseur : tous les chiffres suivants sont alors décalés.',
       'Arrondir le dernier chiffre : 1100110 / 101 donne 10100,011001 ; le 7e chiffre (1) ne s’ajoute pas.',
       'Placer la virgule trop tôt ou trop tard : elle s’écrit quand on abaisse le premier 0 ajouté, après le dernier chiffre du dividende.'],
-    official: false, note: NOTE + ' « n chiffres après la virgule » : on arrête la division, donc on tronque.'
+    official: true, note: NOTE + ' « n chiffres après la virgule » : on arrête la division, donc on tronque.'
   });
   add({
     id: 'td1-ex3e', exam: null, kind: 'td', order: 18, src: 'TD 1 · Ex 3.5', title: 'Additions hexadécimales',
@@ -502,7 +503,7 @@
       'Écrire la somme décimale d’une colonne (28) au lieu de son chiffre hexadécimal (C, retenue 1).',
       'Se tromper sur une lettre : B = 11, C = 12, D = 13, E = 14, F = 15 ; une unité d’écart fausse toute la colonne.',
       'Oublier la retenue finale : BEBE + CAFE a 5 chiffres.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
 
   /* ---------------------------------------------------------------- TD 2 · Exercice 1 */
@@ -528,7 +529,7 @@
       'Le maximum non signé est ' + pw(2, '<var>n</var>') + ' − 1, pas ' + pw(2, '<var>n</var>') + ' : 256 ne tient pas sur 8 bits (1 0000 0000 en a 9).',
       'La plage signée n’est pas symétrique : −128 à 127 sur 8 bits (ni −127 à 127, ni −128 à 128).',
       'En signé, c’est ' + pw(2, '<var>n</var>−1') + ' et non ' + pw(2, '<var>n</var>') + ' : −' + pw(2, '<var>n</var>−1') + ' à ' + pw(2, '<var>n</var>−1') + ' − 1. Il y a ' + pw(2, '<var>n</var>') + ' valeurs dans les deux codages.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
 
   /* ---------------------------------------------------------------- TD 2 · Exercice 2 */
@@ -561,7 +562,7 @@
       'S’arrêter au complément à un (oublier le + 1) : 11011110 vaut −34, pas −33.',
       'Mettre seulement un 1 devant la valeur absolue (10100001 pour −33) : ce n’est pas l’encodage du cours ; en complément à deux, 10100001 vaut −95.',
       'Prendre le complément à deux d’une valeur absolue écrite sur moins de 8 bits : complète d’abord à 8 bits (33 = 00100001).'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
 
   /* ---------------------------------------------------------------- TD 2 · Exercice 3 */
@@ -606,7 +607,7 @@
       'Juger le signe sur la valeur décimale apparente : 81₁₆ « ressemble » à un positif, mais 1000 0001 commence par 1 : négatif (−127).',
       'Confondre retenue et dépassement signé : la retenue sortante signale un dépassement non signé, pas un dépassement signé.',
       'Appliquer la règle des additions telle quelle aux soustractions : « positif − positif » ne déborde jamais, « positif − négatif » peut déborder.'],
-    official: false, note: NOTE + ' Tableaux des questions 4 et 5 vérifiés sur tous les couples de mots de 8 bits.'
+    official: true, note: NOTE + ' Tableaux des questions 4 et 5 vérifiés sur tous les couples de mots de 8 bits.'
   });
 
   /* ---------------------------------------------------------------- TD 2 · Exercice 4 */
@@ -643,7 +644,7 @@
       'Prendre la retenue pour un dépassement signé : 11101111 + 11111010 a une retenue (non signé faux), mais le résultat signé −23 est juste.',
       'Écrire la lecture non signée dans la colonne signée : 11000010 vaut 194 en non signé mais −62 en signé.',
       'Oublier que P + P peut déborder sans retenue : 01111010 + 00001001 = 10000011, 131 en non signé mais ERREUR en signé.'],
-    official: false, note: NOTE
+    official: true, note: NOTE
   });
 
   /* ================================================================== pour le fichier anglais */

@@ -124,13 +124,13 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 - **Archi** (Architecture des ordinateurs · Numération) : cours `archi/cours-1-bases`, `-2-operations`, `-3-entiers`,
   `-4-flottants` (`data-done="archi:<chapitre>:sN"`, chapitres bases, operations, entiers, flottants) ; exercices
   `window.ARCHI_EX` (`data/archi/ex-annales.js` : fiches des 10 sujets, ids `pAAAA-exN`, p2025 = examen B1 2025-2026
-  du Moodle ; `ex-td.js` : TD 1 et 2, `td1-ex1`…, `near` vers un sujet) ; sujets `ARCHI_EXAMS` (`prog`, `progPts`) et
+  du Moodle ; `ex-td.js` : TD 1 et 2, `td1-ex1`…, `near` vers un sujet ; `ex-td3.js` : TD 3 ex. 1 à 4, `td3-ex1`…, seuls au programme) ; sujets `ARCHI_EXAMS` (`prog`, `progPts`) et
   notions `ARCHI_TOPICS` (`data/archi/exams.js`) ; QCM `data/qcm/archi.js` (`archi-cN-…`) et `archi-annales.js`
   (`archi-pAAAA-qN`). **Tout nombre est recalculé par programme** (`data-eq` dans les pages, relus par un script).
   Points vérifiés : « n chiffres après la virgule » = troncature, jamais d’arrondi ; IEEE 754 aux 3 derniers sujets
   (encoder en simple : S / E / M en binaire sans espace ; décoder du double : « k × 2ⁿ », k impair, ou NaN) ; tableau
-  8 bits avec ERREUR en cas de dépassement ; extension de signe, BCD, Gray, ASCII jamais tombés. Le chapitre 2 du
-  cours (flottants) et le TD 3 n’ont pas été fournis : le cours 4 suit la norme et les corrigés, et le dit. Coquilles
+  8 bits avec ERREUR en cas de dépassement ; extension de signe, BCD, Gray, ASCII jamais tombés. Chapitre 2 (flottants), TD 3 et corrigés des TD 1 à 3 publiés le 24 octobre :
+  le cours 4 reprend leurs méthodes en cinq étapes ; tous les corrigés officiels des TD sont justes (recalculés). Coquilles
   du chapitre 1 relevées (0,4025 pour 0,40625, « 0 − 1 = 1 → on emprunte »…) : ne pas les recopier.
 - **Maths** (examen 1 : OBM et DP, mercredi 28 octobre) : cours `maths/cours-1-logique`, `-2-ensembles`, `-3-fonctions`,
   `-4-raisonnement` (OBM), `-5-denombrement`, `-6-probabilites`, `-7-variables` (DP) (`data-done="maths:<chapitre>:sN"`) ;

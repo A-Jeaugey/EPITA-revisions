@@ -102,7 +102,7 @@
     </ol></details>
 
     <div class="note why" style="margin-bottom:8px"><span class="tag">D’où vient ce chapitre</span>
-      <p>Le chapitre 2 du cours (« Systèmes de numération flottante ») ne nous a pas été fourni : cette page suit la norme IEEE 754, les sujets 2023 à 2025 et leurs corrigés (2023 et 2025). Si ton cours dit autrement, c’est ton cours qui compte.</p>
+      <p>Cette page suit le chapitre 2 du cours (« Systèmes de numération flottante », version du 18/07/2026) et le corrigé du TD 3, publiés sur le Moodle le 24 octobre : leurs méthodes en cinq étapes (parties 3 et 4), leurs exemples et leurs écritures. Les autres exemples viennent des sujets 2023 à 2025 et de leurs corrigés.</p>
     </div>
 
     <!-- ============================================================ 1 -->
@@ -192,7 +192,17 @@
             <li>M = <span class="bn">1001 0…</span> veut dire 1,1001…<sub>2</sub> : il manque le 1 de tête, que tu dois remettre pour relire la valeur.</li>
           </ul>
         </div>
-        <p class="muted" style="font-size:.9rem">Vocabulaire : les sujets n’emploient que les lettres S, E et M et les mots « simple précision » et « double précision ». Signe, exposant biaisé, biais, mantisse et 1 implicite sont les termes usuels des manuels (la norme elle-même parle de significande plutôt que de mantisse).</p>
+        <div class="tbl"><table>
+          <caption>Tableau 4.2 bis — Taille des champs et biais selon la précision (chapitre 2, II.1)</caption>
+          <thead><tr><th></th><th>S (bits)</th><th>E (bits)</th><th>M (bits)</th><th>Total (bits)</th><th>Biais</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Demi-précision</th><td>1</td><td>5</td><td>10</td><td>16</td><td>15</td></tr>
+            <tr><th scope="row">Simple précision</th><td>1</td><td>8</td><td>23</td><td>32</td><td>127</td></tr>
+            <tr><th scope="row">Double précision</th><td>1</td><td>11</td><td>52</td><td>64</td><td>1 023</td></tr>
+            <tr><th scope="row">Quadruple précision</th><td>1</td><td>15</td><td>112</td><td>128</td><td>16 383</td></tr>
+          </tbody>
+        </table></div>
+        <p class="muted" style="font-size:.9rem">Seules la simple et la double précision tombent aux sujets et au TD 3. Vocabulaire du chapitre 2 : signe <var>s</var>, mantisse <var>m</var> (ou significande), exposant <var>e</var>, biais ; les champs S, E, M ; mantisse normalisée (elle commence par « 1, ») et mantisse dénormalisée. Le cours écrit un nombre normalisé (−1)<sup>S</sup> × (1,M)<sub>2</sub> × 2<sup>E − biais</sup>.</p>
         <div data-check-ref="archi/cours-4-flottants.html#s2" data-n="3"></div>
       </div>
       <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="archi:flottants:s2"></button></div>
@@ -220,6 +230,11 @@
             <p class="xl"><span class="vi">0</span> <span class="cu">1000 0101</span> <span class="bl">0000 1101 1000 0000 0000 000</span><br>= <span class="bn" data-k="wb">0100 0010 1000 0110 1100 0000 0000 0000</span> = <b><span class="bn" data-k="hex">4286 C000</span></b></p></div></li>
         </ol>
         <div class="xl" data-ie="single" data-x="67,375" style="border-left-color:var(--exam)">Sur la copie : <b class="ie-cs">S</b> <span class="cp" data-k="s">0</span> · <b class="ie-ce">E</b> <span class="cp" data-k="ef">10000101</span> · <b class="ie-cm">M</b> <span class="cp" data-k="m">00001101100000000000000</span></div>
+        <div class="note keep"><span class="tag">La méthode du cours (chapitre 2, III.1)</span>
+          <ol><li>Déterminer la valeur de S en fonction du signe du nombre.</li><li>Convertir la valeur absolue du nombre dans sa représentation binaire (éventuellement fractionnaire).</li><li>Normaliser la représentation binaire et déterminer facilement les valeurs de M et <var>e</var>.</li><li>Déterminer la valeur de E en fonction de <var>e</var> et du biais : E = <var>e</var> + biais.</li><li>Écrire le résultat final dans sa forme binaire.</li></ol>
+          <p>Ce sont les étapes ci-dessus, M et <var>e</var> lus ensemble à la normalisation. Exemple du cours : <span class="bn">−145,625</span>. S = 1 ; 145,625 = <span class="bn">1001 0001,101<sub>2</sub></span> = <span class="bn">(1,0010001101)<sub>2</sub></span> × 2<sup>7</sup>, donc M = <span class="bn">00100011010…0</span> et <var>e</var> = 7 ; E = 7 + 127 = 6 + 128 = <span class="bn">1000 0110<sub>2</sub></span> ; résultat : <span class="bn" style="white-space:normal;overflow-wrap:anywhere">1 10000110 00100011010000000000000</span>.</p>
+          <p><b>L’astuce du corrigé</b> : 127 = 128 − 1 et 128 = <span class="bn">1000 0000<sub>2</sub></span>, donc E = (<var>e</var> − 1) + 128 s’écrit sans division : un 1 en tête, puis <var>e</var> − 1 sur les 7 bits de droite (6 = <span class="bn">110<sub>2</sub></span> donne <span class="bn">1000 0110</span>). En double précision : 1023 = 1024 − 1, et 1024 = <span class="bn">100 0000 0000<sub>2</sub></span>. Les exercices 1 et 2 du <a href="entrainement.html#td3-ex1">TD 3</a> s’entraînent sur cette méthode.</p>
+        </div>
         <div class="prose">
           <p><b>À toi.</b> L’outil refait ces étapes pour n’importe quel nombre. Il part de 0,09375 (examen 2025-2026), plus petit que 1 : la virgule se déplace vers la droite et l’exposant est négatif.</p>
         </div>
@@ -254,6 +269,10 @@
           <li><div><p><b>Remettre le 1</b> devant la virgule : la valeur est 1,M × 2<sup><var>e</var></sup>. Les 0 de fin de M ne comptent pas.</p>
             <p class="xl"><span data-k="norm"><span class="bn">1,0100 0101<sub>2</sub></span> × 2<sup>8</sup></span> = <span data-eq><span class="bn">1 0100 0101<sub>2</sub></span> = <span class="bn" data-k="val">325</span></span>.</p></div></li>
         </ol>
+        <div class="note keep"><span class="tag">La méthode du cours (chapitre 2, III.2)</span>
+          <ol><li>Déterminer le signe du nombre en fonction de la valeur de S.</li><li>Déterminer <var>e</var> en fonction de E et du biais : <var>e</var> = E − biais.</li><li>Déterminer <var>m</var> dans sa représentation binaire : <var>m</var> = (1,M)<sub>2</sub>.</li><li>Écrire le résultat sous la forme suivante : ± <var>m</var> × 2<sup><var>e</var></sup>.</li><li>Simplifier si nécessaire en déplaçant ou supprimant la virgule et convertir en représentation décimale.</li></ol>
+          <p>Avant tout, regarde E : s’il ne contient que des 0 ou que des 1, ce n’est pas un nombre normalisé (partie 6). Les exercices 3 et 4 du <a href="entrainement.html#td3-ex3">TD 3</a> mélangent les deux cas.</p>
+        </div>
         <div class="note trap"><span class="tag">Piège : en simple précision, E chevauche deux chiffres hexadécimaux</span>
           <p>1 + 8 = 9 bits : S et E ne remplissent pas un nombre entier de chiffres hexadécimaux. Dans <span class="bn">43A2</span>, le 4 (<span class="bn">0100</span>) contient S et les 3 premiers bits de E, et le dernier bit de E est le premier bit du A (<span class="bn">1010</span>). Découpe toujours en binaire, jamais directement sur l’hexadécimal.</p>
         </div>
@@ -306,6 +325,9 @@
         <div class="prose" data-ie="double">
           <p><b>Un mot négatif.</b> <span class="bn" data-k="hex">C029 0000 0000 0000</span> commence par C ≥ 8 : S = 1 et E = <span data-eq><span class="bn">C02<sub>16</sub></span> − <span class="bn">800<sub>16</sub></span> = <span class="bn">402<sub>16</sub></span> = <span data-k="eb">1026</span></span>, donc <var>e</var> = 3. M commence par 9 = <span class="bn">1001</span> : la valeur est <span data-eq>−<span class="bn">1,1001<sub>2</sub></span> × 2<sup>3</sup> = −<span class="bn">1100,1<sub>2</sub></span> = <span data-k="val">−12,5</span></span>, le nombre de la partie 2.</p>
         </div>
+        <div class="prose">
+          <p><b>L’exemple du cours</b> (chapitre 2, III.2) : <span class="bn">2401 8000 0000 0000<sub>16</sub></span> = <span class="bn">0010 0100 0000 0001 1000 0…0<sub>2</sub></span>. S = 0 → positif ; <var>e</var> = E − biais = <span class="bn">010 0100 0000<sub>2</sub></span> − 1023 = 576 − 1023 = −447 ; <var>m</var> = (1,M)<sub>2</sub> = <span class="bn">(1,00011)<sub>2</sub></span> ; +<var>m</var> × 2<sup><var>e</var></sup> = <span class="bn">(1,00011)<sub>2</sub></span> × 2<sup>−447</sup> = <span class="bn">(100011)<sub>2</sub></span> × 2<sup>−452</sup> = <b>35 × 2<sup>−452</sup></b>.</p>
+        </div>
         <div class="prose"><p>L’outil décode le mot de l’examen 2025-2026. Sur un écran étroit, les 64 bits passent sur plusieurs lignes, toujours par paquets de 4.</p></div>
         <div data-archi="ieee" data-opts='{"fmt":"double","hex":"2844 0000 0000 0000","title":"Décoder un mot de 64 bits"}'></div>
         <div class="prose" data-ie="double" data-x="67,375">
@@ -345,7 +367,7 @@
           <p><b>Zéro.</b> 0 ne s’écrit pas 1,M × 2<sup><var>e</var></sup> : il a son propre code, E = 0 et M = 0. Le signe donne deux zéros, +0 et −0 (<span class="bn">0000 0000</span> et <span class="bn">8000 0000</span> en simple), égaux en valeur.</p>
           <p><b>Infinis.</b> E rempli de 1 et M = 0 : +∞ si S = 0, −∞ si S = 1. C’est le résultat d’un calcul qui dépasse le plus grand nombre représentable, ou de 1 / 0. En simple : <span class="bn">7F80 0000</span> et <span class="bn">FF80 0000</span>.</p>
           <p><b>NaN</b> (<i>Not a Number</i>, « pas un nombre »). E rempli de 1 et M ≠ 0 : c’est le résultat de 0 / 0, ou de la racine carrée d’un nombre négatif. <b>Un seul bit de M à 1 suffit</b> : <span class="bn">7FF0 0001 0000 0000</span> est un NaN (examen 2025-2026). Le signe d’un NaN ne compte pas : le corrigé 2023 écrit « NaN » pour <span class="bn">FFFF 0000 0000 0000</span>, qui a pourtant S = 1.</p>
-          <p><b>Dénormalisés.</b> Le plus petit normalisé positif est 1,0 × 2<sup>−1022</sup> (E = 1). En dessous, E = 0 et M ≠ 0 codent des nombres <b>dénormalisés</b> : pas de 1 implicite, et l’exposant reste celui de E = 1, soit −1022 (−126 en simple). Ils comblent le trou entre 0 et le plus petit normalisé.</p>
+          <p><b>Dénormalisés.</b> Le plus petit normalisé positif est 1,0 × 2<sup>−1022</sup> (E = 1). En dessous, E = 0 et M ≠ 0 codent des nombres <b>dénormalisés</b> : pas de 1 implicite, <var>m</var> = (0,M)<sub>2</sub>, et l’exposant est fixe : <var>e</var> = 1 − biais, soit −1022 en double (−126 en simple), celui de E = 1. Ils comblent le trou entre 0 et le plus petit normalisé. Le cours note que leur conversion est même plus simple : l’exposant est constant et la mantisse n’a pas à être normalisée.</p>
         </div>
         <div class="calc" data-ie="double"><div>dénormalisé, double : ±0,M × 2<sup>−1022</sup></div><div>dénormalisé, simple : ±0,M × 2<sup>−126</sup></div><div><span class="bn" data-k="hex">000A 8000 0000 0000</span> : E = 0, M = <span class="bn">1010 1000 0…</span></div><div class="r"><span data-eq><span class="bn">0,1010 1<sub>2</sub></span> × 2<sup>−1022</sup> = <span class="bn">1 0101<sub>2</sub></span> × 2<sup>−1027</sup> = <span data-k="val">21 × 2<sup>−1027</sup></span></span></div></div>
         <div data-archi="ieee" data-opts='{"fmt":"double","hex":"000A 8000 0000 0000","input":false,"title":"Sujet 2023 : E = 0"}'></div>
@@ -404,7 +426,7 @@
         </table></div>
         <div data-archi="ieee" data-opts='{"fmt":"single","value":"0,1","title":"0,1 en simple précision"}'></div>
         <div class="note why"><span class="tag">Arrondir ou tronquer ?</span>
-          <p>Le chapitre 2 et le TD 3 nous manquent : on ne sait pas si ton cours arrondit au plus proche, comme la norme, ou s’il tronque, comme les « <var>n</var> chiffres après la virgule » du chapitre 1. Les sujets ne tranchent pas : tous leurs nombres sont exacts. Si un exercice te donne un nombre comme 0,1, applique la règle de ton cours.</p>
+          <p>Le chapitre 2 ne parle pas d’arrondi : tous les nombres de ses exemples, du TD 3 (exercices 1 à 4) et des sujets s’écrivent exactement. La norme arrondit au plus proche ; les « <var>n</var> chiffres après la virgule » du chapitre 1 se tronquent. Si un exercice te donne un nombre comme 0,1, dis quelle règle tu appliques.</p>
         </div>
         <div class="prose">
           <p><b>Combien de chiffres décimaux ?</b> 24 chiffres binaires significatifs font environ 7 chiffres décimaux (<span data-eq="a">2<sup>−23</sup> ≈ 1,19 × 10<sup>−7</sup></span>) ; en double, 53 chiffres binaires font 15 à 16 chiffres décimaux (<span data-eq="a">2<sup>−52</sup> ≈ 2,22 × 10<sup>−16</sup></span>). Les entiers aussi finissent par manquer de place : en simple, tous les entiers jusqu’à <span data-eq>2<sup>24</sup> = 16 777 216</span> sont exacts, mais <span data-ie="single" data-x="16777217"><span data-eq>16 777 217 = 2<sup>24</sup> + 1</span> demande 25 chiffres significatifs. Le bit en trop vaut exactement la moitié : égalité, on arrondit au pair, et le mot <span class="bn" data-k="hex">4B80 0000</span> vaut <span data-k="dv">16 777 216</span></span>.</p>

@@ -15,7 +15,7 @@
   if (!T || !R || !R.i18n) return;
   var D = T.DATA, OPS = D.OPS, B = T.B, H = T.H, W = T.W, pw = T.pw, tool = T.tool, calc = T.calc, tbl = T.tbl, dtext = T.dtext, sgn = T.sgn;
   var MINUS = '−', n = '<var>n</var>';
-  var NOTE = 'No official answer key for the tutorials: solution written, every result recomputed by a program (exact fractions).';
+  var NOTE = 'Solution written and recomputed by a program (exact fractions); it matches the official tutorial answer key published on Moodle.';
   var L = {
     power: 'Power', value: 'Value', word: 'Word', binary: 'Binary', sign: 'Sign',
     conv: {
