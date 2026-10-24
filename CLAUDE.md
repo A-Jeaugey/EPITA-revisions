@@ -93,7 +93,8 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   construits). QCM : `data/qcm/taa.js` (cours), `taa-annales.js` (questions de cours des partiels, rattachées par
   `same`), `taa-hebdo.js` (QCM hebdo des promos 2021 à 2030, `also` = autres apparitions).
   Points vérifiés : une constante retourne un type défini (partiel 2023) ; la signature occupe les zones types,
-  utilise, opérations ; « opération auxiliaire » = sert à écrire le domaine d’une autre.
+  utilise, opérations ; « opération auxiliaire » = sert à écrire le domaine d’une autre. Annonce de l'examen (24 octobre 2026) : types abstraits,
+  listes récursives et itératives, piles et files ; lire, appliquer et reconnaître des axiomes, en rédiger ; ensembles non cités.
 - **Physique** (mécanique du point) : exercices `data/physique/ex-annales.js` (partiels 2017-2022 au programme)
   et `ex-td.js` (TD 1 à 5) dans `window.PHYS_EX` (même format, `figs: [{ svg, cap }]`), sujets `PHYS_EXAMS`
   (parties `prog`, `progPts`) et notions `PHYS_TOPICS` (`data/physique/exams.js`), QCM `data/qcm/physique.js`
