@@ -85,6 +85,9 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   solution, answer, traps, official). Une figure est `{spec}` (schéma), `{svg}` ou `{img:'assets/img/…', alt}`.
 - **Sujets d’élec** (`data/elec/exams.js`) : `window.ELEC_EXAMS` (clé `pAAAA` = année du partiel ; promo = AAAA + 5),
   `window.ELEC_TOPICS`, `window.ELEC_CATS`.
+  Programme de l'examen 1 (annonce d'octobre 2026) : cours jusqu'à la page 15 (associations de résistances) et TD 1
+  jusqu'à l'exercice 5 ; **Thévenin, Norton, Millman, superposition hors examen 1** (chapitre 3 du site, notions du QCM
+  décochées via `window.QCM_OFF`) ; meilleurs modèles : partiels 2020 à 2022 (2020 entièrement au programme).
 - **Exercices TAA** (`data/taa/ex-*.js`, poussés dans `window.TAA_EX`) : même idée que l’élec, sans schémas :
   `{ id, exam, kind:'partiel'|'td'|'archive'|'cours', order, src, title, pts, topics, lvl, time, intro,
   specs:[{ code, cap }], questions, hints, solution:[{ t, html, spec }], answer (HTML ou { html, spec }), traps,

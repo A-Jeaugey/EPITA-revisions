@@ -7,7 +7,7 @@ REV.i18n.patch(window.ELEC_CATS, {
 REV.i18n.patch(window.ELEC_TOPICS, {
   vocabulaire: 'Nodes, branches, loops', potentiels: 'Potentials and arrows', kirchhoff: 'Kirchhoff’s laws', req: 'Equivalent resistance',
   diviseurs: 'Dividers', interrupteurs: 'Switches', appareils: 'Measuring instruments', generateurs: 'Real sources',
-  'source-courant': 'Current sources', thevenin: 'Thévenin and Norton', millman: 'Millman', superposition: 'Superposition',
+  'source-courant': 'Current sources', thevenin: 'Thévenin and Norton (not in exam 1)', millman: 'Millman (not in exam 1)', superposition: 'Superposition (not in exam 1)',
   calcul: 'Symbolic calculation', qcm: 'Lecture questions'
 });
 REV.i18n.patch(window.ELEC_EXAMS, {

@@ -6,7 +6,7 @@
   window.ELEC_TOPICS = {
     vocabulaire: 'Nœuds, branches, mailles', potentiels: 'Potentiels et flèches', kirchhoff: 'Lois de Kirchhoff', req: 'Résistance équivalente',
     diviseurs: 'Diviseurs', interrupteurs: 'Interrupteurs', appareils: 'Appareils de mesure', generateurs: 'Générateurs réels',
-    'source-courant': 'Sources de courant', thevenin: 'Thévenin et Norton', millman: 'Millman', superposition: 'Superposition',
+    'source-courant': 'Sources de courant', thevenin: 'Thévenin et Norton (hors examen 1)', millman: 'Millman (hors examen 1)', superposition: 'Superposition (hors examen 1)',
     calcul: 'Calcul littéral', qcm: 'Questions de cours'
   };
   window.ELEC_EXAMS = [

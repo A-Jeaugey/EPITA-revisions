@@ -7,9 +7,11 @@
     grandeurs: 'Grandeurs et unités', schema: 'Lire un schéma', fleches: 'Flèches et potentiels', conventions: 'Dipôles et conventions',
     ohm: 'Loi d’Ohm et puissance', appareils: 'Interrupteurs et appareils', generateurs: 'Générateurs', calcul: 'Calcul et homogénéité',
     vocabulaire: 'Nœuds, branches, mailles', kirchhoff: 'Lois de Kirchhoff', 'serie-parallele': 'Série ou parallèle', req: 'Résistance équivalente',
-    diviseurs: 'Diviseurs de tension et de courant', thevenin: 'Thévenin', norton: 'Norton et équivalences', millman: 'Millman', superposition: 'Superposition'
+    diviseurs: 'Diviseurs de tension et de courant', thevenin: 'Thévenin (hors examen 1)', norton: 'Norton et équivalences (hors examen 1)', millman: 'Millman (hors examen 1)', superposition: 'Superposition (hors examen 1)'
   };
   for (var k in add) T[k] = add[k];
+  /* hors du programme de l'examen 1 (cours jusqu'à la page 15, TD 1 jusqu'à l'exercice 5) : décochées par défaut dans qcm/index.html */
+  window.QCM_OFF = (window.QCM_OFF || []).concat(['thevenin', 'norton', 'millman', 'superposition']);
 
   var C1 = 'elec/cours-1-bases.html', C2 = 'elec/cours-2-lois.html', C3 = 'elec/cours-3-theoremes.html';
   var Q = [

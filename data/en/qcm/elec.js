@@ -5,7 +5,7 @@ REV.i18n.topics({
   grandeurs: 'Quantities and units', schema: 'Reading a diagram', fleches: 'Arrows and potentials', conventions: 'Dipoles and conventions',
   ohm: 'Ohm’s law and power', appareils: 'Switches and meters', generateurs: 'Sources', calcul: 'Calculation and dimensional consistency',
   vocabulaire: 'Nodes, branches, loops', kirchhoff: 'Kirchhoff’s laws', 'serie-parallele': 'Series or parallel', req: 'Equivalent resistance',
-  diviseurs: 'Voltage and current dividers', thevenin: 'Thévenin', norton: 'Norton and equivalences', millman: 'Millman', superposition: 'Superposition'
+  diviseurs: 'Voltage and current dividers', thevenin: 'Thévenin (not in exam 1)', norton: 'Norton and equivalences (not in exam 1)', millman: 'Millman (not in exam 1)', superposition: 'Superposition (not in exam 1)'
 });
 REV.i18n.qcm({
   /* ---------- chapter 1 ---------- */
