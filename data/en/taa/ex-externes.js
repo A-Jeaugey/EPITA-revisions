@@ -177,8 +177,59 @@
     },
 
     /* ---------- Boolean ---------- */
+    'kb-pfcls': {
+      src: 'Moodle · Practice exercises',
+      title: 'Rock-paper-scissors-lizard-Spock: writing the rules as axioms',
+      intro: '<p>Exercise added by your teacher on 20 October, in the “Exercices d’entraînement” section of Moodle, with no answer key. The rules: scissors cut paper, paper covers rock, rock crushes lizard, lizard poisons Spock, Spock smashes scissors, scissors decapitate lizard, lizard eats paper, paper disproves Spock, Spock vaporizes rock, and rock crushes scissors.</p>',
+      specs: [{ cap: 'The Moodle signature, copied as is (the French move names are kept: pierre = rock, feuille = paper, ciseaux = scissors, lézard = lizard).' }],
+      questions: [
+        '1. What does ' + c('battu-par') + ' (“beaten by”) return according to its profile? How many moves beat each move?',
+        '2. Write the axioms of ' + c('battu-par') + '.',
+        '3. The signature uses ' + c('booléen') + ' without needing it. Suggest an operation that would need it, and its axioms.'],
+      hints: [
+        'The profile returns a pair of moves: the two moves that beat the argument. Sort the ten rules by loser.',
+        'There are only five possible values, all constants: one axiom per constant.',
+        'An operation ' + c('_ bat _ : coup_PFCLS × coup_PFCLS → booléen') + ' (“beats”) would say whether the first move beats the second.'],
+      solution: [
+        { t: 'Reading the signature', html: '<p>' + c('coup_PFCLS') + ' is the defined type; the five moves are constants. ' + c('battu-par') + ' takes a move and returns a <b>pair</b> of moves: those that beat it. Each of the ten rules has a winner and a loser, and each move loses exactly twice, so the pair is always complete. No precondition.</p>' +
+          table(['Move', 'Beaten by'], [['pierre (rock)', 'feuille (covers), spock (vaporizes)'], ['feuille (paper)', 'ciseaux (cut), lézard (eats)'], ['ciseaux (scissors)', 'spock (smashes), pierre (crushes)'], ['lézard (lizard)', 'pierre (crushes), ciseaux (decapitate)'], ['spock', 'lézard (poisons), feuille (disproves)']]) },
+        { t: 'The axioms of battu-par', html: '<p>One axiom per constant. The order inside the pair is not set by the statement: pick the order of the rules and stick to it.</p>' },
+        { t: 'With a boolean', html: '<p>A more natural reading of the game: ' + c('_ bat _ : coup_PFCLS × coup_PFCLS → booléen') + '. It is an observer (it returns a predefined type). Write the ten true cases, then state that any other pair gives false. With variables, a conditional axiom completes it.</p>' }],
+      answer: { html: '<p>1. A pair: the two moves that beat the argument; each move is beaten by exactly two others. 2. Five axioms, one per constant:</p>' },
+      traps: [
+        'Do not reverse the direction: ' + c('battu-par feuille') + ' gives the moves that beat paper (scissors, lizard), not those it beats (rock, Spock).',
+        'Check completeness: five constants, so five axioms. Each move appears twice in the pairs, once per rule it wins.',
+        'In the boolean variant, do not write ' + c('c bat c = vrai') + ': a move against itself is a tie.'],
+      note: 'No answer key on Moodle: solution written, the five pairs checked by a program against the ten rules.'
+    },
+    'kb-pile-ordres': {
+      src: 'Moodle · Practice exercises',
+      title: 'Pop orders of a stack: A, B, C pushed in this order',
+      intro: '<p>Exercise added by your teacher on 20 October, in the “Exercices d’entraînement” section of Moodle. A, then B, then C are pushed, and you may pop between two pushes: in which orders can the elements come out?</p>' +
+        '<p>Moodle examples: with A alone, ' + c('pop(push(empty_stack, A))') + ' outputs A. With A, B: ' + c('pop(pop(push(push(empty_stack, A), B)))') + ' outputs B then A, and ' + c('pop(push(pop(push(empty_stack, A)), B))') + ' outputs A then B.</p>',
+      questions: [
+        '1. With A, B, C: Moodle gives C, B, A and A, B, C. Find the three other possible orders, and write for each the term that produces it.',
+        '2. Which permutation is impossible, and why?'],
+      hints: [
+        'Before C comes out, A and B are necessarily in the stack or already out.',
+        'A stack always returns the last element in (LIFO): if C comes out while A and B are still inside, B is above A.'],
+      solution: [
+        { t: 'The five possible orders', html: '<p>Read the term from the inside out: each ' + c('pop') + ' outputs the current top.</p>' +
+          table(['Output order', 'Term'], [
+            ['A, B, C', c('pop(push(pop(push(pop(push(empty_stack, A)), B)), C))')],
+            ['A, C, B', c('pop(pop(push(push(pop(push(empty_stack, A)), B), C)))')],
+            ['B, A, C', c('pop(push(pop(pop(push(push(empty_stack, A), B))), C))')],
+            ['B, C, A', c('pop(pop(push(pop(push(push(empty_stack, A), B)), C)))')],
+            ['C, B, A', c('pop(pop(pop(push(push(push(empty_stack, A), B), C))))')]]) },
+        { t: 'The impossible order', html: '<p><b>C, A, B</b> is impossible. For C to come out first, A and B must have been pushed and not yet popped: the stack holds A at the bottom, B above it. The next element out is therefore B, never A.</p>' }],
+      answer: { html: '<p>1. The three other orders: A, C, B; B, A, C; B, C, A (terms in the solution). 2. C, A, B is impossible: after C, B is on top, above A.</p>' },
+      traps: [
+        'A term reads from the inside: the first ' + c('push') + ' written is the deepest in the brackets.',
+        'There are 6 permutations of A, B, C but only 5 possible orders.'],
+      note: 'No answer key on Moodle: the five orders and their terms were obtained by enumerating every push / pop sequence.'
+    },
     'kb-booleen': {
-      src: 'Moodle practice exercise',
+      src: 'Moodle · Practice exercises (Booleans)',
       title: 'The axioms of the Boolean type',
       intro: '<p>Practice exercise from the Moodle (1 October), whose solution was announced for “later”. Krisboul’s online course gives the same signature, without the axioms.</p>',
       specs: [{ code: L('types', '    boolean', 'operations',

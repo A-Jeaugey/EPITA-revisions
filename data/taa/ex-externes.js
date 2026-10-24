@@ -184,7 +184,7 @@
      ===================================================================== */
 
   /* ---------- Booléen ---------- */
-  X.push({ id: 'kb-booleen', exam: null, kind: 'cours', order: 1, src: 'Exercice d’application du Moodle',
+  X.push({ id: 'kb-booleen', exam: null, kind: 'cours', order: 1, src: 'Moodle · Exercices d’entraînement (Booléens)',
     title: 'Les axiomes du type Booléen', topics: ['axiomes', 'autres'], lvl: 1, time: 10,
     intro: '<p>Exercice d’application du Moodle (1<sup>er</sup> octobre), dont la correction était annoncée « ultérieurement ». Le cours en ligne de Krisboul donne la même signature, sans les axiomes.</p>',
     specs: [{ code: L('types', '    booléen', 'opérations',
@@ -702,4 +702,75 @@
       'Un axiome qui manque est un problème de complétude, pas de consistance.'
     ],
     official: false, note: 'Exercice construit : le trou vient des axiomes du cours (page en ligne et fiche 05). Correction vérifiée.' });
+  /* ---------- Exercices d'entraînement du Moodle (section ajoutée le 20 octobre 2026) ---------- */
+  X.push({ id: 'kb-pfcls', exam: null, kind: 'cours', order: 13, src: 'Moodle · Exercices d’entraînement',
+    title: 'Pierre-feuille-ciseaux-lézard-Spock : écrire les règles en axiomes', topics: ['axiomes', 'autres'], lvl: 2, time: 15,
+    intro: '<p>Exercice ajouté par le prof le 20 octobre, dans la section « Exercices d’entraînement » du Moodle, sans correction. Les règles : les ciseaux coupent la feuille, la feuille couvre la pierre, la pierre écrase le lézard, le lézard empoisonne Spock, Spock écrase les ciseaux, les ciseaux décapitent le lézard, le lézard mange la feuille, la feuille réfute Spock, Spock vaporise la pierre, et la pierre casse les ciseaux.</p>',
+    specs: [{ code: L('types', '    coup_PFCLS', 'utilise', '    booléen', 'opérations',
+      '         pierre : → coup_PFCLS',
+      '        feuille : → coup_PFCLS',
+      '        ciseaux : → coup_PFCLS',
+      '         lézard : → coup_PFCLS',
+      '          spock : → coup_PFCLS',
+      '    battu-par _ : coup_PFCLS → coup_PFCLS × coup_PFCLS'),
+      cap: 'La signature du Moodle, recopiée telle quelle.' }],
+    questions: [
+      '1. Que rend ' + c('battu-par') + ' d’après son profil ? Combien de coups battent chaque coup ?',
+      '2. Écris les axiomes de ' + c('battu-par') + '.',
+      '3. La signature utilise ' + c('booléen') + ' sans s’en servir. Propose une opération qui en aurait besoin, et ses axiomes.'
+    ],
+    hints: [
+      'Le profil rend un couple de coups : les deux coups qui battent l’argument. Range les dix règles par perdant.',
+      'Il n’y a que cinq valeurs possibles, toutes des constantes : un axiome par constante.',
+      'Une opération ' + c('_ bat _ : coup_PFCLS × coup_PFCLS → booléen') + ' dirait si le premier coup bat le second.'
+    ],
+    solution: [
+      { t: 'Lire la signature', html: '<p>' + c('coup_PFCLS') + ' est le type défini ; les cinq coups sont des constantes. ' + c('battu-par') + ' prend un coup et rend un <b>couple</b> de coups : ceux qui le battent. Chacune des dix règles a un gagnant et un perdant, et chaque coup perd exactement deux fois : le couple est donc toujours complet. Aucune précondition.</p>' +
+        table(['Coup', 'Battu par'], [['pierre', 'feuille (couvre), spock (vaporise)'], ['feuille', 'ciseaux (coupent), lézard (mange)'], ['ciseaux', 'spock (écrase), pierre (casse)'], ['lézard', 'pierre (écrase), ciseaux (décapitent)'], ['spock', 'lézard (empoisonne), feuille (réfute)']]) },
+      { t: 'Les axiomes de battu-par', html: '<p>Un axiome par constante. L’ordre dans le couple n’est pas fixé par l’énoncé : on choisit l’ordre des règles et on s’y tient.</p>',
+        spec: L('axiomes', '    battu-par pierre = (feuille, spock)', '    battu-par feuille = (ciseaux, lézard)', '    battu-par ciseaux = (spock, pierre)', '    battu-par lézard = (pierre, ciseaux)', '    battu-par spock = (lézard, feuille)') },
+      { t: 'Avec un booléen', html: '<p>Une lecture plus naturelle du jeu : ' + c('_ bat _ : coup_PFCLS × coup_PFCLS → booléen') + '. C’est un observateur (il rend un type prédéfini). On écrit les dix cas vrais, puis on dit que tout autre couple donne faux. Avec des variables, il suffit de compléter par un axiome conditionnel.</p>',
+        spec: L('axiomes', '    ciseaux bat feuille = vrai', '    feuille bat pierre = vrai', '    pierre bat lézard = vrai', '    lézard bat spock = vrai', '    spock bat ciseaux = vrai',
+          '    ciseaux bat lézard = vrai', '    lézard bat feuille = vrai', '    feuille bat spock = vrai', '    spock bat pierre = vrai', '    pierre bat ciseaux = vrai',
+          '    c2 bat c1 = vrai ⇒ c1 bat c2 = faux', '    c bat c = faux', 'avec', '    coup_PFCLS c, c1, c2') }
+    ],
+    answer: { html: '<p>1. Un couple : les deux coups qui battent l’argument ; chaque coup est battu par exactement deux autres. 2. Cinq axiomes, un par constante :</p>',
+      spec: L('axiomes', '    battu-par pierre = (feuille, spock)', '    battu-par feuille = (ciseaux, lézard)', '    battu-par ciseaux = (spock, pierre)', '    battu-par lézard = (pierre, ciseaux)', '    battu-par spock = (lézard, feuille)') },
+    traps: [
+      'Ne pas inverser le sens : ' + c('battu-par feuille') + ' donne ceux qui battent la feuille (ciseaux, lézard), pas ceux qu’elle bat (pierre, spock).',
+      'Vérifie la complétude : cinq constantes, donc cinq axiomes. Chaque coup apparaît deux fois dans les couples, une fois par règle où il gagne.',
+      'Dans la variante booléenne, n’écris pas ' + c('c bat c = vrai') + ' : un coup contre lui-même, c’est une égalité.'
+    ],
+    official: false, note: 'Pas de corrigé sur le Moodle : correction rédigée, les cinq couples vérifiés par programme sur les dix règles.' });
+
+  X.push({ id: 'kb-pile-ordres', exam: null, kind: 'cours', order: 14, src: 'Moodle · Exercices d’entraînement',
+    title: 'Ordres de sortie d’une pile : A, B, C empilés dans cet ordre', topics: ['piles'], lvl: 1, time: 10,
+    intro: '<p>Exercice ajouté par le prof le 20 octobre, dans la section « Exercices d’entraînement » du Moodle. Il écrit les termes avec les noms anglais du type pile : ' + c('push') + ' (empiler), ' + c('pop') + ' (dépiler), ' + c('empty_stack') + ' (pilevide). On empile A, puis B, puis C, en pouvant dépiler entre deux empilements : dans quels ordres les éléments peuvent-ils sortir ?</p>' +
+      '<p>Exemples du Moodle : avec A seul, ' + c('pop(push(empty_stack, A))') + ' fait sortir A. Avec A, B : ' + c('pop(pop(push(push(empty_stack, A), B)))') + ' fait sortir B puis A, et ' + c('pop(push(pop(push(empty_stack, A)), B))') + ' fait sortir A puis B.</p>',
+    specs: [],
+    questions: [
+      '1. Avec A, B, C : le Moodle donne C, B, A et A, B, C. Trouve les trois autres ordres possibles, et écris pour chacun le terme qui le produit.',
+      '2. Quelle permutation est impossible, et pourquoi ?'
+    ],
+    hints: [
+      'Avant de sortir C, A et B sont forcément dans la pile ou déjà sortis.',
+      'Une pile rend toujours le dernier élément entré (LIFO) : si C sort alors que A et B sont encore dedans, B est au-dessus de A.'
+    ],
+    solution: [
+      { t: 'Les cinq ordres possibles', html: '<p>Le terme se lit de l’intérieur vers l’extérieur : chaque ' + c('pop') + ' fait sortir le sommet du moment.</p>' +
+        table(['Ordre de sortie', 'Terme'], [
+          ['A, B, C', c('pop(push(pop(push(pop(push(empty_stack, A)), B)), C))')],
+          ['A, C, B', c('pop(pop(push(push(pop(push(empty_stack, A)), B), C)))')],
+          ['B, A, C', c('pop(push(pop(pop(push(push(empty_stack, A), B))), C))')],
+          ['B, C, A', c('pop(pop(push(pop(push(push(empty_stack, A), B)), C)))')],
+          ['C, B, A', c('pop(pop(pop(push(push(push(empty_stack, A), B), C))))')]]) },
+      { t: 'L’ordre impossible', html: '<p><b>C, A, B</b> est impossible. Pour que C sorte en premier, A et B doivent avoir été empilés et pas encore dépilés : la pile contient A en bas, B au-dessus. Le prochain élément à sortir est donc B, jamais A.</p>' }
+    ],
+    answer: { html: '<p>1. Les trois autres ordres : A, C, B ; B, A, C ; B, C, A (termes dans la correction). 2. C, A, B est impossible : après C, B est au sommet, au-dessus de A.</p>' },
+    traps: [
+      'Un terme se lit de l’intérieur : le premier ' + c('push') + ' écrit est le plus profond dans les parenthèses.',
+      'Il y a 6 permutations de A, B, C mais seulement 5 ordres possibles.'
+    ],
+    official: false, note: 'Pas de corrigé sur le Moodle : les cinq ordres et leurs termes ont été obtenus par énumération de toutes les suites push / pop.' });
+
 })();
