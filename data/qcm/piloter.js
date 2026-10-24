@@ -1,7 +1,7 @@
 /* Banque de questions — Piloter S1 : méthodologie de travail (pil-mt-…) et gestion de groupe (pil-gg-…).
    Format des deux QCM du jeudi 29 octobre : 40 questions chacun, sans point négatif, des situations où il faut
    reconnaître et conseiller l'outil vu en atelier (annonce Moodle du 22 octobre). Sources : supports Edvia des
-   ateliers 1 à 4 (français) et 5 (anglais, méthodologie), fiches d'atelier. Les cas pratiques des supports n'ont pas
+   ateliers 1 à 5 (français ; atelier 5 publié le 24 octobre), fiches d'atelier. Les cas pratiques des supports n'ont pas
    de corrigé : les réponses retenues sont celles qui appliquent l'outil du support.
    ref : partie de piloter/index.html ; les deux premières questions de chaque partie servent à sa vérification. */
 (function () {
@@ -249,6 +249,30 @@
       'La tension vient d’un changement non annoncé, pas des personnes : on fixe une règle d’information et on formalise les décisions.'),
 
     /* ================= gestion de groupe, atelier 5 : groupe projet ================= */
+    q('pil-gg-41', 'pil-gg-projet', 'gg5', 1, 'Dans le modèle RACI, que désigne la lettre A ?',
+      ['La personne qui porte la responsabilité finale et valide', 'La personne qui réalise concrètement le travail', 'La personne qui est consultée', 'La personne qui est informée'], 0,
+      'R = réalise concrètement le travail ; A = porte la responsabilité finale et valide ; C = est consulté ; I = est informé.'),
+    q('pil-gg-42', 'pil-gg-projet', 'gg5', 1, 'À quoi sert une matrice RACI dans un groupe projet ?',
+      ['À dire, pour chaque activité, qui réalise, qui valide, qui est consulté et qui est informé', 'À classer les tâches selon leur urgence et leur importance', 'À noter la participation de chaque membre', 'À choisir le style de gestion d’un conflit'], 0,
+      'Le RACI clarifie les rôles activité par activité. Classer par urgence et importance, c’est la matrice d’Eisenhower ; gérer un conflit, Thomas-Kilmann.'),
+    q('pil-gg-43', 'pil-gg-projet', 'gg5', 2, 'Léo corrige les bugs prioritaires de la démo. Inès, cheffe de projet, décidera si la version peut être présentée et en répond. Quel rôle RACI a Inès sur cette activité ?',
+      ['A', 'R', 'C', 'I'], 0,
+      'Léo réalise le travail (R) ; Inès porte la responsabilité finale et valide (A).'),
+    q('pil-gg-44', 'pil-gg-projet', 'gg5', 2, 'Sam n’intervient pas dans les tests de la version, mais il doit être prévenu du résultat. Quel rôle RACI a Sam sur cette activité ?',
+      ['I', 'C', 'R', 'A'], 0,
+      'Être prévenu sans donner son avis : I, informé. C, consulté, suppose qu’on lui demande son avis avant.'),
+    q('pil-gg-45', 'pil-gg-projet', 'gg5', 2, 'Votre groupe ne peut traiter qu’une seule priorité avant une démonstration. Quelle démarche permet de construire une décision commune ?',
+      ['Partager les informations, se fixer un critère commun, faire parler chacun, puis choisir une seule priorité et la justifier', 'Voter tout de suite, sans discussion', 'Laisser le membre le plus expérimenté décider seul', 'Avancer un peu sur chacune des priorités'], 0,
+      'Exercice « Construire une décision commune » de l’atelier 5 : la qualité de la décision tient à la démarche. Faire un peu de tout revient à ne rien traiter sérieusement.'),
+    q('pil-gg-46', 'pil-gg-projet', 'gg5', 3, 'Le jeu peut être terminé mais plusieurs bugs sont visibles, et la démo aura lieu devant un public extérieur. Quelle priorité est la plus facile à défendre pour les deux semaines restantes ?',
+      ['Corriger les bugs et améliorer la stabilité', 'Ajouter du contenu pour allonger le jeu', 'Améliorer les graphismes', 'Commencer une nouvelle fonctionnalité'], 0,
+      'Le support ne donne pas de corrigé. Avec le critère « ce que verra le public », des bugs visibles nuisent le plus à la démo ; l’essentiel est de justifier le choix par un critère partagé.'),
+    q('pil-gg-47', 'pil-gg-projet', 'gg5', 2, 'En réunion, tout le monde se range à l’avis du premier qui a parlé, et personne n’exprime ses doutes. Quel est le risque ?',
+      ['Un biais de groupe : le groupe croit être d’accord alors que les doutes n’ont pas été dits', 'Aucun : la décision est rapide et unanime', 'Un conflit ouvert entre deux sous-groupes', 'Une surcharge de travail pour le premier qui a parlé'], 0,
+      'Éviter les biais de groupe est un objectif de l’atelier 5 : un accord apparent peut cacher des doutes jamais exprimés (la « pensée de groupe »).'),
+    q('pil-gg-48', 'pil-gg-projet', 'gg5', 2, 'Comment limiter les biais de groupe avant une décision importante ?',
+      ['Faire donner son avis à chacun avant la discussion, et décider sur des critères explicites', 'Laisser parler en premier le plus sûr de lui', 'Décider le plus vite possible pour éviter les débats', 'Écarter les membres qui ne sont pas d’accord'], 0,
+      'Un tour de table avant le débat évite que tous s’alignent sur le premier avis ; des critères explicites rendent la décision justifiable.'),
     q('pil-gg-36', 'pil-gg-projet', 'gg5', 1, 'Certaines décisions sont prises en réunion, d’autres sur Discord, et aucune n’est écrite. Que faire ?',
       ['Noter chaque décision au même endroit, avec qui fait quoi et pour quand', 'Continuer ainsi : chacun s’en souvient', 'Ne plus utiliser Discord du tout', 'Laisser le chef décider seul'], 0,
       'Décisions éparpillées et non formalisées : une cause de tension relevée dans l’atelier 4. Un seul endroit, partagé par tous.'),

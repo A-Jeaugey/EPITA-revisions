@@ -149,7 +149,7 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   des ateliers, sert aussi de fiche à l'impression ; `data-done="piloter:methodo|groupe:sN"`, 5 parties chacun), thème
   `piloter.css` (paperboard d'atelier) ; QCM `data/qcm/piloter.js` (`pil-mt-NN`, `pil-gg-NN`, mises en situation, `ref` vers
   `piloter/index.html#mtN|ggN`). Examen : deux QCM de 40 questions sans point négatif, jeudi 29 octobre (14 h 15, 15 h 30).
-  Supports des ateliers 5 (gestion de groupe, méthodologie en français) publiés le 24 octobre : à intégrer.
+  Supports des ateliers 5 (24 octobre) intégrés : gg5 = décision commune, biais de groupe, RACI (sans corrigé : exemples du site).
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
