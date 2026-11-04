@@ -6,12 +6,13 @@ SUBJ = {'Elec':'elec','Maths PC':'maths','Phys':'physique','Algo':'algo','Archi'
 KIND = {'subject':'Sujet','correction':'Corrigé','answer_sheet':'Feuille de réponses'}
 def url(rel):
     return 'https://past-exams.epidocs.eu/' + quote(rel)
-groups = {}
-base = os.path.join(root, 'S1', 'Midterms')
-for dirpath, dirs, files in os.walk(base):
+def collect(kind_dir):
+  groups = {}
+  base = os.path.join(root, 'S1', kind_dir)
+  for dirpath, dirs, files in os.walk(base):
     for f in sorted(files):
         rel = os.path.relpath(os.path.join(dirpath, f), root).replace(os.sep, '/')
-        parts = rel.split('/')  # S1 Midterms <subj> <promo> [variant...] file
+        parts = rel.split('/')  # S1 Midterms|Finals|Retakes <subj> <promo> [variant...] file
         subj = SUBJ.get(parts[2]);
         if not subj: continue
         promo_raw = parts[3]
@@ -36,12 +37,17 @@ for dirpath, dirs, files in os.walk(base):
         if m: kind += ' (partie ' + m.group(1) + ')'
         lang = 'fr' if re.search(r'-fr\.pdf$', name) else ('en' if re.search(r'-en\.pdf$', name) else '')
         g['files'].append({'kind': kind, 'lang': lang, 'url': url(rel)})
-order = {'Sujet':0,'Feuille de réponses':1,'Corrigé':2}
-mid = []
-for k in sorted(groups, key=lambda k: (k[0], -k[1], k[2])):
+  out = []
+  for k in sorted(groups, key=lambda k: (k[0], -k[1], k[2])):
     g = groups[k]
     g['files'].sort(key=lambda x: (order.get(x['kind'].split(' (')[0], 3), x['kind'], x['lang'] != 'fr'))
-    mid.append(g)
+    out.append(g)
+  return out
+order = {'Sujet':0,'Feuille de réponses':1,'Corrigé':2}
+# partiels de mi-semestre (bimestre 1) ; examens de fin de semestre et rattrapages (bimestre 2)
+mid = collect('Midterms')
+fin = collect('Finals')
+ret = collect('Retakes')
 # QCM hebdo
 mcq = {}
 mb = os.path.join(root, 'S1', 'MCQs')
@@ -72,18 +78,18 @@ hyper = [
   {'subject':'te','label':'Midterm TE 2022','files':[{'kind':'Sujet','url':H+'SH/2022-Midterm-TE-Sujet.pdf'}]},
 ]
 data = {
-  'updated': '2026-10-16',
+  'updated': '2026-11-04',
   'subjects': {
     'elec': {'name':'Électronique','page':'elec/annales.html'},
     'maths': {'name':'Mathématiques','page':'maths/annales.html'}, 'physique': {'name':'Physique','page':'physique/annales.html'}, 'algo': {'name':'Algorithmique','page':'taa/annales.html'},
     'archi': {'name':'Architecture','page':'archi/annales.html'}, 'prog': {'name':'Programmation'},
     'cie': {'name':'Anglais · CIE'}, 'tim': {'name':'Anglais · TIM'}, 'te': {'name':'Techniques d’expression'}
   },
-  'midterms': mid, 'mcq': mcql, 'hyperion': hyper
+  'midterms': mid, 'finals': fin, 'retakes': ret, 'mcq': mcql, 'hyperion': hyper
 }
 with open(out, 'w', encoding='utf8') as fh:
-    fh.write('/* Index des annales de partiels de mi-semestre S1 (généré depuis Epidocs/Past-Exams et HyperAnnales). */\n')
+    fh.write('/* Index des annales S1 (généré par tools/gen_annales.py depuis Epidocs/Past-Exams et HyperAnnales) : partiels de mi-semestre\n   (midterms, bimestre 1), examens de fin de semestre (finals) et rattrapages (retakes), bimestre 2. */\n')
     fh.write('window.ANNALES = ' + json.dumps(data, ensure_ascii=False, indent=1) + ';\n')
-print(len(mid), 'midterm groups;', len(mcql), 'mcq;', sum(len(g['files']) for g in mid), 'files')
+print(len(mid), 'midterm groups;', len(fin), 'finals;', len(ret), 'retakes;', len(mcql), 'mcq;', sum(len(g['files']) for g in mid), 'files')
 from collections import Counter
 print(Counter(g['subject'] for g in mid))

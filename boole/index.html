@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Archi B2 · Révisions S1</title>
+<meta name="description" content="Architecture des ordinateurs · Algèbre de Boole (B2) : la lecture pour le TD du 9 novembre, les cinq fiches de cours, ce que le Moodle a publié, l’examen d’1 h 30, ce qui tombe d’après 13 sujets (2014 à 2026), les méthodes, l’entraînement corrigé, les annales et la fiche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Accueil Archi B2 : la feuille de garde du dossier de schémas. La prochaine échéance en tête (le TD de la semaine),
+   puis le parcours, ce que le Moodle a publié (journal tenu à jour au fil du bimestre), l’évaluation, ce qui tombe. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:64px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap;padding-top:.8rem;border-top:2px solid var(--rule)}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+/* l’échéance de la semaine */
+.t2{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--comp);border-radius:0 0 var(--radius) var(--radius);display:grid;align-self:center;min-width:0}
+.t2-top{display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:.55rem 1rem;border-bottom:1px solid var(--line);background:var(--surface-2);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--comp);font-weight:600}
+.t2-st{font-size:.78rem;letter-spacing:.02em;text-transform:none;color:var(--ink);background:var(--surface);border:1px solid var(--comp);border-radius:999px;padding:.1rem .6rem}
+.t2-st:empty{display:none}
+.t2-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.8rem}
+.t2-b>*{min-width:0}
+.t2 h2{font-size:1.9rem}
+.t2-dl{margin:0;display:grid;gap:0}
+.t2-dl>div{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:.45rem 0;border-top:1px dashed var(--line)}
+.t2-dl dt{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
+.t2-dl dd{margin:0;font-size:.97rem;line-height:1.45}
+@media (max-width:480px){.t2-dl>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+/* parcours */
+.path{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.path{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.path{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--comp);border-radius:0 0 var(--radius) var(--radius);padding:.95rem 1.05rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+.stop:hover{border-color:var(--accent)}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stop h3{margin:0;font-size:1.2rem}
+.stop p{font-size:.93rem;color:var(--muted)}
+.stop .tg{display:flex;flex-wrap:wrap;gap:6px}
+.stop .tg span{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:3px;padding:.05rem .45rem;color:var(--muted)}
+.stop .tg .hot{border-color:var(--exam);color:var(--exam)}
+.stop .tg .td{border-color:var(--accent);color:var(--accent)}
+.stop .mono{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.bar{height:6px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tools .stop{border-top-width:1px;border-radius:var(--radius)}
+/* journal du Moodle : ce qui est publié, ce qui reste à venir */
+.log{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--comp)}
+.log li{display:grid;grid-template-columns:118px minmax(0,1fr);gap:4px 18px;padding:.8rem 1rem;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.log li>*{min-width:0}
+.log .d{font-family:var(--font-mono);font-size:.8rem;color:var(--comp);padding-top:.15rem}
+.log .soon .d{color:var(--muted)}
+.log .soon{background:repeating-linear-gradient(135deg,transparent 0 10px,var(--surface-2) 10px 11px)}
+.log b{font-weight:600}
+.log p{font-size:.95rem}
+.log .m{color:var(--muted);font-size:.9rem}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}}
+/* évaluation */
+.eval{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .card{gap:.55rem}
+.eval .w{font-family:var(--font-display);font-weight:700;font-size:2.6rem;line-height:1;color:var(--accent)}
+.eval .card.ex .w{color:var(--exam)}
+.cd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-top:.5rem;border-top:1px dashed var(--line)}
+.cd label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cd input{font:inherit;font-family:var(--font-mono);font-size:.92rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-bottom:2px solid var(--ink);border-radius:3px;padding:.3rem .5rem;min-height:38px}
+.cd input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.cd-n{font-family:var(--font-mono);font-weight:600;font-size:1.35rem;color:var(--exam);line-height:1}
+.cd-t{font-size:.88rem;color:var(--muted)}
+.rules{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--comp)}
+.rules li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding:.75rem 1rem;border-top:1px solid var(--line)}
+.rules li:first-child{border-top:0}
+.rules li>*{min-width:0}
+.rules q{font-family:var(--font-mono);font-size:.9rem;quotes:"« " " »"}
+.rules .n{font-family:var(--font-mono);font-size:.76rem;color:var(--exam);white-space:nowrap}
+.rules .d{grid-column:1/-1;font-size:.93rem;color:var(--muted)}
+@media (max-width:560px){.rules li{grid-template-columns:minmax(0,1fr)}}
+/* fréquences */
+.freq td,.freq th{vertical-align:middle}
+.freq .fq{white-space:nowrap;width:1%}
+.fbar{display:inline-block;vertical-align:middle;width:84px;height:8px;border-radius:1px;background:var(--surface-2);overflow:hidden;margin-right:8px}
+.fbar i{display:block;height:100%;background:var(--accent)}
+.freq .n{font-family:var(--font-mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+.freq .ref{white-space:nowrap;font-size:.88rem}
+.freq tr.zero th,.freq tr.zero .n{color:var(--warn)}
+@media (max-width:560px){.fbar{width:60px}.freq thead{display:none}.freq tbody tr{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;border-bottom:1px solid var(--line)}.freq tbody tr:last-child{border-bottom:0}.freq tbody th{grid-column:1/-1;border-bottom:0;padding-bottom:.15rem}.freq tbody td{border-bottom:0;padding-top:.15rem}.freq .ref{text-align:right}}
+.fmt td,.fmt th{text-align:center}
+.fmt td:first-child,.fmt th:first-child{text-align:left}
+.grid2>.note{align-content:start}
+.fmt .mono{font-family:var(--font-mono);font-size:.9rem}
+@media (max-width:480px){.fmt td,.fmt th{padding:.4rem .35rem}.fmt .mono{font-size:.8rem}}
+</style>
+</head>
+<body data-resume="Archi B2 · accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — accueil de la matière</span><span>Architecture des ordinateurs · cours de D. Bouchet · 2e bimestre</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="0"></span>Archi B2 · Architecture des ordinateurs · Algèbre de Boole</div>
+      <h1>Des 0, des 1, <span class="w">et le circuit le plus simple.</span></h1>
+      <p class="lead">Portes logiques, algèbre de Boole, formes canoniques, tableaux de Karnaugh, problèmes mis en équations. Depuis 2023, l’examen de fin de bimestre ne porte que là-dessus, toujours dans le même ordre. Ici : le cours en cinq fiches, les méthodes, les exercices des sujets et des TD corrigés, des générateurs d’exercices sans fin.</p>
+      <ul class="feats">
+        <li><span><span class="k">Cours</span> 5 fiches · 41 parties</span></li>
+        <li><span><span class="k">Sujets</span> 13, de 2014 à 2026</span></li>
+        <li><span><span class="k">Exercices</span> <span id="nEx0">34 corrigés</span> + générateurs</span></li>
+        <li class="ex"><span><span class="k">Note</span> QCM en ligne 10 % · examen 90 %</span></li>
+      </ul>
+    </div>
+    <aside class="t2" aria-labelledby="t2-h">
+      <div class="t2-top"><span>Cette semaine</span><span class="t2-st" id="tdSt" aria-live="polite"></span></div>
+      <div class="t2-b">
+        <h2 id="t2-h">Le TD du 9 novembre</h2>
+        <dl class="t2-dl">
+          <div><dt>À lire</dt><dd>chapitre 1, <b>pages 1 à 18</b>, sans les tableaux de Karnaugh (annonce du 4 novembre)</dd></div>
+          <div><dt>Sur le site</dt><dd>les <a href="cours-1-portes.html">fiches 1</a>, <a href="cours-2-algebre.html">2</a> et <a href="cours-3-formes.html">3</a> : portes, algèbre, formes canoniques</dd></div>
+          <div><dt>Le TD 1</dt><dd>simplifier, portes NON-ET, formes canoniques : <a href="entrainement.html#td1-ex1">les fiches du TD 1</a>, corrigées pas à pas</dd></div>
+          <div><dt>Bon à savoir</dt><dd>trois expressions du TD 1 sont retombées telles quelles à l’examen de 2025-2026</dd></div>
+        </dl>
+        <div class="row"><a class="btn primary" href="cours-1-portes.html">Commencer la fiche 1</a><a class="btn" href="entrainement.html#td1-ex1">Le TD 1</a></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section id="parcours" aria-labelledby="t-path">
+    <div class="sec-title"><div><div class="eyebrow">Parcours</div><h2 id="t-path">Les cinq fiches de cours</h2></div><p>Elles suivent le chapitre 1 du cours, « Logique combinatoire ». Chaque partie se termine par quelques questions : marque-la comme comprise, ta progression s’affiche ici.</p></div>
+    <div class="path" id="path"></div>
+    <div class="tools">
+      <a class="stop" href="methodes.html"><div class="k">Méthodes</div><h3>Une méthode par exercice</h3><p>Simplifier, formes canoniques, Karnaugh avec Φ, problème, portes NON-ET : les étapes et ce qu’on écrit sur la copie.</p></a>
+      <a class="stop" href="entrainement.html"><div class="k">Entraînement</div><h3>Sujets, TD, générateurs</h3><p id="nEx">Les exercices des sujets et du TD 1, corrigés pas à pas, et des générateurs d’exercices sans fin.</p></a>
+      <a class="stop" href="annales.html"><div class="k">Annales</div><h3>Les 13 sujets</h3><p>De 2014 à 2026, exercice par exercice : ce qui tombe, les PDF, l’évolution du format.</p></a>
+      <a class="stop" href="fiche.html"><div class="k">Fiche</div><h3>Tout sur une page</h3><p>Portes, théorèmes, formes canoniques, Karnaugh, méthode des problèmes et pièges, imprimable en A4.</p></a>
+      <a class="stop" href="../qcm/index.html#boole"><div class="k">QCM</div><h3>Questions de cours</h3><p id="nQ2">Répétition espacée : les questions ratées reviennent.</p></a>
+    </div>
+  </section>
+
+  <section id="moodle" aria-labelledby="t-moodle">
+    <div class="sec-title"><div><div class="eyebrow">Au fil du bimestre</div><h2 id="t-moodle">Ce que le Moodle a publié</h2></div><p>Le site suit le cours à mesure qu’il avance : chaque document publié est intégré aux fiches, aux exercices et au QCM.</p></div>
+    <ol class="log">
+      <li><span class="d">4 novembre</span><div><p><b>Chapitre 1, « Logique combinatoire »</b> (29 pages, français et anglais) : tout le chapitre est dans les <a href="#parcours">cinq fiches</a>.</p><p class="m">Pages 1 à 18 sans Karnaugh = fiches 1 à 3. Karnaugh (p. 18-23) = fiche 4. Problèmes et circuits (p. 24-29) = fiche 5.</p></div></li>
+      <li><span class="d">4 novembre</span><div><p><b>TD 1, « Algèbre de Boole »</b> : simplifications, portes NON-ET, formes canoniques. <a href="entrainement.html#td1-ex1">Quatre fiches d’exercices</a>, corrigées par le site.</p><p class="m">Pas de corrigé publié : toutes les réponses sont calculées et vérifiées par programme.</p></div></li>
+      <li><span class="d">4 novembre</span><div><p><b>Examen terminal 2025-2026</b>, avec son corrigé : le <a href="annales.html#p2025">sujet blanc</a> le plus proche de ce qui t’attend.</p><p class="m">Toutes les réponses du corrigé ont été recalculées : elles sont justes.</p></div></li>
+      <li class="soon"><span class="d">à venir</span><div><p>Les TD suivants, les QCM en ligne (10 %) et la date de l’examen. Le plan du cours annonce aussi « l’adressage d’une mémoire » comme exemple de problème concret.</p></div></li>
+    </ol>
+  </section>
+
+  <section id="evaluation" aria-labelledby="t-eval">
+    <div class="sec-title"><div><div class="eyebrow">Évaluation</div><h2 id="t-eval">Comment l’archi B2 est notée</h2></div><p>D’après le Moodle de la matière et l’examen de l’an dernier, fourni avec son corrigé.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">10 %</span><h4>Les QCM en ligne</h4><p>« QCMs ou questionnaires en ligne », sur le Moodle. Dates et programme pas encore publiés.</p></div>
+      <div class="card ex"><span class="w">90 %</span><h4>L’examen de fin de semestre</h4><p>Sur papier, réponses sur le sujet, <b>1 h 30</b>. En 2025-2026 : cinq exercices sur 20 points, tous d’algèbre de Boole. Date à venir.</p>
+        <div class="cd"><label for="exDate">Ta date</label><input type="date" id="exDate" aria-label="Date de ton examen d’archi B2"><span class="cd-n" id="cdN" aria-live="polite"></span><span class="cd-t" id="cdT">Saisis le jour exact pour le compte à rebours.</span></div></div>
+    </div>
+    <h3>Les consignes des sujets</h3>
+    <ul class="rules">
+      <li><q>Répondre exclusivement sur le sujet.</q><span class="n">2023, 2024, 2025</span><span class="d">Les réponses vont dans les cases du sujet : tableaux de réponses, grilles de Karnaugh déjà dessinées.</span></li>
+      <li><q>Ne pas détailler les calculs sauf si cela est explicitement demandé.</q><span class="n">2023, 2024, 2025</span><span class="d">Simplifications et formes canoniques : seul le résultat compte. Fais tes calculs au brouillon, puis vérifie-les avec un tableau de Karnaugh.</span></li>
+      <li><q>Le résultat ne devra pas contenir de parenthèses.</q><span class="n">simplifier, depuis 2023</span><span class="d">La forme attendue est une somme de produits, la plus courte possible (<a href="methodes.html#simplifier">méthode 1</a>).</span></li>
+      <li><q>Aucun point ne sera attribué à une expression si son tableau est faux.</q><span class="n">Karnaugh, depuis 2023</span><span class="d">Le tableau rempli (bulles comprises) est noté avant l’expression : un 1 mal placé annule tout. En 2025, la consigne interdit aussi le OU exclusif dans les expressions lues sur le tableau (<a href="methodes.html#karnaugh">méthode 3</a>).</span></li>
+      <li><q>Ne pas écrire à l’encre rouge ni au crayon à papier.</q><span class="n">2023, 2024, 2025</span><span class="d">Au stylo, comme pour les autres matières.</span></li>
+      <li><q>Le nombre maximum de portes est précisé.</q><span class="n">portes NON-ET, 2025</span><span class="d">ET en 2 portes, OU en 3, OU exclusif en 5 (<a href="methodes.html#nand">méthode 5</a>).</span></li>
+    </ul>
+  </section>
+
+  <section id="tombe" aria-labelledby="t-falls">
+    <div class="sec-title"><div><div class="eyebrow">Annales</div><h2 id="t-falls">Ce qui tombe</h2></div><p>D’après les 13 sujets retrouvés, de 2014-2015 à l’examen B2 de 2025-2026, rattrapages compris. Toutes les réponses des corrigés ont été recalculées par programme : elles sont justes (une coquille au rattrapage 2017-2018).</p></div>
+    <div class="grid2">
+      <div class="note exam"><span class="tag">Format fixe depuis 2023</span><p>Avant 2023, l’examen de fin de S1 mêlait numération (le B1) et algèbre de Boole. Depuis, il ne porte que sur l’algèbre de Boole, dans cet ordre :</p>
+        <div class="tbl"><table class="fmt">
+          <thead><tr><th>Exercice</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+          <tbody>
+            <tr><td>1. Simplifier, sans parenthèses</td><td class="mono">5 pts</td><td class="mono">5 pts</td><td class="mono">4 pts</td></tr>
+            <tr><td>2. Formes canoniques (1re et 2e)</td><td class="mono">4 pts</td><td class="mono">5 pts</td><td class="mono">4 pts</td></tr>
+            <tr><td>3. Tableaux de Karnaugh, avec Φ</td><td class="mono">6 pts</td><td class="mono">6 pts</td><td class="mono">5 pts</td></tr>
+            <tr><td>4. Problème : de l’énoncé aux équations</td><td class="mono">3 pts</td><td class="mono">4 pts</td><td class="mono">4 pts</td></tr>
+            <tr><td>5. Comparateur 1 bit · portes NON-ET</td><td class="mono">2 pts</td><td class="mono">—</td><td class="mono">3 pts</td></tr>
+          </tbody>
+        </table></div></div>
+      <div class="note keep"><span class="tag">Le TD 1 retombe tel quel</span><p>À l’examen de 2025-2026, trois des quatre expressions à simplifier sont celles du TD 1 (S5, S2 et S7), et l’exercice des portes NON-ET reprend son exercice 2. L’expression S1 de la seconde forme canonique (TD 1, ex. 3.2) était au sujet de 2023-2024. Les exercices des TD sont le meilleur entraînement.</p></div>
+    </div>
+    <div class="tbl"><table class="freq">
+      <thead><tr><th>Type d’exercice</th><th>Sujets</th><th>Méthode</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Tableau de Karnaugh à 3 ou 4 variables</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:100%"></i></span><span class="n">13 / 13</span></td><td class="ref"><a href="methodes.html#karnaugh">Méthode 3</a></td></tr>
+        <tr><th scope="row">Simplifier une expression</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:92%"></i></span><span class="n">12 / 13</span></td><td class="ref"><a href="methodes.html#simplifier">Méthode 1</a></td></tr>
+        <tr><th scope="row">Première forme canonique</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:92%"></i></span><span class="n">12 / 13</span></td><td class="ref"><a href="methodes.html#canon">Méthode 2</a></td></tr>
+        <tr><th scope="row">Seconde forme canonique</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:85%"></i></span><span class="n">11 / 13</span></td><td class="ref"><a href="methodes.html#canon">Méthode 2</a></td></tr>
+        <tr><th scope="row">Cases indéfinies (Φ) dans un tableau</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:85%"></i></span><span class="n">11 / 13</span></td><td class="ref"><a href="methodes.html#karnaugh">Méthode 3</a></td></tr>
+        <tr><th scope="row">OU exclusif : reconnaître, écrire une sortie avec ⊕</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:85%"></i></span><span class="n">11 / 13</span></td><td class="ref"><a href="methodes.html#xor">Méthode 4</a></td></tr>
+        <tr><th scope="row">Problème : de l’énoncé à la table de vérité</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:69%"></i></span><span class="n">9 / 13</span></td><td class="ref"><a href="methodes.html#probleme">Méthode 6</a></td></tr>
+        <tr><th scope="row">Transcodeur (BCD, code Aiken)</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:38%"></i></span><span class="n">5 / 13</span></td><td class="ref"><a href="cours-5-circuits.html#s3">Fiche 5</a></td></tr>
+        <tr><th scope="row">Simplifier un schéma et le redessiner</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:38%"></i></span><span class="n">5 / 13</span></td><td class="ref"><a href="cours-1-portes.html#s8">Fiche 1</a></td></tr>
+        <tr><th scope="row">Additionneur, comparateur</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:31%"></i></span><span class="n">4 / 13</span></td><td class="ref"><a href="cours-5-circuits.html#s4">Fiche 5</a></td></tr>
+        <tr><th scope="row">Portes NON-ET seules</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:8%"></i></span><span class="n">1 / 13</span></td><td class="ref"><a href="methodes.html#nand">Méthode 5</a></td></tr>
+        <tr class="zero"><th scope="row">Décodeur, multiplexeur, démultiplexeur</th><td class="fq"><span class="fbar" aria-hidden="true"><i style="width:0"></i></span><span class="n">0 / 13</span></td><td class="ref"><a href="cours-5-circuits.html#s6">Fiche 5</a></td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="note trap"><span class="tag">Ce que le cours ne dit pas</span><p>Les cases indéfinies (Φ) tombent dans 11 sujets sur 13, mais le chapitre 1 n’en parle pas : la <a href="cours-4-karnaugh.html#s6">fiche 4</a> les explique avec les exemples des sujets.</p></div>
+      <div class="note exam"><span class="tag">Le sujet blanc</span><p>L’<a href="annales.html#p2025">examen B2 de 2025-2026</a> (1 h 30, fourni sur le Moodle avec son corrigé) est le plus proche de ce qui t’attend. Fais-le en temps réel, sans calculatrice, puis corrige-toi avec l’<a href="entrainement.html#p2025-ex1">entraînement</a>.</p></div>
+    </div>
+    <p><a class="btn" href="annales.html">Les 13 sujets, exercice par exercice →</a></p>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../data/boole/exams.js"></script>
+<script src="../data/boole/ex-annales.js"></script>
+<script src="../data/boole/ex-td.js"></script>
+<script src="../assets/js/boole.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('boole'), EX = window.BOOLE_EX || [];
+  var DESC = ['Circuit combinatoire, table de vérité, les sept portes, bulles, logiques positive et négative, lire un schéma.',
+    'Axiomes, distributivité, De Morgan, absorption, dualité, simplifier pas à pas, portes NON-ET et NON-OU seules.',
+    'Mintermes et maxtermes, première et seconde formes canoniques, depuis une expression ou une table de vérité.',
+    'Code de Gray, cercles de 1, 2, 4 et 8 cases, bords qui se touchent, cases indéfinies (Φ), OU exclusif.',
+    'De l’énoncé aux équations, transcodeurs, additionneur, comparateur, décodeur, multiplexeur.'];
+  var TAGS = [['chap. 1 § I-II', 'td', 'TD du 9 nov.'], ['chap. 1 § III.1-4 · TD 1', 'td', 'TD du 9 nov.'], ['chap. 1 § III.5 · TD 1', 'td', 'TD du 9 nov.'], ['chap. 1 § III.6', 'hot', '13 sujets sur 13'], ['chap. 1 § IV-V', 'hot', '9 sujets sur 13']];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('boole', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="plate" data-n="' + (i + 1) + '"></span>Fiche ' + (i + 1) + '</div><h3>' + c.title + '</h3><p>' + DESC[i] + '</p><div class="tg"><span>' + TAGS[i][0] + '</span><span class="' + TAGS[i][1] + '">' + TAGS[i][2] + '</span></div><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><p class="mono">' + done + ' / ' + c.sections + ' parties comprises</p></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'boole'; }), st = R.qcm.stats('boole', bank);
+    var np = EX.filter(function (e) { return e.kind === 'partiel'; }).length, ok = R.exo.stats('boole').ok;
+    if (bank.length) document.getElementById('nQ2').textContent = bank.length + ' questions, dont ' + st.due + ' à revoir aujourd’hui.';
+    if (EX.length) {
+      document.getElementById('nEx').textContent = np + ' exercices de sujets et ' + (EX.length - np) + ' du TD 1, corrigés pas à pas, et des générateurs. Réussis : ' + ok + ' / ' + EX.length + '.';
+      document.getElementById('nEx0').textContent = EX.length + ' corrigés';
+    }
+  }
+  /* le TD de la semaine du 9 novembre */
+  function paintTd() {
+    var d = R.exams.daysLeft('2026-11-09'), el = document.getElementById('tdSt');
+    el.textContent = d === null || d < 0 ? '' : d === 0 ? 'Cette semaine' : d === 1 ? 'Lundi, demain' : 'Dans ' + d + ' jours';
+  }
+  var inp = document.getElementById('exDate');
+  function paintDate() {
+    var iso = R.exams.get('boole'), d = R.exams.daysLeft(iso), n = document.getElementById('cdN'), t = document.getElementById('cdT');
+    inp.value = iso || '';
+    if (iso && d !== null && d >= 0) {
+      n.textContent = d === 0 ? 'Jour J' : 'J−' + d;
+      t.textContent = d === 0 ? 'C’est aujourd’hui.' : d === 1 ? 'L’examen est demain.' : 'Il reste ' + d + ' jours.';
+    } else { n.textContent = ''; t.textContent = iso ? 'Cette date est passée.' : 'Saisis le jour exact pour le compte à rebours.'; }
+  }
+  inp.addEventListener('change', function () { R.exams.set('boole', inp.value); });
+  paint(); paintTd(); paintDate();
+  R.store.on(function () { paint(); paintDate(); });
+})();
+</script>
+</body>
+</html>

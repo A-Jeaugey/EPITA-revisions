@@ -72,7 +72,7 @@ a.step:hover{border-color:var(--accent)}
 .subj.soon{background:transparent;border-style:dashed}
 .subj.soon h3{color:var(--muted)}
 .subj-elec{--c:var(--s-elec)}
-.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-piloter{--c:var(--s-piloter)} .subj-taa,.subj-caml{--c:var(--s-algo)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-boole{--c:var(--s-boole)} .subj-piloter{--c:var(--s-piloter)} .subj-taa,.subj-caml{--c:var(--s-algo)}
 .chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
 .chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
 .chapters a:hover{border-color:var(--c)}
@@ -94,6 +94,17 @@ a.tool:hover{border-color:var(--accent)}
 .method li::before{content:counter(m);font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:1.7rem;color:var(--accent);line-height:1}
 .method b{font-size:1.02rem}
 .method span{color:var(--muted);font-size:.93rem;line-height:1.5}
+/* bascule entre les bimestres : deux onglets sous l'en-tête */
+.periods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 46px}
+@media (max-width:560px){.periods{grid-template-columns:minmax(0,1fr)}}
+.per{display:grid;gap:3px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:inherit;text-decoration:none;min-width:0}
+.per:hover{border-color:var(--accent)}
+.per.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.per-k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.per.on .per-k{color:var(--accent)}
+.per-t{font-family:var(--font-display);font-stretch:112%;font-weight:800;font-size:1.15rem}
+.per-d{color:var(--muted);font-size:.9rem;line-height:1.4}
+.count .btn{justify-self:start}
 </style>
 </head>
 <body data-resume="Accueil">
@@ -102,13 +113,14 @@ a.tool:hover{border-color:var(--accent)}
 <header class="hero">
   <div class="wrap hero-grid">
     <div class="sheet margin copie">
-      <div class="copie-fields" aria-hidden="true"><span>NOM : ……………………</span><span>Prénom : ……………………</span><span>Groupe : <b>Promo 2031</b></span></div>
-      <h1>Partiels <span>S1</span></h1>
-      <p class="lead">Le cours repris pas à pas, ce qui tombe vraiment au partiel, des exercices d’annales corrigés et un QCM qui te repose les questions ratées au bon moment.</p>
+      <div class="copie-fields" aria-hidden="true"><span>NOM : ……………………</span><span>Prénom : ……………………</span><span>Groupe : <b>Promo 2031</b> · <b id="h-period">Bimestre 1</b></span></div>
+      <h1 id="h-title">Partiels <span>S1</span></h1>
+      <p class="lead" id="h-lead">Le cours repris pas à pas, ce qui tombe vraiment au partiel, des exercices d’annales corrigés et un QCM qui te repose les questions ratées au bon moment.</p>
       <div class="rules"><span>Les calculatrices et les documents ne sont pas autorisés.</span><span>Le barème est donné à titre indicatif. Justifiez vos réponses.</span></div>
     </div>
     <aside class="count" id="count" aria-live="polite"></aside>
   </div>
+  <div class="wrap"><nav class="periods" id="periods" aria-label="Bimestres"></nav></div>
 </header>
 
 <main class="wrap">
@@ -118,7 +130,7 @@ a.tool:hover{border-color:var(--accent)}
   </section>
 
   <section aria-labelledby="t-subj">
-    <div class="sec-title"><div><span class="eyebrow">Matières</span><h2 id="t-subj">Où tu en es</h2></div><p class="muted" style="max-width:34em">Les autres matières arrivent au fur et à mesure que les cours sont ajoutés. Leurs annales sont déjà disponibles.</p></div>
+    <div class="sec-title"><div><span class="eyebrow">Matières</span><h2 id="t-subj">Où tu en es</h2></div><p class="muted" style="max-width:34em" id="subj-note"></p></div>
     <div class="subjects" id="subjects"></div>
   </section>
 
@@ -126,7 +138,7 @@ a.tool:hover{border-color:var(--accent)}
     <div class="sec-title"><div><span class="eyebrow">Outils</span><h2 id="t-tools">Pour toutes les matières</h2></div></div>
     <div class="tools">
       <a class="sheet margin tool" href="qcm/index.html"><span class="big" id="n-qcm">0</span><span class="t">QCM</span><span class="d">Questions de cours et questions de vrais QCM, avec explication. Celles que tu rates reviennent le lendemain, puis de plus en plus tard.</span></a>
-      <a class="sheet margin tool" href="annales/index.html"><span class="big" id="n-ann">0</span><span class="t">Annales</span><span class="d">Tous les sujets de partiels de mi-semestre S1 retrouvés, par matière et par année, avec les corrigés quand ils existent.</span></a>
+      <a class="sheet margin tool" href="annales/index.html"><span class="big" id="n-ann">0</span><span class="t">Annales</span><span class="d" id="d-ann"></span></a>
       <a class="sheet margin tool" href="fiches/index.html"><span class="big" id="n-fiche">1</span><span class="t">Fiches</span><span class="d">Une page par matière avec toutes les formules et les réflexes à relire juste avant l’épreuve.</span></a>
     </div>
   </section>
@@ -142,7 +154,7 @@ a.tool:hover{border-color:var(--accent)}
   </section>
 </main>
 
-<footer class="page-foot"><div class="wrap"><span>Révisions S1 · EPITA promo 2031 · bimestre 1</span><span>Ta progression reste dans ce navigateur.</span></div></footer>
+<footer class="page-foot"><div class="wrap"><span id="h-foot">Révisions S1 · EPITA promo 2031</span><span>Ta progression reste dans ce navigateur.</span></div></footer>
 
 <script src="assets/js/circuit.js"></script>
 <script src="assets/js/qcm-engine.js"></script>
@@ -170,6 +182,7 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/qcm/maths.js"></script>
 <script src="data/qcm/maths-annales.js"></script>
 <script src="data/qcm/piloter.js"></script>
+<script src="data/qcm/boole.js"></script>
 <script src="data/taa/exams.js"></script>
 <script src="data/taa/ex-annales.js"></script>
 <script src="data/taa/ex-externes.js"></script>
@@ -186,134 +199,9 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/maths/exams.js"></script>
 <script src="data/maths/ex-annales.js"></script>
 <script src="data/maths/ex-td.js"></script>
-<script>
-(function () {
-  var R = window.REV, U = R.util, $ = U.$;
-  var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [], maths: window.MATHS_EX || [] };
-  function nEx(sid) { return (EXS[sid] || []).length; }
-  function nChap(s) { var n = s.chapters.length; return (['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'][n] || n) + ' chapitre' + (n > 1 ? 's' : ''); }
-  /* sujets de partiel d’une matière (algo : TAA et Caml partagent les sujets d’avant 2023) */
-  function annOf(s) {
-    var A = window.ANNALES || { midterms: [] }, id = s.annalesId || s.id;
-    return A.midterms.filter(function (m) {
-      if (m.subject !== id) return false;
-      var v = (m.variant || '').toUpperCase();
-      return (v !== 'TAA' && v !== 'CAML') || v === String(s.short).toUpperCase();
-    });
-  }
-  /* matières prêtes, la plus urgente d’abord (date de partiel saisie), sinon dans l’ordre du registre */
-  /* heure de début officielle (minutes), pour départager deux examens le même jour ; sans heure : en dernier */
-  function startMin(id) { var o = R.exams.official && R.exams.official(id); if (!o || !o.start || R.exams.get(id) !== o.date) return 1e4; var t = o.start.split(':'); return +t[0] * 60 + +t[1]; }
-  function byUrgency() {
-    return R.subjects.filter(function (s) { return s.status === 'ready'; }).map(function (s, i) {
-      var d = R.exams.daysLeft(R.exams.get(s.id)); return { s: s, d: d === null || d < 0 ? 999 : d, i: i };
-    }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id) || a.i - b.i; }).map(function (x) { return x.s; });
-  }
-
-  /* ---- compte à rebours ---- */
-  function renderCount() {
-    var box = $('#count'), ready = R.subjects.filter(function (s) { return s.status === 'ready'; });
-    var dated = ready.map(function (s) { return { s: s, iso: R.exams.get(s.id), d: R.exams.daysLeft(R.exams.get(s.id)) }; })
-      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id); });
-    var html = '<span class="eyebrow">Compte à rebours</span>';
-    if (dated.length) {
-      var n = dated[0];
-      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'C’est aujourd’hui : partiel ' : 'avant le partiel ') + (/^[aeiouyhéèêàâîôû]/i.test(n.s.short) ? 'd’' : 'de ') + n.s.short + '</span></div>';
-      html += '<div class="count-list">' + dated.map(function (x) {
-        var p = x.iso.split('-');
-        return '<div><span>' + x.s.name + '</span><span class="mono">' + p[2] + '/' + p[1] + '/' + p[0] + '</span></div>';
-      }).join('') + '</div>';
-      html += '<button type="button" class="linkish" id="editDates">Modifier les dates</button>';
-    } else {
-      html += '<div class="count-main"><span class="count-num">J−?</span><span class="count-txt">Ajoute la date de ton partiel pour lancer le décompte.</span></div>';
-    }
-    html += '<form id="dateForm"' + (dated.length ? ' hidden' : '') + '>' + ready.map(function (s) {
-      return '<label for="d-' + s.id + '">' + s.name + '</label><input type="date" id="d-' + s.id + '" value="' + R.exams.get(s.id) + '">';
-    }).join('') + '<button class="btn" type="submit">Enregistrer</button></form>';
-    box.innerHTML = html;
-    var f = $('#dateForm');
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      ready.forEach(function (s) { R.exams.set(s.id, $('#d-' + s.id).value); });
-      renderCount();
-    });
-    var ed = $('#editDates'); if (ed) ed.addEventListener('click', function () { f.hidden = !f.hidden; });
-  }
-
-  /* ---- prochaine étape ---- */
-  function nextSection(s) {
-    for (var i = 0; i < s.chapters.length; i++) {
-      var c = s.chapters[i], done = R.progress.chapterDone(s.id, c.id);
-      if (done < c.sections) return { c: c, i: i, done: done };
-    }
-    return null;
-  }
-  function renderToday() {
-    var steps = [], d = R.store.load(), order = byUrgency(), top = order[0];
-    if (d.last && d.last.href && d.last.href !== 'index.html' && d.last.href !== '') {
-      steps.push({ k: 'Reprendre', t: d.last.title, d: 'La dernière page que tu as ouverte.', href: d.last.href, go: 'Continuer' });
-    }
-    for (var i = 0; i < order.length && steps.length < 2; i++) {
-      var s = order[i], ns = nextSection(s);
-      if (ns) steps.push({ k: s.short + ' · chapitre ' + (ns.i + 1), t: ns.c.title, d: ns.done ? ns.done + ' partie' + (ns.done > 1 ? 's' : '') + ' sur ' + ns.c.sections + ' marquée' + (ns.done > 1 ? 's' : '') + ' comme comprise' + (ns.done > 1 ? 's' : '') + '.' : 'Pas encore commencé. Compte environ 30 minutes.', href: ns.c.path + (ns.done ? '#s' + (ns.done + 1) : ''), go: ns.done ? 'Continuer' : 'Commencer' });
-    }
-    var st = R.qcm.stats(top.id, BANK.filter(function (q) { return q.s === top.id; }));
-    if (st.due > 0) steps.push({ k: 'Répétition espacée · ' + top.short, t: st.due + ' question' + (st.due > 1 ? 's' : '') + ' à revoir', d: 'Des questions ratées ou vues il y a quelques jours. C’est le moment de les reprendre.', href: 'qcm/index.html#' + top.id + '-revision', go: 'Réviser maintenant' });
-    else steps.push({ k: 'QCM · ' + top.short, t: 'Sprint de 10 questions', d: st.seen ? st.seen + ' questions déjà vues sur ' + st.total + ', dont ' + st.mastered + ' bien ancrées.' : st.total + ' questions t’attendent : cours, pièges et vrais QCM.', href: 'qcm/index.html#' + top.id + '-sprint', go: 'Lancer' });
-    if (top.train) steps.push({ k: 'Annales · ' + top.short, t: 'Un exercice d’examen', d: 'Exercices des sujets des années précédentes, avec indices et corrigé détaillé.', href: top.train, go: 'S’entraîner' });
-    $('#today').innerHTML = steps.slice(0, 3).map(function (s) {
-      return '<a class="step" href="' + R.url(s.href) + '"><span class="k">' + U.esc(s.k) + '</span><span class="t">' + U.esc(s.t) + '</span><span class="d">' + U.esc(s.d) + '</span><span class="go">' + U.esc(s.go) + ' →</span></a>';
-    }).join('');
-  }
-
-  /* ---- matières ---- */
-  function meter(label, frac, txt) {
-    return '<div class="meter"><div class="row"><span>' + label + '</span><span>' + txt + '</span></div><div class="bar"><i style="width:' + Math.round(frac * 100) + '%"></i></div></div>';
-  }
-  function renderSubjects() {
-    /* matières prêtes d’abord, chacune sur toute la largeur ; les autres ensuite */
-    var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
-    $('#subjects').innerHTML = list.map(function (s) {
-      /* Archi : les sujets d’Epidocs, plus l’examen B1 2025-2026 du Moodle (data/archi/exams.js) ; Maths : les 13 sujets PC de data/maths/exams.js (sans les corrigés de la filière PA) */
-      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : s.id === 'maths' && window.MATHS_EXAMS ? window.MATHS_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
-      if (s.status !== 'ready') {
-        return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">bientôt</span></div>' +
-          '<p>Le cours et les entraînements arriveront avec tes supports. En attendant : ' + nAnn + ' sujet' + (nAnn > 1 ? 's' : '') + ' de partiel.</p>' +
-          '<div class="links"><a class="btn ghost" href="annales/index.html#' + (s.annalesId || s.id) + '">Voir les annales</a></div></article>';
-      }
-      var p = R.progress.subject(s.id), bank = BANK.filter(function (q) { return q.s === s.id; }), q = R.qcm.stats(s.id, bank);
-      var chapters = s.chapters.map(function (c, i) {
-        var done = Math.min(c.sections, R.progress.chapterDone(s.id, c.id));
-        return '<li><a href="' + R.url(c.path) + '"><span>' + (i + 1) + '. ' + c.title + '</span><span class="mono">' + done + '/' + c.sections + '</span></a></li>';
-      }).join('');
-      return '<article class="subj ready subj-' + s.id + '">' +
-        '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
-        '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">prêt</span></div>' +
-        '<span class="code">' + (s.code ? s.code + ' · ' : '') + s.course + '</span>' +
-        '<p>' + s.exam + '. ' + nChap(s) + ', des méthodes, ' + (NEX ? NEX + ' exercices corrigés, ' : '') + bank.length + ' questions de QCM' + (nAnn ? ' et les ' + nAnn + ' sujets de partiel retrouvés' : '') + '.</p>' +
-        '<ul class="chapters">' + chapters + '</ul>' +
-        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Ouvrir') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Entraînement</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Fiche</a>' : '') + '</div>' +
-        '</div><div class="meters">' +
-        meter('Cours compris', p.pctRead, p.read + ' / ' + p.sections) +
-        meter('QCM bien ancrés', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
-        meter('QCM déjà vus', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
-        (NEX ? meter('Exercices réussis', p.ex.ok / NEX, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' à revoir' : '')) : '') +
-        '</div></article>';
-    }).join('');
-  }
-
-  function renderTools() {
-    var A = window.ANNALES || { midterms: [] };
-    $('#n-qcm').textContent = BANK.length;
-    $('#n-ann').textContent = A.midterms.length;
-    $('#n-fiche').textContent = R.subjects.filter(function (s) { return s.status === 'ready' && s.fiche; }).length;
-  }
-
-  function all() { renderCount(); renderToday(); renderSubjects(); renderTools(); }
-  all();
-  R.store.on(function () { renderToday(); renderSubjects(); });
-})();
-</script>
+<script src="data/boole/exams.js"></script>
+<script src="data/boole/ex-annales.js"></script>
+<script src="data/boole/ex-td.js"></script>
+<script src="assets/js/hub.js"></script>
 </body>
 </html>

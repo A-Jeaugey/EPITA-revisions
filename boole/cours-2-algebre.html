@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L’algèbre de Boole · Archi B2</title>
+<meta name="description" content="Archi B2, chapitre 2 : priorités, axiomes du NON, du ET et du OU, distributivité, théorèmes de De Morgan, absorption, dualité, OU exclusif, simplification algébrique pas à pas et portes NON-ET seules, avec un simplificateur et des réponses vérifiées.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapitre 2 : l’algèbre de Boole">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — fiche 2 sur 5</span><span>Source : chapitre 1 « Logique combinatoire », § III.1 à 4 (D. Bouchet) · TD 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="2"></span><a href="index.html">Archi B2</a> · Chapitre 2 sur 5</div>
+      <h1>Moins de lettres, <span class="w">moins de portes.</span></h1>
+      <p class="lead">Les axiomes, la distributivité, les théorèmes de De Morgan et d’absorption permettent de réduire une expression, donc un circuit. Ce chapitre les présente un par un, puis les enchaîne sur les exemples du cours et des sujets.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 9, avec réponses vérifiées</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § III.1 à 4</span></li>
+        <li class="ex"><span><span class="k">Examen</span> simplifier : 4 ou 5 points, chaque année</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="simplifier" data-opts='{"value":"~(A.B + A.C) + ~A.~B.C"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Tape une expression : l’outil donne sa forme la plus simple et ses formes canoniques (~ pour la barre).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 2 · L’algèbre de Boole</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>Opérateurs et priorités</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>NON, ET, OU : les axiomes</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Distributivité</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>De Morgan</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Les théorèmes 1 et 2</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Dualité</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Le OU exclusif</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Simplifier pas à pas</span></a></li>
+      <li><a href="#s9"><span class="plate" data-n="9"></span><span>Tout en NON-ET</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque partie porte un repère de composant, comme sur un schéma : U1, U2… Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="cours-1-portes.html">← Chapitre 1 : les portes logiques</a><a href="cours-3-formes.html">Chapitre 3 : les formes canoniques →</a><a href="../qcm/index.html#boole">QCM d’algèbre de Boole</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Opérateurs et priorités</a></li><li><a href="#s2">NON, ET, OU : les axiomes</a></li><li><a href="#s3">Distributivité</a></li><li><a href="#s4">De Morgan</a></li><li><a href="#s5">Les théorèmes 1 et 2</a></li><li><a href="#s6">Dualité</a></li><li><a href="#s7">Le OU exclusif</a></li><li><a href="#s8">Simplifier pas à pas</a></li><li><a href="#s9">Tout en NON-ET</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Partie 1 <span class="ref">cours § III.1, 2</span></div><h2>Variables, opérateurs et priorités</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>L’<b>algèbre de Boole</b> manipule des expressions faites de <b>variables logiques</b> (qui valent 0 ou 1) et d’opérateurs. Elle sert à <b>décrire</b> un circuit combinatoire, puis à le <b>simplifier</b> : une expression plus courte, c’est un circuit avec moins de portes.</p>
+          <p>Ses trois opérateurs fondamentaux sont le <b>NON</b> (barre), le <b>ET</b> (point) et le <b>OU</b> (+). Les autres portes s’écrivent avec eux : <span class="bx">~(A.B)</span> pour le NON-ET, <span class="bx">~A.B + A.~B</span> pour le OU exclusif.</p>
+        </div>
+        <div class="note keep"><span class="tag">Priorité des opérateurs</span>
+          <p>Comme × avant + en calcul : le <b>NON</b> d’abord, puis le <b>ET</b>, puis le <b>OU</b>. Le cours l’écrit <span class="bx">A + (B.C) = A + B.C</span> : les parenthèses autour d’un produit sont inutiles. Autour d’une somme, elles sont indispensables : <span class="bx">(A + B).C</span> n’est pas <span class="bx">A + B.C</span>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.C","(A + B).C"],"raw":true,"title":"Les parenthèses changent la fonction"}'></div>
+        <div class="prose">
+          <p><b>Une barre est une parenthèse.</b> Tout ce qui est sous une barre est calculé d’abord, puis complémenté : <span class="bx">~(A + B).C</span> se lit « (non (A ou B)) et C ». Quand tu enlèves une grande barre (De Morgan, partie 4), remets des parenthèses autour de ce qu’elle couvrait.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : le point oublié</span>
+          <p>Les sujets écrivent toujours le point du ET : <span class="bx">A.B.C</span>. Écris-le aussi dans tes réponses ; <span class="bx">AB</span> peut se lire comme une seule variable. Le correcteur attend le format du sujet.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Partie 2 <span class="ref">cours § III.2</span></div><h2>Les axiomes du NON, du ET et du OU</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Ces égalités se vérifient sur une table de vérité de deux lignes (<var>A</var> = 0, <var>A</var> = 1). Elles sont la boîte à outils de toutes les simplifications.</p></div>
+        <div class="tbl"><table>
+          <caption>Axiomes du cours (§ III.2), avec leur nom usuel</caption>
+          <thead><tr><th>Opérateur</th><th>Égalité</th><th>Nom</th></tr></thead>
+          <tbody>
+            <tr><th rowspan="3">NON</th><td><span class="bx">~~A = A</span></td><td>double complémentation</td></tr>
+            <tr><td><span class="bx">~A + A = 1</span></td><td>complémentarité</td></tr>
+            <tr><td><span class="bx">~A.A = 0</span></td><td>complémentarité</td></tr>
+            <tr><th rowspan="5">ET</th><td><span class="bx">A.(B.C) = (A.B).C = A.B.C</span></td><td>associativité</td></tr>
+            <tr><td><span class="bx">A.B = B.A</span></td><td>commutativité</td></tr>
+            <tr><td><span class="bx">A.A = A</span></td><td>idempotence</td></tr>
+            <tr><td><span class="bx">A.1 = A</span></td><td>élément neutre</td></tr>
+            <tr><td><span class="bx">A.0 = 0</span></td><td>élément absorbant</td></tr>
+            <tr><th rowspan="5">OU</th><td><span class="bx">A + (B + C) = (A + B) + C = A + B + C</span></td><td>associativité</td></tr>
+            <tr><td><span class="bx">A + B = B + A</span></td><td>commutativité</td></tr>
+            <tr><td><span class="bx">A + A = A</span></td><td>idempotence</td></tr>
+            <tr><td><span class="bx">A + 0 = A</span></td><td>élément neutre</td></tr>
+            <tr><td><span class="bx">A + 1 = 1</span></td><td>élément absorbant</td></tr>
+          </tbody>
+        </table></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Ce qui sert le plus</span><p><span class="bx">X.~X = 0</span> : un produit qui contient une variable et son complément disparaît. <span class="bx">X + ~X = 1</span> : une somme qui les contient vaut 1.</p></div>
+          <div class="card"><span class="k">Et ce qui surprend</span><p><span class="bx">A + A = A</span> et <span class="bx">A + 1 = 1</span> : il n’y a ni « 2A » ni retenue en algèbre de Boole.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Piège : X peut être une expression</span>
+          <p>Les axiomes valent pour n’importe quelle expression à la place de <var>A</var> : <span class="bx">A.B.~(A.B) = 0</span>, <span class="bx">C.D + C.D = C.D</span>, <span class="bx">(A + B) + 1 = 1</span>. C’est ce qui permet de simplifier de longues expressions en quelques lignes.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Partie 3 <span class="ref">cours § III.2</span></div><h2>La distributivité, dans les deux sens</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le ET se distribue sur le OU, comme × sur + : <span class="bx">A.(B + C) = A.B + A.C</span>. On s’en sert pour <b>développer</b> un produit de sommes, ou pour <b>factoriser</b> (<span class="bx">A.~B.C + A.~B.~C = A.~B.(C + ~C) = A.~B</span>).</p>
+          <p>La surprise : en algèbre de Boole, <b>le OU se distribue aussi sur le ET</b>. <span class="bx">A + B.C = (A + B).(A + C)</span>. Cette égalité n’a pas d’équivalent en calcul ordinaire, et c’est elle qui sert à démontrer le théorème 2 (partie 5).</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.C","(A + B).(A + C)"],"raw":true,"title":"Les deux colonnes sont égales"}'></div>
+        <div class="prose"><p><b>Développer un produit de sommes</b> (exemple X1 du cours) : on multiplie chaque terme de la première somme par chaque terme de la seconde, puis on supprime les produits nuls.</p></div>
+        <div class="calc"><div><span><span class="bx">(A + B + C.D).(~A + B)</span></span></div><div><span><span class="bx">A.~A + A.B + ~A.B + B.B + ~A.C.D + B.C.D</span></span><span class="why-r">développement</span></div><div><span><span class="bx">A.B + ~A.B + B + ~A.C.D + B.C.D</span></span><span class="why-r">A.~A = 0, B.B = B</span></div><div><span><span class="bx">B + ~A.C.D</span></span><span class="why-r">théorème 1 : B absorbe A.B, ~A.B et B.C.D</span></div></div>
+
+        <div class="note trap"><span class="tag">Piège : développer trop tôt</span>
+          <p>Développer trois sommes de trois termes donne 27 produits. Cherche d’abord ce qui se simplifie avant de développer : un facteur commun, une barre à casser, une absorption.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Partie 4 <span class="ref">cours § III.2</span></div><h2>Les théorèmes de De Morgan</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour enlever une barre posée sur un produit ou sur une somme :</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Barre sur un produit</span><p class="big"><span class="bx">~(A.B) = ~A + ~B</span></p></div>
+          <div class="card"><span class="k">Barre sur une somme</span><p class="big"><span class="bx">~(A + B) = ~A.~B</span></p></div>
+        </div>
+        <div class="note keep"><span class="tag">La règle : « casser la barre, changer le signe »</span>
+          <p>On coupe la barre au-dessus de l’opérateur, chaque morceau reste barré, et l’opérateur change : ET devient OU, OU devient ET. Cela marche avec autant de variables qu’il faut : <span class="bx">~(A.B.C) = ~A + ~B + ~C</span> et <span class="bx">~(A + B + C) = ~A.~B.~C</span>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B"],"exprs":["~(A + B)","~A.~B","~A + ~B"],"raw":true,"title":"~(A + B) n’est pas ~A + ~B"}'></div>
+        <div class="prose">
+          <p><b>Barres imbriquées.</b> On casse la barre la plus haute d’abord, en gardant les parenthèses, puis on recommence. Exemple de l’examen 2 de 2023-2024 :</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">~(~C.B)</span></span></div><div><span><span class="bx">~~C + ~B</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">C + ~B</span></span><span class="why-r">double complémentation</span></div></div>
+        <div class="calc"><div><span><span class="bx">~(A.B + A.C)</span></span></div><div><span><span class="bx">~(A.B).~(A.C)</span></span><span class="why-r">De Morgan sur la somme</span></div><div><span><span class="bx">(~A + ~B).(~A + ~C)</span></span><span class="why-r">De Morgan sur chaque produit</span></div></div>
+
+        <div data-boole="check" data-opts='{"ref":"~A.(B + ~C)","vars":["A","B","C"],"kind":"any","label":"~(A + ~B.C)","title":"À toi : enlève la barre de ~(A + ~B.C)","placeholder":"~A.(B + ~C)"}'></div>
+        <div class="note trap"><span class="tag">Piège : oublier les parenthèses</span>
+          <p><span class="bx">~(A + B.C)</span> = <span class="bx">~A.~(B.C)</span> = <span class="bx">~A.(~B + ~C)</span>. Sans les parenthèses, on écrirait <span class="bx">~A.~B + ~C</span>, une autre fonction. Une barre cassée sur un produit donne une somme : mets-la entre parenthèses si elle est multipliée par autre chose.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Partie 5 <span class="ref">cours § III.2</span></div><h2>Absorption : les théorèmes 1 et 2</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="card"><span class="k">Théorème 1</span><p class="big"><span class="bx">A + A.B = A</span></p><p class="muted">Un terme absorbe tout produit qui le contient.</p></div>
+          <div class="card"><span class="k">Théorème 2</span><p class="big"><span class="bx">A + ~A.B = A + B</span></p><p class="muted">Un terme efface son complément dans un produit voisin.</p></div>
+        </div>
+        <div class="tbl"><table>
+          <caption>Démonstrations du cours</caption>
+          <thead><tr><th>Théorème 1</th><th>Théorème 2</th></tr></thead>
+          <tbody><tr><td>
+        <div class="calc"><div><span><span class="bx">A + A.B</span></span></div><div><span><span class="bx">A.1 + A.B</span></span><span class="why-r">A = A.1</span></div><div><span><span class="bx">A.(1 + B)</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">A.1</span></span><span class="why-r">1 + B = 1</span></div><div><span><span class="bx">A</span></span></div></div>
+</td><td>
+        <div class="calc"><div><span><span class="bx">A + ~A.B</span></span></div><div><span><span class="bx">(A + ~A).(A + B)</span></span><span class="why-r">distributivité du OU</span></div><div><span><span class="bx">1.(A + B)</span></span><span class="why-r">A + ~A = 1</span></div><div><span><span class="bx">A + B</span></span></div></div>
+</td></tr></tbody>
+        </table></div>
+        <div class="prose">
+          <p>Les deux théorèmes s’appliquent à des expressions entières, pas seulement à des variables. Dans les exemples du cours :</p>
+          <ul>
+            <li>théorème 1 : <span class="bx">~A + ~A.~C = ~A</span>, <span class="bx">~A + ~A.~B.C = ~A</span>, <span class="bx">~A.~B.C.D + ~A.C.D = ~A.C.D</span> (exemple X1) : le terme qui absorbe doit être <b>entièrement</b> contenu dans l’autre ;</li>
+            <li>théorème 2 : <span class="bx">B + ~B.A.C = B + A.C</span> (exemple X2), <span class="bx">A.B.~(C.D) + C.D = A.B + C.D</span> (exemple X3, avec <var>X</var> = <span class="bx">C.D</span>).</li>
+          </ul>
+        </div>
+<div data-boole="check" data-opts='{"ref":"A + B.C","vars":["A","B","C"],"kind":"min","label":"A + ~A.B.C","title":"À toi : simplifie A + ~A.B.C (théorème 2)"}'></div>
+        <div class="note trap"><span class="tag">Piège : absorber de travers</span>
+          <p><span class="bx">A + A.B = A</span>, mais <span class="bx">A.B + A.~B.C</span> ne se simplifie pas en <span class="bx">A.B</span> : le terme <span class="bx">A.B</span> n’est pas contenu dans <span class="bx">A.~B.C</span>. Ici c’est le théorème 2 qui joue, une fois <var>A</var> mis en facteur : <span class="bx">A.(B + ~B.C) = A.(B + C)</span>.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Partie 6 <span class="ref">cours § III.3</span></div><h2>Le principe de dualité</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une égalité booléenne <b>reste vraie</b> si l’on échange partout les 0 et les 1, ainsi que les ET et les OU. L’égalité obtenue s’appelle l’égalité <b>duale</b>. Les variables et les barres ne bougent pas.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Exemples du cours (§ III.3)</caption>
+          <thead><tr><th>Égalité</th><th></th><th>Duale</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bx">1 + 0 = 1</span></td><td>↔</td><td><span class="bx">0.1 = 0</span></td></tr>
+            <tr><td><span class="bx">X + 1 = 1</span></td><td>↔</td><td><span class="bx">X.0 = 0</span></td></tr>
+            <tr><td><span class="bx">X.~X = 0</span></td><td>↔</td><td><span class="bx">X + ~X = 1</span></td></tr>
+            <tr><td><span class="bx">X + ~X.Y = X + Y</span></td><td>↔</td><td><span class="bx">X.(~X + Y) = X.Y</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>La dualité double la boîte à outils : chaque axiome du ET a son dual du OU (la table de la partie 2 est faite de paires duales), chaque distributivité a sa duale, les deux théorèmes de De Morgan sont duaux l’un de l’autre. Les duals des théorèmes 1 et 2 servent dans les produits de sommes :</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Dual du théorème 1</span><p><span class="bx">A.(A + B) = A</span></p></div>
+          <div class="card"><span class="k">Dual du théorème 2</span><p><span class="bx">A.(~A + B) = A.B</span></p></div>
+        </div>
+        <div class="note trap"><span class="tag">Piège : la priorité cachée</span>
+          <p>Le dual de <span class="bx">A + B.C</span> est <span class="bx">A.(B + C)</span>, avec des parenthèses : le produit était prioritaire, la somme qui le remplace doit le rester. Remets les parenthèses avant d’échanger les opérateurs.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Partie 7 <span class="ref">cours § III.2</span></div><h2>Le OU exclusif dans les calculs</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <caption>Propriétés du OU exclusif (cours § III.2)</caption>
+          <tbody>
+            <tr><td><span class="bx">A ^ B = ~A.B + A.~B = ~A ^ ~B</span></td></tr>
+            <tr><td><span class="bx">~(A ^ B) = A.B + ~A.~B = ~A ^ B = A ^ ~B</span></td></tr>
+            <tr><td><span class="bx">A ^ (B ^ C) = (A ^ B) ^ C = A ^ B ^ C</span> et <span class="bx">A ^ B = B ^ A</span></td></tr>
+            <tr><td><span class="bx">A ^ 0 = A</span>, <span class="bx">A ^ 1 = ~A</span>, <span class="bx">A ^ A = 0</span>, <span class="bx">A ^ ~A = 1</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Reconnaître un OU exclusif.</b> Deux produits identiques sauf sur deux variables, l’une prise directe dans le premier et complémentée dans le second, et l’autre l’inverse : c’est un OU exclusif.</p>
+          <ul>
+            <li><span class="bx">X.~Y + ~X.Y = X ^ Y</span> (les deux variables « différentes ») ;</li>
+            <li><span class="bx">X.Y + ~X.~Y = ~(X ^ Y)</span> (les deux variables « égales »).</li>
+          </ul>
+          <p><var>X</var> et <var>Y</var> peuvent être des produits : c’est ainsi que les corrigés obtiennent leurs formes avec ⊕.</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">B.C + ~A.B + A.~B.~C</span></span><span class="why-r">examen 2021-2022, ex. 4.6</span></div><div><span><span class="bx">B.(C + ~A) + ~B.(A.~C)</span></span><span class="why-r">factorisation de B et de ~B</span></div><div><span><span class="bx">B.~(A.~C) + ~B.(A.~C)</span></span><span class="why-r">De Morgan : C + ~A = ~(A.~C)</span></div><div><span><span class="bx">B ^ (A.~C)</span></span><span class="why-r">X.~Y + ~X.Y avec X = B, Y = A.~C</span></div></div>
+        <div class="calc"><div><span><span class="bx">A + B.C.D + B.~C.~D</span></span><span class="why-r">examen 2021-2022, ex. 4.5</span></div><div><span><span class="bx">A + B.(C.D + ~C.~D)</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">A + B.~(C ^ D)</span></span><span class="why-r">X.Y + ~X.~Y = ~(X ^ Y)</span></div></div>
+
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <p>« Simplifiez à l’aide de l’opérateur OU EXCLUSIF » revient presque chaque année : après un tableau de Karnaugh (2025-2026 : <span class="bx">S1 = B ^ (C.D)</span>), ou sur une expression donnée (2016-2017, 2020-2021, 2021-2022). Méthode : d’abord la forme la plus simple sans OU exclusif, puis repérer les paires de produits « différents » ou « égaux ».</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : simplifier avec ⊕ quand c’est interdit</span>
+          <p>Plusieurs sujets précisent « ne pas utiliser de simplification à l’aide de OU EXCLUSIF » pour la question sur Karnaugh. Lis la consigne : la forme avec ⊕ ne vaut des points que quand elle est demandée.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Partie 8 <span class="ref">cours § III.4</span></div><h2>Simplifier une expression pas à pas</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une méthode qui marche sur tous les exemples du cours et des sujets :</p></div>
+        <ol class="steps">
+          <li><div><p><b>Casser les grandes barres</b> (De Morgan), de la plus haute à la plus basse, en gardant des parenthèses.</p></div></li>
+          <li><div><p><b>Développer</b> les produits de sommes (distributivité).</p></div></li>
+          <li><div><p><b>Nettoyer</b> : <span class="bx">X.~X = 0</span>, <span class="bx">X.X = X</span>, <span class="bx">X + X = X</span>, <span class="bx">X + 1 = 1</span>.</p></div></li>
+          <li><div><p><b>Absorber</b> : théorème 1 (<span class="bx">X + X.Y = X</span>), théorème 2 (<span class="bx">X + ~X.Y = X + Y</span>), et <b>factoriser</b> (<span class="bx">X.Y + X.~Y = X</span>).</p></div></li>
+          <li><div><p><b>Vérifier</b> sur quelques lignes de la table de vérité, ou avec un tableau de Karnaugh (chapitre 4).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>L’exemple du cours</b> : le schéma du chapitre 1.</p></div>
+        <div class="calc"><div><span><span class="bx">~(A.B + A.C) + ~A.~B.C</span></span></div><div><span><span class="bx">~(A.B).~(A.C) + ~A.~B.C</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">(~A + ~B).(~A + ~C) + ~A.~B.C</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">~A.~A + ~A.~C + ~A.~B + ~B.~C + ~A.~B.C</span></span><span class="why-r">développement</span></div><div><span><span class="bx">~A + ~A.~C + ~A.~B + ~B.~C + ~A.~B.C</span></span><span class="why-r">~A.~A = ~A</span></div><div><span><span class="bx">~A + ~B.~C</span></span><span class="why-r">théorème 1 : ~A absorbe ~A.~C, ~A.~B et ~A.~B.C</span></div></div>
+
+        <div class="prose"><p><b>Deux autres exemples du cours</b> (X2 et X3) :</p></div>
+        <div class="calc"><div><span><span class="bx">~A.B.~C + ~A.B.C + A.~B.C + A.B.~C + A.B.C</span></span><span class="why-r">X2</span></div><div><span><span class="bx">~A.B.(~C + C) + A.~B.C + A.B.(~C + C)</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">~A.B + A.~B.C + A.B</span></span><span class="why-r">~C + C = 1</span></div><div><span><span class="bx">B.(~A + A) + A.~B.C</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">B + A.~B.C</span></span></div><div><span><span class="bx">B + A.C</span></span><span class="why-r">théorème 2 : B + ~B.(A.C) = B + A.C</span></div></div>
+        <div class="calc"><div><span><span class="bx">A.B.~D + ~B.C.D + A.B.~C + B.C.D + ~A.C.D</span></span><span class="why-r">X3</span></div><div><span><span class="bx">A.B.~D + C.D.(~B + B + ~A) + A.B.~C</span></span><span class="why-r">factorisation de C.D</span></div><div><span><span class="bx">A.B.~D + C.D + A.B.~C</span></span><span class="why-r">~B + B + ~A = 1</span></div><div><span><span class="bx">A.B.(~C + ~D) + C.D</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">A.B.~(C.D) + C.D</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">A.B + C.D</span></span><span class="why-r">théorème 2 avec X = C.D</span></div></div>
+
+        <div data-boole="check" data-opts='{"ref":"(A + ~B.~C).~(A.B)","vars":["A","B","C"],"kind":"min","label":"(A + ~B.~C).~(A.B)","title":"À toi : examen 2025-2026, ex. 1 (et TD 1, S5)"}'></div>
+        <div data-boole="check" data-opts='{"ref":"A + B.C + ~A.(~B + ~C).(A.D + C)","vars":["A","B","C","D"],"kind":"min","label":"A + B.C + ~A.(~B + ~C).(A.D + C)","title":"À toi : examen 2025-2026, ex. 1 (et TD 1, S7)"}'></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <ul>
+            <li>Chaque sujet commence par « Simplifiez au maximum les expressions ci-dessous. <b>Le résultat ne devra pas contenir de parenthèses.</b> » : 4 ou 5 expressions, 4 ou 5 points sur 20 (2023-2024, 2024-2025, 2025-2026).</li>
+            <li>« Ne pas détailler les calculs sauf si cela est explicitement demandé » : seul le résultat compte. Avec 4 variables au plus, un <b>tableau de Karnaugh au brouillon</b> (chapitre 4) donne à coup sûr la forme la plus simple ; l’algèbre sert quand on demande le détail (montage de 2014-2015, rattrapage de 2017-2018).</li>
+            <li>Les expressions du TD 1 reviennent telles quelles : S2, S5 et S7 du TD 1 sont trois des quatre expressions de l’examen 2025-2026.</li>
+          </ul>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s8"></button></div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="s9">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="9"></span>Partie 9 <span class="ref">TD 1, ex. 2 · examen 2025-2026</span></div><h2>Tout avec des portes NON-ET</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La porte NON-ET est <b>universelle</b> : avec des NON-ET seulement, on fabrique un NON, un ET, un OU, donc n’importe quel circuit. Tout vient de deux égalités : <span class="bx">~(A.A) = ~A</span> (idempotence) et De Morgan.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Les constructions attendues (corrigé de l’examen 2025-2026)</caption>
+          <thead><tr><th>Porte</th><th>Portes NON-ET</th><th>Égalité utilisée</th></tr></thead>
+          <tbody>
+            <tr><td>NON</td><td>1</td><td><span class="bx">~A = ~(A.A)</span></td></tr>
+            <tr><td>ET</td><td>2</td><td><span class="bx">A.B = ~~(A.B)</span> : un NON-ET, puis un NON-ET en inverseur</td></tr>
+            <tr><td>OU</td><td>3</td><td><span class="bx">A + B = ~(~A.~B)</span> : deux inverseurs, puis un NON-ET</td></tr>
+            <tr><td>OU exclusif</td><td>5</td><td><span class="bx">A ^ B = ~(~(A.~B).~(~A.B))</span></td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="schema" data-opts='{"w":360,"h":90,"live":true,"title":"NON avec une porte NON-ET","inputs":[{"id":"A","x":26,"y2":60}],"gates":[{"id":"n1","type":"nand","x":110,"y":25,"in":["A","A"]}],"outputs":[{"from":"n1","label":"~A","x":240}]}'></div>
+<div data-boole="schema" data-opts='{"w":440,"h":100,"live":true,"title":"ET avec deux portes NON-ET","inputs":[{"id":"A","x":26,"y2":70},{"id":"B","x":52,"y2":70}],"gates":[{"id":"n1","type":"nand","x":110,"y":25,"in":["A","B"],"label":"~(A.B)"},{"id":"n2","type":"nand","x":230,"y":25,"in":["n1","n1"]}],"outputs":[{"from":"n2","label":"A.B","x":340}]}'></div>
+<div data-boole="schema" data-opts='{"w":460,"h":150,"live":true,"title":"OU avec trois portes NON-ET","inputs":[{"id":"A","x":26,"y2":130},{"id":"B","x":52,"y2":130}],"gates":[{"id":"n1","type":"nand","x":110,"y":20,"in":["A","A"],"label":"~A"},{"id":"n2","type":"nand","x":110,"y":86,"in":["B","B"],"label":"~B"},{"id":"n3","type":"nand","x":250,"y":53,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A + B","x":360}]}'></div>
+<div data-boole="schema" data-opts='{"w":600,"h":230,"live":true,"title":"OU exclusif avec cinq portes NON-ET","inputs":[{"id":"A","x":26,"y2":210},{"id":"B","x":52,"y2":210}],"gates":[{"id":"na","type":"nand","x":100,"y":24,"in":["A","A"],"label":"~A"},{"id":"nb","type":"nand","x":100,"y":150,"in":["B","B"],"label":"~B"},{"id":"n1","type":"nand","x":250,"y":40,"in":["A","nb"],"mx":[0,205]},{"id":"n2","type":"nand","x":250,"y":130,"in":["na","B"],"mx":[215,0]},{"id":"n3","type":"nand","x":400,"y":85,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A ^ B","x":510}]}'></div>
+        <div class="calc"><div><span><span class="bx">A ^ B</span></span></div><div><span><span class="bx">A.~B + ~A.B</span></span><span class="why-r">définition</span></div><div><span><span class="bx">~~(A.~B + ~A.B)</span></span><span class="why-r">double complémentation</span></div><div><span><span class="bx">~(~(A.~B).~(~A.B))</span></span><span class="why-r">De Morgan sur la somme</span></div></div>
+
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <p>Examen 2025-2026, exercice 5 (3 points) : « Donnez le schéma de câblage des portes ET, OU, et OU EXCLUSIF, en utilisant uniquement des portes NON-ET. Le nombre maximum de portes est précisé » : 2, 3 et 5. Le TD 1 (exercice 2) demande aussi le NON. Une porte NON-ET dont les deux entrées sont reliées est un inverseur : c’est la brique de base des trois schémas.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : le nombre de portes</span>
+          <p>Le sujet impose un maximum. Un OU exclusif dessiné avec un NON-ET pour chaque NON, ET et OU de <span class="bx">~A.B + A.~B</span> demande 9 portes : il faut passer par l’égalité du tableau pour descendre à 5.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s9" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 9 sur 9</span><button type="button" class="done-btn" data-done="boole:algebre:s9"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais simplifier une expression. Le chapitre 3, <a href="cours-3-formes.html">les formes canoniques</a>, montre deux façons d’écrire une fonction qui ne dépendent que de sa table de vérité.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

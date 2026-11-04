@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Méthodes · Archi B2</title>
+<meta name="description" content="Archi B2 : une méthode par exercice de l’examen, dans l’ordre du sujet, chacune avec un exemple des sujets et l’outil qui le montre. Simplifier sans parenthèses, formes canoniques, tableaux de Karnaugh avec Φ, OU exclusif, portes NON-ET, problème mis en équations ; vérifier, la liste à cocher, les pièges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Méthodes : une section par exercice de l’examen, repérée comme un composant (U1…) ; chaque exemple vient d’un
+   sujet et se rejoue avec l’outil de boole.js. */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 .3rem;font-family:var(--font-mono);font-size:.85rem;font-weight:600;color:var(--comp);border:1.5px solid var(--comp);border-radius:3px;flex:none}
+.copy{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:0 var(--radius) var(--radius) 0;padding:.8rem 1rem;display:grid;gap:.45rem;min-width:0}
+.copy>*{min-width:0}
+.copy .tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ex-src{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;color:var(--exam)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.vf td:first-child{min-width:9rem}
+@media (max-width:560px){.calc>div{white-space:normal;flex-wrap:wrap;gap:.2rem 1rem}}
+</style>
+</head>
+<body data-resume="Archi B2 · méthodes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — méthodes d’examen</span><span>Exemples : examen B2 2025-2026, examens 2023 et 2024, TD 1</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="6"></span><a href="index.html">Archi B2</a> · Méthodes</div>
+      <h1>Une méthode par <span class="w">exercice du sujet.</span></h1>
+      <p class="lead">Depuis 2023, l’examen pose les mêmes questions dans le même ordre : simplifier, formes canoniques, tableaux de Karnaugh, un problème, et un petit exercice de circuits. Chaque méthode tient en quelques étapes, avec un exemple des sujets, ce qu’on écrit sur la copie et le piège qui coûte des points.</p>
+      <ul class="feats">
+        <li><span><span class="k">Méthodes</span> 6, dans l’ordre du sujet</span></li>
+        <li><span><span class="k">Puis</span> vérifier, la liste à cocher, les pièges</span></li>
+        <li class="ex"><span><span class="k">Exemples</span> tous tirés des sujets et du TD 1</span></li>
+        <li><span><span class="k">S’entraîner</span> <a href="entrainement.html#infini">générateurs</a></span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire des méthodes">
+    <div class="toc-title">Méthodes</div>
+    <ol>
+      <li><a href="#simplifier"><span class="plate" data-n="1"></span><span>Simplifier sans parenthèses</span></a></li>
+      <li><a href="#canon"><span class="plate" data-n="2"></span><span>Les formes canoniques</span></a></li>
+      <li><a href="#karnaugh"><span class="plate" data-n="3"></span><span>Karnaugh, avec Φ</span></a></li>
+      <li><a href="#xor"><span class="plate" data-n="4"></span><span>Faire apparaître un OU exclusif</span></a></li>
+      <li><a href="#nand"><span class="plate" data-n="5"></span><span>Des portes NON-ET seules</span></a></li>
+      <li><a href="#probleme"><span class="plate" data-n="6"></span><span>Un problème en équations</span></a></li>
+      <li><a href="#verifier"><span class="mk">=</span><span>Vérifier vite</span></a></li>
+      <li><a href="#copie"><span class="mk">✓</span><span>Avant de rendre</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>Les pièges</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque méthode porte un repère de composant, comme les parties du cours : U1, U2…</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="entrainement.html">Entraînement →</a><a href="fiche.html">Fiche d’une page</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire des méthodes</summary><ol>
+      <li><a href="#simplifier">Simplifier sans parenthèses</a></li><li><a href="#canon">Les formes canoniques</a></li><li><a href="#karnaugh">Karnaugh, avec Φ</a></li>
+      <li><a href="#xor">Faire apparaître un OU exclusif</a></li><li><a href="#nand">Des portes NON-ET seules</a></li><li><a href="#probleme">Un problème en équations</a></li>
+      <li><a href="#verifier">Vérifier vite</a></li><li><a href="#copie">Avant de rendre</a></li><li><a href="#pieges">Les pièges</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="simplifier">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Méthode 1 <span class="ref">exercice 1 · <a href="cours-2-algebre.html#s4">fiche 2, parties 4, 5 et 8</a></span></div><h2>Simplifier au maximum, sans parenthèses</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Casse les grandes barres</b> avec De Morgan, de l’extérieur vers l’intérieur : <span class="bx">~(X.Y) = ~X + ~Y</span>, <span class="bx">~(X + Y) = ~X.~Y</span>. Garde des parenthèses tant qu’il le faut.</p></div></li>
+          <li><div><p><b>Développe</b> en somme de produits, et supprime aussitôt les produits nuls (<span class="bx">X.~X = 0</span>) et les répétitions (<span class="bx">X.X = X</span>).</p></div></li>
+          <li><div><p><b>Réduis</b> : deux produits qui ne diffèrent que par une variable se regroupent (<span class="bx">X.Y + X.~Y = X</span>) ; un produit en absorbe un plus long (<span class="bx">X + X.Y = X</span>) ; <span class="bx">X + ~X.Y = X + Y</span>.</p></div></li>
+          <li><div><p><b>Contrôle au brouillon</b> avec un tableau de Karnaugh : seul le résultat est noté, et le tableau donne à coup sûr la forme la plus simple.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026, exercice 1 (et TD 1, S5)</p>
+        <div class="calc"><div><span><span class="bx">(A + ~B.~C).~(A.B)</span></span></div><div><span><span class="bx">(A + ~B.~C).(~A + ~B)</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">A.~A + A.~B + ~A.~B.~C + ~B.~C</span></span><span class="why-r">développement</span></div><div><span><span class="bx">A.~B + ~A.~B.~C + ~B.~C</span></span><span class="why-r">A.~A = 0</span></div><div><span><span class="bx">A.~B + ~B.~C</span></span><span class="why-r">~B.~C absorbe ~A.~B.~C</span></div></div>
+        <p class="ex-src">Même sujet : la somme sous la barre</p>
+        <div class="calc"><div><span><span class="bx">~(A.B + ~A.~B + ~A.B)</span></span></div><div><span><span class="bx">~(A.B + ~A)</span></span><span class="why-r">~A.~B + ~A.B = ~A</span></div><div><span><span class="bx">~(~A + B)</span></span><span class="why-r">~A + A.B = ~A + B</span></div><div><span><span class="bx">A.~B</span></span><span class="why-r">De Morgan</span></div></div>
+        <div data-boole="simplifier" data-opts='{"value":"A + B.C + ~A.(~B + ~C).(A.D + C)"}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Le résultat seul, dans la case : <b><span class="bx">A.~B + ~B.~C</span></b>. Une somme de produits, sans aucune parenthèse : « Le résultat ne devra pas contenir de parenthèses. » Une expression qui vaut 0 ou 1 s’écrit <b>0</b> ou <b>1</b> (sujet 2023 : <span class="bx">~((C + D) + (B + ~D)) = 0</span>).</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>De Morgan à moitié : <span class="bx">~(X.Y)</span> devient <span class="bx">~X + ~Y</span> ; le ET devient OU, il ne suffit pas de barrer chaque lettre.</li>
+          <li>S’arrêter trop tôt : <span class="bx">A + B.C + ~B.C</span> se réduit encore, à <span class="bx">A + C</span>.</li>
+          <li>Laisser une parenthèse factorisée (<span class="bx">B.(C + ~A)</span>) : le résultat est juste, mais la consigne n’est pas respectée.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="canon">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Méthode 2 <span class="ref">exercice 2 · <a href="cours-3-formes.html#s2">fiche 3, parties 2 à 7</a></span></div><h2>Première et seconde formes canoniques</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Liste les variables</b> de l’expression, dans l’ordre alphabétique, et rien qu’elles : <span class="bx">A + ~B</span> n’a que A et B.</p></div></li>
+          <li><div><p><b>Cherche les lignes</b> : à 1 pour la première forme, à 0 pour la seconde. Lis-les sur la forme de l’expression (un produit impose ses valeurs) ou fais la table de vérité.</p></div></li>
+          <li><div><p><b>1re forme : un minterme par ligne à 1</b>, produit de toutes les variables, barrée si elle vaut 0. <b>2e forme : un maxterme par ligne à 0</b>, somme de toutes les variables, barrée si elle vaut 1.</p></div></li>
+          <li><div><p><b>Compte</b> : mintermes + maxtermes = 2<sup><var>n</var></sup>. Aucun terme en double.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026 : A + B.~C, seconde forme</p>
+        <div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.~C"],"names":["S"],"hl":[0,1,3],"title":"S vaut 0 sur les lignes 000, 001 et 011"}'></div>
+        <div class="calc"><div><span><span class="bx">S = (A + B + C).(A + B + ~C).(A + ~B + ~C)</span></span><span class="why-r">un maxterme par ligne à 0</span></div></div>
+        <p class="ex-src">Compléter les termes · examen 2 2023-2024 et TD 1 : (A + C).(~A + B + C)</p>
+        <div class="calc"><div><span><span class="bx">(A + C).(~A + B + C)</span></span></div><div><span><span class="bx">(A + B.~B + C).(~A + B + C)</span></span><span class="why-r">il manque B : B.~B = 0</span></div><div><span><span class="bx">(A + B + C).(A + ~B + C).(~A + B + C)</span></span><span class="why-r">X + Y.Z = (X + Y).(X + Z)</span></div></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Chaque terme contient toutes les variables, dans le même ordre ; les mintermes séparés par des +, les maxtermes entre parenthèses et séparés par des points. Les corrigés rangent les termes dans un ordre quelconque : seul le contenu compte.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Inverser les conventions : dans un maxterme, une variable à <b>0</b> s’écrit <b>sans</b> barre.</li>
+          <li>Ajouter une variable qui n’est pas dans l’expression.</li>
+          <li>Garder un terme en double après avoir complété deux produits (TD 1, ex. 3.1, S3 : deux doublons).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="karnaugh">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Méthode 3 <span class="ref">exercice 3 · <a href="cours-4-karnaugh.html#s2">fiche 4</a></span></div><h2>Tableaux de Karnaugh, avec les cases indéfinies</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Recopie l’en-tête du sujet</b> : lignes DC, colonnes BA, dans l’ordre de Gray 00, 01, 11, 10. Les numéros des cases : <span class="mono">0 1 3 2 / 4 5 7 6 / 12 13 15 14 / 8 9 11 10</span>.</p></div></li>
+          <li><div><p><b>Remplis</b> : 1 aux numéros donnés, Φ aux cases indéfinies, 0 partout ailleurs. Le tableau est noté : vérifie chaque case.</p></div></li>
+          <li><div><p><b>Encercle</b> les plus grands rectangles de 1, 2, 4 ou 8 cases, bords opposés voisins, le moins de cercles possible. Un Φ entre dans un cercle s’il l’agrandit, jamais seul.</p></div></li>
+          <li><div><p><b>Lis chaque cercle</b> : la variable qui varie disparaît ; à 0, elle est barrée ; à 1, écrite. L’expression est la somme des produits.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026, exercice 3 : S2 = 1 ssi N = 0, 4, 6, 8, 12, 14 ; indéfinie ssi N = 3, 5, 7, 10, 13, 15</p>
+        <div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[10,13,15,3,5,7],"name":"S2","steps":true}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Le tableau rempli (0, 1 et Φ), les cercles dessinés, puis l’expression : <b><span class="bx">S2 = C + ~B.~A</span></b>. « Aucun point ne sera attribué à une expression si son tableau est faux » : le tableau compte autant que l’expression.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Ordre binaire au lieu de l’ordre de Gray (00, 01, 10, 11) : le tableau est faux.</li>
+          <li>Oublier les bords : la colonne 10 touche la colonne 00, la ligne 10 touche la ligne 00, et les quatre coins forment un cercle.</li>
+          <li>Un cercle de 3 ou 6 cases : seules les puissances de 2 sont permises.</li>
+          <li>Un cercle qui ne contient que des Φ, ou un Φ laissé à 0 alors qu’il aurait doublé un cercle.</li>
+        </ul></div>
+        <p><a class="btn" href="entrainement.html#gen-km">Générateur de tableaux de Karnaugh →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="xor">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Méthode 4 <span class="ref">exercices 3 et 5 · <a href="cours-2-algebre.html#s7">fiche 2, partie 7</a></span></div><h2>Faire apparaître un OU exclusif</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Pars de la forme la plus simple</b> sans OU exclusif (Karnaugh ou algèbre).</p></div></li>
+          <li><div><p><b>Cherche le motif</b> <span class="bx">X.~Y + ~X.Y = X ^ Y</span> (ou <span class="bx">X.Y + ~X.~Y = ~(X ^ Y)</span>), où X et Y peuvent être des produits. Factorise pour le faire apparaître, De Morgan à l’appui.</p></div></li>
+          <li><div><p><b>Repère le damier</b> : dans un tableau de Karnaugh, des 1 qui ne se touchent jamais, une case sur deux, signalent un OU exclusif.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026, exercice 3, question 2</p>
+        <div class="calc"><div><span><span class="bx">~D.B + ~C.B + D.C.~B</span></span></div><div><span><span class="bx">B.(~D + ~C) + ~B.(C.D)</span></span><span class="why-r">factorisation</span></div><div><span><span class="bx">B.~(C.D) + ~B.(C.D)</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">B ^ (C.D)</span></span><span class="why-r">X.~Y + ~X.Y = X ^ Y</span></div></div>
+        <div data-boole="kmap" data-opts='{"vars":["C","B","A"],"rows":1,"expr":"A ^ B ^ C","name":"S","title":"Le damier : A ⊕ B ⊕ C, la somme d’un additionneur complet"}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p><b><span class="bx">S1 = B ^ (C.D)</span></b>, avec les parenthèses autour du produit : <span class="bx">B ^ C.D</span> se lit pareil (le ET passe avant), mais les corrigés les écrivent.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Utiliser le OU exclusif quand le sujet l’interdit : « Ne pas utiliser de simplification à l’aide de OU EXCLUSIF » (2025, question 1). La forme avec ⊕ ne va que là où elle est demandée.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="nand">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Méthode 5 <span class="ref">exercice 5 (2025) · <a href="cours-2-algebre.html#s9">fiche 2, partie 9</a></span></div><h2>Des portes NON-ET seules</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>NON</b> : un NON-ET aux deux entrées reliées, <span class="bx">~(A.A) = ~A</span>. 1 porte.</p></div></li>
+          <li><div><p><b>ET</b> : un NON-ET, puis un inverseur, <span class="bx">A.B = ~~(A.B)</span>. 2 portes.</p></div></li>
+          <li><div><p><b>OU</b> : un inverseur sur chaque entrée, puis un NON-ET, <span class="bx">A + B = ~(~A.~B)</span>. 3 portes.</p></div></li>
+          <li><div><p><b>OU exclusif</b> : <span class="bx">A ^ B = ~(~(A.~B).~(~A.B))</span>. Deux inverseurs, deux NON-ET, un NON-ET final : 5 portes.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026, exercice 5 : le OU exclusif en 5 portes</p>
+        <div data-boole="schema" data-opts='{"w":600,"h":230,"live":true,"inputs":[{"id":"A","x":26,"y2":210},{"id":"B","x":52,"y2":210}],"gates":[{"id":"na","type":"nand","x":100,"y":24,"in":["A","A"]},{"id":"nb","type":"nand","x":100,"y":150,"in":["B","B"]},{"id":"n1","type":"nand","x":250,"y":40,"in":["A","nb"],"mx":[0,205]},{"id":"n2","type":"nand","x":250,"y":130,"in":["na","B"],"mx":[215,0]},{"id":"n3","type":"nand","x":400,"y":85,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A ^ B","x":510}]}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>Un schéma propre : entrées à gauche, sortie à droite, une porte NON-ET par symbole, et le nombre de portes imposé respecté (ET : 2, OU : 3, OU exclusif : 5 en 2025-2026).</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Traduire chaque porte de <span class="bx">A.~B + ~A.B</span> en NON-ET, une par une : 9 portes. La double barre et De Morgan font tomber à 5 (4 en partageant <span class="bx">~(A.B)</span>, voir le <a href="entrainement.html#td1-ex2">TD 1, ex. 2</a>).</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="probleme">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Méthode 6 <span class="ref">exercice 4 · <a href="cours-5-circuits.html#s1">fiche 5, parties 1 et 2</a></span></div><h2>Un problème : de l’énoncé aux équations</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Nomme les entrées et les sorties</b>, dans l’ordre du sujet (la première entrée est le poids fort de la table).</p></div></li>
+          <li><div><p><b>Remplis la table de vérité</b> ligne par ligne, en traduisant l’énoncé. Une ligne que l’énoncé déclare impossible ou « peu importe » prend Φ ; une ligne qu’il définit (un défaut, une alarme) prend sa valeur.</p></div></li>
+          <li><div><p><b>Une sortie par tableau de Karnaugh</b>, sauf si une ligne seule vaut 1 : c’est alors un minterme. Simplifie, puis cherche un OU exclusif si on le demande.</p></div></li>
+        </ol>
+        <p class="ex-src">Exemple · examen B2 2025-2026, exercice 4 : la cuve à trois capteurs</p>
+        <div class="prose"><p>C1, C2 et C3 sont à 250, 500 et 750 litres. Un capteur ne peut être immergé que si ceux du dessous le sont : seules 000, 001, 011 et 111 sont normales, et chacune allume un voyant de niveau. Les quatre autres lignes sont des défauts : L0.</p></div>
+        <div data-boole="truth" data-opts='{"vars":["C3","C2","C1"],"cols":{"L1":[1,0,0,0,0,0,0,0],"L2":[0,1,0,0,0,0,0,0],"L3":[0,0,0,1,0,0,0,0],"L4":[0,0,0,0,0,0,0,1],"L0":[0,0,1,0,1,1,1,0]},"hl":[2,4,5,6],"title":"Les lignes de défaut, en surbrillance, allument L0"}'></div>
+        <div data-boole="kmap" data-opts='{"vars":["C3","C2","C1"],"rows":1,"ones":[2,4,5,6],"name":"L0"}'></div>
+        <div class="copy"><span class="tag">Sur la copie</span><p>La table complète, puis <b><span class="bx">L1 = ~C3.~C2.~C1</span></b>, <b><span class="bx">L2 = ~C3.~C2.C1</span></b>, <b><span class="bx">L3 = ~C3.C2.C1</span></b>, <b><span class="bx">L4 = C3.C2.C1</span></b>, et le tableau de L0 avec ses cercles : <b><span class="bx">L0 = C3.~C2 + C2.~C1</span></b>.</p></div>
+        <div class="note trap"><span class="tag">Piège</span><p>Mettre Φ sur une ligne que l’énoncé définit. Ici, les défauts ne sont pas « impossibles » : ils allument L0 et éteignent L1 à L4. Simplifier L1 en <span class="bx">~C3</span> serait faux sur la ligne 010.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ vérifier -->
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="mk">=</span>Contrôles</div><h2>Vérifier vite un résultat</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une minute de contrôle par exercice rattrape la plupart des erreurs. Chaque contrôle refait le calcul par un autre chemin.</p></div>
+        <div class="tbl"><table class="vf">
+          <thead><tr><th>Exercice</th><th>Contrôle</th></tr></thead>
+          <tbody>
+            <tr><td>Simplifier</td><td>Place l’expression de départ dans un tableau de Karnaugh : les cercles donnent la forme la plus simple. Ou teste deux ou trois lignes dans les deux expressions.</td></tr>
+            <tr><td>Formes canoniques</td><td>Mintermes + maxtermes = 2<sup><var>n</var></sup> ; un minterme pris au hasard rend l’expression vraie, un maxterme la rend fausse.</td></tr>
+            <tr><td>Karnaugh</td><td>Relis chaque case contre la liste des numéros ; chaque 1 est dans au moins un cercle ; aucun cercle n’en contient un autre.</td></tr>
+            <tr><td>OU exclusif</td><td>Développe la forme avec ⊕ (<span class="bx">X ^ Y = X.~Y + ~X.Y</span>) : tu dois retrouver la forme de départ.</td></tr>
+            <tr><td>Portes NON-ET</td><td>Fais passer 0 0, 0 1, 1 0, 1 1 dans le schéma, porte par porte.</td></tr>
+            <tr><td>Problème</td><td>Relis l’énoncé ligne par ligne avec la table : chaque phrase doit se retrouver dans une ligne au moins.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>Les dernières minutes</div><h2>Avant de rendre la copie</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Relis chaque exercice avec cette liste. Elle reprend les consignes des sujets et les erreurs que les corrigés font éviter. Rien n’est enregistré.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Tout décocher</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Simplifier</b> : sommes de produits sans parenthèses, plus aucun regroupement possible ; 0 ou 1 écrit tel quel.</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Formes canoniques</b> : toutes les variables dans chaque terme, aucune de plus ; pas de doublon ; bon nombre de termes.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Karnaugh</b> : ordre de Gray, chaque case relue (0, 1, Φ), cercles dessinés, Φ utilisés seulement s’ils agrandissent un cercle.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>OU exclusif</b> : seulement là où il est demandé ; parenthèses autour des produits.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Problème</b> : table complète, Φ seulement sur les cas impossibles, une expression par sortie.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Schémas</b> : nombre de portes respecté, entrées des inverseurs reliées, sortie nommée.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>Au stylo</b>, ni encre rouge ni crayon à papier ; toutes les cases remplies.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>À relire la veille</div><h2>Les pièges, exercice par exercice</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Algèbre</span><ul>
+            <li><span class="bx">~(A + B)</span> n’est pas <span class="bx">~A + ~B</span> : c’est <span class="bx">~A.~B</span>.</li>
+            <li><span class="bx">A + ~A.B = A + B</span>, pas A.B ni A.</li>
+            <li><span class="bx">(A + B).(A + C) = A + B.C</span> : la distributivité du OU sur le ET n’existe pas en arithmétique, mais bien en algèbre de Boole.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Formes canoniques</span><ul>
+            <li>Minterme : variable à 0 → barrée. Maxterme : variable à 0 → sans barre.</li>
+            <li>La seconde forme vient des lignes à <b>0</b>, pas des lignes à 1.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Karnaugh</span><ul>
+            <li>Ordre de Gray, bords voisins, cercles de 1, 2, 4, 8 cases.</li>
+            <li>Lignes et colonnes inversées par rapport au sujet : les numéros des cases changent.</li>
+            <li>Φ : une aide, jamais une obligation.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Problèmes</span><ul>
+            <li>Ordre des entrées : la première nommée est le poids fort de la table (C3 avant C2 avant C1 dans la cuve).</li>
+            <li>Une ligne définie par l’énoncé n’est jamais un Φ.</li>
+          </ul></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/boole.js"></script>
+<script>
+(function () {
+  /* la liste à cocher (rien n’est enregistré) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' vérifiés'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
-/* Index des annales de partiels de mi-semestre S1 (généré depuis Epidocs/Past-Exams et HyperAnnales). */
+/* Index des annales S1 (généré par tools/gen_annales.py depuis Epidocs/Past-Exams et HyperAnnales) : partiels de mi-semestre
+   (midterms, bimestre 1), examens de fin de semestre (finals) et rattrapages (retakes), bimestre 2. */
 window.ANNALES = {
- "updated": "2026-10-16",
+ "updated": "2026-11-04",
  "subjects": {
   "elec": {
    "name": "Électronique",
@@ -1137,6 +1138,1307 @@ window.ANNALES = {
      "kind": "Sujet",
      "lang": "",
      "url": "https://past-exams.epidocs.eu/S1/Midterms/TIM/2022/midterm-2022-s1-tim-subject.pdf"
+    }
+   ]
+  }
+ ],
+ "finals": [
+  {
+   "subject": "algo",
+   "promo": 2029,
+   "year": 2024,
+   "variant": "PYTHON",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2029/PYTHON/final-2029-s1-algo-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2029,
+   "year": 2024,
+   "variant": "TAA",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2029/TAA/final-2029-s1-algo-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "PYTHON",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2028/PYTHON/final-2028-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Document",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2028/PYTHON/final-2028-s1-algo-copie-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "TAA",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2028/TAA/final-2028-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2028/TAA/final-2027-s1-algo-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2027/final-2027-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2027/final-2027-s1-algo-answer_sheet-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2026,
+   "year": 2021,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2026/final-2026-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2026/final-2026-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2026/final-2026-s1-algo-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2025/final-2025-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2025/final-2025-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2025/final-2025-s1-algo-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-subject-en.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-answer_sheet-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024/final-2024-s1-algo-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "version B",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-subject-en.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-answer_sheet-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2024%23/final-2024%23-s1-algo-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-subject-en.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-answer_sheet-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023/final-2023-s1-algo-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "version B",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023%23/final-2023%23-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023%23/final-2023%23-s1-algo-subject-en.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023%23/final-2023%23-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023%23/final-2023%23-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2023%23/final-2023%23-s1-algo-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-subject-en.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-answer_sheet-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2022/final-2022-s1-algo-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2021/final-2021-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2021/final-2021-s1-algo-answer_sheet-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2021/final-2021-s1-algo-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2021/final-2021-s1-algo-correction.py"
+    }
+   ]
+  },
+  {
+   "subject": "algo",
+   "promo": 2020,
+   "year": 2015,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2020/final-2020-s1-algo-subject-fr.pdf"
+    },
+    {
+     "kind": "Feuille de réponses",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Algo/2020/final-2020-s1-algo-answer_sheet-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2029,
+   "year": 2024,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2029/final-2029-s1-archi-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2028/final-2028-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2028/final-2027-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2028/final-2028-s1-archi-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2027/final-2027-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2027/final-2027-s1-archi-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2026,
+   "year": 2021,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2026/final-2026-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2026/final-2026-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2026/final-2026-s1-archi-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2026/final-2026-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2025/final-2025-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2025/final-2025-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2024/final-2024-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2024/final-2024-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2024/final-2024-s1-archi-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2024/final-2024-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023/final-2023-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023/final-2023-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023/final-2023-s1-archi-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023/final-2023-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "version B",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023%23/final-2023%23-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2023%23/final-2023%23-s1-archi-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2022/final-2022-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2022/final-2022-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2022/final-2022-s1-archi-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2022/final-2022-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2021/final-2021-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2021/final-2021-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2021/final-2021-s1-archi-correction-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2021/final-2021-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2020,
+   "year": 2015,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2020/final-2020-s1-archi-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Archi/2020/final-2020-s1-archi-subject-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "cie",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/CIE/2027/final-2027-s1-cie-subject.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/CIE/2027/final-2027-s1-cie-correction.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "cie",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/CIE/2025/final-2025-s1-cie-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2028/final-2028-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2028/final-2028-s1-elec-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2028/final-2028-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2027/final-2027-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2027/final-2027-s1-elec-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2027/final-2027-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2026,
+   "year": 2021,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2026/final-2026-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2026/final-2026-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2025/final-2025-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2024/final-2024-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2024/final-2024-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2023/final-2023-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2023/final-2023-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "version B",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2023%23/final-2023%23-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2023%23/final-2023%23-s1-elec-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2022/final-2022-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2022/final-2022-s1-elec-correction-fr.pdf"
+    },
+    {
+     "kind": "Grille du QCM (correction en ligne)",
+     "lang": "",
+     "url": "https://mcq.epidocs.eu/?https://past-exams.epidocs.eu/S1/Finals/Elec/2022/final-2022-s1-elec-mcq.json"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2021/final-2021-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2021/final-2021-s1-elec-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2021/final-2021-s1-elec-correction-fr.pdf"
+    },
+    {
+     "kind": "Grille du QCM (correction en ligne)",
+     "lang": "",
+     "url": "https://mcq.epidocs.eu/?https://past-exams.epidocs.eu/S1/Finals/Elec/2021/final-2021-s1-elec-mcq.json"
+    }
+   ]
+  },
+  {
+   "subject": "elec",
+   "promo": 2020,
+   "year": 2015,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2020/final-2020-s1-elec-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Elec/2020/final-2020-s1-elec-subject-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2029,
+   "year": 2024,
+   "variant": "PC · ARITH",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2029/PC/ARITH/final-2029-s1-maths-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2029,
+   "year": 2024,
+   "variant": "PC · SR",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2029/PC/SR/final-2029-s1-maths-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "PA",
+   "files": [
+    {
+     "kind": "Corrigé",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PA/S1PA_B2_COR_GEPNC.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PA/S1PA_B2_COR_PIELD.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "PC · ARITH",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PC/ARITH/final-2028-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PC/ARITH/final-2028-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2028,
+   "year": 2023,
+   "variant": "PC · ASI",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PC/ASI/final-2028-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2028/PC/ASI/final-2028-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2027/final-2027-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2027/final-2027-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2026,
+   "year": 2021,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2026/final-2026-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2026/final-2026-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2025/final-2025-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2025/final-2025-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2024/final-2024-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2024/final-2024-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2022/final-2022-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2022/final-2022-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2021/final-2021-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2021/final-2021-s1-maths-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2021/final-2021-s1-maths-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "maths",
+   "promo": 2020,
+   "year": 2015,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2020/final-2020-s1-maths-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Maths%20PC/2020/final-2020-s1-maths-subject-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2027/final-2027-s1-phys-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2026,
+   "year": 2021,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2026/final-2026-s1-phys-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2024,
+   "year": 2019,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2024/final-2024-s1-phys-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2024/final-2024-s1-phys-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "version B",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2023%23/final-2023%23-s1-phys-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2023%23/final-2023%23-s1-phys-correction-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2022/final-2022-s1-phys-subject-fr.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2022/final-2022-s1-phys-correction-fr.pdf"
+    },
+    {
+     "kind": "Grille du QCM (correction en ligne)",
+     "lang": "",
+     "url": "https://mcq.epidocs.eu/?https://past-exams.epidocs.eu/S1/Finals/Phys/2022/final-2022-s1-phys-mcq.json"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2021/final-2021-s1-phys-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2021/final-2021-s1-phys-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2021/final-2021-s1-phys-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "physique",
+   "promo": 2020,
+   "year": 2015,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2020/final-2020-s1-phys-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Phys/2020/final-2020-s1-phys-subject-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "prog",
+   "promo": 2023,
+   "year": 2018,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Prog/2023/final-2023-s1-prog-subject-fr.pdf"
+    },
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Prog/2023/final-2023-s1-prog-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/Prog/2023/final-2023-s1-prog-correction.zip"
+    }
+   ]
+  },
+  {
+   "subject": "te",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/TE/2027/final-2027-s1-te-subject.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "te",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/TE/2025/final-2025-s1-te-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "tim",
+   "promo": 2027,
+   "year": 2022,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/TIM/2027/final-2027-s1-tim-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "tim",
+   "promo": 2025,
+   "year": 2020,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/TIM/2025/final-2025-s1-tim-subject-fr.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "tim",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "fr",
+     "url": "https://past-exams.epidocs.eu/S1/Finals/TIM/2022/final-2022-s1-tim-subject-fr.pdf"
+    }
+   ]
+  }
+ ],
+ "retakes": [
+  {
+   "subject": "archi",
+   "promo": 2022,
+   "year": 2017,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Retakes/Archi/2022/retake-2022-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Retakes/Archi/2022/retake-2022-s1-archi-correction-en.pdf"
+    }
+   ]
+  },
+  {
+   "subject": "archi",
+   "promo": 2021,
+   "year": 2016,
+   "variant": "",
+   "files": [
+    {
+     "kind": "Sujet",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Retakes/Archi/2021/retake-2021-s1-archi-subject-en.pdf"
+    },
+    {
+     "kind": "Corrigé",
+     "lang": "en",
+     "url": "https://past-exams.epidocs.eu/S1/Retakes/Archi/2021/retake-2021-s1-archi-correction-en.pdf"
     }
    ]
   }

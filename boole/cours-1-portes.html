@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les portes logiques · Archi B2</title>
+<meta name="description" content="Archi B2, chapitre 1 : circuits combinatoires, tables de vérité, portes NON, ET, OU, NON-ET, NON-OU, OU exclusif et NON-OU exclusif, bulles, logiques positive et négative, lecture d’un schéma, avec des portes cliquables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapitre 1 : les portes logiques">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — fiche 1 sur 5</span><span>Source : chapitre 1 « Logique combinatoire », § I et II (D. Bouchet)</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="1"></span><a href="index.html">Archi B2</a> · Chapitre 1 sur 5</div>
+      <h1>Des 0, des 1 et <span class="w">sept portes.</span></h1>
+      <p class="lead">Un circuit combinatoire calcule ses sorties à partir de ses seules entrées, avec des portes logiques. Ce chapitre présente les sept portes du cours, leurs symboles, leurs tables de vérité, les bulles, et la façon de lire un schéma.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec portes cliquables</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § I et II</span></li>
+        <li class="ex"><span><span class="k">Examen</span> lire un schéma : 4 sujets</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="gate" data-opts='{"type":"nand","expr":"X = ~(A.B)","rect":true,"title":"La porte NON-ET"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Clique sur les entrées : la sortie et la ligne de la table de vérité suivent.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 1 · Les portes logiques</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>Circuit, table de vérité</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>NON, ET, OU</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>NON-ET, NON-OU</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>OU exclusif, NON-OU exclusif</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Plus de deux entrées, bulles</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Logique positive et négative</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Choisir le bon symbole</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Lire un schéma</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque partie porte un repère de composant, comme sur un schéma : U1, U2… Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="cours-2-algebre.html">Chapitre 2 : l’algèbre de Boole →</a><a href="../qcm/index.html#boole">QCM d’algèbre de Boole</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Circuit, table de vérité</a></li><li><a href="#s2">NON, ET, OU</a></li><li><a href="#s3">NON-ET, NON-OU</a></li><li><a href="#s4">OU exclusif, NON-OU exclusif</a></li><li><a href="#s5">Plus de deux entrées, bulles</a></li><li><a href="#s6">Logique positive et négative</a></li><li><a href="#s7">Choisir le bon symbole</a></li><li><a href="#s8">Lire un schéma</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Partie 1 <span class="ref">cours § I</span></div><h2>Circuit combinatoire et table de vérité</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>circuit combinatoire</b> est un circuit numérique dont les sorties se déduisent <b>uniquement</b> de l’état des entrées au même instant. Il n’a pas de mémoire : mêmes entrées, mêmes sorties, toujours.</p>
+          <p>Chaque entrée et chaque sortie est dans l’un de deux états : l’<b>état logique 0</b> ou l’<b>état logique 1</b>. Un circuit combinatoire est fait uniquement de <b>portes logiques</b>, présentées dans ce chapitre.</p>
+          <p>On décrit un circuit par sa <b>table de vérité</b> : un tableau qui donne la valeur des sorties pour chaque combinaison des entrées. Avec <var>n</var> entrées, il y a <b>2<sup><var>n</var></sup> lignes</b> : 4 lignes pour 2 entrées, 8 pour 3, 16 pour 4.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">L’ordre des lignes</span><p>On compte en binaire, de 0 à 2<sup><var>n</var></sup> − 1. La première colonne est le <b>bit de poids fort</b> : elle change le moins souvent (0000 1111), la dernière alterne (0101 0101).</p></div>
+          <div class="card"><span class="k">Le numéro d’une ligne</span><p>Lue comme un nombre binaire, une ligne donne son numéro : avec <var>A</var>, <var>B</var>, <var>C</var> dans cet ordre, la ligne <var>A</var> = 1, <var>B</var> = 0, <var>C</var> = 1 est la ligne 101<sub>2</sub> = 5. Ces numéros reviennent aux chapitres 3 et 4.</p></div>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A.B + C"],"names":["S"],"title":"Une table de vérité à 3 entrées : 2³ = 8 lignes","hl":[5]}'></div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <ul>
+            <li>Combinatoire : les sorties ne dépendent que des entrées présentes, pas du passé.</li>
+            <li><var>n</var> entrées → 2<sup><var>n</var></sup> lignes, dans l’ordre du comptage binaire.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : oublier une ligne</span>
+          <p>Une table de vérité à 4 entrées a 16 lignes. Recompte-les avant de remplir la sortie : dans les sujets, la table est souvent déjà tracée, mais au brouillon une ligne sautée fausse tout le tableau de Karnaugh qui suit.</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Partie 2 <span class="ref">cours § II.1, 2, 4</span></div><h2>Les portes NON, ET, OU</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le cours dessine chaque porte avec son <b>symbole à forme distincte</b>. Il faut aussi reconnaître le <b>symbole à forme rectangulaire</b>, très présent dans les documentations : un rectangle avec un signe dedans.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Les trois opérateurs fondamentaux de l’algèbre de Boole</caption>
+          <thead><tr><th>Porte</th><th>Équation</th><th>La sortie vaut 1…</th><th>Rectangle</th></tr></thead>
+          <tbody>
+            <tr><th>NON (NOT)</th><td><span class="bx">X = ~A</span></td><td>quand l’entrée vaut 0 (inverseur)</td><td class="mono">1 et une bulle</td></tr>
+            <tr><th>ET (AND)</th><td><span class="bx">X = A.B</span></td><td>quand <b>toutes</b> les entrées valent 1</td><td class="mono">&amp;</td></tr>
+            <tr><th>OU (OR)</th><td><span class="bx">X = A + B</span></td><td>quand <b>au moins une</b> entrée vaut 1</td><td class="mono">≥1</td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="gate" data-opts='{"type":"and","expr":"X = A.B","rect":true}'></div>
+<div data-boole="gate" data-opts='{"type":"or","expr":"X = A + B","rect":true}'></div>
+<div data-boole="gate" data-opts='{"type":"not","names":["A"],"expr":"X = ~A","rect":true}'></div>
+        <div class="prose">
+          <p><b>Les notations.</b> Le ET se note avec un point, comme un produit : on l’appelle aussi <b>produit</b>. Le OU se note + et s’appelle <b>somme</b>. Le NON se note avec une barre : <span class="bx">~A</span> se lit « A barre » ou « non A ». Ces mots servent au chapitre 3 : une « somme de produits », c’est un OU de ET.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : 1 + 1</span>
+          <p>En algèbre de Boole, <span class="bx">1 + 1 = 1</span> : c’est un OU, pas une addition. Le OU vaut 1 dès qu’une entrée vaut 1. L’addition binaire, avec sa retenue, est un autre circuit (l’additionneur, chapitre 5).</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Partie 3 <span class="ref">cours § II.3, 5</span></div><h2>Les portes NON-ET et NON-OU</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Une <b>bulle</b> sur une sortie inverse cette sortie. La porte <b>NON-ET</b> (NAND) est un ET suivi d’un NON ; la porte <b>NON-OU</b> (NOR) est un OU suivi d’un NON. La barre couvre toute l’expression.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">NON-ET (NAND)</span><p><span class="bx">X = ~(A.B)</span></p><p class="muted">La sortie vaut 0 seulement quand toutes les entrées valent 1.</p></div>
+          <div class="card"><span class="k">NON-OU (NOR)</span><p><span class="bx">X = ~(A + B)</span></p><p class="muted">La sortie vaut 1 seulement quand toutes les entrées valent 0.</p></div>
+        </div>
+<div data-boole="gate" data-opts='{"type":"nand","expr":"X = ~(A.B)","rect":true}'></div>
+<div data-boole="gate" data-opts='{"type":"nor","expr":"X = ~(A + B)","rect":true}'></div>
+        <div class="note trap"><span class="tag">Piège : une barre longue n’est pas deux barres courtes</span>
+          <p><span class="bx">~(A.B)</span> et <span class="bx">~A.~B</span> sont deux fonctions différentes. Pour <var>A</var> = 1 et <var>B</var> = 0 : <span class="bx">~(A.B)</span> = <span class="bx">~(0)</span> = 1, mais <span class="bx">~A.~B</span> = 0.0 = 0. Le lien exact entre les deux, ce sont les théorèmes de De Morgan (chapitre 2) : <span class="bx">~(A.B) = ~A + ~B</span>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B"],"exprs":["~(A.B)","~A.~B","~A + ~B"],"raw":true,"title":"Une barre longue sur A.B, deux barres courtes, et De Morgan"}'></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <p>La porte NON-ET est la vedette des sujets : avec elle seule, on peut fabriquer toutes les autres (chapitre 2, partie 8). L’examen 2025-2026 demandait le schéma des portes ET, OU et OU exclusif en n’utilisant que des portes NON-ET (exercice 5, 3 points), comme l’exercice 2 du TD 1.</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Partie 4 <span class="ref">cours § II.6, 7</span></div><h2>OU exclusif et NON-OU exclusif</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La porte <b>OU EXCLUSIF</b> (XOR) vaut 1 quand ses deux entrées sont <b>différentes</b>. On la note ⊕ : <span class="bx">X = A ^ B</span>. Son symbole est celui du OU avec un second arc à l’entrée ; en rectangle, il porte <span class="mono">=1</span>.</p>
+          <p>La porte <b>NON-OU EXCLUSIF</b> (NXOR, ou XNOR) est son inverse : elle vaut 1 quand ses entrées sont <b>égales</b>. <span class="bx">X = ~(A ^ B)</span>.</p>
+        </div>
+<div data-boole="gate" data-opts='{"type":"xor","expr":"X = A ^ B","rect":true}'></div>
+<div data-boole="gate" data-opts='{"type":"xnor","expr":"X = ~(A ^ B)","rect":true}'></div>
+        <div class="grid2">
+          <div class="card"><span class="k">« Différent »</span><p><span class="bx">A ^ B</span> = 1 ssi <var>A</var> ≠ <var>B</var>. Écrit avec les opérateurs fondamentaux : <span class="bx">A ^ B = ~A.B + A.~B</span>.</p></div>
+          <div class="card"><span class="k">« Égal »</span><p><span class="bx">~(A ^ B)</span> = 1 ssi <var>A</var> = <var>B</var>. Écrit avec les opérateurs fondamentaux : <span class="bx">~(A ^ B) = A.B + ~A.~B</span>.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <p>Le NON-OU exclusif est un <b>comparateur d’un bit</b> : il dit si deux bits sont égaux. L’examen 2 de 2023-2024 l’attendait mot pour mot : <span class="bx">'A = B' = ~(A ^ B)</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : OU et OU exclusif</span>
+          <p>Les deux tables ne diffèrent que sur la dernière ligne : pour <var>A</var> = <var>B</var> = 1, le OU vaut 1 et le OU exclusif vaut 0. « Exclusif » veut dire « l’un ou l’autre, mais pas les deux ».</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Partie 5 <span class="ref">cours § II.8, 9</span></div><h2>Plus de deux entrées, et les bulles</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><b>Plus de deux entrées.</b> Les portes ET, OU, NON-ET et NON-OU acceptent autant d’entrées qu’il faut. Le sens ne change pas : un ET à quatre entrées vaut 1 quand ses quatre entrées valent 1, un OU à six entrées vaut 1 dès que l’une vaut 1.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Les exemples du cours (§ II.8)</caption>
+          <thead><tr><th>Porte</th><th>Expression</th></tr></thead>
+          <tbody>
+            <tr><td>ET à 3 entrées</td><td><span class="bx">X = A.B.C</span></td></tr>
+            <tr><td>NON-ET à 4 entrées</td><td><span class="bx">X = ~(A.B.C.D)</span></td></tr>
+            <tr><td>OU à 4 entrées</td><td><span class="bx">X = A + B + C + D</span></td></tr>
+            <tr><td>NON-OU à 6 entrées</td><td><span class="bx">X = ~(A + B + C + D + E + F)</span></td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="gate" data-opts='{"type":"nand","n":3,"expr":"X = ~(A.B.C)","title":"NON-ET à 3 entrées"}'></div>
+        <div class="prose">
+          <p><b>Les bulles.</b> Une petite bulle sur une entrée ou sur la sortie d’un symbole est un <b>indicateur de négation</b> : elle inverse ce qui passe par là. Toutes les combinaisons sont possibles. On lit l’expression en complémentant chaque entrée qui a une bulle, puis la sortie si elle en a une.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">OU, bulle sur A</span><p><span class="bx">X = ~A + B + C + D</span></p></div>
+          <div class="card"><span class="k">ET, bulles sur A, C, D et sur la sortie</span><p><span class="bx">X = ~(~A.B.~C.~D)</span></p></div>
+        </div>
+<div data-boole="gate" data-opts='{"type":"and","n":4,"inv":[1,0,1,1],"neg":true,"expr":"X = ~(~A.B.~C.~D)","title":"ET à 4 entrées avec bulles","table":false}'></div>
+        <div class="note trap"><span class="tag">Piège : la bulle de sortie</span>
+          <p>Une bulle sur la sortie met une barre sur <b>toute</b> l’expression, pas seulement sur la dernière variable : <span class="bx">~(~A.B.~C.~D)</span>, pas <span class="bx">~A.B.~C.~(D)</span>.</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Partie 6 <span class="ref">cours § II.10</span></div><h2>Logique positive, logique négative</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>En <b>logique positive</b>, la valeur 1 représente l’état <b>actif</b> (vrai) et la valeur 0 l’état inactif (faux). C’est la lecture habituelle : la sortie d’un OU est vraie (1) quand au moins une entrée est vraie (1).</p>
+          <p>En <b>logique négative</b>, c’est l’inverse : 0 est l’état actif (vrai) et 1 l’état inactif (faux).</p>
+          <p>Prenons un ET avec des bulles sur ses deux entrées et sur sa sortie : <span class="bx">X = ~(~A.~B)</span>. Sa table de vérité est celle d’un <b>OU</b>. Les deux symboles décrivent <b>la même porte physique</b>.</p>
+        </div>
+<div data-boole="gate" data-opts='{"type":"and","inv":[1,1],"neg":true,"expr":"X = ~(~A.~B)","title":"Une porte ET négative… est une porte OU"}'></div>
+        <div class="prose">
+          <p>Lecture en logique négative : la sortie est vraie (0) quand toutes les entrées sont vraies (0). C’est un <b>ET négatif</b>. Lecture en logique positive : la sortie vaut 1 dès qu’une entrée vaut 1. C’est un <b>OU</b>.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Les équivalents négatifs des portes (cours § II.10)</caption>
+          <thead><tr><th>Porte</th><th>≡ symbole négatif</th><th>Égalité</th></tr></thead>
+          <tbody>
+            <tr><td>NON</td><td>NON négative (bulle à l’entrée)</td><td><span class="bx">~A</span></td></tr>
+            <tr><td>OU</td><td>ET négative (bulles partout)</td><td><span class="bx">A + B = ~(~A.~B)</span></td></tr>
+            <tr><td>ET</td><td>OU négative (bulles partout)</td><td><span class="bx">A.B = ~(~A + ~B)</span></td></tr>
+            <tr><td>NON-OU</td><td>NON-ET négative (bulles aux entrées)</td><td><span class="bx">~(A + B) = ~A.~B</span></td></tr>
+            <tr><td>NON-ET</td><td>NON-OU négative (bulles aux entrées)</td><td><span class="bx">~(A.B) = ~A + ~B</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note keep"><span class="tag">La règle pour passer d’un symbole à l’autre</span>
+          <p>On échange ET et OU, et on <b>inverse chaque bulle</b> : une entrée ou une sortie qui avait une bulle n’en a plus, et inversement. Ce sont les théorèmes de De Morgan en dessin (chapitre 2, partie 4).</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Partie 7 <span class="ref">cours § II.10</span></div><h2>Choisir le bon symbole</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Dans un même circuit, on mélange souvent les deux notations :</p>
+          <ul>
+            <li>une entrée ou une sortie <b>sans bulle</b> est <b>active à l’état haut</b> : 1 = actif (vrai), 0 = inactif ;</li>
+            <li>une entrée ou une sortie <b>avec une bulle</b> est <b>active à l’état bas</b> : 0 = actif (vrai), 1 = inactif.</li>
+          </ul>
+          <p>Le principe du cours : <b>quand une entrée ou une sortie est active à l’état haut, on ne dessine pas de bulle ; on en dessine une dans le cas contraire.</b></p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">OU, bulle sur A</span><p>« <var>X</var> est vrai (1) quand <var>A</var> est vrai (0) ou <var>B</var> est vrai (1) ou <var>C</var> est vrai (1) ou <var>D</var> est vrai (1). »</p></div>
+          <div class="card"><span class="k">ET, bulles sur A, C, D et la sortie</span><p>« <var>X</var> est vrai (0) quand <var>A</var> est vrai (0) et <var>B</var> est vrai (1) et <var>C</var> est vrai (0) et <var>D</var> est vrai (0). »</p></div>
+        </div>
+        <div class="prose">
+          <p><b>L’exemple du reset.</b> Un circuit a une entrée <i>reset</i> active à l’état haut : à 1, elle force toutes les sorties à 0. On veut une entrée <i>reset</i> active à l’état bas : il suffit d’une porte NON devant. Rien n’est faux, mais avec le symbole habituel du NON (bulle en sortie), on ne voit pas que l’entrée est active à l’état bas. Avec le <b>symbole négatif du NON</b> (bulle à l’entrée), la bulle est du côté de l’entrée active à l’état bas : un coup d’œil suffit.</p>
+        </div>
+<div data-boole="schema" data-opts='{"w":420,"h":120,"title":"Reset actif à l’état bas : symbole négatif du NON","inputs":[],"gates":[{"id":"n","type":"buf","x":150,"y":40,"h":34,"in":[{"x":20}],"inv":[1],"neg":false}],"outputs":[{"from":"n","label":"vers le circuit : reset actif à l’état haut","x":230}],"labels":[{"x":20,"y":48,"t":"reset actif à l’état bas"}]}'></div>
+        <div class="note trap"><span class="tag">Piège : « actif » n’est pas « à 1 »</span>
+          <p>Une entrée active à l’état bas agit quand elle vaut 0. Dans un énoncé, lis toujours si un signal est actif à l’état haut ou bas avant de remplir une table de vérité.</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Partie 8 <span class="ref">cours § II.11</span></div><h2>Associer des portes : lire un schéma</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Tout circuit combinatoire s’obtient en <b>connectant des portes</b>. Deux règles : une entrée ou une sortie peut se connecter à <b>n’importe quelle entrée</b> ; une sortie ne se connecte <b>jamais à une autre sortie</b> (deux sorties qui imposeraient 0 et 1 sur le même fil).</p>
+          <p><b>Écrire l’expression d’un schéma.</b> On part des entrées et on écrit, porte après porte, l’expression de chaque sortie, jusqu’à la sortie finale. Voici le schéma du cours : clique sur <var>A</var>, <var>B</var>, <var>C</var> pour voir les niveaux circuler (vert = 1).</p>
+        </div>
+<div data-boole="schema" data-opts='{"w":580,"h":270,"live":true,"title":"Le schéma du cours","alt":"Schéma : deux portes ET, une porte NON-OU, deux portes NON, une porte ET à trois entrées et une porte OU","inputs":[{"id":"A","x":26},{"id":"B","x":58},{"id":"C","x":90}],"gates":[{"id":"g1","type":"and","x":136,"y":28,"in":["A","B"],"label":"A.B"},{"id":"g2","type":"and","x":136,"y":84,"in":["A","C"],"label":"A.C"},{"id":"g3","type":"nor","x":254,"y":52,"in":["g1","g2"],"label":"~(A.B + A.C)"},{"id":"g4","type":"not","x":136,"y":136,"h":30,"in":["A"],"label":"~A"},{"id":"g5","type":"not","x":136,"y":178,"h":30,"in":["B"],"label":"~B"},{"id":"g6","type":"and","x":254,"y":172,"n":3,"in":["g4","g5","C"],"label":"~A.~B.C"},{"id":"g7","type":"or","x":392,"y":112,"in":["g3","g6"]}],"outputs":[{"from":"g7","label":"S","x":490}]}'></div>
+        <ol class="steps">
+          <li><div><p>Les deux portes ET : <span class="bx">A.B</span> et <span class="bx">A.C</span>.</p></div></li>
+          <li><div><p>Le NON-OU de ces deux sorties : <span class="bx">~(A.B + A.C)</span>, la barre sur toute la somme.</p></div></li>
+          <li><div><p>Les deux NON, puis le ET à trois entrées : <span class="bx">~A.~B.C</span>.</p></div></li>
+          <li><div><p>Le OU final : <span class="bx">S = ~(A.B + A.C) + ~A.~B.C</span>.</p></div></li>
+        </ol>
+        <div class="prose"><p>Le chapitre 2 simplifie ce schéma de sept portes en <span class="bx">S = ~A + ~B.~C</span> : trois portes NON, un ET et un OU suffisent.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <p>Ce schéma exact est tombé quatre fois : examens de 2014-2015, 2019-2020 et 2022-2023, rattrapage de 2017-2018 (3 points). Trois questions : « Exprimez, sans simplification, la sortie <var>S</var> », « Donnez l’expression la plus simplifiée de <var>S</var> » (parfois avec le détail du calcul), « Donnez un nouveau montage constitué de trois portes NON, d’une porte ET à deux entrées et d’une porte OU à deux entrées ».</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : simplifier trop tôt</span>
+          <p>La première question demande l’expression <b>sans simplification</b> : recopie exactement ce que fait chaque porte, barres comprises. Une réponse déjà simplifiée ne répond pas à la question.</p>
+        </div>
+        <div data-check-ref="boole/cours-1-portes.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="boole:portes:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais lire un schéma et écrire son expression. Le chapitre 2, <a href="cours-2-algebre.html">l’algèbre de Boole</a>, donne les règles pour simplifier ces expressions, et donc les circuits.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

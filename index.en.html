@@ -72,7 +72,7 @@ a.step:hover{border-color:var(--accent)}
 .subj.soon{background:transparent;border-style:dashed}
 .subj.soon h3{color:var(--muted)}
 .subj-elec{--c:var(--s-elec)}
-.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-piloter{--c:var(--s-piloter)} .subj-taa,.subj-caml{--c:var(--s-algo)}
+.subj-maths{--c:var(--s-maths)} .subj-physique{--c:var(--s-physique)} .subj-algo{--c:var(--s-algo)} .subj-archi{--c:var(--s-archi)} .subj-boole{--c:var(--s-boole)} .subj-piloter{--c:var(--s-piloter)} .subj-taa,.subj-caml{--c:var(--s-algo)}
 .chapters{display:grid;gap:6px;margin:2px 0 0;padding:0;list-style:none}
 .chapters a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font-size:.95rem;padding:.45rem .6rem;border-radius:7px;border:1px solid var(--line);background:var(--bg)}
 .chapters a:hover{border-color:var(--c)}
@@ -94,6 +94,17 @@ a.tool:hover{border-color:var(--accent)}
 .method li::before{content:counter(m);font-family:var(--font-display);font-stretch:125%;font-weight:800;font-size:1.7rem;color:var(--accent);line-height:1}
 .method b{font-size:1.02rem}
 .method span{color:var(--muted);font-size:.93rem;line-height:1.5}
+/* bascule entre les bimestres : deux onglets sous l'en-tête */
+.periods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 46px}
+@media (max-width:560px){.periods{grid-template-columns:minmax(0,1fr)}}
+.per{display:grid;gap:3px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:inherit;text-decoration:none;min-width:0}
+.per:hover{border-color:var(--accent)}
+.per.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.per-k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.per.on .per-k{color:var(--accent)}
+.per-t{font-family:var(--font-display);font-stretch:112%;font-weight:800;font-size:1.15rem}
+.per-d{color:var(--muted);font-size:.9rem;line-height:1.4}
+.count .btn{justify-self:start}
 </style>
 </head>
 <body data-resume="Home">
@@ -102,13 +113,14 @@ a.tool:hover{border-color:var(--accent)}
 <header class="hero">
   <div class="wrap hero-grid">
     <div class="sheet margin copie">
-      <div class="copie-fields" aria-hidden="true"><span>SURNAME: ……………………</span><span>First name: ……………………</span><span>Group: <b>Class of 2031</b></span></div>
-      <h1><span>S1</span> Midterms</h1>
-      <p class="lead">The course taken step by step, what really comes up in the midterm, past exam exercises with solutions, and an MCQ that asks you the questions you missed again at the right time.</p>
+      <div class="copie-fields" aria-hidden="true"><span>SURNAME: ……………………</span><span>First name: ……………………</span><span>Group: <b>Class of 2031</b> · <b id="h-period">Term 1</b></span></div>
+      <h1 id="h-title"><span>S1</span> Midterms</h1>
+      <p class="lead" id="h-lead">The course taken step by step, what really comes up in the midterm, past exam exercises with solutions, and an MCQ that asks you the questions you missed again at the right time.</p>
       <div class="rules"><span>Calculators and documents are not allowed.</span><span>The points scale is given as an indication. Justify your answers.</span></div>
     </div>
     <aside class="count" id="count" aria-live="polite"></aside>
   </div>
+  <div class="wrap"><nav class="periods" id="periods" aria-label="Terms"></nav></div>
 </header>
 
 <main class="wrap">
@@ -118,7 +130,7 @@ a.tool:hover{border-color:var(--accent)}
   </section>
 
   <section aria-labelledby="t-subj">
-    <div class="sec-title"><div><span class="eyebrow">Subjects</span><h2 id="t-subj">Where you stand</h2></div><p class="muted" style="max-width:34em">The other subjects will be added as their courses come in. Their past exams are already available.</p></div>
+    <div class="sec-title"><div><span class="eyebrow">Subjects</span><h2 id="t-subj">Where you stand</h2></div><p class="muted" style="max-width:34em" id="subj-note"></p></div>
     <div class="subjects" id="subjects"></div>
   </section>
 
@@ -126,7 +138,7 @@ a.tool:hover{border-color:var(--accent)}
     <div class="sec-title"><div><span class="eyebrow">Tools</span><h2 id="t-tools">For every subject</h2></div></div>
     <div class="tools">
       <a class="sheet margin tool" href="qcm/index.html"><span class="big" id="n-qcm">0</span><span class="t">MCQ</span><span class="d">Course questions and questions from real MCQs, with explanations. The ones you miss come back the next day, then less and less often.</span></a>
-      <a class="sheet margin tool" href="annales/index.html"><span class="big" id="n-ann">0</span><span class="t">Past exams</span><span class="d">Every S1 midterm paper we found, by subject and by year, with the solutions when they exist.</span></a>
+      <a class="sheet margin tool" href="annales/index.html"><span class="big" id="n-ann">0</span><span class="t">Past exams</span><span class="d" id="d-ann"></span></a>
       <a class="sheet margin tool" href="fiches/index.html"><span class="big" id="n-fiche">1</span><span class="t">Summary sheets</span><span class="d">One page per subject with all the formulas and reflexes to reread just before the exam.</span></a>
     </div>
   </section>
@@ -142,7 +154,7 @@ a.tool:hover{border-color:var(--accent)}
   </section>
 </main>
 
-<footer class="page-foot"><div class="wrap"><span>S1 Revision · EPITA class of 2031 · term 1</span><span>Your progress stays in this browser.</span></div></footer>
+<footer class="page-foot"><div class="wrap"><span id="h-foot">S1 Revision · EPITA class of 2031</span><span>Your progress stays in this browser.</span></div></footer>
 
 <script src="assets/js/circuit.js"></script>
 <script src="assets/js/qcm-engine.js"></script>
@@ -194,6 +206,8 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/en/qcm/maths-annales.js"></script>
 <script src="data/qcm/piloter.js"></script>
 <script src="data/en/qcm/piloter.js"></script>
+<script src="data/qcm/boole.js"></script>
+<script src="data/en/qcm/boole.js"></script>
 <script src="data/taa/exams.js"></script>
 <script src="data/en/taa/exams.js"></script>
 <script src="data/taa/ex-annales.js"></script>
@@ -226,136 +240,12 @@ a.tool:hover{border-color:var(--accent)}
 <script src="data/en/maths/ex-annales.js"></script>
 <script src="data/maths/ex-td.js"></script>
 <script src="data/en/maths/ex-td.js"></script>
-<script>
-(function () {
-  var R = window.REV, U = R.util, $ = U.$;
-  var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX || [], taa: window.TAA_EX || [], physique: window.PHYS_EX || [], caml: window.CAML_EX || [], archi: window.ARCHI_EX || [], maths: window.MATHS_EX || [] };
-  function nEx(sid) { return (EXS[sid] || []).length; }
-  function nChap(s) { var n = s.chapters.length; return (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][n] || n) + ' chapter' + (n > 1 ? 's' : ''); }
-  function pl(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
-  var MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
-  /* midterm papers of a subject (algo: TAA and Caml share the papers from before 2023) */
-  function annOf(s) {
-    var A = window.ANNALES || { midterms: [] }, id = s.annalesId || s.id;
-    return A.midterms.filter(function (m) {
-      if (m.subject !== id) return false;
-      var v = (m.variant || '').toUpperCase();
-      return (v !== 'TAA' && v !== 'CAML') || v === String(s.short).toUpperCase();
-    });
-  }
-  /* ready subjects, the most urgent first (midterm date entered), otherwise in registry order */
-  /* heure de début officielle (minutes), pour départager deux examens le même jour ; sans heure : en dernier */
-  function startMin(id) { var o = R.exams.official && R.exams.official(id); if (!o || !o.start || R.exams.get(id) !== o.date) return 1e4; var t = o.start.split(':'); return +t[0] * 60 + +t[1]; }
-  function byUrgency() {
-    return R.subjects.filter(function (s) { return s.status === 'ready'; }).map(function (s, i) {
-      var d = R.exams.daysLeft(R.exams.get(s.id)); return { s: s, d: d === null || d < 0 ? 999 : d, i: i };
-    }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id) || a.i - b.i; }).map(function (x) { return x.s; });
-  }
-
-  /* ---- countdown ---- */
-  function renderCount() {
-    var box = $('#count'), ready = R.subjects.filter(function (s) { return s.status === 'ready'; });
-    var dated = ready.map(function (s) { return { s: s, iso: R.exams.get(s.id), d: R.exams.daysLeft(R.exams.get(s.id)) }; })
-      .filter(function (x) { return x.iso && x.d !== null && x.d >= 0; }).sort(function (a, b) { return a.d - b.d || startMin(a.s.id) - startMin(b.s.id); });
-    var html = '<span class="eyebrow">Countdown</span>';
-    if (dated.length) {
-      var n = dated[0];
-      html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'Today' : n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'is your ' + n.s.name + ' midterm' : (n.d > 1 ? 'days' : 'day') + ' left before the ' + n.s.name + ' midterm') + '</span></div>';
-      html += '<div class="count-list">' + dated.map(function (x) {
-        var p = x.iso.split('-');
-        return '<div><span>' + x.s.name + '</span><span class="mono">' + (+p[2]) + ' ' + (MONTHS[+p[1] - 1] || p[1]) + ' ' + p[0] + '</span></div>';
-      }).join('') + '</div>';
-      html += '<button type="button" class="linkish" id="editDates">Change the dates</button>';
-    } else {
-      html += '<div class="count-main"><span class="count-num">?</span><span class="count-txt">Add the date of your midterm to start the countdown.</span></div>';
-    }
-    html += '<form id="dateForm"' + (dated.length ? ' hidden' : '') + '>' + ready.map(function (s) {
-      return '<label for="d-' + s.id + '">' + s.name + '</label><input type="date" id="d-' + s.id + '" value="' + R.exams.get(s.id) + '">';
-    }).join('') + '<button class="btn" type="submit">Save</button></form>';
-    box.innerHTML = html;
-    var f = $('#dateForm');
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      ready.forEach(function (s) { R.exams.set(s.id, $('#d-' + s.id).value); });
-      renderCount();
-    });
-    var ed = $('#editDates'); if (ed) ed.addEventListener('click', function () { f.hidden = !f.hidden; });
-  }
-
-  /* ---- next step ---- */
-  function nextSection(s) {
-    for (var i = 0; i < s.chapters.length; i++) {
-      var c = s.chapters[i], done = R.progress.chapterDone(s.id, c.id);
-      if (done < c.sections) return { c: c, i: i, done: done };
-    }
-    return null;
-  }
-  function renderToday() {
-    var steps = [], d = R.store.load(), order = byUrgency(), top = order[0];
-    if (d.last && d.last.href && d.last.href !== 'index.html' && d.last.href !== '') {
-      steps.push({ k: 'Resume', t: d.last.title, d: 'The last page you opened.', href: d.last.href, go: 'Continue' });
-    }
-    for (var i = 0; i < order.length && steps.length < 2; i++) {
-      var s = order[i], ns = nextSection(s);
-      if (ns) steps.push({ k: s.short + ' · chapter ' + (ns.i + 1), t: ns.c.title, d: ns.done ? pl(ns.done, 'part') + ' out of ' + ns.c.sections + ' marked as understood.' : 'Not started yet. Allow about 30 minutes.', href: ns.c.path + (ns.done ? '#s' + (ns.done + 1) : ''), go: ns.done ? 'Continue' : 'Start' });
-    }
-    var st = R.qcm.stats(top.id, BANK.filter(function (q) { return q.s === top.id; }));
-    if (st.due > 0) steps.push({ k: 'Spaced repetition · ' + top.short, t: pl(st.due, 'question') + ' to review', d: 'Questions you missed or saw a few days ago. Now is the time to go over them again.', href: 'qcm/index.html#' + top.id + '-revision', go: 'Review now' });
-    else steps.push({ k: 'MCQ · ' + top.short, t: '10-question sprint', d: st.seen ? st.seen + ' questions already seen out of ' + st.total + ', ' + st.mastered + ' of them mastered.' : st.total + ' questions are waiting for you: course, traps and real MCQs.', href: 'qcm/index.html#' + top.id + '-sprint', go: 'Start' });
-    if (top.train) steps.push({ k: 'Past exams · ' + top.short, t: 'An exam exercise', d: 'Exercises from previous years’ papers, with hints and a detailed solution.', href: top.train, go: 'Practice' });
-    $('#today').innerHTML = steps.slice(0, 3).map(function (s) {
-      return '<a class="step" href="' + R.url(s.href) + '"><span class="k">' + U.esc(s.k) + '</span><span class="t">' + U.esc(s.t) + '</span><span class="d">' + U.esc(s.d) + '</span><span class="go">' + U.esc(s.go) + ' →</span></a>';
-    }).join('');
-  }
-
-  /* ---- subjects ---- */
-  function meter(label, frac, txt) {
-    return '<div class="meter"><div class="row"><span>' + label + '</span><span>' + txt + '</span></div><div class="bar"><i style="width:' + Math.round(frac * 100) + '%"></i></div></div>';
-  }
-  function renderSubjects() {
-    /* ready subjects first, each on the full width; the others after */
-    var list = R.subjects.filter(function (s) { return s.status === 'ready'; }).concat(R.subjects.filter(function (s) { return s.status !== 'ready'; }));
-    $('#subjects').innerHTML = list.map(function (s) {
-      /* Archi: the Epidocs papers, plus the B1 Examination 2025-2026 from Moodle (data/archi/exams.js) */
-      var nAnn = s.id === 'archi' && window.ARCHI_EXAMS ? window.ARCHI_EXAMS.length : s.id === 'maths' && window.MATHS_EXAMS ? window.MATHS_EXAMS.length : annOf(s).length, NEX = nEx(s.id);
-      if (s.status !== 'ready') {
-        return '<article class="subj soon subj-' + s.id + '"><div class="subj-top"><h3>' + s.name + '</h3><span class="tag">soon</span></div>' +
-          '<p>The course and the practice will come with your course materials. In the meantime: ' + pl(nAnn, 'midterm paper') + '.</p>' +
-          '<div class="links"><a class="btn ghost" href="annales/index.html#' + (s.annalesId || s.id) + '">See the past exams</a></div></article>';
-      }
-      var p = R.progress.subject(s.id), bank = BANK.filter(function (q) { return q.s === s.id; }), q = R.qcm.stats(s.id, bank);
-      var chapters = s.chapters.map(function (c, i) {
-        var done = Math.min(c.sections, R.progress.chapterDone(s.id, c.id));
-        return '<li><a href="' + R.url(c.path) + '"><span>' + (i + 1) + '. ' + c.title + '</span><span class="mono">' + done + '/' + c.sections + '</span></a></li>';
-      }).join('');
-      return '<article class="subj ready subj-' + s.id + '">' +
-        '<div style="display:grid;gap:12px;align-content:start;min-width:0">' +
-        '<div class="subj-top"><h3>' + s.name + '</h3><span class="tag">ready</span></div>' +
-        '<span class="code">' + (s.code ? s.code + ' · ' : '') + s.course + '</span>' +
-        '<p>' + s.exam + '. ' + nChap(s) + ', methods, ' + (NEX ? NEX + ' exercises with solutions, ' : '') + bank.length + ' MCQ questions' + (nAnn ? ' and the ' + nAnn + ' midterm papers we found' : '') + '.</p>' +
-        '<ul class="chapters">' + chapters + '</ul>' +
-        '<div class="links"><a class="btn primary" href="' + R.url(s.path) + '">' + (s.open || 'Open') + '</a>' + (s.train ? '<a class="btn" href="' + R.url(s.train) + '">Practice</a>' : '') + (s.fiche ? '<a class="btn" href="' + R.url(s.fiche) + '">Summary sheet</a>' : '') + '</div>' +
-        '</div><div class="meters">' +
-        meter('Course understood', p.pctRead, p.read + ' / ' + p.sections) +
-        meter('MCQs mastered', bank.length ? q.mastered / bank.length : 0, q.mastered + ' / ' + bank.length) +
-        meter('MCQs seen', bank.length ? q.seen / bank.length : 0, q.seen + ' / ' + bank.length) +
-        (NEX ? meter('Exercises solved', p.ex.ok / NEX, p.ex.ok + ' / ' + NEX + (p.ex.review ? ' · ' + p.ex.review + ' to review' : '')) : '') +
-        '</div></article>';
-    }).join('');
-  }
-
-  function renderTools() {
-    var A = window.ANNALES || { midterms: [] };
-    $('#n-qcm').textContent = BANK.length;
-    $('#n-ann').textContent = A.midterms.length;
-    $('#n-fiche').textContent = R.subjects.filter(function (s) { return s.status === 'ready' && s.fiche; }).length;
-  }
-
-  function all() { renderCount(); renderToday(); renderSubjects(); renderTools(); }
-  all();
-  R.store.on(function () { renderToday(); renderSubjects(); });
-})();
-</script>
+<script src="data/boole/exams.js"></script>
+<script src="data/en/boole/exams.js"></script>
+<script src="data/boole/ex-annales.js"></script>
+<script src="data/en/boole/ex-annales.js"></script>
+<script src="data/boole/ex-td.js"></script>
+<script src="data/en/boole/ex-td.js"></script>
+<script src="assets/js/hub.js"></script>
 </body>
 </html>

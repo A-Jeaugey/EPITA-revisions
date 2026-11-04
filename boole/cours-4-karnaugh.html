@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les tableaux de Karnaugh · Archi B2</title>
+<meta name="description" content="Archi B2, chapitre 4 : tableaux de Karnaugh à 2, 3 et 4 variables, code Gray, numéros des cases, règles de regroupement, lecture d’un cercle, bords adjacents, cases indéfinies, méthode d’examen, avec des tableaux cliquables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapitre 4 : les tableaux de Karnaugh">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — fiche 4 sur 5</span><span>Source : chapitre 1 « Logique combinatoire », § III.6 (D. Bouchet) · sujets 2014 à 2026</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="4"></span><a href="index.html">Archi B2</a> · Chapitre 4 sur 5</div>
+      <h1>Simplifier <span class="w">sans calculer.</span></h1>
+      <p class="lead">Un tableau de Karnaugh range la table de vérité de façon que les termes qui se simplifient soient voisins. On encercle des groupes de 1, on lit un produit par cercle : la forme la plus simple apparaît sans une ligne d’algèbre.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec tableaux cliquables</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § III.6</span></li>
+        <li class="ex"><span><span class="k">Examen</span> Karnaugh : 5 ou 6 points, chaque sujet</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[3,5,7,10,13,15],"name":"S2","title":"Examen 2025-2026 : S2","steps":false}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Les cercles et l’expression sont calculés : chaque cercle a sa couleur, les Φ servent à agrandir les cercles.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 4 · Les tableaux de Karnaugh</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>Le tableau de Karnaugh</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>Numéroter les cases</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Regrouper les 1</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>Lire un cercle</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Les bords se touchent</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Cases indéfinies Φ</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Remplir avec N</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Karnaugh à l’examen</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque partie porte un repère de composant, comme sur un schéma : U1, U2… Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="cours-3-formes.html">← Chapitre 3 : les formes canoniques</a><a href="cours-5-circuits.html">Chapitre 5 : problèmes et circuits →</a><a href="../qcm/index.html#boole">QCM d’algèbre de Boole</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Le tableau de Karnaugh</a></li><li><a href="#s2">Numéroter les cases</a></li><li><a href="#s3">Regrouper les 1</a></li><li><a href="#s4">Lire un cercle</a></li><li><a href="#s5">Les bords se touchent</a></li><li><a href="#s6">Cases indéfinies Φ</a></li><li><a href="#s7">Remplir avec N</a></li><li><a href="#s8">Karnaugh à l’examen</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Partie 1 <span class="ref">cours § III.6.1</span></div><h2>Du tableau de vérité au tableau de Karnaugh</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>tableau de Karnaugh</b> est une autre façon de dessiner une table de vérité : une grille avec une case par ligne de la table, soit <b>2<sup><var>n</var></sup> cases</b> pour <var>n</var> entrées. C’est une méthode <b>graphique</b> de simplification : on y voit d’un coup d’œil les termes qui se regroupent.</p>
+          <p>Avec trois entrées <var>A</var>, <var>B</var>, <var>C</var> : huit cases, sur deux lignes (<var>A</var> = 0, <var>A</var> = 1) et quatre colonnes (<var>BC</var> = 00, 01, 11, 10).</p>
+        </div>
+        <div class="grid2">
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"X":[1,1,0,1,0,1,1,1]},"title":"La table de vérité du cours"}'></div>
+<div data-boole="kmap" data-opts='{"circles":false,"title":"Le même X en tableau de Karnaugh","vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        </div>
+        <div class="note keep"><span class="tag">Le code Gray</span>
+          <p>Les colonnes ne sont pas dans l’ordre 00, 01, 10, 11 mais dans l’ordre <b>00, 01, 11, 10</b> : le <b>code Gray</b>, où d’une colonne à la suivante <b>un seul bit change</b>. C’est tout le secret du tableau : deux cases voisines ne diffèrent que d’une variable.</p>
+        </div>
+        <div class="prose">
+          <p>Chaque case contient la valeur de la sortie pour sa ligne et sa colonne. La case en haut à gauche donne <var>X</var> pour <var>A</var> = <var>B</var> = <var>C</var> = 0 ; la case en bas à droite donne <var>X</var> pour <var>A</var> = <var>B</var> = 1 et <var>C</var> = 0.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : recopier dans l’ordre de la table</span>
+          <p>La table de vérité est dans l’ordre 000, 001, 010, 011 ; le tableau dans l’ordre 00, 01, <b>11, 10</b>. Les deux dernières colonnes sont « croisées » : les lignes 010 et 011 de la table vont dans les colonnes 10 et 11. Remplir le tableau ligne par ligne de la table, sans y penser, inverse deux colonnes, et tout le tableau est faux.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Partie 2 <span class="ref">cours § III.6.1</span></div><h2>Numéroter les cases</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Si les entrées forment un nombre binaire <var>N</var>, chaque case porte un numéro décimal : celui de sa ligne dans la table de vérité. Le petit nombre en haut à gauche de chaque case ci-dessous est ce numéro.</p>
+        </div>
+        <div class="grid2">
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X","circles":false,"num":true,"title":"3 variables : 2 lignes, 4 colonnes"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":2,"ones":[0,1,3,5,6,7],"name":"X","circles":false,"num":true,"title":"3 variables : 4 lignes, 2 colonnes"}'></div>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C","D"],"rows":2,"ones":[],"name":"N","circles":false,"num":true,"title":"4 variables : 4 lignes AB, 4 colonnes CD"}'></div>
+        <div class="note keep"><span class="tag">À retenir : les numéros d’un tableau 4 × 4</span>
+          <p>Lignes 00, 01, 11, 10 et colonnes 00, 01, 11, 10 : la première ligne est <b>0 1 3 2</b>, la deuxième <b>4 5 7 6</b>, la troisième <b>12 13 15 14</b>, la dernière <b>8 9 11 10</b>. Les colonnes 3 et 4 sont inversées par rapport à l’ordre naturel, et les lignes 3 et 4 aussi.</p>
+        </div>
+        <div class="prose">
+          <p>Le cours conseille d’écrire les variables dans le <b>même ordre que la table de vérité</b> (lignes <var>AB</var>, colonnes <var>CD</var>) : la correspondance est plus facile. Un tableau avec <var>AC</var> en lignes et <var>B</var> en colonnes serait juste aussi, mais plus long à remplir.</p>
+        </div>
+        <div class="note exam"><span class="tag">La convention des sujets</span>
+          <p>Les sujets écrivent <var>N</var> = (<var>D</var>, <var>C</var>, <var>B</var>, <var>A</var>), « <var>A</var> est le bit de poids faible » : les lignes sont <b><var>DC</var></b> et les colonnes <b><var>BA</var></b>. La case <var>DC</var> = 01, <var>BA</var> = 10 est <var>N</var> = 0110 = 6. Les numéros sont placés exactement comme dans le tableau <var>AB</var> / <var>CD</var> ci-dessus.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Partie 3 <span class="ref">cours § III.6.2</span></div><h2>Regrouper les 1</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour simplifier, on <b>encercle des groupes de 1 adjacents</b>, en respectant quatre règles :</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Le nombre de cases d’un groupe est une <b>puissance de 2</b> : 1, 2, 4, 8… Un groupe est un rectangle (2 × 2, 1 × 4, 2 × 4…), jamais un L ou une diagonale.</p></div></li>
+          <li><div><p><b>Tous les 1, et seulement les 1</b>, sont encerclés. Un 1 peut être dans plusieurs cercles.</p></div></li>
+          <li><div><p>Le <b>nombre de cercles</b> est <b>minimum</b>.</p></div></li>
+          <li><div><p>La <b>taille</b> de chaque cercle est <b>maximum</b>.</p></div></li>
+        </ol>
+<div data-boole="kmap" data-opts='{"title":"L’exemple du cours : trois cercles","steps":false,"vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        <div class="prose">
+          <p>Chaque cercle donnera un produit : <b>trois cercles, trois termes</b>. La forme la plus simple de <var>X</var> est une somme de trois produits.</p>
+          <p>Un cercle de 2<sup><var>k</var></sup> cases fait disparaître <var>k</var> variables : un cercle de 2 cases donne un produit de <var>n</var> − 1 variables, un cercle de 4 cases un produit de <var>n</var> − 2 variables. Plus le cercle est grand, plus le produit est court.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : des cercles trop petits</span>
+          <p>Encercler 1 par 1 donne la première forme canonique, pas la forme la plus simple. Cherche toujours le plus grand rectangle possible autour de chaque 1, même s’il chevauche un cercle déjà tracé.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Partie 4 <span class="ref">cours § III.6.2</span></div><h2>Lire un cercle</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Chaque cercle se traduit en un <b>produit</b>, variable par variable, en regardant ses valeurs sur toutes les cases du cercle :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sur les cases du cercle, la variable…</th><th>Dans le produit</th></tr></thead>
+          <tbody>
+            <tr><td><b>varie</b> (vaut 0 sur certaines cases, 1 sur d’autres)</td><td>elle <b>disparaît</b></td></tr>
+            <tr><td>vaut toujours <b>0</b></td><td>elle apparaît <b>complémentée</b></td></tr>
+            <tr><td>vaut toujours <b>1</b></td><td>elle apparaît <b>telle quelle</b></td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="kmap" data-opts='{"title":"Le détail des trois cercles du cours","vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        <div class="prose">
+          <p>La forme la plus simple obtenue par Karnaugh n’utilise que les opérateurs élémentaires (NON, ET, OU). On peut ensuite gagner encore avec le OU exclusif : <span class="bx">~A.~B + A.B = ~(A ^ B)</span>, donc <span class="bx">X = ~(A ^ B) + C</span>.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,2,5,7],"name":"V","xor":"~(A ^ C)","title":"Le pétrolier du cours (chapitre 5) : V = ~A.~C + A.C"}'></div>
+        <div class="note trap"><span class="tag">Piège : lire une ligne de titres</span>
+          <p>Les titres <b>01</b> et <b>10</b> ne disent pas la même chose : pour la colonne <var>BA</var> = 10, <var>B</var> = 1 et <var>A</var> = 0. Lis chaque titre dans l’ordre des variables écrites au-dessus.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Partie 5 <span class="ref">cours § III.6.2</span></div><h2>Le tableau est un tore</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le tableau doit être vu comme <b>enroulé sur un tore</b> (une bouée) : la colonne de gauche touche la colonne de droite, la ligne du haut touche la ligne du bas. On peut donc regrouper des cases de part et d’autre d’un bord, et même les <b>quatre coins</b>.</p>
+          <p>La règle derrière : <b>deux cases sont adjacentes quand une seule variable change entre elles</b>. Les colonnes 00 et 10 ne diffèrent que d’un bit : elles sont voisines.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C","D"],"rows":2,"ones":[0,12,14,8],"name":"X","title":"L’exemple du cours : X = A.B.~D + ~B.~C.~D"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,2,8,10],"name":"S","title":"Les quatre coins forment un seul cercle de 4 cases"}'></div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <p>Avant de conclure qu’un 1 est isolé, regarde de l’autre côté du tableau : sur le bord opposé, ou dans les coins. L’examen 2 de 2023-2024 avait les quatre coins (<span class="bx">S5 = ~C.~A</span>).</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : la diagonale</span>
+          <p>Deux cases en diagonale ne sont jamais adjacentes : deux variables changent. Seuls les côtés (et les bords opposés) comptent.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Partie 6 <span class="ref">sujets 2018-2026</span></div><h2>Les cases indéfinies Φ</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Parfois une combinaison d’entrées <b>n’arrive jamais</b> (un chiffre BCD au-delà de 9, un capteur haut immergé sans le capteur bas…), ou sa sortie n’a pas d’importance. La sortie y est <b>indéfinie</b> : on écrit <b>Φ</b> (phi) dans la case. Le chapitre ne le présente pas, mais tous les sujets récents l’utilisent.</p>
+        </div>
+        <div class="note keep"><span class="tag">La règle des Φ</span>
+          <ul>
+            <li>Un Φ vaut <b>0 ou 1, au choix</b> : on le met dans un cercle <b>s’il permet d’agrandir le cercle</b> ou d’en supprimer un.</li>
+            <li>On n’est <b>jamais obligé</b> d’encercler un Φ, et on n’encercle <b>jamais un Φ seul</b>.</li>
+          </ul>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[3,5,7,10,13,15],"name":"S2","title":"Examen 2025-2026 : S2 = 1 pour 0, 4, 6, 8, 12, 14 ; Φ pour 3, 5, 7, 10, 13, 15"}'></div>
+        <div class="prose">
+          <p>Sans les Φ, il faudrait trois cercles. Avec les Φ 5, 7, 13 et 15, les lignes <var>DC</var> = 01 et 11 se remplissent : un cercle de 8 cases donne <span class="bx">C</span>. Les coins restants donnent <span class="bx">~B.~A</span>. Les Φ 3 et 10 ne servent à rien : ils restent hors des cercles (donc valent 0).</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[8,10,14,15],"dc":[0,1,2,3,4,5,6,7],"name":"S4","title":"Examen 2025-2026 : S4, une moitié du tableau indéfinie"}'></div>
+        <div class="note trap"><span class="tag">Piège : encercler tous les Φ</span>
+          <p>Un Φ inutile dans un cercle ajoute des cases qui ne sont pas des puissances de 2, ou un terme de trop. Les Φ servent la simplification, pas l’inverse.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Partie 7 <span class="ref">sujets 2021-2026</span></div><h2>Remplir un tableau à partir des numéros</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Les sujets donnent les fonctions par leurs numéros : « Soit <var>N</var> un nombre binaire codé sur 4 bits (<var>D</var>, <var>C</var>, <var>B</var>, <var>A</var>). <var>A</var> est le bit de poids faible. <var>S1</var> = 1 ssi <var>N</var> = 2, 3, 6, 7, 10, 11, 12 ou 13 ». Il faut placer chaque numéro dans sa case : c’est là que se perdent le plus de points, car « aucun point ne sera attribué à une expression si son tableau est faux ».</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Le tableau des numéros (lignes DC, colonnes BA), à connaître par cœur</caption>
+          <thead><tr><th>DC \ BA</th><th>00</th><th>01</th><th>11</th><th>10</th></tr></thead>
+          <tbody>
+            <tr><th>00</th><td>0</td><td>1</td><td>3</td><td>2</td></tr>
+            <tr><th>01</th><td>4</td><td>5</td><td>7</td><td>6</td></tr>
+            <tr><th>11</th><td>12</td><td>13</td><td>15</td><td>14</td></tr>
+            <tr><th>10</th><td>8</td><td>9</td><td>11</td><td>10</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>À toi.</b> Clique sur les cases pour les remplir (0, puis 1, puis Φ), puis vérifie. Le tableau corrigé et les cercles apparaissent quand il est juste, ou avec le bouton Solution.</p></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,3,6,7,10,11,12,13],"name":"S1","mode":"play","xor":"B ^ (C.D)","title":"Examen 2025-2026 : S1 = 1 ssi N = 2, 3, 6, 7, 10, 11, 12 ou 13"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,1,4,5,8,9,12,13],"dc":[3,7,11,15],"name":"S3","mode":"play","title":"Examen 2025-2026 : S3 = 1 ssi N = 0, 1, 4, 5, 8, 9, 12 ou 13 ; indéfinie pour 3, 7, 11, 15"}'></div>
+        <div class="note trap"><span class="tag">Piège : 3 bits ou 4 bits</span>
+          <p>Avec 3 bits (<var>C</var>, <var>B</var>, <var>A</var>), le tableau a 2 lignes (<var>C</var>) et 4 colonnes (<var>BA</var>) : première ligne 0 1 3 2, seconde ligne 4 5 7 6. Ne place pas le 4 dans la colonne 10.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Partie 8 <span class="ref">sujets 2014-2026</span></div><h2>Karnaugh à l’examen</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La méthode complète, telle que les corrigés l’attendent :</p></div>
+        <ol class="steps">
+          <li><div><p><b>Tracer et remplir</b> le tableau, Φ compris, en vérifiant la place des numéros (0 1 3 2 / 4 5 7 6 / 12 13 15 14 / 8 9 11 10).</p></div></li>
+          <li><div><p><b>Encercler</b> : d’abord les 1 qui n’ont qu’une façon d’être dans un grand cercle, puis compléter avec le moins de cercles possible, chacun le plus grand possible (Φ et bords compris).</p></div></li>
+          <li><div><p><b>Lire</b> chaque cercle : une variable qui varie disparaît, à 0 elle est barrée, à 1 elle est écrite.</p></div></li>
+          <li><div><p><b>Écrire</b> la somme des produits, sans parenthèses, sans OU exclusif sauf si la question le demande.</p></div></li>
+          <li><div><p><b>OU exclusif</b> (si demandé) : repérer <span class="bx">X.~Y + ~X.Y</span> ou <span class="bx">X.Y + ~X.~Y</span> dans la forme obtenue.</p></div></li>
+        </ol>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,3,6,7,10,11,12,13],"name":"S1","xor":"B ^ (C.D)","title":"Examen 2025-2026 : S1 et sa forme avec OU exclusif"}'></div>
+        <div class="prose"><p>Ici <span class="bx">~D.B + ~C.B = B.(~D + ~C) = B.~(C.D)</span>, et le dernier cercle donne <span class="bx">D.C.~B</span> : c’est <span class="bx">B.~Y + ~B.Y</span> avec <var>Y</var> = <span class="bx">C.D</span>, donc <span class="bx">S1 = B ^ (C.D)</span>.</p></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <ul>
+            <li>Un exercice de tableaux de Karnaugh <b>à chaque sujet</b> depuis 2014, le plus souvent 5 ou 6 points : quatre à six fonctions, données le plus souvent par leurs numéros, à 3 et à 4 variables, avec des Φ (2021-2022, 2023-2024, 2024-2025, 2025-2026).</li>
+            <li>« Remplissez les diagrammes de Karnaugh (<b>bulles incluses</b>) » : les « bulles », ce sont les cercles. Dessine-les.</li>
+            <li>« Aucun point ne sera attribué à une expression si son tableau est faux » : vérifie chaque numéro.</li>
+            <li>Les fonctions reviennent : <var>S1</var> à <var>S4</var> et <var>S6</var> de 2023-2024 sont celles de 2021-2022.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : plusieurs bonnes réponses</span>
+          <p>Il peut exister plusieurs regroupements minimaux de même taille (par exemple quand un 1 peut rejoindre deux cercles différents). Les corrigés n’en donnent qu’un ; une autre expression avec autant de termes et de littéraux est aussi la plus simple. Le vérificateur du site accepte toutes les formes minimales.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais simplifier n’importe quelle fonction de 4 variables au plus. Le chapitre 5, <a href="cours-5-circuits.html">problèmes et circuits</a>, part d’un énoncé en français pour arriver au schéma, et présente les circuits combinatoires classiques.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

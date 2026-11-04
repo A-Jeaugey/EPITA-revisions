@@ -60,6 +60,8 @@ main{display:grid;gap:44px}
 <footer class="page-foot"><div class="wrap"><span class="credit">Papers hosted by <a href="https://github.com/Epidocs/Past-Exams">Epidocs · Past-Exams</a> and <a href="https://annales.hyperion.tf/">HyperAnnales</a>. The links open the original PDFs.</span><span>A class takes its S1 five years before graduating: class of 2029 = Fall 2024.</span></div></footer>
 <script src="../data/annales.js"></script>
 <script src="../data/en/annales.js"></script>
+<script src="../data/boole/exams.js"></script>
+<script src="../data/en/boole/exams.js"></script>
 <script src="../data/caml/exams.js"></script>
 <script src="../data/en/caml/exams.js"></script>
 <script src="../data/maths/exams.js"></script>
@@ -68,6 +70,21 @@ main{display:grid;gap:44px}
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
   var A = window.ANNALES, order = ['elec', 'maths', 'physique', 'algo', 'archi', 'prog', 'cie', 'tim', 'te'];
+  /* bimestre de la page (REV.period) : B1 = partiels de mi-semestre et QCM hebdo ; B2 = examens de fin de semestre
+     (finals) puis rattrapages (retakes) d'Epidocs, et sujets du Moodle absents d'Epidocs (BOOLE_EXAMS, moodle: true). */
+  var B1 = R.period === 'b1', RET = A.retakes || [], LIST = B1 ? A.midterms : (A.finals || []).concat(RET);
+  var OWN2 = window.BOOLE_EXAMS || [], BOOLE = R.subject('boole');
+  /* page de corrigés d'une matière dans le bimestre de la page (archi : numération au B1, algèbre de Boole au B2) */
+  function pageOf(s) { if (B1) return A.subjects[s].page; return s === 'archi' && BOOLE && BOOLE.status === 'ready' ? 'boole/annales.html' : null; }
+  /* notre fiche d'un sujet du bimestre 2 (même promo, examen ou rattrapage) */
+  function ownKey(m) {
+    var r = RET.indexOf(m) >= 0;
+    for (var i = 0; i < OWN2.length; i++) {
+      var e = OWN2[i]; if (e.moodle || !!e.retake !== r) continue;
+      if ((e.promo === m.promo && (e.variant || '') === (m.variant || '')) || (e.alsoPromo === m.promo && !m.variant)) return e.key;
+    }
+    return null;
+  }
   var sel = 'all';
   /* Caml: a paper has a Caml part if it is not the TAA variant and its PDFs sit in the same folder as a paper of
      CAML_EXAMS (data/caml/exams.js): CAML variants of 2023-2024, shared papers before 2023, 2024# (= p2019d). */
@@ -87,7 +104,7 @@ main{display:grid;gap:44px}
     for (var i = 0; i < ME.length; i++) if ((ME[i].files || []).some(function (f) { return fs.indexOf(folder(f.url)) >= 0; })) return ME[i].key;
     return null;
   }
-  function count(s) { return A.midterms.filter(function (m) { return m.subject === s; }).length; }
+  function count(s) { return LIST.filter(function (m) { return m.subject === s; }).length + (B1 || s !== 'archi' ? 0 : OWN2.filter(function (e) { return e.moodle; }).length); }
   /* file and archive labels: the data keeps the French ones (Sujet, Corrigé…), translated here for display */
   var LABEL = { 'Contrôle (nov. 2017)': 'Test (Nov. 2017)', 'Partiel de fin de semestre': 'End-of-semester exam', 'TD 1 à 3, ED 1 (anciens)': 'TD 1 to 3, ED 1 (older years)' };
   var KIND = { 'Sujet': 'Exam paper', 'Corrigé': 'Solution', 'Feuille de réponses': 'Answer sheet', 'Corrigé (OCaml)': 'Solution (OCaml)', 'Grille du QCM (correction en ligne)': 'MCQ answer grid (online marking)' };
@@ -106,13 +123,14 @@ main{display:grid;gap:44px}
       return first[a.f.kind] - first[b.f.kind] || (a.f.lang === 'en' ? 0 : 1) - (b.f.lang === 'en' ? 0 : 1) || a.i - b.i;
     }).map(function (x) { return x.f; });
   }
+  function when(m) { return B1 ? 'Fall ' + m.year : (RET.indexOf(m) >= 0 ? 'Retake · ' : 'Final · ') + m.year + '-' + (m.year + 1); }
   function fileLink(f) {
     var cor = /Corrigé/.test(f.kind), ext = /mcq\.epidocs/.test(f.url);
     return '<a class="file' + (cor ? ' cor' : '') + '" href="' + f.url + '" target="_blank" rel="noopener"' + (f.lang ? ' hreflang="' + f.lang + '"' : '') + '>' + U.esc(kindName(f.kind)) + (f.lang ? ' <span class="lang' + (f.lang === 'en' ? ' en' : '') + '">' + f.lang + '</span>' : '') + (ext ? ' ↗' : '') + '</a>';
   }
   function paintChips() {
-    var items = [{ id: 'all', name: 'All', n: A.midterms.length }].concat(order.filter(function (s) { return count(s); }).map(function (s) { return { id: s, name: A.subjects[s].name, n: count(s) }; }));
-    items.push({ id: 'qcm', name: 'Weekly MCQs', n: A.mcq.length });
+    var items = [{ id: 'all', name: 'All', n: LIST.length + (B1 ? 0 : OWN2.filter(function (e) { return e.moodle; }).length) }].concat(order.filter(function (s) { return count(s); }).map(function (s) { return { id: s, name: A.subjects[s].name, n: count(s) }; }));
+    if (B1) items.push({ id: 'qcm', name: 'Weekly MCQs', n: A.mcq.length });
     $('#chips').innerHTML = items.map(function (it) { return '<button type="button" class="chip" data-f="' + it.id + '" aria-pressed="' + (sel === it.id) + '">' + it.name + ' <span class="n">' + it.n + '</span></button>'; }).join('');
     $$('#chips [data-f]').forEach(function (b) { b.addEventListener('click', function () { sel = b.dataset.f; paintChips(); paintList(); }); });
   }
@@ -120,24 +138,30 @@ main{display:grid;gap:44px}
     var html = '';
     order.forEach(function (s) {
       if (sel !== 'all' && sel !== s) return;
-      var ms = A.midterms.filter(function (m) { return m.subject === s; });
-      var hy = A.hyperion.filter(function (h) { return h.subject === s; });
-      if (!ms.length && !hy.length) return;
-      var info = A.subjects[s];
+      var ms = LIST.filter(function (m) { return m.subject === s; });
+      var hy = B1 ? A.hyperion.filter(function (h) { return h.subject === s; }) : [];
+      var mo = !B1 && s === 'archi' ? OWN2.filter(function (e) { return e.moodle; }) : [];
+      if (!ms.length && !hy.length && !mo.length) return;
+      var info = { name: A.subjects[s].name, page: pageOf(s) };
       html += '<section class="subj-sec" id="' + s + '"><div class="subj-head"><h2>' + info.name + '</h2>' +
         (info.page ? (s === 'algo' ? '<span class="mores">' : '') + '<a class="more" href="' + R.url(info.page) + '">' + (s === 'algo' ? 'TAA part: solutions and analysis →' : 'Detailed solutions and analysis of the papers →') + '</a>' + (s === 'algo' ? '<a class="more" href="' + R.url(CAML_PAGE) + '">Caml part: solutions and analysis →</a></span>' : '') : '<span class="legend">' + ms.length + ' paper' + (ms.length > 1 ? 's' : '') + '</span>') + '</div><div class="exams">';
+      mo.forEach(function (e) {
+        html += '<div class="ex"><div class="when"><b>Class of ' + e.promo + '</b><span>' + U.esc(e.when) + ' · Moodle</span></div><div class="files">' + e.files.map(function (f) { return '<a class="file' + (/orrig|olution|ey/.test(f.t) ? ' cor' : '') + '" href="' + f.url + '" target="_blank" rel="noopener">' + U.esc(f.t) + '</a>'; }).join('') +
+          (info.page ? '<a class="file ours" href="' + R.url(info.page) + '#' + e.key + '">Our solution</a>' : '') + '</div></div>';
+      });
       ms.forEach(function (m) {
-        html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>Fall ' + m.year + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
-          (info.page && (s === 'elec' || s === 'archi' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') +
-          (s === 'maths' && info.page && mathsKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + mathsKey(m) + '">Our solution</a>' : '') +
-          (s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Our solution (Caml)</a>' : '') + '</div></div>';
+        html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>' + when(m) + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
+          (!B1 && info.page && ownKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + ownKey(m) + '">' + 'Our solution' + '</a>' : '') +
+          (B1 && info.page && (s === 'elec' || s === 'archi' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') +
+          (B1 && s === 'maths' && info.page && mathsKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + mathsKey(m) + '">Our solution</a>' : '') +
+          (B1 && s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Our solution (Caml)</a>' : '') + '</div></div>';
       });
       hy.forEach(function (h) {
         html += '<div class="ex"><div class="when"><b>Archive</b><span>' + U.esc(LABEL[h.label] || h.label) + '</span></div><div class="files">' + enFirst(h.files).map(fileLink).join('') + '</div></div>';
       });
       html += '</div></section>';
     });
-    if (sel === 'all' || sel === 'qcm') {
+    if (B1 && (sel === 'all' || sel === 'qcm')) {
       var promos = {};
       A.mcq.forEach(function (e) { (promos[e.promo] = promos[e.promo] || []).push(e); });
       html += '<section class="subj-sec" id="qcm"><div class="subj-head"><h2>Weekly MCQs</h2><span class="legend">All subjects mixed · in green: answer key available</span></div><div class="exams mcq">';
@@ -154,6 +178,11 @@ main{display:grid;gap:44px}
       html += '</div></section>';
     }
     $('#list').innerHTML = html;
+  }
+  if (!B1) {
+    U.$('.top .eyebrow').textContent = 'Past exams · S1 final exams and retakes';
+    U.$('.top h1').textContent = 'The end-of-semester papers';
+    U.$('.page-foot .wrap span:last-child').textContent = 'A class takes its S1 five years before graduating: class of 2028 = school year 2023-2024.';
   }
   var h = (location.hash || '').slice(1);
   if (h && (order.indexOf(h) >= 0 || h === 'qcm')) sel = h;

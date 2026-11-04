@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les formes canoniques · Archi B2</title>
+<meta name="description" content="Archi B2, chapitre 3 : sommes de produits et produits de sommes, mintermes et première forme canonique, maxtermes et seconde forme canonique, lien avec la table de vérité, passage d’une forme à l’autre, avec des réponses vérifiées.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapitre 3 : les formes canoniques">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — fiche 3 sur 5</span><span>Source : chapitre 1 « Logique combinatoire », § III.5 (D. Bouchet) · TD 1, ex. 3</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="3"></span><a href="index.html">Archi B2</a> · Chapitre 3 sur 5</div>
+      <h1>Une fonction, <span class="w">deux écritures uniques.</span></h1>
+      <p class="lead">Une fonction a mille écritures, mais une seule somme de mintermes et un seul produit de maxtermes. On les obtient en complétant les termes, ou directement depuis la table de vérité.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec réponses vérifiées</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § III.5</span></li>
+        <li class="ex"><span><span class="k">Examen</span> formes canoniques : chaque année</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"X":[0,1,0,1,0,0,1,1]},"hl":[1,3,6,7],"title":"Les 1 donnent la 1re forme, les 0 la 2e"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Chaque ligne à 1 est un minterme ; chaque ligne à 0 est un maxterme.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 3 · Les formes canoniques</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>Sommes et produits</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>Mintermes, 1re forme</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Compléter les produits</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>1re forme et table</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Maxtermes, 2e forme</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Compléter les sommes</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>2e forme et table</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>D’une forme à l’autre</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque partie porte un repère de composant, comme sur un schéma : U1, U2… Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="cours-2-algebre.html">← Chapitre 2 : l’algèbre de Boole</a><a href="cours-4-karnaugh.html">Chapitre 4 : les tableaux de Karnaugh →</a><a href="../qcm/index.html#boole">QCM d’algèbre de Boole</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">Sommes et produits</a></li><li><a href="#s2">Mintermes, 1re forme</a></li><li><a href="#s3">Compléter les produits</a></li><li><a href="#s4">1re forme et table</a></li><li><a href="#s5">Maxtermes, 2e forme</a></li><li><a href="#s6">Compléter les sommes</a></li><li><a href="#s7">2e forme et table</a></li><li><a href="#s8">D’une forme à l’autre</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Partie 1 <span class="ref">cours § III.5.1</span></div><h2>Sommes de produits, produits de sommes</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>En algèbre de Boole, le résultat d’un OU s’appelle une <b>somme</b> et le résultat d’un ET un <b>produit</b>. Deux écritures reviennent sans cesse :</p>
+          <ul>
+            <li>une <b>somme de produits</b> : des produits reliés par des OU, comme <span class="bx">A.B.C + B.C.D + A.~B.C.~D.E</span> ;</li>
+            <li>un <b>produit de sommes</b> : des sommes reliées par des ET, comme <span class="bx">(A + ~B).(B + C + D)</span>.</li>
+          </ul>
+          <p>Dans les deux cas, les barres ne portent que sur des <b>variables seules</b>. Un terme réduit à une variable compte comme un produit (dans une somme de produits) ou comme une somme (dans un produit de sommes).</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Sommes de produits (cours)</span><p><span class="bx">A + A.B + B.~A + ~B + ~A.C.D + B.C.D</span></p><p><span class="bx">~B + A.C + ~A.B + B.~C + ~A.~B.C</span></p></div>
+          <div class="card"><span class="k">Produits de sommes (cours)</span><p><span class="bx">(A + ~B + C).(~A + D + ~E).(C + D + ~E)</span></p><p><span class="bx">A.(B + C + ~D).(A + ~C).(A + D)</span></p></div>
+        </div>
+        <div class="note keep"><span class="tag">À retenir</span>
+          <p>« Le résultat ne devra pas contenir de parenthèses » : c’est une <b>somme de produits</b>. Toute expression peut s’écrire ainsi (De Morgan, puis développement), et c’est la forme que donne un tableau de Karnaugh.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : une barre sur un groupe</span>
+          <p><span class="bx">A.~(B.C) + D</span> n’est pas une somme de produits au sens strict : la barre couvre deux variables. Casse-la d’abord : <span class="bx">A.(~B + ~C) + D = A.~B + A.~C + D</span>.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Partie 2 <span class="ref">cours § III.5.2.1</span></div><h2>Mintermes et première forme canonique</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>minterme</b> est un produit qui contient <b>toutes les variables</b> de l’expression, chacune une fois, complémentée ou non. Avec <var>A</var>, <var>B</var>, <var>C</var>, <var>D</var> : <span class="bx">A.~B.C.D</span> est un minterme, <span class="bx">A.~B.C</span> n’en est pas un (il manque <var>D</var>).</p>
+          <p>Une fonction peut s’écrire de bien des façons, mais elle n’a <b>qu’une seule somme de mintermes</b> : c’est la <b>somme canonique de produits</b>, ou <b>première forme canonique</b>.</p>
+        </div>
+        <div class="prose"><p>Exemple du cours, avec cinq variables <var>A</var>, <var>B</var>, <var>C</var>, <var>D</var>, <var>E</var> :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Produit</th><th>Minterme ?</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bx">A.B.C</span></td><td>non : <var>D</var> et <var>E</var> n’apparaissent pas</td></tr>
+            <tr><td><span class="bx">B.C.D</span></td><td>non : <var>A</var> et <var>E</var> n’apparaissent pas</td></tr>
+            <tr><td><span class="bx">A.~B.C.~D.E</span></td><td>oui</td></tr>
+            <tr><td><span class="bx">A.B.C.~D.~E</span></td><td>oui</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>En revanche, <span class="bx">A.B.C.D + ~A.~B.~C.D + ~A.B.C.~D + ~A.B.~C.~D + ~A.~B.~C.~D</span> est une somme de mintermes : c’est une première forme canonique.</p></div>
+        <div class="note keep"><span class="tag">Le numéro d’un minterme</span>
+          <p>Remplace chaque variable par 1 et chaque variable barrée par 0, et lis le nombre binaire obtenu (dans l’ordre des variables) : <span class="bx">A.~B.C</span> → 101 → minterme 5. Un minterme vaut 1 sur <b>une seule ligne</b> de la table de vérité : celle qui porte son numéro.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : quelles variables ?</span>
+          <p>Les variables sont celles de l’expression, toutes. Dans <span class="bx">A + ~B</span>, il y en a deux : la première forme a trois mintermes, <span class="bx">A.B + A.~B + ~A.~B</span> (examen 2025-2026). N’en invente pas de troisième.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Partie 3 <span class="ref">cours § III.5.2.2</span></div><h2>Compléter les produits</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On obtient la première forme à partir de <b>n’importe quelle somme de produits</b> en complétant chaque produit. S’il manque la variable <var>D</var>, on multiplie par <span class="bx">(D + ~D)</span>, qui vaut 1, puis on développe.</p>
+          <p>Exemple du cours : <span class="bx">X = ~A.B.C + A.~B + A.B.~C.~D</span>, quatre variables.</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">~A.B.C</span></span><span class="why-r">il manque D</span></div><div><span><span class="bx">~A.B.C.(D + ~D)</span></span></div><div><span><span class="bx">~A.B.C.D + ~A.B.C.~D</span></span><span class="why-r">deux mintermes</span></div></div>
+        <div class="calc"><div><span><span class="bx">A.~B</span></span><span class="why-r">il manque C et D</span></div><div><span><span class="bx">A.~B.(C + ~C).(D + ~D)</span></span></div><div><span><span class="bx">A.~B.C.D + A.~B.C.~D + A.~B.~C.D + A.~B.~C.~D</span></span><span class="why-r">quatre mintermes</span></div></div>
+
+        <div class="prose"><p>Le dernier produit, <span class="bx">A.B.~C.~D</span>, est déjà un minterme. Résultat :</p></div>
+        <div class="calc"><div><span><span class="bx">X = ~A.B.C.D + ~A.B.C.~D + A.~B.C.D + A.~B.C.~D + A.~B.~C.D + A.~B.~C.~D + A.B.~C.~D</span></span></div></div>
+        <div class="note keep"><span class="tag">Combien de mintermes ?</span>
+          <p>Un produit auquel il manque <var>k</var> variables donne 2<sup><var>k</var></sup> mintermes. Si deux produits donnent le même minterme, on ne l’écrit qu’une fois (<span class="bx">X + X = X</span>).</p>
+        </div>
+<div data-boole="check" data-opts='{"ref":"A.B.C + A.~B","vars":["A","B","C"],"kind":"canon1","label":"A.B.C + A.~B","title":"À toi : examen 2023-2024, ex. 2"}'></div>
+        <div class="note trap"><span class="tag">Piège : les doublons</span>
+          <p>Avec <span class="bx">A.B + B.C</span> (variables <var>A</var>, <var>B</var>, <var>C</var>), compléter donne <span class="bx">A.B.C + A.B.~C + A.B.C + ~A.B.C</span> : le minterme <span class="bx">A.B.C</span> apparaît deux fois. La première forme n’en garde qu’un : trois mintermes.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Partie 4 <span class="ref">cours § III.5.2.3</span></div><h2>Première forme et table de vérité</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La première forme se lit directement sur la table de vérité : <b>chaque ligne où la sortie vaut 1</b> donne un minterme. On remplace les 1 par les variables et les 0 par les variables complémentées.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"X":[0,1,0,1,0,0,1,1]},"hl":[1,3,6,7],"title":"L’exemple du cours : X vaut 1 sur les lignes 1, 3, 6 et 7"}'></div>
+        <div class="calc"><div><span><span class="bx">X = ~A.~B.C + ~A.B.C + A.B.~C + A.B.C</span></span><span class="why-r">lignes 001, 011, 110, 111</span></div></div>
+        <div class="prose">
+          <p>Et inversement : à partir d’une première forme, on remplit la table en mettant un 1 sur la ligne de chaque minterme, et 0 ailleurs.</p>
+        </div>
+        <div class="note keep"><span class="tag">Une méthode rapide pour l’examen</span>
+          <p>Pour la première forme d’une expression compliquée, il est souvent plus sûr de passer par la table : calcule la sortie ligne par ligne (ou remplis directement un tableau de Karnaugh, chapitre 4), puis écris un minterme par 1. Exemple : <span class="bx">(A + ~C).(~A + C + ~D).B.~C</span> vaut 1 seulement si <var>B</var> = 1 et <var>C</var> = 0 ; il reste à tester les quatre valeurs de <var>A</var> et <var>D</var>.</p>
+        </div>
+<div data-boole="check" data-opts='{"ref":"(A + ~C).(~A + C + ~D).B.~C","vars":["A","B","C","D"],"kind":"canon1","label":"(A + ~C).(~A + C + ~D).B.~C","title":"À toi : examen 2025-2026, ex. 2"}'></div>
+        <div class="note trap"><span class="tag">Piège : l’ordre des variables</span>
+          <p>Écris les variables de chaque minterme dans le même ordre, celui de la table (<var>A</var>, <var>B</var>, <var>C</var>, <var>D</var>) : c’est plus lisible, et c’est ainsi que les corrigés les écrivent. L’ordre des mintermes entre eux, lui, n’a pas d’importance.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Partie 5 <span class="ref">cours § III.5.3.1</span></div><h2>Maxtermes et seconde forme canonique</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>maxterme</b> est une <b>somme</b> qui contient toutes les variables de l’expression, chacune une fois, complémentée ou non : <span class="bx">(A + ~B + C + D)</span>. Une fonction n’a qu’un seul <b>produit de maxtermes</b> : le <b>produit canonique de sommes</b>, ou <b>seconde forme canonique</b>.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Exemple du cours, variables A, B, C, D, E</caption>
+          <thead><tr><th>Somme</th><th>Maxterme ?</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bx">A + B + C</span></td><td>non : <var>D</var> et <var>E</var> n’apparaissent pas</td></tr>
+            <tr><td><span class="bx">B + C + D</span></td><td>non : <var>A</var> et <var>E</var> n’apparaissent pas</td></tr>
+            <tr><td><span class="bx">A + ~B + C + ~D + E</span></td><td>oui</td></tr>
+            <tr><td><span class="bx">A + B + C + ~D + ~E</span></td><td>oui</td></tr>
+          </tbody>
+        </table></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Minterme</span><p>Un <b>produit</b>, qui vaut <b>1</b> sur une seule ligne de la table.</p></div>
+          <div class="card"><span class="k">Maxterme</span><p>Une <b>somme</b>, qui vaut <b>0</b> sur une seule ligne de la table.</p></div>
+        </div>
+        <div class="note keep"><span class="tag">La ligne d’un maxterme</span>
+          <p>Un maxterme vaut 0 quand chacune de ses variables vaut 0 : la variable seule vaut 0, la variable barrée vaut 1. <span class="bx">(A + ~B + C)</span> vaut 0 seulement pour <var>A</var> = 0, <var>B</var> = 1, <var>C</var> = 0 : la ligne 010 = 2. C’est l’inverse de la règle des mintermes.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : les barres à l’envers</span>
+          <p>La ligne 101 donne le minterme <span class="bx">A.~B.C</span> mais le maxterme <span class="bx">(~A + B + ~C)</span> : dans un maxterme, on barre les variables qui valent <b>1</b>.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Partie 6 <span class="ref">cours § III.5.3.2</span></div><h2>Compléter les sommes</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour passer d’un produit de sommes à la seconde forme, on complète chaque somme. S’il manque <var>B</var>, on ajoute <span class="bx">B.~B</span>, qui vaut 0, puis on applique la distributivité du OU (<span class="bx">X + Y.Z = (X + Y).(X + Z)</span>).</p>
+          <p>Exemple du cours : <span class="bx">X = (~A + C).B</span>, trois variables.</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">(~A + C)</span></span><span class="why-r">il manque B</span></div><div><span><span class="bx">(~A + B.~B + C)</span></span></div><div><span><span class="bx">(~A + B + C).(~A + ~B + C)</span></span><span class="why-r">distributivité</span></div></div>
+        <div class="calc"><div><span><span class="bx">B</span></span><span class="why-r">il manque A et C</span></div><div><span><span class="bx">A.~A + B + C.~C</span></span></div><div><span><span class="bx">(A + B + C.~C).(~A + B + C.~C)</span></span><span class="why-r">distributivité</span></div><div><span><span class="bx">(A + B + C).(A + B + ~C).(~A + B + C).(~A + B + ~C)</span></span><span class="why-r">distributivité</span></div></div>
+
+        <div class="prose"><p>Le maxterme <span class="bx">(~A + B + C)</span> apparaît deux fois : on le garde une seule fois. Seconde forme :</p></div>
+        <div class="calc"><div><span><span class="bx">X = (~A + B + C).(~A + ~B + C).(A + B + C).(A + B + ~C).(~A + B + ~C)</span></span></div></div>
+<div data-boole="check" data-opts='{"ref":"(A + C).(~A + B + C)","vars":["A","B","C"],"kind":"canon2","label":"(A + C).(~A + B + C)","title":"À toi : examen 2023-2024 et TD 1, ex. 3"}'></div>
+        <div class="note trap"><span class="tag">Piège : partir d’une somme de produits</span>
+          <p>Pour la seconde forme de <span class="bx">A + B.C</span>, il faut d’abord un produit de sommes : <span class="bx">A + B.C = (A + B).(A + C)</span>, puis compléter. Ou bien passer par la table : les lignes où la sortie vaut 0 (partie suivante).</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Partie 7 <span class="ref">cours § III.5.3.3</span></div><h2>Seconde forme et table de vérité</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>La seconde forme se lit aussi sur la table, mais sur les <b>0</b> : chaque ligne où la sortie vaut 0 donne un maxterme, en remplaçant les <b>0 par les variables</b> et les <b>1 par les variables complémentées</b>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"X":[0,1,0,1,0,0,1,1]},"hl":[0,2,4,5],"title":"Le même exemple : X vaut 0 sur les lignes 0, 2, 4 et 5"}'></div>
+        <div class="calc"><div><span><span class="bx">X = (A + B + C).(A + ~B + C).(~A + B + C).(~A + B + ~C)</span></span><span class="why-r">lignes 000, 010, 100, 101</span></div></div>
+        <div class="prose"><p>Les deux formes décrivent la même fonction : quatre mintermes (les 1) d’un côté, quatre maxtermes (les 0) de l’autre. Avec 3 variables, il y a 8 lignes : le nombre de mintermes plus le nombre de maxtermes vaut toujours 8.</p></div>
+<div data-boole="check" data-opts='{"ref":"A + B.~C","vars":["A","B","C"],"kind":"canon2","label":"A + B.~C","title":"À toi : examen 2025-2026, ex. 2"}'></div>
+        <div class="note trap"><span class="tag">Piège : lire les 1 au lieu des 0</span>
+          <p>La seconde forme vient des lignes à <b>0</b>. Un maxterme écrit pour une ligne à 1 donne une fonction fausse ; c’est l’erreur la plus fréquente sur cette question.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Partie 8 <span class="ref">cours § III.5.4</span></div><h2>D’une forme à l’autre, et l’examen</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Pour passer d’une forme canonique à l’autre, on liste les combinaisons binaires présentes dans une forme ; <b>les combinaisons manquantes</b> donnent l’autre forme.</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>Première forme du cours : <span class="bx">~A.~B.C + ~A.B.~C + ~A.B.C + A.~B.C + A.B.~C</span>.</p></div></li>
+          <li><div><p>Combinaisons présentes (les 1) : 001, 010, 011, 101, 110.</p></div></li>
+          <li><div><p>Combinaisons manquantes (les 0) : 000, 100, 111.</p></div></li>
+          <li><div><p>Seconde forme : <span class="bx">(A + B + C).(~A + B + C).(~A + ~B + ~C)</span>.</p></div></li>
+        </ol>
+<div data-boole="simplifier" data-opts='{"value":"~A.~B.C + ~A.B.~C + ~A.B.C + A.~B.C + A.B.~C"}'></div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <ul>
+            <li>Un exercice de formes canoniques à chaque examen 2 (2023-2024, 2024-2025, 2025-2026 : 4 ou 5 points) : deux ou trois expressions pour la première forme, deux pour la seconde. Avant, la question venait dans un exercice d’expressions (« donnez la première forme canonique de <var>S1</var> »).</li>
+            <li>Les expressions sont courtes : 2 à 4 variables, un produit et une somme. Exemples tombés : <span class="bx">A + ~B</span>, <span class="bx">A.B.C + A.~B</span>, <span class="bx">(A + ~B).(~B + C)</span>, <span class="bx">A + B.~C</span>.</li>
+            <li>Le TD 1 (exercice 3) reprend des expressions des anciens sujets : <span class="bx">(a + c).(~a + b + c)</span> est celle de l’examen 2 de 2023-2024.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Piège : simplifier la forme canonique</span>
+          <p>Une forme canonique ne se simplifie pas : c’est justement la forme développée au maximum. Si ta réponse a moins de termes que de 1 (ou de 0) dans la table, ce n’est pas une forme canonique.</p>
+        </div>
+        <div data-check-ref="boole/cours-3-formes.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="boole:formes:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu sais écrire les deux formes canoniques. Le chapitre 4, <a href="cours-4-karnaugh.html">les tableaux de Karnaugh</a>, part de la table de vérité pour trouver la forme la plus simple, sans calcul.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

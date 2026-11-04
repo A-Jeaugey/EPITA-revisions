@@ -93,7 +93,7 @@
   /* ---------- registre des matières ---------- */
   var SUBJECTS = [
     {
-      id: 'elec', name: 'Électronique', short: 'Élec', code: 'SI-S1-ELEC-1-OAC',
+      id: 'elec', period: 'b1', name: 'Électronique', short: 'Élec', code: 'SI-S1-ELEC-1-OAC',
       course: 'Outils d’analyse de circuits', path: 'elec/index.html', dir: 'elec/', status: 'ready',
       train: 'elec/entrainement.html', fiche: 'elec/fiche.html', open: 'Ouvrir l’élec',
       exam: 'Jeudi 29 octobre, 10 h 30 · 1 h, sans calculatrice ni document',
@@ -104,7 +104,7 @@
       ]
     },
     {
-      id: 'maths', name: 'Mathématiques', short: 'Maths', code: 'S1 · ECUE OBM et DP',
+      id: 'maths', period: 'b1', name: 'Mathématiques', short: 'Maths', code: 'S1 · ECUE OBM et DP',
       course: 'Outils de base (OBM) · Dénombrement et probabilités (DP)', path: 'maths/index.html', dir: 'maths/', status: 'ready', annales: 'Maths PC',
       exam: 'Mercredi 28 octobre : OBM à 10 h 30, DP à 14 h (2 h chacun) · DM 20 %, contrôle de cours 20 %, examen 60 % · APIS à l’examen 2',
       train: 'maths/entrainement.html', fiche: 'maths/fiche.html', open: 'Ouvrir les maths',
@@ -119,7 +119,7 @@
       ]
     },
     {
-      id: 'physique', name: 'Physique · Mécanique', short: 'Physique',
+      id: 'physique', period: 'b1', name: 'Physique · Mécanique', short: 'Physique',
       course: 'Mécanique du point', path: 'physique/index.html', dir: 'physique/', status: 'ready', annales: 'Phys',
       train: 'physique/entrainement.html', fiche: 'physique/fiche.html', open: 'Ouvrir la physique',
       exam: 'Mardi 27 octobre, 13 h 15 · 1 h 30, sans calculatrice ni document',
@@ -131,7 +131,7 @@
       ]
     },
     {
-      id: 'taa', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
+      id: 'taa', period: 'b1', name: 'Algo · Types abstraits', short: 'TAA', code: 'ALGO-S1 · ECUE TAA',
       course: 'Types algébriques abstraits', path: 'taa/index.html', dir: 'taa/', status: 'ready',
       exam: 'Mardi 27 octobre, 9 h · 1 h, écrit sur le sujet',
       annalesId: 'algo', train: 'taa/entrainement.html', fiche: 'taa/fiche.html', open: 'Ouvrir TAA',
@@ -142,7 +142,7 @@
       ]
     },
     {
-      id: 'caml', name: 'Algo · Caml', short: 'Caml', code: 'ALGO-S1 · ECUE Caml',
+      id: 'caml', period: 'b1', name: 'Algo · Caml', short: 'Caml', code: 'ALGO-S1 · ECUE Caml',
       course: 'Caml et récursivité', path: 'caml/index.html', dir: 'caml/', status: 'ready',
       exam: 'Mardi 27 octobre, 10 h 15 · 1 h 30, écrit',
       annalesId: 'algo', train: 'caml/entrainement.html', fiche: 'caml/fiche.html', open: 'Ouvrir Caml',
@@ -154,7 +154,7 @@
       ]
     },
     {
-      id: 'archi', name: 'Architecture · Numération', short: 'Archi',
+      id: 'archi', period: 'b1', name: 'Architecture · Numération', short: 'Archi',
       course: 'Architecture des ordinateurs · Numération', path: 'archi/index.html', dir: 'archi/', status: 'ready', annales: 'Archi',
       exam: 'Jeudi 29 octobre, 13 h · examen 1 h · tests Moodle 10 %',
       train: 'archi/entrainement.html', fiche: 'archi/fiche.html', open: 'Ouvrir l’archi',
@@ -166,13 +166,27 @@
       ]
     },
     {
-      id: 'piloter', name: 'Méthodo · Gestion de groupe', short: 'Méthodo', code: 'Piloter S1',
+      id: 'piloter', period: 'b1', name: 'Méthodo · Gestion de groupe', short: 'Méthodo', code: 'Piloter S1',
       course: 'Méthodologie de travail · Gestion de groupe', path: 'piloter/index.html', dir: 'piloter/', status: 'ready',
       exam: 'Jeudi 29 octobre : méthodologie à 14 h 15, gestion de groupe à 15 h 30 · deux QCM de 40 questions, sans point négatif',
       fiche: 'piloter/index.html', open: 'Ouvrir la méthodo',
       chapters: [
         { id: 'methodo', title: 'Méthodologie de travail', path: 'piloter/index.html#methodo', sections: 5 },
         { id: 'groupe', title: 'Gestion de groupe', path: 'piloter/index.html#groupe', sections: 5 }
+      ]
+    },
+    /* ---------- bimestre 2 ---------- */
+    {
+      id: 'boole', period: 'b2', name: 'Architecture · Algèbre de Boole', short: 'Archi', code: 'Produire S1 · Archi B2',
+      course: 'Architecture des ordinateurs · Algèbre de Boole', path: 'boole/index.html', dir: 'boole/', status: 'ready',
+      exam: 'Examen de fin de bimestre (date à venir) · 1 h 30, réponses sur le sujet · QCM en ligne 10 %, examen 90 %',
+      train: 'boole/entrainement.html', fiche: 'boole/fiche.html', open: 'Ouvrir l’algèbre de Boole',
+      chapters: [
+        { id: 'portes', title: 'Les portes logiques', path: 'boole/cours-1-portes.html', sections: 8 },
+        { id: 'algebre', title: 'L’algèbre de Boole', path: 'boole/cours-2-algebre.html', sections: 9 },
+        { id: 'formes', title: 'Les formes canoniques', path: 'boole/cours-3-formes.html', sections: 8 },
+        { id: 'karnaugh', title: 'Les tableaux de Karnaugh', path: 'boole/cours-4-karnaugh.html', sections: 8 },
+        { id: 'circuits', title: 'Problèmes et circuits', path: 'boole/cours-5-circuits.html', sections: 8 }
       ]
     }
   ];
@@ -197,7 +211,10 @@
       chapters: ['Number bases', 'Operations in base 2 and 16', 'Signed and unsigned integers', 'Floating-point numbers'] },
     piloter: { name: 'Study skills · Group management', short: 'Study skills', course: 'Working methodology · Group management', open: 'Open study skills',
       exam: 'Thursday 29 October: working methodology at 2:15 pm, group management at 3:30 pm · two 40-question MCQs, no negative marking',
-      chapters: ['Working methodology', 'Group management'] }
+      chapters: ['Working methodology', 'Group management'] },
+    boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',
+      exam: 'End-of-term exam (date to come) · 1 hr 30 min, answers on the paper · online quizzes 10%, exam 90%',
+      chapters: ['Logic gates', 'Boolean algebra', 'Canonical forms', 'Karnaugh maps', 'Problems and circuits'] }
   };
   if (LANG === 'en') SUBJECTS.forEach(function (s) {
     var e = SUBJECTS_EN[s.id]; if (!e) return;
@@ -205,6 +222,54 @@
     if (e.chapters && s.chapters) s.chapters.forEach(function (c, i) { if (e.chapters[i]) c.title = e.chapters[i]; });
   });
   function subject(id) { for (var i = 0; i < SUBJECTS.length; i++) if (SUBJECTS[i].id === id) return SUBJECTS[i]; return null; }
+
+  /* ---------- bimestres ----------
+     Le S1 a deux bimestres, chacun avec ses matières (une matière n'appartient qu'à un bimestre : period). Les pages
+     communes (accueil, QCM, annales, fiches) servent les deux : elles montrent le bimestre de l'adresse (?b=b1),
+     sinon celui d'une matière nommée dans l'ancre (#archi-sprint), sinon le bimestre en cours (CURRENT).
+     Une page de matière est dans le bimestre de sa matière. Sur une page qui n'est pas du bimestre en cours, les
+     liens vers les pages communes reçoivent ?b=… (aussi ceux ajoutés par les scripts) : on reste dans son bimestre. */
+  var PERIODS = [
+    { id: 'b1', short: 'B1', name: 'Bimestre 1', months: 'septembre-octobre 2026', exams: 'Partiels du 26 au 29 octobre 2026', state: 'done' },
+    { id: 'b2', short: 'B2', name: 'Bimestre 2', months: 'novembre-décembre 2026', exams: 'Examens de fin de bimestre', state: 'current' }
+  ];
+  var PERIODS_EN = {
+    b1: { name: 'Term 1', months: 'September-October 2026', exams: 'Midterms, 26-29 October 2026' },
+    b2: { name: 'Term 2', months: 'November-December 2026', exams: 'End-of-term exams' }
+  };
+  if (LANG === 'en') PERIODS.forEach(function (p) { var e = PERIODS_EN[p.id]; if (e) for (var k in e) p[k] = e[k]; });
+  var CURRENT = 'b2';
+  function periodInfo(id) { for (var i = 0; i < PERIODS.length; i++) if (PERIODS[i].id === id) return PERIODS[i]; return null; }
+  /* page commune (accueil, qcm/, annales/, fiches/), chemin pris depuis la racine */
+  var SHARED = /^(?:index(?:\.en)?\.html|(?:qcm|annales|fiches)\/(?:index(?:\.en)?\.html)?)?$/i;
+  function pagePeriod() {
+    var p = here().replace(/\.en\.html$/i, '.html'), i, s;
+    for (i = 0; i < SUBJECTS.length; i++) { s = SUBJECTS[i]; if (s.dir && p.indexOf(s.dir) === 0) return s.period; }
+    var m = /[?&]b=(b\d)(?:&|$)/.exec(location.search);
+    if (m && periodInfo(m[1])) return m[1];
+    var h = (location.hash || '').slice(1).split('-')[0];
+    for (i = 0; i < SUBJECTS.length; i++) { s = SUBJECTS[i]; if (h && (h === s.id || h === s.annalesId)) return s.period; }
+    return CURRENT;
+  }
+  var PERIOD = pagePeriod();
+  function periodSubjects(pid) { return SUBJECTS.filter(function (s) { return s.period === (pid || PERIOD); }); }
+  /* ajoute ?b=pid à une adresse (avant l'ancre, après une éventuelle requête) */
+  function withPeriod(h, pid) {
+    var j = h.search(/[?#]/), base = j < 0 ? h : h.slice(0, j), rest = j < 0 ? '' : h.slice(j);
+    var k = rest.indexOf('#'), q = k < 0 ? rest : rest.slice(0, k), hash = k < 0 ? '' : rest.slice(k);
+    return base + (q ? q + '&' : '?') + 'b=' + pid + hash;
+  }
+  /* adresse (depuis la racine) d'une page commune pour un bimestre : ?b= seulement hors du bimestre en cours */
+  function sharedPath(path, pid) { pid = pid || PERIOD; return pid === CURRENT ? path : withPeriod(path, pid); }
+  /* lien de la page vers une page commune → même lien, dans le bimestre de la page ; dans le bimestre en cours,
+     seulement s'il a une ancre (l'ancre #archi désigne la numération du B1 et l'algèbre de Boole du B2) */
+  function periodHref(h) {
+    if (!h || h.charAt(0) === '#' || /[?&]b=b\d/.test(h) || (PERIOD === CURRENT && h.indexOf('#') < 0)) return h;
+    var u; try { u = new URL(h, location.href); } catch (e) { return h; }
+    var full = u.href.split('#')[0].split('?')[0];
+    if (full.indexOf(ROOT) !== 0 || !SHARED.test(full.slice(ROOT.length))) return h;
+    return withPeriod(h, PERIOD);
+  }
 
   /* ---------- stockage (toujours protégé : navigation privée, aperçus…) ---------- */
   var mem = null;
@@ -373,17 +438,17 @@
     'Accueil': 'Home', 'QCM': 'MCQ', 'Annales': 'Past exams', 'Fiches': 'Summaries', 'Révisions': 'Revision',
     'Navigation principale': 'Main navigation', 'Menu': 'Menu',
     'J’ai compris cette partie': 'I understand this part', 'Compris': 'Understood',
-    'Langue': 'Language'
+    'Langue': 'Language', 'Bimestre': 'Term', 'terminé': 'finished', 'en cours': 'current'
   };
   i18n.add(DICT_CORE);
   var THEME_LABEL = { system: t('Thème : système'), light: t('Thème : clair'), dark: t('Thème : sombre') };
 
   function navItems() {
-    var items = [{ href: 'index.html', label: t('Accueil'), match: /^(index\.html)?$/ }];
-    SUBJECTS.forEach(function (s) { if (s.status === 'ready') items.push({ href: s.path, label: s.short, match: new RegExp('^' + (s.dir || s.path)) }); });
-    items.push({ href: 'qcm/index.html', label: t('QCM'), match: /^qcm\// });
-    items.push({ href: 'annales/index.html', label: t('Annales'), match: /^annales\// });
-    items.push({ href: 'fiches/index.html', label: t('Fiches'), match: /^fiches\// });
+    var items = [{ href: sharedPath('index.html'), label: t('Accueil'), match: /^(index\.html)?$/ }];
+    periodSubjects().forEach(function (s) { if (s.status === 'ready') items.push({ href: s.path, label: s.short, match: new RegExp('^' + (s.dir || s.path)) }); });
+    items.push({ href: sharedPath('qcm/index.html'), label: t('QCM'), match: /^qcm\// });
+    items.push({ href: sharedPath('annales/index.html'), label: t('Annales'), match: /^annales\// });
+    items.push({ href: sharedPath('fiches/index.html'), label: t('Fiches'), match: /^fiches\// });
     return items;
   }
   function url(p) { var u = ROOT + p; return LANG === 'en' ? enHref(u) : u; }
@@ -396,6 +461,11 @@
       var on = it.match.test(cur);
       return '<a href="' + url(it.href) + '"' + (on ? ' aria-current="page"' : '') + '>' + it.label + '</a>';
     }).join('');
+    var per = PERIODS.map(function (p) {
+      var tip = p.name + ' · ' + p.months + (p.state === 'done' ? ' · ' + t('terminé') : p.id === CURRENT ? ' · ' + t('en cours') : '');
+      return '<a href="' + url(sharedPath('index.html', p.id)) + '" data-period="' + p.id + '"' + (p.id === PERIOD ? ' aria-current="true"' : '') +
+        ' title="' + util.esc(tip) + '" aria-label="' + util.esc(tip) + '">' + p.short + '</a>';
+    }).join('');
     var lang = ['fr', 'en'].map(function (l) {
       return '<a href="' + twin(l) + '" hreflang="' + l + '" lang="' + l + '" data-lang="' + l + '"' + (l === LANG ? ' aria-current="true"' : '') +
         ' title="' + (l === 'fr' ? 'Lire en français' : 'Read in English') + '">' + l.toUpperCase() + '</a>';
@@ -403,7 +473,8 @@
     host.className = 'shell';
     host.innerHTML =
       '<div class="shell-in">' +
-      '<a class="shell-brand" href="' + url('index.html') + '"><span class="shell-mark" aria-hidden="true">S1</span><span class="shell-name">' + t('Révisions') + '</span></a>' +
+      '<a class="shell-brand" href="' + url(sharedPath('index.html')) + '"><span class="shell-mark" aria-hidden="true">S1</span><span class="shell-name">' + t('Révisions') + '</span></a>' +
+      '<div class="shell-period" role="group" aria-label="' + t('Bimestre') + '">' + per + '</div>' +
       '<nav class="shell-nav" id="shell-nav" aria-label="' + t('Navigation principale') + '">' + links + '</nav>' +
       '<div class="shell-tools">' +
       '<div class="shell-lang" role="group" aria-label="Langue · Language">' + lang + '</div>' +
@@ -448,23 +519,24 @@
     var b = document.body; if (!b || !b.hasAttribute('data-resume')) return;
     var cur = here().replace(/\.en\.html$/i, '.html'); if (!cur) return;
     var d = load();
-    d.last = { href: cur, title: b.getAttribute('data-resume') || document.title, t: Date.now() };
+    d.last = { href: cur, title: b.getAttribute('data-resume') || document.title, t: Date.now(), period: PERIOD };
     save();
   }
 
-  /* ---------- page anglaise : liens internes vers les pages anglaises ---------- */
+  /* ---------- liens internes : jumelle anglaise (page anglaise), bimestre de la page (pages communes) ---------- */
+  function fixHref(h) { var n = periodHref(h); return LANG === 'en' ? enHref(n) : n; }
   function localizeLinks(root) {
-    if (LANG !== 'en' || !root || root.nodeType !== 1) return;
+    if (!root || root.nodeType !== 1) return;
     var list = root.matches && root.matches('a[href]') ? [root] : [];
     list = list.concat(util.$$('a[href]', root));
     list.forEach(function (a) {
-      if (a.hasAttribute('hreflang')) return;
-      var h = a.getAttribute('href'), n = enHref(h);
+      if (a.hasAttribute('hreflang') || a.hasAttribute('data-period')) return;
+      var h = a.getAttribute('href'), n = fixHref(h);
       if (n !== h) a.setAttribute('href', n);
     });
   }
   function watchLinks() {
-    if (LANG !== 'en') return;
+    /* toujours actif : liens à ancre vers les pages communes, jumelles anglaises */
     localizeLinks(document.body);
     if (window.MutationObserver) new MutationObserver(function (list) {
       for (var i = 0; i < list.length; i++) for (var j = 0; j < list[i].addedNodes.length; j++) localizeLinks(list[i].addedNodes[j]);
@@ -472,7 +544,7 @@
     /* filet de sécurité : un lien dont l'adresse a été changée après coup */
     document.addEventListener('click', function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-      if (a && !a.hasAttribute('hreflang')) { var h = a.getAttribute('href'), n = enHref(h); if (n !== h) a.setAttribute('href', n); }
+      if (a && !a.hasAttribute('hreflang') && !a.hasAttribute('data-period')) { var h = a.getAttribute('href'), n = fixHref(h); if (n !== h) a.setAttribute('href', n); }
     }, true);
   }
 
@@ -498,6 +570,7 @@
     root: ROOT, lang: LANG, t: t, i18n: i18n,
     url: url,
     subjects: SUBJECTS, subject: subject,
+    periods: PERIODS, period: PERIOD, currentPeriod: CURRENT, periodInfo: periodInfo, periodSubjects: periodSubjects, sharedPath: sharedPath,
     store: { load: load, save: save, update: update, on: function (f) { listeners.push(f); } },
     progress: progress, qcm: qcm, exo: exo, exams: exams, theme: theme, util: util,
     wireDoneButtons: wireDoneButtons

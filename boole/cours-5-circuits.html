@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Problèmes et circuits · Archi B2</title>
+<meta name="description" content="Archi B2, chapitre 5 : résoudre un problème de logique combinatoire (pétrolier, cuve, réservoirs, transcodeurs BCD et Aiken), additionneur, comparateur, décodeur, multiplexeur et démultiplexeur, avec des circuits cliquables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapitre 5 : problèmes et circuits">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Algèbre de Boole</b> — fiche 5 sur 5</span><span>Source : chapitre 1 « Logique combinatoire », § IV et V (D. Bouchet) · sujets 2014 à 2026</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="5"></span><a href="index.html">Archi B2</a> · Chapitre 5 sur 5</div>
+      <h1>De l’énoncé <span class="w">au circuit.</span></h1>
+      <p class="lead">Un énoncé en français, une table de vérité, un tableau de Karnaugh, un schéma : la méthode de tous les problèmes des sujets. Puis les circuits combinatoires classiques du cours : additionneur, comparateur, décodeur, multiplexeur et démultiplexeur.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 8, avec circuits cliquables</span></li>
+        <li><span><span class="k">Cours</span> chapitre 1, § IV et V</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un problème à chaque sujet</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="schema" data-opts='{"w":420,"h":130,"live":true,"title":"Le circuit du pétrolier","inputs":[{"id":"A","x":26,"y2":110},{"id":"B","x":54,"y2":110},{"id":"C","x":82,"y2":110}],"gates":[{"id":"x","type":"xnor","x":180,"y":38,"in":["A","C"]}],"outputs":[{"from":"x","label":"V","x":320}]}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Le pétrolier du cours : clique sur A, B, C. Le voyant s’allume quand les soutes a et c sont dans le même état.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 5 · Problèmes et circuits</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>De l’énoncé au circuit</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>Cas impossibles</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Transcodeurs</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>Additionneur</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Comparateur</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Décodeur</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Multiplexeur</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Démultiplexeur</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque partie porte un repère de composant, comme sur un schéma : U1, U2… Une coche apparaît quand tu marques une partie comme comprise.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Archi B2</a><a href="cours-4-karnaugh.html">← Chapitre 4 : les tableaux de Karnaugh</a><a href="methodes.html">Les méthodes d’examen →</a><a href="../qcm/index.html#boole">QCM d’algèbre de Boole</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du chapitre</summary><ol>
+      <li><a href="#s1">De l’énoncé au circuit</a></li><li><a href="#s2">Cas impossibles</a></li><li><a href="#s3">Transcodeurs</a></li><li><a href="#s4">Additionneur</a></li><li><a href="#s5">Comparateur</a></li><li><a href="#s6">Décodeur</a></li><li><a href="#s7">Multiplexeur</a></li><li><a href="#s8">Démultiplexeur</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Partie 1 <span class="ref">cours § IV</span></div><h2>De l’énoncé au circuit</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un problème de logique combinatoire se résout toujours dans le même ordre :</p></div>
+        <ol class="steps">
+          <li><div><p><b>Coder</b> les entrées et les sorties : que veut dire 1 pour chaque variable ?</p></div></li>
+          <li><div><p>Écrire la <b>table de vérité</b> de chaque sortie, ligne par ligne, en relisant l’énoncé.</p></div></li>
+          <li><div><p><b>Simplifier</b> chaque sortie (tableau de Karnaugh), puis éventuellement avec le OU exclusif.</p></div></li>
+          <li><div><p><b>Dessiner</b> le circuit à partir de l’expression la plus simple.</p></div></li>
+        </ol>
+        <div class="prose">
+          <p><b>L’exemple du cours : les soutes d’un pétrolier.</b> La cale a trois soutes <var>a</var>, <var>b</var>, <var>c</var>, avec un capteur chacune : <var>A</var> = 1 si la soute <var>a</var> est pleine (de même <var>B</var>, <var>C</var>). Un voyant <var>V</var> s’allume (<var>V</var> = 1) si l’assiette du bateau est correcte : les trois soutes pleines, ou les trois vides, ou <var>b</var> pleine et les autres vides, ou <var>b</var> vide et les autres pleines.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"V":[1,0,1,0,0,1,0,1]},"hl":[0,2,5,7],"title":"Une ligne par cas de l’énoncé : 000, 010, 101, 111"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,2,5,7],"name":"V","xor":"~(A ^ C)","title":"V = ~A.~C + A.C"}'></div>
+<div data-boole="schema" data-opts='{"w":420,"h":130,"live":true,"title":"Le circuit du pétrolier","inputs":[{"id":"A","x":26,"y2":110},{"id":"B","x":54,"y2":110},{"id":"C","x":82,"y2":110}],"gates":[{"id":"x","type":"xnor","x":180,"y":38,"in":["A","C"]}],"outputs":[{"from":"x","label":"V","x":320}]}'></div>
+        <div class="prose"><p>Une seule porte NON-OU exclusif suffit, et <var>B</var> n’est relié à rien : l’assiette ne dépend pas de la soute du milieu. La table le disait déjà, puisque <var>V</var> = 1 exactement quand <var>A</var> = <var>C</var>.</p></div>
+        <div class="note trap"><span class="tag">Piège : traduire mot à mot</span>
+          <p>Ne cherche pas à écrire l’équation directement depuis la phrase : passe par la table. Ici, « <var>b</var> pleine et les autres vides » donne une ligne (010), pas une équation.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Partie 2 <span class="ref">examens 2024-2025, 2025-2026</span></div><h2>Les cas impossibles : Φ</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Quand l’énoncé contient des capteurs, certaines combinaisons ne peuvent pas arriver : elles signalent un <b>défaut</b>, ou bien la sortie y est <b>indéfinie</b> (Φ). Lis bien laquelle des deux l’énoncé demande.</p>
+          <p><b>La cuve de l’examen 2025-2026.</b> Une cuve de 1 000 L a trois capteurs : <var>C1</var> à 250 L, <var>C2</var> à 500 L, <var>C3</var> à 750 L (1 = immergé). Les voyants <var>L1</var> à <var>L4</var> indiquent le niveau (<var>L1</var> : moins de 250 L… <var>L4</var> : 750 L ou plus) ; <var>L0</var> s’allume en cas de défaut, et les autres s’éteignent.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["C3","C2","C1"],"cols":{"L1":[1,0,0,0,0,0,0,0],"L2":[0,1,0,0,0,0,0,0],"L3":[0,0,0,1,0,0,0,0],"L4":[0,0,0,0,0,0,0,1],"L0":[0,0,1,0,1,1,1,0]},"title":"Un capteur immergé au-dessus d’un capteur sec : défaut"}'></div>
+        <div class="prose">
+          <p>Seules quatre combinaisons sont possibles : 000, 001, 011, 111 (un capteur n’est immergé que si ceux du dessous le sont). Chacune allume un seul voyant de niveau : <span class="bx">L1 = ~C3.~C2.~C1</span>, <span class="bx">L2 = ~C3.~C2.C1</span>, <span class="bx">L3 = ~C3.C2.C1</span>, <span class="bx">L4 = C3.C2.C1</span>, sans tableau de Karnaugh (le sujet le précise). Les quatre autres combinaisons allument <var>L0</var> :</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["C3","C2","C1"],"rows":1,"ones":[2,4,5,6],"name":"L0","title":"L0 = C3.~C2 + C2.~C1"}'></div>
+        <div class="prose">
+          <p><b>Les réservoirs de l’examen 2024-2025.</b> Deux réservoirs ont chacun un détecteur haut (<var>A</var>, <var>B</var>) et un détecteur bas (<var>C</var>, <var>D</var>). Un détecteur haut immergé avec le bas à sec est impossible : le sujet demande d’y mettre Φ. Avec <var>V1</var> = 1 si les deux réservoirs sont pleins et <var>V2</var> = 1 s’ils sont vides, les Φ donnent <span class="bx">V1 = A.B</span>, <span class="bx">V2 = ~C.~D</span> et <span class="bx">V3 = ~A.D + ~B.C</span> (sujet sans corrigé : réponses calculées par le site).</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : défaut ou indéfini</span>
+          <p>Dans la cuve, les combinaisons impossibles ne sont pas des Φ : elles <b>définissent</b> <var>L0</var> = 1 et éteignent <var>L1</var> à <var>L4</var> (0). Dans les réservoirs, ce sont des Φ. Mettre Φ dans la cuve donnerait de faux tableaux.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Partie 3 <span class="ref">examens 2016-2023</span></div><h2>Les transcodeurs</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>transcodeur</b> traduit un nombre d’un code dans un autre. Les sujets en ont donné plusieurs : <b>multiplier par 4 un chiffre BCD</b> (2017-2018, et la même table en 2022-2023), <b>multiplier par 3</b> (juin 2018), <b>passer du binaire naturel au code Aiken</b> (2016-2017 et 2020-2021).</p>
+          <p>Le BCD code chaque chiffre décimal sur 4 bits : l’entrée <var>N</var> = <var>DCBA</var> va de 0 à 9. Les combinaisons 10 à 15 n’existent pas : <b>Φ</b> partout. Le résultat 4 × <var>N</var> s’écrit en BCD sur deux chiffres, <var>H’G’F’E’</var> (dizaines) et <var>D’C’B’A’</var> (unités).</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["D","C","B","A"],"cols":{"F&#39;":[0,0,0,0,0,1,1,1,1,1,"x","x","x","x","x","x"],"E&#39;":[0,0,0,1,1,0,0,0,1,1,"x","x","x","x","x","x"],"D&#39;":[0,0,1,0,0,0,0,1,0,0,"x","x","x","x","x","x"],"C&#39;":[0,1,0,0,1,0,1,0,0,1,"x","x","x","x","x","x"]},"title":"4 × N en BCD : les quatre sorties non évidentes"}'></div>
+        <div class="note keep"><span class="tag">Les solutions évidentes</span>
+          <p>4 × 9 = 36 : le chiffre des dizaines ne dépasse jamais 3, donc <span class="bx">H’ = G’ = 0</span> ; un multiple de 4 est pair, donc <span class="bx">A’ = 0</span>. Le sujet le dit : « trois solutions sont évidentes et ne nécessitent pas de tableaux de Karnaugh ». Une solution évidente n’a aucune opération hormis le complément (<span class="bx">A’ = 1</span>, <span class="bx">A’ = ~A</span>). Ici aussi <span class="bx">B’ = E’</span> : les unités 2 ou 6 vont avec les dizaines impaires.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[5,6,7,8,9],"dc":[10,11,12,13,14,15],"name":"F&#39;","title":"F’ = D + C.A + C.B (2017-2018)"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,7],"dc":[10,11,12,13,14,15],"name":"D&#39;","xor":"B.~(C ^ A)","title":"D’ = C.B.A + ~C.B.~A, puis avec OU exclusif"}'></div>
+        <div class="note trap"><span class="tag">Piège : les Φ du BCD</span>
+          <p>Les six dernières cases (10 à 15) sont des Φ : ne les laisse pas à 0. Elles permettent par exemple le grand cercle <var>D</var> (8 cases, lignes <var>DC</var> = 11 et 10).</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Partie 4 <span class="ref">cours § V.1</span></div><h2>L’additionneur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>additionneur</b> additionne deux nombres binaires. Sur <var>n</var> bits, il a deux entrées parallèles <var>A</var> et <var>B</var>, une <b>retenue d’entrée</b> <var>Cin</var>, une sortie <var>S</var> sur <var>n</var> bits et une <b>retenue de sortie</b> <var>Cout</var>. <var>A0</var>, <var>B0</var>, <var>S0</var> sont les bits de poids faible.</p>
+          <p>Exemple du cours sur 4 bits : <var>A</var> = 1010, <var>B</var> = 1100, <var>Cin</var> = 1 donne 1 + 1010 + 1100 = 10111, soit <var>S</var> = 0111 et <var>Cout</var> = 1.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"adder","n":4}'></div>
+        <div class="prose">
+          <p><b>L’additionneur 2 bits (juin 2018).</b> Deux nombres <var>A</var> = <var>A1</var><var>A0</var> et <var>B</var> = <var>B1</var><var>B0</var>, une somme <var>S</var> = <var>S1</var><var>S0</var> et une retenue <var>R</var>, sans retenue d’entrée. La table a 16 lignes ; Karnaugh puis le OU exclusif donnent :</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">S0 = ~B0.A0 + B0.~A0 = B0 ^ A0</span></span></div><div><span><span class="bx">R = B1.A1 + B1.B0.A0 + B0.A1.A0</span></span></div><div><span><span class="bx">S1 = A1 ^ B1 ^ (A0.B0)</span></span><span class="why-r">question bonus</span></div></div>
+        <div class="note keep"><span class="tag">Pour s’en souvenir</span>
+          <p>Le bit de poids faible d’une somme est un OU exclusif (1 + 1 = 10 : le bit vaut 0). La retenue vaut 1 quand au moins deux des bits ajoutés valent 1. <var>S1</var> ajoute <var>A1</var>, <var>B1</var> et la retenue du rang 0, qui est <span class="bx">A0.B0</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : OU et addition</span>
+          <p>L’addition n’est pas le OU : 1 + 1 donne 0 avec une retenue de 1. C’est pour cela que la somme d’un rang est un OU exclusif et la retenue un ET.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Partie 5 <span class="ref">cours § V.2</span></div><h2>Le comparateur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>comparateur</b> compare deux nombres <var>A</var> et <var>B</var> de <var>n</var> bits. Il a trois sorties : <span class="mono">'A &gt; B'</span>, <span class="mono">'A = B'</span> et <span class="mono">'A &lt; B'</span>, dont une seule vaut 1. Exemples du cours : <var>A</var> = 0110, <var>B</var> = 0011 donne <span class="mono">'A &gt; B'</span> = 1 ; <var>A</var> = <var>B</var> = 0110 donne <span class="mono">'A = B'</span> = 1 ; <var>A</var> = 0110, <var>B</var> = 1110 donne <span class="mono">'A &lt; B'</span> = 1.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"comparator","n":4}'></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Sur 1 bit (examen 2023-2024)</span>
+            <p><span class="bx">A.~B</span> pour <span class="mono">'A &gt; B'</span></p><p><span class="bx">~(A ^ B)</span> pour <span class="mono">'A = B'</span></p><p><span class="bx">~A.B</span> pour <span class="mono">'A &lt; B'</span></p></div>
+          <div class="card"><span class="k">Sur 2 bits (2014-2015, 2019-2020)</span>
+            <p><span class="bx">A1.~B1 + A0.~B1.~B0 + A1.A0.~B0</span></p><p><span class="bx">~(A0 ^ B0).~(A1 ^ B1)</span></p><p><span class="bx">~A1.B1 + ~A1.~A0.B0 + ~A0.B1.B0</span></p></div>
+        </div>
+        <div class="prose">
+          <p>Sur 2 bits, <span class="mono">'A = B'</span> se trouve sans tableau : les deux nombres sont égaux si leurs bits de poids fort sont égaux <b>et</b> leurs bits de poids faible aussi. Le sujet de 2019-2020 le demandait ainsi (« sans l’aide de tableaux de Karnaugh […] à l’aide de l’opérateur OU EXCLUSIF »). Les deux autres sorties demandent un tableau 4 × 4 (lignes <var>A1 A0</var>, colonnes <var>B1 B0</var>).</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A1","A0","B1","B0"],"rows":2,"ones":[4,8,9,12,13,14],"name":"A>B","title":"&#39;A > B&#39; sur 2 bits"}'></div>
+        <div class="note trap"><span class="tag">Piège : l’ordre des variables</span>
+          <p>Le sujet de 2019-2020 met <var>A1 A0</var> en lignes et <var>B1 B0</var> en colonnes. Avec un autre ordre, les numéros des cases changent : recopie toujours l’en-tête du sujet.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Partie 6 <span class="ref">cours § V.3</span></div><h2>Le décodeur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>décodeur</b> détecte quel nombre est présent sur ses entrées. Avec une entrée parallèle de <var>n</var> bits, il a <b>2<sup><var>n</var></sup> sorties</b> : la sortie <var>Qk</var> vaut 1 quand le nombre <var>k</var> est sur l’entrée, toutes les autres valent 0. Exemple du cours : le décodeur <b>1 parmi 8</b> (3 lignes d’entrée <var>A2 A1 A0</var>, 8 lignes de sortie).</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"decoder","n":3}'></div>
+        <div class="note keep"><span class="tag">Chaque sortie est un minterme</span>
+          <p><var>Qk</var> vaut 1 sur une seule ligne de la table : c’est le minterme numéro <var>k</var> des entrées. <span class="bx">Q0 = ~A2.~A1.~A0</span>, <span class="bx">Q5 = A2.~A1.A0</span>, <span class="bx">Q7 = A2.A1.A0</span>. Un décodeur se câble donc avec 8 portes ET à 3 entrées et des inverseurs.</p>
+        </div>
+        <div class="prose"><p>Le plan du cours cite l’<b>adressage d’une mémoire</b> comme application : un décodeur choisit, à partir d’une adresse, la seule case (ou le seul boîtier) à activer.</p></div>
+        <div class="note trap"><span class="tag">Piège : 2<sup><var>n</var></sup>, pas 2<var>n</var></span>
+          <p>3 entrées donnent 8 sorties, 4 entrées en donnent 16. Un décodeur « 1 parmi 8 » a 3 entrées.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Partie 7 <span class="ref">cours § V.4</span></div><h2>Le multiplexeur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Un <b>multiplexeur</b> envoie sur une seule ligne de sortie l’information de l’une de ses entrées de donnée. Il a une entrée de <b>sélection</b> sur <var>n</var> bits, <b>2<sup><var>n</var></sup> entrées de donnée</b> et une sortie : la sélection <var>S</var> choisit le bit de donnée <var>DS</var> recopié sur <var>Q</var>. Exemple du cours : le multiplexeur <b>8 vers 1</b> (3 lignes de sélection).</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"mux","n":3}'></div>
+        <div class="calc"><div><span><span class="bx">Q = ~S2.~S1.~S0.D0 + ~S2.~S1.S0.D1 + ~S2.S1.~S0.D2 + ~S2.S1.S0.D3 + S2.~S1.~S0.D4 + S2.~S1.S0.D5 + S2.S1.~S0.D6 + S2.S1.S0.D7</span></span></div></div>
+        <div class="prose">
+          <p><b>À quoi il sert.</b> Dans un ordinateur, les données circulent par paquets de bits en parallèle (8, 16, 32 ou 64 fils). Pour parler à un périphérique (imprimante, appareil photo), un câble de 64 fils serait peu pratique : un multiplexeur transforme la liaison <b>parallèle</b> en liaison <b>série</b>, un bit après l’autre sur un seul fil, en faisant défiler la sélection. L’USB (<i>Universal Serial Bus</i>) est une liaison série.</p>
+        </div>
+        <div class="note trap"><span class="tag">Piège : sélection et donnée</span>
+          <p>Les bits de sélection ne sont pas recopiés : ils choisissent. Avec <var>S</var> = 101, <var>Q</var> recopie <var>D5</var>, quelle que soit la valeur des sept autres entrées.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Partie 8 <span class="ref">cours § V.5</span></div><h2>Le démultiplexeur</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Le <b>démultiplexeur</b> fait l’inverse : il distribue une ligne d’entrée <var>D</var> sur l’une de ses <b>2<sup><var>n</var></sup> sorties</b>, choisie par la sélection <var>S</var> sur <var>n</var> bits. La sortie choisie recopie <var>D</var>, les autres valent 0. Exemple du cours : le démultiplexeur <b>1 parmi 8</b>.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"demux","n":3}'></div>
+        <div class="note keep"><span class="tag">Remarque du cours</span>
+          <p>Si l’entrée <var>D</var> est toujours à 1, un démultiplexeur se comporte comme un <b>décodeur</b> : la sortie numéro <var>S</var> vaut 1, les autres 0. Chaque sortie s’écrit <span class="bx">Qk = (minterme k).D</span>, par exemple <span class="bx">Q5 = S2.~S1.S0.D</span>.</p>
+        </div>
+        <div class="note exam"><span class="tag">À l’examen</span>
+          <ul>
+            <li>Les sujets de 2014 à 2026 ne demandent jamais de câbler un décodeur, un multiplexeur ou un démultiplexeur. L’additionneur et le comparateur y apparaissent comme <b>problèmes</b> sur 1 ou 2 bits (table de vérité, Karnaugh, expressions).</li>
+            <li>Presque chaque sujet a un problème à mettre en équations (2 à 9 points) : coffre à clés, cuve, réservoirs, transcodeurs BCD et Aiken, additionneur ou comparateur. Exceptions : 2021-2022 n’en a pas, et en 2022-2023 la table de vérité était donnée.</li>
+          </ul>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="boole:circuits:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tu as vu tout le chapitre 1 du cours. Pour t’entraîner : les <a href="methodes.html">méthodes d’examen</a>, puis les <a href="entrainement.html">exercices du TD et des sujets</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

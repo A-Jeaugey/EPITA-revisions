@@ -65,6 +65,10 @@
 .kpi span{font-size:.76rem;color:var(--muted);line-height:1.25}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.88rem}
 .empty{color:var(--muted);font-size:.95rem;padding:.4rem 0}
+/* expressions d’algèbre de Boole (assets/js/boole.js) : barres empilables, ⊕ */
+.bx{font-family:var(--font-mono,ui-monospace,monospace);white-space:nowrap;letter-spacing:0}
+.ov{display:inline-block;border-top:.085em solid currentColor;padding-top:.08em;line-height:1.05}
+.xo{padding:0 .05em}
 </style>
 </head>
 <body data-resume="QCM">
@@ -148,12 +152,17 @@
 <script src="../data/qcm/maths.js"></script>
 <script src="../data/qcm/maths-annales.js"></script>
 <script src="../data/qcm/piloter.js"></script>
+<script src="../data/qcm/boole.js"></script>
 <script src="../assets/js/caml.js"></script>
+<script src="../assets/js/boole.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
   var BANK = R.quiz.bank(); /* dédoublonnée : voir qcm-engine.js */
-  var subjects = R.subjects.filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
+  /* matières du bimestre de la page (REV.period) qui ont des questions */
+  var subjects = R.periodSubjects().filter(function (s) { return BANK.some(function (q) { return q.s === s.id; }); });
+  $('.top .eyebrow').textContent = 'QCM · ' + R.periodInfo(R.period).name.toLowerCase();
+  if (!subjects.length) { $('#setup').innerHTML = '<p class="empty">Aucune matière de ce bimestre n’a encore de questions. Elles arrivent avec les cours ; celles du bimestre 1 sont dans l’onglet B1.</p>'; $('.side').hidden = true; return; }
   var st = { subj: subjects.length ? subjects[0].id : null, topics: null, mode: 'train', n: 10, srcs: null, exam: null };
   var SRC = [{ id: 'cours', t: 'Cours', test: /^[a-z]+-c\d/ }, { id: 'partiel', t: 'Partiels', test: /^[a-z]+-p20\d\d[a-z]?-/ }, { id: 'hebdo', t: 'QCM hebdo', test: /^[a-z]+-mcq/ }, { id: 'td', t: 'TD', test: /^[a-z]+-td/ }];
   function srcOf(id) { for (var i = 0; i < SRC.length; i++) if (SRC[i].test.test(id)) return SRC[i].id; return 'cours'; }
