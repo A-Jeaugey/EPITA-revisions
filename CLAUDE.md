@@ -3,6 +3,25 @@
 Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/JS, **aucun build**, compatible
 `file://` (scripts classiques, pas de modules ES ni de `fetch` de données) et GitHub Pages (chemins relatifs).
 
+## Deux bimestres : B1 (terminé) et B2 (en cours)
+
+- Les partiels du B1 sont passés (semaine du 26 octobre 2026). Le site sert maintenant au **B2**, rempli **au fur et à
+  mesure** que l'élève fournit les cours : chaque ajout s'intègre à ce qui existe sans coupure (quitte à refaire un
+  chapitre ou la matière), pour qu'en fin de bimestre la matière soit aussi complète que celles du B1.
+- `core.js` : `PERIODS` (b1 : terminé, b2 : en cours), `CURRENT = 'b2'` ; chaque matière de `SUBJECTS` a `period`.
+  Une matière n'appartient qu'à un bimestre : une matière du B2 qui a déjà existé au B1 (l'archi) a son **propre id et
+  son propre dossier** (`boole/`), les dossiers du B1 ne bougent pas (liens et progression conservés).
+- `REV.period()` : bimestre de la page (dossier de la matière, sinon `?b=b1`, sinon l'ancre `#<matière>` ou
+  `#<matière>-<sujet>`, sinon `CURRENT`). Les pages partagées (`index`, `qcm/`, `annales/`, `fiches/`) montrent les
+  matières du bimestre (`REV.periodSubjects()`) ; un lien vers elles reçoit `?b=…` hors du bimestre courant
+  (`periodHref`, appliqué à tous les liens). Barre de navigation : pastille B1 | B2 (`.shell-period`).
+  Aussi exportés : `REV.periods`, `currentPeriod`, `periodInfo`, `sharedPath`.
+- Accueil : logique dans `assets/js/hub.js` (titres, cartes des deux bimestres `#periods`, compte à rebours, reprise,
+  matières, outils). Annales : en B1 les partiels (`ANNALES.midterms`), en B2 les examens finaux et rattrapages
+  (`ANNALES.finals`, `retakes`) et les sujets du Moodle (`BOOLE_EXAMS`, `moodle: true`).
+- **Nouveau document du Moodle** : l'intégrer dans la matière (fiche de cours, exercices, QCM, accueil de la matière :
+  journal « Ce que le Moodle a publié » de `boole/index.html`), en FR et EN, puis tout revérifier.
+
 ## Architecture
 
 - Chaque page charge `assets/css/shell.css` puis sa propre feuille, et `assets/js/core.js` **dans le `<head>`**
@@ -150,22 +169,46 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   `piloter.css` (paperboard d'atelier) ; QCM `data/qcm/piloter.js` (`pil-mt-NN`, `pil-gg-NN`, mises en situation, `ref` vers
   `piloter/index.html#mtN|ggN`). Examen : deux QCM de 40 questions sans point négatif, jeudi 29 octobre (14 h 15, 15 h 30).
   Supports des ateliers 5 (24 octobre) intégrés : gg5 = décision commune, biais de groupe, RACI (sans corrigé : exemples du site).
+- **Archi B2 · Algèbre de Boole** (id `boole`, dossier `boole/`, thème `boole.css` : feuille de schéma électronique,
+  IBM Plex ; sombre = analyseur logique) : cours `boole/cours-1-portes`, `-2-algebre`, `-3-formes`, `-4-karnaugh`,
+  `-5-circuits` = chapitre 1 « Logique combinatoire » du Moodle en entier (`data-done="boole:<chapitre>:sN"`, chapitres
+  portes 8, algebre 9, formes 8, karnaugh 8, circuits 8 ; pages 1 à 18 du chapitre = fiches 1 à 3) ; `methodes`,
+  `entrainement` (fiches + générateurs : simplifier, formes canoniques, Karnaugh avec Φ), `annales`, `fiche`.
+  Moteur et outils `assets/js/boole.js` (API en tête) : expressions en notation source `~A`, `.`, `+`, `^` dans
+  `<span class="bx">`, réécrites avec des barres empilables (`.ov`) ; Quine-McCluskey exact avec cases indéfinies ;
+  `<div data-boole="kmap|truth|gate|schema|check|simplifier|block" data-opts='{…}'>`. Exercices `window.BOOLE_EX` :
+  `data/boole/ex-annales.js` (30 fiches, ids `pAAAA-exN`, `rAAAA-exN` rattrapages, `p2018j` = juin 2018 S1# ; un
+  exercice retombé tel quel n'a qu'une fiche ; aides d'écriture `window.BOOLE_K`), `ex-td.js` (TD 1 : `td1-ex1`,
+  `td1-ex2`, `td1-ex3a`, `td1-ex3b`, sans corrigé publié) ; sujets `BOOLE_EXAMS` et notions `BOOLE_TOPICS`
+  (`data/boole/exams.js`) ; QCM `data/qcm/boole.js` (`boole-cN-NN`, **généré** par un script Python qui vérifie
+  chaque réponse par table de vérité ; balisage `{{expression}}`). La page QCM charge `boole.js` pour les barres.
+  **Tout résultat est vérifié par programme** (tables de vérité, simplification exacte ; les égalités `bx` et les
+  chaînes `.calc` des pages sont relues par script). Points vérifiés : 13 sujets retrouvés (Epidocs `S1/Finals/Archi/
+  <promo>` : l'examen de fin de S1 est dans l'année promo − 5 / promo − 4 ; le dossier 2023 copie 2019-2020) ; jusqu'en
+  2022-2023, exercices 1-2 de numération (B1, `prog: false`) ; depuis 2023 l'examen est 100 % Boole, toujours
+  simplifier sans parenthèses, formes canoniques, Karnaugh avec Φ, problème (+ comparateur 1 bit en 2023, portes NON-ET
+  en 2025) ; les cases Φ ne sont pas dans le chapitre mais à 11 sujets sur 13 ; le TD 1 retombe tel quel (S2, S5, S7 à
+  l'examen 2025-2026, S6 en 2016-2017, ex. 3.2 S1 en 2023-2024) ; décodeur, multiplexeur, démultiplexeur jamais tombés ;
+  toutes les réponses des corrigés sont justes (coquille du rattrapage 2017-2018 : « Y = B̄.D̄ – B.C » pour « + ») ;
+  2024-2025 sans corrigé. Évaluation : QCM en ligne 10 %, examen 90 % (date à venir).
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
-  d’Epidocs/Past-Exams.
+  d’Epidocs/Past-Exams : `midterms` (B1), `finals` et `retakes` (B2).
 - **QCM hebdo d’élec** : `data/qcm/elec-hebdo.js` est généré par `python3 tools/gen_hebdo.py` depuis les banques
   `tools/src/elec_mcq_bank*.json` (promos 2021 à 2030) ; corriger une question dans le JSON puis regénérer.
 
 ## Ajouter une matière
 
-1. Ajouter/compléter son entrée dans `SUBJECTS` (`assets/js/core.js`) avec `status:'ready'`, son chemin et ses
-   chapitres (`sections` = nombre de parties avec un bouton « J’ai compris »).
+1. Ajouter/compléter son entrée dans `SUBJECTS` (`assets/js/core.js`) avec `status:'ready'`, son `period`, son chemin
+   et ses chapitres (`sections` = nombre de parties avec un bouton « J’ai compris »), et sa jumelle anglaise (`SUBJECTS_EN`).
 2. Créer son dossier (`maths/`, …) avec **sa propre identité visuelle** (une feuille `assets/css/<matière>.css`
    avec le même jeu de jetons que `elec.css` : `--bg --surface --ink --muted --line --accent --ok --bad …`,
    versions claire et sombre). Chaque matière doit avoir un style à elle.
 3. Banque de QCM `data/qcm/<matière>.js` + l’ajouter aux `<script>` de `qcm/index.html` et `index.html`.
 4. Fiche : ajouter l’entrée dans `fiches/index.html`.
+5. Ajouter son dossier à `tools/check_i18n.js` et `tools/artifact_entry.py`, sa couleur `--s-<id>` (`site.css`) et
+   `.subj-<id>` (`index.html`), et ses scripts de données aux pages d’accueil (FR et EN).
 
 ## Rédaction
 
