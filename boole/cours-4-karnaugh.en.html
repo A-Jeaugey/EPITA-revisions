@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karnaugh maps · Archi B2</title>
+<meta name="description" content="Archi B2, chapter 4: Karnaugh maps with 2, 3 and 4 variables, Gray code, cell numbers, grouping rules, reading a group, adjacent edges, undefined cells, the exam method, with clickable maps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapter 4: Karnaugh maps">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Boolean algebra</b> — sheet 4 of 5</span><span>Source: chapter 1 “Combinational Logic”, § III.6 (D. Bouchet) · papers 2014 to 2026</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="4"></span><a href="index.html">Archi B2</a> · Chapter 4 of 5</div>
+      <h1>Simplify <span class="w">without calculating.</span></h1>
+      <p class="lead">A Karnaugh map arranges the truth table so that the terms that simplify together are neighbours. You circle groups of 1s and read one product per circle: the simplest form appears without a line of algebra.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with clickable maps</span></li>
+        <li><span><span class="k">Course</span> chapter 1, § III.6</span></li>
+        <li class="ex"><span><span class="k">Exam</span> Karnaugh: 5 or 6 points, every paper</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[3,5,7,10,13,15],"name":"S2","title":"2025-2026 exam: S2","steps":false}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — The groups and the expression are computed: each group has its own colour, and the Φ cells are used to enlarge the groups.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 4 · Karnaugh maps</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>The Karnaugh map</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>Numbering the cells</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Grouping the 1s</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>Reading a group</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>The edges touch</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Undefined cells Φ</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Filling in from N</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Karnaugh in the exam</span></a></li>
+    </ol>
+    <p class="toc-note">Each part carries a component marker, as on a schematic: U1, U2… A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi B2 home</a><a href="cours-3-formes.html">← Chapter 3: canonical forms</a><a href="cours-5-circuits.html">Chapter 5: problems and circuits →</a><a href="../qcm/index.html#boole">Boolean algebra quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">The Karnaugh map</a></li><li><a href="#s2">Numbering the cells</a></li><li><a href="#s3">Grouping the 1s</a></li><li><a href="#s4">Reading a group</a></li><li><a href="#s5">The edges touch</a></li><li><a href="#s6">Undefined cells Φ</a></li><li><a href="#s7">Filling in from N</a></li><li><a href="#s8">Karnaugh in the exam</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Part 1 <span class="ref">course § III.6.1</span></div><h2>From the truth table to the Karnaugh map</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>Karnaugh map</b> is another way to draw a truth table: a grid with one cell per row of the table, so <b>2<sup><var>n</var></sup> cells</b> for <var>n</var> inputs. It is a <b>graphical</b> simplification method: you see at a glance which terms combine.</p>
+          <p>With three inputs <var>A</var>, <var>B</var>, <var>C</var>: eight cells, in two rows (<var>A</var> = 0, <var>A</var> = 1) and four columns (<var>BC</var> = 00, 01, 11, 10).</p>
+        </div>
+        <div class="grid2">
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"X":[1,1,0,1,0,1,1,1]},"title":"The truth table of the course"}'></div>
+<div data-boole="kmap" data-opts='{"circles":false,"title":"The same X as a Karnaugh map","vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        </div>
+        <div class="note keep"><span class="tag">The Gray code</span>
+          <p>The columns are not in the order 00, 01, 10, 11 but in the order <b>00, 01, 11, 10</b>: the <b>Gray code</b>, where only <b>one bit changes</b> from one column to the next. That is the whole secret of the map: two neighbouring cells differ by only one variable.</p>
+        </div>
+        <div class="prose">
+          <p>Each cell contains the value of the output for its row and its column. The top-left cell gives <var>X</var> for <var>A</var> = <var>B</var> = <var>C</var> = 0; the bottom-right cell gives <var>X</var> for <var>A</var> = <var>B</var> = 1 and <var>C</var> = 0.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: copying in the order of the table</span>
+          <p>The truth table is in the order 000, 001, 010, 011; the map is in the order 00, 01, <b>11, 10</b>. The last two columns are “crossed”: rows 010 and 011 of the table go into columns 10 and 11. If you fill the map row by row from the table without thinking, you swap two columns and the whole map is wrong.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Part 2 <span class="ref">course § III.6.1</span></div><h2>Numbering the cells</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>If the inputs form a binary number <var>N</var>, each cell has a decimal number: the number of its row in the truth table. The small number at the top left of each cell below is that number.</p>
+        </div>
+        <div class="grid2">
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X","circles":false,"num":true,"title":"3 variables: 2 rows, 4 columns"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":2,"ones":[0,1,3,5,6,7],"name":"X","circles":false,"num":true,"title":"3 variables: 4 rows, 2 columns"}'></div>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C","D"],"rows":2,"ones":[],"name":"N","circles":false,"num":true,"title":"4 variables: 4 rows AB, 4 columns CD"}'></div>
+        <div class="note keep"><span class="tag">Remember: the numbers of a 4 × 4 map</span>
+          <p>Rows 00, 01, 11, 10 and columns 00, 01, 11, 10: the first row is <b>0 1 3 2</b>, the second <b>4 5 7 6</b>, the third <b>12 13 15 14</b>, the last <b>8 9 11 10</b>. Columns 3 and 4 are swapped compared to the natural order, and so are rows 3 and 4.</p>
+        </div>
+        <div class="prose">
+          <p>The course advises writing the variables in the <b>same order as the truth table</b> (rows <var>AB</var>, columns <var>CD</var>): the correspondence is easier. A map with <var>AC</var> as rows and <var>B</var> as columns would be correct too, but slower to fill in.</p>
+        </div>
+        <div class="note exam"><span class="tag">The convention of the papers</span>
+          <p>The papers write <var>N</var> = (<var>D</var>, <var>C</var>, <var>B</var>, <var>A</var>), “<var>A</var> is the least significant bit”: the rows are <b><var>DC</var></b> and the columns are <b><var>BA</var></b>. The cell <var>DC</var> = 01, <var>BA</var> = 10 is <var>N</var> = 0110 = 6. The numbers are placed exactly as in the <var>AB</var> / <var>CD</var> map above.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Part 3 <span class="ref">course § III.6.2</span></div><h2>Grouping the 1s</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>To simplify, you <b>circle groups of adjacent 1s</b>, following four rules:</p>
+        </div>
+        <ol class="steps">
+          <li><div><p>The number of cells in a group is a <b>power of 2</b>: 1, 2, 4, 8… A group is a rectangle (2 × 2, 1 × 4, 2 × 4…), never an L or a diagonal.</p></div></li>
+          <li><div><p><b>All the 1s, and only the 1s</b>, are circled. A 1 can be in several circles.</p></div></li>
+          <li><div><p>The <b>number of circles</b> is <b>as small as possible</b>.</p></div></li>
+          <li><div><p>The <b>size</b> of each circle is <b>as large as possible</b>.</p></div></li>
+        </ol>
+<div data-boole="kmap" data-opts='{"title":"The example of the course: three circles","steps":false,"vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        <div class="prose">
+          <p>Each circle will give a product: <b>three circles, three terms</b>. The simplest form of <var>X</var> is a sum of three products.</p>
+          <p>A circle of 2<sup><var>k</var></sup> cells removes <var>k</var> variables: a 2-cell circle gives a product of <var>n</var> − 1 variables, a 4-cell circle a product of <var>n</var> − 2 variables. The larger the circle, the shorter the product.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: circles that are too small</span>
+          <p>Circling the 1s one by one gives the minterm canonical form, not the simplest form. Always look for the largest possible rectangle around each 1, even if it overlaps a circle you have already drawn.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Part 4 <span class="ref">course § III.6.2</span></div><h2>Reading a group</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Each circle translates into a <b>product</b>, variable by variable, by looking at its values on all the cells of the circle:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>On the cells of the circle, the variable…</th><th>In the product</th></tr></thead>
+          <tbody>
+            <tr><td><b>changes</b> (is 0 on some cells, 1 on others)</td><td>it <b>disappears</b></td></tr>
+            <tr><td>is always <b>0</b></td><td>it appears <b>complemented</b></td></tr>
+            <tr><td>is always <b>1</b></td><td>it appears <b>as is</b></td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="kmap" data-opts='{"title":"The three circles of the course in detail","vars":["A","B","C"],"rows":1,"ones":[0,1,3,5,6,7],"name":"X"}'></div>
+        <div class="prose">
+          <p>The simplest form obtained with a Karnaugh map uses only the basic operators (NOT, AND, OR). You can then gain even more with EXCLUSIVE-OR: <span class="bx">~A.~B + A.B = ~(A ^ B)</span>, so <span class="bx">X = ~(A ^ B) + C</span>.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,2,5,7],"name":"V","xor":"~(A ^ C)","title":"The oil tanker of the course (chapter 5): V = ~A.~C + A.C"}'></div>
+        <div class="note trap"><span class="tag">Trap: reading a header line</span>
+          <p>The headers <b>01</b> and <b>10</b> do not say the same thing: for the column <var>BA</var> = 10, <var>B</var> = 1 and <var>A</var> = 0. Read each header in the order of the variables written above it.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Part 5 <span class="ref">course § III.6.2</span></div><h2>The map is a torus</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Think of the map as <b>wrapped around a torus</b> (a lifebuoy): the leftmost column touches the rightmost column, and the top row touches the bottom row. So you can group cells on both sides of an edge, and even the <b>four corners</b>.</p>
+          <p>The rule behind it: <b>two cells are adjacent when only one variable changes between them</b>. Columns 00 and 10 differ by only one bit: they are neighbours.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C","D"],"rows":2,"ones":[0,12,14,8],"name":"X","title":"The example of the course: X = A.B.~D + ~B.~C.~D"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,2,8,10],"name":"S","title":"The four corners form a single circle of 4 cells"}'></div>
+        <div class="note keep"><span class="tag">Remember</span>
+          <p>Before concluding that a 1 is isolated, look on the other side of the map: on the opposite edge, or in the corners. Exam 2 of 2023-2024 had the four corners (<span class="bx">S5 = ~C.~A</span>).</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: the diagonal</span>
+          <p>Two cells on a diagonal are never adjacent: two variables change. Only sides (and opposite edges) count.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Part 6 <span class="ref">papers 2018-2026</span></div><h2>The undefined cells Φ</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Sometimes an input combination <b>never happens</b> (a BCD digit above 9, a high sensor submerged without the low sensor…), or its output does not matter. The output is then <b>undefined</b>: you write <b>Φ</b> (phi) in the cell. The chapter does not introduce it, but all the recent papers use it.</p>
+        </div>
+        <div class="note keep"><span class="tag">The rule for Φ</span>
+          <ul>
+            <li>A Φ is <b>0 or 1, your choice</b>: you put it in a circle <b>if it lets you enlarge the circle</b> or remove one.</li>
+            <li>You are <b>never required</b> to circle a Φ, and you <b>never circle a Φ alone</b>.</li>
+          </ul>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[3,5,7,10,13,15],"name":"S2","title":"2025-2026 exam: S2 = 1 for 0, 4, 6, 8, 12, 14; Φ for 3, 5, 7, 10, 13, 15"}'></div>
+        <div class="prose">
+          <p>Without the Φ cells, you would need three circles. With the Φ cells 5, 7, 13 and 15, rows <var>DC</var> = 01 and 11 fill up: a circle of 8 cells gives <span class="bx">C</span>. The remaining corners give <span class="bx">~B.~A</span>. The Φ cells 3 and 10 are of no use: they stay outside the circles (so they count as 0).</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[8,10,14,15],"dc":[0,1,2,3,4,5,6,7],"name":"S4","title":"2025-2026 exam: S4, half of the map undefined"}'></div>
+        <div class="note trap"><span class="tag">Trap: circling every Φ</span>
+          <p>A useless Φ inside a circle adds cells that are not a power of 2, or one term too many. The Φ cells serve the simplification, not the other way round.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Part 7 <span class="ref">papers 2021-2026</span></div><h2>Filling in a map from the numbers</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The papers give the functions by their numbers: “Let us consider <var>N</var>, a 4-bit binary number (<var>D</var>, <var>C</var>, <var>B</var>, <var>A</var>). <var>A</var> is the least significant bit. <var>S1</var> = 1 iff <var>N</var> = 2, 3, 6, 7, 10, 11, 12 or 13”. You have to put each number in its cell: this is where most points are lost, because “no points will be given to an expression if its Karnaugh map is wrong”.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>The table of numbers (rows DC, columns BA), to know by heart</caption>
+          <thead><tr><th>DC \ BA</th><th>00</th><th>01</th><th>11</th><th>10</th></tr></thead>
+          <tbody>
+            <tr><th>00</th><td>0</td><td>1</td><td>3</td><td>2</td></tr>
+            <tr><th>01</th><td>4</td><td>5</td><td>7</td><td>6</td></tr>
+            <tr><th>11</th><td>12</td><td>13</td><td>15</td><td>14</td></tr>
+            <tr><th>10</th><td>8</td><td>9</td><td>11</td><td>10</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p><b>Your turn.</b> Click the cells to fill them in (0, then 1, then Φ), then check. The corrected map and the circles appear when it is right, or with the Solution button.</p></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,3,6,7,10,11,12,13],"name":"S1","mode":"play","xor":"B ^ (C.D)","title":"2025-2026 exam: S1 = 1 iff N = 2, 3, 6, 7, 10, 11, 12 or 13"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,1,4,5,8,9,12,13],"dc":[3,7,11,15],"name":"S3","mode":"play","title":"2025-2026 exam: S3 = 1 iff N = 0, 1, 4, 5, 8, 9, 12 or 13; undefined for 3, 7, 11, 15"}'></div>
+        <div class="note trap"><span class="tag">Trap: 3 bits or 4 bits</span>
+          <p>With 3 bits (<var>C</var>, <var>B</var>, <var>A</var>), the map has 2 rows (<var>C</var>) and 4 columns (<var>BA</var>): first row 0 1 3 2, second row 4 5 7 6. Do not put the 4 in column 10.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Part 8 <span class="ref">papers 2014-2026</span></div><h2>Karnaugh in the exam</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The complete method, as the answer keys expect it:</p></div>
+        <ol class="steps">
+          <li><div><p><b>Draw and fill in</b> the map, Φ included, checking the position of the numbers (0 1 3 2 / 4 5 7 6 / 12 13 15 14 / 8 9 11 10).</p></div></li>
+          <li><div><p><b>Circle</b>: first the 1s that can be in a large circle in only one way, then complete with as few circles as possible, each as large as possible (Φ and edges included).</p></div></li>
+          <li><div><p><b>Read</b> each circle: a variable that changes disappears, at 0 it is complemented, at 1 it is written as is.</p></div></li>
+          <li><div><p><b>Write</b> the sum of products, without parentheses, without EXCLUSIVE-OR unless the question asks for it.</p></div></li>
+          <li><div><p><b>EXCLUSIVE-OR</b> (if asked): spot <span class="bx">X.~Y + ~X.Y</span> or <span class="bx">X.Y + ~X.~Y</span> in the form you obtained.</p></div></li>
+        </ol>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,3,6,7,10,11,12,13],"name":"S1","xor":"B ^ (C.D)","title":"2025-2026 exam: S1 and its form with EXCLUSIVE-OR"}'></div>
+        <div class="prose"><p>Here <span class="bx">~D.B + ~C.B = B.(~D + ~C) = B.~(C.D)</span>, and the last circle gives <span class="bx">D.C.~B</span>: this is <span class="bx">B.~Y + ~B.Y</span> with <var>Y</var> = <span class="bx">C.D</span>, so <span class="bx">S1 = B ^ (C.D)</span>.</p></div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>A Karnaugh map exercise in <b>every paper</b> since 2014, most often 5 or 6 points: four to six functions, most often given by their numbers, with 3 and 4 variables, with Φ cells (2021-2022, 2023-2024, 2024-2025, 2025-2026).</li>
+            <li>“Complete the Karnaugh maps (<b>circles included</b>)”: the circles must be drawn. Draw them.</li>
+            <li>“No points will be given to an expression if its Karnaugh map is wrong”: check every number.</li>
+            <li>The functions come back: <var>S1</var> to <var>S4</var> and <var>S6</var> of 2023-2024 are those of 2021-2022.</li>
+          </ul>
+        </div>
+        <div class="note trap"><span class="tag">Trap: several correct answers</span>
+          <p>There can be several minimal groupings of the same size (for example when a 1 can join two different circles). The answer keys give only one; another expression with as many terms and literals is just as simple. The site’s checker accepts all minimal forms.</p>
+        </div>
+        <div data-check-ref="boole/cours-4-karnaugh.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="boole:karnaugh:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can now simplify any function of up to 4 variables. Chapter 5, <a href="cours-5-circuits.html">problems and circuits</a>, starts from a statement in words and ends with the schematic, and presents the classic combinational circuits.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../data/en/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

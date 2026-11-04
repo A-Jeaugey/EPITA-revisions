@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boolean algebra · Archi B2</title>
+<meta name="description" content="Archi B2, chapter 2: priorities, NOT, AND and OR axioms, distributivity, De Morgan’s theorems, absorption, duality, exclusive OR, step-by-step algebraic simplification and NAND-only circuits, with a simplifier and checked answers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapter 2: Boolean algebra">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Boolean algebra</b> — sheet 2 of 5</span><span>Source: chapter 1 “Combinational Logic”, § III.1 to 4 (D. Bouchet) · Tutorial 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="2"></span><a href="index.html">Archi B2</a> · Chapter 2 of 5</div>
+      <h1>Fewer letters, <span class="w">fewer gates.</span></h1>
+      <p class="lead">The axioms, distributivity, De Morgan’s theorems and the absorption theorems let you reduce an expression, and therefore a circuit. This chapter presents them one by one, then chains them on the examples from the course and the exams.</p>
+      <ul class="feats">
+        <li><span><span class="k">Duration</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parts</span> 9, with checked answers</span></li>
+        <li><span><span class="k">Course</span> chapter 1, § III.1 to 4</span></li>
+        <li class="ex"><span><span class="k">Exam</span> simplifying: 4 or 5 points, every year</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="simplifier" data-opts='{"value":"~(A.B + A.C) + ~A.~B.C"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Type an expression: the tool gives its simplest form and its canonical forms (~ for the bar).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 2 · Boolean algebra</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>Operators and priorities</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>NOT, AND, OR: the axioms</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Distributivity</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>De Morgan</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Theorems 1 and 2</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Duality</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>The exclusive OR</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Simplifying step by step</span></a></li>
+      <li><a href="#s9"><span class="plate" data-n="9"></span><span>Everything with NAND</span></a></li>
+    </ol>
+    <p class="toc-note">Each part carries a component label, as on a schematic: U1, U2… A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi B2 home</a><a href="cours-1-portes.html">← Chapter 1: logic gates</a><a href="cours-3-formes.html">Chapter 3: canonical forms →</a><a href="../qcm/index.html#boole">Boolean algebra quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">Operators and priorities</a></li><li><a href="#s2">NOT, AND, OR: the axioms</a></li><li><a href="#s3">Distributivity</a></li><li><a href="#s4">De Morgan</a></li><li><a href="#s5">Theorems 1 and 2</a></li><li><a href="#s6">Duality</a></li><li><a href="#s7">The exclusive OR</a></li><li><a href="#s8">Simplifying step by step</a></li><li><a href="#s9">Everything with NAND</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Part 1 <span class="ref">course § III.1, 2</span></div><h2>Variables, operators and priorities</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p><b>Boolean algebra</b> deals with expressions made of <b>logic variables</b> (which are 0 or 1) and operators. It is used to <b>describe</b> a combinational circuit, then to <b>simplify</b> it: a shorter expression means a circuit with fewer gates.</p>
+          <p>Its three fundamental operators are <b>NOT</b> (bar), <b>AND</b> (dot) and <b>OR</b> (+). The other gates are written with them: <span class="bx">~(A.B)</span> for NAND, <span class="bx">~A.B + A.~B</span> for XOR.</p>
+        </div>
+        <div class="note keep"><span class="tag">Operator priority</span>
+          <p>Like × before + in arithmetic: <b>NOT</b> first, then <b>AND</b>, then <b>OR</b>. The course writes it <span class="bx">A + (B.C) = A + B.C</span>: parentheses around a product are useless. Around a sum, they are essential: <span class="bx">(A + B).C</span> is not <span class="bx">A + B.C</span>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.C","(A + B).C"],"raw":true,"title":"Parentheses change the function"}'></div>
+        <div class="prose">
+          <p><b>A bar is a parenthesis.</b> Everything under a bar is computed first, then complemented: <span class="bx">~(A + B).C</span> is read “(not (A or B)) and C”. When you remove a long bar (De Morgan, part 4), put parentheses back around what it covered.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: the forgotten dot</span>
+          <p>The exams always write the AND dot: <span class="bx">A.B.C</span>. Write it in your answers too; <span class="bx">AB</span> can be read as a single variable. The marker expects the format of the exam.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Part 2 <span class="ref">course § III.2</span></div><h2>The axioms of NOT, AND and OR</h2></div>
+      <div class="stack">
+        <div class="prose"><p>These equalities can be checked on a two-row truth table (<var>A</var> = 0, <var>A</var> = 1). They are the toolbox of every simplification.</p></div>
+        <div class="tbl"><table>
+          <caption>Axioms of the course (§ III.2), with their usual name</caption>
+          <thead><tr><th>Operator</th><th>Equality</th><th>Name</th></tr></thead>
+          <tbody>
+            <tr><th rowspan="3">NOT</th><td><span class="bx">~~A = A</span></td><td>double complementation</td></tr>
+            <tr><td><span class="bx">~A + A = 1</span></td><td>complementarity</td></tr>
+            <tr><td><span class="bx">~A.A = 0</span></td><td>complementarity</td></tr>
+            <tr><th rowspan="5">AND</th><td><span class="bx">A.(B.C) = (A.B).C = A.B.C</span></td><td>associativity</td></tr>
+            <tr><td><span class="bx">A.B = B.A</span></td><td>commutativity</td></tr>
+            <tr><td><span class="bx">A.A = A</span></td><td>idempotence</td></tr>
+            <tr><td><span class="bx">A.1 = A</span></td><td>identity element</td></tr>
+            <tr><td><span class="bx">A.0 = 0</span></td><td>absorbing element</td></tr>
+            <tr><th rowspan="5">OR</th><td><span class="bx">A + (B + C) = (A + B) + C = A + B + C</span></td><td>associativity</td></tr>
+            <tr><td><span class="bx">A + B = B + A</span></td><td>commutativity</td></tr>
+            <tr><td><span class="bx">A + A = A</span></td><td>idempotence</td></tr>
+            <tr><td><span class="bx">A + 0 = A</span></td><td>identity element</td></tr>
+            <tr><td><span class="bx">A + 1 = 1</span></td><td>absorbing element</td></tr>
+          </tbody>
+        </table></div>
+        <div class="grid2">
+          <div class="card"><span class="k">What is used most</span><p><span class="bx">X.~X = 0</span>: a product that contains a variable and its complement disappears. <span class="bx">X + ~X = 1</span>: a sum that contains them is 1.</p></div>
+          <div class="card"><span class="k">And what surprises</span><p><span class="bx">A + A = A</span> and <span class="bx">A + 1 = 1</span>: there is no “2A” and no carry in Boolean algebra.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: X can be an expression</span>
+          <p>The axioms hold for any expression in place of <var>A</var>: <span class="bx">A.B.~(A.B) = 0</span>, <span class="bx">C.D + C.D = C.D</span>, <span class="bx">(A + B) + 1 = 1</span>. This is what lets you simplify long expressions in a few lines.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Part 3 <span class="ref">course § III.2</span></div><h2>Distributivity, in both directions</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>AND distributes over OR, like × over +: <span class="bx">A.(B + C) = A.B + A.C</span>. You use it to <b>expand</b> a product of sums, or to <b>factor</b> (<span class="bx">A.~B.C + A.~B.~C = A.~B.(C + ~C) = A.~B</span>).</p>
+          <p>The surprise: in Boolean algebra, <b>OR also distributes over AND</b>. <span class="bx">A + B.C = (A + B).(A + C)</span>. This equality has no equivalent in ordinary arithmetic, and it is the one used to prove theorem 2 (part 5).</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.C","(A + B).(A + C)"],"raw":true,"title":"The two columns are equal"}'></div>
+        <div class="prose"><p><b>Expanding a product of sums</b> (example X1 of the course): you multiply each term of the first sum by each term of the second, then remove the null products.</p></div>
+        <div class="calc"><div><span><span class="bx">(A + B + C.D).(~A + B)</span></span></div><div><span><span class="bx">A.~A + A.B + ~A.B + B.B + ~A.C.D + B.C.D</span></span><span class="why-r">expansion</span></div><div><span><span class="bx">A.B + ~A.B + B + ~A.C.D + B.C.D</span></span><span class="why-r">A.~A = 0, B.B = B</span></div><div><span><span class="bx">B + ~A.C.D</span></span><span class="why-r">theorem 1: B absorbs A.B, ~A.B and B.C.D</span></div></div>
+
+        <div class="note trap"><span class="tag">Pitfall: expanding too early</span>
+          <p>Expanding three sums of three terms gives 27 products. First look for what simplifies before expanding: a common factor, a bar to break, an absorption.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Part 4 <span class="ref">course § III.2</span></div><h2>De Morgan’s theorems</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>To remove a bar over a product or over a sum:</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Bar over a product</span><p class="big"><span class="bx">~(A.B) = ~A + ~B</span></p></div>
+          <div class="card"><span class="k">Bar over a sum</span><p class="big"><span class="bx">~(A + B) = ~A.~B</span></p></div>
+        </div>
+        <div class="note keep"><span class="tag">The rule: “break the bar, change the sign”</span>
+          <p>You cut the bar above the operator, each piece stays barred, and the operator changes: AND becomes OR, OR becomes AND. This works with as many variables as needed: <span class="bx">~(A.B.C) = ~A + ~B + ~C</span> et <span class="bx">~(A + B + C) = ~A.~B.~C</span>.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B"],"exprs":["~(A + B)","~A.~B","~A + ~B"],"raw":true,"title":"~(A + B) is not ~A + ~B"}'></div>
+        <div class="prose">
+          <p><b>Nested bars.</b> Break the highest bar first, keeping the parentheses, then start again. Example from the 2023-2024 Exam 2:</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">~(~C.B)</span></span></div><div><span><span class="bx">~~C + ~B</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">C + ~B</span></span><span class="why-r">double complementation</span></div></div>
+        <div class="calc"><div><span><span class="bx">~(A.B + A.C)</span></span></div><div><span><span class="bx">~(A.B).~(A.C)</span></span><span class="why-r">De Morgan on the sum</span></div><div><span><span class="bx">(~A + ~B).(~A + ~C)</span></span><span class="why-r">De Morgan on each product</span></div></div>
+
+        <div data-boole="check" data-opts='{"ref":"~A.(B + ~C)","vars":["A","B","C"],"kind":"any","label":"~(A + ~B.C)","title":"Your turn: remove the bar from ~(A + ~B.C)","placeholder":"~A.(B + ~C)"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: forgetting the parentheses</span>
+          <p><span class="bx">~(A + B.C)</span> = <span class="bx">~A.~(B.C)</span> = <span class="bx">~A.(~B + ~C)</span>. Without the parentheses, you would write <span class="bx">~A.~B + ~C</span>, a different function. A bar broken over a product gives a sum: put it in parentheses if it is multiplied by something else.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Part 5 <span class="ref">course § III.2</span></div><h2>Absorption: theorems 1 and 2</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="card"><span class="k">Theorem 1</span><p class="big"><span class="bx">A + A.B = A</span></p><p class="muted">A term absorbs every product that contains it.</p></div>
+          <div class="card"><span class="k">Theorem 2</span><p class="big"><span class="bx">A + ~A.B = A + B</span></p><p class="muted">A term erases its complement in a neighbouring product.</p></div>
+        </div>
+        <div class="tbl"><table>
+          <caption>Proofs from the course</caption>
+          <thead><tr><th>Theorem 1</th><th>Theorem 2</th></tr></thead>
+          <tbody><tr><td>
+        <div class="calc"><div><span><span class="bx">A + A.B</span></span></div><div><span><span class="bx">A.1 + A.B</span></span><span class="why-r">A = A.1</span></div><div><span><span class="bx">A.(1 + B)</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">A.1</span></span><span class="why-r">1 + B = 1</span></div><div><span><span class="bx">A</span></span></div></div>
+</td><td>
+        <div class="calc"><div><span><span class="bx">A + ~A.B</span></span></div><div><span><span class="bx">(A + ~A).(A + B)</span></span><span class="why-r">distributivity of OR</span></div><div><span><span class="bx">1.(A + B)</span></span><span class="why-r">A + ~A = 1</span></div><div><span><span class="bx">A + B</span></span></div></div>
+</td></tr></tbody>
+        </table></div>
+        <div class="prose">
+          <p>Both theorems apply to whole expressions, not only to variables. In the examples from the course:</p>
+          <ul>
+            <li>theorem 1: <span class="bx">~A + ~A.~C = ~A</span>, <span class="bx">~A + ~A.~B.C = ~A</span>, <span class="bx">~A.~B.C.D + ~A.C.D = ~A.C.D</span> (example X1): the absorbing term must be <b>entirely</b> contained in the other;</li>
+            <li>theorem 2: <span class="bx">B + ~B.A.C = B + A.C</span> (example X2), <span class="bx">A.B.~(C.D) + C.D = A.B + C.D</span> (example X3, with <var>X</var> = <span class="bx">C.D</span>).</li>
+          </ul>
+        </div>
+<div data-boole="check" data-opts='{"ref":"A + B.C","vars":["A","B","C"],"kind":"min","label":"A + ~A.B.C","title":"Your turn: simplify A + ~A.B.C (theorem 2)"}'></div>
+        <div class="note trap"><span class="tag">Pitfall: absorbing the wrong way</span>
+          <p><span class="bx">A + A.B = A</span>, but <span class="bx">A.B + A.~B.C</span> does not simplify to <span class="bx">A.B</span>: the term <span class="bx">A.B</span> is not contained in <span class="bx">A.~B.C</span>. Here theorem 2 applies, once <var>A</var> is factored out: <span class="bx">A.(B + ~B.C) = A.(B + C)</span>.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Part 6 <span class="ref">course § III.3</span></div><h2>The principle of duality</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A Boolean identity <b>remains true</b> if you swap the 0s and 1s everywhere, as well as the ANDs and ORs. The resulting equality is called the <b>dual</b> equality. The variables and the bars do not move.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>Examples from the course (§ III.3)</caption>
+          <thead><tr><th>Equality</th><th></th><th>Dual</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bx">1 + 0 = 1</span></td><td>↔</td><td><span class="bx">0.1 = 0</span></td></tr>
+            <tr><td><span class="bx">X + 1 = 1</span></td><td>↔</td><td><span class="bx">X.0 = 0</span></td></tr>
+            <tr><td><span class="bx">X.~X = 0</span></td><td>↔</td><td><span class="bx">X + ~X = 1</span></td></tr>
+            <tr><td><span class="bx">X + ~X.Y = X + Y</span></td><td>↔</td><td><span class="bx">X.(~X + Y) = X.Y</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p>Duality doubles the toolbox: each AND axiom has its OR dual (the table in part 2 is made of dual pairs), each distributivity has its dual, and the two De Morgan theorems are duals of each other. The duals of theorems 1 and 2 are used in products of sums:</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><span class="k">Dual of theorem 1</span><p><span class="bx">A.(A + B) = A</span></p></div>
+          <div class="card"><span class="k">Dual of theorem 2</span><p><span class="bx">A.(~A + B) = A.B</span></p></div>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: the hidden priority</span>
+          <p>The dual of <span class="bx">A + B.C</span> is <span class="bx">A.(B + C)</span>, with parentheses: the product had priority, and the sum that replaces it must keep it. Put the parentheses back before swapping the operators.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Part 7 <span class="ref">course § III.2</span></div><h2>The exclusive OR in calculations</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <caption>Properties of the exclusive OR (course § III.2)</caption>
+          <tbody>
+            <tr><td><span class="bx">A ^ B = ~A.B + A.~B = ~A ^ ~B</span></td></tr>
+            <tr><td><span class="bx">~(A ^ B) = A.B + ~A.~B = ~A ^ B = A ^ ~B</span></td></tr>
+            <tr><td><span class="bx">A ^ (B ^ C) = (A ^ B) ^ C = A ^ B ^ C</span> et <span class="bx">A ^ B = B ^ A</span></td></tr>
+            <tr><td><span class="bx">A ^ 0 = A</span>, <span class="bx">A ^ 1 = ~A</span>, <span class="bx">A ^ A = 0</span>, <span class="bx">A ^ ~A = 1</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose">
+          <p><b>Recognising an exclusive OR.</b> Two products identical except for two variables, one taken directly in the first and complemented in the second, and the other the opposite: it is an exclusive OR.</p>
+          <ul>
+            <li><span class="bx">X.~Y + ~X.Y = X ^ Y</span> (the two variables “different”);</li>
+            <li><span class="bx">X.Y + ~X.~Y = ~(X ^ Y)</span> (the two variables “equal”).</li>
+          </ul>
+          <p><var>X</var> and <var>Y</var> can be products: this is how the official solutions get their forms with ⊕.</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">B.C + ~A.B + A.~B.~C</span></span><span class="why-r">2021-2022 exam, ex. 4.6</span></div><div><span><span class="bx">B.(C + ~A) + ~B.(A.~C)</span></span><span class="why-r">factoring B and ~B</span></div><div><span><span class="bx">B.~(A.~C) + ~B.(A.~C)</span></span><span class="why-r">De Morgan: C + ~A = ~(A.~C)</span></div><div><span><span class="bx">B ^ (A.~C)</span></span><span class="why-r">X.~Y + ~X.Y with X = B, Y = A.~C</span></div></div>
+        <div class="calc"><div><span><span class="bx">A + B.C.D + B.~C.~D</span></span><span class="why-r">2021-2022 exam, ex. 4.5</span></div><div><span><span class="bx">A + B.(C.D + ~C.~D)</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">A + B.~(C ^ D)</span></span><span class="why-r">X.Y + ~X.~Y = ~(X ^ Y)</span></div></div>
+
+        <div class="note exam"><span class="tag">In the exam</span>
+          <p>“Simplify using the EXCLUSIVE-OR operator” comes back almost every year: after a Karnaugh map (2025-2026: <span class="bx">S1 = B ^ (C.D)</span>), or on a given expression (2016-2017, 2020-2021, 2021-2022). Method: first the simplest form without XOR, then spot the pairs of “different” or “equal” products.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: simplifying with ⊕ when it is forbidden</span>
+          <p>Several exams specify “do not use simplification with EXCLUSIVE-OR” for the Karnaugh question. Read the instructions: the form with ⊕ earns points only when it is asked for.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Part 8 <span class="ref">course § III.4</span></div><h2>Simplifying an expression step by step</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A method that works on all the examples from the course and the exams:</p></div>
+        <ol class="steps">
+          <li><div><p><b>Break the long bars</b> (De Morgan), from the highest to the lowest, keeping parentheses.</p></div></li>
+          <li><div><p><b>Expand</b> the products of sums (distributivity).</p></div></li>
+          <li><div><p><b>Clean up</b>: <span class="bx">X.~X = 0</span>, <span class="bx">X.X = X</span>, <span class="bx">X + X = X</span>, <span class="bx">X + 1 = 1</span>.</p></div></li>
+          <li><div><p><b>Absorb</b>: theorem 1 (<span class="bx">X + X.Y = X</span>), theorem 2 (<span class="bx">X + ~X.Y = X + Y</span>), and <b>factor</b> (<span class="bx">X.Y + X.~Y = X</span>).</p></div></li>
+          <li><div><p><b>Check</b> on a few rows of the truth table, or with a Karnaugh map (chapter 4).</p></div></li>
+        </ol>
+        <div class="prose"><p><b>The example from the course</b>: the schematic of chapter 1.</p></div>
+        <div class="calc"><div><span><span class="bx">~(A.B + A.C) + ~A.~B.C</span></span></div><div><span><span class="bx">~(A.B).~(A.C) + ~A.~B.C</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">(~A + ~B).(~A + ~C) + ~A.~B.C</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">~A.~A + ~A.~C + ~A.~B + ~B.~C + ~A.~B.C</span></span><span class="why-r">expansion</span></div><div><span><span class="bx">~A + ~A.~C + ~A.~B + ~B.~C + ~A.~B.C</span></span><span class="why-r">~A.~A = ~A</span></div><div><span><span class="bx">~A + ~B.~C</span></span><span class="why-r">theorem 1: ~A absorbs ~A.~C, ~A.~B and ~A.~B.C</span></div></div>
+
+        <div class="prose"><p><b>Two more examples from the course</b> (X2 and X3):</p></div>
+        <div class="calc"><div><span><span class="bx">~A.B.~C + ~A.B.C + A.~B.C + A.B.~C + A.B.C</span></span><span class="why-r">X2</span></div><div><span><span class="bx">~A.B.(~C + C) + A.~B.C + A.B.(~C + C)</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">~A.B + A.~B.C + A.B</span></span><span class="why-r">~C + C = 1</span></div><div><span><span class="bx">B.(~A + A) + A.~B.C</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">B + A.~B.C</span></span></div><div><span><span class="bx">B + A.C</span></span><span class="why-r">theorem 2: B + ~B.(A.C) = B + A.C</span></div></div>
+        <div class="calc"><div><span><span class="bx">A.B.~D + ~B.C.D + A.B.~C + B.C.D + ~A.C.D</span></span><span class="why-r">X3</span></div><div><span><span class="bx">A.B.~D + C.D.(~B + B + ~A) + A.B.~C</span></span><span class="why-r">factoring C.D</span></div><div><span><span class="bx">A.B.~D + C.D + A.B.~C</span></span><span class="why-r">~B + B + ~A = 1</span></div><div><span><span class="bx">A.B.(~C + ~D) + C.D</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">A.B.~(C.D) + C.D</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">A.B + C.D</span></span><span class="why-r">theorem 2 with X = C.D</span></div></div>
+
+        <div data-boole="check" data-opts='{"ref":"(A + ~B.~C).~(A.B)","vars":["A","B","C"],"kind":"min","label":"(A + ~B.~C).~(A.B)","title":"Your turn: 2025-2026 exam, ex. 1 (and Tutorial 1, S5)"}'></div>
+        <div data-boole="check" data-opts='{"ref":"A + B.C + ~A.(~B + ~C).(A.D + C)","vars":["A","B","C","D"],"kind":"min","label":"A + B.C + ~A.(~B + ~C).(A.D + C)","title":"Your turn: 2025-2026 exam, ex. 1 (and Tutorial 1, S7)"}'></div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>Each exam starts with “Simplify the expressions below as much as possible. <b>The result must not contain parentheses.</b>”: 4 or 5 expressions, 4 or 5 points out of 20 (2023-2024, 2024-2025, 2025-2026).</li>
+            <li>“Do not detail the calculations unless explicitly asked”: only the result counts. With at most 4 variables, a <b>Karnaugh map on scratch paper</b> (chapter 4) surely gives the simplest form; algebra is used when the detail is asked for (circuit of 2014-2015, resit of 2017-2018).</li>
+            <li>The expressions of Tutorial 1 come back as they are: S2, S5 and S7 of Tutorial 1 are three of the four expressions of the 2025-2026 exam.</li>
+          </ul>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s8"></button></div>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="sec" id="s9">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="9"></span>Part 9 <span class="ref">Tutorial 1, ex. 2 · 2025-2026 exam</span></div><h2>Everything with NAND gates</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The NAND gate is <b>universal</b>: with NAND gates only, you can build a NOT, an AND, an OR, and therefore any circuit. Everything comes from two equalities: <span class="bx">~(A.A) = ~A</span> (idempotence) and De Morgan.</p>
+        </div>
+        <div class="tbl"><table>
+          <caption>The expected constructions (solution of the 2025-2026 exam)</caption>
+          <thead><tr><th>Gate</th><th>NAND gates</th><th>Equality used</th></tr></thead>
+          <tbody>
+            <tr><td>NOT</td><td>1</td><td><span class="bx">~A = ~(A.A)</span></td></tr>
+            <tr><td>AND</td><td>2</td><td><span class="bx">A.B = ~~(A.B)</span>: one NAND, then a NAND as an inverter</td></tr>
+            <tr><td>OR</td><td>3</td><td><span class="bx">A + B = ~(~A.~B)</span>: two inverters, then a NAND</td></tr>
+            <tr><td>XOR</td><td>5</td><td><span class="bx">A ^ B = ~(~(A.~B).~(~A.B))</span></td></tr>
+          </tbody>
+        </table></div>
+<div data-boole="schema" data-opts='{"w":360,"h":90,"live":true,"title":"NOT with one NAND gate","inputs":[{"id":"A","x":26,"y2":60}],"gates":[{"id":"n1","type":"nand","x":110,"y":25,"in":["A","A"]}],"outputs":[{"from":"n1","label":"~A","x":240}]}'></div>
+<div data-boole="schema" data-opts='{"w":440,"h":100,"live":true,"title":"AND with two NAND gates","inputs":[{"id":"A","x":26,"y2":70},{"id":"B","x":52,"y2":70}],"gates":[{"id":"n1","type":"nand","x":110,"y":25,"in":["A","B"],"label":"~(A.B)"},{"id":"n2","type":"nand","x":230,"y":25,"in":["n1","n1"]}],"outputs":[{"from":"n2","label":"A.B","x":340}]}'></div>
+<div data-boole="schema" data-opts='{"w":460,"h":150,"live":true,"title":"OR with three NAND gates","inputs":[{"id":"A","x":26,"y2":130},{"id":"B","x":52,"y2":130}],"gates":[{"id":"n1","type":"nand","x":110,"y":20,"in":["A","A"],"label":"~A"},{"id":"n2","type":"nand","x":110,"y":86,"in":["B","B"],"label":"~B"},{"id":"n3","type":"nand","x":250,"y":53,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A + B","x":360}]}'></div>
+<div data-boole="schema" data-opts='{"w":600,"h":230,"live":true,"title":"XOR with five NAND gates","inputs":[{"id":"A","x":26,"y2":210},{"id":"B","x":52,"y2":210}],"gates":[{"id":"na","type":"nand","x":100,"y":24,"in":["A","A"],"label":"~A"},{"id":"nb","type":"nand","x":100,"y":150,"in":["B","B"],"label":"~B"},{"id":"n1","type":"nand","x":250,"y":40,"in":["A","nb"],"mx":[0,205]},{"id":"n2","type":"nand","x":250,"y":130,"in":["na","B"],"mx":[215,0]},{"id":"n3","type":"nand","x":400,"y":85,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A ^ B","x":510}]}'></div>
+        <div class="calc"><div><span><span class="bx">A ^ B</span></span></div><div><span><span class="bx">A.~B + ~A.B</span></span><span class="why-r">definition</span></div><div><span><span class="bx">~~(A.~B + ~A.B)</span></span><span class="why-r">double complementation</span></div><div><span><span class="bx">~(~(A.~B).~(~A.B))</span></span><span class="why-r">De Morgan on the sum</span></div></div>
+
+        <div class="note exam"><span class="tag">In the exam</span>
+          <p>2025-2026 exam, exercise 5 (3 points): “Give the wiring diagram of the AND, OR and EXCLUSIVE-OR gates, using only NAND gates. The maximum number of gates is given”: 2, 3 and 5. Tutorial 1 (exercise 2) also asks for the NOT. A NAND gate with its two inputs tied together is an inverter: it is the basic brick of the three schematics.</p>
+        </div>
+        <div class="note trap"><span class="tag">Pitfall: the number of gates</span>
+          <p>The exam imposes a maximum. An XOR drawn with one NAND for each NOT, AND and OR of <span class="bx">~A.B + A.~B</span> takes 9 gates: you must use the equality from the table to get down to 5.</p>
+        </div>
+        <div data-check-ref="boole/cours-2-algebre.html#s9" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 9 of 9</span><button type="button" class="done-btn" data-done="boole:algebre:s9"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can simplify an expression. Chapter 3, <a href="cours-3-formes.html">canonical forms</a>, shows two ways of writing a function that depend only on its truth table.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../data/en/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>

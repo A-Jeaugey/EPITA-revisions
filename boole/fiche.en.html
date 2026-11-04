@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sheet · Archi B2</title>
+<meta name="description" content="Archi B2: Boolean algebra on one A4 page. The seven gates and their truth tables, axioms and theorems, De Morgan, EXCLUSIVE-OR, canonical forms, Karnaugh map cell numbers, undefined cells, NAND gates, the problem method, the circuits of the course, traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Sheet: boxes in columns, like the frames of a schematic sheet; each title links back to the course. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:46em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:16px;columns:3 300px;column-gap:14px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-top:2px solid var(--comp);padding:.55rem .65rem;margin:0 0 12px;display:grid;gap:.4rem;background:var(--bg);min-width:0}
+.box>*{min-width:0}
+.box h2{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--comp);font-weight:600}
+.box h2 a{color:inherit;text-decoration:none}
+.box h2 a:hover{text-decoration:underline}
+.box.hot{border-top-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-top-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.42}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box h3{font-size:.84rem;font-weight:700;margin:.15rem 0 0;font-family:var(--font-body)}
+.box .bx{font-size:.95em}
+.mt .bx{font-size:1em}
+
+.mtw{overflow-x:auto;min-width:0}
+.mt{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.mt{font-size:.74rem}.mt th{font-size:.56rem;letter-spacing:0}.mt th,.mt td{padding:.12rem .15rem}}
+.mt th,.mt td{padding:.12rem .3rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.mt th{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
+.mt th:first-child,.mt td:first-child{text-align:left}
+.mt tr:last-child td{border-bottom:0}
+.mt.c td,.mt.c th{text-align:center}
+.mt td.l{text-align:left}
+.mt.kmn td,.mt.kmn th{text-align:center;font-family:var(--font-mono)}
+.mt td:not(.l),.mt tbody th{white-space:nowrap}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 2.5mm}
+  .top h1{font-size:14pt;margin:0}
+  .top p,.top .eyebrow{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:3.5mm;margin:0;background:#fff}
+  .box{padding:1.3mm 1.7mm;margin-bottom:2mm;gap:.8mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li,.mt,.gray{font-size:7.6pt;line-height:1.27}
+  .box h2{font-size:7.2pt}
+  .box h3{font-size:7.5pt}
+  .box ul,.box ol{gap:.2mm}
+  .mt th,.mt td{padding:.2mm .8mm}
+  .mtw{overflow:visible}
+  .mt thead th{letter-spacing:0;font-size:5.8pt}
+}
+</style>
+</head>
+<body data-resume="Archi B2 · revision sheet">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="plate" data-n="9"></span><a href="index.html">Archi B2</a> · Sheet</div><h1>Boolean algebra on one sheet</h1><p>To reread the day before the exam. One A4 page when printed. Each title links to the part of the course or the method that gives the details.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Print on A4</button><a class="btn" href="methodes.html">Detailed methods</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box hot"><h2><a href="index.html#evaluation">In the exam · 1 h 30</a></h2>
+      <ul>
+        <li>Since 2023, in this order: <b>simplify</b> without parentheses, <b>canonical forms</b>, <b>Karnaugh with Φ</b>, a <b>problem</b>, a small circuits exercise (comparator, NAND gates).</li>
+        <li>Answer on the worksheet, no calculations unless asked; use a pen, not red ink or a pencil.</li>
+        <li>“No points will be given to an expression if its Karnaugh map is wrong.”</li>
+        <li>Tutorial 1 comes up almost unchanged: redo it.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-1-portes.html#s2">The two-input gates</a></h2>
+      <div class="mtw"><table class="mt c">
+        <thead><tr><th>A B</th><th>AND</th><th>OR</th><th>NAND</th><th>NOR</th><th>XOR</th><th>XNOR</th></tr></thead>
+        <tbody>
+          <tr><td>0 0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>0 1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1 0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1 1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>AND <span class="bx">A.B</span>: 1 if all inputs are 1. OR <span class="bx">A + B</span>: 1 if at least one input is 1.</li>
+        <li>NAND <span class="bx">~(A.B)</span>: 0 only if all inputs are 1. NOR <span class="bx">~(A + B)</span>: 1 only if all inputs are 0.</li>
+        <li>XOR <span class="bx">A ^ B</span>: 1 if an odd number of inputs are 1; XNOR: 1 if A = B.</li>
+        <li>A bubble = a NOT. <var>n</var> inputs → 2<sup><var>n</var></sup> rows, counting in binary.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-2-algebre.html#s2">Precedence and axioms</a></h2>
+      <ul>
+        <li>Precedence: NOT, then AND, then OR. A bar over a group works like parentheses.</li>
+        <li><span class="bx">A.0 = 0</span> ; <span class="bx">A.1 = A</span> ; <span class="bx">A.A = A</span> ; <span class="bx">A.~A = 0</span></li>
+        <li><span class="bx">A + 1 = 1</span> ; <span class="bx">A + 0 = A</span> ; <span class="bx">A + A = A</span> ; <span class="bx">A + ~A = 1</span> ; <span class="bx">~~A = A</span></li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-2-algebre.html#s3">Distributivity, De Morgan, absorption</a></h2>
+      <ul>
+        <li><span class="bx">A.(B + C) = A.B + A.C</span> and also <span class="bx">A + B.C = (A + B).(A + C)</span></li>
+        <li>De Morgan: <span class="bx">~(A.B) = ~A + ~B</span>; <span class="bx">~(A + B) = ~A.~B</span> (and for 3 or more variables)</li>
+        <li>Absorption: <span class="bx">A + A.B = A</span>; <span class="bx">A + ~A.B = A + B</span></li>
+        <li>Combining: <span class="bx">A.B + A.~B = A</span></li>
+        <li>Duality: swapping AND and OR, 0 and 1 gives another true rule.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-2-algebre.html#s7">EXCLUSIVE-OR</a></h2>
+      <ul>
+        <li><span class="bx">A ^ B = A.~B + ~A.B</span> ; <span class="bx">~(A ^ B) = A.B + ~A.~B</span></li>
+        <li><span class="bx">A ^ 0 = A</span> ; <span class="bx">A ^ 1 = ~A</span> ; <span class="bx">A ^ A = 0</span> ; <span class="bx">A ^ ~A = 1</span></li>
+        <li>Making it appear: factor until you reach <span class="bx">X.~Y + ~X.Y</span>, where X or Y can be products (<span class="bx">~D.B + ~C.B + D.C.~B = B ^ (C.D)</span>).</li>
+        <li>In a Karnaugh map: 1s in a checkerboard.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="methodes.html#simplifier">Simplify without parentheses</a></h2>
+      <ol>
+        <li>De Morgan on the long bars, from the outside in.</li>
+        <li>Expand; remove <span class="bx">X.~X</span>; <span class="bx">X.X = X</span>.</li>
+        <li>Combine, absorb, until you reach the shortest sum of products.</li>
+        <li>Check with a Karnaugh map.</li>
+      </ol></section>
+
+    <section class="box"><h2><a href="cours-3-formes.html#s2">Canonical forms</a></h2>
+      <ul>
+        <li><b>Minterm form</b>: sum of <b>minterms</b>, one per row with output <b>1</b>; variable at 0 → complemented.</li>
+        <li><b>Maxterm form</b>: product of <b>maxterms</b>, one per row with output <b>0</b>; variable at 1 → complemented.</li>
+        <li>Each term contains all the variables of the expression, once. Minterms + maxterms = 2<sup><var>n</var></sup>.</li>
+        <li>Completing: <span class="bx">X = X.Y + X.~Y</span> (minterm form); <span class="bx">X = (X + Y).(X + ~Y)</span> (maxterm form); no duplicates.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-4-karnaugh.html#s2">Karnaugh: the cell numbers</a></h2>
+      <div class="mtw"><table class="mt kmn">
+        <thead><tr><th>DC \ BA</th><th>00</th><th>01</th><th>11</th><th>10</th></tr></thead>
+        <tbody>
+          <tr><th>00</th><td>0</td><td>1</td><td>3</td><td>2</td></tr>
+          <tr><th>01</th><td>4</td><td>5</td><td>7</td><td>6</td></tr>
+          <tr><th>11</th><td>12</td><td>13</td><td>15</td><td>14</td></tr>
+          <tr><th>10</th><td>8</td><td>9</td><td>11</td><td>10</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>Gray order 00, 01, 11, 10: two neighbouring cells differ by only one bit. With 3 variables: a row C = 0 (0 1 3 2), a row C = 1 (4 5 7 6).</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="cours-4-karnaugh.html#s3">Karnaugh: groups and Φ</a></h2>
+      <ul>
+        <li>Rectangles of 1, 2, 4, 8 cells, as large as possible, as few as possible; opposite edges touch, and so do the 4 corners.</li>
+        <li>Reading: variable that changes → absent; always 0 → complemented; always 1 → written as is.</li>
+        <li><b>Φ</b> (undefined): in a group if it makes it larger, never a group of Φ alone.</li>
+        <li>A single cell = a minterm.</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="methodes.html#nand">NAND gates only</a></h2>
+      <ul>
+        <li>NOT: <span class="bx">~(A.A) = ~A</span> (1 gate).</li>
+        <li>AND: <span class="bx">A.B = ~~(A.B)</span> (2 gates).</li>
+        <li>OR: <span class="bx">A + B = ~(~A.~B)</span> (3 gates).</li>
+        <li>XOR: <span class="bx">A ^ B = ~(~(A.~B).~(~A.B))</span> (5 gates; 4 when sharing <span class="bx">~(A.B)</span>).</li>
+      </ul></section>
+
+    <section class="box"><h2><a href="methodes.html#probleme">A problem</a></h2>
+      <ol>
+        <li>Name the inputs and outputs, in the order of the paper (the first = most significant).</li>
+        <li>Truth table row by row; Φ only for impossible cases.</li>
+        <li>One Karnaugh map per output; an EXCLUSIVE-OR if asked.</li>
+      </ol></section>
+
+    <section class="box"><h2><a href="cours-5-circuits.html#s4">Circuits of the course</a></h2>
+      <ul>
+        <li>1-bit comparator: A &gt; B: <span class="bx">A.~B</span>; A = B: <span class="bx">~(A ^ B)</span>; A &lt; B: <span class="bx">~A.B</span>.</li>
+        <li>2-bit adder: <span class="bx">S0 = B0 ^ A0</span>, <span class="bx">S1 = A1 ^ B1 ^ (A0.B0)</span>.</li>
+        <li>Decoder: one output at 1, the one for the input number. Multiplexer: copies the selected input. Demultiplexer: sends D to the selected output.</li>
+      </ul></section>
+
+    <section class="box trapb"><h2><a href="methodes.html#pieges">Traps</a></h2>
+      <ul>
+        <li><span class="bx">~(A + B)</span> is not <span class="bx">~A + ~B</span>; De Morgan also changes the operator.</li>
+        <li>Result with parentheses, or not the shortest.</li>
+        <li>Maxterm written like a minterm; maxterm form taken from the rows at 1.</li>
+        <li>Karnaugh map in binary order; edges forgotten; group of 3 or 6 cells; a Φ circled alone.</li>
+        <li>EXCLUSIVE-OR used where the paper forbids it.</li>
+        <li>Φ put on a row that the statement defines.</li>
+      </ul></section>
+  </div>
+</div>
+<script src="../assets/js/boole.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

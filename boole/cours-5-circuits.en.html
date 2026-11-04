@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Problems and circuits · Archi B2</title>
+<meta name="description" content="Archi B2, chapter 5: solving a combinational logic problem (oil tanker, tank, reservoirs, BCD and Aiken transcoders), adder, comparator, decoder, multiplexer and demultiplexer, with clickable circuits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Archi B2 · chapter 5: problems and circuits">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Boolean algebra</b> — sheet 5 of 5</span><span>Source: chapter 1 “Combinational Logic”, § IV and V (D. Bouchet) · papers 2014 to 2026</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="5"></span><a href="index.html">Archi B2</a> · Chapter 5 of 5</div>
+      <h1>From the statement <span class="w">to the circuit.</span></h1>
+      <p class="lead">A statement in words, a truth table, a Karnaugh map, a schematic: the method for every problem in the papers. Then the classic combinational circuits of the course: adder, comparator, decoder, multiplexer and demultiplexer.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parts</span> 8, with clickable circuits</span></li>
+        <li><span><span class="k">Course</span> chapter 1, § IV and V</span></li>
+        <li class="ex"><span><span class="k">Exam</span> a problem in every paper</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0">
+      <div data-boole="schema" data-opts='{"w":420,"h":130,"live":true,"title":"The oil tanker circuit","inputs":[{"id":"A","x":26,"y2":110},{"id":"B","x":54,"y2":110},{"id":"C","x":82,"y2":110}],"gates":[{"id":"x","type":"xnor","x":180,"y":38,"in":["A","C"]}],"outputs":[{"from":"x","label":"V","x":320}]}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — The oil tanker of the course: click on A, B, C. The light comes on when holds a and c are in the same state.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 5 · Problems and circuits</div>
+    <ol>
+      <li><a href="#s1"><span class="plate" data-n="1"></span><span>From statement to circuit</span></a></li>
+      <li><a href="#s2"><span class="plate" data-n="2"></span><span>Impossible cases</span></a></li>
+      <li><a href="#s3"><span class="plate" data-n="3"></span><span>Transcoders</span></a></li>
+      <li><a href="#s4"><span class="plate" data-n="4"></span><span>Adder</span></a></li>
+      <li><a href="#s5"><span class="plate" data-n="5"></span><span>Comparator</span></a></li>
+      <li><a href="#s6"><span class="plate" data-n="6"></span><span>Decoder</span></a></li>
+      <li><a href="#s7"><span class="plate" data-n="7"></span><span>Multiplexer</span></a></li>
+      <li><a href="#s8"><span class="plate" data-n="8"></span><span>Demultiplexer</span></a></li>
+    </ol>
+    <p class="toc-note">Each part carries a component marker, as on a schematic: U1, U2… A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← Archi B2 home</a><a href="cours-4-karnaugh.html">← Chapter 4: Karnaugh maps</a><a href="methodes.html">The exam methods →</a><a href="../qcm/index.html#boole">Boolean algebra quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Chapter contents</summary><ol>
+      <li><a href="#s1">From statement to circuit</a></li><li><a href="#s2">Impossible cases</a></li><li><a href="#s3">Transcoders</a></li><li><a href="#s4">Adder</a></li><li><a href="#s5">Comparator</a></li><li><a href="#s6">Decoder</a></li><li><a href="#s7">Multiplexer</a></li><li><a href="#s8">Demultiplexer</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Part 1 <span class="ref">course § IV</span></div><h2>From statement to circuit</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A combinational logic problem is always solved in the same order:</p></div>
+        <ol class="steps">
+          <li><div><p><b>Encode</b> the inputs and outputs: what does 1 mean for each variable?</p></div></li>
+          <li><div><p>Write the <b>truth table</b> of each output, row by row, rereading the statement.</p></div></li>
+          <li><div><p><b>Simplify</b> each output (Karnaugh map), then possibly with EXCLUSIVE-OR.</p></div></li>
+          <li><div><p><b>Draw</b> the circuit from the simplest expression.</p></div></li>
+        </ol>
+        <div class="prose">
+          <p><b>The example of the course: the holds of an oil tanker.</b> The ship has three holds <var>a</var>, <var>b</var>, <var>c</var>, with one sensor each: <var>A</var> = 1 if hold <var>a</var> is full (likewise <var>B</var>, <var>C</var>). A light <var>V</var> comes on (<var>V</var> = 1) if the trim of the ship is correct: all three holds full, or all three empty, or <var>b</var> full and the others empty, or <var>b</var> empty and the others full.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["A","B","C"],"cols":{"V":[1,0,1,0,0,1,0,1]},"hl":[0,2,5,7],"title":"One row per case of the statement: 000, 010, 101, 111"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["A","B","C"],"rows":1,"ones":[0,2,5,7],"name":"V","xor":"~(A ^ C)","title":"V = ~A.~C + A.C"}'></div>
+<div data-boole="schema" data-opts='{"w":420,"h":130,"live":true,"title":"The oil tanker circuit","inputs":[{"id":"A","x":26,"y2":110},{"id":"B","x":54,"y2":110},{"id":"C","x":82,"y2":110}],"gates":[{"id":"x","type":"xnor","x":180,"y":38,"in":["A","C"]}],"outputs":[{"from":"x","label":"V","x":320}]}'></div>
+        <div class="prose"><p>A single XNOR gate is enough, and <var>B</var> is not connected to anything: the trim does not depend on the middle hold. The table already said so, since <var>V</var> = 1 exactly when <var>A</var> = <var>C</var>.</p></div>
+        <div class="note trap"><span class="tag">Trap: translating word for word</span>
+          <p>Do not try to write the equation directly from the sentence: go through the table. Here, “<var>b</var> full and the others empty” gives one row (010), not an equation.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Part 2 <span class="ref">exams 2024-2025, 2025-2026</span></div><h2>Impossible cases: Φ</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>When the statement involves sensors, some combinations cannot happen: they signal an <b>error</b>, or else the output is <b>undefined</b> (Φ) there. Read carefully which of the two the statement asks for.</p>
+          <p><b>The tank of the 2025-2026 exam.</b> A 1,000 L tank has three sensors: <var>C1</var> at 250 L, <var>C2</var> at 500 L, <var>C3</var> at 750 L (1 = liquid present). The lights <var>L1</var> to <var>L4</var> show the level (<var>L1</var>: less than 250 L… <var>L4</var>: 750 L or more); <var>L0</var> comes on when an error occurs, and the others switch off.</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["C3","C2","C1"],"cols":{"L1":[1,0,0,0,0,0,0,0],"L2":[0,1,0,0,0,0,0,0],"L3":[0,0,0,1,0,0,0,0],"L4":[0,0,0,0,0,0,0,1],"L0":[0,0,1,0,1,1,1,0]},"title":"A sensor with liquid above a dry sensor: error"}'></div>
+        <div class="prose">
+          <p>Only four combinations are possible: 000, 001, 011, 111 (a sensor has liquid in front of it only if the ones below it do). Each one lights a single level light: <span class="bx">L1 = ~C3.~C2.~C1</span>, <span class="bx">L2 = ~C3.~C2.C1</span>, <span class="bx">L3 = ~C3.C2.C1</span>, <span class="bx">L4 = C3.C2.C1</span>, without a Karnaugh map (the paper says so). The other four combinations light <var>L0</var>:</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["C3","C2","C1"],"rows":1,"ones":[2,4,5,6],"name":"L0","title":"L0 = C3.~C2 + C2.~C1"}'></div>
+        <div class="prose">
+          <p><b>The reservoirs of the 2024-2025 exam.</b> Two reservoirs each have a high detector (<var>A</var>, <var>B</var>) and a low detector (<var>C</var>, <var>D</var>). A submerged high detector with a dry low one is impossible: the paper asks for Φ there. With <var>V1</var> = 1 if both reservoirs are full and <var>V2</var> = 1 if they are empty, the Φ cells give <span class="bx">V1 = A.B</span>, <span class="bx">V2 = ~C.~D</span> and <span class="bx">V3 = ~A.D + ~B.C</span> (paper without an answer key: answers computed by the site).</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: error or undefined</span>
+          <p>In the tank, the impossible combinations are not Φ: they <b>define</b> <var>L0</var> = 1 and switch off <var>L1</var> to <var>L4</var> (0). In the reservoirs, they are Φ. Putting Φ in the tank would give wrong maps.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Part 3 <span class="ref">exams 2016-2023</span></div><h2>Transcoders</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>transcoder</b> translates a number from one code into another. The papers have given several: <b>multiplying a BCD digit by 4</b> (2017-2018, and the same table in 2022-2023), <b>multiplying by 3</b> (June 2018), <b>converting natural binary to the Aiken code</b> (2016-2017 and 2020-2021).</p>
+          <p>BCD encodes each decimal digit on 4 bits: the input <var>N</var> = <var>DCBA</var> goes from 0 to 9. The combinations 10 to 15 do not exist: <b>Φ</b> everywhere. The result 4 × <var>N</var> is written in BCD on two digits, <var>H’G’F’E’</var> (tens) and <var>D’C’B’A’</var> (units).</p>
+        </div>
+<div data-boole="truth" data-opts='{"vars":["D","C","B","A"],"cols":{"F&#39;":[0,0,0,0,0,1,1,1,1,1,"x","x","x","x","x","x"],"E&#39;":[0,0,0,1,1,0,0,0,1,1,"x","x","x","x","x","x"],"D&#39;":[0,0,1,0,0,0,0,1,0,0,"x","x","x","x","x","x"],"C&#39;":[0,1,0,0,1,0,1,0,0,1,"x","x","x","x","x","x"]},"title":"4 × N in BCD: the four non-obvious outputs"}'></div>
+        <div class="note keep"><span class="tag">The obvious solutions</span>
+          <p>4 × 9 = 36: the tens digit never exceeds 3, so <span class="bx">H’ = G’ = 0</span>; a multiple of 4 is even, so <span class="bx">A’ = 0</span>. The paper says so: “three solutions are obvious and do not need Karnaugh maps”. An obvious solution has no operation apart from complement (<span class="bx">A’ = 1</span>, <span class="bx">A’ = ~A</span>). Here too <span class="bx">B’ = E’</span>: units 2 or 6 go with odd tens.</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[5,6,7,8,9],"dc":[10,11,12,13,14,15],"name":"F&#39;","title":"F’ = D + C.A + C.B (2017-2018)"}'></div>
+<div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[2,7],"dc":[10,11,12,13,14,15],"name":"D&#39;","xor":"B.~(C ^ A)","title":"D’ = C.B.A + ~C.B.~A, puis avec OU exclusif"}'></div>
+        <div class="note trap"><span class="tag">Trap: the BCD Φ cells</span>
+          <p>The last six cells (10 to 15) are Φ: do not leave them at 0. They allow, for example, the large circle <var>D</var> (8 cells, rows <var>DC</var> = 11 and 10).</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Part 4 <span class="ref">course § V.1</span></div><h2>The adder</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>An <b>adder</b> adds two binary numbers. On <var>n</var> bits, it has two parallel inputs <var>A</var> and <var>B</var>, an <b>input carry</b> <var>Cin</var>, an <var>n</var>-bit output <var>S</var> and an <b>output carry</b> <var>Cout</var>. <var>A0</var>, <var>B0</var>, <var>S0</var> are the least significant bits.</p>
+          <p>Example of the course on 4 bits: <var>A</var> = 1010, <var>B</var> = 1100, <var>Cin</var> = 1 gives 1 + 1010 + 1100 = 10111, that is <var>S</var> = 0111 and <var>Cout</var> = 1.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"adder","n":4}'></div>
+        <div class="prose">
+          <p><b>The 2-bit adder (June 2018).</b> Two numbers <var>A</var> = <var>A1</var><var>A0</var> and <var>B</var> = <var>B1</var><var>B0</var>, a sum <var>S</var> = <var>S1</var><var>S0</var> and a carry <var>R</var>, with no input carry. The table has 16 rows; Karnaugh, then EXCLUSIVE-OR, give:</p>
+        </div>
+        <div class="calc"><div><span><span class="bx">S0 = ~B0.A0 + B0.~A0 = B0 ^ A0</span></span></div><div><span><span class="bx">R = B1.A1 + B1.B0.A0 + B0.A1.A0</span></span></div><div><span><span class="bx">S1 = A1 ^ B1 ^ (A0.B0)</span></span><span class="why-r">bonus question</span></div></div>
+        <div class="note keep"><span class="tag">To remember it</span>
+          <p>The least significant bit of a sum is an EXCLUSIVE-OR (1 + 1 = 10: the bit is 0). The carry is 1 when at least two of the added bits are 1. <var>S1</var> adds <var>A1</var>, <var>B1</var> and the carry from position 0, which is <span class="bx">A0.B0</span>.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: OR and addition</span>
+          <p>Addition is not OR: 1 + 1 gives 0 with a carry of 1. That is why the sum of a position is an EXCLUSIVE-OR and the carry is an AND.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Part 5 <span class="ref">course § V.2</span></div><h2>The comparator</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>comparator</b> compares two <var>n</var>-bit numbers <var>A</var> and <var>B</var>. It has three outputs: <span class="mono">'A &gt; B'</span>, <span class="mono">'A = B'</span> et <span class="mono">'A &lt; B'</span>, only one of which is 1. Examples of the course: <var>A</var> = 0110, <var>B</var> = 0011 gives <span class="mono">'A &gt; B'</span> = 1; <var>A</var> = <var>B</var> = 0110 gives <span class="mono">'A = B'</span> = 1; <var>A</var> = 0110, <var>B</var> = 1110 gives <span class="mono">'A &lt; B'</span> = 1.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"comparator","n":4}'></div>
+        <div class="grid2">
+          <div class="card"><span class="k">On 1 bit (2023-2024 exam)</span>
+            <p><span class="bx">A.~B</span> for <span class="mono">'A &gt; B'</span></p><p><span class="bx">~(A ^ B)</span> for <span class="mono">'A = B'</span></p><p><span class="bx">~A.B</span> for <span class="mono">'A &lt; B'</span></p></div>
+          <div class="card"><span class="k">On 2 bits (2014-2015, 2019-2020)</span>
+            <p><span class="bx">A1.~B1 + A0.~B1.~B0 + A1.A0.~B0</span></p><p><span class="bx">~(A0 ^ B0).~(A1 ^ B1)</span></p><p><span class="bx">~A1.B1 + ~A1.~A0.B0 + ~A0.B1.B0</span></p></div>
+        </div>
+        <div class="prose">
+          <p>On 2 bits, <span class="mono">'A = B'</span> can be found without a map: the two numbers are equal if their most significant bits are equal <b>and</b> their least significant bits are too. The 2019-2020 paper asked for it that way (“without the help of Karnaugh maps […] using the EXCLUSIVE-OR operator”). The two other outputs need a 4 × 4 map (rows <var>A1 A0</var>, columns <var>B1 B0</var>).</p>
+        </div>
+<div data-boole="kmap" data-opts='{"vars":["A1","A0","B1","B0"],"rows":2,"ones":[4,8,9,12,13,14],"name":"A>B","title":"&#39;A > B&#39; on 2 bits"}'></div>
+        <div class="note trap"><span class="tag">Trap: the order of the variables</span>
+          <p>The 2019-2020 paper puts <var>A1 A0</var> in rows and <var>B1 B0</var> in columns. With another order, the cell numbers change: always copy the header of the paper.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Part 6 <span class="ref">course § V.3</span></div><h2>The decoder</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>decoder</b> detects which number is present on its inputs. With an <var>n</var>-bit parallel input, it has <b>2<sup><var>n</var></sup> outputs</b>: the output <var>Qk</var> is 1 when the number <var>k</var> is on the input, all the others are 0. Example of the course: the <b>1-of-8</b> decoder (3 input lines <var>A2 A1 A0</var>, 8 output lines).</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"decoder","n":3}'></div>
+        <div class="note keep"><span class="tag">Each output is a minterm</span>
+          <p><var>Qk</var> is 1 on a single row of the table: it is minterm number <var>k</var> of the inputs. <span class="bx">Q0 = ~A2.~A1.~A0</span>, <span class="bx">Q5 = A2.~A1.A0</span>, <span class="bx">Q7 = A2.A1.A0</span>. A decoder is therefore wired with 8 three-input AND gates and inverters.</p>
+        </div>
+        <div class="prose"><p>The outline of the course mentions <b>memory addressing</b> as an application: a decoder selects, from an address, the only cell (or the only chip) to activate.</p></div>
+        <div class="note trap"><span class="tag">Trap: 2<sup><var>n</var></sup>, not 2<var>n</var></span>
+          <p>3 inputs give 8 outputs, 4 inputs give 16. A “1-of-8” decoder has 3 inputs.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="7"></span>Part 7 <span class="ref">course § V.4</span></div><h2>The multiplexer</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A <b>multiplexer</b> sends the information of one of its data inputs onto a single output line. It has an <var>n</var>-bit <b>select</b> input, <b>2<sup><var>n</var></sup> data inputs</b> and one output: the selection <var>S</var> chooses the data bit <var>DS</var> that is copied to <var>Q</var>. Example of the course: the <b>8-to-1</b> multiplexer (3 select lines).</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"mux","n":3}'></div>
+        <div class="calc"><div><span><span class="bx">Q = ~S2.~S1.~S0.D0 + ~S2.~S1.S0.D1 + ~S2.S1.~S0.D2 + ~S2.S1.S0.D3 + S2.~S1.~S0.D4 + S2.~S1.S0.D5 + S2.S1.~S0.D6 + S2.S1.S0.D7</span></span></div></div>
+        <div class="prose">
+          <p><b>What it is for.</b> Inside a computer, data travels in groups of bits in parallel (8, 16, 32 or 64 wires). To talk to a peripheral (printer, camera), a 64-wire cable would be impractical: a multiplexer turns the <b>parallel</b> link into a <b>serial</b> link, one bit after the other on a single wire, by stepping through the selection. USB (<i>Universal Serial Bus</i>) is a serial link.</p>
+        </div>
+        <div class="note trap"><span class="tag">Trap: select and data</span>
+          <p>The select bits are not copied: they choose. With <var>S</var> = 101, <var>Q</var> copies <var>D5</var>, whatever the value of the seven other inputs.</p>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="8"></span>Part 8 <span class="ref">course § V.5</span></div><h2>The demultiplexer</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The <b>demultiplexer</b> does the opposite: it distributes an input line <var>D</var> to one of its <b>2<sup><var>n</var></sup> outputs</b>, chosen by the <var>n</var>-bit selection <var>S</var>. The selected output copies <var>D</var>, the others are 0. Example of the course: the <b>1-to-8</b> demultiplexer.</p>
+        </div>
+<div data-boole="block" data-opts='{"kind":"demux","n":3}'></div>
+        <div class="note keep"><span class="tag">Remark from the course</span>
+          <p>If the input <var>D</var> is always 1, a demultiplexer behaves like a <b>decoder</b>: output number <var>S</var> is 1, the others 0. Each output is written <span class="bx">Qk = (minterm k).D</span>, for example <span class="bx">Q5 = S2.~S1.S0.D</span>.</p>
+        </div>
+        <div class="note exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>The papers from 2014 to 2026 never ask you to wire a decoder, a multiplexer or a demultiplexer. The adder and the comparator appear there as <b>problems</b> on 1 or 2 bits (truth table, Karnaugh map, expressions).</li>
+            <li>Almost every paper has a problem to put into equations (2 to 9 points): key safe, tank, reservoirs, BCD and Aiken transcoders, adder or comparator. Exceptions: 2021-2022 has none, and in 2022-2023 the truth table was given.</li>
+          </ul>
+        </div>
+        <div data-check-ref="boole/cours-5-circuits.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="boole:circuits:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You have now seen all of chapter 1 of the course. To practise: the <a href="methodes.html">exam methods</a>, then the <a href="entrainement.html">tutorial and exam exercises</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/boole.js"></script>
+<script src="../data/en/qcm/boole.js"></script>
+<script src="../assets/js/boole.js"></script>
+</body>
+</html>
