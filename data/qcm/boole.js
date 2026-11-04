@@ -530,7 +530,7 @@
     { id: "boole-c4-23", topic: "boole-karnaugh", lvl: 3, type: "single",
       q: "<var>N</var> = (<var>D</var>, <var>C</var>, <var>B</var>, <var>A</var>). <var>S</var> = 1 ssi <var>N</var> = 2, 3, 6, 7, 10, 11, 12 ou 13 (examen 2025-2026). Quelle est sa forme la plus simple, sans OU exclusif ?",
       o: ["{{~D.B + ~C.B + D.C.~B}}", "{{~D.B + ~C.B}}", "{{B.~C + D.C}}", "{{B + D.C}}"], a: 0,
-      x: "Trois cercles de 4 : ~D.B (cases 2, 3, 6, 7), ~C.B (2, 3, 10, 11), D.C.~B (12, 13).",
+      x: "Trois cercles : deux de 4 cases, ~D.B (cases 2, 3, 6, 7) et ~C.B (2, 3, 10, 11), et un de 2 cases, D.C.~B (12, 13).",
       ref: C4 + "#s8" },
     { id: "boole-c4-24", topic: "boole-xor", lvl: 3, type: "single",
       q: "La même fonction {{~D.B + ~C.B + D.C.~B}}, écrite avec un OU exclusif :",

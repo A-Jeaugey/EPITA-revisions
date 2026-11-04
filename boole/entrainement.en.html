@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice · Archi B2</title>
+<meta name="description" content="Archi B2: the Boolean algebra exercises of the 13 papers (2014 to 2026) and of tutorial 1, filtered by topic, source, level and status, with hints and step-by-step solutions; and three generators that make new exercises without end: simplify, canonical forms, Karnaugh maps with Φ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Practice: the cards of the papers and of tutorial 1 (filterable), then the generators. The tools of the solutions
+   (Karnaugh maps, truth tables, diagrams) are mounted by boole.js when the solution opens. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.3rem}
+.stat{border:1px solid var(--line);border-top:2px solid var(--rule);background:var(--bg);padding:.55rem .8rem;display:grid;gap:2px;min-width:104px;text-decoration:none;color:inherit}
+a.stat:hover{border-color:var(--accent)}
+.stat b{font-family:var(--font-mono);font-weight:700;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.filters{background:var(--bg);border-bottom:1px solid var(--line);padding-block:14px}
+.filters .wrapx{display:grid;gap:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lbl{margin-right:4px;min-width:86px}
+.fchip{font:inherit;font-family:var(--font-mono);font-size:.78rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:3px;padding:.28rem .65rem;cursor:pointer;min-height:34px}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip .n{opacity:.7;margin-left:4px}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fsum{font-size:.9rem;color:var(--muted)}
+.fsum:empty,.fnote:empty{display:none}
+.fnote{font-size:.9rem;color:var(--warn);max-width:76ch}
+.list{display:grid;gap:22px;padding-block:28px 56px}
+.empty{color:var(--muted);padding:1.5rem 0;max-width:62ch}
+.exo{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:70px;min-width:0}
+.exo.target{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.exo-head{display:grid;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.exo-head>*{min-width:0}
+.exo-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tagc{font-family:var(--font-mono);font-size:.7rem;border:1px solid var(--line);border-radius:3px;padding:.08rem .5rem;color:var(--muted)}
+.tagc.src{color:var(--exam);border-color:var(--exam)}
+.tagc.src.td{color:var(--accent);border-color:var(--accent)}
+.tagc.st-ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.tagc.st-review{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.exo h3{font-size:1.4rem;margin:0}
+.exo h3 a{color:inherit;text-decoration:none}
+.exo h3 a:hover{text-decoration:underline}
+.exo-body{display:grid;gap:14px;padding:14px 16px}
+.exo-body>*,.exo-sol>*,.sol-step>*,.sol-step .body>*,.exo-intro>*,.exo-qs li>*,.exo-qs li>div>*{min-width:0}
+.exo-intro{display:grid;gap:.6rem;max-width:84ch}
+.exo-qs{list-style:none;margin:0;padding:0;display:grid;gap:.7rem;max-width:84ch}
+.exo-qs li{padding-left:.9rem;border-left:3px solid var(--line);min-width:0;display:grid;gap:.5rem}
+.exo-qs li>div{display:grid;gap:.5rem}
+.rel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:.9rem;background:var(--accent-soft);border-radius:var(--radius);padding:.5rem .75rem}
+.rel b{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.exo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px dashed var(--line)}
+.exo-actions .grow{flex:1}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.rev[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.exo-hints{display:grid;gap:8px;padding:0 16px}
+.exo-hints:empty{display:none}
+.hint{background:var(--why-soft);border-radius:var(--radius);padding:.6rem .8rem;font-size:.95rem}
+.hint b{color:var(--why);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.exo-sol{display:grid;gap:16px;padding:14px 16px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.sol-step{display:grid;gap:6px}
+.sol-step>b{font-family:var(--font-mono);font-size:.76rem;font-weight:700;letter-spacing:.03em;color:var(--accent)}
+.sol-step>b .k{color:var(--muted);margin-right:.4em}
+.sol-step .body{display:grid;gap:.6rem;max-width:84ch}
+.sol-step .body ol,.sol-step .body ul{margin:0;padding-left:1.25rem;display:grid;gap:.3rem}
+.sol-step .bench{max-width:100%}
+.answer{background:var(--ok-soft);border-radius:var(--radius);padding:.7rem .9rem;display:grid;gap:.5rem}
+.answer>*{min-width:0}
+.answer .tbl{background:var(--surface)}
+.answer ul,.answer ol{margin:0;padding-left:1.25rem;display:grid;gap:.25rem}
+.answer b.t,.traps b.t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.answer b.t{color:var(--ok)}
+.traps{background:var(--warn-soft);border-radius:var(--radius);padding:.7rem .9rem}
+.traps b.t{color:var(--warn);margin-bottom:4px}
+.traps ul{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.sol-note{font-size:.85rem;color:var(--muted)}
+.exo li{min-width:0}
+.exo li .bn{white-space:normal}
+/* generators */
+.infini{display:grid;gap:18px;padding-block:8px 96px;scroll-margin-top:72px}
+.infini-h{display:grid;gap:.5rem;max-width:74ch;padding-top:.8rem;border-top:2px solid var(--rule)}
+.gen-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:980px){.gen-grid{grid-template-columns:minmax(0,1fr)}}
+.gen{scroll-margin-top:72px}
+.gen-opts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:end}
+.gen-opts .cv-f{flex:1 1 15rem}
+.gen-chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);min-height:42px}
+.gen-chk input{width:18px;height:18px;accent-color:var(--accent)}
+.gen-q{font-size:1.02rem;line-height:1.55;min-height:2.6em}
+.gen-q .bn{font-size:1.05em}
+.gen-q .big{font-size:1.25rem;font-weight:600;overflow-wrap:anywhere}
+.gen-f{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:end}
+.gen-f .cv-f{flex:1 1 9rem}
+.gen-f .cv-f.wide{flex:3 1 16rem}
+.gen-f .cv-f.narrow{flex:0 1 5.5rem}
+.gen-f .row{flex:1 1 100%}
+.gen-fb{font-size:.95rem;display:grid;gap:.4rem}
+.gen-fb:empty{display:none}
+.gen-fb .ok{color:var(--ok);font-weight:700}
+.gen-fb .no{color:var(--bad);font-weight:700}
+.gen-fb .bn{white-space:normal;overflow-wrap:anywhere}
+.gen-sol{display:grid;gap:.7rem;padding-top:.7rem;border-top:1px dashed var(--line)}
+.gen-sol>*{min-width:0}
+.gen-score{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+.gen .bench .bench-head{background:var(--bg)}
+
+.stat b{font-weight:600}
+.exo{border-top-color:var(--comp)}
+.calc.res>div{justify-content:flex-start}
+/* generators: one frame per generator, the boole.js tools inside */
+.gbox{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--comp);border-radius:0 0 var(--radius) var(--radius);padding:14px 16px 16px;display:grid;gap:12px;min-width:0;scroll-margin-top:72px}
+.gbox>*{min-width:0}
+.gbox h3{margin:0;font-size:1.25rem}
+.gbox .gen-opts label{display:grid;gap:4px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);flex:1 1 13rem}
+.gbox select{font:inherit;font-family:var(--font-body);font-size:.95rem;text-transform:none;letter-spacing:0;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-bottom:2px solid var(--ink);border-radius:3px;padding:.35rem .5rem;min-height:40px;max-width:100%}
+.gbox select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.gen-q ul{margin:.3rem 0 0;padding-left:1.2rem;display:grid;gap:.2rem}
+.gen-q .bx{font-size:1.08em}
+.gen-tools{display:grid;gap:12px}
+.gen-tools>*{min-width:0}
+</style>
+</head>
+<body data-resume="Archi B2 · practice">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Boolean algebra</b> — practice</span><span>13 papers (2014-2026) · tutorial 1 · generators</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="7"></span><a href="index.html">Archi B2</a> · Practice</div>
+      <h1>The real exercises, <span class="w">then new ones without end.</span></h1>
+      <p class="lead">The Boolean algebra exercises of the 13 papers and those of tutorial 1, with step-by-step solutions: do them on paper, ask for a hint if you are stuck, then open the solution. An exercise that came back unchanged from one paper to another has only one card. Below, three generators make exercises as hard as the papers.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"><div class="wrapx">
+  <div class="frow" id="fTopic" role="group" aria-label="Filter by topic"></div>
+  <div class="frow" id="fKind" role="group" aria-label="Filter by source"></div>
+  <div class="frow" id="fLvl" role="group" aria-label="Filter by level"></div>
+  <div class="frow" id="fState" role="group" aria-label="Filter by status"></div>
+  <p class="fsum" id="fsum" aria-live="polite"></p>
+  <p class="fnote" id="fnote"></p>
+</div></div>
+
+<div class="wrapx">
+  <div class="list" id="list"></div>
+
+  <section class="infini" id="infini" aria-labelledby="t-inf">
+    <div class="infini-h">
+      <div class="eyebrow">Endless practice</div>
+      <h2 id="t-inf">Three generators, as hard as the papers</h2>
+      <p>Each generator copies a typical exercise of the 2023 to 2025 papers: same sizes, same instructions. Type your answer, check it, and ask for the answer if you are stuck. Input: <code>~A</code> or <code>A'</code> for A bar, <code>.</code> for AND, <code>+</code> for OR.</p>
+    </div>
+    <div class="gen-grid">
+      <div class="gbox gen" id="gen-simp"></div>
+      <div class="gbox gen" id="gen-canon"></div>
+      <div class="gbox gen" id="gen-km"></div>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/js/boole.js"></script>
+<script src="../data/boole/exams.js"></script>
+<script src="../data/en/boole/exams.js"></script>
+<script src="../data/boole/ex-annales.js"></script>
+<script src="../data/en/boole/ex-annales.js"></script>
+<script src="../data/boole/ex-td.js"></script>
+<script src="../data/en/boole/ex-td.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, B = R.boole;
+  /* ================================================================ the cards */
+  var KINDS = [{ id: 'partiel', t: 'Exam papers' }, { id: 'td1', t: 'TD 1' }];
+  function prov(e) { return e.kind === 'partiel' ? 'partiel' : (/^td\d/.exec(e.id) || ['td1'])[0]; }
+  var KORD = { partiel: 1, td1: 2 };
+  /* papers from the most recent to the oldest (retakes after the exams of the same year), then the tutorial */
+  function yr(e) { var m = /^[pr](\d{4})/.exec(e.exam || ''); return m ? +m[1] : 0; }
+  var EX = (window.BOOLE_EX || []).slice().sort(function (a, b) {
+    var ka = KORD[prov(a)], kb = KORD[prov(b)];
+    if (ka !== kb) return ka - kb;
+    if (yr(a) !== yr(b)) return yr(b) - yr(a);
+    if (a.exam !== b.exam) return (a.exam || '') < (b.exam || '') ? -1 : 1;
+    return (a.order || 0) - (b.order || 0);
+  });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  var NEAR_IN = {};
+  EX.forEach(function (e) { (e.near || []).forEach(function (id) { (NEAR_IN[id] = NEAR_IN[id] || []).push(e.id); }); });
+  var TOP = {}; Object.keys(window.BOOLE_TOPICS || {}).forEach(function (k) { if (k !== 'hors-programme') TOP[k] = window.BOOLE_TOPICS[k]; });
+  var LVL = ['', 'easy', 'medium', 'hard'];
+  var STATES = [{ id: 'todo', t: 'To do' }, { id: 'ok', t: 'Done' }, { id: 'review', t: 'To review' }];
+  /* method (methodes.html) and course parts to reread for each topic */
+  var METH = { simplification: ['simplifier', 1], canon1: ['canon', 2], canon2: ['canon', 2], karnaugh: ['karnaugh', 3], indefini: ['karnaugh', 3],
+    xor: ['xor', 4], nand: ['nand', 5], probleme: ['probleme', 6], transcodeur: ['probleme', 6] };
+  var C1 = 'cours-1-portes.html', C2 = 'cours-2-algebre.html', C3 = 'cours-3-formes.html', C4 = 'cours-4-karnaugh.html', C5 = 'cours-5-circuits.html';
+  var COURS = { schema: [[C1, 1, 8]], simplification: [[C2, 2, 8]], xor: [[C2, 2, 7]], nand: [[C2, 2, 9]], canon1: [[C3, 3, 3], [C3, 3, 4]], canon2: [[C3, 3, 6], [C3, 3, 7]],
+    karnaugh: [[C4, 4, 3], [C4, 4, 4]], indefini: [[C4, 4, 6]], probleme: [[C5, 5, 1], [C5, 5, 2]], transcodeur: [[C5, 5, 3]], arith: [[C5, 5, 4], [C5, 5, 5]] };
+  var COURS_ID = {};
+  var st = { topic: null, kind: null, lvl: 0, state: null };
+  function key(ex) { return 'boole-' + ex.id; }
+  function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
+  function esc(s) { return U.esc(String(s)); }
+  function has(e, t) { return (e.topics || []).indexOf(t) >= 0; }
+  function pts(v) { return String(v).replace('.', ','); }
+  function stOk(e, s) { var x = state(e); return s === 'todo' ? !x : x === s; }
+  function shown(e) { return (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)); }
+
+  function paintStats() {
+    var ok = 0, rv = 0, np = 0;
+    EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
+    $('#stats').innerHTML = '<div class="stat"><b>' + np + '</b><span>exercises from papers</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>from tutorial 1</span></div><div class="stat"><b>' + ok + '</b><span>done</span></div><div class="stat"><b>' + rv + '</b><span>to review</span></div><a class="stat" href="#infini"><b>∞</b><span>generated exercises</span></a>';
+  }
+  function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+  function paintFilters() {
+    var topics = Object.keys(TOP).filter(function (t) { return EX.some(function (e) { return has(e, t); }); });
+    $('#fTopic').innerHTML = '<span class="lbl">Topic</span>' + chip('data-t', '', !st.topic, 'All', EX.length) +
+      topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), EX.filter(function (e) { return has(e, t); }).length); }).join('');
+    $('#fKind').innerHTML = '<span class="lbl">Source</span>' + chip('data-k', '', !st.kind, 'All') +
+      KINDS.map(function (k) { return chip('data-k', k.id, st.kind === k.id, k.t, EX.filter(function (e) { return prov(e) === k.id; }).length); }).join('');
+    $('#fLvl').innerHTML = '<span class="lbl">Level</span>' + chip('data-l', 0, !st.lvl, 'All') +
+      [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), EX.filter(function (e) { return e.lvl === l; }).length); }).join('');
+    $('#fState').innerHTML = '<span class="lbl">Status</span>' + chip('data-s', '', !st.state, 'All') +
+      STATES.map(function (s) { return chip('data-s', s.id, st.state === s.id, s.t, EX.filter(function (e) { return stOk(e, s.id); }).length); }).join('');
+    $('#fnote').innerHTML = st.kind === 'td1' ? 'Tutorial 1: no official solution published; the answers are computed and checked by program.' : '';
+    $('#filters').hidden = !EX.length;
+    $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
+    $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });
+    $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; repaint(); }); });
+    $$('#fState [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.state = b.dataset.s || null; repaint(); }); });
+  }
+
+  function link(id) { var e = BY[id]; return e ? '<a href="#' + id + '">' + esc(e.src) + ': ' + e.title + '</a>' : ''; }
+  /* related exercises: near in both directions, sorted by the source of the linked card */
+  function relHTML(ex) {
+    var ids = (ex.near || []).concat(NEAR_IN[ex.id] || []).filter(function (id, i, a) { return BY[id] && a.indexOf(id) === i && id !== ex.id; });
+    var td = ids.filter(function (id) { return BY[id].kind !== 'partiel'; }), su = ids.filter(function (id) { return BY[id].kind === 'partiel'; }), r = [];
+    if (su.length) r.push('<b>' + (ex.kind === 'partiel' ? 'The same work in another paper' : 'Asked in an exam') + '</b>' + su.map(link).join(' · '));
+    if (td.length) r.push('<b>The same work in the tutorial</b>' + td.map(link).join(' · '));
+    return r.map(function (x) { return '<p class="rel">' + x + '</p>'; }).join('');
+  }
+  function readHTML(ex) {
+    var seenM = {}, m = [], parts = {}, order = [];
+    (ex.topics || []).forEach(function (t) {
+      var x = METH[t]; if (x && !seenM[x[0]]) { seenM[x[0]] = 1; m.push(x); }
+    });
+    (COURS_ID[ex.id] || [].concat.apply([], (ex.topics || []).map(function (t) { return COURS[t] || []; }))).forEach(function (c) {
+      if (!parts[c[1]]) { parts[c[1]] = { href: c[0], ps: [] }; order.push(c[1]); }
+      if (parts[c[1]].ps.indexOf(c[2]) < 0) parts[c[1]].ps.push(c[2]);
+    });
+    var out = m.map(function (x) { return '<a href="methodes.html#' + x[0] + '">method ' + x[1] + '</a>'; });
+    order.forEach(function (f) {
+      var p = parts[f]; p.ps.sort(function (a, b) { return a - b; });
+      out.push('sheet ' + f + ', part' + (p.ps.length > 1 ? 's ' : ' ') + p.ps.map(function (k) { return '<a href="' + p.href + '#s' + k + '">' + k + '</a>'; }).join(', '));
+    });
+    return out.length ? '<p class="sol-note">Reread: ' + out.join(' ; ') + '.</p>' : '';
+  }
+  function solHTML(ex) {
+    var s = (ex.solution || []).map(function (p, i) { return '<div class="sol-step"><b><span class="k">' + (i + 1) + '.</span>' + (p.t || 'Solution') + '</b><div class="body">' + (p.html || '') + '</div></div>'; }).join('');
+    if (ex.answer) s += '<div class="answer"><b class="t">What to write on your answer sheet</b>' + ex.answer + '</div>';
+    if (ex.traps && ex.traps.length) s += '<div class="traps"><b class="t">Traps</b><ul>' + ex.traps.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    if (ex.grading) s += '<p class="sol-note">Marking: ' + ex.grading + '</p>';
+    s += '<p class="sol-note">' + (ex.official ? 'Matches the official answer key. ' : '') + (ex.note || 'Written solution, every result recomputed by program.') + '</p>';
+    return s + readHTML(ex);
+  }
+  function metaHTML(ex) {
+    var s = state(ex);
+    return '<span class="tagc src' + (ex.kind === 'partiel' ? '' : ' td') + '">' + esc(ex.src) + '</span>' + (ex.pts ? '<span class="tagc">' + pts(ex.pts) + ' pts</span>' : '') + (ex.time ? '<span class="tagc">≈ ' + ex.time + ' min</span>' : '') +
+      (ex.lvl ? '<span class="tagc">' + LVL[ex.lvl] + '</span>' : '') +
+      (ex.topics || []).map(function (t) { return '<span class="tagc">' + esc(TOP[t] || t) + '</span>'; }).join('') +
+      (s ? '<span class="tagc st-' + s + '">' + (s === 'ok' ? 'done' : 'to review') + '</span>' : '');
+  }
+  function card(ex) {
+    var s = state(ex), el = document.createElement('article');
+    el.className = 'exo'; el.id = ex.id;
+    var qs = (ex.questions || []).length ? '<ol class="exo-qs">' + ex.questions.map(function (q) { return '<li><div>' + q + '</div></li>'; }).join('') + '</ol>' : '';
+    var nh = (ex.hints || []).length;
+    el.innerHTML = '<div class="exo-head"><div class="exo-meta">' + metaHTML(ex) + '</div><h3><a href="#' + ex.id + '">' + ex.title + '</a></h3></div>' +
+      '<div class="exo-body">' + (ex.intro ? '<div class="exo-intro">' + ex.intro + '</div>' : '') + qs + relHTML(ex) + '</div>' +
+      '<div class="exo-hints"></div>' +
+      '<div class="exo-actions">' + (nh ? '<button type="button" class="btn" data-act="hint">Hint 1 / ' + nh + '</button>' : '') +
+      '<button type="button" class="btn primary" data-act="sol" aria-expanded="false">Show the solution</button><span class="grow"></span>' +
+      '<button type="button" class="btn ok" data-act="ok" aria-pressed="' + (s === 'ok') + '">I got it</button><button type="button" class="btn rev" data-act="review" aria-pressed="' + (s === 'review') + '">To review</button></div>' +
+      '<div class="exo-sol" hidden></div>';
+    el.querySelector('[data-act="sol"]').addEventListener('click', function (e) {
+      var box = el.querySelector('.exo-sol'), open = box.hidden;
+      if (open && !box.dataset.ready) { box.innerHTML = solHTML(ex); box.dataset.ready = '1'; }
+      box.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); e.currentTarget.textContent = open ? 'Hide the solution' : 'Show the solution';
+    });
+    var shownH = 0, hb = el.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shownH >= nh) return;
+      el.querySelector('.exo-hints').insertAdjacentHTML('beforeend', '<div class="hint"><b>Hint ' + (shownH + 1) + '</b>' + ex.hints[shownH] + '</div>');
+      shownH++; hb.textContent = shownH < nh ? 'Hint ' + (shownH + 1) + ' / ' + nh : 'No more hints'; hb.disabled = shownH >= nh;
+    });
+    /* “I got it” / “To review”: updated in place, an open solution stays open */
+    ['ok', 'review'].forEach(function (k) {
+      el.querySelector('[data-act="' + k + '"]').addEventListener('click', function () {
+        R.exo.set(key(ex), state(ex) === k ? null : k);
+        var now = state(ex);
+        el.querySelector('[data-act="ok"]').setAttribute('aria-pressed', String(now === 'ok'));
+        el.querySelector('[data-act="review"]').setAttribute('aria-pressed', String(now === 'review'));
+        el.querySelector('.exo-meta').innerHTML = metaHTML(ex);
+        paintStats(); paintFilters(); paintSum();
+      });
+    });
+    return el;
+  }
+  function paintSum() {
+    var n = EX.filter(shown).length, any = st.topic || st.kind || st.lvl || st.state;
+    $('#fsum').textContent = any ? n + ' exercise' + (n > 1 ? 's' : '') + ' for these filters.' : '';
+  }
+  function paintList() {
+    var list = EX.filter(shown), box = $('#list'); box.innerHTML = '';
+    if (!EX.length) { box.innerHTML = '<p class="empty">The exercises with solutions will appear here.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">No exercise for these filters.</p>'; return; }
+    list.forEach(function (e) { box.appendChild(card(e)); });
+  }
+
+  function repaint() { paintFilters(); paintList(); paintSum(); }
+
+  /* ================================================================ the generators
+     A random function (union of 2 or 3 products), disguised as in the papers; the answer is checked by the check
+     tool of boole.js (exact equivalence, requested form, number of terms and literals). The .gen-q element carries
+     the question as data (data-q), for the tests. */
+  function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = ri(0, i), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function all(n) { var l = []; for (var k = 0; k < (1 << n); k++) l.push(k); return l; }
+  function covers(p, k) { return (k & ~p.m) === p.v; }
+  /* a random product: each variable absent with probability pf, otherwise 0 or 1 */
+  function randImpl(n, pf) {
+    var v = 0, m = 0;
+    for (var j = 0; j < n; j++) { var bit = 1 << (n - 1 - j); if (Math.random() < pf) m |= bit; else if (Math.random() < 0.5) v |= bit; }
+    if (m === (1 << n) - 1) m &= ~1;
+    return { v: v & ~m, m: m };
+  }
+  /* a function whose simplest form has 2 to 3 products */
+  function randFunc(n, dcMax) {
+    for (var tries = 0; tries < 200; tries++) {
+      var k = ri(2, 3), imps = []; for (var i = 0; i < k; i++) imps.push(randImpl(n, n === 4 ? 0.45 : 0.4));
+      var ones = all(n).filter(function (c) { return imps.some(function (p) { return covers(p, c); }); });
+      var zeros = all(n).filter(function (c) { return ones.indexOf(c) < 0; }), dc = [];
+      if (dcMax && zeros.length > 4) dc = shuffle(zeros.slice()).slice(0, ri(2, Math.min(dcMax, zeros.length - 2))).sort(function (a, b) { return a - b; });
+      var best = B.minimize(n, ones, dc);
+      if (ones.length < 2 || zeros.length < 2 || best.length < 2 || best.length > 3) continue;
+      return { n: n, ones: ones, zeros: zeros, dc: dc, best: best };
+    }
+    return null;
+  }
+  function lit(p, n, vars, neg) {
+    var l = [];
+    for (var j = 0; j < n; j++) { var bit = 1 << (n - 1 - j); if (p.m & bit) continue; l.push(((p.v & bit) ? !neg : neg) ? vars[j] : '~' + vars[j]); }
+    return l;
+  }
+  function prodOf(p, vars) { return lit(p, vars.length, vars, false).join('.') || '1'; }
+  function sumOf(p, vars) { var l = lit(p, vars.length, vars, true); return l.length > 1 ? '(' + l.join(' + ') + ')' : l[0]; }
+  function posOf(zeros, vars) { return B.minimize(vars.length, zeros).map(function (p) { return sumOf(p, vars); }).join('.'); }
+  function sopOf(ones, vars) { return B.sop(B.minimize(vars.length, ones), vars); }
+  function bx(s) { return '<span class="bx">' + U.esc(s) + '</span>'; }
+  function tool(kind, o) { return '<div data-boole="' + kind + '" data-opts=\'' + JSON.stringify(o).replace(/'/g, '&#39;') + '\'></div>'; }
+  var V3 = ['A', 'B', 'C'], V4 = ['A', 'B', 'C', 'D'];
+
+  /* ---------- 1. simplify (exercise 1 of the papers) ---------- */
+  function disguise(f, vars, how) {
+    var n = vars.length, best = B.sop(f.best, vars);
+    if (how === 'mint') return B.canon1(f.ones, vars);
+    if (how === 'bar') return '~(' + sopOf(f.zeros, vars) + ')';
+    if (how === 'pos') return posOf(f.zeros, vars);
+    /* abs: the simple form, one product split in two (X = X.Y + X.~Y) and one extra, absorbed product */
+    var terms = f.best.slice(), out = [], split = false;
+    shuffle(terms).forEach(function (p) {
+      var free = []; for (var j = 0; j < n; j++) if (p.m & (1 << (n - 1 - j))) free.push(1 << (n - 1 - j));
+      if (!split && free.length) { var b = pick(free); out.push(prodOf({ v: p.v | b, m: p.m & ~b }, vars), prodOf({ v: p.v, m: p.m & ~b }, vars)); split = true; }
+      else out.push(prodOf(p, vars));
+    });
+    var extra = randImpl(n, 0.2); if (f.ones.indexOf(extra.v) >= 0 && all(n).filter(function (c) { return covers(extra, c); }).every(function (c) { return f.ones.indexOf(c) >= 0; })) out.push(prodOf(extra, vars));
+    var s = shuffle(out).join(' + ');
+    return s === best ? '~(' + sopOf(f.zeros, vars) + ')' : s;
+  }
+  function simpMake(o) {
+    var n = o.n === '3' ? 3 : o.n === '4' ? 4 : pick([3, 4, 4]), vars = n === 3 ? V3 : V4, f = randFunc(n, 0);
+    var how = o.how && o.how !== 'mix' ? o.how : pick(f.ones.length <= 5 ? ['mint', 'bar', 'pos', 'abs'] : ['bar', 'pos', 'abs', 'abs']);
+    if (how === 'mint' && f.ones.length > 6) how = 'abs';
+    var e = disguise(f, vars, how);
+    return { spec: { k: 'simp', e: e, n: n }, q: '<p>Simplify as much as possible, without parentheses:</p><p>' + bx('S = ' + e) + '</p>',
+      tools: tool('check', { ref: e, vars: vars, kind: 'min', label: 'S', title: 'Simplest expression' }) };
+  }
+  /* ---------- 2. canonical forms (exercise 2) ---------- */
+  function canonMake(o) {
+    var form = o.form && o.form !== 'mix' ? o.form : pick(['canon1', 'canon2']), n = o.n === '4' ? 4 : 3, vars = n === 3 ? V3 : V4, f, cnt;
+    do { f = randFunc(n, 0); cnt = form === 'canon1' ? f.ones.length : f.zeros.length; } while (cnt > (n === 3 ? 5 : 6));
+    var e = Math.random() < 0.5 ? B.sop(f.best, vars) : posOf(f.zeros, vars);
+    var name = form === 'canon1' ? 'minterm canonical form (sum of minterms)' : 'maxterm canonical form (product of maxterms)';
+    return { spec: { k: form, e: e, n: n }, q: '<p>Give the <b>' + name + '</b> of:</p><p>' + bx('S = ' + e) + '</p><p class="muted">Variables: ' + vars.join(', ') + '.</p>',
+      tools: tool('check', { ref: e, vars: vars, kind: form, label: 'S', title: form === 'canon1' ? 'Minterm canonical form' : 'Maxterm canonical form', placeholder: form === 'canon1' ? '~A.B.C + A.~B.C' : '(A + B + ~C).(~A + B + C)' }) };
+  }
+  /* ---------- 3. Karnaugh with Φ (exercise 3) ---------- */
+  function kmMake(o) {
+    var n = o.n === '3' ? 3 : 4, vars = n === 4 ? ['D', 'C', 'B', 'A'] : ['C', 'B', 'A'], f = randFunc(n, o.dc === 'non' ? 0 : n === 4 ? 6 : 2);
+    var st = '<p>Let N be a binary number coded on ' + n + ' bits (' + vars.join(', ') + '); A is the least significant bit.</p><p>' + bx('S') + ' = 1 if and only if N = ' + f.ones.join(', ') +
+      (f.dc.length ? ' and S is undefined if and only if N = ' + f.dc.join(', ') : '') + '.</p>';
+    return { spec: { k: 'km', ones: f.ones, dc: f.dc, n: n }, q: st,
+      tools: tool('kmap', { vars: vars, rows: n === 4 ? 2 : 1, ones: f.ones, dc: f.dc, name: 'S', mode: 'play', title: 'Fill in the map' }) +
+        tool('check', { vars: vars, ones: f.ones, dc: f.dc, kind: 'min', label: 'S', title: 'Simplest expression' }) };
+  }
+  function gen(id, title, sels, make) {
+    var el = document.getElementById(id), opts = {};
+    el.innerHTML = '<h3>' + title + '</h3><div class="gen-opts frow">' + sels.map(function (s) {
+      return '<label><span>' + s.label + '</span><select data-k="' + s.k + '">' + s.opts.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join('') + '</select></label>';
+    }).join('') + '</div><div class="gen-q"></div><div class="gen-tools"></div><div class="row"><button type="button" class="btn primary" data-new>Another exercise</button></div>';
+    var qEl = el.querySelector('.gen-q'), tEl = el.querySelector('.gen-tools');
+    function run() {
+      $$('select', el).forEach(function (s) { opts[s.getAttribute('data-k')] = s.value; });
+      var r = make(opts); qEl.innerHTML = r.q; qEl.setAttribute('data-q', JSON.stringify(r.spec)); tEl.innerHTML = r.tools;
+    }
+    $$('select', el).forEach(function (s) { s.addEventListener('change', run); });
+    el.querySelector('[data-new]').addEventListener('click', run);
+    run();
+  }
+  function initGens() {
+    gen('gen-simp', 'Simplify as much as possible, without parentheses', [
+      { k: 'how', label: 'Starting form', opts: [['mix', 'Random, as in the papers'], ['bar', 'A bar over a sum (De Morgan)'], ['pos', 'A product of sums (expand)'], ['mint', 'A sum of minterms'], ['abs', 'Products that absorb each other']] },
+      { k: 'n', label: 'Variables', opts: [['mix', '3 or 4'], ['3', '3 (A, B, C)'], ['4', '4 (A, B, C, D)']] }], simpMake);
+    gen('gen-canon', 'Minterm and maxterm canonical forms', [
+      { k: 'form', label: 'Form', opts: [['mix', 'Random'], ['canon1', 'Minterm form'], ['canon2', 'Maxterm form']] },
+      { k: 'n', label: 'Variables', opts: [['3', '3 (A, B, C)'], ['4', '4 (A, B, C, D)']] }], canonMake);
+    gen('gen-km', 'Karnaugh map, with undefined cells', [
+      { k: 'n', label: 'Size', opts: [['4', '4 variables (D, C, B, A)'], ['3', '3 variables (C, B, A)']] },
+      { k: 'dc', label: 'Undefined cells Φ', opts: [['oui', 'With Φ, as in the papers'], ['non', 'Without Φ']] }], kmMake);
+  }
+
+  /* ---------- direct links: #<topic>, #partiel, #td, #td1, #<card id>, #infini, #gen-… ---------- */
+  function applyHash() {
+    var h = decodeURIComponent((location.hash || '').slice(1));
+    if (!h) return;
+    if (TOP[h]) { st = { topic: h, kind: null, lvl: 0, state: null }; repaint(); return; }
+    if (KORD[h] || h === 'td') { st = { topic: null, kind: h === 'td' ? 'td1' : h, lvl: 0, state: null }; repaint(); return; }
+    if (BY[h]) { if (!shown(BY[h])) { st = { topic: null, kind: null, lvl: 0, state: null }; repaint(); } go(h, true); return; }
+    if (h === 'infini' || /^gen-/.test(h)) go(h, false);
+  }
+  function go(id, mark) {
+    var t = document.getElementById(id); if (!t) return;
+    if (mark) { $$('.exo.target').forEach(function (x) { x.classList.remove('target'); }); t.classList.add('target'); }
+    setTimeout(function () { t.scrollIntoView({ behavior: U.reduceMotion() ? 'auto' : 'smooth' }); }, 30);
+  }
+  paintStats(); repaint(); initGens();
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+  R.store.on(paintStats);
+})();
+</script>
+</body>
+</html>

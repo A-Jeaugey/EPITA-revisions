@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Archi B2</title>
+<meta name="description" content="Archi B2: one method per exam exercise, in the order of the paper, each with an example from the papers and the tool that shows it. Simplifying without parentheses, canonical forms, Karnaugh maps with Φ, EXCLUSIVE-OR, NAND gates, a problem put into equations; checking, the checklist, the traps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/boole.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Methods: one section per exam exercise, marked like a component (U1…); each example comes from a
+   paper and can be replayed with the boole.js tool. */
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.mk{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 .3rem;font-family:var(--font-mono);font-size:.85rem;font-weight:600;color:var(--comp);border:1.5px solid var(--comp);border-radius:3px;flex:none}
+.copy{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:0 var(--radius) var(--radius) 0;padding:.8rem 1rem;display:grid;gap:.45rem;min-width:0}
+.copy>*{min-width:0}
+.copy .tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ex-src{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;color:var(--exam)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.55rem .75rem}
+.check input{width:20px;height:20px;margin:.15rem 0 0;accent-color:var(--ok)}
+.check label{min-width:0;cursor:pointer}
+.check li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.check-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.check-n{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.vf td:first-child{min-width:9rem}
+@media (max-width:560px){.calc>div{white-space:normal;flex-wrap:wrap;gap:.2rem 1rem}}
+</style>
+</head>
+<body data-resume="Archi B2 · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Archi B2 · Boolean algebra</b> — exam methods</span><span>Examples: B2 exam 2025-2026, exams 2023 and 2024, Tutorial 1</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="plate" data-n="6"></span><a href="index.html">Archi B2</a> · Methods</div>
+      <h1>One method per <span class="w">exercise of the paper.</span></h1>
+      <p class="lead">Since 2023, the exam asks the same questions in the same order: simplifying, canonical forms, Karnaugh maps, a problem, and a small circuits exercise. Each method fits in a few steps, with an example from the papers, what you write on the paper and the trap that costs points.</p>
+      <ul class="feats">
+        <li><span><span class="k">Methods</span> 6, in the order of the paper</span></li>
+        <li><span><span class="k">Then</span> checking, the checklist, the traps</span></li>
+        <li class="ex"><span><span class="k">Examples</span> all taken from the papers and Tutorial 1</span></li>
+        <li><span><span class="k">Practise</span> <a href="entrainement.html#infini">generators</a></span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Contents of the methods">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#simplifier"><span class="plate" data-n="1"></span><span>Simplify without parentheses</span></a></li>
+      <li><a href="#canon"><span class="plate" data-n="2"></span><span>The canonical forms</span></a></li>
+      <li><a href="#karnaugh"><span class="plate" data-n="3"></span><span>Karnaugh, with Φ</span></a></li>
+      <li><a href="#xor"><span class="plate" data-n="4"></span><span>Making an EXCLUSIVE-OR appear</span></a></li>
+      <li><a href="#nand"><span class="plate" data-n="5"></span><span>NAND gates only</span></a></li>
+      <li><a href="#probleme"><span class="plate" data-n="6"></span><span>A problem in equations</span></a></li>
+      <li><a href="#verifier"><span class="mk">=</span><span>Checking quickly</span></a></li>
+      <li><a href="#copie"><span class="mk">✓</span><span>Before handing in</span></a></li>
+      <li><a href="#pieges"><span class="mk">!</span><span>The traps</span></a></li>
+    </ol>
+    <p class="toc-note">Each method carries a component marker, like the parts of the course: U1, U2…</p>
+    <div class="toc-nav"><a href="index.html">← Archi B2 home</a><a href="entrainement.html">Practice →</a><a href="fiche.html">One-page sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Contents of the methods</summary><ol>
+      <li><a href="#simplifier">Simplify without parentheses</a></li><li><a href="#canon">The canonical forms</a></li><li><a href="#karnaugh">Karnaugh, with Φ</a></li>
+      <li><a href="#xor">Making an EXCLUSIVE-OR appear</a></li><li><a href="#nand">NAND gates only</a></li><li><a href="#probleme">A problem in equations</a></li>
+      <li><a href="#verifier">Checking quickly</a></li><li><a href="#copie">Before handing in</a></li><li><a href="#pieges">The traps</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="simplifier">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="1"></span>Method 1 <span class="ref">exercise 1 · <a href="cours-2-algebre.html#s4">sheet 2, parts 4, 5 and 8</a></span></div><h2>Simplify as much as possible, without parentheses</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Break the long bars</b> with De Morgan, from the outside in: <span class="bx">~(X.Y) = ~X + ~Y</span>, <span class="bx">~(X + Y) = ~X.~Y</span>. Keep parentheses as long as you need them.</p></div></li>
+          <li><div><p><b>Expand</b> into a sum of products, and immediately remove the null products (<span class="bx">X.~X = 0</span>) and the repetitions (<span class="bx">X.X = X</span>).</p></div></li>
+          <li><div><p><b>Reduce</b>: two products that differ by only one variable combine (<span class="bx">X.Y + X.~Y = X</span>); a product absorbs a longer one (<span class="bx">X + X.Y = X</span>); <span class="bx">X + ~X.Y = X + Y</span>.</p></div></li>
+          <li><div><p><b>Check on scratch paper</b> with a Karnaugh map: only the result is graded, and the map reliably gives the simplest form.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026, exercise 1 (and Tutorial 1, S5)</p>
+        <div class="calc"><div><span><span class="bx">(A + ~B.~C).~(A.B)</span></span></div><div><span><span class="bx">(A + ~B.~C).(~A + ~B)</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">A.~A + A.~B + ~A.~B.~C + ~B.~C</span></span><span class="why-r">expansion</span></div><div><span><span class="bx">A.~B + ~A.~B.~C + ~B.~C</span></span><span class="why-r">A.~A = 0</span></div><div><span><span class="bx">A.~B + ~B.~C</span></span><span class="why-r">~B.~C absorbs ~A.~B.~C</span></div></div>
+        <p class="ex-src">Same paper: the sum under the bar</p>
+        <div class="calc"><div><span><span class="bx">~(A.B + ~A.~B + ~A.B)</span></span></div><div><span><span class="bx">~(A.B + ~A)</span></span><span class="why-r">~A.~B + ~A.B = ~A</span></div><div><span><span class="bx">~(~A + B)</span></span><span class="why-r">~A + A.B = ~A + B</span></div><div><span><span class="bx">A.~B</span></span><span class="why-r">De Morgan</span></div></div>
+        <div data-boole="simplifier" data-opts='{"value":"A + B.C + ~A.(~B + ~C).(A.D + C)"}'></div>
+        <div class="copy"><span class="tag">On the paper</span><p>The result alone, in the box: <b><span class="bx">A.~B + ~B.~C</span></b>. A sum of products, with no parentheses at all: “The result must not contain parentheses.” An expression that equals 0 or 1 is written <b>0</b> or <b>1</b> (2023 paper: <span class="bx">~((C + D) + (B + ~D)) = 0</span>).</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Half a De Morgan: <span class="bx">~(X.Y)</span> becomes <span class="bx">~X + ~Y</span>; the AND becomes OR, it is not enough to put a bar on each letter.</li>
+          <li>Stopping too early: <span class="bx">A + B.C + ~B.C</span> can still be reduced, to <span class="bx">A + C</span>.</li>
+          <li>Leaving a factored parenthesis (<span class="bx">B.(C + ~A)</span>): the result is correct, but the instruction is not followed.</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="canon">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="2"></span>Method 2 <span class="ref">exercise 2 · <a href="cours-3-formes.html#s2">sheet 3, parts 2 to 7</a></span></div><h2>Minterm and maxterm canonical forms</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>List the variables</b> of the expression, in alphabetical order, and only those: <span class="bx">A + ~B</span> has only A and B.</p></div></li>
+          <li><div><p><b>Find the rows</b>: output 1 for the minterm form, output 0 for the maxterm form. Read them from the shape of the expression (a product imposes its values) or build the truth table.</p></div></li>
+          <li><div><p><b>Minterm form: one minterm per row with output 1</b>, a product of all the variables, complemented if it is 0. <b>Maxterm form: one maxterm per row with output 0</b>, a sum of all the variables, complemented if it is 1.</p></div></li>
+          <li><div><p><b>Count</b>: minterms + maxterms = 2<sup><var>n</var></sup>. No duplicate term.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026: A + B.~C, maxterm form</p>
+        <div data-boole="truth" data-opts='{"vars":["A","B","C"],"exprs":["A + B.~C"],"names":["S"],"hl":[0,1,3],"title":"S is 0 on rows 000, 001 and 011"}'></div>
+        <div class="calc"><div><span><span class="bx">S = (A + B + C).(A + B + ~C).(A + ~B + ~C)</span></span><span class="why-r">one maxterm per row at 0</span></div></div>
+        <p class="ex-src">Completing the terms · exam 2 2023-2024 and Tutorial 1: (A + C).(~A + B + C)</p>
+        <div class="calc"><div><span><span class="bx">(A + C).(~A + B + C)</span></span></div><div><span><span class="bx">(A + B.~B + C).(~A + B + C)</span></span><span class="why-r">B is missing: B.~B = 0</span></div><div><span><span class="bx">(A + B + C).(A + ~B + C).(~A + B + C)</span></span><span class="why-r">X + Y.Z = (X + Y).(X + Z)</span></div></div>
+        <div class="copy"><span class="tag">On the paper</span><p>Each term contains all the variables, in the same order; minterms separated by +, maxterms in parentheses and separated by dots. The answer keys list the terms in any order: only the content counts.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Mixing up the conventions: in a maxterm, a variable at <b>0</b> is written <b>without</b> a bar.</li>
+          <li>Adding a variable that is not in the expression.</li>
+          <li>Keeping a duplicate term after completing two products (Tutorial 1, ex. 3.1, S3: two duplicates).</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="karnaugh">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="3"></span>Method 3 <span class="ref">exercise 3 · <a href="cours-4-karnaugh.html#s2">sheet 4</a></span></div><h2>Karnaugh maps, with undefined cells</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Copy the header of the paper</b>: rows DC, columns BA, in Gray order 00, 01, 11, 10. The cell numbers: <span class="mono">0 1 3 2 / 4 5 7 6 / 12 13 15 14 / 8 9 11 10</span>.</p></div></li>
+          <li><div><p><b>Fill in</b>: 1 at the given numbers, Φ at the undefined cells, 0 everywhere else. The map is graded: check every cell.</p></div></li>
+          <li><div><p><b>Circle</b> the largest rectangles of 1, 2, 4 or 8 cells, opposite edges being neighbours, with as few circles as possible. A Φ goes into a circle if it enlarges it, never alone.</p></div></li>
+          <li><div><p><b>Read each circle</b>: the variable that changes disappears; at 0, it is complemented; at 1, written as is. The expression is the sum of the products.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026, exercise 3: S2 = 1 iff N = 0, 4, 6, 8, 12, 14; undefined iff N = 3, 5, 7, 10, 13, 15</p>
+        <div data-boole="kmap" data-opts='{"vars":["D","C","B","A"],"rows":2,"ones":[0,4,6,8,12,14],"dc":[10,13,15,3,5,7],"name":"S2","steps":true}'></div>
+        <div class="copy"><span class="tag">On the paper</span><p>The completed map (0, 1 and Φ), the circles drawn, then the expression: <b><span class="bx">S2 = C + ~B.~A</span></b>. “No points will be given to an expression if its Karnaugh map is wrong”: the map counts as much as the expression.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Binary order instead of Gray order (00, 01, 10, 11): the map is wrong.</li>
+          <li>Forgetting the edges: column 10 touches column 00, row 10 touches row 00, and the four corners form a circle.</li>
+          <li>A circle of 3 or 6 cells: only powers of 2 are allowed.</li>
+          <li>A circle that contains only Φ cells, or a Φ left at 0 when it would have doubled a circle.</li>
+        </ul></div>
+        <p><a class="btn" href="entrainement.html#gen-km">Karnaugh map generator →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="xor">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="4"></span>Method 4 <span class="ref">exercises 3 and 5 · <a href="cours-2-algebre.html#s7">sheet 2, part 7</a></span></div><h2>Making an EXCLUSIVE-OR appear</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Start from the simplest form</b> without EXCLUSIVE-OR (Karnaugh or algebra).</p></div></li>
+          <li><div><p><b>Look for the pattern</b> <span class="bx">X.~Y + ~X.Y = X ^ Y</span> (or <span class="bx">X.Y + ~X.~Y = ~(X ^ Y)</span>), where X and Y can be products. Factor to make it appear, with De Morgan’s help.</p></div></li>
+          <li><div><p><b>Spot the checkerboard</b>: in a Karnaugh map, 1s that never touch, every other cell, signal an EXCLUSIVE-OR.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026, exercise 3, question 2</p>
+        <div class="calc"><div><span><span class="bx">~D.B + ~C.B + D.C.~B</span></span></div><div><span><span class="bx">B.(~D + ~C) + ~B.(C.D)</span></span><span class="why-r">factoring</span></div><div><span><span class="bx">B.~(C.D) + ~B.(C.D)</span></span><span class="why-r">De Morgan</span></div><div><span><span class="bx">B ^ (C.D)</span></span><span class="why-r">X.~Y + ~X.Y = X ^ Y</span></div></div>
+        <div data-boole="kmap" data-opts='{"vars":["C","B","A"],"rows":1,"expr":"A ^ B ^ C","name":"S","title":"The checkerboard: A ⊕ B ⊕ C, the sum of a full adder"}'></div>
+        <div class="copy"><span class="tag">On the paper</span><p><b><span class="bx">S1 = B ^ (C.D)</span></b>, with parentheses around the product: <span class="bx">B ^ C.D</span> reads the same (AND comes first), but the answer keys write them.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Using EXCLUSIVE-OR when the paper forbids it: “Do not simplify by using the EXCLUSIVE-OR operator” (2025, question 1). The form with ⊕ goes only where it is asked for.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="nand">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="5"></span>Method 5 <span class="ref">exercise 5 (2025) · <a href="cours-2-algebre.html#s9">sheet 2, part 9</a></span></div><h2>NAND gates only</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>NOT</b>: a NAND with both inputs tied together, <span class="bx">~(A.A) = ~A</span>. 1 gate.</p></div></li>
+          <li><div><p><b>AND</b>: a NAND, then an inverter, <span class="bx">A.B = ~~(A.B)</span>. 2 gates.</p></div></li>
+          <li><div><p><b>OR</b>: an inverter on each input, then a NAND, <span class="bx">A + B = ~(~A.~B)</span>. 3 gates.</p></div></li>
+          <li><div><p><b>XOR</b>: <span class="bx">A ^ B = ~(~(A.~B).~(~A.B))</span>. Two inverters, two NANDs, a final NAND: 5 gates.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026, exercise 5: the XOR in 5 gates</p>
+        <div data-boole="schema" data-opts='{"w":600,"h":230,"live":true,"inputs":[{"id":"A","x":26,"y2":210},{"id":"B","x":52,"y2":210}],"gates":[{"id":"na","type":"nand","x":100,"y":24,"in":["A","A"]},{"id":"nb","type":"nand","x":100,"y":150,"in":["B","B"]},{"id":"n1","type":"nand","x":250,"y":40,"in":["A","nb"],"mx":[0,205]},{"id":"n2","type":"nand","x":250,"y":130,"in":["na","B"],"mx":[215,0]},{"id":"n3","type":"nand","x":400,"y":85,"in":["n1","n2"]}],"outputs":[{"from":"n3","label":"A ^ B","x":510}]}'></div>
+        <div class="copy"><span class="tag">On the paper</span><p>A clean schematic: inputs on the left, output on the right, one NAND gate per symbol, and the imposed number of gates respected (AND: 2, OR: 3, XOR: 5 in 2025-2026).</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Translating each gate of <span class="bx">A.~B + ~A.B</span> into NAND, one by one: 9 gates. The double bar and De Morgan bring it down to 5 (4 when sharing <span class="bx">~(A.B)</span>, see <a href="entrainement.html#td1-ex2">Tutorial 1, ex. 2</a>).</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="probleme">
+      <div class="sec-head"><div class="kicker"><span class="plate" data-n="6"></span>Method 6 <span class="ref">exercise 4 · <a href="cours-5-circuits.html#s1">sheet 5, parts 1 and 2</a></span></div><h2>A problem: from the statement to the equations</h2></div>
+      <div class="stack">
+        <ol class="steps">
+          <li><div><p><b>Name the inputs and outputs</b>, in the order of the paper (the first input is the most significant of the table).</p></div></li>
+          <li><div><p><b>Fill in the truth table</b> row by row, translating the statement. A row that the statement declares impossible or “does not matter” gets Φ; a row that it defines (an error, an alarm) gets its value.</p></div></li>
+          <li><div><p><b>One Karnaugh map per output</b>, unless a single row is 1: it is then a minterm. Simplify, then look for an EXCLUSIVE-OR if it is asked for.</p></div></li>
+        </ol>
+        <p class="ex-src">Example · B2 exam 2025-2026, exercise 4: the tank with three sensors</p>
+        <div class="prose"><p>C1, C2 and C3 are at 250, 500 and 750 liters. A sensor can have liquid in front of it only if the ones below it do: only 000, 001, 011 and 111 are normal, and each one lights a level light. The four other rows are errors: L0.</p></div>
+        <div data-boole="truth" data-opts='{"vars":["C3","C2","C1"],"cols":{"L1":[1,0,0,0,0,0,0,0],"L2":[0,1,0,0,0,0,0,0],"L3":[0,0,0,1,0,0,0,0],"L4":[0,0,0,0,0,0,0,1],"L0":[0,0,1,0,1,1,1,0]},"hl":[2,4,5,6],"title":"The error rows, highlighted, light L0"}'></div>
+        <div data-boole="kmap" data-opts='{"vars":["C3","C2","C1"],"rows":1,"ones":[2,4,5,6],"name":"L0"}'></div>
+        <div class="copy"><span class="tag">On the paper</span><p>The complete table, then <b><span class="bx">L1 = ~C3.~C2.~C1</span></b>, <b><span class="bx">L2 = ~C3.~C2.C1</span></b>, <b><span class="bx">L3 = ~C3.C2.C1</span></b>, <b><span class="bx">L4 = C3.C2.C1</span></b>, and the map of L0 with its circles: <b><span class="bx">L0 = C3.~C2 + C2.~C1</span></b>.</p></div>
+        <div class="note trap"><span class="tag">Trap</span><p>Putting Φ on a row that the statement defines. Here, the errors are not “impossible”: they light L0 and switch off L1 to L4. Simplifying L1 to <span class="bx">~C3</span> would be wrong on row 010.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ vérifier -->
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="mk">=</span>Checks</div><h2>Checking a result quickly</h2></div>
+      <div class="stack">
+        <div class="prose"><p>One minute of checking per exercise catches most mistakes. Each check redoes the calculation by another route.</p></div>
+        <div class="tbl"><table class="vf">
+          <thead><tr><th>Exercise</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>Simplifying</td><td>Put the starting expression in a Karnaugh map: the circles give the simplest form. Or test two or three rows in both expressions.</td></tr>
+            <tr><td>Canonical forms</td><td>Minterms + maxterms = 2<sup><var>n</var></sup>; a minterm taken at random makes the expression true, a maxterm makes it false.</td></tr>
+            <tr><td>Karnaugh</td><td>Reread each cell against the list of numbers; each 1 is in at least one circle; no circle contains another.</td></tr>
+            <tr><td>EXCLUSIVE-OR</td><td>Expand the form with ⊕ (<span class="bx">X ^ Y = X.~Y + ~X.Y</span>): you must get back the starting form.</td></tr>
+            <tr><td>NAND gates</td><td>Run 0 0, 0 1, 1 0, 1 1 through the schematic, gate by gate.</td></tr>
+            <tr><td>Problem</td><td>Reread the statement line by line against the table: each sentence must be found in at least one row.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ copie -->
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="mk">✓</span>The last minutes</div><h2>Before handing in your paper</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Reread each exercise with this list. It takes up the instructions of the papers and the mistakes the answer keys help you avoid. Nothing is saved.</p></div>
+        <div class="check-h"><span class="check-n" id="checkN" aria-live="polite"></span><button type="button" class="btn" id="checkReset">Uncheck all</button></div>
+        <ul class="check" id="check">
+          <li><input type="checkbox" id="c1"><label for="c1"><b>Simplifying</b>: sums of products without parentheses, no further combining possible; 0 or 1 written as is.</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2"><b>Canonical forms</b>: all the variables in each term, none more; no duplicate; right number of terms.</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3"><b>Karnaugh</b>: Gray order, each cell reread (0, 1, Φ), circles drawn, Φ used only if they enlarge a circle.</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4"><b>EXCLUSIVE-OR</b>: only where it is asked for; parentheses around the products.</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5"><b>Problem</b>: complete table, Φ only on impossible cases, one expression per output.</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6"><b>Schematics</b>: number of gates respected, inverter inputs tied together, output named.</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7"><b>In pen</b>, no red ink or pencil; all boxes filled in.</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ pièges -->
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="mk">!</span>To reread the day before</div><h2>The traps, exercise by exercise</h2></div>
+      <div class="stack">
+        <div class="grid2">
+          <div class="note trap"><span class="tag">Algebra</span><ul>
+            <li><span class="bx">~(A + B)</span> is not <span class="bx">~A + ~B</span>: it is <span class="bx">~A.~B</span>.</li>
+            <li><span class="bx">A + ~A.B = A + B</span>, not A.B or A.</li>
+            <li><span class="bx">(A + B).(A + C) = A + B.C</span>: distributivity of OR over AND does not exist in arithmetic, but it does in Boolean algebra.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Canonical forms</span><ul>
+            <li>Minterm: variable at 0 → complemented. Maxterm: variable at 0 → no bar.</li>
+            <li>The maxterm form comes from the rows at <b>0</b>, not the rows at 1.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Karnaugh</span><ul>
+            <li>Gray order, neighbouring edges, circles of 1, 2, 4, 8 cells.</li>
+            <li>Rows and columns swapped compared to the paper: the cell numbers change.</li>
+            <li>Φ: a help, never an obligation.</li>
+          </ul></div>
+          <div class="note trap"><span class="tag">Problems</span><ul>
+            <li>Order of the inputs: the first one named is the most significant of the table (C3 before C2 before C1 in the tank).</li>
+            <li>A row defined by the statement is never a Φ.</li>
+          </ul></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/boole.js"></script>
+<script>
+(function () {
+  /* the checklist (nothing is saved) */
+  var R = window.REV, boxes = R.util.$$('#check input'), n = document.getElementById('checkN');
+  function count() { var k = boxes.filter(function (b) { return b.checked; }).length; n.textContent = k + ' / ' + boxes.length + ' checked'; }
+  boxes.forEach(function (b) { b.addEventListener('change', count); });
+  document.getElementById('checkReset').addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); count(); });
+  count();
+})();
+</script>
+</body>
+</html>
