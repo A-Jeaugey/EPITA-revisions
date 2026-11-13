@@ -125,8 +125,7 @@
       chapters: [
         { id: 'cinematique', title: 'Cinématique cartésienne', path: 'physique/cours-1-cinematique.html', sections: 8 },
         { id: 'dynamique', title: 'Forces et lois de Newton', path: 'physique/cours-2-dynamique.html', sections: 8 },
-        { id: 'energie', title: 'Travail et énergie', path: 'physique/cours-3-energie.html', sections: 8 },
-        { id: 'polaires', title: 'Coordonnées polaires', path: 'physique/cours-4-polaires.html', sections: 8 }
+        { id: 'energie', title: 'Travail et énergie', path: 'physique/cours-3-energie.html', sections: 8 }
       ]
     },
     {
@@ -186,6 +185,16 @@
       ]
     },
     {
+      id: 'phys2', period: 'b2', name: 'Physique · Mouvement circulaire', short: 'Physique', code: 'Physique S1 · fin de semestre',
+      course: 'Mécanique du point : coordonnées polaires, mouvement circulaire', path: 'phys2/index.html', dir: 'phys2/', status: 'ready',
+      train: 'phys2/entrainement.html', fiche: 'phys2/fiche.html', open: 'Ouvrir la physique B2',
+      exam: 'Examen de fin de semestre (date à venir) · écrit, sans calculatrice ni document',
+      chapters: [
+        { id: 'polaires', title: 'Coordonnées polaires', path: 'phys2/cours-1-polaires.html', sections: 8 },
+        { id: 'circulaire', title: 'Dynamique du mouvement circulaire', path: 'phys2/cours-2-circulaire.html', sections: 6 }
+      ]
+    },
+    {
       id: 'boole', period: 'b2', name: 'Architecture · Algèbre de Boole', short: 'Archi', code: 'Produire S1 · Archi B2',
       course: 'Architecture des ordinateurs · Algèbre de Boole', path: 'boole/index.html', dir: 'boole/', status: 'ready',
       exam: 'Examen de fin de bimestre (date à venir) · 1 h 30, réponses sur le sujet · QCM en ligne 10 %, examen 90 %',
@@ -208,7 +217,7 @@
       chapters: ['Logic', 'Sets', 'Functions', 'Reasoning', 'Counting', 'Probability', 'Random variables'] },
     physique: { name: 'Physics · Mechanics', short: 'Physics', course: 'Point mechanics', open: 'Open Physics',
       exam: 'Tuesday 27 October, 1:15 pm · 1 hr 30 min, no calculator, no documents',
-      chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy', 'Polar coordinates'] },
+      chapters: ['Kinematics in Cartesian coordinates', 'Forces and Newton’s laws', 'Work and energy'] },
     taa: { name: 'Algo · Abstract types', short: 'TAA', course: 'Abstract algebraic types', open: 'Open TAA',
       exam: 'Tuesday 27 October, 9 am · 1 hr, written on the exam paper',
       chapters: ['Abstract types', 'Lists', 'Stacks, queues, sets'] },
@@ -223,6 +232,8 @@
       chapters: ['Working methodology', 'Group management'] },
     elec2: { name: 'Electronics · Theorems', short: 'Elec', course: 'Circuit analysis tools: Thévenin, Norton, Millman', open: 'Open Elec B2',
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents · 45% of the grade', chapters: ['Thévenin and Norton', 'Millman and superposition'] },
+    phys2: { name: 'Physics · Circular motion', short: 'Physics', course: 'Point mechanics: polar coordinates, circular motion', open: 'Open Physics B2',
+      exam: 'End-of-semester exam (date to come) · written, no calculator, no documents', chapters: ['Polar coordinates', 'Dynamics of circular motion'] },
     boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',
       exam: 'End-of-term exam (date to come) · 1 hr 30 min, answers on the paper · online quizzes 10%, exam 90%',
       chapters: ['Logic gates', 'Boolean algebra', 'Canonical forms', 'Karnaugh maps', 'Problems and circuits'] }

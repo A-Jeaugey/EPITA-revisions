@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dynamique du mouvement circulaire · Physique B2</title>
+<meta name="description" content="Physique B2, chapitre 2 : la 2e loi de Newton en base polaire, la réaction d’un support circulaire, énergie et 2e loi combinées, quitter une sphère, le looping, frottements sur un arc et lecture d’un sujet en base de Frenet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapitre 2 : forces en violet, base polaire en ambre, support en trait épais */
+.mk .k-amb{color:var(--accent)} .mk .k-mut{color:var(--muted)}
+.mk text.k-amb,.mk text.k-mut{fill:currentColor}
+.mk .vk.ghost{opacity:.42}
+.mk .vk.dash path{stroke-dasharray:5 4}
+.mk .vk.bold path{stroke-width:2.6}
+.mk .mk-arc{fill:none;stroke:var(--muted);stroke-width:1.2}
+.plate .mk .mk-arc{stroke:var(--flash);opacity:.8}
+.pl-polar .sliders{grid-template-columns:minmax(0,1fr)}
+.fig .ctrls .sliders{align-items:end}
+/* dérivées pointées dessinées en CSS : le point se place bien quelle que soit la police chargée */
+var.d1,var.d2{position:relative;display:inline-block;line-height:1}
+var.d1::after,var.d2::after{content:"";position:absolute;left:56%;bottom:.82em;width:.13em;height:.13em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+var.d2::after{transform:translateX(-105%);box-shadow:.24em 0 0 currentColor}
+var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physique B2 · chapitre 2 : dynamique du mouvement circulaire">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physique B2</a> · Chapitre 2 sur 2</div>
+      <h1>Sur un cercle, <span class="w">la 2e loi se projette sur la base polaire</span>.</h1>
+      <p class="lead">Une bille sur une sphère, un solide dans une gouttière, un wagon dans un looping : le point décrit un arc de cercle, et on cherche sa vitesse ou la force du support. L’énergie donne la vitesse, la 2e loi projetée sur (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>) donne la réaction. On le retrouve dans 4 des 7 examens de fin de semestre retrouvés (2017, 2018, juin 2018, 2020).</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">6 parties</span><span class="chip">chapitres 2 et 3 du B1 + chapitre 1</span><span class="chip ex">4 examens sur 7</span></div>
+      <div class="note keep"><span class="tag">Ce qu’il faut savoir avant</span><p>La <a href="../physique/cours-2-dynamique.html">2e loi de Newton</a> et le <a href="../physique/cours-3-energie.html">théorème de l’énergie mécanique</a> du B1, et l’accélération d’un mouvement circulaire du <a href="cours-1-polaires.html#s7">chapitre 1, partie 7</a> : <span class="f"><var class="vec ka">a</var> = −<var>R</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>R</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span>.</p></div>
+      <div class="vlegend" aria-label="Couleurs des vecteurs, les mêmes dans tout le site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>vitesse</span><span><i class="la"></i>accélération</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <figure class="fig" style="margin:0"><div class="mk-host" id="figHero"></div><figcaption>Une bille sur une sphère : son poids <var class="vec kf">P</var>, la réaction <var class="vec kf">N</var> du support, et la base polaire en M.</figcaption></figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Chapitre 2 · Dynamique circulaire</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>La 2e loi en base polaire</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>La réaction d’un support</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Énergie puis 2e loi</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Quitter le support</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Le looping</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>Frottements, base de Frenet</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Accueil physique B2</a><a href="cours-1-polaires.html">← Chapitre 1 : coordonnées polaires</a><a href="../qcm/index.html#phys2">QCM de physique B2</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Sommaire du chapitre</summary>
+      <ol>
+        <li><a href="#s1">La 2e loi en base polaire</a></li><li><a href="#s2">La réaction d’un support</a></li><li><a href="#s3">Énergie puis 2e loi</a></li>
+        <li><a href="#s4">Quitter le support</a></li><li><a href="#s5">Le looping</a></li><li><a href="#s6">Frottements, base de Frenet</a></li>
+      </ol>
+    </details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Partie 1</div><h2>La 2e loi de Newton en base polaire</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Au B1, on projetait la 2e loi <span class="f">Σ <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var></span> sur des axes fixes (<var class="vec">u</var><sub><var>x</var></sub>, <var class="vec">u</var><sub><var>y</var></sub>). Quand le point décrit un cercle de centre O et de rayon <var>R</var>, on la projette sur la base polaire en M : l’accélération y a une forme simple.</p>
+        </div>
+        <div class="eq"><span class="nw">sur <var class="vec">u</var><sub><var>r</var></sub> : Σ <var>F</var><sub><var>r</var></sub> = −<var>m</var><var>R</var><var class="d1 hi">θ</var>² = −<var>m</var> <span class="frac"><span><var>v</var>²</span><span><var>R</var></span></span></span><span class="nw">sur <var class="vec">u</var><sub><var>θ</var></sub> : Σ <var>F</var><sub><var>θ</var></sub> = <var>m</var><var>R</var><var class="d2 hi">θ</var> = <var>m</var> <span class="frac"><span>d<var>v</var></span><span>d<var>t</var></span></span></span></div>
+        <div class="prose"><p>Avec <var>v</var> = <var>R</var><var class="d1 hi">θ</var> : <var>R</var><var class="d1 hi">θ</var>² = <var>v</var>²/<var>R</var> et <var>R</var><var class="d2 hi">θ</var> = d<var>v</var>/d<var>t</var>. La première équation dit que la résultante des forces <b>vers le centre</b> vaut <var>m</var><var>v</var>²/<var>R</var> ; la seconde, que la composante tangente fait varier la vitesse.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Cadre</b> : système (le point M, de masse <var>m</var>), référentiel terrestre supposé galiléen.</p></div></li>
+          <li><div><p><b>Repère</b> : O au centre du cercle, l’angle <var>θ</var> mesuré depuis la direction que donne l’énoncé (souvent la verticale), <var class="vec">u</var><sub><var>θ</var></sub> dans le sens des <var>θ</var> croissants. Les formules de la vitesse et de l’accélération restent vraies quel que soit le côté d’où l’on mesure <var>θ</var>.</p></div></li>
+          <li><div><p><b>Bilan des forces</b>, dessinées en M : le poids <var class="vec kf">P</var>, la réaction <var class="vec kf">N</var> du support (perpendiculaire au support, donc selon <var class="vec">u</var><sub><var>r</var></sub>, s’il n’y a pas de frottement), une tension, un frottement…</p></div></li>
+          <li><div><p><b>Projeter chaque force</b> sur <var class="vec">u</var><sub><var>r</var></sub> et <var class="vec">u</var><sub><var>θ</var></sub>, puis écrire les deux équations.</p></div></li>
+        </ol>
+        <figure class="fig"><div class="mk-host" id="figProj"></div><figcaption>Projeter le poids sur la base polaire quand <var>θ</var> se mesure depuis la verticale ascendante : <var>P</var><sub><var>r</var></sub> = −<var>m</var><var>g</var> cos <var>θ</var> (vers le centre), <var>P</var><sub><var>θ</var></sub> = +<var>m</var><var>g</var> sin <var>θ</var> (vers l’avant).</figcaption></figure>
+        <div class="note keep"><span class="tag">Projeter le poids sans se tromper</span><p>L’angle entre <var class="vec kf">P</var> et −<var class="vec">u</var><sub><var>r</var></sub> est l’angle entre la verticale et le rayon OM. Si c’est <var>θ</var> : la composante qui contient cos <var>θ</var> est sur le rayon, celle en sin <var>θ</var> sur la tangente. Contrôle en <var>θ</var> = 0 : au sommet, le poids est entièrement selon −<var class="vec">u</var><sub><var>r</var></sub>, sa composante tangente est nulle.</p></div>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Janvier 2018 (bille sur une sphère, 5 points) et janvier 2020 (gouttière, 6 points) demandent exactement ces deux projections, écrites dans la base de Frenet (partie 6) : c’est la même chose sur un cercle. Le satellite du TD 5 (<a href="cours-1-polaires.html#s7">chapitre 1, partie 7</a>) en est le cas le plus simple : une seule force, dirigée vers le centre.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>La « force centripète » n’est pas une force de plus à ajouter au bilan : <var>m</var><var>v</var>²/<var>R</var> est ce que <b>doivent</b> fournir les vraies forces (poids, réaction, tension) vers le centre.</li>
+          <li>Le signe moins de −<var>m</var><var>R</var><var class="d1 hi">θ</var>² : <var class="vec">u</var><sub><var>r</var></sub> pointe vers l’extérieur, l’accélération vers le centre.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Partie 2</div><h2>La réaction d’un support circulaire</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Sans frottement, la réaction <var class="vec kf">N</var> est perpendiculaire au support, donc portée par le rayon. Son sens dépend du côté où se trouve le mobile : un support <b>pousse</b>, il ne tire jamais.</p></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Sur le dessus (sphère, gouttière bombée)</span><div class="mk-host" id="figOut"></div><p><var class="vec kf">N</var> = <var>N</var> <var class="vec">u</var><sub><var>r</var></sub>, vers l’extérieur. Sur <var class="vec">u</var><sub><var>r</var></sub> : <var>N</var> − <var>m</var><var>g</var> cos <var>θ</var> = −<var>m</var><var>v</var>²/<var>R</var>, donc</p><div class="eq"><span class="nw"><var>N</var> = <var>m</var>(<var>g</var> cos <var>θ</var> − <span class="frac"><span><var>v</var>²</span><span><var>R</var></span></span>)</span></div></div>
+          <div class="card"><span class="k">À l’intérieur (cuvette, looping)</span><div class="mk-host" id="figIn"></div><p><var class="vec kf">N</var> = −<var>N</var> <var class="vec">u</var><sub><var>r</var></sub>, vers le centre. En bas de la cuvette, <var>θ</var> mesuré depuis la verticale descendante : <var>N</var> − <var>m</var><var>g</var> cos <var>θ</var> = <var>m</var><var>v</var>²/<var>R</var>, donc</p><div class="eq"><span class="nw"><var>N</var> = <var>m</var>(<var>g</var> cos <var>θ</var> + <span class="frac"><span><var>v</var>²</span><span><var>R</var></span></span>)</span></div></div>
+        </div>
+        <div class="note why"><span class="tag">La règle à retenir</span><p>Forces vers le centre − forces vers l’extérieur = <var>m</var><var>v</var>²/<var>R</var>. Sur le dessus, le poids tire vers le centre et la réaction repousse : il faut <var>m</var><var>g</var> cos <var>θ</var> − <var>N</var> = <var>m</var><var>v</var>²/<var>R</var>, la réaction diminue quand <var>v</var> augmente. Dans une cuvette, c’est l’inverse : au point le plus bas, <var>N</var> = <var>m</var><var>g</var> + <var>m</var><var>v</var>²/<var>R</var>, plus que le poids. C’est pour ça qu’on se sent plus lourd au fond d’une descente de montagnes russes.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Sans calculatrice</b> : une bille de 0,2 kg passe au fond d’une cuvette de rayon 0,5 m à 2 m·s⁻¹, avec <var>g</var> = 10 m·s⁻². <var>N</var> = 0,2 × (10 + 4/0,5) = 0,2 × 18 = 3,6 N, presque deux fois son poids (2 N).</p></div></li>
+          <li><div><p><b>Équation tangente</b> : sur <var class="vec">u</var><sub><var>θ</var></sub>, la réaction ne compte pas (elle est perpendiculaire), il reste le poids : sur le dessus d’une sphère, <var>m</var><var>R</var><var class="d2 hi">θ</var> = <var>m</var><var>g</var> sin <var>θ</var>, soit <span class="f"><var class="d2 hi">θ</var> − (<var>g</var>/<var>R</var>) sin <var>θ</var> = 0</span>. C’est « l’équation différentielle du mouvement » demandée en janvier 2018.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Janvier 2018 Ex 2 : « Écrire la deuxième loi de Newton dans la base de Frenet, en déduire l’équation différentielle du mouvement ainsi que la norme de la réaction ». Janvier 2020 Ex 3 : la même question pour un solide dans une gouttière en quart de cercle, avec <var>a</var><sub>T</sub> = <var>g</var> sin <var>θ</var> et <var>R</var> = <var>m</var>(<var>g</var> cos <var>θ</var> − <var>v</var>²/<var>r</var>).</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Les sujets appellent souvent la réaction <var class="vec kf">R</var> et le rayon <var>r</var> (ou l’inverse). Écris la lettre de l’énoncé, mais ne les mélange pas.</li>
+          <li>Ne pas recopier « <var>N</var> = <var>m</var><var>g</var> cos <var>θ</var> » du plan incliné : sur un cercle, il manque le terme <var>m</var><var>v</var>²/<var>R</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Partie 3</div><h2>D’abord l’énergie, ensuite la 2e loi</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La réaction dépend de <var>v</var>² ; la 2e loi seule ne donne pas <var>v</var> en fonction de la position. Le <a href="../physique/cours-3-energie.html">théorème de l’énergie</a> le donne en une ligne, sans passer par le temps. La méthode des examens tient en trois étapes.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Hauteur de M</b> en fonction de <var>θ</var>, depuis l’axe choisi. Sur une sphère, <var>θ</var> depuis la verticale ascendante : <var>z</var> = <var>R</var> cos <var>θ</var>, et M est descendu de <var>R</var>(1 − cos <var>θ</var>) depuis le sommet.</p></div></li>
+          <li><div><p><b>Énergie mécanique conservée</b> (pas de frottement, la réaction ne travaille pas car elle est perpendiculaire au mouvement) : <span class="f">½<var>m</var><var>v</var>² = ½<var>m</var><var>v</var><sub>0</sub>² + <var>m</var><var>g</var>(<var>z</var><sub>0</sub> − <var>z</var>)</span>. Depuis le sommet, au repos : <span class="f"><var>v</var>² = 2<var>g</var><var>R</var>(1 − cos <var>θ</var>)</span>.</p></div></li>
+          <li><div><p><b>Remplacer <var>v</var>²</b> dans la réaction de la partie 2 : <var>N</var> = <var>m</var><var>g</var> cos <var>θ</var> − 2<var>m</var><var>g</var>(1 − cos <var>θ</var>), soit</p><div class="eq"><span class="nw"><var>N</var> = <var>m</var><var>g</var>(3 cos <var>θ</var> − 2)</span></div></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Janvier 2020, Ex 3 : l’énoncé donne <var>V</var>² = 2<var>g</var><var>r</var>(1 − cos <var>θ</var>) et demande la réaction : <var>R</var> = <var>m</var><var>g</var>(3 cos <var>θ</var> − 2), le résultat du corrigé. Juin 2018, Ex 3 : on part d’une hauteur <var>h</var>, la vitesse vient de l’énergie entre A et M, puis la réaction dans le looping (partie 5).</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>La différence de hauteur entre le sommet et M est <var>R</var>(1 − cos <var>θ</var>), pas <var>R</var> cos <var>θ</var> : fais un dessin et repère la hauteur de M par rapport au centre.</li>
+          <li>Le travail de la réaction est nul seulement si elle est perpendiculaire au mouvement : avec un frottement, il faut le compter (partie 6).</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Partie 4</div><h2>Quand le mobile quitte le support</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Un support ne peut que pousser : <var>N</var> ≥ 0. Tant que le calcul donne <var>N</var> &gt; 0, le mobile reste en contact. Il le quitte à l’angle où <b><var>N</var> devient nul</b> ; au-delà, la formule donnerait une réaction négative, ce qui n’a pas de sens : le mobile est déjà en chute libre.</p></div>
+        <div class="eq"><span class="nw"><var>N</var> = 0 ⇔ 3 cos <var>θ</var> − 2 = 0 ⇔ cos <var>θ</var> = <span class="frac"><span>2</span><span>3</span></span> ⇔ <var>θ</var> = arccos(2/3) ≈ 48°</span></div>
+        <figure class="fig">
+          <div class="mk-host" id="figLeave"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="lth">Angle <var>θ</var></label><output id="lthv" for="lth"></output><input id="lth" type="range" min="0" max="70" step="1" value="30"></div></div>
+            <div class="readout" id="lread" aria-live="polite"></div>
+          </div>
+          <figcaption>Une bille part du sommet sans vitesse. La flèche de la réaction raccourcit quand <var>θ</var> augmente et s’annule vers 48°. Le résultat ne dépend ni de la masse ni du rayon.</figcaption>
+        </figure>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Janvier 2020, Ex 3, question 3b : « Déterminer l’expression de l’angle <var>θ</var> lorsque le système quitte la gouttière » : <var>R</var> = 0, cos <var>θ</var> = 2/3, <var>θ</var> = arccos(2/3). Pas de calculatrice : la réponse attendue est l’expression, pas les degrés.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Le mobile ne quitte pas la sphère quand sa vitesse s’annule, ni quand <var>θ</var> = 90° : c’est la réaction qui s’annule, bien avant.</li>
+          <li>À l’intérieur d’une cuvette, sous le centre, <var>N</var> = <var>m</var>(<var>g</var> cos <var>θ</var> + <var>v</var>²/<var>R</var>) reste positive : la question ne se pose qu’au-dessus du centre, comme dans le looping.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Partie 5</div><h2>Le looping</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une masse lâchée sans vitesse d’une hauteur <var>h</var> entre en B, en bas d’une boucle de rayon <var>R</var>, et la parcourt <b>à l’intérieur</b>. On repère M par l’angle <var>θ</var> au-dessus du diamètre horizontal (juin 2018) : M est à la hauteur <var>R</var> + <var>R</var> sin <var>θ</var> au-dessus de B.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Énergie entre A et B</b> : <var>v</var><sub>B</sub>² = 2<var>g</var><var>h</var>. Avec <var>g</var> = 10 m·s⁻² et <var>h</var> = 1 m : <var>v</var><sub>B</sub> = √20 = 2√5 m·s⁻¹.</p></div></li>
+          <li><div><p><b>Énergie entre A et M</b> : <span class="f"><var>v</var><sub>M</sub>² = 2<var>g</var>(<var>h</var> − <var>R</var> − <var>R</var> sin <var>θ</var>)</span>.</p></div></li>
+          <li><div><p><b>2e loi sur le rayon</b>, vers le centre : la réaction <var>N</var> pointe vers O ; le poids a une composante <var>m</var><var>g</var> sin <var>θ</var> vers O (M est au-dessus du diamètre). <var>N</var> + <var>m</var><var>g</var> sin <var>θ</var> = <var>m</var><var>v</var><sub>M</sub>²/<var>R</var>, donc</p><div class="eq"><span class="nw"><var>N</var> = <var>m</var><var>g</var>(<span class="frac"><span>2<var>h</var></span><span><var>R</var></span></span> − 2 − 3 sin <var>θ</var>)</span></div></div></li>
+          <li><div><p><b>Au sommet C</b> (<var>θ</var> = 90°) : <var>N</var><sub>C</sub> = <var>m</var><var>g</var>(2<var>h</var>/<var>R</var> − 5). La masse fait le tour sans décoller si <var>N</var><sub>C</sub> ≥ 0 :</p><div class="eq"><span class="nw"><var>h</var> ≥ <span class="frac"><span>5<var>R</var></span><span>2</span></span> &nbsp;&nbsp; ⇔ &nbsp;&nbsp; <var>v</var><sub>C</sub>² ≥ <var>g</var><var>R</var></span></div></div></li>
+        </ol>
+        <figure class="fig">
+          <div class="mk-host" id="figLoop"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="lh">Hauteur <var>h</var>/<var>R</var></label><output id="lhv" for="lh"></output><input id="lh" type="range" min="2" max="4" step="0.1" value="3"></div></div>
+            <div class="readout" id="lhread" aria-live="polite"></div>
+          </div>
+          <figcaption>La boucle et la réaction au sommet C, pour une hauteur de départ <var>h</var>. En dessous de 2,5 <var>R</var>, le calcul donne une réaction négative au sommet : la masse décolle avant d’y arriver.</figcaption>
+        </figure>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Juin 2018, Ex 3 (6 points) : <var>v</var><sub>B</sub>, puis <var>v</var><sub>M</sub>, puis la réaction « en utilisant la deuxième loi de Newton en base de Frenet ». La condition <var>h</var> ≥ 5<var>R</var>/2 n’était pas demandée, mais elle sert à vérifier le signe du résultat.</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>La hauteur de M se compte depuis le bas de la boucle : <var>R</var> + <var>R</var> sin <var>θ</var>, pas <var>R</var> sin <var>θ</var>.</li>
+          <li>Au sommet, la réaction et le poids pointent tous deux vers le centre : ils s’ajoutent.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Partie 6</div><h2>Frottements sur un arc ; lire un sujet en base de Frenet</h2></div>
+      <div class="stack">
+        <h3>Une force de frottement de norme constante</h3>
+        <div class="prose"><p>Le frottement <var class="vec kf">f</var> est tangent et opposé au mouvement. Sur un arc de rayon <var>R</var> parcouru d’un angle Δ<var>θ</var>, le chemin a pour longueur <var>R</var>Δ<var>θ</var> (en radians) : le travail vaut</p></div>
+        <div class="eq"><span class="nw"><var>W</var>(<var class="vec kf">f</var>) = −<var>f</var> <var>R</var> Δ<var>θ</var> &nbsp;&nbsp; (−<var>f</var> × π<var>R</var>/2 pour un quart de cercle)</span></div>
+        <div class="prose"><p>Avec le théorème de l’énergie mécanique, <span class="f">Δ<var>E</var><sub>m</sub> = <var>W</var>(<var class="vec kf">f</var>)</span>, on en déduit <var>f</var> à partir des vitesses mesurées.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Janvier 2018, Ex 3</b> : <var>m</var> = 10 g lâchée du bord d’un guide en demi-cylindre (<var>R</var> = 1 m), <var>v</var><sub>B</sub> = 4 m·s⁻¹ au fond. Δ<var>E</var><sub>c</sub> = ½ × 0,01 × 16 = 0,08 J ; Δ<var>E</var><sub>p</sub> = −<var>m</var><var>g</var><var>R</var> = −0,1 J ; Δ<var>E</var><sub>m</sub> = −0,02 J = −<var>f</var> × π<var>R</var>/2, donc <var>f</var> = 0,04/π ≈ 1,3·10⁻² N.</p></div></li>
+          <li><div><p><b>Janvier 2017, Ex 3</b> : arc de 60° (≈ 1 rad), <var>R</var> = 1,5 m, <var>m</var> = 0,1 kg, <var>v</var><sub>A</sub> = 2 et <var>v</var><sub>B</sub> = 3 m·s⁻¹. ½<var>m</var>(<var>v</var><sub>B</sub>² − <var>v</var><sub>A</sub>²) = <var>m</var><var>g</var><var>R</var>(1 − cos <var>θ</var>) − <var>f</var><var>R</var><var>θ</var> : 0,25 = 0,75 − 1,5 <var>f</var>, donc <var>f</var> = 1/3 N.</p></div></li>
+        </ol>
+        <h3>La base de Frenet : un autre nom pour la base polaire sur un cercle</h3>
+        <div class="prose"><p>Six examens sur sept posent leurs questions « dans la base de Frenet (<var class="vec">u</var><sub>T</sub>, <var class="vec">u</var><sub>N</sub>) ». Ce repère n’est pas dans le cours de cette année, mais sur un cercle parcouru dans le sens des <var>θ</var> croissants, il se lit avec ce chapitre :</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Frenet</th><th>Sur un cercle de rayon <var>R</var></th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><var class="vec">u</var><sub>T</sub>, tangent, dans le sens du mouvement</th><td class="f"><var class="vec">u</var><sub><var>θ</var></sub></td></tr>
+            <tr><th scope="row"><var class="vec">u</var><sub>N</sub>, normal, vers l’intérieur de la courbe</th><td class="f">−<var class="vec">u</var><sub><var>r</var></sub> (vers le centre)</td></tr>
+            <tr><th scope="row">abscisse curviligne <var>s</var>, longueur parcourue</th><td class="f"><var>s</var> = <var>R</var><var>θ</var> (depuis <var>θ</var> = 0), <var>v</var> = d<var>s</var>/d<var>t</var></td></tr>
+            <tr><th scope="row"><var>a</var><sub>T</sub> = d<var>v</var>/d<var>t</var></th><td class="f"><var>R</var><var class="d2 hi">θ</var></td></tr>
+            <tr><th scope="row"><var>a</var><sub>N</sub> = <var>v</var>²/<var>R</var></th><td class="f"><var>R</var><var class="d1 hi">θ</var>², toujours positive</td></tr>
+          </tbody>
+        </table></div>
+        <div class="note exam"><span class="tag">Aux examens</span><p>Juin 2018, Ex 1 : un cercle parcouru à la vitesse <var>V</var> = <var>V</var><sub>0</sub>/(1 + <var>α</var><var>t</var>). <var>s</var>(<var>t</var>) est la primitive de <var>V</var> nulle en 0 : <var>s</var> = (<var>V</var><sub>0</sub>/<var>α</var>) ln(1 + <var>α</var><var>t</var>) ; <var>a</var><sub>T</sub> = d<var>V</var>/d<var>t</var> = −<var>α</var><var>V</var><sub>0</sub>/(1 + <var>α</var><var>t</var>)² et <var>a</var><sub>N</sub> = <var>V</var>²/<var>R</var> = <var>V</var><sub>0</sub>²/(<var>R</var>(1 + <var>α</var><var>t</var>)²). Janvier 2022, Ex 2 : <var>θ</var> = <var>α</var><var>t</var>², <var>s</var> = <var>α</var><var>R</var><var>t</var>², <var>a</var><sub>T</sub> = 2<var>α</var><var>R</var>, <var>a</var><sub>N</sub> = 4<var>α</var>²<var>R</var><var>t</var>².</p></div>
+        <div class="note trap"><span class="tag">Pièges</span><ul>
+          <li>Mouvement circulaire décéléré : <var>a</var><sub>T</sub> &lt; 0 mais <var>a</var><sub>N</sub> &gt; 0, toujours (QCM de juin 2018).</li>
+          <li>Pour une courbe qui n’est pas un cercle, le rayon de courbure <var>R</var> change le long de la trajectoire : les formules de Frenet restent vraies, mais la base polaire centrée en O ne coïncide plus avec elle.</li>
+          <li>Un angle en degrés dans <var>R</var>Δ<var>θ</var> : 60° se convertit en π/3 ≈ 1 rad.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-2-circulaire.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 6</span><button type="button" class="done-btn" data-done="phys2:circulaire:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>La statique (moments d’une force, équilibre d’une poutre), présente à 6 examens sur 7, n’est pas encore au cours : elle sera ajoutée quand le Moodle la publiera. Pour t’entraîner sur les sujets corrigés, passe à <a href="entrainement.html">l’entraînement</a> ; les formules sont réunies dans <a href="fiche.html">la fiche</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/qcm/physique-annales.js"></script>
+<script src="../data/qcm/phys2.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  function deg(a) { return Math.round(a * 180 / Math.PI); }
+  /* textes de la page (traduits dans la page anglaise) */
+  var L = {
+    hero: 'Bille sur une sphère : poids, réaction du support, base polaire en M',
+    proj: 'Poids projeté sur la base polaire : composante −mg cos θ sur ur, mg sin θ sur uθ',
+    out: 'Mobile sur le dessus d’un support circulaire : réaction vers l’extérieur, poids',
+    inn: 'Mobile au fond d’une cuvette circulaire : réaction vers le centre, poids',
+    leave: function (t) { return 'Bille sur une sphère à θ = ' + t + '°, avec son poids et la réaction du support'; },
+    lread: function (t, v2, n) {
+      return '<p><var>θ</var> = ' + t + '° · <var>v</var>²/(<var>g</var><var>R</var>) = 2(1 − cos <var>θ</var>) = <b>' + nf(v2, 2) + '</b> · <var>N</var>/(<var>m</var><var>g</var>) = 3 cos <var>θ</var> − 2 = <b>' + nf(n, 2) + '</b></p>' +
+        (n > 0.005 ? '<p class="muted">La bille est encore en contact.</p>' : '<p><b>La réaction est nulle ou négative : la bille a quitté la sphère vers 48°.</b></p>');
+    },
+    loop: function (h) { return 'Looping de rayon R, départ à la hauteur ' + h + ' R, réaction au sommet C'; },
+    lhread: function (h, n) {
+      return '<p><var>h</var> = ' + nf(h, 1) + ' <var>R</var> · au sommet : <var>v</var><sub>C</sub>² = 2<var>g</var>(<var>h</var> − 2<var>R</var>) = <b>' + nf(2 * (h - 2), 1) + ' <var>g</var><var>R</var></b> · <var>N</var><sub>C</sub>/(<var>m</var><var>g</var>) = 2<var>h</var>/<var>R</var> − 5 = <b>' + nf(n, 1) + '</b></p>' +
+        (n >= -0.001 ? '<p class="muted">La masse fait le tour en restant plaquée contre la boucle.</p>' : '<p><b>Réaction négative au sommet : la masse décolle avant d’y arriver. Il faut <var>h</var> ≥ 2,5 <var>R</var>.</b></p>');
+    }
+  };
+
+  /* calc:start — calculs purs */
+  function sphere(th) { return { v2: 2 * (1 - Math.cos(th)), n: 3 * Math.cos(th) - 2 }; }
+  function loopTop(h) { return 2 * h - 5; }
+  /* calc:end */
+
+  function circle(p, a, b, cls) { return p.param(function (t) { return [Math.cos(t), Math.sin(t)]; }, a, b, { cls: cls || 'mk-curve' }); }
+  function arcMark(p, r, a, b) { return p.param(function (t) { return [r * Math.cos(t), r * Math.sin(t)]; }, a, b, { cls: 'mk-arc' }); }
+  function base(p, P, ur, ut, s) {
+    p.vec(P, [ur[0] * s, ur[1] * s], { kind: 'ink', label: 'u', sub: 'r', w: 1.4, head: 7 });
+    p.vec(P, [ut[0] * s, ut[1] * s], { kind: 'ink', label: 'u', sub: 'θ', w: 1.4, head: 7 });
+  }
+  /* bille sur le dessus d’une sphère : θ depuis la verticale ascendante, M = (sin θ, cos θ) */
+  function sphereFig(w, th, opts) {
+    opts = opts || {};
+    var p = M.plot({ x: [-1.45, 1.75], y: [-0.35, 1.75], w: Math.min(w, 460), equal: true, pad: [10, 10, 10, 10] });
+    circle(p, -0.2, Math.PI + 0.2);
+    p.line([-1.3, 0], [1.3, 0], { cls: 'mk-dash' });
+    p.line([0, 0], [0, 1.45], { cls: 'mk-dash' });
+    var P = [Math.sin(th), Math.cos(th)], ur = P, ut = [Math.cos(th), -Math.sin(th)];
+    p.line([0, 0], P, { cls: 'mk-dash' });
+    if (th > 0.06) { arcMark(p, 0.32, Math.PI / 2 - th, Math.PI / 2); p.label([0.42 * Math.sin(th / 2), 0.42 * Math.cos(th / 2) + 0.03], 'θ', { arrow: false }); }
+    p.point([0, 0], { label: 'O', dx: -16, dy: 14 });
+    var s = sphere(th);
+    if (opts.base !== false) base(p, P, ur, ut, 0.42);
+    p.vec(P, [0, -0.62], { kind: 'frc', label: 'P', lab: [8, 4] });
+    if (s.n > 0.01) p.vec(P, [ur[0] * 0.31 * s.n, ur[1] * 0.31 * s.n], { kind: 'frc', label: 'N' });
+    if (opts.proj) {
+      p.vec(P, [-ur[0] * 0.62 * Math.cos(th), -ur[1] * 0.62 * Math.cos(th)], { kind: 'frc', w: 1.2, label: 'P', sub: 'r', lab: [-26, 4] });
+      p.vec(P, [ut[0] * 0.62 * Math.sin(th), ut[1] * 0.62 * Math.sin(th)], { kind: 'frc', w: 1.2, label: 'P', sub: 'θ', lab: [6, -4] });
+    }
+    p.point(P, { label: 'M', dx: -18, dy: -8 });
+    return p.svg({ label: opts.label });
+  }
+  /* au fond d’une cuvette : θ depuis la verticale descendante, M = (sin θ, −cos θ) */
+  function bowlFig(w) {
+    var th = 0.5, p = M.plot({ x: [-1.4, 1.5], y: [-1.75, 0.35], w: Math.min(w, 420), equal: true, pad: [10, 10, 10, 10] });
+    circle(p, Math.PI, 2 * Math.PI);
+    p.line([0, 0], [0, -1.3], { cls: 'mk-dash' });
+    var P = [Math.sin(th), -Math.cos(th)], ur = P, ut = [Math.cos(th), Math.sin(th)];
+    p.line([0, 0], P, { cls: 'mk-dash' });
+    arcMark(p, 0.3, -Math.PI / 2, -Math.PI / 2 + th); p.label([0.4 * Math.sin(th / 2) + 0.02, -0.4 * Math.cos(th / 2) - 0.06], 'θ', { arrow: false });
+    p.point([0, 0], { label: 'O', dx: -16, dy: -6 });
+    base(p, P, ur, ut, 0.4);
+    p.vec(P, [0, -0.6], { kind: 'frc', label: 'P', lab: [8, 4] });
+    p.vec(P, [-ur[0] * 0.75, -ur[1] * 0.75], { kind: 'frc', label: 'N', lab: [-6, -6] });
+    p.point(P, { label: 'M', dx: 8, dy: 16 });
+    return p.svg({ label: L.inn });
+  }
+  /* looping : centre O, rayon 1, B en bas ; départ à la hauteur h au-dessus de B */
+  function loopFig(w, h) {
+    var p = M.plot({ x: [-3.3, 1.45], y: [-1.25, Math.max(3.2, h - 0.75)], w: Math.min(w, 520), equal: true, pad: [10, 10, 10, 10] });
+    var y0 = -1;
+    p.line([-3.2, y0], [1.4, y0], { cls: 'mk-ground' });
+    p.param(function (u) { var x = -3 + 3 * u; return [x, y0 + (h) * Math.pow(1 - u, 2.2)]; }, 0, 1, { cls: 'mk-curve' });
+    circle(p, 0, 2 * Math.PI);
+    p.point([-3, y0 + h], { label: 'A', dx: 8, dy: -6 });
+    p.line([-3.15, y0], [-3.15, y0 + h], { cls: 'mk-dash' }); p.label([-3.0, y0 + h / 2], 'h', { arrow: false });
+    p.point([0, y0], { label: 'B', dx: 6, dy: 16 });
+    p.point([0, 0], { label: 'O', dx: 8, dy: 4 });
+    var n = loopTop(h), C = [0, 1];
+    p.point(C, { label: 'C', dx: 8, dy: -8 });
+    p.vec(C, [0, -0.55], { kind: 'frc', label: 'P', lab: [8, 10] });
+    if (n > 0.02) p.vec(C, [0, -0.18 * n], { kind: 'frc', label: 'N', lab: [-22, 10] });
+    return p.svg({ label: L.loop(nf(h, 1)) });
+  }
+
+  function mountStatic(id, f) { var el = document.getElementById(id); if (el) M.mount(el, f); }
+  mountStatic('figHero', function (w) { return sphereFig(w, 0.6, { label: L.hero }); });
+  mountStatic('figProj', function (w) { return sphereFig(w, 0.75, { proj: true, base: true, label: L.proj }); });
+  mountStatic('figOut', function (w) { return sphereFig(w, 0.6, { label: L.out }); });
+  mountStatic('figIn', bowlFig);
+
+  (function () {
+    var host = document.getElementById('figLeave'); if (!host) return;
+    var inp = document.getElementById('lth'), out = document.getElementById('lthv'), rd = document.getElementById('lread'), th = 30 * Math.PI / 180, view;
+    function update() {
+      out.textContent = deg(th) + '°'; var s = sphere(th);
+      rd.innerHTML = L.lread(deg(th), s.v2, s.n);
+      if (view) view.redraw(); else view = M.mount(host, function (w) { return sphereFig(w, th, { label: L.leave(deg(th)) }); });
+    }
+    inp.addEventListener('input', function () { th = +inp.value * Math.PI / 180; update(); });
+    update();
+  })();
+  (function () {
+    var host = document.getElementById('figLoop'); if (!host) return;
+    var inp = document.getElementById('lh'), out = document.getElementById('lhv'), rd = document.getElementById('lhread'), h = 3, view;
+    function update() {
+      out.textContent = nf(h, 1) + ' R'; rd.innerHTML = L.lhread(h, loopTop(h));
+      if (view) view.redraw(); else view = M.mount(host, function (w) { return loopFig(w, h); });
+    }
+    inp.addEventListener('input', function () { h = +inp.value; update(); });
+    update();
+  })();
+})();
+</script>
+</body>
+</html>
