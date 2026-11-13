@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="../assets/css/qcm.css">
 <style>
 /* chapitre 2 : forces en violet, base polaire en ambre, support en trait épais */
+.mk .mk-sup{fill:none;stroke:var(--ink);stroke-width:2.4}
 .mk .k-amb{color:var(--accent)} .mk .k-mut{color:var(--muted)}
 .mk text.k-amb,.mk text.k-mut{fill:currentColor}
 .mk .vk.ghost{opacity:.42}
@@ -269,7 +270,7 @@ var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
   function loopTop(h) { return 2 * h - 5; }
   /* calc:end */
 
-  function circle(p, a, b, cls) { return p.param(function (t) { return [Math.cos(t), Math.sin(t)]; }, a, b, { cls: cls || 'mk-curve' }); }
+  function circle(p, a, b, cls) { return p.param(function (t) { return [Math.cos(t), Math.sin(t)]; }, a, b, { cls: cls || 'mk-sup' }); }
   function arcMark(p, r, a, b) { return p.param(function (t) { return [r * Math.cos(t), r * Math.sin(t)]; }, a, b, { cls: 'mk-arc' }); }
   function base(p, P, ur, ut, s) {
     p.vec(P, [ur[0] * s, ur[1] * s], { kind: 'ink', label: 'u', sub: 'r', w: 1.4, head: 7 });
@@ -287,12 +288,13 @@ var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
     if (th > 0.06) { arcMark(p, 0.32, Math.PI / 2 - th, Math.PI / 2); p.label([0.42 * Math.sin(th / 2), 0.42 * Math.cos(th / 2) + 0.03], 'θ', { arrow: false }); }
     p.point([0, 0], { label: 'O', dx: -16, dy: 14 });
     var s = sphere(th);
-    if (opts.base !== false) base(p, P, ur, ut, 0.42);
+    if (opts.base) base(p, P, ur, ut, 0.28);
     p.vec(P, [0, -0.62], { kind: 'frc', label: 'P', lab: [8, 4] });
-    if (s.n > 0.01) p.vec(P, [ur[0] * 0.31 * s.n, ur[1] * 0.31 * s.n], { kind: 'frc', label: 'N' });
+    var nl = opts.fixedN ? 0.4 : 0.62 * s.n;
+    if (!opts.noN && nl > 0.01) p.vec(P, [ur[0] * nl, ur[1] * nl], { kind: 'frc', label: 'N' });
     if (opts.proj) {
       p.vec(P, [-ur[0] * 0.62 * Math.cos(th), -ur[1] * 0.62 * Math.cos(th)], { kind: 'frc', w: 1.2, label: 'P', sub: 'r', lab: [-26, 4] });
-      p.vec(P, [ut[0] * 0.62 * Math.sin(th), ut[1] * 0.62 * Math.sin(th)], { kind: 'frc', w: 1.2, label: 'P', sub: 'θ', lab: [6, -4] });
+      p.vec(P, [ut[0] * 0.62 * Math.sin(th), ut[1] * 0.62 * Math.sin(th)], { kind: 'frc', w: 1.2, label: 'P', sub: 'θ', lab: [4, 14] });
     }
     p.point(P, { label: 'M', dx: -18, dy: -8 });
     return p.svg({ label: opts.label });
@@ -306,18 +308,17 @@ var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
     p.line([0, 0], P, { cls: 'mk-dash' });
     arcMark(p, 0.3, -Math.PI / 2, -Math.PI / 2 + th); p.label([0.4 * Math.sin(th / 2) + 0.02, -0.4 * Math.cos(th / 2) - 0.06], 'θ', { arrow: false });
     p.point([0, 0], { label: 'O', dx: -16, dy: -6 });
-    base(p, P, ur, ut, 0.4);
     p.vec(P, [0, -0.6], { kind: 'frc', label: 'P', lab: [8, 4] });
-    p.vec(P, [-ur[0] * 0.75, -ur[1] * 0.75], { kind: 'frc', label: 'N', lab: [-6, -6] });
-    p.point(P, { label: 'M', dx: 8, dy: 16 });
+    p.vec(P, [-ur[0] * 0.5, -ur[1] * 0.5], { kind: 'frc', label: 'N', lab: [-24, 12] });
+    p.point(P, { label: 'M', dx: 10, dy: 6 });
     return p.svg({ label: L.inn });
   }
   /* looping : centre O, rayon 1, B en bas ; départ à la hauteur h au-dessus de B */
   function loopFig(w, h) {
-    var p = M.plot({ x: [-3.3, 1.45], y: [-1.25, Math.max(3.2, h - 0.75)], w: Math.min(w, 520), equal: true, pad: [10, 10, 10, 10] });
+    var p = M.plot({ x: [-3.3, 1.45], y: [-1.25, Math.max(1.5, h - 0.7)], w: Math.min(w, 520), equal: true, pad: [10, 10, 10, 10] });
     var y0 = -1;
-    p.line([-3.2, y0], [1.4, y0], { cls: 'mk-curve' });
-    p.param(function (u) { var x = -3 + 3 * u; return [x, y0 + (h) * Math.pow(1 - u, 2.2)]; }, 0, 1, { cls: 'mk-curve' });
+    p.line([-3.2, y0], [1.4, y0], { cls: 'mk-sup' });
+    p.param(function (u) { var x = -3 + 3 * u; return [x, y0 + (h) * Math.pow(1 - u, 2.2)]; }, 0, 1, { cls: 'mk-sup' });
     circle(p, 0, 2 * Math.PI);
     p.point([-3, y0 + h], { label: 'A', dx: 8, dy: -6 });
     p.line([-3.15, y0], [-3.15, y0 + h], { cls: 'mk-dash' }); p.label([-3.0, y0 + h / 2], 'h', { arrow: false });
@@ -331,9 +332,9 @@ var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
   }
 
   function mountStatic(id, f) { var el = document.getElementById(id); if (el) M.mount(el, f); }
-  mountStatic('figHero', function (w) { return sphereFig(w, 0.6, { label: L.hero }); });
-  mountStatic('figProj', function (w) { return sphereFig(w, 0.75, { proj: true, base: true, label: L.proj }); });
-  mountStatic('figOut', function (w) { return sphereFig(w, 0.6, { label: L.out }); });
+  mountStatic('figHero', function (w) { return sphereFig(w, 0.6, { label: L.hero, fixedN: true }); });
+  mountStatic('figProj', function (w) { return sphereFig(w, 0.75, { proj: true, base: true, noN: true, label: L.proj }); });
+  mountStatic('figOut', function (w) { return sphereFig(w, 0.6, { label: L.out, fixedN: true }); });
   mountStatic('figIn', bowlFig);
 
   (function () {
