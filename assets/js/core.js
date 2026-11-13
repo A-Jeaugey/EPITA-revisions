@@ -99,8 +99,7 @@
       exam: 'Jeudi 29 octobre, 10 h 30 · 1 h, sans calculatrice ni document',
       chapters: [
         { id: 'bases', title: 'Les bases', path: 'elec/cours-1-bases.html', sections: 8 },
-        { id: 'lois', title: 'Lois fondamentales', path: 'elec/cours-2-lois.html', sections: 8 },
-        { id: 'theoremes', title: 'Thévenin, Norton, Millman', path: 'elec/cours-3-theoremes.html', sections: 8 }
+        { id: 'lois', title: 'Lois fondamentales', path: 'elec/cours-2-lois.html', sections: 8 }
       ]
     },
     {
@@ -177,6 +176,16 @@
     },
     /* ---------- bimestre 2 ---------- */
     {
+      id: 'elec2', period: 'b2', name: 'Électronique · Théorèmes', short: 'Élec', code: 'SI-S1-ELEC-1-OAC · fin de semestre',
+      course: 'Outils d’analyse de circuits : Thévenin, Norton, Millman', path: 'elec2/index.html', dir: 'elec2/', status: 'ready',
+      train: 'elec2/entrainement.html', fiche: 'elec2/fiche.html', open: 'Ouvrir l’élec B2',
+      exam: 'Examen de fin de semestre (date à venir) · écrit, sans calculatrice ni document · 45 % de la note',
+      chapters: [
+        { id: 'thevenin', title: 'Thévenin et Norton', path: 'elec2/cours-1-thevenin.html', sections: 8 },
+        { id: 'millman', title: 'Millman et superposition', path: 'elec2/cours-2-millman.html', sections: 6 }
+      ]
+    },
+    {
       id: 'boole', period: 'b2', name: 'Architecture · Algèbre de Boole', short: 'Archi', code: 'Produire S1 · Archi B2',
       course: 'Architecture des ordinateurs · Algèbre de Boole', path: 'boole/index.html', dir: 'boole/', status: 'ready',
       exam: 'Examen de fin de bimestre (date à venir) · 1 h 30, réponses sur le sujet · QCM en ligne 10 %, examen 90 %',
@@ -193,7 +202,7 @@
   /* textes anglais du registre */
   var SUBJECTS_EN = {
     elec: { name: 'Electronics', short: 'Elec', course: 'Circuit analysis tools', open: 'Open Elec',
-      exam: 'Thursday 29 October, 10:30 am · 1 hr, no calculator, no documents', chapters: ['The basics', 'Fundamental laws', 'Thévenin, Norton, Millman'] },
+      exam: 'Thursday 29 October, 10:30 am · 1 hr, no calculator, no documents', chapters: ['The basics', 'Fundamental laws'] },
     maths: { name: 'Mathematics', short: 'Maths', course: 'Basic mathematical tools (OBM) · Counting and probability (DP)', open: 'Open Maths',
       exam: 'Wednesday 28 October: OBM at 10:30 am, DP at 2 pm (2 hr each) · homework 20%, course test 20%, exam 60% · APIS in exam 2',
       chapters: ['Logic', 'Sets', 'Functions', 'Reasoning', 'Counting', 'Probability', 'Random variables'] },
@@ -212,6 +221,8 @@
     piloter: { name: 'Study skills · Group management', short: 'Study skills', course: 'Working methodology · Group management', open: 'Open study skills',
       exam: 'Thursday 29 October: working methodology at 2:15 pm, group management at 3:30 pm · two 40-question MCQs, no negative marking',
       chapters: ['Working methodology', 'Group management'] },
+    elec2: { name: 'Electronics · Theorems', short: 'Elec', course: 'Circuit analysis tools: Thévenin, Norton, Millman', open: 'Open Elec B2',
+      exam: 'End-of-semester exam (date to come) · written, no calculator, no documents · 45% of the grade', chapters: ['Thévenin and Norton', 'Millman and superposition'] },
     boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',
       exam: 'End-of-term exam (date to come) · 1 hr 30 min, answers on the paper · online quizzes 10%, exam 90%',
       chapters: ['Logic gates', 'Boolean algebra', 'Canonical forms', 'Karnaugh maps', 'Problems and circuits'] }

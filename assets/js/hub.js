@@ -38,7 +38,7 @@
   });
   var P = R.period, PI = R.periodInfo(P), SUBJ = R.periodSubjects(P);
   var BANK = R.quiz.bank();
-  var EXS = { elec: window.ELEC_EX, taa: window.TAA_EX, physique: window.PHYS_EX, caml: window.CAML_EX, archi: window.ARCHI_EX, maths: window.MATHS_EX, boole: window.BOOLE_EX };
+  var EXS = { elec: window.ELEC_EX, taa: window.TAA_EX, physique: window.PHYS_EX, caml: window.CAML_EX, archi: window.ARCHI_EX, maths: window.MATHS_EX, boole: window.BOOLE_EX, elec2: window.ELEC2_EX };
   var A = window.ANNALES || { midterms: [], finals: [], retakes: [] };
   var MONTHS = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
   function nEx(sid) { return (EXS[sid] || []).length; }
@@ -52,7 +52,7 @@
   /* sujets d'examen d'une matière : les fiches d'annales de la matière quand elle en a, sinon l'index d'Epidocs
      (bimestre 1 : partiels de mi-semestre, algo : TAA et Caml partagent les sujets d'avant 2023 ; bimestre 2 : examens
      de fin de semestre) */
-  var OWN = { archi: window.ARCHI_EXAMS, maths: window.MATHS_EXAMS, boole: window.BOOLE_EXAMS };
+  var OWN = { archi: window.ARCHI_EXAMS, maths: window.MATHS_EXAMS, boole: window.BOOLE_EXAMS, elec2: window.ELEC2_EXAMS };
   function nAnn(s) {
     if (OWN[s.id]) return OWN[s.id].length;
     var id = s.annalesId || s.id, list = P === 'b1' ? A.midterms : (A.finals || []);

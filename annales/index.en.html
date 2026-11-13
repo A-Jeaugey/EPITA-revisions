@@ -62,6 +62,8 @@ main{display:grid;gap:44px}
 <script src="../data/en/annales.js"></script>
 <script src="../data/boole/exams.js"></script>
 <script src="../data/en/boole/exams.js"></script>
+<script src="../data/elec2/exams.js"></script>
+<script src="../data/en/elec2/exams.js"></script>
 <script src="../data/caml/exams.js"></script>
 <script src="../data/en/caml/exams.js"></script>
 <script src="../data/maths/exams.js"></script>
@@ -73,9 +75,11 @@ main{display:grid;gap:44px}
   /* bimestre de la page (REV.period) : B1 = partiels de mi-semestre et QCM hebdo ; B2 = examens de fin de semestre
      (finals) puis rattrapages (retakes) d'Epidocs, et sujets du Moodle absents d'Epidocs (BOOLE_EXAMS, moodle: true). */
   var B1 = R.period === 'b1', RET = A.retakes || [], LIST = B1 ? A.midterms : (A.finals || []).concat(RET);
-  var OWN2 = window.BOOLE_EXAMS || [], BOOLE = R.subject('boole');
+  var OWN2 = window.BOOLE_EXAMS || [], BOOLE = R.subject('boole'), ELEC2 = R.subject('elec2'), EL2 = window.ELEC2_EXAMS || [];
+  /* élec B2 : examen de janvier de l’année promo − 4 (f2023…) ; le dossier 2023# (version B) est la session de juin 2018 */
+  function elecKey(m) { var k = m.variant ? 'f2018j' : 'f' + (m.promo - 4); return EL2.some(function (e) { return e.key === k; }) ? k : null; }
   /* page de corrigés d'une matière dans le bimestre de la page (archi : numération au B1, algèbre de Boole au B2) */
-  function pageOf(s) { if (B1) return A.subjects[s].page; return s === 'archi' && BOOLE && BOOLE.status === 'ready' ? 'boole/annales.html' : null; }
+  function pageOf(s) { if (B1) return A.subjects[s].page; return s === 'archi' && BOOLE && BOOLE.status === 'ready' ? 'boole/annales.html' : s === 'elec' && ELEC2 && ELEC2.status === 'ready' ? 'elec2/annales.html' : null; }
   /* notre fiche d'un sujet du bimestre 2 (même promo, examen ou rattrapage) */
   function ownKey(m) {
     var r = RET.indexOf(m) >= 0;
@@ -151,7 +155,7 @@ main{display:grid;gap:44px}
       });
       ms.forEach(function (m) {
         html += '<div class="ex"><div class="when"><b>Class of ' + m.promo + '</b><span>' + when(m) + (m.variant ? ' · ' + U.esc(m.variant) : '') + '</span></div><div class="files">' + enFirst(m.files).map(fileLink).join('') +
-          (!B1 && info.page && ownKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + ownKey(m) + '">' + 'Our solution' + '</a>' : '') +
+          (!B1 && info.page && (s === 'elec' ? elecKey(m) : ownKey(m)) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'elec' ? elecKey(m) : ownKey(m)) + '">' + 'Our solution' + '</a>' : '') +
           (B1 && info.page && (s === 'elec' || s === 'archi' || (s === 'algo' && String(m.variant || '').toUpperCase() !== 'CAML')) ? '<a class="file ours" href="' + R.url(info.page) + '#' + (s === 'algo' && camlKey(m) || 'p' + (m.promo - 5)) + '">' + (s === 'algo' ? 'Our solution (TAA)' : 'Our solution') + '</a>' : '') +
           (B1 && s === 'maths' && info.page && mathsKey(m) ? '<a class="file ours" href="' + R.url(info.page) + '#' + mathsKey(m) + '">Our solution</a>' : '') +
           (B1 && s === 'algo' && camlKey(m) ? '<a class="file ours" href="' + R.url(CAML_PAGE) + '#' + camlKey(m) + '">Our solution (Caml)</a>' : '') + '</div></div>';

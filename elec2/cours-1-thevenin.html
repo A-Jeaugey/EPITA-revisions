@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thévenin et Norton · Élec B2</title>
+<meta name="description" content="Électronique S1, B2, fiche 1 : éteindre les sources, théorèmes de Thévenin et de Norton, transformations en chaîne, éléments qui ne comptent pas, et la forme des questions à l’examen de fin de semestre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.stepper-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stepper-nav .mono{font-variant-numeric:tabular-nums;color:var(--muted)}
+.twin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.twin>div{min-width:0}
+.twin>div+div{border-left:1px solid var(--line)}
+@media (max-width:640px){.twin{grid-template-columns:minmax(0,1fr)}.twin>div+div{border-left:0;border-top:1px solid var(--line)}}
+.twin .cap{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.6rem .9rem 0}
+.equal{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.equal .big{color:var(--accent)}
+</style>
+</head>
+<body data-resume="Élec B2 · fiche 1 : Thévenin et Norton">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Élec B2</a> · Fiche 1 sur 2</div>
+      <h1>Tout un circuit, vu de deux bornes, c’est <span class="w">une pile et une résistance</span>.</h1>
+      <p class="lead">C’est l’idée de Thévenin et de Norton, au cœur de l’<b>examen de fin de semestre</b> : de 12 à 14 points sur 20 aux sujets de 2022 et 2023, et un exercice à chaque sujet depuis 2016. Cette fiche t’apprend à réduire un circuit sans te tromper de signe.</p>
+      <p class="lead">Elle suppose acquis le cours du B1 : <a href="../elec/cours-1-bases.html">les bases</a> et <a href="../elec/cours-2-lois.html">les lois fondamentales</a> (diviseurs, résistances équivalentes), que le QCM de l’examen interroge aussi.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">8 parties</span><span class="chip">cours « Théorèmes » · TD 1 Ex 6</span><span class="chip ex">12 à 14 points sur 20 en 2022 et 2023</span></div>
+    </div>
+    <div class="bench" aria-label="Comparaison d’un circuit et de son équivalent de Thévenin">
+      <div class="bench-head"><span>Essaie : deux circuits, même comportement</span><span>change la charge</span></div>
+      <div class="twin">
+        <div><div class="cap">Le vrai circuit</div><div class="fig" id="heroA"></div></div>
+        <div><div class="cap">Son équivalent de Thévenin</div><div class="fig" id="heroB"></div></div>
+      </div>
+      <div class="ctrls">
+        <div class="slider"><label for="hRL">Charge <var>R</var><sub>L</sub> branchée entre A et B</label><output id="hRLv">6 Ω</output><input id="hRL" type="range" min="1" max="40" value="6"></div>
+        <div class="readout" id="hRead" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du chapitre">
+    <div class="toc-title">Fiche 1 · Thévenin et Norton</div>
+    <ol>
+      <li><a href="#s1"><span class="code" data-n="1"></span><span>Vu de deux bornes</span></a></li>
+      <li><a href="#s2"><span class="code" data-n="2"></span><span>Éteindre les sources</span></a></li>
+      <li><a href="#s3"><span class="code" data-n="3"></span><span>Thévenin</span></a></li>
+      <li><a href="#s4"><span class="code" data-n="4"></span><span>Norton</span></a></li>
+      <li><a href="#s5"><span class="code" data-n="5"></span><span>Thévenin ⇄ Norton</span></a></li>
+      <li><a href="#s6"><span class="code" data-n="6"></span><span>Transformations en chaîne</span></a></li>
+      <li><a href="#s7"><span class="code" data-n="7"></span><span>Ce qui ne compte pas</span></a></li>
+      <li><a href="#s8"><span class="code" data-n="8"></span><span>À l’examen</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Accueil Élec B2</a><a href="cours-2-millman.html">Fiche 2 : Millman et superposition →</a><a href="entrainement.html#equivalences">Exercices d’équivalences</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Sommaire (8 parties)</summary>
+      <ol>
+        <li><a href="#s1">Vu de deux bornes</a></li><li><a href="#s2">Éteindre les sources</a></li><li><a href="#s3">Thévenin</a></li><li><a href="#s4">Norton</a></li><li><a href="#s5">Thévenin ⇄ Norton</a></li><li><a href="#s6">Transformations en chaîne</a></li><li><a href="#s7">Ce qui ne compte pas</a></li><li><a href="#s8">À l’examen</a></li>
+      </ol>
+    </details>
+
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Partie 1</span></div><h2>Un circuit vu de deux bornes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Prends n’importe quel circuit fait de sources et de résistances, et ne garde que deux bornes A et B pour y brancher quelque chose (une « charge »). Vu depuis A et B, ce circuit se comporte comme <b>une seule source et une seule résistance</b>. Les théorèmes de Thévenin et de Norton disent lesquelles.</p>
+          <p>Tu l’as déjà fait sans le savoir dans la boîte noire du TD 1 (Ex 6) : un voltmètre entre A et B mesure la <b>tension à vide</b> (4 V), un ampèremètre entre A et B mesure le <b>courant de court-circuit</b> (0,5 A). Ces deux mesures suffisent à tout prévoir pour n’importe quelle charge.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Les deux mesures</h3><p><b>À vide</b> (rien entre A et B) : <var class="u">U</var><sub>AB</sub> = <var class="u">U</var><sub>V</sub>, la tension à vide.</p><p><b>En court-circuit</b> (un fil entre A et B) : le courant <var class="i">I</var><sub>CC</sub>.</p></div>
+          <div class="qty"><h3>Ce qu’on en tire</h3><p><span class="f-inline"><var class="u">E</var><sub>th</sub> = <var class="u">U</var><sub>V</sub></span>, <span class="f-inline"><var class="i">I</var><sub>N</sub> = <var class="i">I</var><sub>CC</sub></span> et <span class="f-inline"><var>R</var><sub>th</sub> = <var class="u">U</var><sub>V</sub>/<var class="i">I</var><sub>CC</sub></span>.</p><p class="ex">Boîte noire du TD 1 : <var>R</var><sub>th</sub> = 4/0,5 = 8 Ω. Et en effet <var>R</var>₁ // <var>R</var>₂ = 12 // 24 = 8 Ω.</p></div>
+        </div>
+        <div class="note why"><span class="tag">Pourquoi c’est utile</span><p>Quand on te demande la tension aux bornes d’<b>une seule</b> résistance dans un gros circuit, pas besoin de résoudre tout le circuit. Tu remplaces tout le reste par son équivalent, et il ne reste qu’une boucle : un diviseur de tension.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Équivalent = même tension et même courant dans la charge, <b>quelle que soit la charge</b>.</li><li>Tension à vide → <var class="u">E</var><sub>th</sub>. Courant de court-circuit → <var class="i">I</var><sub>N</sub>. Leur rapport → <var>R</var><sub>th</sub>.</li></ul></div>
+        <div data-check="elec-c3-01,elec-c3-02"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s1"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Partie 2</span></div><h2>Éteindre les sources pour trouver <var>R</var><sub>th</sub></h2></div>
+      <div class="stack">
+        <div class="prose"><p><var>R</var><sub>th</sub> est la résistance vue entre A et B quand le circuit est rendu <b>passif</b> : on annule toutes les sources d’énergie. Le cours le dit avec les symboles : <b>enlève le rond</b>.</p></div>
+        <div class="grid2">
+          <div class="qty"><h3>Source de tension éteinte</h3><p><var class="u">E</var> = 0 : ses bornes sont au même potentiel. On la remplace par <b>un fil</b> (on la court-circuite).</p></div>
+          <div class="qty"><h3>Source de courant éteinte</h3><p><var class="i">I</var> = 0 : plus rien ne passe. On la remplace par <b>un trou</b> : on enlève sa branche.</p></div>
+        </div>
+        <div class="bench">
+          <div class="bench-head"><span>Éteins les sources une par une</span><span>regarde ce qui reste entre A et B</span></div>
+          <div class="fig" id="passFig"></div>
+          <div class="ctrls">
+            <div class="row"><button class="btn" type="button" id="offE" aria-pressed="false">Éteindre E</button><button class="btn" type="button" id="offI" aria-pressed="false">Éteindre I</button></div>
+            <div class="readout" id="passRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="note trap"><span class="tag">Les deux erreurs qui coûtent cher</span><ul><li>Court-circuiter une source de <b>courant</b> (au lieu de l’ouvrir) : <var>R</var><sub>th</sub> devient faux et tout le reste aussi.</li><li>Garder la <b>charge</b> (la 2<var>R</var> entre A et B) dans le calcul de <var>R</var><sub>th</sub> : on la débranche toujours d’abord.</li></ul></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Tension → fil. Courant → trou.</li><li><var>R</var><sub>th</sub> = résistance vue de A et B, charge débranchée, sources éteintes.</li></ul></div>
+        <div data-check="elec-c3-03,elec-c3-04"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s2"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Partie 3</span></div><h2>Le théorème de Thévenin</h2></div>
+      <div class="stack">
+        <div class="prose"><p><b>Énoncé du cours :</b> tout dipôle générateur complexe peut être remplacé, entre deux bornes A et B, par un générateur de Thévenin : une source de tension <var class="u">E</var><sub>th</sub> en <b>série</b> avec une résistance <var>R</var><sub>th</sub>, telles que :</p>
+          <ul><li><var class="u">E</var><sub>th</sub> est la tension qui apparaît entre A et B quand ils ne sont pas reliés : la <b>tension à vide</b> <var class="u">U</var><sub>V</sub>.</li>
+          <li><var>R</var><sub>th</sub> est la résistance vue depuis A et B quand on a rendu le dipôle passif (sources éteintes).</li></ul></div>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="thModel"></div><p class="fig-cap">Le modèle de Thévenin, chargé par la 2<var>R</var> des sujets de partiel. La flèche <var class="u">E</var><sub>th</sub> pointe vers A.</p></div>
+          <ol class="steps">
+            <li><div><b>Débranche la charge</b> entre A et B.</div></li>
+            <li><div><b><var class="u">E</var><sub>th</sub></b> = tension entre A et B à vide (diviseur de tension, loi des mailles, Millman…).</div></li>
+            <li><div><b><var>R</var><sub>th</sub></b> = résistance vue de A et B, sources éteintes.</div></li>
+            <li><div><b>Rebranche la charge</b> : il ne reste qu’une boucle, <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·<var>R</var><sub>L</sub>/(<var>R</var><sub>th</sub> + <var>R</var><sub>L</sub>)</span>.</div></li>
+          </ol>
+        </div>
+        <h3>Exemple : le pont diviseur vu de sa sortie</h3>
+        <div class="prose"><p>Le circuit de l’en-tête : <var class="u">E</var> = 12 V, <var>R</var>₁ = 6 Ω en haut, <var>R</var>₂ = 12 Ω entre A et B.</p>
+          <ol><li>À vide, aucun courant ne sort par A : <var>R</var>₁ et <var>R</var>₂ sont en série, diviseur de tension : <span class="f-inline"><var class="u">E</var><sub>th</sub> = 12 × 12/18 = 8 V</span>.</li>
+          <li><var class="u">E</var> éteinte devient un fil : vu de A et B, <var>R</var>₁ et <var>R</var>₂ sont en <b>parallèle</b> : <span class="f-inline"><var>R</var><sub>th</sub> = 6 × 12/18 = 4 Ω</span>.</li>
+          <li>Avec une charge de 4 Ω : <span class="f-inline"><var class="u">U</var> = 8 × 4/(4 + 4) = 4 V</span>. Vérifie sur le simulateur de l’en-tête.</li></ol></div>
+        <div class="note trap"><span class="tag">Piège</span><p>À vide, <var>R</var>₁ et <var>R</var>₂ sont en <b>série</b> (même courant, rien ne sort par A). Sources éteintes et vues depuis A et B, elles sont en <b>parallèle</b>. Les mêmes résistances changent de rôle selon d’où on regarde : redessine le circuit à chaque étape.</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li><var class="u">E</var><sub>th</sub> = tension à vide ; <var>R</var><sub>th</sub> = résistance vue, sources éteintes.</li><li>Puis un seul diviseur de tension avec la charge.</li></ul></div>
+        <div data-check="elec-c3-05,elec-c3-06"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s3"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Partie 4</span></div><h2>Le théorème de Norton</h2></div>
+      <div class="stack">
+        <div class="prose"><p><b>Énoncé du cours :</b> le même dipôle peut aussi être remplacé par un générateur de Norton : une source de courant <var class="i">I</var><sub>N</sub> en <b>parallèle</b> avec une résistance <var>R</var><sub>N</sub>, telles que :</p>
+          <ul><li><var class="i">I</var><sub>N</sub> est le courant qui passe entre A et B quand on les relie par un fil : le <b>courant de court-circuit</b> <var class="i">I</var><sub>CC</sub>.</li>
+          <li><var>R</var><sub>N</sub> est la résistance vue de A et B, sources éteintes : <b>c’est la même que <var>R</var><sub>th</sub></b>.</li></ul></div>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="nModel"></div><p class="fig-cap">Le modèle de Norton chargé par <var>R</var><sub>L</sub>. La flèche de <var class="i">I</var><sub>N</sub> pointe vers A.</p></div>
+          <div class="prose"><p>Avec la charge, c’est un <b>diviseur de courant</b> : <span class="f-inline"><var class="i">I</var> = <var class="i">I</var><sub>N</sub>·<var>R</var><sub>N</sub>/(<var>R</var><sub>N</sub> + <var>R</var><sub>L</sub>)</span>, et <span class="f-inline"><var class="u">U</var> = (<var>R</var><sub>N</sub> // <var>R</var><sub>L</sub>)·<var class="i">I</var><sub>N</sub></span>.</p>
+            <p>Sur le pont diviseur de l’exemple : un fil entre A et B court-circuite <var>R</var>₂, donc <span class="f-inline"><var class="i">I</var><sub>N</sub> = 12/6 = 2 A</span>, et <var>R</var><sub>N</sub> = 4 Ω. On retrouve <var class="u">E</var><sub>th</sub> = <var>R</var><sub>N</sub>·<var class="i">I</var><sub>N</sub> = 8 V.</p></div>
+        </div>
+        <div class="formula"><div><var class="u">E</var><sub>th</sub> = <var>R</var><sub>N</sub>·<var class="i">I</var><sub>N</sub> &nbsp;&nbsp; <var class="i">I</var><sub>N</sub> = <var class="u">E</var><sub>th</sub>/<var>R</var><sub>th</sub> &nbsp;&nbsp; <var>R</var><sub>th</sub> = <var>R</var><sub>N</sub></div><small>les trois formules de passage du cours</small></div>
+        <div class="note why"><span class="tag">Pour aller plus loin (cours)</span><p>Théoriquement les deux modèles sont équivalents. En pratique, Thévenin décrit bien une source dont la résistance interne est très faible devant la charge (la tension reste presque <var class="u">E</var><sub>th</sub>, comme un amplificateur opérationnel). Norton décrit bien une source dont la résistance interne est très forte (le courant reste presque <var class="i">I</var><sub>N</sub>, comme un transistor).</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li><var class="i">I</var><sub>N</sub> = courant de court-circuit entre A et B ; <var>R</var><sub>N</sub> = <var>R</var><sub>th</sub>.</li><li><var class="u">E</var><sub>th</sub> = <var>R</var>·<var class="i">I</var><sub>N</sub> et <var class="i">I</var><sub>N</sub> = <var class="u">E</var><sub>th</sub>/<var>R</var>.</li></ul></div>
+        <div data-check="elec-c3-07,elec-c3-08"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s4"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Partie 5</span></div><h2>Thévenin ⇄ Norton : la transformation de source</h2></div>
+      <div class="stack">
+        <div class="prose"><p>C’est l’outil des partiels. Toute branche « source de tension <var class="u">E</var> en série avec <var>R</var> » peut être remplacée par « source de courant <var class="u">E</var>/<var>R</var> en parallèle avec la même <var>R</var> », et inversement. On ne calcule rien de nouveau : on <b>redessine</b> pour faire apparaître des choses simples à regrouper.</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>Convertisseur</span><span>la flèche suit toujours le +</span></div>
+          <div class="twin">
+            <div><div class="cap">Forme Thévenin</div><div class="fig sm" id="convT"></div></div>
+            <div><div class="cap">Forme Norton</div><div class="fig sm" id="convN"></div></div>
+          </div>
+          <div class="ctrls">
+            <div class="grid2">
+              <div class="slider"><label for="cvE"><var class="u">E</var></label><output id="cvEv">12 V</output><input id="cvE" type="range" min="1" max="24" value="12"></div>
+              <div class="slider"><label for="cvR"><var>R</var></label><output id="cvRv">4 Ω</output><input id="cvR" type="range" min="1" max="12" value="4"></div>
+            </div>
+            <div class="row"><button class="btn" type="button" id="cvFlip">Retourner la source</button></div>
+            <div class="readout" id="cvRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>Les trois règles de regroupement</h3>
+        <div class="grid3">
+          <div class="card"><span class="t">sources de courant en parallèle</span><span class="f"><var class="i">I</var> = Σ ± <var class="i">I</var><sub>k</sub></span><span class="d">même sens : on additionne ; sens contraires : on soustrait</span></div>
+          <div class="card"><span class="t">sources de tension en série</span><span class="f"><var class="u">E</var> = Σ ± <var class="u">E</var><sub>k</sub></span><span class="d">sur le trajet de B vers A : flèche vers A +, flèche vers B −</span></div>
+          <div class="card"><span class="t">résistances</span><span class="f">série +, parallèle //</span><span class="d">deux 2<var>R</var> en parallèle : <var>R</var> ; 6<var>R</var> // 6<var>R</var> = 3<var>R</var></span></div>
+        </div>
+        <div class="note trap"><span class="tag">Le piège de signe</span><p>La flèche du courant de Norton pointe vers la <b>borne +</b> de la source de tension, c’est-à-dire dans le même sens que la flèche de <var class="u">E</var>. Dans l’autre sens : la flèche de la fém de Thévenin pointe dans le sens de la flèche du courant. En 2024, la source 2<var>E</var> était fléchée <b>vers le bas</b> : la lire à l’envers donnait <var class="u">E</var><sub>th</sub> = 2(<var>R</var><var class="i">I</var> + <var class="u">E</var>) au lieu de 2(<var>R</var><var class="i">I</var> − <var class="u">E</var>).</p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>(<var class="u">E</var> en série avec <var>R</var>) ⇄ (<var class="u">E</var>/<var>R</var> en parallèle avec <var>R</var>), même <var>R</var>.</li><li>La flèche du courant pointe vers le + ; la fém pointe dans le sens du courant.</li><li>On regroupe les sources de courant en parallèle, les sources de tension en série.</li></ul></div>
+        <div data-check="elec-c3-09,elec-c3-10,elec-c3-11"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s5"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Partie 6</span></div><h2>La méthode des transformations en chaîne</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Voici l’exercice 3 du partiel de novembre 2023, question 1 : trouver <var class="u">E</var><sub>th</sub> et <var>R</var><sub>th</sub> vus par la charge 2<var>R</var>, puis la tension <var class="u">U</var>. Avance étape par étape : chaque schéma est celui que le correcteur attend sur ta copie (« justifiez par des schémas intermédiaires »).</p></div>
+        <div class="bench">
+          <div class="bench-head"><span>Partiel nov. 2023 · Ex 3 · Q1</span><span class="td x">11,5 points</span></div>
+          <div class="fig" id="chainFig"></div>
+          <div class="ctrls">
+            <div class="stepper-nav"><button class="btn" type="button" id="chPrev">◀ Étape précédente</button><button class="btn primary" type="button" id="chNext">Étape suivante ▶</button><span class="mono" id="chCount">0 / 6</span></div>
+            <div class="readout" id="chRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>La recette, valable pour tous les sujets</h3>
+        <ol class="steps">
+          <li><div><b>Débranche la charge</b> et repère A et B.</div></li>
+          <li><div><b>Regarde la forme des branches.</b> Branches en parallèle entre A et B → passe-les en Norton pour additionner les courants. Éléments à la suite sur un même chemin → passe-les en Thévenin pour additionner les tensions.</div></li>
+          <li><div><b>Bloc « source de courant // <var>R</var> » posé sur une ligne</b> (motif des partiels 2023 et 2024) : c’est un Norton. Transforme-le en Thévenin <var>R</var>·<var class="i">I</var> en série avec <var>R</var>, flèche dans le sens de <var class="i">I</var>.</div></li>
+          <li><div><b>Regroupe</b>, transforme à nouveau, jusqu’à une seule source et une seule résistance.</div></li>
+          <li><div><b>Rebranche la charge</b> et applique le diviseur de tension.</div></li>
+          <li><div><b>Contrôle <var>R</var><sub>th</sub></b> en éteignant les sources sur le schéma de départ, et l’unité de chaque terme (<var>R</var><var class="i">I</var> et <var class="u">E</var> sont des volts).</div></li>
+        </ol>
+        <div class="note exam"><span class="tag">Au partiel</span><p>Question 2 du même exercice, et les deux questions de 2024 : même charge 2<var>R</var>, réponses du type (<var class="u">E</var> + 4<var>R</var><var class="i">I</var>)/3, 4(<var>R</var><var class="i">I</var> − <var class="u">E</var>)/7 ou (<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6. Elles sont toutes corrigées pas à pas dans l’entraînement. <a class="td x" href="entrainement.html#thevenin">S’entraîner</a></p></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Parallèle → Norton (on additionne des courants). Série → Thévenin (on additionne des tensions).</li><li>Un schéma intermédiaire par transformation, avec les flèches.</li></ul></div>
+        <div data-check="elec-c3-12,elec-c3-13"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s6"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Partie 7</span></div><h2>Ce qui ne compte pas, et les sources qui disparaissent</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Les sujets de fin de semestre glissent souvent des éléments qui ne changent rien au résultat. Les repérer d’un coup d’œil évite des calculs faux et du temps perdu. Deux règles suffisent, toutes les deux venues de la définition des sources idéales.</p></div>
+        <div class="grid2" style="align-items:start">
+          <div class="qty"><h3>Une résistance en série avec une source de courant</h3><p>La source impose le courant de sa branche : <var>R</var><sub>0</sub> ne change que la tension aux bornes de la source. Pour le reste du circuit, la branche se réduit à la source <var class="i">I</var><sub>0</sub>.</p><div class="fig sm" id="f7a"></div><p class="fig-cap">Janvier 2017 (Ex 3) et janvier 2019 (bonus) : on l’ignore dans Millman, Thévenin et Norton.</p></div>
+          <div class="qty"><h3>Une résistance en parallèle sur une source de tension</h3><p>La source impose la tension entre ses bornes : <var>R</var><sub>4</sub> consomme du courant de la source, sans rien changer ailleurs. Le nœud est au potentiel <var class="u">E</var><sub>3</sub>.</p><div class="fig sm" id="f7b"></div><p class="fig-cap">Janvier 2018 (Ex 4) et janvier 2020 (Ex 4, la 3<var>R</var> sur <var class="u">E</var><sub>2</sub>).</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Attention pour <var>R</var><sub>th</sub></span><p>La règle vaut pour la source <b>allumée</b>. Quand on éteint les sources pour <var>R</var><sub>th</sub>, la source de tension devient un fil qui court-circuite la résistance placée en parallèle, et la source de courant devient un trou qui coupe la résistance placée en série : dans les deux cas, ces résistances disparaissent encore de <var>R</var><sub>th</sub>.</p></div>
+        <h3>Quand une source disparaît du résultat</h3>
+        <div class="prose"><p>Deux sujets donnent une réponse où une source manque : en janvier 2019 (Ex 3), <var class="u">U</var> = 6<var>R</var><var>R</var><sub>1</sub><var class="i">I</var>/(4<var>R</var> + <var>R</var><sub>1</sub>) ne contient pas <var class="u">E</var> ; en juin 2018 et janvier 2016 (Ex 3), <var class="u">U</var> = 3<var>R</var><sub>1</sub><var class="u">E</var>/(2<var>R</var> + <var>R</var><sub>1</sub>) ne contient pas <var class="i">I</var>. Ce n’est pas une erreur : la superposition le montre, deux sources y ont des contributions <b>opposées</b>.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sujet</th><th>Contribution 1</th><th>Contribution 2</th><th>Somme</th></tr></thead>
+          <tbody>
+            <tr><td>Janvier 2019, Ex 3</td><td>2<var class="u">E</var> seule : + <var>R</var><sub>1</sub><var class="u">E</var>/(4<var>R</var> + <var>R</var><sub>1</sub>)</td><td><var class="u">E</var> seule : − <var>R</var><sub>1</sub><var class="u">E</var>/(4<var>R</var> + <var>R</var><sub>1</sub>)</td><td>0</td></tr>
+            <tr><td>Juin 2018, Ex 3</td><td>2<var class="i">I</var> seule : + 2<var>R</var><var>R</var><sub>1</sub><var class="i">I</var>/(2<var>R</var> + <var>R</var><sub>1</sub>)</td><td><var class="i">I</var> seule : − 2<var>R</var><var>R</var><sub>1</sub><var class="i">I</var>/(2<var>R</var> + <var>R</var><sub>1</sub>)</td><td>0</td></tr>
+          </tbody></table></div>
+        <div class="note keep"><span class="tag">À retenir</span><ul><li>Résistance en série avec une source de courant : elle ne compte pas.</li><li>Résistance en parallèle sur une source de tension : elle ne compte pas.</li><li>Une source absente du résultat n’est pas forcément une erreur : vérifie par superposition.</li></ul></div>
+        <div data-check="elec-c3-18,elec-c3-19,elec-c3-20"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s7"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Partie 8</span></div><h2>Thévenin et Norton à l’examen de fin de semestre</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Cette année, Thévenin et Norton ne sont pas au premier examen : ils sont au programme de l’<b>examen de fin de semestre</b> (45 % de la note). Les sujets de fin de semestre de 2016 à 2023 posent toujours la même question sous trois formes.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Forme de la question</th><th>Sujets</th><th>Méthode</th></tr></thead>
+          <tbody>
+            <tr><td>« Déterminer <var class="i">I</var><sub>N</sub> et <var>R</var><sub>N</sub> tels que les 2 circuits soient équivalents », puis le courant dans la charge</td><td>2022, 2023 (12 à 14 points)</td><td>Transformations en chaîne, puis diviseur de courant</td></tr>
+            <tr><td>« Déterminer le générateur de Thévenin (ou de Norton) vu par <var>R</var><sub>4</sub> », puis <var class="u">U</var> ou <var class="i">I</var></td><td>2016 à 2021</td><td>Au choix : équivalences, ou <var>R</var><sub>th</sub> et <var class="u">E</var><sub>th</sub> par la définition (superposition, Millman)</td></tr>
+            <tr><td>« Déterminer la tension aux bornes de <var>R</var><sub>1</sub> par la méthode de votre choix »</td><td>2016 à 2019</td><td>Thévenin vu par <var>R</var><sub>1</sub>, ou équivalences jusqu’à une seule maille</td></tr>
+          </tbody></table></div>
+        <h3>Un exemple complet : janvier 2022, Ex 2</h3>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="f8a"></div></div>
+          <ol class="steps">
+            <li><div><b>On débranche la charge</b> <var>R</var>′ : on cherche le Norton vu à ses bornes.</div></li>
+            <li><div><b><var class="i">I</var> // <var>R</var> est un Norton</b> : il devient la fém <var>R</var><var class="i">I</var> en série avec <var>R</var>. Avec 3<var>R</var> : <var>R</var><var class="i">I</var> en série avec 4<var>R</var>.</div></li>
+            <li><div><b>Retour en Norton</b> : <var>R</var><var class="i">I</var>/4<var>R</var> = <var class="i">I</var>/4, en parallèle avec 4<var>R</var> ; avec la 6<var>R</var> : 4<var>R</var> // 6<var>R</var> = 12<var>R</var>/5.</div></li>
+            <li><div><b>Résultat</b> : <var class="i">I</var><sub>N</sub> = <var class="i">I</var>/4, <var>R</var><sub>N</sub> = 12<var>R</var>/5 ; puis le diviseur de courant donne <var class="i">I</var>′ = 3<var>R</var><var class="i">I</var>/(5<var>R</var>′ + 12<var>R</var>).</div></li>
+          </ol>
+        </div>
+        <div class="note exam"><span class="tag">Ce que le correcteur attend</span><p>Les corrigés dessinent un schéma par transformation, en recopiant les flèches. Écris toujours <var class="u">E</var><sub>th</sub> (ou <var class="i">I</var><sub>N</sub>) <b>et</b> <var>R</var><sub>th</sub> avant la question suivante, puis le diviseur avec sa formule littérale. Pour une application numérique (2017, 2020, 2021), donne d’abord l’expression littérale, comme le demande le sujet.</p></div>
+        <div class="note trap"><span class="tag">Les pièges des corrigés de fin de semestre</span><ul><li>Une résistance oubliée sur le fil du bas (janvier 2023 : la <var>R</var> en série avec 3<var>R</var>).</li><li>Une source de courant fléchée vers le bas, qui retire du courant au lieu d’en ajouter.</li><li>Répondre <var class="u">E</var><sub>th</sub> quand le sujet demande <var class="u">U</var> (le corrigé de juin 2018 lui-même s’y trompe).</li></ul></div>
+        <p><a class="btn" href="entrainement.html#equivalences">Les exercices d’équivalences des sujets →</a></p>
+        <div data-check="elec-c3-17,elec-c3-21,elec-c3-22"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="elec2:thevenin:s8"></button></div>
+      </div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Fiches">
+      <a href="../elec/cours-2-lois.html"><span>Révision B1</span><b>← Lois fondamentales</b></a>
+      <a class="next" href="cours-2-millman.html"><span>Fiche 2</span><b>Millman et superposition →</b></a>
+    </nav>
+    <footer class="foot">Fait à partir du cours « Concepts de base de l’électronique » (parties B.IV et B.V), des exercices 3 des partiels de novembre 2023 et d’octobre 2024 et des examens de fin de semestre de 2016 à 2023, corrigés et vérifiés par calcul.</footer>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/qcm/elec-hebdo.js"></script>
+<script src="../data/qcm/elec2.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, nf = U.nf, C = R.circuit;
+
+  /* ---- en-tête : vrai circuit contre équivalent ---- */
+  var E0 = 12, R1 = 6, R2 = 12, ETH = E0 * R2 / (R1 + R2), RTH = R1 * R2 / (R1 + R2);
+  function loadSpec(withModel, rl) {
+    var parts = withModel
+      ? [{ t: 'E', x: 50, y: 110, d: 'v', p: 'n', l: 'E_th = ' + nf(ETH) + ' V' }, { t: 'R', x: 130, y: 40, l: 'R_th = ' + nf(RTH) + ' Ω' }]
+      : [{ t: 'E', x: 50, y: 110, d: 'v', p: 'n', l: 'E = 12 V' }, { t: 'R', x: 120, y: 40, l: 'R_1 = 6 Ω' }, { t: 'R', x: 190, y: 110, d: 'v', l: 'R_2', lp: 'w' }];
+    parts = parts.concat([{ t: 'R', x: 250, y: 110, d: 'v', l: 'R_L', lp: 'w', c: 'cz-hl' }, { t: 'U', a: [282, 165], b: [282, 55], l: 'U' },
+      { t: 'dot', x: 250, y: 40 }, { t: 'dot', x: 250, y: 180 }, { t: 'txt', x: 252, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 252, y: 204, s: 'B', c: 'cz-n' }]);
+    if (!withModel) parts.push({ t: 'dot', x: 190, y: 40, r: 3 }, { t: 'dot', x: 190, y: 180, r: 3 });
+    return { w: 320, h: 215, aria: withModel ? 'Générateur de Thévenin chargé par RL' : 'Pont diviseur chargé par RL', wires: withModel ? ['M50 40H250V180H50Z'] : ['M50 40H250V180H50Z', 'M190 40V180'], parts: parts };
+  }
+  function updHero() {
+    var rl = +$('#hRL').value, u = ETH * rl / (RTH + rl);
+    $('#hRLv').textContent = rl + ' Ω';
+    C.mount('#heroA', loadSpec(false, rl)); C.mount('#heroB', loadSpec(true, rl));
+    var ua = E0 * (R2 * rl / (R2 + rl)) / (R1 + R2 * rl / (R2 + rl));
+    $('#hRead').innerHTML = '<div class="equal"><span>Vrai circuit : <span class="big">' + nf(ua) + ' V</span></span><span>Équivalent : <span class="big">' + nf(u) + ' V</span></span></div><span style="color:var(--muted);font-size:.9rem">Même tension aux bornes de <var>R</var><sub>L</sub>, quelle que soit sa valeur. <var class="u">E</var><sub>th</sub> = 12 × 12/18 = 8 V et <var>R</var><sub>th</sub> = 6 // 12 = 4 Ω.</span>';
+  }
+  $('#hRL').addEventListener('input', updHero); updHero();
+
+  /* ---- éteindre les sources ---- */
+  var eOff = false, iOff = false;
+  function updPass() {
+    var wires = ['M50 40H400', 'M50 200H400', 'M200 40V200'], parts = [];
+    if (eOff) { wires.push('M50 40V200'); parts.push({ t: 'txt', x: 30, y: 125, s: 'fil', c: 'cz-tiny' }); }
+    else { wires.push('M50 40V200'); parts.push({ t: 'E', x: 50, y: 120, d: 'v', p: 'n', l: 'E' }); }
+    if (!iOff) { wires.push('M330 40V200'); parts.push({ t: 'J', x: 330, y: 120, d: 'v', to: 'n', l: 'I', as: 'e' }); }
+    else parts.push({ t: 'txt', x: 330, y: 125, s: 'trou', c: 'cz-tiny' });
+    parts.push({ t: 'R', x: 125, y: 40, l: 'R_1 = 6 Ω' }, { t: 'R', x: 200, y: 120, d: 'v', l: 'R_2 = 3 Ω' }, { t: 'R', x: 265, y: 40, l: 'R_3 = 2 Ω' },
+      { t: 'dot', x: 200, y: 40 }, { t: 'dot', x: 200, y: 200 }, { t: 'term', x: 400, y: 40, l: 'A', lp: 'e' }, { t: 'term', x: 400, y: 200, l: 'B', lp: 'e' });
+    if (!iOff) parts.push({ t: 'dot', x: 330, y: 40 }, { t: 'dot', x: 330, y: 200 });
+    C.mount('#passFig', { w: 440, h: 230, aria: 'Circuit avec une source de tension E, une source de courant I et trois résistances, vu depuis A et B', wires: wires, parts: parts });
+    $('#offE').setAttribute('aria-pressed', String(eOff)); $('#offE').textContent = eOff ? 'Rallumer E' : 'Éteindre E';
+    $('#offI').setAttribute('aria-pressed', String(iOff)); $('#offI').textContent = iOff ? 'Rallumer I' : 'Éteindre I';
+    var t;
+    if (eOff && iOff) t = '<b>Circuit passif.</b> Vu de A et B : <var>R</var>₃ en série avec (<var>R</var>₁ // <var>R</var>₂), car le fil qui remplace <var class="u">E</var> met <var>R</var>₁ entre les deux mêmes nœuds que <var>R</var>₂. <span class="big">R<sub>th</sub> = 2 + 6 × 3/9 = 4 Ω</span>';
+    else if (eOff) t = '<var class="u">E</var> est devenue un fil : <var>R</var>₁ se retrouve en parallèle avec <var>R</var>₂. Il reste à éteindre <var class="i">I</var>.';
+    else if (iOff) t = 'La branche de <var class="i">I</var> a disparu : il ne reste rien entre A et B de ce côté. Il reste à éteindre <var class="u">E</var>.';
+    else t = 'Les deux sources sont allumées. Pour trouver <var>R</var><sub>th</sub> vue de A et B, éteins-les toutes les deux.';
+    $('#passRead').innerHTML = t;
+  }
+  $('#offE').addEventListener('click', function () { eOff = !eOff; updPass(); });
+  $('#offI').addEventListener('click', function () { iOff = !iOff; updPass(); });
+  updPass();
+
+  /* ---- modèles ---- */
+  function thevSpec(eLab, rLab, loadLab, extra) {
+    return { w: 320, h: 215, aria: 'Générateur de Thévenin chargé', wires: ['M50 40H240V180H50Z'],
+      parts: [{ t: 'E', x: 50, y: 110, d: 'v', p: 'n', l: eLab }, { t: 'R', x: 140, y: 40, l: rLab }, { t: 'R', x: 240, y: 110, d: 'v', l: loadLab, lp: 'w', c: extra || '' },
+        { t: 'U', a: [276, 165], b: [276, 55], l: 'U', c: extra || '' }, { t: 'dot', x: 240, y: 40 }, { t: 'dot', x: 240, y: 180 }, { t: 'txt', x: 242, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 242, y: 204, s: 'B', c: 'cz-n' }] };
+  }
+  C.mount('#thModel', thevSpec('E_th', 'R_th', '2R'));
+  C.mount('#nModel', { w: 320, h: 215, aria: 'Générateur de Norton chargé', wires: ['M50 40H240V180H50Z', 'M140 40V180'],
+    parts: [{ t: 'J', x: 50, y: 110, d: 'v', to: 'n', l: 'I_N', as: 'e' }, { t: 'R', x: 140, y: 110, d: 'v', l: 'R_N' }, { t: 'R', x: 240, y: 110, d: 'v', l: 'R_L', lp: 'w' },
+      { t: 'U', a: [276, 165], b: [276, 55], l: 'U' }, { t: 'dot', x: 140, y: 40 }, { t: 'dot', x: 140, y: 180 }, { t: 'txt', x: 242, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 242, y: 204, s: 'B', c: 'cz-n' }] });
+
+  /* ---- convertisseur ---- */
+  var up = true;
+  function updConv() {
+    var e = +$('#cvE').value, r = +$('#cvR').value;
+    $('#cvEv').textContent = e + ' V'; $('#cvRv').textContent = r + ' Ω';
+    C.mount('#convT', { w: 260, h: 200, aria: 'Source de tension en série avec une résistance', wires: ['M50 40H200M50 170H200M50 40V170'],
+      parts: [{ t: 'E', x: 50, y: 105, d: 'v', p: up ? 'n' : 's', l: 'E = ' + e + ' V' }, { t: 'R', x: 125, y: 40, l: 'R = ' + r + ' Ω' }, { t: 'term', x: 200, y: 40, l: 'A' }, { t: 'term', x: 200, y: 170, l: 'B' }] });
+    C.mount('#convN', { w: 260, h: 200, aria: 'Source de courant en parallèle avec une résistance', wires: ['M50 40H200M50 170H200M50 40V170M130 40V170'],
+      parts: [{ t: 'J', x: 50, y: 105, d: 'v', to: up ? 'n' : 's', l: 'I = ' + nf(e / r) + ' A', as: 'e' }, { t: 'R', x: 130, y: 105, d: 'v', l: 'R = ' + r + ' Ω' },
+        { t: 'dot', x: 130, y: 40 }, { t: 'dot', x: 130, y: 170 }, { t: 'term', x: 200, y: 40, l: 'A' }, { t: 'term', x: 200, y: 170, l: 'B' }] });
+    $('#cvRead').innerHTML = '<span class="big">I = E/R = ' + e + '/' + r + ' = ' + nf(e / r) + ' A</span><br>' + (up ? 'Le + de la source de tension est en haut, côté A : la flèche du courant de Norton pointe aussi vers le haut, vers A.' : 'La source est retournée : le + est en bas, côté B. La flèche du courant de Norton se retourne aussi et pointe vers B.') +
+      ' Vérification : à vide, la forme Norton donne <var>R</var>·<var class="i">I</var> = ' + nf(r * e / r) + ' V entre A et B, comme la forme Thévenin.';
+  }
+  $('#cvE').addEventListener('input', updConv); $('#cvR').addEventListener('input', updConv);
+  $('#cvFlip').addEventListener('click', function () { up = !up; updConv(); }); updConv();
+
+  /* ---- transformations en chaîne : partiel 2023, Q1 ---- */
+  function ladder(items, load) {
+    var n = items.length, x0 = 50, dx = 92, xs = items.map(function (_, i) { return x0 + i * dx; }), xl = x0 + n * dx + 10;
+    var wires = ['M' + x0 + ' 40H' + xl + 'M' + x0 + ' 210H' + xl], parts = [];
+    items.forEach(function (it, i) {
+      var x = xs[i]; wires.push('M' + x + ' 40V210');
+      if (it.t === 'J') parts.push({ t: 'J', x: x, y: 125, d: 'v', to: 'n', l: it.l, as: 'e', c: it.c || '' });
+      else parts.push({ t: 'R', x: x, y: 125, d: 'v', l: it.l, c: it.c || '' });
+      if (i > 0) parts.push({ t: 'dot', x: x, y: 40 }, { t: 'dot', x: x, y: 210 });
+    });
+    wires.push({ d: 'M' + xl + ' 40V210', c: load || '' });
+    parts.push({ t: 'R', x: xl, y: 125, d: 'v', l: '2R', c: load || '' }, { t: 'U', a: [xl + 34, 185], b: [xl + 34, 65], l: 'U', c: load || '' },
+      { t: 'txt', x: xl, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: xl, y: 236, s: 'B', c: 'cz-n' }, { t: 'dot', x: xl, y: 40 }, { t: 'dot', x: xl, y: 210 });
+    return { w: Math.max(460, xl + 80), h: 250, aria: 'Branches en parallèle entre A et B', wires: wires, parts: parts };
+  }
+  function original(cls) {
+    cls = cls || {};
+    return { w: 480, h: 250, aria: 'Circuit du partiel 2023 : source I, branche E + 2R, charge 2R, branche R + E + R',
+      wires: ['M50 40H420V210H50Z', 'M140 40V210', { d: 'M240 40V210', c: cls.load || '' }],
+      parts: [{ t: 'J', x: 50, y: 125, d: 'v', to: 'n', l: 'I', as: 'w' },
+        { t: 'R', x: 140, y: 85, d: 'v', l: '2R', c: cls.b2 || '' }, { t: 'E', x: 140, y: 165, d: 'v', p: 'n', l: 'E', c: cls.b2 || '' },
+        { t: 'R', x: 240, y: 125, d: 'v', l: '2R', c: cls.load || '' }, { t: 'U', a: [205, 185], b: [205, 65], l: 'U', lp: 'w', c: cls.load || '' },
+        { t: 'R', x: 330, y: 40, l: 'R', c: cls.b4 || '' }, { t: 'E', x: 420, y: 100, d: 'v', p: 'n', l: 'E', as: 'e', c: cls.b4 || '' }, { t: 'R', x: 420, y: 168, d: 'v', l: 'R', lp: 'w', c: cls.b4 || '' },
+        { t: 'dot', x: 140, y: 40 }, { t: 'dot', x: 140, y: 210 }, { t: 'dot', x: 240, y: 40 }, { t: 'dot', x: 240, y: 210 },
+        { t: 'txt', x: 240, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 240, y: 236, s: 'B', c: 'cz-n' }] };
+  }
+  var CH = [
+    { spec: function () { return original(); }, txt: 'Le circuit du sujet. On cherche le générateur de Thévenin (<var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>) qui alimente la charge 2<var>R</var> entre A et B.' },
+    { spec: function () { return original({ load: 'cz-ghost' }); }, txt: '<b>On débranche la charge 2<var>R</var>.</b> Il reste trois branches entre A et B : la source <var class="i">I</var>, la branche (<var class="u">E</var>, 2<var>R</var>) et la branche de droite.' },
+    { spec: function () { return original({ load: 'cz-ghost', b2: 'cz-hl', b4: 'cz-hl' }); }, txt: 'Branche de droite : <var>R</var>, <var class="u">E</var> et <var>R</var> sont <b>en série</b> sur le même chemin, soit <var class="u">E</var> en série avec 2<var>R</var>. On a donc <b>deux branches identiques</b> (<var class="u">E</var>, 2<var>R</var>), fléchées vers le haut, vers A.' },
+    { spec: function () { return ladder([{ t: 'J', l: 'I' }, { t: 'J', l: 'E/(2R)', c: 'cz-hl' }, { t: 'R', l: '2R', c: 'cz-hl' }, { t: 'J', l: 'E/(2R)', c: 'cz-hl' }, { t: 'R', l: '2R', c: 'cz-hl' }], 'cz-ghost'); },
+      txt: '<b>Thévenin → Norton</b> sur chaque branche : (<var class="u">E</var> en série avec 2<var>R</var>) devient une source <var class="u">E</var>/(2<var>R</var>) en parallèle avec 2<var>R</var>. Les flèches pointent vers A, comme les flèches <var class="u">E</var>. Tout est maintenant en parallèle entre A et B.' },
+    { spec: function () { return ladder([{ t: 'J', l: 'I + E/R', c: 'cz-hl' }, { t: 'R', l: 'R', c: 'cz-hl' }], 'cz-ghost'); },
+      txt: '<b>On regroupe.</b> Sources de courant en parallèle, toutes vers A : <span class="f-inline"><var class="i">I</var> + <var class="u">E</var>/(2<var>R</var>) + <var class="u">E</var>/(2<var>R</var>) = <var class="i">I</var> + <var class="u">E</var>/<var>R</var></span>. Résistances : 2<var>R</var> // 2<var>R</var> = <var>R</var>. C’est le générateur de Norton.' },
+    { spec: function () { var s = thevSpec('E_th = RI + E', 'R_th = R', '2R', 'cz-ghost'); s.w = 340; return s; },
+      txt: '<b>Norton → Thévenin</b> : <span class="f-inline"><var class="u">E</var><sub>th</sub> = <var>R</var>·(<var class="i">I</var> + <var class="u">E</var>/<var>R</var>) = <var>R</var><var class="i">I</var> + <var class="u">E</var></span> et <span class="f-inline"><var>R</var><sub>th</sub> = <var>R</var></span>. Contrôle : sources éteintes, il reste 2<var>R</var> // 2<var>R</var> = <var>R</var> ✓. Unité : <var>R</var><var class="i">I</var> et <var class="u">E</var> sont des volts ✓.' },
+    { spec: function () { var s = thevSpec('E_th = RI + E', 'R_th = R', '2R', 'cz-hl'); s.w = 340; return s; },
+      txt: '<b>On rebranche la charge</b> : diviseur de tension, <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·2<var>R</var>/(<var>R</var><sub>th</sub> + 2<var>R</var>)</span> = <span class="big">2(RI + E)/3</span>. C’est la réponse du corrigé officiel.' }];
+  var cs = 0;
+  function updChain() {
+    C.mount('#chainFig', CH[cs].spec());
+    $('#chRead').innerHTML = CH[cs].txt; $('#chCount').textContent = cs + ' / ' + (CH.length - 1);
+    $('#chPrev').disabled = cs === 0; $('#chNext').disabled = cs === CH.length - 1;
+  }
+  $('#chPrev').addEventListener('click', function () { if (cs > 0) { cs--; updChain(); } });
+  $('#chNext').addEventListener('click', function () { if (cs < CH.length - 1) { cs++; updChain(); } });
+  updChain();
+
+
+  /* ---- partie 7 : ce qui ne compte pas ; partie 8 : janvier 2022 ---- */
+  C.mount('#f7a', { w: 300, h: 220, aria: 'Nœud A relié à la masse par une source de courant I0 en série avec R0, et par une résistance R', wires: ['M60 40H240', 'M60 190H240', 'M60 40V190', 'M240 40V190'],
+    parts: [{ t: 'J', x: 60, y: 80, d: 'v', to: 'n', l: 'I_0', as: 'w' }, { t: 'R', x: 60, y: 150, d: 'v', l: 'R_0', lp: 'w', c: 'cz-ghost' }, { t: 'R', x: 240, y: 115, d: 'v', l: 'R', lp: 'e' }, { t: 'txt', x: 150, y: 28, s: 'A', c: 'cz-n' }] });
+  C.mount('#f7b', { w: 300, h: 220, aria: 'Nœud tenu au potentiel E3 par une source de tension, avec R4 en parallèle sur la source', wires: ['M60 40H240', 'M60 190H240', 'M60 40V190', 'M240 40V190'],
+    parts: [{ t: 'E', x: 60, y: 115, d: 'v', p: 'n', l: 'E_3', as: 'w' }, { t: 'R', x: 240, y: 115, d: 'v', l: 'R_4', lp: 'e', c: 'cz-ghost' }, { t: 'txt', x: 150, y: 28, s: 'potentiel E₃', c: 'cz-n' }] });
+  C.mount('#f8a', { w: 470, h: 240, aria: 'Janvier 2022 : source de courant I, R, 3R en haut, 6R, charge R prime', wires: ['M60 40H400', 'M60 200H400', 'M60 40V200', 'M160 40V200', 'M300 40V200', 'M400 40V200'],
+    parts: [{ t: 'J', x: 60, y: 120, d: 'v', to: 'n', l: 'I', as: 'w' }, { t: 'R', x: 160, y: 120, d: 'v', l: 'R' }, { t: 'R', x: 230, y: 40, l: '3R' }, { t: 'R', x: 300, y: 120, d: 'v', l: '6R' },
+      { t: 'R', x: 400, y: 120, d: 'v', l: 'R′', lp: 'e', c: 'cz-ghost' }, { t: 'I', x: 400, y: 68, d: 's', l: 'I′', lp: 'e' }] });
+})();
+</script>
+<script src="../assets/js/elec-viz.js"></script>
+</body>
+</html>
