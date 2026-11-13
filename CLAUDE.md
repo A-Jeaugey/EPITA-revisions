@@ -125,8 +125,9 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   curviligne, produit vectoriel hors programme cette année ; le cours anglais dit « Newton's second law », poids W⃗,
   énergie cinétique E_k. Programme du partiel 1 envoyé par le prof (octobre 2026) : cinématique cartésienne, 2e loi, conditions
   particulières (sommet : v_y = 0), forces du cours et des TD, travail, Ec, Ep, EM, théorèmes de l'énergie cinétique et mécanique (et
-  lequel choisir), projections et normes. **Coordonnées polaires et mouvement circulaire hors partiel 1** (chapitre 4, TD 5 ; parties
-  `prog: false`, notions du QCM décochées via `window.QCM_OFF`).
+  lequel choisir), projections et normes. **Coordonnées polaires et mouvement circulaire hors partiel 1** : passés en Physique B2
+  (`phys2`, voir plus bas) ; le B1 a maintenant 3 chapitres, `physique/cours-4-polaires(.en).html` redirige, les fiches d'exercices
+  polaires et du TD 5 portent `b2: true` (cachées de l'entraînement du B1).
 - **Caml** (Caml et récursivité) : cours `caml/cours-1-bases`, `-2-recursivite`, `-3-listes`, `-4-ordre-superieur`
   (`data-done="caml:<chapitre>:sN"`, chapitres bases, recursivite, listes, ordre) ; exercices `window.CAML_EX`
   (`data/caml/ex-annales.js` : 28 fiches des sujets 2017-2024, ids `pAAAA-exN`, `p2019d` = contrôle S1# d’avril 2019 ;
@@ -208,6 +209,20 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   9/9, Millman (bonus 2016, 2017, 2019, noté 2018), superposition 2018 S1#, 2020, 2021 ; 2022-2023 : un grand exercice
   d'équivalences (12 à 14 pts). Janvier 2024 (promo 2028) = autre ECUE, ELEC-2-ERS (régime sinusoïdal) : `prog:false`,
   hors programme ; si ce cours apparaît au Moodle, l'ajouter à `elec2` (nouveaux chapitres). Sujets sans durée indiquée.
+- **Physique B2** (id `phys2`, dossier `phys2/`, thème `physique.css`) : `phys2/cours-1-polaires` (l'ancien chapitre 4 du B1,
+  8 parties, `data-done="phys2:polaires:sN"`) et `-2-circulaire` (6 parties : 2e loi en base polaire, réaction d'un support,
+  énergie puis réaction, décollage cos θ = 2/3, looping h ≥ 5R/2, frottement sur un arc et lecture de la base de Frenet) ;
+  `methodes` (la méthode polaires du B1 y est passée), `entrainement`, `annales`, `fiche`. QCM `data/qcm/phys2.js` (chargé
+  après `physique.js` et `physique-annales.js`) : passe en `s:'phys2'` les questions dont `ref` vise l'ancien chapitre 4,
+  retire leurs notions de `QCM_OFF`, ajoute `phys-c5-NN` et les questions d'examens `phys-fAAAA-qN`. Sujets `PHYS2_EXAMS`
+  / notions `PHYS2_TOPICS` / `PHYS2_FROM_B1` (fiches du B1 reprises, progression `physique-<id>`) dans `data/phys2/exams.js` ;
+  fiches `window.PHYS2_EX` (`data/phys2/ex-finals.js`, 10 fiches `kind:'final'`, progression `phys2-<id>`, figures
+  `PHYS2_FIGS`). Examens Epidocs `S1/Finals/Phys/<promo>` : janvier AAAA = promo − 4 (f2016, f2017, f2018, f2020, f2022),
+  `f2018j` = juin 2018 (dossier 2023#), `f2022d` = décembre 2022 (promo 2027, copie d'élève corrigée). Points vérifiés
+  (sympy) : corrigés justes (janv. 2018 Ex 3 : π ≈ 3, f = 1,33·10⁻² N au lieu de 0,04/π) ; statique (moments) à 6 sujets
+  sur 7, **pas encore au cours** (parties `prog: false`, notion `statique`) ; base de Frenet à 6 sur 7 (traduite en polaires,
+  chapitre 2 partie 6) ; 2e loi + énergie sur un arc (sphère, gouttière, looping) à 4 sur 7. Quand le cours du B2 arrive
+  (statique, Frenet…), ajouter les chapitres et corriger les exercices de statique.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
