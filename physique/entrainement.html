@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Entraînement · Physique</title>
-<meta name="description" content="Physique S1 : les exercices des anciens partiels et des TD 1 à 5, filtrables par notion, provenance et niveau, avec indices, corrigé pas à pas et auto-évaluation.">
+<meta name="description" content="Physique S1 : les exercices des anciens partiels et des TD 1 à 4, filtrables par notion, provenance et niveau, avec indices, corrigé pas à pas et auto-évaluation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
@@ -82,7 +82,7 @@
     <div>
       <div class="eyebrow"><a href="index.html">Physique</a> · Entraînement</div>
       <h1>Les vrais exercices, <span class="w">corrigés pas à pas</span>.</h1>
-      <p class="lead">Les exercices des anciens partiels encore au programme et ceux des TD 1 à 5. Essaie d’abord seul, sans calculatrice, demande un indice si tu bloques, puis compare ta rédaction avec la correction.</p>
+      <p class="lead">Les exercices des anciens partiels encore au programme et ceux des TD 1 à 4. Essaie d’abord seul, sans calculatrice, demande un indice si tu bloques, puis compare ta rédaction avec la correction.</p>
       <div class="stats" id="stats"></div>
     </div>
   </div>
@@ -108,7 +108,7 @@
   var R = window.REV, U = R.util, $ = U.$, $$ = U.$$;
   var KIND_ORDER = { partiel: 1, td: 2 };
   /* partiels du plus récent au plus ancien, puis les TD dans l’ordre */
-  var EX = (window.PHYS_EX || []).slice().sort(function (a, b) {
+  var EX = (window.PHYS_EX || []).filter(function (e) { return !e.b2; }).sort(function (a, b) {
     var ka = KIND_ORDER[a.kind] || 9, kb = KIND_ORDER[b.kind] || 9;
     if (ka !== kb) return ka - kb;
     if (a.exam !== b.exam) return (b.exam || '') < (a.exam || '') ? -1 : 1;
@@ -131,7 +131,7 @@
   function paintStats() {
     var ok = 0, rv = 0, np = 0;
     EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
-    $('#stats').innerHTML = '<div class="stat"><b>' + EX.length + '</b><span>exercices corrigés</span></div><div class="stat"><b>' + np + '</b><span>de partiels</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>des TD 1 à 5</span></div><div class="stat"><b>' + ok + '</b><span>réussis</span></div><div class="stat"><b>' + rv + '</b><span>à revoir</span></div>';
+    $('#stats').innerHTML = '<div class="stat"><b>' + EX.length + '</b><span>exercices corrigés</span></div><div class="stat"><b>' + np + '</b><span>de partiels</span></div><div class="stat"><b>' + (EX.length - np) + '</b><span>des TD 1 à 4</span></div><div class="stat"><b>' + ok + '</b><span>réussis</span></div><div class="stat"><b>' + rv + '</b><span>à revoir</span></div>';
   }
   function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
   function paintFilters() {

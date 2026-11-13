@@ -526,7 +526,7 @@
   });
 
   X0.push({
-    id: 'p2021-ex2', exam: 'p2021', kind: 'partiel', order: 2, src: 'Partiel nov. 2021 · Ex 2',
+    id: 'p2021-ex2', b2: true, exam: 'p2021', kind: 'partiel', order: 2, src: 'Partiel nov. 2021 · Ex 2',
     title: 'Base polaire, dérivées et vitesse en polaires', pts: 8, topics: ['polaire'], lvl: 1, time: 15,
     intro: P('Le schéma ci-dessous représente, sur le même plan, les coordonnées polaires ainsi que les coordonnées cartésiennes.'),
     figs: [{ svg: F.pol21('Point M de coordonnées cartésiennes x et y et de coordonnées polaires rho et thêta ; en O, les vecteurs u x et u y de la base cartésienne et les vecteurs u rho et u thêta de la base polaire.'),
@@ -600,7 +600,7 @@
   });
 
   X0.push({
-    id: 'p2021-ex4', exam: 'p2021', kind: 'partiel', order: 4, src: 'Partiel nov. 2021 · Ex 4',
+    id: 'p2021-ex4', b2: true, exam: 'p2021', kind: 'partiel', order: 4, src: 'Partiel nov. 2021 · Ex 4',
     title: 'Accélération en polaires : circulaire, puis circulaire uniforme', pts: 4, topics: ['polaire', 'circulaire'], lvl: 1, time: 8,
     intro: P('Pour un mouvement quelconque, l’expression de l’accélération en coordonnées polaires est donnée par :') + E('a⃗(t) = (ρ̈ − ρθ̇²) u⃗_ρ + (ρθ̈ + 2ρ̇θ̇) u⃗_θ'),
     questions: [
@@ -888,7 +888,7 @@
   });
 
   X0.push({
-    id: 'p2017-ex2', exam: 'p2017', kind: 'partiel', order: 2, src: 'Partiel nov. 2017 · Ex 2',
+    id: 'p2017-ex2', b2: true, exam: 'p2017', kind: 'partiel', order: 2, src: 'Partiel nov. 2017 · Ex 2',
     title: 'Spirale : position, vitesse et accélération en polaires', topics: ['polaire'], lvl: 2, time: 15,
     intro: P('Les composantes du vecteur position $OM⃗$ en coordonnées cartésiennes sont données par :') + E('x(t) = ae^{ω.t} cos(ω.t)', 'y(t) = ae^{ω.t} sin(ω.t)') + P('$a$ et $ω$ sont des constantes positives.') +
       site('La question 4 (composantes de l’accélération en base de Frenet, rayon de courbure) est hors programme cette année : elle n’est pas reprise.'),

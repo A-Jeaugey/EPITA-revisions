@@ -882,7 +882,7 @@
      TD 5 — Cinématique en polaire (pas de corrigé officiel)
      ===================================================================== */
   add({
-    id: 'td5-ex1', exam: null, kind: 'td', order: 51, src: 'TD 5 · Ex 1', title: 'Base polaire',
+    id: 'td5-ex1', b2: true, exam: null, kind: 'td', order: 51, src: 'TD 5 · Ex 1', title: 'Base polaire',
     topics: ['polaire'], lvl: 2, time: 15,
     figs: [{ svg: figPolar(), cap: 'Schéma de l’énoncé : M repéré par r = OM et par l’angle θ.' }],
     questions: [
@@ -915,7 +915,7 @@
   });
 
   add({
-    id: 'td5-ex2', exam: null, kind: 'td', order: 52, src: 'TD 5 · Ex 2', title: 'Mouvement d’un manège',
+    id: 'td5-ex2', b2: true, exam: null, kind: 'td', order: 52, src: 'TD 5 · Ex 2', title: 'Mouvement d’un manège',
     topics: ['polaire', 'circulaire', 'nature'], lvl: 2, time: 25,
     intro: '<p>Dans le plan rapporté à un repère orthonormé (Oxy), les coordonnées du cheval en bois d’un manège, assimilé à un point matériel M, sont définies en fonction du temps par les équations dites paramétriques suivantes :</p>' +
       eq('$x($t) = $r_0 cos($ω$t)', '$y($t) = $r_0 sin($ω$t)'),
@@ -961,7 +961,7 @@
   });
 
   add({
-    id: 'td5-ex3', exam: null, kind: 'td', order: 53, src: 'TD 5 · Ex 3', title: 'Mouvement d’un satellite',
+    id: 'td5-ex3', b2: true, exam: null, kind: 'td', order: 53, src: 'TD 5 · Ex 3', title: 'Mouvement d’un satellite',
     topics: ['polaire', 'circulaire', 'newton'], lvl: 3, time: 30,
     intro: '<p>Un satellite de masse m = 300 kg se déplace sur une orbite circulaire autour de la Terre à une hauteur h = 6400 km du sol terrestre. Le rayon terrestre vaut R<sub>T</sub> = 6400 km. Au temps t, il est localisé au point M de coordonnées polaires (r, θ) comme le montre la figure. L’origine des axes O se situe au centre de la Terre.</p>',
     figs: [{ svg: figSat(), cap: 'Figure de l’énoncé : orbite circulaire de rayon $r = R<sub>T</sub> + $h autour du centre O de la Terre.' }],

@@ -7,7 +7,7 @@
    programme : le cours de cette année ne traite que le régime continu. */
 (function () {
   var EP = 'https://past-exams.epidocs.eu/S1/Finals/Elec/';
-  function f(promo, list) { return list.map(function (x) { return { k: x[0], l: x[1], u: EP + promo + '/final-' + promo + '-s1-elec-' + x[2] + '.pdf' }; }); }
+  function f(promo, list) { return list.map(function (x) { return { k: x[0], l: x[1], u: EP + encodeURIComponent(promo) + '/final-' + encodeURIComponent(promo) + '-s1-elec-' + x[2] + '.pdf' }; }); }
   window.ELEC2_TOPICS = {
     thevenin: 'Thévenin', norton: 'Norton', equivalences: 'Équivalences Thévenin/Norton', millman: 'Millman',
     superposition: 'Superposition', 'source-courant': 'Sources de courant', diviseurs: 'Diviseurs', numerique: 'Application numérique', qcm: 'Questions de cours'
