@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche élec B2 · Révisions S1</title>
+<meta name="description" content="La fiche d’une page de l’examen de fin de semestre d’électronique S1 : Thévenin, Norton, transformations, Millman, superposition, pièges, imprimable en A4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top h1{font-size:2.3rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:42em;margin-top:.4rem}
+.a4{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;columns:3 300px;column-gap:16px;margin-bottom:60px}
+.box{break-inside:avoid;border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;margin:0 0 12px;display:grid;gap:.3rem;background:var(--bg)}
+.box h2{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.box.hot{border-color:var(--exam);background:var(--exam-soft)}
+.box.hot h2{color:var(--exam)}
+.box.trapb{border-color:var(--warn);background:var(--warn-soft)}
+.box.trapb h2{color:var(--warn)}
+.box p,.box li{font-size:.86rem;line-height:1.45}
+.box ul,.box ol{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.box .eq{font-family:var(--font-math);font-size:1.02rem;line-height:1.55}
+.box .fig{padding:4px;background:none}
+.box .fig svg{max-width:260px}
+.box table{font-size:.8rem}
+.box th,.box td{padding:.2rem .35rem}
+@media print{
+  @page{size:A4;margin:9mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell{display:none!important}
+  .top{padding:0 0 4mm}
+  .top h1{font-size:15pt}
+  .top p{display:none}
+  .a4{border:0;padding:0;columns:3;column-gap:4mm;margin:0}
+  .box{padding:2mm 2.4mm;margin-bottom:2.6mm;background:#fff!important;border-color:#999!important}
+  .box p,.box li{font-size:8.1pt;line-height:1.32}
+  .box .eq{font-size:9.4pt}
+  .box h2{font-size:7pt}
+  .box .fig svg{max-width:46mm}
+  .box table{font-size:7.6pt}
+}
+</style>
+</head>
+<body data-resume="Élec B2 · fiche d’une page">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><a href="index.html">Élec B2</a> · Fiche</div><h1>Tout l’examen de fin de semestre sur une page</h1><p>À relire la veille et le matin de l’épreuve. Les lois du B1 (Kirchhoff, associations, diviseurs) ont leur propre <a href="../elec/fiche.html">fiche</a> : le QCM porte sur tout le semestre.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="methodes.html">Méthodes détaillées</a></div>
+  </div>
+
+  <div class="a4">
+    <section class="box"><h2>L’examen</h2>
+      <p>Sans calculatrice ni document, réponses sur le sujet. Un QCM de cours (5 à 8 points, tout le semestre), puis deux ou trois exercices de théorèmes. 45 % de la note de l’ECUE.</p>
+      <p>Le titre de l’exercice nomme le théorème : utilise celui-là.</p></section>
+
+    <section class="box"><h2>Éteindre une source</h2>
+      <p><b>Tension → fil</b> (<var class="u">U</var> = 0). <b>Courant → trou</b> (<var class="i">I</var> = 0, on enlève la branche).</p>
+      <p><b>Ne comptent pas</b> : une résistance en série avec une source de courant, une résistance en parallèle sur une source de tension.</p></section>
+
+    <section class="box hot"><h2>Thévenin</h2>
+      <div class="fig" id="ficheThev"></div>
+      <ol><li>Débrancher la charge, repérer A et B.</li><li><var class="u">E</var><sub>th</sub> = tension à vide entre A et B.</li><li><var>R</var><sub>th</sub> = résistance vue de A et B, sources éteintes.</li></ol>
+      <p class="eq"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·<var>R</var><sub>L</sub>/(<var>R</var><sub>th</sub> + <var>R</var><sub>L</sub>)</p></section>
+
+    <section class="box hot"><h2>Norton</h2>
+      <p><var class="i">I</var><sub>N</sub> = courant de court-circuit entre A et B (fil à la place de la charge). <var>R</var><sub>N</sub> = <var>R</var><sub>th</sub>.</p>
+      <p class="eq"><var class="i">I</var> = <var class="i">I</var><sub>N</sub>·<var>R</var><sub>N</sub>/(<var>R</var><sub>N</sub> + <var>R</var><sub>L</sub>) — l’autre en haut</p>
+      <p class="eq"><var class="u">E</var><sub>th</sub> = <var>R</var><sub>N</sub>·<var class="i">I</var><sub>N</sub></p></section>
+
+    <section class="box hot"><h2>Transformations en chaîne</h2>
+      <p class="eq">(<var class="u">E</var> série <var>R</var>) ⇄ (<var class="u">E</var>/<var>R</var> parallèle <var>R</var>)</p>
+      <ol><li>Débrancher la charge, supprimer ce qui ne compte pas.</li><li>Branches en parallèle → Norton, additionner les courants.</li><li>Éléments en série (bloc <var class="i">I</var> // <var>R</var> sur une ligne) → Thévenin <var>R</var><var class="i">I</var>, additionner les fém.</li><li>Une source + une résistance → rebrancher la charge, diviseur.</li><li>Vérifier <var>R</var><sub>th</sub> en éteignant les sources.</li></ol>
+      <p>Flèche du courant de Norton vers le + ; fém dans le sens du courant. Une source qui sort de A compte en moins. Un schéma par étape.</p></section>
+
+    <section class="box"><h2>Millman</h2>
+      <p class="eq"><var class="v">V</var><sub>A</sub> = [Σ (<var class="v">V</var><sub>k</sub> ± <var class="u">E</var><sub>k</sub>)/<var>R</var><sub>k</sub> + Σ<var class="i">I</var><sub>entrants</sub> − Σ<var class="i">I</var><sub>sortants</sub>] / Σ 1/<var>R</var><sub>k</sub></p>
+      <p>Masse au pied des sources. + si la fém pointe vers A. Branche à source de courant : numérateur seulement, sa résistance ne compte pas.</p></section>
+
+    <section class="box"><h2>Superposition</h2>
+      <ol><li>Un état par source, les autres éteintes (tension → fil, courant → trou).</li><li>Chaque contribution par un diviseur, avec son signe.</li><li>Additionner, puis l’application numérique.</li></ol>
+      <p>Jamais des puissances. Une source peut disparaître du résultat : c’est permis.</p></section>
+
+    <section class="box"><h2>Quelle méthode ?</h2>
+      <table><tbody>
+        <tr><td>Une charge entre deux nœuds</td><td>Thévenin / Norton</td></tr>
+        <tr><td>Tout entre deux mêmes nœuds</td><td>Millman</td></tr>
+        <tr><td>Sources bien séparées</td><td>Superposition</td></tr>
+        <tr><td><var class="i">I</var> // <var>R</var> sur un chemin</td><td>Transformations</td></tr>
+      </tbody></table></section>
+
+    <section class="box"><h2>Rappels du B1</h2>
+      <p class="eq">Tension : <var class="u">U</var>₂ = <var class="u">E</var>·<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂) — la même en haut</p>
+      <p class="eq">Courant : <var class="i">I</var>₂ = <var class="i">I</var>·<var>R</var>₁/(<var>R</var>₁ + <var>R</var>₂) — l’autre en haut</p>
+      <table><tbody><tr><td><var>R</var> // <var>R</var> = <var>R</var>/2</td><td><var>R</var> // 2<var>R</var> = 2<var>R</var>/3</td></tr><tr><td>3<var>R</var> // 6<var>R</var> = 2<var>R</var></td><td>2<var>R</var> // 3<var>R</var> = 6<var>R</var>/5</td></tr></tbody></table>
+      <p>kΩ × mA = V · V / kΩ = mA</p></section>
+
+    <section class="box trapb"><h2>Pièges</h2>
+      <ul><li>Charge à débrancher avant <var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>.</li><li>Source de courant éteinte = trou, pas fil.</li><li>Diviseur de courant : l’autre résistance en haut.</li><li>Lire chaque flèche de source avant d’écrire un signe.</li><li>Une résistance du fil du bas s’oublie vite.</li><li>Millman : pas de 1/<var>R</var> pour une branche à source de courant.</li><li>Répondre <var class="u">U</var> chargée, pas <var class="u">E</var><sub>th</sub>.</li><li>Résultat négatif = bonne réponse si la flèche est à l’envers.</li></ul></section>
+
+    <section class="box"><h2>Sur la copie</h2>
+      <ul><li>Nommer le théorème et l’étape.</li><li>Un schéma par transformation, par état.</li><li>Littéral, puis numérique avec unité.</li><li>Une seule barre de fraction, résultat encadré.</li><li>Vérifier les unités et <var>R</var><sub>th</sub> deux fois.</li></ul></section>
+  </div>
+</div>
+<script src="../assets/js/circuit.js"></script>
+<script>
+(function () {
+  REV.circuit.mount('#ficheThev', { w: 300, h: 170, aria: 'Générateur de Thévenin chargé par une résistance R_L',
+    wires: ['M40 30H210V150H40Z'],
+    parts: [{ t: 'E', x: 40, y: 90, d: 'v', p: 'n', l: 'E_th' }, { t: 'R', x: 125, y: 30, l: 'R_th' }, { t: 'R', x: 210, y: 90, d: 'v', l: 'R_L', lp: 'w' }, { t: 'U', a: [246, 140], b: [246, 40], l: 'U' },
+      { t: 'dot', x: 210, y: 30 }, { t: 'dot', x: 210, y: 150 }, { t: 'txt', x: 212, y: 20, s: 'A', c: 'cz-n' }, { t: 'txt', x: 212, y: 168, s: 'B', c: 'cz-n' }] });
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

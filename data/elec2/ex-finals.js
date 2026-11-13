@@ -187,8 +187,8 @@
   });
 
   var F21N = { w: 470, h: 250, aria: 'Branche 4R en série avec E à gauche ; 4R verticale ; en haut, source I0 fléchée vers la gauche en parallèle avec R ; 3R verticale ; charge 2R traversée par I',
-    wires: box([60, 170, 300, 400], ['M195 40V82H275V40']), parts: [{ t: 'R', x: 60, y: 85, d: 'v', l: '4R', lp: 'w' }, { t: 'E', x: 60, y: 160, d: 'v', p: 'n', l: 'E', as: 'w' },
-      { t: 'R', x: 170, y: 120, d: 'v', l: '4R' }, { t: 'J', x: 235, y: 40, d: 'h', to: 'w', l: 'I_0', as: 'n' }, { t: 'R', x: 235, y: 82, l: 'R', lp: 's' },
+    wires: box([60, 170, 300, 400], ['M195 40V118H275V40']), parts: [{ t: 'R', x: 60, y: 85, d: 'v', l: '4R', lp: 'w' }, { t: 'E', x: 60, y: 160, d: 'v', p: 'n', l: 'E', as: 'w' },
+      { t: 'R', x: 170, y: 120, d: 'v', l: '4R' }, { t: 'J', x: 235, y: 40, d: 'h', to: 'w', l: 'I_0', as: 's' }, { t: 'R', x: 235, y: 118, l: 'R', lp: 's' },
       { t: 'R', x: 300, y: 120, d: 'v', l: '3R' }, { t: 'I', x: 350, y: 40, d: 'e', l: 'I', lp: 'n' }, { t: 'R', x: 400, y: 120, d: 'v', l: '2R', lp: 'e' }] };
   L.push({
     id: 'f2021-ex4', exam: 'f2021', kind: 'final', order: 4, src: 'Examen janv. 2021 · Ex 4', title: 'Norton vu par 2R, puis le courant I',
