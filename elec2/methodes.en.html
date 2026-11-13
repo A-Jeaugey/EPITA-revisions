@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods · Elec B2</title>
+<meta name="description" content="S1 electronics, B2: a step-by-step method for each type of end-of-semester exam question (Thévenin, Norton, chained transformations, Millman, superposition), with the traps found in the answer keys.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.recipe{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:14px;align-items:start}
+@media (max-width:820px){.recipe{grid-template-columns:minmax(0,1fr)}}
+.express{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem;display:grid;gap:.5rem;min-width:0}
+.express .t{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.express .fig{padding:6px;border:1px solid var(--line);border-radius:8px}
+.express .fig svg{max-width:360px}
+.decide{display:grid;gap:8px}
+.decide a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:.65rem .85rem;background:var(--surface);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink)}
+.decide a:hover{border-color:var(--accent)}
+.decide a span:last-child{font-family:var(--font-mono);font-size:.78rem;color:var(--accent);white-space:nowrap}
+.traplist{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:t}
+.traplist li{counter-increment:t;display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.6rem .8rem}
+.traplist li::before{content:counter(t);font-family:var(--font-mono);font-weight:600;color:var(--warn)}
+.traplist li>div{min-width:0}
+.traplist b{display:block}
+.traplist span{color:var(--muted);font-size:.93rem}
+</style>
+</head>
+<body data-resume="Elec B2 · methods">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><a href="index.html">Elec B2</a> · Methods</div>
+      <h1>One theorem, <span class="w">one recipe</span>.</h1>
+      <p class="lead">The end-of-semester exam always asks the same questions: a Thévenin or Norton generator seen by a resistor, a chain of transformations, a node voltage, a superposition. For each one: the order of the steps on your paper, a quick example and the mistakes the answer keys penalize.</p>
+      <div class="chips"><span class="chip">8 methods</span><span class="chip">checks</span><span class="chip">14 traps</span><span class="chip ex">what the marker expects</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Methods contents">
+    <div class="toc-title">Methods</div>
+    <ol>
+      <li><a href="#choisir"><span class="code" data-n="0"></span><span>Which method?</span></a></li>
+      <li><a href="#thevenin"><span class="code" data-n="1"></span><span>Direct Thévenin</span></a></li>
+      <li><a href="#norton"><span class="code" data-n="2"></span><span>Direct Norton</span></a></li>
+      <li><a href="#chaine"><span class="code" data-n="3"></span><span>Chained transformations</span></a></li>
+      <li><a href="#millman"><span class="code" data-n="4"></span><span>Millman</span></a></li>
+      <li><a href="#superposition"><span class="code" data-n="5"></span><span>Superposition</span></a></li>
+      <li><a href="#auchoix"><span class="code" data-n="6"></span><span>“Method of your choice”</span></a></li>
+      <li><a href="#numerique"><span class="code" data-n="7"></span><span>Numerical application</span></a></li>
+      <li><a href="#verifier"><span class="code" data-n="8"></span><span>Check</span></a></li>
+      <li><a href="#pieges"><span class="code" data-n="9"></span><span>The 14 traps</span></a></li>
+      <li><a href="#copie"><span class="code" data-n="10"></span><span>Writing your paper</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Elec B2 home</a><a href="entrainement.html">Exercises →</a><a href="fiche.html">One-page sheet</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Methods contents</summary>
+      <ol>
+        <li><a href="#choisir">Which method?</a></li><li><a href="#thevenin">Direct Thévenin</a></li><li><a href="#norton">Direct Norton</a></li><li><a href="#chaine">Chained transformations</a></li>
+        <li><a href="#millman">Millman</a></li><li><a href="#superposition">Superposition</a></li><li><a href="#auchoix">“Method of your choice”</a></li><li><a href="#numerique">Numerical application</a></li>
+        <li><a href="#verifier">Check</a></li><li><a href="#pieges">The 14 traps</a></li><li><a href="#copie">Writing your paper</a></li>
+      </ol>
+    </details>
+
+    <section class="sec" id="choisir">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="0"></span><span>Starting point</span></div><h2>Which method for which question?</h2></div>
+      <div class="decide">
+        <a href="#thevenin"><span>“Find the Thévenin generator seen by <var>R</var>′”, then the voltage across it</span><span>Method 1</span></a>
+        <a href="#norton"><span>“Find the Norton generator seen by <var>R</var><sub>4</sub>”, then the current through it</span><span>Method 2</span></a>
+        <a href="#chaine"><span>“You may use the Thévenin/Norton equivalences”, a circuit with <var>R</var>, 2<var>R</var>, 3<var>R</var> and several sources</span><span>Method 3</span></a>
+        <a href="#millman"><span>“Millman’s theorem”, or the voltage between two points where several branches meet</span><span>Method 4</span></a>
+        <a href="#superposition"><span>“Superposition theorem”, or a result asked source by source</span><span>Method 5</span></a>
+        <a href="#auchoix"><span>“Find the voltage across <var>R</var><sub>1</sub>” with no method imposed</span><span>Method 6</span></a>
+        <a href="#numerique"><span>Values in kΩ and mA, “numerical application”</span><span>Method 7</span></a>
+      </div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>The paper almost always names the method in the title of the exercise (“Norton’s theorem”). Use that one: the marking scheme follows its steps. When it does not name one, method 6 helps you choose.</p></div>
+    </section>
+
+    <section class="sec" id="thevenin">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Method 1</span></div><h2>Direct Thévenin</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Disconnect the load</b> (the resistor “seen by”) and mark its two terminals A and B.</div></li>
+          <li><div><b><var class="u">E</var><sub>th</sub> = open-circuit voltage</b> between A and B: voltage divider, Millman or superposition. No current leaves through A.</div></li>
+          <li><div><b><var>R</var><sub>th</sub></b>: turn off the sources (voltage → wire, current → gap), then the resistance seen from A and B.</div></li>
+          <li><div><b>Reconnect the load</b>: <span class="f-inline"><var class="u">U</var> = <var class="u">E</var><sub>th</sub>·<var>R</var><sub>L</sub>/(<var>R</var><sub>th</sub> + <var>R</var><sub>L</sub>)</span>.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><div class="fig" id="exThev"></div><p><var class="u">E</var><sub>th</sub> = 12 × 6/(3 + 6) = 8 V; <var>R</var><sub>th</sub> = 3 // 6 = 2 kΩ; with <var>R</var><sub>L</sub> = 2 kΩ: <var class="u">U</var> = 8 × 2/4 = 4 V.</p></div>
+      </div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>January 2018, 2019, 2020 and 2021: “Thévenin generator seen by <var>R</var>′ (or <var>R</var><sub>4</sub>)”, 5 to 6.5 points. <a class="td x" href="entrainement.html#thevenin">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="norton">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Method 2</span></div><h2>Direct Norton</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Disconnect the load</b>, then <b>join A and B with a wire</b>.</div></li>
+          <li><div><b><var class="i">I</var><sub>N</sub> = short-circuit current</b> in that wire, from B to A through the generator. Resistors in parallel with the wire are short-circuited: they no longer count.</div></li>
+          <li><div><b><var>R</var><sub>N</sub> = <var>R</var><sub>th</sub></b>: remove the wire, turn off the sources, resistance seen from A and B.</div></li>
+          <li><div><b>Reconnect the load</b>: current divider, <span class="f-inline"><var class="i">I</var> = <var class="i">I</var><sub>N</sub>·<var>R</var><sub>N</sub>/(<var>R</var><sub>N</sub> + <var>R</var><sub>L</sub>)</span>, the <b>other</b> resistor on top.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><p>Same circuit: wire between A and B, the 6 kΩ is short-circuited, <var class="i">I</var><sub>N</sub> = 12/3 = 4 mA; <var>R</var><sub>N</sub> = 2 kΩ; with <var>R</var><sub>L</sub> = 2 kΩ: <var class="i">I</var> = 4 × 2/(2 + 2) = 2 mA, so <var class="u">U</var> = 2 × 2 = 4 V, as with Thévenin.</p><p class="ex">Check: <var class="u">E</var><sub>th</sub> = <var>R</var><sub>N</sub>·<var class="i">I</var><sub>N</sub> = 2 × 4 = 8 V.</p></div>
+      </div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>January 2016, 2017, 2020, 2021, 2022 and 2023: “Norton seen by…”, then the current in the load. The most frequent trap is the current divider upside down. <a class="td x" href="entrainement.html#norton">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="chaine">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Method 3</span></div><h2>Chained Thévenin ⇄ Norton transformations</h2></div>
+      <div class="prose"><p>This is the main exercise of the 2022 and 2023 papers (12 and 14 points) and of the 2023 and 2024 midterms. The marker expects <b>one intermediate diagram per transformation</b>.</p></div>
+      <ol class="steps">
+        <li><div><b>Disconnect the load</b>. Everything that remains is the “generator” to simplify.</div></li>
+        <li><div><b>Remove what does not matter</b>: a resistor in series with a current source, a resistor in parallel with a voltage source (<a href="cours-1-thevenin.html#s7">course, part 7</a>).</div></li>
+        <li><div><b>Branches in parallel between the same two nodes</b>: turn each series (<var class="u">E</var>, <var>R</var>) into a Norton (<var class="u">E</var>/<var>R</var> // <var>R</var>, arrow toward the +), then add the current sources (algebraically) and combine the parallel resistors.</div></li>
+        <li><div><b>Elements one after another on a path</b>: turn each (<var class="i">I</var> // <var>R</var>) into a Thévenin (<var>R</var><var class="i">I</var> in series with <var>R</var>, emf in the direction of <var class="i">I</var>), then add the emfs (algebraically, from B to A) and the resistances.</div></li>
+        <li><div><b>“(<var class="u">E</var>, <var>R</var>) loaded by a resistor” block</b>: intermediate Thévenin, <var class="u">E</var>·<var>R</var>₂/(<var>R</var>₁ + <var>R</var>₂) in series with <var>R</var>₁ // <var>R</var>₂.</div></li>
+        <li><div><b>A single source and a single resistor</b>: that is (<var class="u">E</var><sub>th</sub>, <var>R</var><sub>th</sub>) or (<var class="i">I</var><sub>N</sub>, <var>R</var><sub>N</sub>), depending on the form asked. Reconnect the load, divider.</div></li>
+        <li><div><b>Check</b> <var>R</var><sub>th</sub> on the original circuit, sources turned off, and the units (V everywhere, <var>R</var><var class="i">I</var> is in V; A everywhere, <var class="u">E</var>/<var>R</var> is in A).</div></li>
+      </ol>
+      <div class="tbl" style="margin-top:14px"><table>
+        <thead><tr><th>Paper</th><th>Generator asked</th><th>Source</th><th>Resistance</th></tr></thead>
+        <tbody>
+          <tr><td>Jan. 2023</td><td>Norton seen by 2<var>R</var></td><td><var class="i">I</var><sub>N</sub> = <var class="u">E</var>/(16<var>R</var>) − <var class="i">I</var></td><td>32<var>R</var>/5</td></tr>
+          <tr><td>Jan. 2022</td><td>Norton seen by <var>R</var>′</td><td><var class="i">I</var><sub>N</sub> = <var class="i">I</var>/4</td><td>12<var>R</var>/5</td></tr>
+          <tr><td>Jan. 2021 · Ex 3</td><td>Thévenin seen by <var>R</var>′</td><td>(2<var>R</var><var class="i">I</var> + 2<var class="u">E</var><sub>1</sub> + <var class="u">E</var><sub>2</sub>)/3</td><td>2<var>R</var>/3</td></tr>
+          <tr><td>Jan. 2021 · Ex 4</td><td>Norton seen by 2<var>R</var></td><td><var class="u">E</var>/(6<var>R</var>) − <var class="i">I</var><sub>0</sub>/3</td><td>3<var>R</var>/2</td></tr>
+          <tr><td>Jan. 2019 · Ex 2</td><td>Thévenin seen by <var>R</var><sub>4</sub></td><td>(<var>R</var><var class="i">I</var><sub>0</sub> + 2<var class="u">E</var><sub>3</sub>)/3</td><td>2<var>R</var>/3</td></tr>
+          <tr><td>Midterm Nov. 2023 · Q2</td><td>Thévenin seen by 2<var>R</var></td><td><var class="u">E</var> + 4<var>R</var><var class="i">I</var></td><td>4<var>R</var></td></tr>
+          <tr><td>Midterm Oct. 2024 · Q1</td><td>Thévenin seen by 2<var>R</var></td><td>2(<var>R</var><var class="i">I</var> − <var class="u">E</var>)</td><td>5<var>R</var></td></tr>
+        </tbody></table></div>
+      <div class="note keep" style="margin-top:14px"><span class="tag">The arrow rule</span><p>Norton: the current arrow points toward the + terminal of the voltage source it replaces. Thévenin: the emf arrow points in the direction of the arrow of the current it replaces. A current source that <b>leaves</b> node A counts negatively.</p></div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>In 2022, question 2 is done by turning <b>all</b> the branches into Norton generators: they are all in parallel between the same two nodes, and <var class="u">U</var> comes out of a single fraction. <a class="td x" href="entrainement.html#equivalences">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="millman">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Method 4</span></div><h2>Millman in three steps</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Ground</b> at the common point of the sources (often the bottom wire). Name the node you want A.</div></li>
+          <li><div><b>Numerator</b>: for each branch arriving at A, (potential of the other end ± emf)/<var>R</var>, + if the emf points toward A; plus the currents of the current sources (+ entering, − leaving).</div></li>
+          <li><div><b>Denominator</b>: sum of the 1/<var>R</var> of the resistor branches, <b>without</b> those of the current-source branches (their series resistance does not count). Multiply top and bottom so that you have a single fraction bar.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><div class="fig" id="exMil"></div><p class="f-block"><var class="v">V</var><sub>A</sub> = (12/2 + 3)/(1/2 + 1/2) = 9/1 = 9 V</p><p class="ex">The 3 A source adds its current to the numerator and nothing to the denominator.</p></div>
+      </div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>As a bonus in 2016, 2017 and 2019, graded 2 points in 2018; in 2017, the whole of exercise 3 is done with Millman (then “what value of <var>R</var><sub>4</sub> gives <var class="u">U</var> = 0?”). <a class="td x" href="entrainement.html#millman">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="superposition">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Method 5</span></div><h2>Superposition: one state per source</h2></div>
+      <div class="recipe">
+        <ol class="steps">
+          <li><div><b>Count the sources</b>: as many states as sources (three sources, three diagrams).</div></li>
+          <li><div><b>In each state</b>, keep a single source and turn off the others: voltage → wire, current → gap. <b>Redraw</b> the simplified circuit.</div></li>
+          <li><div><b>Compute the contribution</b> with a voltage or current divider, <b>with its sign</b> relative to the arrow of the quantity asked.</div></li>
+          <li><div><b>Add</b> the contributions, and only then do the numerical application.</div></li>
+        </ol>
+        <div class="express"><span class="t">Quick example</span><p>Same circuit as Millman. 12 V alone (3 A → gap): <var class="v">V</var><sub>A</sub>′ = 12 × 2/(2 + 2) = 6 V. 3 A alone (12 V → wire): <var class="v">V</var><sub>A</sub>″ = 3 × (2 // 2) = 3 V. Total: 6 + 3 = 9 V, as with Millman.</p></div>
+      </div>
+      <div class="note trap" style="margin-top:14px"><span class="tag">Watch out</span><p>Superposition adds voltages and currents, <b>never powers</b>. And a source that is turned off stays in the circuit as a wire or a gap: do not erase it together with its resistor.</p></div>
+      <div class="note exam" style="margin-top:14px"><span class="tag">In the exam</span><p>June 2018, January 2020 and January 2021, often with a numerical application at the end (4.5 to 7.5 points). <a class="td x" href="entrainement.html#superposition">Practice</a></p></div>
+    </section>
+
+    <section class="sec" id="auchoix">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Method 6</span></div><h2>“Find the voltage across <var>R</var><sub>1</sub>”: which method?</h2></div>
+      <div class="prose"><p>January 2016, June 2018, January 2018 and 2019 ask this question without imposing a method, on circuits with two or three sources (7 to 8 points). The shortest path:</p></div>
+      <div class="tbl"><table>
+        <thead><tr><th>What you see</th><th>Method</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><var>R</var><sub>1</sub> between two nodes, the rest reduces nicely</td><td>Thévenin seen by <var>R</var><sub>1</sub></td><td>A single reduction, then a voltage divider.</td></tr>
+          <tr><td>All the branches between the same two nodes</td><td>Millman</td><td>A single fraction, no transformation.</td></tr>
+          <tr><td>Sources of different types, well separated</td><td>Superposition</td><td>Each state is a simple divider.</td></tr>
+          <tr><td>A current source in parallel with a resistor</td><td>Chained transformations</td><td>(<var class="i">I</var>, <var>R</var>) → (<var>R</var><var class="i">I</var>, <var>R</var>) combines in series.</td></tr>
+        </tbody></table></div>
+      <div class="note keep" style="margin-top:14px"><span class="tag">A source disappears?</span><p>It can happen and it is not a mistake. In January 2019, <var class="u">E</var> does not appear in <var class="u">U</var> = 6<var>R</var><var>R</var><sub>1</sub><var class="i">I</var>/(4<var>R</var> + <var>R</var><sub>1</sub>); in June 2018, it is <var class="i">I</var> that disappears. Check with superposition: the contribution of that source is 0.</p></div>
+    </section>
+
+    <section class="sec" id="numerique">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="7"></span><span>Method 7</span></div><h2>The numerical application without a calculator</h2></div>
+      <ol class="steps">
+        <li><div><b>Symbolic expression first</b>, simplified, boxed: it earns most of the points.</div></li>
+        <li><div><b>Consistent units</b>: resistances in kΩ, currents in mA, voltages in V (kΩ × mA = V, V / kΩ = mA).</div></li>
+        <li><div><b>Substitute</b> in the final expression only, not at every step.</div></li>
+        <li><div><b>Keep the sign</b>: −1.5 A is a good answer (January 2020) when the arrow points the other way.</div></li>
+      </ol>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card"><span class="t">Jan. 2017</span><span class="f"><var class="i">I</var><sub>N</sub> = 5 mA</span><span class="d"><var>R</var><sub>N</sub> = 800 Ω, <var class="i">I</var><sub>2</sub> = 2 mA</span></div>
+        <div class="card"><span class="t">Jan. 2021</span><span class="f"><var class="i">I</var><sub>2</sub> = 2.5 mA</span><span class="d"><var>R</var> = 500 Ω = 0.5 kΩ</span></div>
+        <div class="card"><span class="t">Jan. 2020</span><span class="f"><var class="i">I</var> = 1.8 A</span><span class="d">after the symbolic <var class="u">E</var><sub>th</sub>, for <var>R</var>′ = 3<var>R</var></span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="verifier">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="8"></span><span>Method 8</span></div><h2>Check without a calculator</h2></div>
+      <div class="grid2">
+        <div class="qty"><h3>Units</h3><p>Every term of a sum has the same unit: <var>R</var><var class="i">I</var> and <var class="u">E</var> are volts, <var class="u">E</var>/<var>R</var> and <var class="i">I</var> are amperes. A result <var class="u">U</var> = <var class="u">E</var> + <var class="i">I</var> is certainly wrong.</p></div>
+        <div class="qty"><h3>Limiting cases</h3><p>Set <var class="i">I</var> = 0 or <var class="u">E</var> = 0 and check that the result matches the simplified circuit. A load tending to infinity gives <var class="u">E</var><sub>th</sub> back; a zero load gives <var class="i">I</var><sub>N</sub>.</p></div>
+        <div class="qty"><h3><var>R</var><sub>th</sub> twice</h3><p>Once through the transformations, once by turning off the sources on the original diagram. If the two differ, an arrow or a grouping is wrong.</p></div>
+        <div class="qty"><h3>Another method</h3><p>Superposition or Millman at node A give the same result in a few lines. And <var class="u">E</var><sub>th</sub> = <var>R</var><sub>N</sub>·<var class="i">I</var><sub>N</sub> links the two generators.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="pieges">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="9"></span><span>To avoid</span></div><h2>The 14 traps found in the papers</h2></div>
+      <ol class="traplist">
+        <li><div><b>Keeping the load in <var class="u">E</var><sub>th</sub> or <var>R</var><sub>th</sub></b><span>Disconnect it first, reconnect it at the end (2021, 2023).</span></div></li>
+        <li><div><b>Short-circuiting a current source for <var>R</var><sub>th</sub></b><span>A current source turned off = gap. In 2019, you would find <var>R</var>/2 instead of 2<var>R</var>/3.</span></div></li>
+        <li><div><b>Counting a resistor in series with a current source</b><span>It changes neither the current nor <var>R</var><sub>th</sub> (2018 Ex 2, Millman 2017 and 2019).</span></div></li>
+        <li><div><b>Keeping a resistor in parallel with a voltage source</b><span>When the source is turned off (wire), it is short-circuited (2020 Ex 4).</span></div></li>
+        <li><div><b>Current divider upside down</b><span>It is the resistance of the <b>other</b> branch that goes in the numerator (2016, 2022).</span></div></li>
+        <li><div><b>Reading a source arrow backwards</b><span>2018 Ex 3: the 2<var class="u">E</var> opposes the direction of travel; 2021 Ex 4: <var class="i">I</var><sub>0</sub> goes to the left, <var>R</var><var class="i">I</var><sub>0</sub> is subtracted.</span></div></li>
+        <li><div><b>Forgetting that a current source draws current</b><span>2023: <var class="i">I</var> leaves the top node, hence <var class="u">E</var>/(16<var>R</var>) − <var class="i">I</var>.</span></div></li>
+        <li><div><b>Forgetting a resistor on the bottom wire</b><span>2017 (<var>R</var><sub>4</sub>), 2023 (<var>R</var> in series with 3<var>R</var>), June 2018 (2<var>R</var>).</span></div></li>
+        <li><div><b>Adding a current source and a series resistor</b><span>Without a transformation, it makes no sense (2022).</span></div></li>
+        <li><div><b>Forgetting a superposition state</b><span>Three sources, three states (2020 Ex 4).</span></div></li>
+        <li><div><b>Losing a sign in a state</b><span>2021 Ex 2: with <var class="i">I</var><sub>0</sub> alone, the current goes through 3<var>R</var> against the <var class="i">I</var><sub>2</sub> arrow.</span></div></li>
+        <li><div><b>Putting 1/<var>R</var> of a current-source branch in the Millman denominator</b><span>2017, 2018, 2019: its resistance does not count.</span></div></li>
+        <li><div><b>Copying <var class="u">E</var><sub>th</sub> as the answer</b><span>June 2018: they ask for <var class="u">U</var> across the load (denominator 14), not the open-circuit voltage (denominator 11). The official answer key gets it wrong.</span></div></li>
+        <li><div><b>Mixing Ω and kΩ</b><span>2017, 2021: everything in kΩ and mA, or everything in Ω and A.</span></div></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="copie">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="10"></span><span>Exam day</span></div><h2>Writing your paper</h2></div>
+      <div class="prose"><p>No calculator or documents, answers directly on the paper (it gives no duration). It starts with a course MCQ (5 to 8 points), then two or three theorem exercises. What earns points:</p>
+        <ul><li><b>The named theorem</b> at the start of each answer: “Thévenin seen by <var>R</var>′”, “Norton → Thévenin”, “superposition, state 1”.</li>
+        <li><b>One diagram per step</b>: load disconnected, sources turned off, each transformation, each superposition state.</li>
+        <li><b>The symbolic expression first</b>, then the numerical value with its unit.</li>
+        <li><b>The result boxed</b>, simplified (a single fraction bar).</li>
+        <li><b>The MCQ</b>: it covers the whole semester, B1 laws included (measuring instruments, units, equivalent resistances, dividers). Revise it with the <a href="../qcm/index.html#elec2">Elec B2 MCQ</a> and the <a href="../qcm/index.html#elec">B1</a> one.</li></ul></div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Next">
+      <a href="index.html"><span>Back</span><b>← Elec B2 home</b></a>
+      <a class="next" href="entrainement.html"><span>Put it into practice</span><b>The exercises →</b></a>
+    </nav>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+REV.circuit.mount('#exThev', { w: 365, h: 190, aria: '12 V source, 3 kΩ in series, 6 kΩ between A and B',
+  wires: ['M75 40H305M75 160H305M75 40V160M215 40V160'],
+  parts: [{ t: 'E', x: 75, y: 100, d: 'v', p: 'n', l: '12 V' }, { t: 'R', x: 145, y: 40, l: '3 kΩ' }, { t: 'R', x: 215, y: 100, d: 'v', l: '6 kΩ' },
+    { t: 'dot', x: 215, y: 40 }, { t: 'dot', x: 215, y: 160 }, { t: 'term', x: 305, y: 40, l: 'A' }, { t: 'term', x: 305, y: 160, l: 'B' }] });
+REV.circuit.mount('#exMil', { w: 365, h: 190, aria: '12 V source in series with 2 Ω toward node A, 2 Ω from A to ground, 3 A current source entering A',
+  wires: ['M75 40H315M75 160H315M75 40V160M215 40V160M315 40V160'],
+  parts: [{ t: 'E', x: 75, y: 100, d: 'v', p: 'n', l: '12 V' }, { t: 'R', x: 145, y: 40, l: '2 Ω' }, { t: 'R', x: 215, y: 100, d: 'v', l: '2 Ω' },
+    { t: 'J', x: 315, y: 100, d: 'v', to: 'n', l: '3 A' }, { t: 'dot', x: 215, y: 40 }, { t: 'dot', x: 215, y: 160 },
+    { t: 'txt', x: 215, y: 28, s: 'A', a: 'middle', c: 'cz-n' }, { t: 'gnd', x: 145, y: 160 }] });
+</script>
+</body>
+</html>
