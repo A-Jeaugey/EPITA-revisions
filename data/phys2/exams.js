@@ -18,7 +18,7 @@
   window.PHYS2_EXAMS = [
     { key: 'f2022d', label: 'Examen déc. 2022', promo: 2027, date: 'Décembre 2022', official: false, progPts: '≈ 8 / 20',
       files: f(2027, [['Sujet (copie corrigée)', 'fr', 'subject-fr']]),
-      parts: [{ ex: 1, t: 'Questions de cours : cinématique (Q1-2), moments d’une force (Q3-6)', pts: 6, topics: ['qcm', 'statique'] },
+      parts: [{ ex: 1, t: 'Questions de cours : cinématique (Q1-2), moments d’une force (Q3-6)', pts: 6, topics: ['qcm', 'statique', 'circulaire'] },
         { ex: 2, t: 'Mouvement elliptique : conditions initiales, vitesse, accélération', pts: 5.5, topics: ['cinematique', 'trajectoire'], cards: ['f2022d-ex2'] },
         { ex: 3, t: 'Forces et moments sur un plongeoir', pts: 4.5, topics: ['statique'], prog: false },
         { ex: 4, t: 'Équilibre d’une masse accrochée à deux fils (+ 2 points de bonus)', pts: 4, topics: ['statique'], prog: false }],
