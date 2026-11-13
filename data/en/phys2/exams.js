@@ -22,21 +22,21 @@
       note: 'The only paper without statics: 100% kinematics, polar coordinates and the circle. The printed marking scheme adds up to 21 points. No published answer key: the solution was written here.' },
     f2020: { label: 'End-of-semester exam Jan. 2020', date: 'January 2020',
       files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
-      parts: [{ t: 'Moments of a force (Q1-3, Q6-7), second law, action at a distance, law of inertia' },
+      parts: [{ ex: 'MCQ', t: 'Moments of a force (Q1-3, Q6-7), second law, action at a distance, law of inertia' },
         { t: 'Inclined plane and pulley: second law, acceleration, tension, reaction' },
         { t: 'Beam in equilibrium: moments, cable tension, reaction' },
         { t: 'Quarter-circle chute: second law in the Frenet basis, reaction, leaving the surface' }],
       note: 'Exercise 3 is the model for chapter 2: energy, reaction, leaving angle cos θ = 2/3.' },
     f2018j: { label: 'End-of-semester exam June 2018 (S1#)', date: 'June 2018',
       files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
-      parts: [{ t: 'The Frenet basis, rotational equilibrium, moments, energy, work of a friction force' },
+      parts: [{ ex: 'MCQ', t: 'The Frenet basis, rotational equilibrium, moments, energy, work of a friction force' },
         { t: 'Circle travelled at V₀/(1 + αt): curvilinear abscissa, Frenet acceleration' },
         { t: 'Shop sign: moments and equilibrium' },
         { t: 'Loop: speeds from energy, reaction from the second law' }],
       note: 'Session of the shifted S1. The official answer key is handwritten and partly illegible: answers were recomputed.' },
     f2018: { label: 'End-of-semester exam Jan. 2018', date: 'January 2018',
       files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
-      parts: [{ t: 'Moments (Q1-3), work, energy theorems' },
+      parts: [{ ex: 'MCQ', t: 'Moments (Q1-3), work, energy theorems' },
         { t: 'Beam held by a cable: moments, tension, reaction' },
         { t: 'Bead on a sphere: second law in the Frenet basis, equation of motion' },
         { t: 'Half-cylinder guide with friction: energies, friction force' }],
@@ -53,5 +53,5 @@
         { t: 'Bar leaning against a wall: moments, reaction, coefficient of friction' },
         { t: 'Helix: nature of the motion, cylindrical coordinates' }],
       note: 'No published answer key. The spiral of part B is that of the November 2017 midterm; the helix is that of May 2018 (the questions in cylindrical coordinates are not in the course).' }
-  });
+  }, 'key');
 })();
