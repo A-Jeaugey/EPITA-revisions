@@ -105,8 +105,8 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 - **Sujets d’élec** (`data/elec/exams.js`) : `window.ELEC_EXAMS` (clé `pAAAA` = année du partiel ; promo = AAAA + 5),
   `window.ELEC_TOPICS`, `window.ELEC_CATS`.
   Programme de l'examen 1 (annonce d'octobre 2026) : cours jusqu'à la page 15 (associations de résistances) et TD 1
-  jusqu'à l'exercice 5 ; **Thévenin, Norton, Millman, superposition hors examen 1** (chapitre 3 du site, notions du QCM
-  décochées via `window.QCM_OFF`) ; meilleurs modèles : partiels 2020 à 2022 (2020 entièrement au programme).
+  jusqu'à l'exercice 5 ; **Thévenin, Norton, Millman, superposition hors examen 1** : ils sont passés dans la matière
+  Élec B2 (`elec2`, voir plus bas) ; meilleurs modèles : partiels 2020 à 2022 (2020 entièrement au programme).
 - **Exercices TAA** (`data/taa/ex-*.js`, poussés dans `window.TAA_EX`) : même idée que l’élec, sans schémas :
   `{ id, exam, kind:'partiel'|'td'|'archive'|'cours', order, src, title, pts, topics, lvl, time, intro,
   specs:[{ code, cap }], questions, hints, solution:[{ t, html, spec }], answer (HTML ou { html, spec }), traps,
@@ -191,6 +191,23 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   l'examen 2025-2026, S6 en 2016-2017, ex. 3.2 S1 en 2023-2024) ; décodeur, multiplexeur, démultiplexeur jamais tombés ;
   toutes les réponses des corrigés sont justes (coquille du rattrapage 2017-2018 : « Y = B̄.D̄ – B.C » pour « + ») ;
   2024-2025 sans corrigé. Évaluation : QCM en ligne 10 %, examen 90 % (date à venir).
+- **Élec B2** (id `elec2`, dossier `elec2/`, même thème `elec.css` ; examen de fin de semestre, 45 % de la note, QCM de
+  cours sur tout le semestre + théorèmes) : l'ancien chapitre 3 du B1 est devenu `elec2/cours-1-thevenin` (8 parties :
+  Thévenin, Norton, équivalences, ce qui ne compte pas, à l'examen) et `-2-millman` (6 parties : Millman, branches
+  particulières, superposition, quelle méthode) ; `elec/cours-3-theoremes(.en).html` ne fait plus que rediriger. Les
+  méthodes et la fiche du B1 renvoient vers `elec2/methodes.html` et `elec2/fiche.html` (pas de doublon). QCM :
+  `data/qcm/elec2.js` (chargé après `elec.js` et `elec-hebdo.js`) passe en `s:'elec2'` les questions dont `ref` vise
+  l'ancien chapitre 3 (ids conservés, ref réécrite vers les fiches) et ajoute `elec-c3-18`… et les questions des
+  examens (`elec-fAAAA-qN`, provenance « Examens de fin de semestre », filtre `#elec2-f2016` dans `qcm/`). Sujets
+  `ELEC2_EXAMS` / notions `ELEC2_TOPICS` (`data/elec2/exams.js`, clé `fAAAA` = janvier AAAA = promo − 4, `f2018j` =
+  juin 2018 S1#, dossier Epidocs `S1/Finals/Elec/2023#`) ; exercices `window.ELEC2_EX` (`data/elec2/ex-finals.js`,
+  22 fiches `kind:'final'`, progression `elec2-<id>`) ; l'entraînement et l'accueil reprennent aussi les exercices de
+  théorèmes de `ELEC_EX` (progression `elec-<id>`). Points vérifiés (analyse nodale symbolique sympy) : toutes les
+  réponses des corrigés justes, deux coquilles (janv. 2019 Ex 2 « 2E » pour 2E₃ ; juin 2018 Q2b encadre E_th, dénominateur
+  11, au lieu de U, dénominateur 14) ; 2016 sans corrigé (réponses calculées) ; Thévenin ou Norton 9 sujets sur 9, QCM
+  9/9, Millman (bonus 2016, 2017, 2019, noté 2018), superposition 2018 S1#, 2020, 2021 ; 2022-2023 : un grand exercice
+  d'équivalences (12 à 14 pts). Janvier 2024 (promo 2028) = autre ECUE, ELEC-2-ERS (régime sinusoïdal) : `prog:false`,
+  hors programme ; si ce cours apparaît au Moodle, l'ajouter à `elec2` (nouveaux chapitres). Sujets sans durée indiquée.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
