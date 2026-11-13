@@ -1,1 +1,57 @@
-/* English overlay (to be written). */
+/* English text for data/phys2/exams.js (merged over the French file: PHYS2_TOPICS by key, PHYS2_EXAMS by `key`). */
+(function () {
+  var R = window.REV;
+  R.i18n.patch(window.PHYS2_TOPICS, {
+    polaire: 'Polar coordinates', circulaire: 'Circular motion', dyncirc: 'Second law on a circle', energie: 'Energy and friction',
+    newton: 'Newton’s second law', cinematique: 'Kinematics in Cartesian coordinates', trajectoire: 'Trajectory', frenet: 'The Frenet basis',
+    statique: 'Statics (not in the course yet)', qcm: 'Lecture questions'
+  });
+  R.i18n.patch(window.PHYS2_EXAMS, {
+    f2022d: { label: 'End-of-semester exam Dec. 2022', date: 'December 2022',
+      files: [{ k: 'Exam paper (graded copy)' }],
+      parts: [{ t: 'Lecture questions: kinematics (Q1-2), moments of a force (Q3-6)' },
+        { t: 'Elliptical motion: initial conditions, velocity, acceleration' },
+        { t: 'Forces and moments on a diving board' },
+        { t: 'Equilibrium of a mass hung from two strings (+ 2 bonus points)' }],
+      note: 'The most recent paper found, 1 h long. Only a graded student copy is published. Half of the points are on statics, which is not in the course yet.' },
+    f2022: { label: 'End-of-semester exam Jan. 2022', date: 'January 2022',
+      files: [{ k: 'Exam paper' }],
+      parts: [{ t: 'MCQ: orthonormal basis, polar coordinates, the Frenet basis, trajectory, cylindrical coordinates' },
+        { t: 'Cartesian coordinates and the Frenet basis: a circle travelled with αt²' },
+        { t: 'Polar coordinates: ρ(t), θ(t), position and velocity' }],
+      note: 'The only paper without statics: 100% kinematics, polar coordinates and the circle. The printed marking scheme adds up to 21 points. No published answer key: the solution was written here.' },
+    f2020: { label: 'End-of-semester exam Jan. 2020', date: 'January 2020',
+      files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
+      parts: [{ t: 'Moments of a force (Q1-3, Q6-7), second law, action at a distance, law of inertia' },
+        { t: 'Inclined plane and pulley: second law, acceleration, tension, reaction' },
+        { t: 'Beam in equilibrium: moments, cable tension, reaction' },
+        { t: 'Quarter-circle chute: second law in the Frenet basis, reaction, leaving the surface' }],
+      note: 'Exercise 3 is the model for chapter 2: energy, reaction, leaving angle cos θ = 2/3.' },
+    f2018j: { label: 'End-of-semester exam June 2018 (S1#)', date: 'June 2018',
+      files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
+      parts: [{ t: 'The Frenet basis, rotational equilibrium, moments, energy, work of a friction force' },
+        { t: 'Circle travelled at V₀/(1 + αt): curvilinear abscissa, Frenet acceleration' },
+        { t: 'Shop sign: moments and equilibrium' },
+        { t: 'Loop: speeds from energy, reaction from the second law' }],
+      note: 'Session of the shifted S1. The official answer key is handwritten and partly illegible: answers were recomputed.' },
+    f2018: { label: 'End-of-semester exam Jan. 2018', date: 'January 2018',
+      files: [{ k: 'Exam paper' }, { k: 'Answer key' }],
+      parts: [{ t: 'Moments (Q1-3), work, energy theorems' },
+        { t: 'Beam held by a cable: moments, tension, reaction' },
+        { t: 'Bead on a sphere: second law in the Frenet basis, equation of motion' },
+        { t: 'Half-cylinder guide with friction: energies, friction force' }],
+      note: 'The official answer key is correct; in exercise 3 it takes π ≈ 3 and finds f = 1.33·10⁻² N (0.04/π ≈ 1.27·10⁻² N).' },
+    f2017: { label: 'End-of-semester exam Jan. 2017', date: 'January 2017',
+      files: [{ k: 'Exam paper' }, { k: 'Exam paper' }, { k: 'Answer key' }],
+      parts: [{ t: 'Cycloid in Cartesian coordinates (A), spiral in polar coordinates (B, Q1-2; Q3, Frenet)' },
+        { t: 'Horizontal beam and cable: moments, tension, reaction of the wall' },
+        { t: 'Curved then straight track: friction, work-kinetic energy theorem' }],
+      note: 'The official answer key is in English and correct. The cycloid and the spiral are those of the 2019-2020 midterms and of November 2017: same cards.' },
+    f2016: { label: 'End-of-semester exam Jan. 2016', date: 'January 2016',
+      files: [{ k: 'Exam paper' }, { k: 'Exam paper' }],
+      parts: [{ t: 'The Frenet basis (A); spiral in polar coordinates (B)' },
+        { t: 'Bar leaning against a wall: moments, reaction, coefficient of friction' },
+        { t: 'Helix: nature of the motion, cylindrical coordinates' }],
+      note: 'No published answer key. The spiral of part B is that of the November 2017 midterm; the helix is that of May 2018 (the questions in cylindrical coordinates are not in the course).' }
+  });
+})();
