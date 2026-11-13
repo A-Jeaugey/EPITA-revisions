@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Millman and Superposition · Elec B2</title>
+<meta name="description" content="Electronics S1, B2, sheet 2: Millman’s theorem and its special branches, the superposition theorem state by state, checking a result, choosing your method, based on the end-of-semester exams.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=STIX+Two+Text:ital,wght@0,400;1,400;1,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/elec.css">
+<link rel="stylesheet" href="../assets/css/circuit.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+<style>
+.stepper-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stepper-nav .mono{font-variant-numeric:tabular-nums;color:var(--muted)}
+.twin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.twin>div{min-width:0}
+.twin>div+div{border-left:1px solid var(--line)}
+@media (max-width:640px){.twin{grid-template-columns:minmax(0,1fr)}.twin>div+div{border-left:0;border-top:1px solid var(--line)}}
+.twin .cap{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.6rem .9rem 0}
+.equal{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.equal .big{color:var(--accent)}
+</style>
+</head>
+<body data-resume="Elec B2 · sheet 2: Millman and superposition">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Elec B2</a> · Sheet 2 of 2</div>
+      <h1>One node, one line: <span class="w">Millman</span>. One source at a time: <span class="w">superposition</span>.</h1>
+      <p class="lead">Millman writes Kirchhoff’s current law with potentials: one line for the voltage of a node. Superposition cuts a circuit with several sources into circuits with a single source. Both are asked in the end-of-semester exam, and both are used to <b>check</b> a Thévenin result.</p>
+      <div class="chips"><span class="chip">≈ 35 min</span><span class="chip">6 parts</span><span class="chip">course “Theorems”</span><span class="chip ex">Millman or superposition in 7 papers out of 8</span></div>
+    </div>
+    <div class="bench" aria-label="Example: Millman in one line"><div class="bench-head"><span>Millman in one line</span><span>January 2019</span></div><div class="fig" id="heroMil"></div><div class="ctrls"><div class="readout"><span class="f-inline"><var class="u">U</var> = (<var class="i">I</var> + <var class="u">E</var><sub>1</sub>/<var>R</var> + <var class="u">E</var><sub>2</sub>/<var>R</var>)/(3/<var>R</var>) = (<var>R</var><var class="i">I</var> + <var class="u">E</var><sub>1</sub> + <var class="u">E</var><sub>2</sub>)/3</span><br><span style="color:var(--muted);font-size:.9rem">January 2019, bonus. The two greyed-out resistors do not count (part 2).</span></div></div></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sheet contents">
+    <div class="toc-title">Sheet 2 · Millman and superposition</div>
+    <ol>
+      <li><a href="#s1"><span class="code" data-n="1"></span><span>Millman</span></a></li>
+      <li><a href="#s2"><span class="code" data-n="2"></span><span>Special branches</span></a></li>
+      <li><a href="#s3"><span class="code" data-n="3"></span><span>Superposition</span></a></li>
+      <li><a href="#s4"><span class="code" data-n="4"></span><span>One state per source</span></a></li>
+      <li><a href="#s5"><span class="code" data-n="5"></span><span>Checking</span></a></li>
+      <li><a href="#s6"><span class="code" data-n="6"></span><span>Which method</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="cours-1-thevenin.html">← Sheet 1: Thévenin and Norton</a><a href="methodes.html">Step-by-step methods →</a><a href="entrainement.html#millman">Millman exercises</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Contents (6 parts)</summary>
+      <ol>
+        <li><a href="#s1">Millman</a></li><li><a href="#s2">Special branches</a></li><li><a href="#s3">Superposition</a></li><li><a href="#s4">One state per source</a></li><li><a href="#s5">Checking</a></li><li><a href="#s6">Which method</a></li>
+      </ol>
+    </details>
+
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="1"></span><span>Part 1</span></div><h2>Millman’s theorem</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Millman’s theorem is <b>Kirchhoff’s current law written with potentials</b>. It gives you directly the potential of a node A where several branches arrive, all the potentials being measured relative to one common reference M (the ground, 0 V). The course proves it by writing the current of each branch <span class="f-inline">(<var class="v">V</var><sub>k</sub> − <var class="v">V</var><sub>A</sub> + <var class="u">E</var><sub>k</sub>)/<var>R</var><sub>k</sub></span>, then Kirchhoff’s current law at A.</p></div>
+        <div class="formula"><div><var class="v">V</var><sub>A</sub> = <span class="frac"><span>Σ (<var class="v">V</var><sub>k</sub> ± <var class="u">E</var><sub>k</sub>)/<var>R</var><sub>k</sub> + Σ <var class="i">I</var><sub>entering</sub> − Σ <var class="i">I</var><sub>leaving</sub></span><span>Σ 1/<var>R</var><sub>k</sub></span></span></div><small>top: what each branch “pushes” toward A · bottom: the sum of the conductances</small></div>
+        <ol class="steps">
+          <li><div><b>Choose the ground</b>: the point common to all the sources, often the bottom wire.</div></li>
+          <li><div><b>For each branch</b> that reaches A through a resistance <var>R</var><sub>k</sub>: in the numerator, the potential of the other end (plus the emf of the branch, <b>+</b> if its arrow points toward A, <b>−</b> otherwise), divided by <var>R</var><sub>k</sub>; in the denominator, 1/<var>R</var><sub>k</sub>.</div></li>
+          <li><div><b>Current sources</b> that reach A: in the numerator only (+ if they enter, − if they leave). A current source <b>in series</b> in a branch sets the current of that branch: the resistor in series with it does not count in the denominator.</div></li>
+        </ol>
+        <div class="bench">
+          <div class="bench-head"><span>Millman calculator</span><span>potential of node A</span></div>
+          <div class="fig" id="milFig"></div>
+          <div class="ctrls">
+            <div class="grid3">
+              <div class="slider"><label for="mE1"><var class="u">E</var>₁</label><output id="mE1v">12 V</output><input id="mE1" type="range" min="-12" max="24" value="12"></div>
+              <div class="slider"><label for="mR1"><var>R</var>₁</label><output id="mR1v">2 Ω</output><input id="mR1" type="range" min="1" max="12" value="2"></div>
+              <div class="slider"><label for="mE2"><var class="u">E</var>₂</label><output id="mE2v">6 V</output><input id="mE2" type="range" min="-12" max="24" value="6"></div>
+              <div class="slider"><label for="mR2"><var>R</var>₂</label><output id="mR2v">2 Ω</output><input id="mR2" type="range" min="1" max="12" value="2"></div>
+              <div class="slider"><label for="mR3"><var>R</var>₃</label><output id="mR3v">4 Ω</output><input id="mR3" type="range" min="1" max="12" value="4"></div>
+              <div class="slider"><label for="mI"><var class="i">I</var>₀ (entering A)</label><output id="mIv">0 A</output><input id="mI" type="range" min="-4" max="4" step="0.5" value="0"></div>
+            </div>
+            <div class="readout" id="milRead" aria-live="polite"></div>
+          </div>
+        </div>
+        <h3>The example from the course</h3>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="milEx"></div></div>
+          <div class="prose"><p>Ground = bottom wire. Three branches reach A: (<var class="u">E</var>₁, <var>R</var>₁), (<var class="u">E</var>₃, <var>R</var>₃) and (<var class="i">I</var>₂ // <var>R</var>₂). The source <var class="i">I</var>₂ leaves A and <var class="u">E</var>₃ has its arrow pointing down, hence the minus signs:</p>
+            <div class="f-block" style="text-align:center"><var class="u">U</var> = <span class="frac"><span><var class="u">E</var>₁/<var>R</var>₁ − <var class="u">E</var>₃/<var>R</var>₃ − <var class="i">I</var>₂</span><span>1/<var>R</var>₁ + 1/<var>R</var>₂ + 1/<var>R</var>₃</span></span></div>
+            <p>Multiplying top and bottom by <var>R</var>₁<var>R</var>₂<var>R</var>₃: <span class="f-inline"><var class="u">U</var> = <var>R</var>₂(<var class="u">E</var>₁<var>R</var>₃ − <var class="u">E</var>₃<var>R</var>₁ − <var class="i">I</var>₂<var>R</var>₁<var>R</var>₃)/(<var>R</var>₂<var>R</var>₃ + <var>R</var>₁<var>R</var>₂ + <var>R</var>₁<var>R</var>₃)</span>. A single formula, where Thévenin or superposition would take three calculations.</p></div>
+        </div>
+        <div class="note exam"><span class="tag">In the end-of-semester exam</span><p>Millman is asked four times: as a bonus in January 2016, 2017 and 2019, and graded in January 2018 (Ex 4, 2 points). The January 2017 model answer also chooses it for exercise 3, and it is used everywhere to <b>check</b> a no-load voltage <var class="u">E</var><sub>th</sub> in one line.</p></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li><var class="v">V</var><sub>A</sub> = (Σ “what each branch pushes”/<var>R</var><sub>k</sub> + entering currents) / Σ 1/<var>R</var><sub>k</sub>.</li><li>Sign + if the emf or the current goes toward A, − otherwise. A branch with a current source appears only in the numerator.</li></ul></div>
+        <div data-check="elec-c3-23,elec-c3-14,elec-c3-15"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s1"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="2"></span><span>Part 2</span></div><h2>Millman: the special branches</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Every branch that reaches node A brings something to the numerator and, if it has a resistor, to the denominator. The papers mix all kinds of branches: here is how to write each one, with the ground chosen at B.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Branch between A and ground</th><th>Numerator</th><th>Denominator</th></tr></thead>
+          <tbody>
+            <tr><td>Resistor <var>R</var><sub>k</sub> alone</td><td>0</td><td>1/<var>R</var><sub>k</sub></td></tr>
+            <tr><td><var>R</var><sub>k</sub> in series with an emf <var class="u">E</var><sub>k</sub> whose arrow points toward A</td><td>+<var class="u">E</var><sub>k</sub>/<var>R</var><sub>k</sub></td><td>1/<var>R</var><sub>k</sub></td></tr>
+            <tr><td><var>R</var><sub>k</sub> in series with an emf whose arrow points toward ground</td><td>−<var class="u">E</var><sub>k</sub>/<var>R</var><sub>k</sub></td><td>1/<var>R</var><sub>k</sub></td></tr>
+            <tr><td>Current source (with or without a series resistor) entering A</td><td>+<var class="i">I</var><sub>k</sub></td><td>nothing</td></tr>
+            <tr><td><var>R</var><sub>k</sub> toward a node held by a voltage source (resistor in parallel with that source)</td><td>potential of that node / <var>R</var><sub>k</sub></td><td>1/<var>R</var><sub>k</sub></td></tr>
+            <tr><td>Two emfs in opposite directions in the same branch, with <var>R</var><sub>1</sub> + <var>R</var><sub>2</sub></td><td>(<var class="u">E</var><sub>1</sub> − <var class="u">E</var><sub>2</sub>)/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</td><td>1/(<var>R</var><sub>1</sub> + <var>R</var><sub>2</sub>)</td></tr>
+          </tbody></table></div>
+        <h3>The graded exercise: January 2018, Ex 4</h3>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="f22"></div></div>
+          <div class="prose"><p>Ground at B. <var class="i">I</var><sub>1</sub> leaves A, <var class="i">I</var><sub>2</sub> enters it; <var>R</var><sub>2</sub>, in series with <var class="i">I</var><sub>2</sub>, does not count; the bottom of <var>R</var><sub>3</sub> is at potential −<var class="u">E</var><sub>3</sub> (arrow pointing down), and <var>R</var><sub>4</sub>, in parallel with <var class="u">E</var><sub>3</sub>, does not count:</p>
+            <div class="f-block" style="text-align:center"><var class="u">U</var> = <span class="frac"><span><var class="u">E</var><sub>1</sub>/<var>R</var><sub>1</sub> − <var class="i">I</var><sub>1</sub> + <var class="i">I</var><sub>2</sub> − <var class="u">E</var><sub>3</sub>/<var>R</var><sub>3</sub></span><span>1/<var>R</var><sub>1</sub> + 1/<var>R</var><sub>3</sub></span></span></div></div>
+        </div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>In the denominator, only the resistors of the branches without a current source.</li><li>The sign of each term: + if the emf or the current goes toward A.</li><li>Simplify by multiplying top and bottom by the product of the resistors.</li></ul></div>
+        <div data-check="elec-c3-24,elec-c3-25,elec-c3-26"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s2"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="3"></span><span>Part 3</span></div><h2>The superposition theorem</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course cites the <b>superposition theorem</b>: in a linear circuit with several sources, a voltage (or a current) is the sum of the contributions of each source acting <b>alone</b>, the others being turned off (voltage → wire, current → gap). It came up once in a midterm (2017, 2.5 points); in the end-of-semester exam, four times (January 2020, January 2021, June 2018, and in the 2018 and 2019 model answers). It is also an excellent way to check a result.</p>
+          <p>Example, 2024 Q2: with <var class="u">E</var> alone (<var class="i">I</var> open), you get <var class="u">E</var>/6; with <var class="i">I</var> alone (<var class="u">E</var> as a wire), <var class="i">I</var> leaves A and flows through 2<var>R</var> // 4<var>R</var> = 4<var>R</var>/3, hence −4<var>R</var><var class="i">I</var>/3. Total: (<var class="u">E</var> − 8<var>R</var><var class="i">I</var>)/6, the same result as with the transformations.</p></div>
+        <div class="prose"><p>The bench below takes the circuit of the 2017 midterm (Ex 4) with numerical values. Change <var class="u">E</var>₁ and <var class="i">I</var>₃: each single-source diagram gives its share of <var class="i">I</var>₁, and the sum of the two shares always lands on the current of the full circuit. The arrow <var class="i">I</var>₁ stays the same in all three diagrams: with <var class="i">I</var>₃ alone, the red band shows the current flowing through <var>R</var>₁ against this arrow, hence the minus sign.</p></div>
+        <div class="bench viz-sup" data-viz="superposition"></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>One state per source: you keep it, you turn off the others (voltage → wire, current → gap).</li><li>You add the contributions <b>with their signs</b>, relative to the same arrow.</li><li>Conditions: linear circuit, independent sources.</li></ul></div>
+        <div data-check="elec-c3-16,elec-f2018j-q7"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s3"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="4"></span><span>Part 4</span></div><h2>Superposition in the exam: one state per source</h2></div>
+      <div class="stack">
+        <div class="prose"><p>January 2020 (Ex 2): four sources, a voltage <var class="u">U</var> and a current <var class="i">I</var> to find, with a numerical application. The method fits in one table: one state per source, and in each state, what is left of the circuit.</p></div>
+        <div class="grid2" style="align-items:start">
+          <div class="bench"><div class="fig sm" id="f24"></div><p class="fig-cap"><var class="u">E</var><sub>1</sub> = −5 V, <var class="u">E</var><sub>2</sub> = 3 V, <var class="i">I</var><sub>1</sub> = 1 A, <var class="i">I</var><sub>2</sub> = 2 A, <var>R</var><sub>1</sub> = 2 Ω, <var>R</var><sub>2</sub> = 3 Ω.</p></div>
+          <div class="tbl"><table>
+            <thead><tr><th>State</th><th>What is left</th><th><var class="u">U</var></th><th><var class="i">I</var></th></tr></thead>
+            <tbody>
+              <tr><td><var class="u">E</var><sub>1</sub> alone</td><td>bottom wire cut (<var class="i">I</var><sub>1</sub> open)</td><td>−<var class="u">E</var><sub>1</sub></td><td><var class="u">E</var><sub>1</sub>/<var>R</var><sub>1</sub></td></tr>
+              <tr><td><var class="u">E</var><sub>2</sub> alone</td><td><var>R</var><sub>1</sub> short-circuited</td><td><var class="u">E</var><sub>2</sub></td><td>0</td></tr>
+              <tr><td><var class="i">I</var><sub>1</sub> alone</td><td><var class="i">I</var><sub>1</sub> flows through <var>R</var><sub>2</sub></td><td><var>R</var><sub>2</sub><var class="i">I</var><sub>1</sub></td><td><var class="i">I</var><sub>1</sub></td></tr>
+              <tr><td><var class="i">I</var><sub>2</sub> alone</td><td><var class="i">I</var><sub>2</sub> circulates in <var>R</var><sub>2</sub></td><td>−<var>R</var><sub>2</sub><var class="i">I</var><sub>2</sub></td><td>0</td></tr>
+              <tr><td><b>Sum</b></td><td></td><td><b>5 V</b></td><td><b>−1.5 A</b></td></tr>
+            </tbody></table></div>
+        </div>
+        <ol class="steps">
+          <li><div><b>Number the states</b> and draw each single-source circuit: the model answers do it, and the grader marks the diagrams.</div></li>
+          <li><div><b>Spot the short circuits and the cuts</b>: a voltage source turned off short-circuits whatever is in parallel with it; a current source turned off cuts its branch.</div></li>
+          <li><div><b>Calculate each contribution</b> with a divider, Ohm’s law or KVL, using the arrow of the paper.</div></li>
+          <li><div><b>Add with the signs</b>, then do the numerical application (careful with negative sources: −<var class="u">E</var><sub>1</sub> = +5 V).</div></li>
+        </ol>
+        <div class="note exam"><span class="tag">January 2021, Ex 2</span><p>Same method with two sources: <var class="i">I</var><sub>2</sub> = <var class="u">E</var><sub>1</sub>/(6<var>R</var>) − <var class="i">I</var><sub>0</sub>/18 = 5 − 2.5 = 2.5 mA (<var class="u">E</var><sub>1</sub> = 15 V, <var class="i">I</var><sub>0</sub> = 45 mA, <var>R</var> = 500 Ω).</p></div>
+        <div data-check="elec-c3-29,elec-c3-28"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s4"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="5"></span><span>Part 5</span></div><h2>Checking a result before handing in</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Without a calculator and with literal expressions, a sign error or a forgotten resistor slips through easily. Three quick checks catch almost everything.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Check</th><th>How</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Homogeneity</td><td>You only add voltages to voltages (<var class="u">E</var>, <var>R</var><var class="i">I</var>) or currents to currents (<var class="i">I</var>, <var class="u">E</var>/<var>R</var>)</td><td>(<var class="u">E</var> + <var>R</var><var class="i">I</var>)/5: correct; <var class="u">E</var> + <var class="i">I</var>: impossible</td></tr>
+            <tr><td>Limiting case</td><td>Cancel a source (<var class="i">I</var> = 0 or <var class="u">E</var> = 0) and compare with the simplified circuit</td><td>January 2023: <var class="i">I</var> = 0 gives <var class="i">I</var>′ = <var class="u">E</var>/(21<var>R</var>); with <var class="u">E</var> alone, the divider confirms it</td></tr>
+            <tr><td>Another method</td><td>Millman for a no-load voltage, superposition for a literal result</td><td>January 2020, Ex 4: Millman gives <var class="u">E</var><sub>th</sub> = (3<var class="u">E</var><sub>1</sub> + <var class="u">E</var><sub>2</sub> + 3<var>R</var><var class="i">I</var><sub>3</sub>)/5 again in one line</td></tr>
+          </tbody></table></div>
+        <div class="note keep"><span class="tag">Key points</span><ul><li>One minute of checking per question is worth more than one extra line.</li><li>A voltage or a current can be negative: the sign only tells the real direction relative to the arrow.</li></ul></div>
+        <div data-check="elec-c3-30,elec-c3-31"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s5"></button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="code" data-n="6"></span><span>Part 6</span></div><h2>Which method to choose</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The “Theorems” papers leave the choice of method open (“using the method of your choice”). The right choice depends on what you are looking for.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Situation</th><th>Fastest method</th></tr></thead>
+          <tbody>
+            <tr><td>Voltage across a <b>single</b> resistor (the load) in a circuit with several sources</td><td>Thévenin seen by that resistor, then voltage divider</td></tr>
+            <tr><td>“Find <var class="u">E</var><sub>th</sub> and <var>R</var><sub>th</sub> so that the two circuits are equivalent”</td><td>Chained Thévenin ⇄ Norton transformations, backed by diagrams</td></tr>
+            <tr><td>Potential of a node where several branches with sources arrive</td><td>Millman</td></tr>
+            <tr><td>A single source, resistors</td><td>Equivalent resistance, then dividers</td></tr>
+            <tr><td>All the voltages and all the currents of a small circuit, numerical values</td><td>Kirchhoff’s laws and Ohm’s law</td></tr>
+            <tr><td>Check a symbolic result</td><td>Superposition or Millman, plus a limiting case (<var class="i">I</var> = 0 or <var class="u">E</var> = 0)</td></tr>
+          </tbody></table></div>
+        <div class="note trap"><span class="tag">The traps found in the answer keys (2023 and 2024 midterms)</span><ul>
+          <li>Including the 2<var>R</var> load in <var class="u">E</var><sub>th</sub> or <var>R</var><sub>th</sub>.</li>
+          <li>Short-circuiting a current source to calculate <var>R</var><sub>th</sub>.</li>
+          <li>Reading a source arrow backward (2<var>E</var> with its arrow pointing down in 2024) or forgetting that a current source <b>draws</b> current from node A.</li>
+          <li>Forgetting the resistor <var>R</var> on the bottom wire (2024 Q2: <var>R</var><sub>th</sub> = 4<var>R</var>, not 3<var>R</var>).</li>
+          <li>Thinking that the bottom node of the left part is B when an “<var class="i">I</var> // <var>R</var>” block separates them.</li>
+          <li>6<var>R</var> // 6<var>R</var> = 3<var>R</var>, not 12<var>R</var>.</li></ul></div>
+        <div class="note exam"><span class="tag">What the end-of-semester model answers choose</span><p>Thévenin/Norton equivalences for 2018 (Ex 3), 2021, 2022, 2023; superposition for 2019 (Ex 3) and 2020 (Ex 2, Ex 4); Millman for 2017 (Ex 3) and all the bonuses. The first two methods check each other.</p></div>
+        <div data-check="elec-c3-32,elec-c3-13"></div>
+        <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 6</span><button type="button" class="done-btn" data-done="elec2:millman:s6"></button></div>
+      </div>
+    </section>
+
+    <nav class="chap-nav" aria-label="Sheets">
+      <a href="cours-1-thevenin.html"><span>Sheet 1</span><b>← Thévenin and Norton</b></a>
+      <a class="next" href="entrainement.html"><span>Now</span><b>The exercises from the papers →</b></a>
+    </nav>
+    <footer class="foot">Based on the course “Electronics basic Concepts” (parts B.IV and B.V) and on the end-of-semester exams from 2016 to 2023, solved and checked by calculation.</footer>
+  </main>
+</div>
+
+<script src="../assets/js/circuit.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/elec.js"></script>
+<script src="../data/en/qcm/elec.js"></script>
+<script src="../data/qcm/elec-hebdo.js"></script>
+<script src="../data/en/qcm/elec-hebdo.js"></script>
+<script src="../data/qcm/elec2.js"></script>
+<script src="../data/en/qcm/elec2.js"></script>
+<script src="../assets/js/elec.js"></script>
+<script>
+(function () {
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, nf = U.nf, C = R.circuit;
+  /* ---- Millman ---- */
+  function updMil() {
+    var e1 = +$('#mE1').value, r1 = +$('#mR1').value, e2 = +$('#mE2').value, r2 = +$('#mR2').value, r3 = +$('#mR3').value, i0 = +$('#mI').value;
+    $('#mE1v').textContent = e1 + ' V'; $('#mR1v').textContent = r1 + ' Ω'; $('#mE2v').textContent = e2 + ' V'; $('#mR2v').textContent = r2 + ' Ω'; $('#mR3v').textContent = r3 + ' Ω'; $('#mIv').textContent = nf(i0, 1) + ' A';
+    var num = e1 / r1 + e2 / r2 + i0, den = 1 / r1 + 1 / r2 + 1 / r3, va = num / den;
+    C.mount('#milFig', { w: 460, h: 240, aria: 'Node A connected to ground by three branches and a current source',
+      wires: ['M50 40H410', 'M50 200H410', 'M50 40V200', 'M160 40V200', 'M270 40V200', 'M410 40V200'],
+      parts: [{ t: 'R', x: 50, y: 85, d: 'v', l: 'R_1' }, { t: 'E', x: 50, y: 155, d: 'v', p: 'n', l: 'E_1', as: 'w' },
+        { t: 'R', x: 160, y: 85, d: 'v', l: 'R_2' }, { t: 'E', x: 160, y: 155, d: 'v', p: 'n', l: 'E_2', as: 'w' },
+        { t: 'R', x: 270, y: 120, d: 'v', l: 'R_3' }, { t: 'J', x: 410, y: 120, d: 'v', to: 'n', l: 'I_0', as: 'w' },
+        { t: 'dot', x: 160, y: 40 }, { t: 'dot', x: 270, y: 40 }, { t: 'dot', x: 160, y: 200 }, { t: 'dot', x: 270, y: 200 },
+        { t: 'txt', x: 215, y: 28, s: 'A', c: 'cz-n' }, { t: 'gnd', x: 215, y: 200 }] });
+    var i1 = (e1 - va) / r1, i2 = (e2 - va) / r2, i3 = va / r3;
+    $('#milRead').innerHTML = '<span class="f-inline"><var class="v">V</var><sub>A</sub> = (' + e1 + '/' + r1 + ' + ' + e2 + '/' + r2 + ' + 0/' + r3 + (i0 ? ' + ' + nf(i0, 1) : '') + ') / (1/' + r1 + ' + 1/' + r2 + ' + 1/' + r3 + ') = </span><span class="big">' + nf(va) + ' V</span><br>' +
+      '<span style="color:var(--muted);font-size:.9rem">Currents toward A: ' + nf(i1) + ' A through branch 1, ' + nf(i2) + ' A through branch 2, ' + nf(i0, 1) + ' A from the source; ' + nf(i3) + ' A flow back out through <var>R</var>₃. Kirchhoff’s current law: ' + nf(i1 + i2 + i0) + ' = ' + nf(i3) + ' ✓</span>';
+  }
+  ['mE1', 'mR1', 'mE2', 'mR2', 'mR3', 'mI'].forEach(function (id) { $('#' + id).addEventListener('input', updMil); }); updMil();
+
+  C.mount('#milEx', { w: 400, h: 230, aria: 'Course example: E1 and R1 on the left, source I2 in parallel with R2 in the middle, E3 and R3 on the right, ground at the bottom',
+    wires: ['M50 40H350', 'M50 200H350', 'M50 40V200', 'M350 40V200', 'M170 40V200', 'M240 40V200'],
+    parts: [{ t: 'R', x: 110, y: 40, l: 'R_1' }, { t: 'E', x: 50, y: 120, d: 'v', p: 'n', l: 'E_1' },
+      { t: 'R', x: 290, y: 40, l: 'R_3' }, { t: 'E', x: 350, y: 120, d: 'v', p: 's', l: 'E_3', as: 'e' },
+      { t: 'J', x: 170, y: 120, d: 'v', to: 's', l: 'I_2', as: 'w' }, { t: 'R', x: 240, y: 120, d: 'v', l: 'R_2' },
+      { t: 'U', a: [205, 185], b: [205, 60], l: 'U', lp: 'e' },
+      { t: 'dot', x: 170, y: 40 }, { t: 'dot', x: 240, y: 40 }, { t: 'dot', x: 170, y: 200 }, { t: 'dot', x: 240, y: 200 },
+      { t: 'txt', x: 205, y: 28, s: 'A', c: 'cz-n' }, { t: 'gnd', x: 205, y: 200 }] });
+
+  C.mount('#heroMil', { w: 495, h: 230, aria: 'January 2019, bonus: I in series with R, R and E1, U, R, R on top, E2, R', wires: ['M60 40H460', 'M60 190H460', 'M60 40V190', 'M150 40V190', 'M260 40V190', 'M370 40V190', 'M460 40V190'],
+    parts: [{ t: 'J', x: 60, y: 80, d: 'v', to: 'n', l: 'I', as: 'w' }, { t: 'R', x: 60, y: 150, d: 'v', l: 'R', lp: 'w', c: 'cz-ghost' }, { t: 'R', x: 150, y: 80, d: 'v', l: 'R' }, { t: 'E', x: 150, y: 150, d: 'v', p: 'n', l: 'E_1', as: 'w' },
+      { t: 'U', a: [205, 170], b: [205, 60], l: 'U', lp: 'e' }, { t: 'R', x: 260, y: 115, d: 'v', l: 'R' }, { t: 'R', x: 315, y: 40, l: 'R' }, { t: 'E', x: 370, y: 115, d: 'v', p: 'n', l: 'E_2', as: 'e' }, { t: 'R', x: 460, y: 115, d: 'v', l: 'R', lp: 'e', c: 'cz-ghost' }] });
+  /* ---- part 2: January 2018 Ex 4; part 4: January 2020 Ex 2 ---- */
+  C.mount('#f22', { w: 500, h: 250, aria: 'January 2018: I1 pointing down, R1 and E1, R2 and I2, R3 then E3 pointing down with R4 in parallel', wires: ['M70 40H360', 'M70 200H440', 'M70 40V200', 'M160 40V200', 'M260 40V200', 'M360 40V200', 'M360 125H440V200'],
+    parts: [{ t: 'J', x: 70, y: 120, d: 'v', to: 's', l: 'I_1', as: 'e' }, { t: 'R', x: 160, y: 82, d: 'v', l: 'R_1' }, { t: 'E', x: 160, y: 160, d: 'v', p: 'n', l: 'E_1', as: 'w' },
+      { t: 'R', x: 260, y: 82, d: 'v', l: 'R_2', c: 'cz-ghost' }, { t: 'J', x: 260, y: 160, d: 'v', to: 'n', l: 'I_2', as: 'w' }, { t: 'R', x: 360, y: 82, d: 'v', l: 'R_3' },
+      { t: 'E', x: 360, y: 165, d: 'v', p: 's', l: 'E_3', as: 'w' }, { t: 'R', x: 440, y: 165, d: 'v', l: 'R_4', lp: 'e', c: 'cz-ghost' }, { t: 'U', a: [30, 190], b: [30, 50], l: 'U', lp: 'w' },
+      { t: 'txt', x: 70, y: 28, s: 'A', c: 'cz-n' }, { t: 'txt', x: 70, y: 226, s: 'B', c: 'cz-n' }] });
+  C.mount('#f24', { w: 470, h: 250, aria: 'January 2020: E1 with current I, R1, E2 on the top wire, R2, I2; I1 on the bottom wire, U across it', wires: ['M60 40H420', 'M60 200H420', 'M60 40V200', 'M150 40V200', 'M330 40V200', 'M420 40V200'],
+    parts: [{ t: 'E', x: 60, y: 125, d: 'v', p: 'n', l: 'E_1', as: 'w' }, { t: 'I', x: 60, y: 62, d: 'n', l: 'I', lp: 'w' }, { t: 'R', x: 150, y: 120, d: 'v', l: 'R_1' }, { t: 'E', x: 240, y: 40, d: 'h', p: 'w', l: 'E_2', as: 'n' },
+      { t: 'R', x: 330, y: 120, d: 'v', l: 'R_2' }, { t: 'J', x: 420, y: 120, d: 'v', to: 's', l: 'I_2', as: 'e' }, { t: 'J', x: 240, y: 200, d: 'h', to: 'w', l: 'I_1', as: 'n' }, { t: 'U', a: [290, 232], b: [190, 232], l: 'U', lp: 's' }] });
+})();
+</script>
+<script src="../assets/js/elec-viz.js"></script>
+</body>
+</html>
