@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integration by parts, change of variable · Maths APIS</title>
+<meta name="description" content="Maths, APIS, lesson 3: integration by parts (formula, assumptions, proof, choice of u and v′, successive integrations, recurrence relation) and change of variable (formula, five-step method, bounds). On the syllabus of the 23 November course test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · lesson 3: IBP, change of variable">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — lesson 3 of 4 for the course test</span><span>Source: summary sheet “IBP and change of variable”, Moodle model exercises, Tutorial 3 ex. 3.12 and 3.13</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Maths APIS</a> · Lesson 3 · <a href="controle.html">in the 23 November course test</a></div>
+      <h1>Two techniques <span class="w">when no primitive can be read off.</span></h1>
+      <p class="lead">Integration by parts trades one integral for another, simpler one, by differentiating one factor and integrating the other. A change of variable rewrites the whole integral with a new variable: the function, the \(dx\) and the bounds. In exams, the change of variable is always given.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 9 November · Tutorial 3, ex. 3.12 and 3.13</span></li>
+        <li class="ex"><span><span class="k">Course test</span> state IBP with its assumptions, prove it, apply it</span></li>
+      </ul>
+    </div>
+    <div class="box thm" style="align-self:start"><span class="tag">The two formulas</span>
+      <p><b>Integration by parts.</b> \(f\) and \(g\) of class \(C^1\) on \([a, b]\):</p>
+      <div class="fm">\[\int_a^b f(x)\,g'(x)\,dx = \left[f(x)\,g(x)\right]_a^b - \int_a^b f'(x)\,g(x)\,dx\]</div>
+      <p><b>Change of variable.</b> \(\varphi\) a bijection of class \(C^1\):</p>
+      <div class="fm">\[\int_{\varphi(a)}^{\varphi(b)} f(x)\,dx = \int_a^b f(\varphi(t))\,\varphi'(t)\,dt\]</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 3 · IBP, change of variable</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>The IBP formula</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Choosing u and v′</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Several IBPs, recurrence</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Change of variable</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>In exams</span></a></li>
+    </ol>
+    <p class="toc-note">“Of class \(C^1\)”: differentiable, with a continuous derivative.</p>
+    <div class="toc-nav"><a href="cours-2-integrales.html">← Lesson 2: integrals</a><a href="cours-4-suites.html">Lesson 4: sequences →</a><a href="../qcm/index.html#apis">APIS MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">The IBP formula</a></li><li><a href="#s2">Choosing u and v′</a></li><li><a href="#s3">Several IBPs, recurrence</a></li><li><a href="#s4">Change of variable</a></li><li><a href="#s5">In exams</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">summary § 1 · October 2022 course test</span></div><h2>Integration by parts: statement and proof</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>integration by parts</i></span>
+          <p>Let \(f\) and \(g\) be two functions <b>of class \(C^1\)</b> on an interval \([a, b]\). Then:</p>
+          <div class="fm">\[\int_a^b f(x)\,g'(x)\,dx = \left[f(x) \times g(x)\right]_a^b - \int_a^b f'(x)\,g(x)\,dx.\]</div>
+        </div>
+        <div class="prose"><p>With the letters \(u\) and \(v\), more common in tutorials: \(\displaystyle\int_a^b u\,v' = \left[u\,v\right]_a^b - \int_a^b u'\,v\). You <b>differentiate</b> \(u\) and <b>integrate</b> \(v'\).</p></div>
+        <div class="box proof"><span class="tag">Proof <i>to know how to redo</i></span>
+          <p>\(f\) and \(g\) are of class \(C^1\) on \([a, b]\), so \(fg\) is differentiable and \((fg)' = f'g + fg'\).</p>
+          <p>The functions \(f'g\) and \(fg'\) are continuous on \([a, b]\) (products of continuous functions): you can integrate the equality between \(a\) and \(b\).</p>
+          <p>\(\displaystyle\int_a^b (fg)'(x)\,dx = \int_a^b f'(x)g(x)\,dx + \int_a^b f(x)g'(x)\,dx\) by linearity.</p>
+          <p>Now \(fg\) is a primitive of \((fg)'\): \(\displaystyle\int_a^b (fg)'(x)\,dx = \left[f(x)g(x)\right]_a^b\).</p>
+          <p>So \(\displaystyle\int_a^b f(x)g'(x)\,dx = \left[f(x)g(x)\right]_a^b - \int_a^b f'(x)g(x)\,dx\).</p>
+        </div>
+        <div class="box exam"><span class="tag">In the course test</span>
+          <p>The October 2022 course test asked, word for word: “State precisely the integration by parts theorem, <b>not forgetting its assumptions</b>”, then “Prove this theorem”. The assumption to write: \(f\) and \(g\) of class \(C^1\) on \([a, b]\). The proof takes four lines: derivative of a product, then you integrate.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Forgetting the bracket \(\left[fg\right]_a^b\), or forgetting to evaluate it at the bounds.</li>
+            <li>The minus sign applies to the <b>whole</b> second integral: use parentheses if it already contains a minus sign.</li>
+            <li>Writing the assumption “continuous”: you need \(C^1\), since you differentiate.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="apis:ipp:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">model exercises 2 and 3 · Tutorial 3 ex. 3.12</span></div><h2>Choosing \(u\) and \(v'\)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>All the work is in the choice. The idea: the new integral \(\displaystyle\int u'v\) must be <b>simpler</b> than the original one. You differentiate what gets simpler when differentiated, and you integrate what you know how to integrate.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Form</th><th>You differentiate \(u =\)</th><th>You integrate \(v' =\)</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>polynomial \(\times\ e^{kx}\)</td><td>the polynomial</td><td>\(e^{kx}\)</td><td>the degree drops by 1</td></tr>
+            <tr><td>polynomial \(\times \cos(kx)\) or \(\sin(kx)\)</td><td>the polynomial</td><td>\(\cos(kx)\), \(\sin(kx)\)</td><td>the degree drops by 1</td></tr>
+            <tr><td>\(\ln(x) \times\) power of \(x\)</td><td>\(\ln(x)\)</td><td>the power</td><td>\(\ln\) becomes \(\frac{1}{x}\); you cannot integrate it directly</td></tr>
+            <tr><td>\(\ln(x)\) alone, \(\arctan(x)\) alone</td><td>\(\ln(x)\), \(\arctan(x)\)</td><td>\(1\)</td><td>you write \(\ln(x) = 1 \times \ln(x)\)</td></tr>
+            <tr><td>\(e^x \times \sin(x)\) or \(\cos(x)\)</td><td>either one</td><td>the other</td><td>two IBPs, and the integral comes back (part 3)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box meth"><span class="tag">Method <i>writing up an IBP</i></span>
+          <ol>
+            <li><b>Set</b> the four functions: \(u(x) = \ldots\), \(u'(x) = \ldots\), \(v'(x) = \ldots\), \(v(x) = \ldots\)</li>
+            <li><b>Justify</b>: “\(u\) and \(v\) are of class \(C^1\) on \([a, b]\)”.</li>
+            <li><b>Apply</b> the formula: bracket minus integral.</li>
+            <li><b>Compute</b> the bracket, then the new integral (direct primitive or a new IBP).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>November 2021 midterm</i></span>
+          <p>Compute \(J = \displaystyle\int_0^1 (2x + 1)e^{2x}\,dx\).</p>
+          <p>I set \(u(x) = 2x + 1\), \(u'(x) = 2\) and \(v'(x) = e^{2x}\), \(v(x) = \frac{1}{2}e^{2x}\). \(u\) and \(v\) are of class \(C^1\) on \([0, 1]\).<span class="c">the polynomial gets differentiated</span></p>
+          <p>\(J = \left[(2x + 1)\dfrac{e^{2x}}{2}\right]_0^1 - \displaystyle\int_0^1 2 \times \dfrac{e^{2x}}{2}\,dx = \dfrac{3e^2}{2} - \dfrac{1}{2} - \left[\dfrac{e^{2x}}{2}\right]_0^1\).<span class="c">bracket minus integral</span></p>
+          <p>\(J = \dfrac{3e^2}{2} - \dfrac{1}{2} - \dfrac{e^2}{2} + \dfrac{1}{2} = e^2\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 2: a primitive of \(x\ln(x)\)</i></span>
+          <p>The derivative of \(\ln\) is simpler than its primitive: I set \(u(x) = \ln(x)\), \(u'(x) = \frac{1}{x}\) and \(v'(x) = x\), \(v(x) = \frac{x^2}{2}\).</p>
+          <p>\(\displaystyle\int x\ln(x)\,dx = \frac{x^2}{2}\ln(x) - \int \frac{x^2}{2} \times \frac{1}{x}\,dx = \frac{x^2}{2}\ln(x) - \frac{x^2}{4} + k\).<span class="c">no bounds: no bracket to evaluate, a constant</span></p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 3, exercise 3.12</th><th>Choice</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>\(I = \displaystyle\int_0^1 (2x + 3)e^{3x}\,dx\)</td><td>\(u = 2x + 3\), \(v' = e^{3x}\)</td><td><span data-eq>\(\frac{13e^3 - 7}{9}\)</span></td></tr>
+            <tr><td>\(J = \displaystyle\int_0^{\pi/2} x\cos\left(\frac{x}{2}\right)dx\)</td><td>\(u = x\), \(v' = \cos\left(\frac{x}{2}\right)\), \(v = 2\sin\left(\frac{x}{2}\right)\)</td><td><span data-eq>\(\frac{\pi\sqrt{2}}{2} + 2\sqrt{2} - 4\)</span></td></tr>
+            <tr><td>\(K = \displaystyle\int_1^e \ln(x)\,dx\)</td><td>\(u = \ln(x)\), \(v' = 1\)</td><td><span data-eq>\(\left[x\ln x - x\right]_1^e = 1\)</span></td></tr>
+            <tr><td>\(L = \displaystyle\int_0^{\pi/4} x\sin(x)\,dx\)</td><td>\(u = x\), \(v' = \sin(x)\), \(v = -\cos(x)\)</td><td><span data-eq>\(\frac{\sqrt{2}(4 - \pi)}{8}\)</span></td></tr>
+            <tr><td>\(M = \displaystyle\int_0^{\pi} e^x\sin(x)\,dx\)</td><td>two IBPs (part 3)</td><td><span data-eq>\(\frac{e^{\pi} + 1}{2}\)</span></td></tr>
+            <tr><td>★ \(N = \displaystyle\int_1^e \frac{\ln(x)}{x^2}\,dx\)</td><td>\(u = \ln(x)\), \(v' = \frac{1}{x^2}\), \(v = -\frac{1}{x}\)</td><td><span data-eq>\(1 - \frac{2}{e}\)</span></td></tr>
+            <tr><td>★ \(O = \displaystyle\int_0^{\pi/4} \frac{x}{\cos^2(x)}\,dx\)</td><td>\(u = x\), \(v' = \frac{1}{\cos^2(x)}\), \(v = \tan(x)\)</td><td><span data-eq>\(\frac{\pi}{4} - \frac{1}{2}\ln(2)\)</span></td></tr>
+          </tbody>
+          <caption>Tutorial published without an answer key: values recomputed (sympy). In \(O\), the new integral is \(\int \tan\), with primitive \(-\ln(\cos x)\).</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Integrating \(e^{kx}\), \(\cos(kx)\), \(\sin(kx)\) without dividing by \(k\): \(v = \frac{e^{2x}}{2}\), not \(e^{2x}\).</li>
+            <li>\(v' = \sin(x)\) gives \(v = -\cos(x)\): the minus sign combines with the one in the formula.</li>
+            <li>Differentiating the exponential and integrating the polynomial: the degree goes up and the integral gets harder. Change your choice.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="apis:ipp:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">model exercises 1 and 4 · Tutorial 3 ex. 3.12 (5)</span></div><h2>Several IBPs in a row, recurrence relation</h2></div>
+      <div class="stack">
+        <div class="prose"><p>“Using one or more integrations by parts”: three situations need more than one step.</p></div>
+        <div class="box model"><span class="tag">Degree-2 polynomial: two IBPs <i>Moodle model exercise 1</i></span>
+          <p>Compute \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx\).</p>
+          <p>I set \(u(x) = x^2\), \(u'(x) = 2x\), \(v'(x) = \cos(x)\), \(v(x) = \sin(x)\): \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx = \left[x^2\sin(x)\right]_0^{\pi} - \int_0^{\pi} 2x\sin(x)\,dx = -2\int_0^{\pi} x\sin(x)\,dx\), since \(\sin(\pi) = 0\).<span class="c">the degree goes from 2 to 1</span></p>
+          <p>New IBP with \(u(x) = x\), \(v'(x) = \sin(x)\), \(v(x) = -\cos(x)\): \(\displaystyle\int_0^{\pi} x\sin(x)\,dx = \left[-x\cos(x)\right]_0^{\pi} + \int_0^{\pi} \cos(x)\,dx = \pi + \left[\sin(x)\right]_0^{\pi} = \pi\).<span class="c">−π cos(π) = π</span></p>
+          <p>So \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx = -2\pi\).</p>
+        </div>
+        <div class="box model"><span class="tag">The integral that comes back <i>Tutorial 3, ex. 3.12: \(M = \int_0^{\pi} e^x\sin(x)\,dx\)</i></span>
+          <p>First IBP, \(u = \sin(x)\), \(v' = e^x\): \(M = \left[e^x\sin(x)\right]_0^{\pi} - \displaystyle\int_0^{\pi} e^x\cos(x)\,dx = -\int_0^{\pi} e^x\cos(x)\,dx\).</p>
+          <p>Second IBP, \(u = \cos(x)\), \(v' = e^x\) (we keep the same role for \(e^x\)): \(\displaystyle\int_0^{\pi} e^x\cos(x)\,dx = \left[e^x\cos(x)\right]_0^{\pi} + \int_0^{\pi} e^x\sin(x)\,dx = -e^{\pi} - 1 + M\).</p>
+          <p>So \(M = e^{\pi} + 1 - M\), that is \(2M = e^{\pi} + 1\) and \(M = \dfrac{e^{\pi} + 1}{2}\).<span class="c">M reappears: we solve the equation</span></p>
+        </div>
+        <div class="box model"><span class="tag">Recurrence relation <i>Moodle model exercise 4</i></span>
+          <p>For \(n \in \N\), let \(I_n = \displaystyle\int_0^1 t^n e^{-t}\,dt\). What is the relation between \(I_{n+1}\) and \(I_n\)?</p>
+          <p>I start from \(I_{n+1}\) and set \(u(t) = t^{n+1}\), \(u'(t) = (n + 1)t^n\), \(v'(t) = e^{-t}\), \(v(t) = -e^{-t}\).</p>
+          <p>\(I_{n+1} = \left[-t^{n+1}e^{-t}\right]_0^1 + \displaystyle\int_0^1 (n + 1)t^n e^{-t}\,dt = -e^{-1} + (n + 1)I_n\).<span class="c">we recognise Iₙ</span></p>
+          <p>With \(I_0 = \left[-e^{-t}\right]_0^1 = 1 - e^{-1}\), we get \(I_1 = -e^{-1} + I_0 = 1 - 2e^{-1}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>In the integral that comes back, <b>swapping the roles</b> in the second IBP leads to \(M = M\): keep \(v' = e^x\) both times.</li>
+            <li>Do not conclude “\(0 = 0\)”: when \(M\) reappears with a minus sign, move everything to the same side.</li>
+            <li>In a recurrence, you differentiate the power \(t^{n+1}\) (which gives \(t^n\)), never the other way round.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="apis:ipp:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">summary § 2 · model exercises 5 and 6 · Tutorial 3 ex. 3.13</span></div><h2>The change of variable</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>change of variable</i></span>
+          <p>Let \(I\) and \(J\) be two intervals of \(\R\), \(f\) a function defined on \(I\) and \(\varphi : J \to I\) a bijection of class \(C^1\). Then for every \((a, b) \in J \times J\):</p>
+          <div class="fm">\[\int_{\varphi(a)}^{\varphi(b)} f(x)\,dx = \int_a^b f(\varphi(t))\,\varphi'(t)\,dt.\]</div>
+          <p>If \(F\) is a primitive of \(f\), then \(F \circ \varphi\) is a primitive of \((f \circ \varphi) \times \varphi'\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Official erratum of the sheet</span>
+          <p>The last line of the summary sheet writes “\(F \circ f\)”. The Moodle corrects it: read “If \(F\) is a primitive of \(f\) then \(F \circ \varphi\) is a primitive of \((f \circ \varphi) \times \varphi'\)”. It is the formula \(u' \times g(u)\) from lesson 1, read backwards.</p>
+        </div>
+        <div class="prose"><p>In practice, you set \(x = \varphi(t)\), so \(dx = \varphi'(t)\,dt\), and you replace <b>three things</b>: the function, the \(dx\), the bounds. The course unit’s objective says so: “the change of variable always being given”.</p></div>
+        <div class="box meth"><span class="tag">Method <i>five steps</i></span>
+          <ol>
+            <li><b>Write the change</b> in the direction given: “I set \(t = \sqrt{x + 2}\)”, and justify it in one sentence (bijection of class \(C^1\)).</li>
+            <li><b>Express \(x\)</b> in terms of \(t\) if needed: \(x = t^2 - 2\).</li>
+            <li><b>Compute \(dx\)</b>: \(dx = 2t\,dt\). If the statement gives \(x = \varphi(t)\), it is direct; if it gives \(t = \psi(x)\), you can also write \(dt = \psi'(x)\,dx\).</li>
+            <li><b>Change the bounds</b>: when \(x = -1\), \(t = 1\); when \(x = 1\), \(t = \sqrt{3}\).</li>
+            <li><b>Rewrite everything in \(t\)</b>, simplify, compute. No \(x\) must be left.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>November 2022 midterm and Tutorial 3 ex. 3.13 (4)</i></span>
+          <p>Compute \(K = \displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\) by setting \(t = \sqrt{x + 2}\).</p>
+          <p>\(x \mapsto \sqrt{x + 2}\) is a bijection of class \(C^1\) from \([-1, 1]\) onto \([1, \sqrt{3}]\). We have \(x = t^2 - 2\), so \(dx = 2t\,dt\) and \(x + 3 = t^2 + 1\).<span class="c">function, dx</span></p>
+          <p>Bounds: \(x = -1 \Rightarrow t = 1\); \(x = 1 \Rightarrow t = \sqrt{3}\).<span class="c">bounds</span></p>
+          <p>\(K = \displaystyle\int_1^{\sqrt{3}} \frac{2t\,dt}{(t^2 + 1)\,t} = 2\int_1^{\sqrt{3}} \frac{dt}{t^2 + 1} = 2\left[\arctan(t)\right]_1^{\sqrt{3}} = 2\left(\frac{\pi}{3} - \frac{\pi}{4}\right) = \frac{\pi}{6}\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 5</i></span>
+          <p>Compute \(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx\) with \(t = e^x\).</p>
+          <p>\(t = e^x\) defines a bijection from \([0, 1]\) onto \([1, e]\). \(dt = e^x\,dx\) and \(e^{2x} = t^2\).<span class="c">here dt appears as is</span></p>
+          <p>\(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx = \int_1^e \frac{dt}{t^2 + 1} = \arctan(e) - \arctan(1) = \arctan(e) - \frac{\pi}{4}\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 3, exercise 3.13</th><th>After the change</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>\(I = \displaystyle\int_0^{1/2} \frac{4x^2}{(2x + 1)^2}\,dx\), \(t = 2x + 1\)</td><td>\(\displaystyle\frac{1}{2}\int_1^2 \left(1 - \frac{2}{t} + \frac{1}{t^2}\right)dt\)</td><td><span data-eq>\(\frac{3}{4} - \ln(2)\)</span></td></tr>
+            <tr><td>\(J = \displaystyle\int_0^{\ln\sqrt{3}} \frac{dt}{e^t + e^{-t}}\), \(x = e^t\)</td><td>\(\displaystyle\int_1^{\sqrt{3}} \frac{dx}{x^2 + 1}\)</td><td><span data-eq>\(\frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}\)</span></td></tr>
+            <tr><td>\(K = \displaystyle\int_1^e \frac{\ln(x)}{\sqrt{x}}\,dx\), \(t = \ln(x)\)</td><td>\(\displaystyle\int_0^1 t\,e^{t/2}\,dt\), then an IBP</td><td><span data-eq>\(4 - 2\sqrt{e}\)</span></td></tr>
+            <tr><td>\(L = \displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\), \(t = \sqrt{x + 2}\)</td><td>\(\displaystyle 2\int_1^{\sqrt{3}} \frac{dt}{t^2 + 1}\)</td><td><span data-eq>\(\frac{\pi}{6}\)</span></td></tr>
+            <tr><td>\(M = \displaystyle\int_0^4 e^{\sqrt{x}}\,dx\), \(t = \sqrt{x}\)</td><td>\(\displaystyle\int_0^2 2t\,e^t\,dt\), then an IBP</td><td><span data-eq>\(2e^2 + 2\)</span></td></tr>
+            <tr><td>★ \(N = \displaystyle\int_{\pi/6}^{\pi/3} \frac{dt}{\sin(t)\cos(t)}\), \(x = \tan(t)\)</td><td>\(\displaystyle\int_{1/\sqrt{3}}^{\sqrt{3}} \frac{dx}{x}\)</td><td><span data-eq>\(\ln(3)\)</span></td></tr>
+          </tbody>
+          <caption>Tutorial published without an answer key: values recomputed (sympy). \(J\) came up in the January 2024 exam, \(L\) in the November 2022 midterm, \(K\) (by IBP) in the November 2020 midterm.</caption>
+        </table></div>
+        <div class="prose"><p><b>Without bounds</b> (model exercise 6): \(\displaystyle\int \frac{\sin^3 t}{\cos^5 t}\,dt\) with \(u = \tan(t)\), \(du = \frac{dt}{\cos^2 t}\): \(\displaystyle\int \frac{\sin^3 t}{\cos^3 t} \times \frac{dt}{\cos^2 t} = \int u^3\,du = \frac{u^4}{4} + k = \frac{\tan^4 t}{4} + k\). At the end, you go back to the original variable.</p></div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li><b>Forgetting to change the bounds</b>: the most frequent mistake. The new bounds are the values of the new variable.</li>
+            <li>Replacing \(dx\) by \(dt\) without the factor \(\varphi'(t)\): with \(x = t^2 - 2\), \(dx = 2t\,dt\).</li>
+            <li>Leaving an \(x\) in the integral in \(t\).</li>
+            <li>When the new lower bound is greater than the upper one, keep the order you get: the sign takes care of itself.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="apis:ipp:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">papers 2020 to 2024</span></div><h2>In exams: always the same trio</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The integrals exercise in past papers has a stable structure: a direct primitive “without integration by parts or change of variable” (lessons 1 and 2), an IBP, a given change of variable.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Paper</th><th>Integration by parts</th><th>Given change of variable</th></tr></thead>
+          <tbody>
+            <tr><td>Course test, October 2020</td><td>\(\displaystyle\int_0^{\pi/6} x\sin(3x)\,dx = \frac{1}{9}\)</td><td>—</td></tr>
+            <tr><td>Midterm, November 2020</td><td>\(\displaystyle\int_1^e \frac{\ln(x)}{\sqrt{x}}\,dx = 4 - 2\sqrt{e}\)</td><td>\(\displaystyle\int_0^1 \frac{dx}{x^2 + 3}\), \(t = \frac{x}{\sqrt{3}}\): \(\frac{\pi\sqrt{3}}{18}\)</td></tr>
+            <tr><td>Midterm, November 2021</td><td>\(\displaystyle\int_0^1 (2x + 1)e^{2x}\,dx = e^2\)</td><td>\(\displaystyle\int_1^{2\sqrt{3}+1} \frac{dx}{(x - 1)^2 + 4}\), \(x = 2t + 1\): \(\frac{\pi}{6}\)</td></tr>
+            <tr><td>Midterm, November 2022</td><td>\(\displaystyle\int_0^{\pi/4} (2x + 1)\sin(2x)\,dx = 1\)</td><td>\(\displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\), \(t = \sqrt{x + 2}\): \(\frac{\pi}{6}\)</td></tr>
+            <tr><td>Exam, January 2024</td><td>\(\displaystyle\int_0^1 (3x + 1)e^{2x}\,dx = \frac{5e^2 + 1}{4}\)</td><td>\(\displaystyle\int_0^{\ln\sqrt{3}} \frac{dt}{e^{-t} + e^{t}}\), \(x = e^t\): \(\frac{\pi}{12}\)</td></tr>
+            <tr><td>Exam, October 2024</td><td>\(\displaystyle\int_0^{\pi} (x + 1)\cos\left(\frac{x}{3}\right)dx = \frac{3\sqrt{3}\,\pi}{2} + \frac{3\sqrt{3}}{2} - \frac{9}{2}\)</td><td>\(\displaystyle\int_0^{\sqrt{3}} \frac{dx}{3 + x^2}\), \(t = \frac{x}{\sqrt{3}}\): \(\frac{\pi\sqrt{3}}{12}\)</td></tr>
+          </tbody>
+          <caption>Results checked by computer algebra. Each exercise is worked out step by step in the practice section.</caption>
+        </table></div>
+        <div class="box exam"><span class="tag">What it tells you</span>
+          <ul>
+            <li>IBP is almost always “degree-1 polynomial \(\times\) exponential or sine / cosine”: differentiate the polynomial.</li>
+            <li>The change of variable almost always leads to \(\displaystyle\int \frac{dt}{1 + t^2} = \arctan\). To know: \(\arctan(0) = 0\), \(\arctan\left(\frac{1}{\sqrt{3}}\right) = \frac{\pi}{6}\), \(\arctan(1) = \frac{\pi}{4}\), \(\arctan(\sqrt{3}) = \frac{\pi}{3}\).</li>
+            <li>The course test may ask for the statement and the proof of IBP (October 2022).</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>October 2024 exam</i></span>
+          <p>Compute \(K = \displaystyle\int_0^{\sqrt{3}} \frac{dx}{3 + x^2}\) by setting \(t = \frac{x}{\sqrt{3}}\).</p>
+          <p>\(x = \sqrt{3}\,t\), so \(dx = \sqrt{3}\,dt\). Bounds: \(x = 0 \Rightarrow t = 0\); \(x = \sqrt{3} \Rightarrow t = 1\).</p>
+          <p>\(K = \displaystyle\int_0^1 \frac{\sqrt{3}\,dt}{3 + 3t^2} = \frac{\sqrt{3}}{3}\int_0^1 \frac{dt}{1 + t^2} = \frac{\sqrt{3}}{3}\left[\arctan(t)\right]_0^1 = \frac{\pi\sqrt{3}}{12}\).<span class="c">we factor out 3 to make 1 + t² appear</span></p>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="apis:ipp:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Moodle lesson 3 is finished. Lesson 4, <a href="cours-4-suites.html">numerical sequences</a>, is the second half of the course test.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

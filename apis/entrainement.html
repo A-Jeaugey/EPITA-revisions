@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entraînement · Maths APIS</title>
+<meta name="description" content="Maths, APIS : les exercices types corrigés du Moodle, les TD 3 et 4, les anciens contrôles de cours et les exercices des anciens sujets, filtrables par périmètre (contrôle de cours du 23 novembre, examen final), notion, provenance, niveau et état, avec indices et corrections rédigées.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Entraînement : les fiches des sujets, du séminaire et des TD (filtrables), puis les générateurs. Les outils des
+   corrections (arbre pondéré, loi, diagrammes) sont montés par maths.js quand la correction s’ouvre ; les formules sont
+   rendues par mathrender.js, y compris celles ajoutées par script. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in.single{grid-template-columns:minmax(0,1fr)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.3rem}
+.stat{border:1px solid var(--line);border-top:2px solid var(--rule);background:var(--bg);padding:.55rem .8rem;display:grid;gap:2px;min-width:104px;text-decoration:none;color:inherit}
+a.stat:hover{border-color:var(--accent)}
+.stat b{font-family:var(--font-ui);font-weight:700;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.filters{background:var(--bg);border-bottom:1px solid var(--line);padding-block:14px}
+.filters .wrapx{display:grid;gap:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lbl{margin-right:4px;min-width:86px}
+.fchip{font:inherit;font-family:var(--font-ui);font-size:.84rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:3px;padding:.24rem .65rem;cursor:pointer;min-height:34px}
+.fchip:hover{border-color:var(--accent)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip .n{opacity:.7;margin-left:4px}
+.fchip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fsum{font-size:.95rem;color:var(--muted)}
+.fsum:empty{display:none}
+.list{display:grid;gap:22px;padding-block:28px 56px}
+.empty{color:var(--muted);padding:1.5rem 0;max-width:62ch}
+.exo{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);overflow:hidden;scroll-margin-top:70px;min-width:0}
+.exo.target{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.exo-head{display:grid;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.exo-head>*{min-width:0}
+.exo-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tagc{font-family:var(--font-ui);font-size:.76rem;border:1px solid var(--line);border-radius:3px;padding:.06rem .5rem;color:var(--muted)}
+.tagc.src{color:var(--exam);border-color:var(--exam)}
+.tagc.src.td{color:var(--accent);border-color:var(--accent)}
+.tagc.ec{font-weight:600;color:var(--ink)}
+.tagc.st-ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.tagc.st-review{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.exo h3{font-size:1.4rem;margin:0}
+.exo h3 a{color:inherit;text-decoration:none}
+.exo h3 a:hover{text-decoration:underline}
+.exo-body{display:grid;gap:14px;padding:14px 16px}
+.exo-body>*,.exo-sol>*,.sol-step>*,.sol-step .body>*,.exo-intro>*,.exo-qs li>*{min-width:0}
+.exo-intro{display:grid;gap:.6rem;max-width:84ch}
+.exo-qs{list-style:none;margin:0;padding:0;display:grid;gap:.7rem;max-width:84ch}
+.exo-qs li{padding-left:.9rem;border-left:3px solid var(--line);min-width:0}
+.exo-qs .q{display:block}
+.exo-qs .q>*+*{margin-top:.5rem}
+.exo-qs .q ul,.exo-qs .q ol,.exo-intro ul,.exo-intro ol{margin:0;padding-left:1.25rem}
+.rel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:.95rem;background:var(--accent-soft);border-radius:var(--radius);padding:.5rem .75rem}
+.rel b{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.exo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-top:1px dashed var(--line)}
+.exo-actions .grow{flex:1}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.rev[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.exo-hints{display:grid;gap:8px;padding:0 16px}
+.exo-hints:empty{display:none}
+.hintb{background:var(--why-soft);border-radius:var(--radius);padding:.6rem .8rem;font-size:1rem}
+.hintb>b{color:var(--why);font-family:var(--font-ui);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.exo-sol{display:grid;gap:16px;padding:14px 16px 16px;background:var(--bg);border-top:1px solid var(--line)}
+.sol-step{display:grid;gap:6px}
+.sol-step>b{font-family:var(--font-ui);font-size:.82rem;font-weight:700;letter-spacing:.03em;color:var(--accent)}
+.sol-step>b .k{color:var(--muted);margin-right:.4em}
+.sol-step .body{display:grid;gap:.6rem;max-width:84ch}
+.sol-step .body ol,.sol-step .body ul{margin:0;padding-left:1.25rem;display:grid;gap:.3rem}
+.answer{background:var(--ok-soft);border-radius:var(--radius);padding:.7rem .9rem;display:grid;gap:.5rem}
+.answer>*{min-width:0}
+.answer ul,.answer ol{margin:0;padding-left:1.25rem;display:grid;gap:.25rem}
+.answer b.t,.traps b.t{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;display:block}
+.answer b.t{color:var(--ok)}
+.traps{background:var(--red-soft);border-radius:var(--radius);padding:.7rem .9rem}
+.traps b.t{color:var(--red);margin-bottom:4px}
+.traps ul{margin:0;padding-left:1.2rem;display:grid;gap:.25rem}
+.sol-note{font-size:.92rem;color:var(--muted)}
+.exo li{min-width:0}
+/* générateurs */
+.infini{display:grid;gap:18px;padding-block:8px 96px;scroll-margin-top:72px}
+.infini-h{display:grid;gap:.5rem;max-width:74ch;padding-top:.8rem;border-top:2px solid var(--rule)}
+.gen-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;max-width:900px}
+.gen{scroll-margin-top:72px}
+.gen-opts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:end}
+.gen-opts .fld{flex:1 1 16rem}
+.gen-q{font-size:1.05rem;line-height:1.6;min-height:2.6em;display:grid;gap:.5rem}
+.gen-f{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:end}
+.gen-f .fld{flex:1 1 10rem}
+.gen-f .fld.wide{flex:2 1 16rem}
+.gen-f .row{flex:1 1 100%}
+.gen-fb{font-size:1rem;display:grid;gap:.4rem}
+.gen-fb:empty{display:none}
+.gen-fb .ok{color:var(--ok);font-weight:700}
+.gen-fb .no{color:var(--bad);font-weight:700}
+.gen-sol{display:grid;gap:.8rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+.gen-sol>*{min-width:0}
+.gen-score{font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+.gen-help{font-family:var(--font-ui);font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Maths APIS · entraînement">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — entraînement</span><span>Exercices types du Moodle · TD 3 et 4 · contrôles de cours et sujets 2020-2024</span></div>
+  <div class="hero-in single">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="5"></span><a href="index.html">Maths APIS</a> · Entraînement</div>
+      <h1>Les vrais exercices, <span class="w">rédigés comme sur la copie.</span></h1>
+      <p class="lead">Les exercices types du Moodle avec leur corrigé officiel, les TD 3 et 4 (publiés sans corrigé : tout est recalculé), les anciens contrôles de cours et les exercices d’intégrales et de suites des anciens sujets. Le filtre « Périmètre » sépare ce qui tombe au contrôle du 23 novembre de ce qui s’ajoute pour l’examen final. Fais chaque exercice sur papier, demande un indice si tu bloques, puis ouvre la correction.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"><div class="wrapx">
+  <div class="frow" id="fEcue" role="group" aria-label="Filtrer par périmètre"></div>
+  <div class="frow" id="fTopic" role="group" aria-label="Filtrer par notion"></div>
+  <div class="frow" id="fKind" role="group" aria-label="Filtrer par provenance"></div>
+  <div class="frow" id="fLvl" role="group" aria-label="Filtrer par niveau"></div>
+  <div class="frow" id="fState" role="group" aria-label="Filtrer par état"></div>
+  <p class="fsum" id="fsum" aria-live="polite"></p>
+</div></div>
+
+<div class="wrapx">
+  <div class="list" id="list"></div>
+
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../data/apis/exams.js"></script>
+<script src="../data/apis/ex-integrales.js"></script>
+<script src="../data/apis/ex-suites.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = window.REV, U = R.util, $ = U.$, $$ = U.$$, MA = R.maths;
+  /* ================================================================ les fiches */
+  var KINDS = [{ id: 'partiel', t: 'Contrôles et sujets' }, { id: 'mo', t: 'Exercices types du Moodle' }, { id: 'td3', t: 'TD 3' }, { id: 'td4', t: 'TD 4' }];
+  function prov(e) { return e.kind === 'partiel' ? 'partiel' : e.id.split('-')[0]; }
+  var KORD = { partiel: 1, mo: 2, td3: 3, td4: 4 };
+  var ECUES = [{ id: 'cc', t: 'Contrôle du 23 novembre' }, { id: 'final', t: 'Examen final seulement' }];
+  var EXAMS = window.APIS_EXAMS || [], EORD = {};
+  EXAMS.forEach(function (x, i) { EORD[x.key] = i; });
+  /* contrôles et sujets du plus récent au plus ancien (ordre de APIS_EXAMS), puis exercices types du Moodle, TD 3, TD 4 */
+  var EX = (window.APIS_EX || []).slice().sort(function (a, b) {
+    var ka = KORD[prov(a)], kb = KORD[prov(b)];
+    if (ka !== kb) return ka - kb;
+    if (a.exam !== b.exam) return (EORD[a.exam] || 0) - (EORD[b.exam] || 0);
+    return (a.order || 0) - (b.order || 0);
+  });
+  var BY = {}; EX.forEach(function (e) { BY[e.id] = e; });
+  /* « near » : liens vers des fiches proches, affichés dans les deux sens. Une fiche de TD pointe vers un sujet ; une
+     fiche de sujet peut pointer vers un autre sujet (le même exercice une autre année). */
+  var NEAR_IN = {};
+  EX.forEach(function (e) { (e.near || []).forEach(function (id) { (NEAR_IN[id] = NEAR_IN[id] || []).push(e.id); }); });
+  var TOP = window.APIS_TOPICS || {}, TEC = window.APIS_STAGE || {};
+  var LVL = ['', 'facile', 'moyen', 'difficile'];
+  var STATES = [{ id: 'todo', t: 'À faire' }, { id: 'ok', t: 'Réussis' }, { id: 'review', t: 'À revoir' }];
+  /* méthode (methodes.html) et parties de cours à relire, par notion */
+  var METH = {};
+  var C = ['', 'cours-1-primitives.html', 'cours-2-integrales.html', 'cours-3-ipp.html', 'cours-4-suites.html'];
+  var COURS = { primitives: [[1, 2], [1, 4], [1, 5]], aires: [[2, 1], [2, 2]], rectangles: [[2, 3]], integrales: [[2, 4], [2, 5], [2, 6]], ipp: [[3, 1], [3, 2], [3, 3]], cdv: [[3, 4]],
+    definitions: [[4, 1], [4, 2], [4, 3]], limites: [[4, 4], [4, 5], [4, 6]], geometriques: [[4, 7], [4, 8]], exemples: [[4, 8]], demonstrations: [[3, 1], [4, 2], [4, 6]] };
+  var st = { ecue: null, topic: null, kind: null, lvl: 0, state: null, nostar: false };
+  function starred(e) { return e.kind !== 'partiel' && e.src.indexOf('★') >= 0; }
+  function key(ex) { return 'apis-' + ex.id; }
+  function state(ex) { var s = R.exo.get(key(ex)); return s ? s.s : null; }
+  function esc(s) { return U.esc(String(s)); }
+  function has(e, t) { return (e.topics || []).indexOf(t) >= 0; }
+  function pts(v) { return String(v).replace('.', ','); }
+  function stOk(e, s) { var x = state(e); return s === 'todo' ? !x : x === s; }
+  function inEcue(e) { return !st.ecue || e.stage === st.ecue; }
+  function shown(e) { return inEcue(e) && (!st.topic || has(e, st.topic)) && (!st.kind || prov(e) === st.kind || (st.kind === 'td' && e.kind !== 'partiel')) && (!st.lvl || e.lvl === st.lvl) && (!st.state || stOk(e, st.state)) && (!st.nostar || !starred(e)); }
+
+  function paintStats() {
+    var ok = 0, rv = 0, np = 0;
+    EX.forEach(function (e) { var s = state(e); if (s === 'ok') ok++; else if (s === 'review') rv++; if (e.kind === 'partiel') np++; });
+    $('#stats').innerHTML = '<a class="stat" href="#cc"><b>' + EX.filter(function (e) { return e.stage === 'cc'; }).length + '</b><span>fiches pour le contrôle du 23 novembre</span></a><a class="stat" href="#partiel"><b>' + np + '</b><span>de contrôles et de sujets</span></a><div class="stat"><b>' + ok + '</b><span>réussies</span></div><div class="stat"><b>' + rv + '</b><span>à revoir</span></div>';
+  }
+  function chip(attr, val, on, label, n) { return '<button type="button" class="fchip" ' + attr + '="' + val + '" aria-pressed="' + on + '">' + label + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+  function paintFilters() {
+    var base = EX.filter(inEcue);
+    var topics = Object.keys(TOP).filter(function (t) { return (!st.ecue || TEC[t] === st.ecue) && base.some(function (e) { return has(e, t); }); });
+    $('#fEcue').innerHTML = '<span class="lbl">Périmètre</span>' + chip('data-e', '', !st.ecue, 'Tout', EX.length) +
+      ECUES.map(function (c) { return chip('data-e', c.id, st.ecue === c.id, c.t, EX.filter(function (e) { return e.stage === c.id; }).length); }).join('');
+    $('#fTopic').innerHTML = '<span class="lbl">Notion</span>' + chip('data-t', '', !st.topic, 'Toutes', base.length) +
+      topics.map(function (t) { return chip('data-t', t, st.topic === t, esc(TOP[t]), base.filter(function (e) { return has(e, t); }).length); }).join('');
+    $('#fKind').innerHTML = '<span class="lbl">Provenance</span>' + chip('data-k', '', !st.kind, 'Toutes') +
+      KINDS.map(function (k) { var n = base.filter(function (e) { return prov(e) === k.id; }).length; return n ? chip('data-k', k.id, st.kind === k.id, k.t, n) : ''; }).join('');
+    $('#fLvl').innerHTML = '<span class="lbl">Niveau</span>' + chip('data-l', 0, !st.lvl, 'Tous') +
+      [1, 2, 3].map(function (l) { return chip('data-l', l, st.lvl === l, LVL[l].charAt(0).toUpperCase() + LVL[l].slice(1), base.filter(function (e) { return e.lvl === l; }).length); }).join('');
+    $('#fState').innerHTML = '<span class="lbl">État</span>' + chip('data-s', '', !st.state, 'Tous') +
+      STATES.map(function (s) { return chip('data-s', s.id, st.state === s.id, s.t, base.filter(function (e) { return stOk(e, s.id); }).length); }).join('');
+    $('#filters').hidden = !EX.length;
+    $$('#fEcue [data-e]').forEach(function (b) { b.addEventListener('click', function () { st.ecue = b.dataset.e || null; if (st.topic && st.ecue && TEC[st.topic] !== st.ecue) st.topic = null; repaint(); }); });
+    $$('#fTopic [data-t]').forEach(function (b) { b.addEventListener('click', function () { st.topic = b.dataset.t || null; repaint(); }); });
+    $$('#fKind [data-k]').forEach(function (b) { b.addEventListener('click', function () { st.kind = b.dataset.k || null; repaint(); }); });
+    $$('#fLvl [data-l]').forEach(function (b) { b.addEventListener('click', function () { st.lvl = +b.dataset.l || 0; repaint(); }); });
+    $$('#fState [data-s]').forEach(function (b) { b.addEventListener('click', function () { st.state = b.dataset.s || null; repaint(); }); });
+  }
+
+  function link(id) { var e = BY[id]; return e ? '<a href="#' + id + '">' + esc(e.src) + ' : ' + e.title + '</a>' : ''; }
+  function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i && BY[x]; }); }
+  function relHTML(ex) {
+    var out = (ex.near || []).filter(function (id) { return BY[id]; }), inn = (NEAR_IN[ex.id] || []).filter(function (id) { return BY[id]; }), r = [];
+    if (ex.kind === 'partiel') {
+      var same = uniq(out.filter(function (id) { return BY[id].kind === 'partiel'; }).concat(inn.filter(function (id) { return BY[id].kind === 'partiel'; })));
+      var td = uniq(inn.filter(function (id) { return BY[id].kind !== 'partiel'; }));
+      if (same.length) r.push('<b>Le même exercice ailleurs</b>' + same.map(link).join(' · '));
+      if (td.length) r.push('<b>Le même travail en TD</b>' + td.map(link).join(' · '));
+    } else {
+      var sj = uniq(out.filter(function (id) { return BY[id].kind === 'partiel'; })), oth = uniq(out.filter(function (id) { return BY[id].kind !== 'partiel'; }).concat(inn));
+      if (sj.length) r.push('<b>Proche d’un sujet</b>' + sj.map(link).join(' · '));
+      if (oth.length) r.push('<b>Voir aussi</b>' + oth.map(link).join(' · '));
+    }
+    return r.map(function (x) { return '<p class="rel">' + x + '</p>'; }).join('');
+  }
+  function readHTML(ex) {
+    var seenM = {}, m = [], parts = {}, order = [];
+    (ex.topics || []).forEach(function (t) { var x = METH[t]; if (x && !seenM[x[0]]) { seenM[x[0]] = 1; m.push(x); } });
+    m.sort(function (a, b) { return a[1] - b[1]; });
+    [].concat.apply([], (ex.topics || []).map(function (t) { return COURS[t] || []; })).forEach(function (c) {
+      if (!parts[c[0]]) { parts[c[0]] = []; order.push(c[0]); }
+      if (parts[c[0]].indexOf(c[1]) < 0) parts[c[0]].push(c[1]);
+    });
+    order.sort(function (a, b) { return a - b; });
+    var out = m.map(function (x) { return '<a href="methodes.html#' + x[0] + '">méthode ' + x[1] + '</a>'; });
+    order.forEach(function (f) {
+      var ps = parts[f].sort(function (a, b) { return a - b; });
+      out.push('cours ' + f + ', partie' + (ps.length > 1 ? 's ' : ' ') + ps.map(function (k) { return '<a href="' + C[f] + '#s' + k + '">' + k + '</a>'; }).join(', '));
+    });
+    return out.length ? '<p class="sol-note">À relire : ' + out.join(' ; ') + '.</p>' : '';
+  }
+  function solHTML(ex) {
+    var s = (ex.solution || []).map(function (p, i) { return '<div class="sol-step"><b><span class="k">' + (i + 1) + '.</span>' + (p.t || 'Correction') + '</b><div class="body">' + (p.html || '') + '</div></div>'; }).join('');
+    if (ex.answer) s += '<div class="answer"><b class="t">Ce qu’il faut écrire sur la copie</b>' + ex.answer + '</div>';
+    if (ex.traps && ex.traps.length) s += '<div class="traps"><b class="t">Pièges</b><ul>' + ex.traps.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    if (ex.grading) s += '<p class="sol-note">Barème : ' + ex.grading + '</p>';
+    s += '<p class="sol-note">' + (ex.note || 'Correction rédigée, chaque résultat recalculé par programme.') + '</p>';
+    return s + readHTML(ex);
+  }
+  function metaHTML(ex) {
+    var s = state(ex);
+    return '<span class="tagc ec">' + (ex.stage === 'final' ? 'Examen final' : 'Contrôle du 23 nov.') + '</span><span class="tagc src' + (ex.kind === 'partiel' ? '' : ' td') + '">' + esc(ex.src) + '</span>' + (ex.pts ? '<span class="tagc">' + pts(ex.pts) + ' pts</span>' : '') + (ex.time ? '<span class="tagc">≈ ' + ex.time + ' min</span>' : '') +
+      (ex.lvl ? '<span class="tagc">' + LVL[ex.lvl] + '</span>' : '') +
+      (ex.topics || []).map(function (t) { return '<span class="tagc">' + esc(TOP[t] || t) + '</span>'; }).join('') +
+      (s ? '<span class="tagc st-' + s + '">' + (s === 'ok' ? 'réussi' : 'à revoir') + '</span>' : '');
+  }
+  function card(ex) {
+    var s = state(ex), el = document.createElement('article');
+    el.className = 'exo'; el.id = ex.id;
+    var qs = (ex.questions || []).length ? '<ol class="exo-qs">' + ex.questions.map(function (q) { return '<li><div class="q">' + q + '</div></li>'; }).join('') + '</ol>' : '';
+    var nh = (ex.hints || []).length;
+    el.innerHTML = '<div class="exo-head"><div class="exo-meta">' + metaHTML(ex) + '</div><h3><a href="#' + ex.id + '">' + ex.title + '</a></h3></div>' +
+      '<div class="exo-body">' + (ex.intro ? '<div class="exo-intro">' + ex.intro + '</div>' : '') + qs + relHTML(ex) + '</div>' +
+      '<div class="exo-hints"></div>' +
+      '<div class="exo-actions">' + (nh ? '<button type="button" class="btn" data-act="hint">Indice 1 / ' + nh + '</button>' : '') +
+      '<button type="button" class="btn primary" data-act="sol" aria-expanded="false">Voir la correction</button><span class="grow"></span>' +
+      '<button type="button" class="btn ok" data-act="ok" aria-pressed="' + (s === 'ok') + '">J’ai réussi</button><button type="button" class="btn rev" data-act="review" aria-pressed="' + (s === 'review') + '">À revoir</button></div>' +
+      '<div class="exo-sol" hidden></div>';
+    el.querySelector('[data-act="sol"]').addEventListener('click', function (e) {
+      var box = el.querySelector('.exo-sol'), open = box.hidden;
+      if (open && !box.dataset.ready) { box.innerHTML = solHTML(ex); box.dataset.ready = '1'; }
+      box.hidden = !open; e.currentTarget.setAttribute('aria-expanded', String(open)); e.currentTarget.textContent = open ? 'Masquer la correction' : 'Voir la correction';
+    });
+    var shownH = 0, hb = el.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shownH >= nh) return;
+      el.querySelector('.exo-hints').insertAdjacentHTML('beforeend', '<div class="hintb"><b>Indice ' + (shownH + 1) + '</b>' + ex.hints[shownH] + '</div>');
+      shownH++; hb.textContent = shownH < nh ? 'Indice ' + (shownH + 1) + ' / ' + nh : 'Plus d’indice'; hb.disabled = shownH >= nh;
+    });
+    /* « J’ai réussi » / « À revoir » : mis à jour sur place, la correction ouverte reste ouverte */
+    ['ok', 'review'].forEach(function (k) {
+      el.querySelector('[data-act="' + k + '"]').addEventListener('click', function () {
+        R.exo.set(key(ex), state(ex) === k ? null : k);
+        var now = state(ex);
+        el.querySelector('[data-act="ok"]').setAttribute('aria-pressed', String(now === 'ok'));
+        el.querySelector('[data-act="review"]').setAttribute('aria-pressed', String(now === 'review'));
+        el.querySelector('.exo-meta').innerHTML = metaHTML(ex);
+        paintStats(); paintFilters(); paintSum();
+      });
+    });
+    return el;
+  }
+  function paintSum() {
+    var n = EX.filter(shown).length, any = st.ecue || st.topic || st.kind || st.lvl || st.state;
+    $('#fsum').textContent = any ? n + ' exercice' + (n > 1 ? 's' : '') + ' pour ces filtres.' : '';
+  }
+  function paintList() {
+    var list = EX.filter(shown), box = $('#list'); box.innerHTML = '';
+    if (!EX.length) { box.innerHTML = '<p class="empty">Les exercices corrigés arrivent ici.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">Aucun exercice pour ces filtres.</p>'; return; }
+    list.forEach(function (e) { box.appendChild(card(e)); });
+  }
+  function repaint() { paintFilters(); paintList(); paintSum(); }
+
+  function applyHash() {
+    var h = decodeURIComponent((location.hash || '').slice(1));
+    if (!h) return;
+    var none = { ecue: null, topic: null, kind: null, lvl: 0, state: null };
+    if (h === 'cc' || h === 'final') { st = none; st.ecue = h; repaint(); go('filters', false); return; }
+    if (TOP[h]) { st = none; st.topic = h; repaint(); go('filters', false); return; }
+    if (KORD[h] || h === 'td') { st = none; st.kind = h; repaint(); go('filters', false); return; }
+    if (BY[h]) { if (!shown(BY[h])) { st = none; repaint(); } go(h, true); return; }
+  }
+  function go(id, mark) {
+    var t = document.getElementById(id); if (!t) return;
+    if (mark) { $$('.exo.target').forEach(function (x) { x.classList.remove('target'); }); t.classList.add('target'); }
+    setTimeout(function () { t.scrollIntoView({ behavior: U.reduceMotion() ? 'auto' : 'smooth' }); }, 30);
+  }
+  paintStats(); repaint();
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+  R.store.on(paintStats);
+})();
+</script>
+</body>
+</html>

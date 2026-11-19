@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sequences: definitions, limits, standard examples · Maths APIS</title>
+<meta name="description" content="Maths, APIS, lesson 4: numerical sequences. Defining a sequence, sequences bounded above, bounded below, bounded, monotonicity, finite and infinite limits with quantifiers, operations and indeterminate forms, comparison and the squeeze theorem (“théorème des gendarmes”), geometric and arithmetic-geometric sequences, ratio criterion, classic counterexamples. On the syllabus of the 23 November course test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · lesson 4: sequences">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — lesson 4 of 4 for the course test</span><span>Source: summary sheets “Introduction”, “Limits”, “Standard examples”, Moodle model exercises, Tutorial 4 parts 1 and 2</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="4"></span><a href="index.html">Maths APIS</a> · Lesson 4 · <a href="controle.html">in the 23 November course test</a></div>
+      <h1>A sequence, <span class="w">and what becomes of it as n grows.</span></h1>
+      <p class="lead">Three Moodle modules are on the course test syllabus: the introduction (definition, bounds, monotonicity), limits (definition with \(\varepsilon\), operations, squeeze theorem) and standard examples (geometric sequences, ratio criterion). Definitions are recited with their quantifiers, and every property must come with an example and a counterexample.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 1 h 15</span></li>
+        <li><span><span class="k">Parts</span> 8</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 16 November · Tutorial 4, parts 1 and 2</span></li>
+        <li class="ex"><span><span class="k">Course test</span> definitions with quantifiers, examples, limits, geometric sequences</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0;align-self:start">
+      <div data-apis="seq" data-opts='{"preset":"hom","eps":0.2,"only":["hom","geo","alt"],"title":"Convergent, or not"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Converging to \(\ell\): for every band around \(\ell\), the terms all end up inside it.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 4 · Sequences</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Defining a sequence</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Bounded above, bounded below, bounded</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Monotonicity</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Limit of a sequence</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Operations, indeterminate forms</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Comparison, squeeze theorem</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Geometric sequences</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Ratio criterion, counterexamples</span></a></li>
+    </ol>
+    <p class="toc-note">Not in the course test, for the final exam: convergence theorems, recurrent sequences, Landau comparisons.</p>
+    <div class="toc-nav"><a href="cours-3-ipp.html">← Lesson 3: IBP</a><a href="controle.html">The 23 November course test →</a><a href="../qcm/index.html#apis">APIS MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Defining a sequence</a></li><li><a href="#s2">Bounded above, bounded below, bounded</a></li><li><a href="#s3">Monotonicity</a></li><li><a href="#s4">Limit of a sequence</a></li><li><a href="#s5">Operations, indeterminate forms</a></li><li><a href="#s6">Comparison, squeeze theorem</a></li><li><a href="#s7">Geometric sequences</a></li><li><a href="#s8">Ratio criterion, counterexamples</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">“Introduction” sheet § 1</span></div><h2>Defining a sequence</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>numerical sequence</i></span>
+          <p>A <b>numerical sequence</b> is a function from \(\N\) to \(\mathbb{K}\), where \(\mathbb{K} = \R\) or \(\mathbb{C}\):</p>
+          <div class="fm">\[u : \N \to \mathbb{K},\qquad n \mapsto u(n) = u_n.\]</div>
+          <p>\(u_n\) is the <b>term of index \(n\)</b>. The sequence is written \(u\), \((u_n)\) or \((u_n)_{n \in \N}\). If \(\mathbb{K} = \R\), it is a real sequence; if \(\mathbb{K} = \mathbb{C}\), a complex sequence.</p>
+        </div>
+        <div class="prose">
+          <p>Two ways to define a sequence:</p>
+          <ul>
+            <li><b>explicitly</b>, as a function of \(n\): \(\forall n \in \N,\ u_n = f(n)\). Example: \(u_n = \dfrac{n}{n + 3}\). You compute any term directly: \(u_{100} = \frac{100}{103}\).</li>
+            <li><b>by recurrence</b>: a first term and a relation that gives each term from the previous one (or ones). Example: \(u_0 = 0\) and \(u_{n+1} = \sqrt{1 + u_n}\). To get \(u_3\), you need \(u_1\) and \(u_2\): \(u_1 = 1\), \(u_2 = \sqrt{2}\), \(u_3 = \sqrt{1 + \sqrt{2}}\).</li>
+          </ul>
+          <p>A sequence may be defined only from some rank on: \(\left(\frac{1}{n}\right)_{n \in \N^*}\) starts at \(n = 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 3: the sequence is well defined</i></span>
+          <p>Let \(u_0 = 0\) and \(u_{n+1} = \sqrt{1 + u_n}\). Show that \((u_n)\) is well defined and that \(\forall n \in \N,\ 0 \leq u_n \leq 2\).</p>
+          <p>By induction, with \(\mathcal{P}_n\): “\(u_n\) is defined and \(0 \leq u_n \leq 2\)”.<span class="c">the statement includes “is defined”</span></p>
+          <p><b>Base case.</b> \(u_0 = 0\): \(\mathcal{P}_0\) is true.</p>
+          <p><b>Inductive step.</b> Suppose \(\mathcal{P}_n\) is true for some \(n \in \N\). Then \(1 \leq 1 + u_n \leq 3\), so \(1 + u_n \geq 0\): \(\sqrt{1 + u_n}\) exists, that is, \(u_{n+1}\) is defined. Moreover \(\sqrt{1} \leq u_{n+1} \leq \sqrt{3}\), and since \(0 \leq 1\) and \(\sqrt{3} \leq 2\): \(0 \leq u_{n+1} \leq 2\). \(\mathcal{P}_{n+1}\) is true.</p>
+          <p><b>Conclusion.</b> For every \(n \in \N\), \(u_n\) is defined and \(0 \leq u_n \leq 2\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>\((u_n)\) is the sequence, \(u_n\) is a number. “\(u_n\) is increasing” is said of the sequence: \((u_n)\) is increasing.</li>
+            <li>\(u_{n+1}\) (the next term) is not \(u_n + 1\).</li>
+            <li>For an explicit sequence, \(u_{n+1}\) is obtained by replacing <b>every</b> \(n\) with \(n + 1\): if \(u_n = \frac{n}{n + 3}\), then \(u_{n+1} = \frac{n + 1}{n + 4}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">“Introduction” sheet § 3 · proofs § 1</span></div><h2>Sequence bounded above, bounded below, bounded</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definitions <i>with quantifiers</i></span>
+          <ol>
+            <li>\((u_n)\) is <b>bounded above</b> if \(\exists M \in \R,\ \forall n \in \N,\ u_n \leq M\).</li>
+            <li>\((u_n)\) is <b>bounded below</b> if \(\exists m \in \R,\ \forall n \in \N,\ m \leq u_n\).</li>
+            <li>\((u_n)\) is <b>bounded</b> if it is bounded below and bounded above.</li>
+          </ol>
+        </div>
+        <div class="prose"><p>The order of the quantifiers matters: \(M\) is chosen <b>before</b> \(n\), it does not depend on \(n\). An upper bound is not unique: if 1 is an upper bound of the sequence, so is 2. The negation, useful for counterexamples: \((u_n)\) is not bounded above if \(\forall M \in \R,\ \exists n \in \N,\ u_n \gt M\).</p></div>
+        <div class="box thm"><span class="tag">Proposition <i>bounded sequence</i></span>
+          <div class="fm">\[(u_n) \text{ bounded} \iff \exists M \in \R,\ \forall n \in \N,\ |u_n| \leq M.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>the “Proofs to know” sheet</i></span>
+          <p>Reminder: for \(M \in \R_+\), \(|a| \leq M \iff -M \leq a \leq M\).</p>
+          <p>\(\Leftarrow\) Suppose there exists \(M \in \R\) such that \(\forall n \in \N,\ |u_n| \leq M\). Then \(\forall n \in \N,\ -M \leq u_n \leq M\): \((u_n)\) is bounded below by \(-M\) and bounded above by \(M\), hence bounded.</p>
+          <p>\(\Rightarrow\) Suppose \((u_n)\) is bounded: there exists \((m, K) \in \R^2\) such that \(\forall n \in \N,\ m \leq u_n \leq K\). Now \(K \leq |K|\) and \(-|m| \leq m\), hence \(-|m| \leq u_n \leq |K|\).</p>
+          <p>Set \(M = \max(|m|, |K|)\). We have \(|K| \leq M\) and \(-M \leq -|m|\), hence \(\forall n \in \N,\ -M \leq u_n \leq M\), that is, \(|u_n| \leq M\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>bounding above, bounding below</i></span>
+          <ol>
+            <li>Compute a few terms to guess an upper bound and a lower bound.</li>
+            <li>Start from safe inequalities: \(n \geq 0\), \(-1 \leq \cos(n) \leq 1\), \(-1 \leq (-1)^n \leq 1\), \(n \lt n + 3\).</li>
+            <li>For a quotient of positive terms: bound the numerator above, bound the denominator <b>below</b>.</li>
+            <li>For a sequence defined by recurrence: proof by induction.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 1</i></span>
+          <p>Let \(u_n = \dfrac{n}{n + 3}\) for \(n \in \N\). Upper bound, lower bound? Is the sequence bounded?</p>
+          <p>Let \(n \in \N\). \(n \geq 0\) and \(n + 3 \gt 0\), so \(u_n \geq 0\): the sequence is bounded below by 0.</p>
+          <p>Moreover \(n \lt n + 3\) and \(n + 3 \gt 0\), hence \(\dfrac{n}{n + 3} \leq 1\): the sequence is bounded above by 1.<span class="c">we divide by a positive number</span></p>
+          <p>Bounded below and above: \((u_n)\) is bounded.</p>
+        </div>
+        <div class="prose">
+          <p><b>Model exercise 2.</b> \(u_n = \dfrac{n - 4}{7n - 22}\). The denominator never vanishes (\(\frac{22}{7}\) is not an integer). First terms: \(u_0 = \frac{2}{11}\), \(u_1 = \frac{1}{5}\), \(u_2 = \frac{1}{4}\), \(u_3 = 1\), \(u_4 = 0\). For \(n \geq 4\): \(n - 4 \geq 0\) and \(7n - 22 \geq 6\), so \(u_n \geq 0\); and \(7(n - 4) = 7n - 28 \lt 7n - 22\), so \(u_n \leq \frac{1}{7}\). With the first four terms: the sequence is bounded below by 0 and above by 1, hence bounded. You handle the first terms separately, then “from rank 4 on”.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Writing “\(\forall n,\ \exists M,\ u_n \leq M\)”: it is true for every sequence (take \(M = u_n\)). The upper bound comes <b>first</b>.</li>
+            <li>“Bounded above by 3” does not mean that 3 is reached, nor that the limit is 3.</li>
+            <li>\((-1)^n n\) is neither bounded above nor bounded below; \((-1)^n\) is bounded: \(|(-1)^n| \leq 1\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">“Introduction” sheet § 2</span></div><h2>Monotonicity</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definitions</span>
+          <ul>
+            <li>\((u_n)\) is <b>increasing</b> if \(\forall n \in \N,\ u_{n+1} \geq u_n\); <b>decreasing</b> if \(\forall n \in \N,\ u_{n+1} \leq u_n\).</li>
+            <li>\((u_n)\) is <b>strictly increasing</b> if \(\forall n \in \N,\ u_{n+1} \gt u_n\); <b>strictly decreasing</b> if \(\forall n \in \N,\ u_{n+1} \lt u_n\).</li>
+            <li>\((u_n)\) is <b>monotonic</b> if it is increasing or decreasing (strictly monotonic: strictly increasing or strictly decreasing).</li>
+            <li>\((u_n)\) is <b>constant</b> if \(\exists C \in \R,\ \forall n \in \N,\ u_n = C\).</li>
+            <li>\((u_n)\) is <b>stationary</b> if it is constant from some rank on: \(\exists N \in \N,\ \forall n \geq N,\ u_n = u_N\).</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Method</th><th>When</th><th>Conclusion</th></tr></thead>
+          <tbody>
+            <tr><td>Sign of \(u_{n+1} - u_n\)</td><td>always possible; sums, fractions</td><td>\(\geq 0\) for every \(n\): increasing</td></tr>
+            <tr><td>Compare \(\dfrac{u_{n+1}}{u_n}\) with 1</td><td>only if \(u_n \gt 0\); products, powers, factorials</td><td>\(\geq 1\) for every \(n\): increasing</td></tr>
+            <tr><td>Variations of \(f\)</td><td>explicit \(u_n = f(n)\)</td><td>\(f\) increasing on \([0, +\infty[\): \((u_n)\) increasing</td></tr>
+            <tr><td>Induction</td><td>\(u_{n+1} = f(u_n)\)</td><td>show \(\mathcal{P}_n\): \(u_n \leq u_{n+1}\)</td></tr>
+          </tbody>
+          <caption>“Choosing the right method to study monotonicity” is a learning outcome of Tutorial 4.</caption>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>model exercise 1: \(u_n = \frac{n}{n+3}\)</i></span>
+          <p>Let \(n \in \N\). <span data-eq>\(u_{n+1} - u_n = \dfrac{n + 1}{n + 4} - \dfrac{n}{n + 3} = \dfrac{(n + 1)(n + 3) - n(n + 4)}{(n + 4)(n + 3)} = \dfrac{3}{(n + 4)(n + 3)}\)</span>.<span class="c">same denominator, we expand</span></p>
+          <p>For every \(n \in \N\), \(u_{n+1} - u_n \gt 0\): the sequence is strictly increasing.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>model exercise 3: increasing, by induction</i></span>
+          <p>\(u_0 = 0\), \(u_{n+1} = \sqrt{1 + u_n}\). Let \(\mathcal{P}_n\): “\(u_n \lt u_{n+1}\)”.</p>
+          <p><b>Base case.</b> \(u_1 = 1 \gt 0 = u_0\): \(\mathcal{P}_0\) is true.</p>
+          <p><b>Inductive step.</b> Suppose \(u_n \lt u_{n+1}\). Then \(1 + u_n \lt 1 + u_{n+1}\), and since the square root is strictly increasing, \(\sqrt{1 + u_n} \lt \sqrt{1 + u_{n+1}}\), that is, \(u_{n+1} \lt u_{n+2}\).<span class="c">we apply an increasing function</span></p>
+          <p><b>Conclusion.</b> The sequence is strictly increasing.</p>
+        </div>
+        <div class="prose">
+          <p><b>Monotonic from some rank on.</b> In model exercise 2, \(u_n = \frac{n - 4}{7n - 22}\): for \(n \geq 5\), \(u_n \gt 0\) and \(\dfrac{u_{n+1}}{u_n} = \dfrac{7n^2 - 43n + 66}{7n^2 - 43n + 60} \gt 1\), so the sequence is strictly increasing from rank 5 on. But \(u_3 = 1 \gt u_4 = 0\): it is not increasing on \(\N\), hence not monotonic.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The quotient can be compared with 1 only if the terms are <b>strictly positive</b>. With \(u_n = -\frac{1}{n}\), the quotient is less than 1 and the sequence is increasing.</li>
+            <li>A constant sequence is both increasing and decreasing (in the weak sense).</li>
+            <li>A sequence can be neither increasing nor decreasing: \(((-1)^n)\).</li>
+            <li>Two or three terms do not prove monotonicity; a single counterexample is enough to refute it.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">“Limits” sheet § 1 and 2</span></div><h2>Limit of a sequence: finite, infinite, or no limit</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>finite limit</i></span>
+          <p>Let \((u_n)\) be a real sequence. We say that \((u_n)\) <b>converges to</b> \(\ell \in \R\) if</p>
+          <div class="fm">\[\forall \varepsilon \gt 0,\ \exists n_\varepsilon \in \N,\ \forall n \in \N,\ \left(n \geq n_\varepsilon \Rightarrow |u_n - \ell| \lt \varepsilon\right).\]</div>
+          <p>We write \(u_n \to \ell\) or \(\displaystyle\lim_{n \to +\infty} u_n = \ell\).</p>
+        </div>
+        <div class="prose">
+          <p>\(|u_n - \ell| \lt \varepsilon\) is equivalent to \(\ell - \varepsilon \lt u_n \lt \ell + \varepsilon\), that is, \(u_n \in\ ]\ell - \varepsilon, \ell + \varepsilon[\). The definition says: for <b>every</b> band around \(\ell\), however narrow, there is a rank from which <b>all</b> the terms are in the band. The rank depends on \(\varepsilon\).</p>
+        </div>
+        <div data-apis="seq" data-opts='{"preset":"inv2","eps":0.2,"only":["inv2","hom","gend","alt","div"],"title":"The definition, by hand"}'></div>
+        <p class="fig-cap"><b>Figure 2</b> — Reduce \(\varepsilon\): the rank moves back, but it always exists. For \((-1)^n\), no narrow band works.</p>
+        <div class="box model"><span class="tag">Model answer <i>model exercise 1: \(u_n = \frac{1}{n^2}\) converges, by the definition</i></span>
+          <p>Let us show that \((u_n)_{n \in \N^*}\) converges to 0. Let \(\varepsilon \gt 0\).<span class="c">ε is fixed, arbitrary</span></p>
+          <p>\(|u_n - 0| = \dfrac{1}{n^2}\), and \(\dfrac{1}{n^2} \leq \varepsilon \iff n^2 \geq \dfrac{1}{\varepsilon} \iff n \geq \dfrac{1}{\sqrt{\varepsilon}}\).<span class="c">we look for the n from which it holds</span></p>
+          <p>Let \(N\) be an integer greater than \(\dfrac{1}{\sqrt{\varepsilon}}\), for example \(N = E\left(\dfrac{1}{\sqrt{\varepsilon}}\right) + 1\). Then \(n \geq N \Rightarrow |u_n - 0| \leq \varepsilon\).<span class="c">E: integer part</span></p>
+          <p>So \((u_n)\) converges to 0.</p>
+        </div>
+        <div class="box thm"><span class="tag">Propositions <i>convergent sequence</i></span>
+          <ul>
+            <li><b>Uniqueness.</b> The limit of a convergent real sequence is unique.</li>
+            <li>\(\displaystyle\lim_{n \to +\infty} u_n = \ell \iff \lim_{n \to +\infty} (u_n - \ell) = 0\).</li>
+            <li>If \(\ell \neq 0\), then \(\exists n_0 \in \N,\ \forall n \geq n_0,\ u_n \neq 0\).</li>
+            <li>If \(\forall n \in \N,\ u_n \gt 0\), then \(\ell \geq 0\): the strict inequality becomes <b>weak</b> in the limit.</li>
+            <li>If \(u_n \to \ell\), then \(|u_n| \to |\ell|\). And \(u_n \to 0 \iff |u_n| \to 0\).</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Definitions <i>divergent sequence, infinite limit</i></span>
+          <p>A sequence is <b>divergent</b> if it does not converge.</p>
+          <p>\((u_n)\) <b>tends to \(+\infty\)</b> if \(\forall A \in \R,\ \exists n_0 \in \N,\ \forall n \in \N,\ \left(n \geq n_0 \Rightarrow u_n \gt A\right)\).</p>
+          <p>\((u_n)\) <b>tends to \(-\infty\)</b> if \(\forall A \in \R,\ \exists n_0 \in \N,\ \forall n \in \N,\ \left(n \geq n_0 \Rightarrow u_n \lt A\right)\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Behaviour</th><th>Vocabulary</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>finite limit \(\ell\)</td><td><b>convergent</b></td><td>\(1 + \frac{1}{n} \to 1\)</td></tr>
+            <tr><td>limit \(+\infty\) or \(-\infty\)</td><td><b>divergent</b> (it has a limit, an infinite one)</td><td>\(n^2 \to +\infty\), \(\ln(n^2 + n) \to +\infty\)</td></tr>
+            <tr><td>no limit</td><td><b>divergent</b></td><td>\((-1)^n\), \(\cos(n)\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>“Divergent” does not mean “tends to infinity”: \(((-1)^n)\) diverges while staying bounded.</li>
+            <li>In the definition, \(\varepsilon\) comes before the rank. “\(\exists N,\ \forall \varepsilon \gt 0\)” describes a stationary sequence.</li>
+            <li>\(\frac{1}{n} \gt 0\) for every \(n\), and yet the limit is 0: you only keep \(\ell \geq 0\).</li>
+            <li>A sequence that tends to \(+\infty\) is not necessarily increasing (part 8).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">“Limits” sheet, propositions 3 and 4 · “Indeterminate forms” video</span></div><h2>Operations on limits, indeterminate forms</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>finite limits</i></span>
+          <p>Let \((u_n)\) and \((v_n)\) be convergent, with limits \(\ell\) and \(\ell'\), and \(\lambda \in \R\). Then:</p>
+          <ol>
+            <li>\((\lambda u_n + v_n)\) converges to \(\lambda\ell + \ell'\);</li>
+            <li>\((u_n v_n)\) converges to \(\ell\ell'\);</li>
+            <li>if \(\forall n \in \N,\ v_n \neq 0\) and \(\ell' \neq 0\), then \(\left(\dfrac{1}{v_n}\right)\) converges to \(\dfrac{1}{\ell'}\).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(\lim u_n\)</th><th>\(\lim v_n\)</th><th>Sum \(u_n + v_n\)</th><th>Product \(u_n v_n\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(\ell\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\) depending on the sign of \(\ell\) (if \(\ell \neq 0\))</td></tr>
+            <tr><td>\(+\infty\)</td><td>\(+\infty\)</td><td>\(+\infty\)</td><td>\(+\infty\)</td></tr>
+            <tr><td>\(-\infty\)</td><td>\(-\infty\)</td><td>\(-\infty\)</td><td>\(+\infty\)</td></tr>
+            <tr><td>\(-\infty\)</td><td>\(+\infty\)</td><td><b>nothing can be said</b></td><td>\(-\infty\)</td></tr>
+            <tr><td>\(0\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\)</td><td><b>nothing can be said</b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box def"><span class="tag">The four indeterminate forms</span>
+          <div class="fm">\[\infty - \infty,\qquad 0 \times \infty,\qquad \frac{\infty}{\infty},\qquad \frac{0}{0}.\]</div>
+          <p>“Indeterminate” does not mean “no limit”: you must transform the expression before concluding.</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>resolving an indeterminate form</i></span>
+          <ol>
+            <li><b>Factor out the dominant term</b> in the numerator and the denominator, then simplify.</li>
+            <li><b>Comparative growth</b>: \(\displaystyle\lim_{n \to +\infty} \frac{\ln(n)}{n} = 0\), \(\displaystyle\lim_{n \to +\infty} \frac{n^2}{e^n} = 0\), \(\displaystyle\lim_{n \to +\infty} \frac{e^n}{n} = +\infty\). The exponential beats the powers, which beat the logarithm.</li>
+            <li><b>Conjugate expression</b> for a difference of roots: \(\sqrt{n + 1} - \sqrt{n} = \dfrac{1}{\sqrt{n + 1} + \sqrt{n}} \to 0\).</li>
+            <li>Otherwise: bounding and the squeeze theorem (part 6).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 2</i></span>
+          <p>Limit of \(u_n = \dfrac{2 + n - n^2}{n^2 + 3n + 4}\)?</p>
+          <p>\(u_n = \dfrac{n^2\left(\frac{2}{n^2} + \frac{1}{n} - 1\right)}{n^2\left(1 + \frac{3}{n} + \frac{4}{n^2}\right)} = \dfrac{\frac{2}{n^2} + \frac{1}{n} - 1}{1 + \frac{3}{n} + \frac{4}{n^2}}\).<span class="c">we factor out n², the dominant term</span></p>
+          <p>Now \(\displaystyle\lim_{n \to +\infty} \left(\frac{2}{n^2} + \frac{1}{n} - 1\right) = -1\) and \(\displaystyle\lim_{n \to +\infty} \left(1 + \frac{3}{n} + \frac{4}{n^2}\right) = 1\). By the quotient rule, \(\displaystyle\lim_{n \to +\infty} u_n = -1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 3</i></span>
+          <p>Limit of \(u_n = \dfrac{e^n - n^2}{n + \ln(n)}\)?</p>
+          <p>\(u_n = \dfrac{e^n\left(1 - \frac{n^2}{e^n}\right)}{n\left(1 + \frac{\ln(n)}{n}\right)} = \dfrac{e^n}{n} \times \dfrac{1 - \frac{n^2}{e^n}}{1 + \frac{\ln(n)}{n}}\).<span class="c">eⁿ dominates on top, n on the bottom</span></p>
+          <p>By comparative growth, \(\dfrac{n^2}{e^n} \to 0\), \(\dfrac{\ln(n)}{n} \to 0\) and \(\dfrac{e^n}{n} \to +\infty\). So \(\displaystyle\lim_{n \to +\infty} u_n = +\infty\).</p>
+        </div>
+        <div class="prose"><p><b>Shortcut to know.</b> A quotient of polynomials in \(n\) has the limit of the quotient of their highest-degree terms: \(\dfrac{3n^2 + 1}{2n^2 - n} \to \dfrac{3}{2}\), \(\dfrac{n + 1}{n^2} \to 0\), \(\dfrac{n^3}{n^2 + 1} \to +\infty\). In your answer, write the factorisation.</p></div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>“\(\infty - \infty = 0\)” and “\(0 \times \infty = 0\)” are false: \(n^2 - n \to +\infty\), \(\frac{1}{n} \times n^2 \to +\infty\), \(\frac{1}{n} \times n \to 1\).</li>
+            <li>The operations assume that both limits <b>exist</b>: \((-1)^n + (-1)^{n+1} = 0\) converges although neither of the two terms has a limit.</li>
+            <li>\(\ln(n^2 + n) \to +\infty\): the sequence diverges, even though it grows slowly.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">“Limits” sheet § 3 · proofs § 2</span></div><h2>Comparison, squeeze theorem, convergent hence bounded</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>comparison</i></span>
+          <p>Let \((u_n)\) and \((v_n)\) be such that \(\forall n \in \N,\ u_n \leq v_n\).</p>
+          <ol>
+            <li>If \(\lim u_n = +\infty\), then \(\lim v_n = +\infty\).</li>
+            <li>If \(\lim v_n = -\infty\), then \(\lim u_n = -\infty\).</li>
+          </ol>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>squeeze theorem</i></span>
+          <p>Let \((u_n)\), \((v_n)\) and \((w_n)\) be three real sequences such that:</p>
+          <ol>
+            <li>from some rank on, \(u_n \leq v_n \leq w_n\);</li>
+            <li>\((u_n)\) and \((w_n)\) converge to the same limit \(\ell \in \R\).</li>
+          </ol>
+          <p>Then \((v_n)\) converges to \(\ell\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>the “Proofs to know” sheet; January 2024 exam, 5 points</i></span>
+          <p>Let \(\varepsilon \gt 0\) be fixed.</p>
+          <p>\((u_n)\) converges to \(\ell\): \(\exists N_1 \in \N,\ \forall n \geq N_1,\ \ell - \varepsilon \lt u_n \lt \ell + \varepsilon\).</p>
+          <p>\((w_n)\) converges to \(\ell\): \(\exists N_2 \in \N,\ \forall n \geq N_2,\ \ell - \varepsilon \lt w_n \lt \ell + \varepsilon\).</p>
+          <p>Set \(N = \max(N_1, N_2)\) and let \(n \geq N\). Then \(n \geq N_1\) and \(n \geq N_2\), so \(\ell - \varepsilon \lt u_n \leq v_n \leq w_n \lt \ell + \varepsilon\).</p>
+          <p>We have shown: \(\forall \varepsilon \gt 0\), there is a rank \(N\) from which \(|v_n - \ell| \lt \varepsilon\). So \((v_n)\) converges to \(\ell\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 4</i></span>
+          <p>Limit of \(u_n = \dfrac{2n + (-1)^n}{n^2 + \cos(n)}\)?</p>
+          <p>\((-1)^n = \pm 1\), so \(2n - 1 \leq 2n + (-1)^n \leq 2n + 1\). And \(\cos(n) \in [-1, 1]\), so \(n^2 - 1 \leq n^2 + \cos(n) \leq n^2 + 1\).</p>
+          <p>For \(n \geq 2\), everything is strictly positive: \(\dfrac{2n - 1}{n^2 + 1} \leq u_n \leq \dfrac{2n + 1}{n^2 - 1}\).<span class="c">small numerator over large denominator, and the reverse</span></p>
+          <p>Now \(\dfrac{2n - 1}{n^2 + 1} = \dfrac{2 - \frac{1}{n}}{n + \frac{1}{n}} \to 0\) and \(\dfrac{2n + 1}{n^2 - 1} \to 0\). By the squeeze theorem, \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Practical consequence.</b> If \((u_n)\) is bounded and \(v_n \to 0\), then \(u_n v_n \to 0\): \(|u_n v_n| \leq M|v_n|\). Examples: \(\dfrac{\sin(n)}{n} \to 0\), \(\dfrac{(-1)^n}{n} \to 0\).</p>
+          <p><b>Comparison towards infinity</b> (model exercise 5). \(u_n = \sqrt{n}\) if \(n\) is even, \(n^2\) if \(n\) is odd. In both cases \(u_n \geq \sqrt{n}\), and \(\sqrt{n} \to +\infty\): by comparison, \(u_n \to +\infty\). The sequence is nevertheless not monotonic: for \(n\) odd, \(n \geq 3\), \(u_n = n^2 \gt \sqrt{n + 1} = u_{n+1}\).</p>
+          <p><b>Tutorial 4, exercise 3.6.</b> \(u_n = \displaystyle\sum_{k=1}^{n} \frac{1}{n^2 + k}\): each term is between \(\frac{1}{n^2 + n}\) and \(\frac{1}{n^2 + 1}\), and there are \(n\) of them, so \(\dfrac{n}{n^2 + n} \leq u_n \leq \dfrac{n}{n^2 + 1}\). The two bounding sequences tend to 0: \(u_n \to 0\). Likewise \(\dfrac{n^2}{n^2 + n} \leq n\,u_n \leq \dfrac{n^2}{n^2 + 1}\): \(n\,u_n \to 1\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Proposition <i>property of a convergent sequence</i></span>
+          <div class="fm">\[(u_n) \text{ converges} \implies (u_n) \text{ bounded}.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>the “Proofs to know” sheet</i></span>
+          <p>Suppose that \((u_n)\) converges and denote its limit by \(\ell \in \R\): \(\forall \varepsilon \gt 0,\ \exists N \in \N,\ \forall n \geq N,\ |u_n - \ell| \lt \varepsilon\).</p>
+          <p>This is true for every \(\varepsilon \gt 0\), so for \(\varepsilon = 1\): there is a rank \(N\) from which \(|u_n - \ell| \lt 1\). For \(n \geq N\), by the triangle inequality:</p>
+          <div class="fm">\[|u_n| = |(u_n - \ell) + \ell| \leq |u_n - \ell| + |\ell| \lt 1 + |\ell|.\]</div>
+          <p>The sequence is bounded from rank \(N\) on. Set \(M = \max\left(|u_0|, |u_1|, \ldots, |u_{N-1}|, 1 + |\ell|\right)\). Alors \(\forall n \in \N,\ |u_n| \leq M\): \((u_n)\) is bounded.</p>
+        </div>
+        <div class="prose"><p><b>The converse is false</b>: \(((-1)^n)\) is bounded and does not converge. The <b>contrapositive</b>, true and useful: an unbounded sequence does not converge. The January 2025 exam asked for all four: the definition of “bounded”, the proof, the converse (with a counterexample) and the contrapositive.</p></div>
+        <div class="box exam"><span class="tag">In the course test and the exam</span>
+          <p>The “Proofs to know” sheet is a separate Moodle module, which is not named in the course test syllabus. Its first three proofs (bounded \(\iff |u_n| \leq M\), convergent \(\Rightarrow\) bounded, squeeze theorem) are nevertheless about the modules on the syllabus, and a course test may ask for a proof (IBP in October 2022). Learn them now: they are required for the final exam anyway.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Squeeze theorem: the two bounding sequences must have the <b>same</b> limit. \(-1 \leq (-1)^n \leq 1\) gives nothing.</li>
+            <li>Dividing a bounding: by a <b>positive</b> number, and taking the inverse reverses the inequalities.</li>
+            <li>Passing to the limit in an inequality without knowing that the limit exists.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Part 7 <span class="ref">“Standard examples” sheet § 1 · Tutorial 4 ex. 2.3 and 2.4</span></div><h2>Geometric and arithmetic-geometric sequences</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>geometric sequence</i></span>
+          <p>\((u_n)\) is <b>geometric</b> if there is a real number \(q\) such that \(\forall n \in \N,\ u_{n+1} = q\,u_n\). The number \(q\) is the <b>common ratio</b>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorems <i>general term, sum</i></span>
+          <p>Let \((u_n)\) be geometric with first term \(u_0\) and common ratio \(q\).</p>
+          <div class="fm">\[\forall n \in \N,\ u_n = u_0\,q^n \qquad\text{and, for } n \geq n_0,\quad u_n = u_{n_0}\,q^{n - n_0}.\]</div>
+          <div class="fm">\[u_0 + u_1 + \cdots + u_n = \begin{cases} u_0 \times \dfrac{1 - q^{n+1}}{1 - q} &amp; \text{if } q \neq 1,\\[2mm] (n + 1)\,u_0 &amp; \text{if } q = 1. \end{cases}\]</div>
+          <p>From rank \(n_0\) on: \(u_{n_0} + \cdots + u_n = u_{n_0}\dfrac{1 - q^{n - n_0 + 1}}{1 - q}\) for \(q \neq 1\). To remember: <b>first term \(\times \dfrac{1 - q^{\text{number of terms}}}{1 - q}\)</b>.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Common ratio \(q\)</th><th>\(\displaystyle\lim_{n \to +\infty} q^n\)</th><th>\((q^n)\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(q \gt 1\)</td><td>\(+\infty\)</td><td>diverges</td></tr>
+            <tr><td>\(q = 1\)</td><td>\(1\)</td><td>converges (constant)</td></tr>
+            <tr><td>\(-1 \lt q \lt 1\)</td><td>\(0\)</td><td>converges</td></tr>
+            <tr><td>\(q \leq -1\)</td><td>no limit</td><td>diverges</td></tr>
+          </tbody>
+          <caption>So \((q^n)\) converges if and only if \(-1 \lt q \leq 1\): this is the “necessary and sufficient condition” asked for in the December 2022 course test.</caption>
+        </table></div>
+        <div class="prose">
+          <p><b>Sign</b> (Tutorial 4, ex. 2.3). If \(q \gt 0\), all the terms have the sign of \(u_0\). If \(q \lt 0\), the terms change sign at every rank. If \(q = 0\), the sequence is zero from rank 1 on.</p>
+          <p><b>Reminder: arithmetic sequence.</b> \(u_{n+1} = u_n + r\), so \(u_n = u_0 + nr\) and \(u_0 + \cdots + u_n = (n + 1)\dfrac{u_0 + u_n}{2}\). It diverges, unless \(r = 0\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>arithmetic-geometric sequence \(u_{n+1} = a\,u_n + b\), \(a \neq 1\)</i></span>
+          <ol>
+            <li><b>Fixed point</b>: solve \(\ell = a\ell + b\). It is the value of \(u_0\) for which the sequence is constant.</li>
+            <li><b>Set \(v_n = u_n - \ell\)</b> and show that \((v_n)\) is geometric with common ratio \(a\): \(v_{n+1} = u_{n+1} - \ell = a\,u_n + b - (a\ell + b) = a(u_n - \ell) = a\,v_n\).</li>
+            <li><b>Write</b> \(v_n = v_0\,a^n\), then \(u_n = \ell + (u_0 - \ell)\,a^n\).</li>
+            <li><b>Conclude</b>: if \(|a| \lt 1\), \(u_n \to \ell\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Tutorial 4, exercise 2.3 (3)</i></span>
+          <p>\(u_0 \in \R\) and \(\forall n \in \N,\ u_{n+1} = \dfrac{u_n + 4}{5}\).</p>
+          <p><b>(a)</b> The sequence is constant if and only if \(u_1 = u_0\), that is \(u_0 = \dfrac{u_0 + 4}{5}\), that is \(u_0 = 1\). We have solved the equation \(\ell = \dfrac{\ell + 4}{5}\): \(\ell = 1\).<span class="c">the fixed-point equation</span></p>
+          <p><b>(b)</b> Let \(v_n = u_n - 1\). \(v_{n+1} = \dfrac{u_n + 4}{5} - 1 = \dfrac{u_n - 1}{5} = \dfrac{1}{5}v_n\): \((v_n)\) is geometric with common ratio \(\dfrac{1}{5}\).</p>
+          <p><b>(c)</b> With \(u_0 = 5\): \(v_0 = 4\), \(v_n = \dfrac{4}{5^n}\), so <span data-eq>\(u_n = 1 + \dfrac{4}{5^n}\)</span>. Since \(\left|\frac{1}{5}\right| \lt 1\), \(\displaystyle\lim_{n \to +\infty} u_n = 1\).</p>
+          <p><b>(d)</b> \(S = \displaystyle\sum_{k=0}^{5} u_k = 6 + 4\sum_{k=0}^{5} \frac{1}{5^k} = 6 + 4 \times \frac{1 - \frac{1}{5^6}}{1 - \frac{1}{5}} = 6 + 5\left(1 - \frac{1}{5^6}\right)\), that is <span data-eq>\(S = 11 - \dfrac{1}{3125} = \dfrac{34\,374}{3125}\)</span>.<span class="c">6 terms: exponent 6</span></p>
+        </div>
+        <div data-apis="seq" data-opts='{"preset":"ag","eps":0.2,"only":["ag","geo"],"title":"Two sequences from the lesson"}'></div>
+        <div class="prose">
+          <p><b>Moodle model exercise 1.</b> \(u_0 = 0\), \(u_{n+1} = \dfrac{3 + u_n}{2}\). With \(v_n = u_n - l\): \(v_{n+1} = \dfrac{v_n + 3 - l}{2}\), geometric for \(l = 3\), with common ratio \(\frac{1}{2}\). So \(v_n \to 0\) and \(u_n \to 3\).</p>
+          <p><b>Model exercise 3.</b> \(u_n = 0.11\ldots1\) (\(n\) digits 1) \(= \displaystyle\sum_{k=1}^{n} 10^{-k} = \frac{1}{10} \times \frac{1 - \left(\frac{1}{10}\right)^n}{1 - \frac{1}{10}} = \frac{1 - 10^{-n}}{9}\), which converges to \(\dfrac{1}{9}\).</p>
+          <p><b>Tutorial 4, exercise 2.4</b> (the rumour). \(\pi_{n+1} = p\,\pi_n + (1 - p)(1 - \pi_n) = (2p - 1)\pi_n + 1 - p\). Fixed point: \(\frac{1}{2}\). So \(\pi_n = \dfrac{1}{2} + \dfrac{1}{2}(2p - 1)^n\), and since \(|2p - 1| \lt 1\), \(\pi_n \to \dfrac{1}{2}\): after many relays, the information is no better than a coin toss.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Sum: the exponent is the <b>number of terms</b>, \(n + 1\) from \(u_0\) to \(u_n\), not \(n\).</li>
+            <li>\(q = 1\): the sum formula does not apply (division by 0), the sum is \((n + 1)u_0\).</li>
+            <li>\(q = -1\): \(((-1)^n)\) has no limit. \(q = 1\): the sequence converges. Do not write “converges \(\iff |q| \lt 1\)”.</li>
+            <li>The limit of \(q^n\) is not that of \(u_0 q^n\) when \(u_0 \lt 0\) and \(q \gt 1\): \(-2^n \to -\infty\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 7 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Part 8 <span class="ref">“Standard examples” sheet § 2 · Tutorial 4 ex. 1.1 and 1.2</span></div><h2>Ratio criterion, examples and counterexamples</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>sequences such that \(\left|\frac{u_{n+1}}{u_n}\right| \lt \ell \lt 1\)</i></span>
+          <p>Let \((u_n)\) be a sequence of nonzero reals. Assume there is a real number \(\ell\) such that, for every \(n\) (or only from some rank on):</p>
+          <div class="fm">\[\left|\frac{u_{n+1}}{u_n}\right| \lt \ell \lt 1.\]</div>
+          <p>Then \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+          <p><b>Corollary.</b> If \(\displaystyle\lim_{n \to +\infty} \frac{u_{n+1}}{u_n} = 0\), then \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+        </div>
+        <div class="prose"><p>The idea: \(|u_n|\) is then smaller than a geometric sequence with common ratio \(\ell \lt 1\), which tends to 0. The real number \(\ell\) is <b>fixed</b>, strictly between the quotient and 1: “the quotient is less than 1” is not enough. With \(u_n = 1 + \frac{1}{n}\), the quotient is always less than 1 and the sequence tends to 1, not to 0.</p></div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise 2</i></span>
+          <p>Limit of \(u_n = \dfrac{3^n (n!)^2}{(2n)!}\)?</p>
+          <p>\(u_n \gt 0\) for every \(n\). \(\dfrac{u_{n+1}}{u_n} = \dfrac{3^{n+1}\left((n + 1)!\right)^2 (2n)!}{3^n (n!)^2 (2n + 2)!}\). Now \((n + 1)! = (n + 1)\,n!\) and \((2n + 2)! = (2n + 2)(2n + 1)(2n)!\).<span class="c">we unfold the factorials</span></p>
+          <p>So <span data-eq>\(\dfrac{u_{n+1}}{u_n} = \dfrac{3(n + 1)^2}{(2n + 2)(2n + 1)} = \dfrac{3(n + 1)}{2(2n + 1)}\)</span>, which tends to \(\dfrac{3}{4}\).</p>
+          <p>\(\dfrac{3(n + 1)}{2(2n + 1)} \lt \dfrac{4}{5} \iff 15n + 15 \lt 16n + 8 \iff n \gt 7\). For \(n \gt 7\): \(0 \lt \dfrac{u_{n+1}}{u_n} \lt \dfrac{4}{5} \lt 1\).<span class="c">a fixed ℓ: 4/5</span></p>
+          <p>By the theorem, \((u_n)\) tends to 0.</p>
+        </div>
+        <div class="prose"><p><b>With the corollary.</b> \(u_n = \dfrac{a^n}{n!}\) (\(a \gt 0\)): \(\dfrac{u_{n+1}}{u_n} = \dfrac{a}{n + 1} \to 0\), so \(\dfrac{a^n}{n!} \to 0\). The factorial beats every geometric sequence.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>You are asked for a sequence…</th><th>Example</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>stationary, not constant</td><td>\(u_0 = 1\) and \(u_n = 0\) for \(n \geq 1\)</td><td>constant from rank 1 on</td></tr>
+            <tr><td>bounded, not constant</td><td>\(((-1)^n)\)</td><td>\(|u_n| \leq 1\)</td></tr>
+            <tr><td>bounded above by 3</td><td>\((3 - n)\)</td><td>\(3 - n \leq 3\)</td></tr>
+            <tr><td>neither increasing nor decreasing</td><td>\(((-1)^n)\)</td><td>\(u_0 \gt u_1\) and \(u_1 \lt u_2\)</td></tr>
+            <tr><td>divergent</td><td>\((n)\), \(((-1)^n)\)</td><td>infinite limit, or no limit</td></tr>
+            <tr><td>bounded and not convergent</td><td>\(((-1)^n)\)</td><td>the converse of “convergent \(\Rightarrow\) bounded” is false</td></tr>
+            <tr><td>strictly increasing and bounded</td><td>\(\left(\dfrac{n}{n + 1}\right)\)</td><td>\(0 \leq u_n \lt 1\), \(u_{n+1} - u_n = \dfrac{1}{(n + 1)(n + 2)} \gt 0\)</td></tr>
+            <tr><td>strictly increasing and convergent</td><td>\(\left(-\dfrac{1}{n + 1}\right)\)</td><td>tends to 0 while increasing</td></tr>
+            <tr><td>not constant, converging to 2</td><td>\(\left(2 + \dfrac{1}{n + 1}\right)\)</td><td>\(\frac{1}{n + 1} \to 0\)</td></tr>
+            <tr><td>tending to \(+\infty\), not increasing, even from some rank on</td><td>\((n + 2(-1)^n)\)</td><td>\(u_n \geq n - 2\); \(u_{2k} = 2k + 2 \gt u_{2k+1} = 2k - 1\)</td></tr>
+            <tr><td>not bounded above, not tending to \(+\infty\)</td><td>\((n(1 + (-1)^n))\)</td><td>equals \(2n\) at even ranks, 0 at odd ranks</td></tr>
+            <tr><td>neither bounded above nor bounded below</td><td>\(((-1)^n n)\)</td><td>\(u_{2k} = 2k\), \(u_{2k+1} = -(2k + 1)\)</td></tr>
+          </tbody>
+          <caption>Tutorial 4, exercises 1.1 and 1.2, and questions from the December 2022 and November 2023 course tests. On \(\N^*\), \(1 - \frac{1}{n}\), \(-\frac{1}{n}\) and \(2 + \frac{1}{n}\) work too.</caption>
+        </table></div>
+        <div class="prose"><p><b>Why a sequence that is neither bounded above nor bounded below has no limit</b> (Tutorial 4, ex. 1.2). If it converged, it would be bounded. If it tended to \(+\infty\), it would be greater than 0 from some rank \(n_0\) on, hence bounded below by the smallest of the numbers \(u_0, \ldots, u_{n_0 - 1}, 0\). Likewise, if it tended to \(-\infty\), it would be bounded above.</p></div>
+        <div class="box exam"><span class="tag">In the course test</span>
+          <p>The two course tests on sequences that we found (December 2022 and November 2023) ask only this type of question: a definition with quantifiers, then “give an example of a sequence…”. A sequence given without justification is accepted when it is correct, but a line of checking protects you.</p>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 8 of 8</span><button type="button" class="done-btn" data-done="apis:suites:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>The course test syllabus stops here. The <a href="controle.html">23 November course test</a> page gathers what you must know by heart, the form of the questions and a mock test. Convergence theorems, recurrent sequences and Landau comparisons come next, for the final exam.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/apis.js"></script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Primitives · Maths APIS</title>
+<meta name="description" content="Maths, APIS, lesson 1: primitive of a function, uniqueness up to a constant, table of usual primitives, linearity, primitives of composite functions of the form u′ × g(u), method for recognising the form and adjusting the constant. On the syllabus of the 23 November course test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · lesson 1: primitives">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — lesson 1 of 4 for the course test</span><span>Source: course handout “Primitive functions and integrals: Terminale revision” § 1, summary sheet, Tutorial 3 part 1</span></div>
+  <div class="hero-in single">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Maths APIS</a> · Lesson 1 · <a href="controle.html">in the 23 November course test</a></div>
+      <h1>Finding a primitive <span class="w">means differentiating backwards.</span></h1>
+      <p class="lead">A primitive of \(f\) (also called an antiderivative) is a function whose derivative is \(f\). Two tables are enough: the one for usual functions, and the one for composite functions \(u' \times g(u)\). All the work is recognising the right line and adjusting a constant. This lesson is the basis of integrals (lesson 2) and of the rest of the ECUE.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 35 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Course</span> handout § 1 · Tutorial 3, exercises 1.1 and 1.2</span></li>
+        <li class="ex"><span><span class="k">Course test</span> a table to complete, a primitive “without integration by parts or change of variable”</span></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 1 · Primitives</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Definition, constant</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Usual primitives</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Sums and constants</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Composite functions</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Recognising the form</span></a></li>
+    </ol>
+    <p class="toc-note">Part numbers are circled like question numbers on your exam paper. A tick appears when you mark a part as understood.</p>
+    <div class="toc-nav"><a href="index.html">← APIS home</a><a href="cours-2-integrales.html">Lesson 2: integrals →</a><a href="../qcm/index.html#apis">APIS MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Definition, constant</a></li><li><a href="#s2">Usual primitives</a></li><li><a href="#s3">Sums and constants</a></li><li><a href="#s4">Composite functions</a></li><li><a href="#s5">Recognising the form</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">handout § 1.1 · summary § 1</span></div><h2>Primitive of a function: definition, existence, constant</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>primitive</i></span>
+          <p>Let \(f\) be a continuous function on an interval \(I\) of \(\R\). A <b>primitive</b> of \(f\) on \(I\) is a <b>differentiable</b> function \(F\) on \(I\) such that \(F' = f\), that is:</p>
+          <div class="fm">\[\forall x \in I,\quad F'(x) = f(x).\]</div>
+          <p>It is often written \(F(x) = \displaystyle\int f(x)\,dx\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Examples.</b> A primitive of \(x \mapsto \frac{1}{x}\) on \(]0, +\infty[\) is \(x \mapsto \ln(x)\). A primitive of \(x \mapsto x\) on \(\R\) is \(x \mapsto \frac{x^2}{2}\). To check a primitive, differentiate it: this is the check to make every time.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>existence, and all the primitives</i></span>
+          <p>Let \(I\) be an interval of \(\R\).</p>
+          <ol>
+            <li>Every <b>continuous</b> function on \(I\) has a primitive on \(I\).</li>
+            <li>If \(F\) is a primitive of \(f\) on \(I\), then the primitives of \(f\) on \(I\) are exactly the functions \(F + c\), where \(c\) is a real constant.</li>
+          </ol>
+        </div>
+        <div class="box proof"><span class="tag">Why</span>
+          <p>\((F + c)' = F' = f\): adding a constant still gives a primitive. Conversely, if \(G\) is another primitive, \((G - F)' = f - f = 0\) on the interval \(I\), so \(G - F\) is constant.</p>
+        </div>
+        <div class="prose">
+          <p>A continuous function therefore has <b>infinitely many</b> primitives, which differ by a constant: \(x \mapsto 2x\) and \(x \mapsto 2x + \pi\) are two primitives of \(x \mapsto 2\). Say “<b>a</b> primitive”, never “the primitive”, unless a condition fixes the constant.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>the primitive that equals 3 at 4 (handout)</i></span>
+          <p>Find the primitive \(F\) of \(x \mapsto \frac{1}{\sqrt{x}}\) on \(]0, +\infty[\) such that \(F(4) = 3\).</p>
+          <p>The primitives of \(x \mapsto \frac{1}{\sqrt{x}}\) on \(]0, +\infty[\) are the functions \(F(x) = 2\sqrt{x} + c\), \(c \in \R\).<span class="c">the general form first</span></p>
+          <p>\(F(4) = 3 \iff 2\sqrt{4} + c = 3 \iff c = -1\).<span class="c">the condition fixes c</span></p>
+          <p>So \(F(x) = 2\sqrt{x} - 1\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Mixing up primitive and derivative: the primitive of \(x^2\) is \(\frac{x^3}{3}\), not \(2x\). If in doubt, differentiate your answer.</li>
+            <li>On a set that is not an interval (such as \(\R^*\)), two primitives can differ by a different constant on each piece. Always work on an interval.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-1-primitives.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="apis:primitives:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">handout § 1.1 · Tutorial 3 ex. 1.2, table 1</span></div><h2>The table of usual primitives</h2></div>
+      <div class="stack">
+        <div class="prose"><p>First objective of the ECUE: “know the usual derivatives and primitives by heart”. Tutorial 3 gives this table with the middle column empty, to be filled in. \(c\) is a real constant.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(f(x)\)</th><th>A primitive \(F(x)\)</th><th>Interval</th></tr></thead>
+          <tbody>
+            <tr><td>\(a\) (real constant)</td><td>\(ax + c\)</td><td>\(\R\)</td></tr>
+            <tr><td>\(x^\alpha\), \(\alpha \in \R\), \(\alpha \neq -1\)</td><td>\(\dfrac{x^{\alpha+1}}{\alpha+1} + c\)</td><td>depends on \(\alpha\)</td></tr>
+            <tr><td>\(\dfrac{1}{\sqrt{x}}\) (\(\alpha = -\frac{1}{2}\))</td><td>\(2\sqrt{x} + c\)</td><td>\(]0, +\infty[\)</td></tr>
+            <tr><td>\(\dfrac{1}{x^2}\) (\(\alpha = -2\))</td><td>\(-\dfrac{1}{x} + c\)</td><td>\(]0, +\infty[\) or \(]-\infty, 0[\)</td></tr>
+            <tr><td>\(\dfrac{1}{x}\) (\(\alpha = -1\))</td><td>\(\ln|x| + c\)</td><td>\(]0, +\infty[\) or \(]-\infty, 0[\)</td></tr>
+            <tr><td>\(e^x\)</td><td>\(e^x + c\)</td><td>\(\R\)</td></tr>
+            <tr><td>\(\cos(x)\)</td><td>\(\sin(x) + c\)</td><td>\(\R\)</td></tr>
+            <tr><td>\(\sin(x)\)</td><td>\(-\cos(x) + c\)</td><td>\(\R\)</td></tr>
+            <tr><td>\(\dfrac{1}{\cos^2(x)} = 1 + \tan^2(x)\)</td><td>\(\tan(x) + c\)</td><td>where the cosine does not vanish</td></tr>
+            <tr><td>\(\dfrac{1}{1 + x^2}\)</td><td>\(\arctan(x) + c\)</td><td>\(\R\)</td></tr>
+          </tbody>
+          <caption>Table 1 of the handout and of Tutorial 3. On \(]0, +\infty[\), \(\ln|x| = \ln(x)\): the handout writes the \(\frac{1}{x}\) line for this interval only.</caption>
+        </table></div>
+        <div class="box meth"><span class="tag">Method <i>powers: a single formula</i></span>
+          <ol>
+            <li>Write the function in the form \(x^\alpha\): \(\sqrt{x} = x^{1/2}\), \(\frac{1}{x^3} = x^{-3}\), \(x\sqrt{x} = x^{3/2}\).</li>
+            <li>Add 1 to the exponent, divide by the new exponent: \(\frac{x^{\alpha+1}}{\alpha+1}\).</li>
+            <li>If \(\alpha = -1\), the formula does not work (division by 0): the answer is \(\ln|x|\).</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Applications from Tutorial 3 (exercise 1.2).</b> On \(\R_+\): \(x\sqrt{x} = x^{3/2}\) has primitive <span data-eq>\(\frac{x^{5/2}}{5/2} = \frac{2}{5}x^{5/2}\)</span>. On \(\R\): \(-3\sin(x) + 2e^x\) has primitive \(3\cos(x) + 2e^x\).</p>
+        </div>
+        <div class="box why"><span class="tag">Where tan and arctan come from</span>
+          <p>Tutorial 3, exercise 1.1: \(\tan = \frac{\sin}{\cos}\), so \(\tan' = \frac{\cos^2 + \sin^2}{\cos^2} = \frac{1}{\cos^2} = 1 + \tan^2\). For arctan: if \(y = \tan(x)\), then \(\arctan(y) = x\); differentiating \(\arctan(\tan(x)) = x\) gives \(\arctan'(\tan x) \times (1 + \tan^2 x) = 1\), hence \(\arctan'(y) = \frac{1}{1 + y^2}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The sign: a primitive of \(\sin\) is \(-\cos\); a primitive of \(\cos\) is \(+\sin\).</li>
+            <li>\(\frac{1}{x^2}\) does not have \(\ln(x^2)\) as a primitive: the logarithm is only for the exponent \(-1\).</li>
+            <li>Dividing by the old exponent: \(\frac{x^{\alpha+1}}{\alpha}\) is wrong.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">In course tests and exams</span>
+          <p>January 2024 exam, exercise 1, question 1: “Fill in the table below (without worrying about the domain of definition)”, with eight functions: \(\ln(2)\), \(x^4 + 2x\), \(\frac{e^{\sqrt{x}}}{\sqrt{x}}\), \(\sin(x)\), \(1 + \tan^2(x)\), \(\frac{1}{x^2}\), \(\sqrt{x}\), \(\frac{x^5}{x^6 + 1}\). Answers from the official solution: \(x\ln(2)\), \(\frac{x^5}{5} + x^2\), \(2e^{\sqrt{x}}\), \(-\cos(x)\), \(\tan(x)\), \(-\frac{1}{x}\), \(\frac{2}{3}x^{3/2}\), \(\frac{1}{6}\ln(x^6 + 1)\). Six come from table 1, two from table 2 (part 4). \(\ln(2)\) is a <b>constant</b>.</p>
+        </div>
+        <div data-check-ref="apis/cours-1-primitives.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="apis:primitives:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">handout § 1.2 · summary, proposition 2</span></div><h2>Sums and multiplication by a real number</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>linearity</i></span>
+          <p>Let \(f\) and \(g\) be continuous on an interval \(I\), \(F\) a primitive of \(f\) and \(G\) a primitive of \(g\) on \(I\). For every \((\alpha, \beta) \in \R^2\), a primitive of \(\alpha f + \beta g\) on \(I\) is \(\alpha F + \beta G\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Proof</span>
+          <p>\((\alpha F + \beta G)' = \alpha F' + \beta G' = \alpha f + \beta g\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Examples from the handout.</b> On \(\R\), a primitive of \(x + 3x^2 + 6x^5\) is <span data-eq>\(\frac{x^2}{2} + 3 \times \frac{x^3}{3} + 6 \times \frac{x^6}{6} = \frac{x^2}{2} + x^3 + x^6\)</span>. A primitive of \(\cos(x) + 6e^x\) is \(\sin(x) + 6e^x\). On \(\left]-\frac{\pi}{2}, \frac{\pi}{2}\right[\), a primitive of \(\frac{3}{\cos^2(x)} + 2\) is \(3\tan(x) + 2x\) (the handout adds the constant 42: any constant works).</p>
+          <p><b>Tutorial 3.</b> On \(]0, +\infty[\), \(g(x) = \frac{3}{x} - 5x + 6x^4\) has primitive \(3\ln(x) - \frac{5}{2}x^2 + \frac{6}{5}x^5\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap: the product</span>
+          <ul>
+            <li>Linearity says nothing about the product: a primitive of \(f \times g\) is <b>not</b> \(F \times G\), because \((FG)' = fG + Fg\).</li>
+            <li>For a product, only two options: recognise a form \(u' \times g(u)\) (part 4), or use integration by parts (lesson 3).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-1-primitives.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="apis:primitives:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">handout § 1.2 · Tutorial 3 ex. 1.2, table 2</span></div><h2>Primitives of composite functions: the form \(u' \times g(u)\)</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The derivative of a composite function is \((G \circ u)' = u' \times (G' \circ u)\). Read backwards: if \(G\) is a primitive of \(g\), then \(G \circ u\) is a primitive of \(u' \times (g \circ u)\). Each line of table 1 thus gives a “composite” line. This is the objective “compute a primitive using functions of the form \((v' \circ u) \times u'\)”.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Function of the form</th><th>A primitive</th><th>Condition</th></tr></thead>
+          <tbody>
+            <tr><td>\(u'\,u^\alpha\) (\(\alpha \neq -1\))</td><td>\(\dfrac{u^{\alpha+1}}{\alpha+1}\)</td><td>depending on \(\alpha\)</td></tr>
+            <tr><td>\(\dfrac{u'}{2\sqrt{u}}\)</td><td>\(\sqrt{u}\)</td><td>\(u \gt 0\)</td></tr>
+            <tr><td>\(\dfrac{u'}{u^2}\)</td><td>\(-\dfrac{1}{u}\)</td><td>\(u\) does not vanish</td></tr>
+            <tr><td>\(\dfrac{u'}{u}\)</td><td>\(\ln|u|\)</td><td>\(u\) does not vanish</td></tr>
+            <tr><td>\(u'\,e^{u}\)</td><td>\(e^{u}\)</td><td></td></tr>
+            <tr><td>\(u'\cos(u)\)</td><td>\(\sin(u)\)</td><td></td></tr>
+            <tr><td>\(u'\sin(u)\)</td><td>\(-\cos(u)\)</td><td></td></tr>
+            <tr><td>\(\dfrac{u'}{1 + u^2}\)</td><td>\(\arctan(u)\)</td><td></td></tr>
+          </tbody>
+          <caption>Table 2 of the handout and of Tutorial 3. The handout writes the sine line as \(-u'\sin(u) \to \cos(u)\): it is the same.</caption>
+        </table></div>
+        <div class="prose">
+          <p><b>Examples from the handout.</b> A primitive of \(e^{2x}\) on \(\R\) is \(\frac{e^{2x}}{2}\); a primitive of \(\cos(3x)\) is \(\frac{\sin(3x)}{3}\); a primitive of \(\frac{2x}{x^2 + 1}\) is \(\ln(x^2 + 1)\).</p>
+          <p><b>Cases to know by reflex</b> (Tutorial 3, question 3a): for \(a \neq 0\), a primitive of \(\sin(ax + b)\) is \(-\frac{1}{a}\cos(ax + b)\), a primitive of \(\cos(ax + b)\) is \(\frac{1}{a}\sin(ax + b)\), a primitive of \(e^{ax + b}\) is \(\frac{1}{a}e^{ax + b}\). So \(\sin(2x) \to -\frac{\cos(2x)}{2}\), \(\cos\left(\frac{x}{2}\right) \to 2\sin\left(\frac{x}{2}\right)\), \(e^{6x - 7} \to \frac{e^{6x-7}}{6}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>You <b>divide</b> by \(a\) when looking for a primitive of \(e^{ax}\); you multiply when differentiating. Dividing by \(\frac{1}{2}\) means multiplying by 2: \(\cos\left(\frac{x}{2}\right) \to 2\sin\left(\frac{x}{2}\right)\).</li>
+            <li>\(\frac{u'}{\sqrt{u}}\) has primitive \(2\sqrt{u}\), not \(\sqrt{u}\): the table line has a 2 in the denominator.</li>
+            <li>The \(u'\) must be <b>present</b> as a factor. Without it, the line does not apply: \(\frac{1}{x^2 + 1}\) does not have \(\ln(x^2 + 1)\) as a primitive, but \(\arctan(x)\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-1-primitives.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="apis:primitives:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">Tutorial 3 ex. 1.2 · Moodle model exercises · course tests 2020 to 2024</span></div><h2>Recognising the form and adjusting the constant</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Method <i>“without integration by parts or change of variable”</i></span>
+          <ol>
+            <li><b>Spot \(u\)</b>: what is “inside” (under the root, in the denominator, in the exponent, in the cosine).</li>
+            <li><b>Compute \(u'\)</b> and compare it with the remaining factor. If it is there up to a <b>constant</b>, you are done.</li>
+            <li><b>Make \(u'\) appear</b> exactly, by compensating in front: \(x = \frac{1}{2} \times 2x\).</li>
+            <li><b>Read the line of table 2</b>, then <b>check by differentiating</b>.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercises, exercise 2</i></span>
+          <p>1. \(f(x) = \dfrac{2x - 1}{\sqrt{x^2 - x + 1}}\). Let \(u(x) = x^2 - x + 1\); \(u'(x) = 2x - 1\), so \(f = \dfrac{u'}{\sqrt{u}}\).<span class="c">name u, write the form</span> A primitive of \(f\) on \(\R\) is \(F(x) = 2\sqrt{u(x)} = 2\sqrt{x^2 - x + 1}\).</p>
+          <p>2. \(f(x) = \tan(x) = \dfrac{\sin(x)}{\cos(x)}\). Let \(u(x) = \cos(x)\); \(u'(x) = -\sin(x)\), so \(f = -\dfrac{u'}{u}\). A primitive is \(F(x) = -\ln|\cos(x)|\).</p>
+          <p>3. \(f(x) = \cos(x)\sqrt{e^{3\sin(x)}} = \cos(x)\,e^{\frac{3}{2}\sin(x)}\). Let \(u(x) = \frac{3}{2}\sin(x)\); \(u'(x) = \frac{3}{2}\cos(x)\), so \(f = \frac{2}{3}u'e^{u}\).<span class="c">3/2 was missing: compensate with 2/3</span> A primitive on \(\R\) is \(F(x) = \frac{2}{3}e^{\frac{3}{2}\sin(x)} = \frac{2}{3}\sqrt{e^{3\sin(x)}}\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 3, exercise 1.2 (3)</th><th>\(u\) and the form</th><th>A primitive</th></tr></thead>
+          <tbody>
+            <tr><td>\(f_1(x) = \dfrac{3x}{x^2 + 1} - 5x\)</td><td>\(u = x^2 + 1\): \(\frac{3}{2}\cdot\frac{u'}{u}\)</td><td>\(\frac{3}{2}\ln(x^2 + 1) - \frac{5}{2}x^2\)</td></tr>
+            <tr><td>\(f_2(x) = 4(9x^2 + 3)(x^3 + x + 1)^2\)</td><td>\(u = x^3 + x + 1\): \(12\,u'u^2\)</td><td>\(4(x^3 + x + 1)^3\)</td></tr>
+            <tr><td>\(f_3(x) = \dfrac{4x + 8}{\sqrt{x^2 + 4x + 1}}\)</td><td>\(u = x^2 + 4x + 1\): \(\frac{2u'}{\sqrt{u}}\)</td><td>\(4\sqrt{x^2 + 4x + 1}\)</td></tr>
+            <tr><td>\(f_4(x) = \dfrac{\sin(2x + 1)}{\cos^2(2x + 1)}\)</td><td>\(u = \cos(2x + 1)\): \(-\frac{1}{2}\cdot\frac{u'}{u^2}\)</td><td>\(\dfrac{1}{2\cos(2x + 1)}\)</td></tr>
+            <tr><td>\(f_5(x) = \tan(x)\)</td><td>\(u = \cos(x)\): \(-\frac{u'}{u}\)</td><td>\(-\ln|\cos(x)|\)</td></tr>
+            <tr><td>\(f_6(x) = (x^3 + 1)e^{x^4 + 4x}\)</td><td>\(u = x^4 + 4x\): \(\frac{1}{4}u'e^{u}\)</td><td>\(\frac{1}{4}e^{x^4 + 4x}\)</td></tr>
+            <tr><td>\(f_7(x) = \dfrac{9}{1 + x^2}\)</td><td>table 1</td><td>\(9\arctan(x)\)</td></tr>
+          </tbody>
+          <caption>Tutorial published without answers: these primitives are recomputed and checked by differentiation. Handout practice: \(3e^{-x} + \pi\cos(4x + 5) \to -3e^{-x} + \frac{\pi}{4}\sin(4x + 5)\); \(x e^{x^2} \to \frac{1}{2}e^{x^2}\).</caption>
+        </table></div>
+        <div class="box why"><span class="tag">\(e^{2x}\) yes, \(e^{x^2}\) no</span>
+          <p>Tutorial 3 asks: “can you compute a primitive of \(x \mapsto e^{2x}\)? of \(x \mapsto e^{x^2}\)?”. For \(e^{2x}\), \(u' = 2\) is a constant: compensate, \(\frac{e^{2x}}{2}\). For \(e^{x^2}\), you would need the factor \(u' = 2x\), which is not a constant: you cannot create it. This function has primitives (it is continuous), but none can be written with usual functions. By contrast \(x\,e^{x^2}\) can be handled: \(\frac{1}{2}e^{x^2}\).</p>
+        </div>
+        <div class="box exam"><span class="tag">In course tests and exams</span>
+          <p>The first question on integrals is almost always a primitive of this type, with the instruction “without integration by parts or change of variable”:</p>
+          <ul>
+            <li>October 2022 course test: \(\displaystyle\int_0^1 x\sqrt{x^2 + 1}\,dx\) (\(u = x^2 + 1\), form \(\frac{1}{2}u'u^{1/2}\)).</li>
+            <li>November 2022 course test: \(\displaystyle\int_0^1 \frac{2x^3 + 1}{(x^4 + 2x + 1)^3}\,dx\) (\(u = x^4 + 2x + 1\), form \(\frac{1}{2}\cdot\frac{u'}{u^3}\)).</li>
+            <li>November 2021 course test: \(\displaystyle\int_0^1 (x^2 + 1)\sqrt{x^3 + 3x + 1}\,dx\) (\(u = x^3 + 3x + 1\), form \(\frac{1}{3}u'u^{1/2}\)).</li>
+            <li>October 2024 exam: \(\displaystyle\int_0^1 \frac{2x + 2}{2x^2 + 4x + 1}\,dx\) (form \(\frac{1}{2}\cdot\frac{u'}{u}\)). January 2023: \(\displaystyle\int_1^2 (x - 1)\sqrt{x - 1}\,dx\) (power \(\frac{3}{2}\)).</li>
+          </ul>
+          <p>The full calculations are in <a href="entrainement.html#primitives">the practice page</a>; going from the primitive to the integral is in <a href="cours-2-integrales.html#s5">lesson 2, part 5</a>.</p>
+        </div>
+        <div data-check-ref="apis/cours-1-primitives.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="apis:primitives:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>You can find a primitive. Lesson 2, <a href="cours-2-integrales.html">integrals</a>, links this calculation to an area: \(\displaystyle\int_a^b f(x)\,dx = F(b) - F(a)\).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/apis.js"></script>
+</body>
+</html>
