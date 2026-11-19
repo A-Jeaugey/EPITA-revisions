@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intégration par parties, changement de variable · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 3 : intégration par parties (formule, hypothèses, démonstration, choix de u et v′, intégrations successives, relation de récurrence) et changement de variable (formule, méthode en cinq étapes, bornes). Au programme du contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 3 : IPP, changement de variable">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 3 sur 4 du contrôle</span><span>Source : fiche « IPP et changement de variable », exercices types du Moodle, TD 3 ex. 3.12 et 3.13</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Maths APIS</a> · Cours 3 · <a href="controle.html">au contrôle du 23 novembre</a></div>
+      <h1>Deux techniques <span class="w">quand aucune primitive ne se lit.</span></h1>
+      <p class="lead">L’intégration par parties échange une intégrale contre une autre, plus simple, en dérivant un facteur et en primitivant l’autre. Le changement de variable réécrit toute l’intégrale avec une nouvelle variable : la fonction, le \(dx\) et les bornes. Aux examens, le changement de variable est toujours donné.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 9 novembre · TD 3, ex. 3.12 et 3.13</span></li>
+        <li class="ex"><span><span class="k">Contrôle</span> énoncer l’IPP avec ses hypothèses, la démontrer, l’appliquer</span></li>
+      </ul>
+    </div>
+    <div class="box thm" style="align-self:start"><span class="tag">Les deux formules</span>
+      <p><b>Intégration par parties.</b> \(f\) et \(g\) de classe \(C^1\) sur \([a, b]\) :</p>
+      <div class="fm">\[\int_a^b f(x)\,g'(x)\,dx = \left[f(x)\,g(x)\right]_a^b - \int_a^b f'(x)\,g(x)\,dx\]</div>
+      <p><b>Changement de variable.</b> \(\varphi\) bijection de classe \(C^1\) :</p>
+      <div class="fm">\[\int_{\varphi(a)}^{\varphi(b)} f(x)\,dx = \int_a^b f(\varphi(t))\,\varphi'(t)\,dt\]</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 3 · IPP, changement de variable</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>La formule d’IPP</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Choisir u et v′</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Plusieurs IPP, récurrence</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Changement de variable</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Aux examens</span></a></li>
+    </ol>
+    <p class="toc-note">« De classe \(C^1\) » : dérivable, de dérivée continue.</p>
+    <div class="toc-nav"><a href="cours-2-integrales.html">← Cours 2 : intégrales</a><a href="cours-4-suites.html">Cours 4 : suites →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">La formule d’IPP</a></li><li><a href="#s2">Choisir u et v′</a></li><li><a href="#s3">Plusieurs IPP, récurrence</a></li><li><a href="#s4">Changement de variable</a></li><li><a href="#s5">Aux examens</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche § 1 · contrôle de cours d’octobre 2022</span></div><h2>L’intégration par parties : énoncé et démonstration</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>intégration par parties</i></span>
+          <p>Soient \(f\) et \(g\) deux fonctions <b>de classe \(C^1\)</b> sur un intervalle \([a, b]\). Alors :</p>
+          <div class="fm">\[\int_a^b f(x)\,g'(x)\,dx = \left[f(x) \times g(x)\right]_a^b - \int_a^b f'(x)\,g(x)\,dx.\]</div>
+        </div>
+        <div class="prose"><p>Avec les lettres \(u\) et \(v\), plus courantes en TD : \(\displaystyle\int_a^b u\,v' = \left[u\,v\right]_a^b - \int_a^b u'\,v\). On <b>dérive</b> \(u\), on <b>primitive</b> \(v'\).</p></div>
+        <div class="box proof"><span class="tag">Démonstration <i>à savoir refaire</i></span>
+          <p>\(f\) et \(g\) sont de classe \(C^1\) sur \([a, b]\), donc \(fg\) est dérivable et \((fg)' = f'g + fg'\).</p>
+          <p>Les fonctions \(f'g\) et \(fg'\) sont continues sur \([a, b]\) (produits de fonctions continues) : on peut intégrer l’égalité entre \(a\) et \(b\).</p>
+          <p>\(\displaystyle\int_a^b (fg)'(x)\,dx = \int_a^b f'(x)g(x)\,dx + \int_a^b f(x)g'(x)\,dx\) par linéarité.</p>
+          <p>Or \(fg\) est une primitive de \((fg)'\) : \(\displaystyle\int_a^b (fg)'(x)\,dx = \left[f(x)g(x)\right]_a^b\).</p>
+          <p>Donc \(\displaystyle\int_a^b f(x)g'(x)\,dx = \left[f(x)g(x)\right]_a^b - \int_a^b f'(x)g(x)\,dx\).</p>
+        </div>
+        <div class="box exam"><span class="tag">Au contrôle</span>
+          <p>Le contrôle de cours d’octobre 2022 demandait, mot pour mot : « Énoncer précisément le théorème d’intégration par parties, <b>en n’oubliant pas ses hypothèses</b> », puis « Démontrer ce théorème ». L’hypothèse à écrire : \(f\) et \(g\) de classe \(C^1\) sur \([a, b]\). La démonstration tient en quatre lignes : dérivée d’un produit, puis on intègre.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Oublier le crochet \(\left[fg\right]_a^b\), ou oublier de l’évaluer aux bornes.</li>
+            <li>Le signe moins porte sur <b>toute</b> la deuxième intégrale : mets des parenthèses si elle contient déjà un signe moins.</li>
+            <li>Écrire l’hypothèse « continues » : il faut \(C^1\), puisqu’on dérive.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="apis:ipp:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">exercices types 2 et 3 · TD 3 ex. 3.12</span></div><h2>Choisir \(u\) et \(v'\)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Tout le travail est dans le choix. L’idée : la nouvelle intégrale \(\displaystyle\int u'v\) doit être <b>plus simple</b> que celle de départ. On dérive ce qui se simplifie en dérivant, on primitive ce qu’on sait primitiver.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Forme</th><th>On dérive \(u =\)</th><th>On primitive \(v' =\)</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>polynôme \(\times\ e^{kx}\)</td><td>le polynôme</td><td>\(e^{kx}\)</td><td>le degré baisse de 1</td></tr>
+            <tr><td>polynôme \(\times \cos(kx)\) ou \(\sin(kx)\)</td><td>le polynôme</td><td>\(\cos(kx)\), \(\sin(kx)\)</td><td>le degré baisse de 1</td></tr>
+            <tr><td>\(\ln(x) \times\) puissance de \(x\)</td><td>\(\ln(x)\)</td><td>la puissance</td><td>\(\ln\) devient \(\frac{1}{x}\) ; on ne sait pas le primitiver directement</td></tr>
+            <tr><td>\(\ln(x)\) seul, \(\arctan(x)\) seul</td><td>\(\ln(x)\), \(\arctan(x)\)</td><td>\(1\)</td><td>on écrit \(\ln(x) = 1 \times \ln(x)\)</td></tr>
+            <tr><td>\(e^x \times \sin(x)\) ou \(\cos(x)\)</td><td>au choix</td><td>l’autre</td><td>deux IPP, et l’intégrale revient (partie 3)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box meth"><span class="tag">Méthode <i>rédiger une IPP</i></span>
+          <ol>
+            <li><b>Pose</b> les quatre fonctions : \(u(x) = \ldots\), \(u'(x) = \ldots\), \(v'(x) = \ldots\), \(v(x) = \ldots\)</li>
+            <li><b>Justifie</b> : « \(u\) et \(v\) sont de classe \(C^1\) sur \([a, b]\) ».</li>
+            <li><b>Applique</b> la formule : crochet moins intégrale.</li>
+            <li><b>Calcule</b> le crochet, puis la nouvelle intégrale (primitive directe ou nouvelle IPP).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>partiel de novembre 2021</i></span>
+          <p>Calculer \(J = \displaystyle\int_0^1 (2x + 1)e^{2x}\,dx\).</p>
+          <p>Je pose \(u(x) = 2x + 1\), \(u'(x) = 2\) et \(v'(x) = e^{2x}\), \(v(x) = \frac{1}{2}e^{2x}\). \(u\) et \(v\) sont de classe \(C^1\) sur \([0, 1]\).<span class="c">le polynôme se dérive</span></p>
+          <p>\(J = \left[(2x + 1)\dfrac{e^{2x}}{2}\right]_0^1 - \displaystyle\int_0^1 2 \times \dfrac{e^{2x}}{2}\,dx = \dfrac{3e^2}{2} - \dfrac{1}{2} - \left[\dfrac{e^{2x}}{2}\right]_0^1\).<span class="c">crochet moins intégrale</span></p>
+          <p>\(J = \dfrac{3e^2}{2} - \dfrac{1}{2} - \dfrac{e^2}{2} + \dfrac{1}{2} = e^2\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 2 du Moodle : une primitive de \(x\ln(x)\)</i></span>
+          <p>La dérivée de \(\ln\) est plus simple que sa primitive : je pose \(u(x) = \ln(x)\), \(u'(x) = \frac{1}{x}\) et \(v'(x) = x\), \(v(x) = \frac{x^2}{2}\).</p>
+          <p>\(\displaystyle\int x\ln(x)\,dx = \frac{x^2}{2}\ln(x) - \int \frac{x^2}{2} \times \frac{1}{x}\,dx = \frac{x^2}{2}\ln(x) - \frac{x^2}{4} + k\).<span class="c">sans bornes : pas de crochet à évaluer, une constante</span></p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 3, exercice 3.12</th><th>Choix</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>\(I = \displaystyle\int_0^1 (2x + 3)e^{3x}\,dx\)</td><td>\(u = 2x + 3\), \(v' = e^{3x}\)</td><td><span data-eq>\(\frac{13e^3 - 7}{9}\)</span></td></tr>
+            <tr><td>\(J = \displaystyle\int_0^{\pi/2} x\cos\left(\frac{x}{2}\right)dx\)</td><td>\(u = x\), \(v' = \cos\left(\frac{x}{2}\right)\), \(v = 2\sin\left(\frac{x}{2}\right)\)</td><td><span data-eq>\(\frac{\pi\sqrt{2}}{2} + 2\sqrt{2} - 4\)</span></td></tr>
+            <tr><td>\(K = \displaystyle\int_1^e \ln(x)\,dx\)</td><td>\(u = \ln(x)\), \(v' = 1\)</td><td><span data-eq>\(\left[x\ln x - x\right]_1^e = 1\)</span></td></tr>
+            <tr><td>\(L = \displaystyle\int_0^{\pi/4} x\sin(x)\,dx\)</td><td>\(u = x\), \(v' = \sin(x)\), \(v = -\cos(x)\)</td><td><span data-eq>\(\frac{\sqrt{2}(4 - \pi)}{8}\)</span></td></tr>
+            <tr><td>\(M = \displaystyle\int_0^{\pi} e^x\sin(x)\,dx\)</td><td>deux IPP (partie 3)</td><td><span data-eq>\(\frac{e^{\pi} + 1}{2}\)</span></td></tr>
+            <tr><td>★ \(N = \displaystyle\int_1^e \frac{\ln(x)}{x^2}\,dx\)</td><td>\(u = \ln(x)\), \(v' = \frac{1}{x^2}\), \(v = -\frac{1}{x}\)</td><td><span data-eq>\(1 - \frac{2}{e}\)</span></td></tr>
+            <tr><td>★ \(O = \displaystyle\int_0^{\pi/4} \frac{x}{\cos^2(x)}\,dx\)</td><td>\(u = x\), \(v' = \frac{1}{\cos^2(x)}\), \(v = \tan(x)\)</td><td><span data-eq>\(\frac{\pi}{4} - \frac{1}{2}\ln(2)\)</span></td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé : valeurs recalculées (sympy). Dans \(O\), la nouvelle intégrale est \(\int \tan\), de primitive \(-\ln(\cos x)\).</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Primitiver \(e^{kx}\), \(\cos(kx)\), \(\sin(kx)\) sans diviser par \(k\) : \(v = \frac{e^{2x}}{2}\), pas \(e^{2x}\).</li>
+            <li>\(v' = \sin(x)\) donne \(v = -\cos(x)\) : le signe moins se combine avec celui de la formule.</li>
+            <li>Dériver l’exponentielle et primitiver le polynôme : le degré monte, l’intégrale se complique. Change de choix.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="apis:ipp:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">exercices types 1 et 4 · TD 3 ex. 3.12 (5)</span></div><h2>Plusieurs IPP de suite, relation de récurrence</h2></div>
+      <div class="stack">
+        <div class="prose"><p>« À l’aide d’une ou plusieurs intégrations par parties » : trois situations demandent plus d’une étape.</p></div>
+        <div class="box model"><span class="tag">Polynôme de degré 2 : deux IPP <i>exercice type 1 du Moodle</i></span>
+          <p>Calculer \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx\).</p>
+          <p>Je pose \(u(x) = x^2\), \(u'(x) = 2x\), \(v'(x) = \cos(x)\), \(v(x) = \sin(x)\) : \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx = \left[x^2\sin(x)\right]_0^{\pi} - \int_0^{\pi} 2x\sin(x)\,dx = -2\int_0^{\pi} x\sin(x)\,dx\), car \(\sin(\pi) = 0\).<span class="c">le degré passe de 2 à 1</span></p>
+          <p>Nouvelle IPP avec \(u(x) = x\), \(v'(x) = \sin(x)\), \(v(x) = -\cos(x)\) : \(\displaystyle\int_0^{\pi} x\sin(x)\,dx = \left[-x\cos(x)\right]_0^{\pi} + \int_0^{\pi} \cos(x)\,dx = \pi + \left[\sin(x)\right]_0^{\pi} = \pi\).<span class="c">−π cos(π) = π</span></p>
+          <p>Donc \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx = -2\pi\).</p>
+        </div>
+        <div class="box model"><span class="tag">L’intégrale qui revient <i>TD 3, ex. 3.12 : \(M = \int_0^{\pi} e^x\sin(x)\,dx\)</i></span>
+          <p>Première IPP, \(u = \sin(x)\), \(v' = e^x\) : \(M = \left[e^x\sin(x)\right]_0^{\pi} - \displaystyle\int_0^{\pi} e^x\cos(x)\,dx = -\int_0^{\pi} e^x\cos(x)\,dx\).</p>
+          <p>Deuxième IPP, \(u = \cos(x)\), \(v' = e^x\) (on garde le même rôle pour \(e^x\)) : \(\displaystyle\int_0^{\pi} e^x\cos(x)\,dx = \left[e^x\cos(x)\right]_0^{\pi} + \int_0^{\pi} e^x\sin(x)\,dx = -e^{\pi} - 1 + M\).</p>
+          <p>Donc \(M = e^{\pi} + 1 - M\), soit \(2M = e^{\pi} + 1\) et \(M = \dfrac{e^{\pi} + 1}{2}\).<span class="c">M réapparaît : on résout l’équation</span></p>
+        </div>
+        <div class="box model"><span class="tag">Relation de récurrence <i>exercice type 4 du Moodle</i></span>
+          <p>Soit, pour \(n \in \N\), \(I_n = \displaystyle\int_0^1 t^n e^{-t}\,dt\). Relation entre \(I_{n+1}\) et \(I_n\) ?</p>
+          <p>Je pars de \(I_{n+1}\) et je pose \(u(t) = t^{n+1}\), \(u'(t) = (n + 1)t^n\), \(v'(t) = e^{-t}\), \(v(t) = -e^{-t}\).</p>
+          <p>\(I_{n+1} = \left[-t^{n+1}e^{-t}\right]_0^1 + \displaystyle\int_0^1 (n + 1)t^n e^{-t}\,dt = -e^{-1} + (n + 1)I_n\).<span class="c">on reconnaît Iₙ</span></p>
+          <p>Avec \(I_0 = \left[-e^{-t}\right]_0^1 = 1 - e^{-1}\), on obtient \(I_1 = -e^{-1} + I_0 = 1 - 2e^{-1}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Dans l’intégrale qui revient, <b>échanger les rôles</b> à la deuxième IPP ramène à \(M = M\) : garde \(v' = e^x\) les deux fois.</li>
+            <li>Ne pas conclure « \(0 = 0\) » : quand \(M\) réapparaît avec un signe moins, on passe tout du même côté.</li>
+            <li>Dans une récurrence, on dérive la puissance \(t^{n+1}\) (qui donne \(t^n\)), jamais l’inverse.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="apis:ipp:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche § 2 · exercices types 5 et 6 · TD 3 ex. 3.13</span></div><h2>Le changement de variable</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>changement de variable</i></span>
+          <p>Soient \(I\) et \(J\) deux intervalles de \(\R\), \(f\) une fonction définie sur \(I\) et \(\varphi : J \to I\) une bijection de classe \(C^1\). Alors pour tout \((a, b) \in J \times J\) :</p>
+          <div class="fm">\[\int_{\varphi(a)}^{\varphi(b)} f(x)\,dx = \int_a^b f(\varphi(t))\,\varphi'(t)\,dt.\]</div>
+          <p>Si \(F\) est une primitive de \(f\), alors \(F \circ \varphi\) est une primitive de \((f \circ \varphi) \times \varphi'\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Erratum officiel de la fiche</span>
+          <p>La dernière ligne de la fiche de synthèse écrit « \(F \circ f\) ». Le Moodle corrige : il faut lire « Si \(F\) est une primitive de \(f\) alors \(F \circ \varphi\) est une primitive de \((f \circ \varphi) \times \varphi'\) ». C’est la formule \(u' \times g(u)\) du cours 1, lue à l’envers.</p>
+        </div>
+        <div class="prose"><p>En pratique, on pose \(x = \varphi(t)\), donc \(dx = \varphi'(t)\,dt\), et on remplace <b>trois choses</b> : la fonction, le \(dx\), les bornes. L’objectif de l’ECUE le précise : « le changement de variable étant toujours donné ».</p></div>
+        <div class="box meth"><span class="tag">Méthode <i>cinq étapes</i></span>
+          <ol>
+            <li><b>Écris le changement</b> dans le sens donné : « je pose \(t = \sqrt{x + 2}\) », et justifie d’une phrase (bijection de classe \(C^1\)).</li>
+            <li><b>Exprime \(x\)</b> en fonction de \(t\) si besoin : \(x = t^2 - 2\).</li>
+            <li><b>Calcule \(dx\)</b> : \(dx = 2t\,dt\). Si l’énoncé donne \(x = \varphi(t)\), c’est direct ; s’il donne \(t = \psi(x)\), tu peux aussi écrire \(dt = \psi'(x)\,dx\).</li>
+            <li><b>Change les bornes</b> : quand \(x = -1\), \(t = 1\) ; quand \(x = 1\), \(t = \sqrt{3}\).</li>
+            <li><b>Réécris tout en \(t\)</b>, simplifie, calcule. Il ne doit plus rester aucun \(x\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>partiel de novembre 2022 et TD 3 ex. 3.13 (4)</i></span>
+          <p>Calculer \(K = \displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\) en posant \(t = \sqrt{x + 2}\).</p>
+          <p>\(x \mapsto \sqrt{x + 2}\) est une bijection de classe \(C^1\) de \([-1, 1]\) sur \([1, \sqrt{3}]\). On a \(x = t^2 - 2\), donc \(dx = 2t\,dt\) et \(x + 3 = t^2 + 1\).<span class="c">fonction, dx</span></p>
+          <p>Bornes : \(x = -1 \Rightarrow t = 1\) ; \(x = 1 \Rightarrow t = \sqrt{3}\).<span class="c">bornes</span></p>
+          <p>\(K = \displaystyle\int_1^{\sqrt{3}} \frac{2t\,dt}{(t^2 + 1)\,t} = 2\int_1^{\sqrt{3}} \frac{dt}{t^2 + 1} = 2\left[\arctan(t)\right]_1^{\sqrt{3}} = 2\left(\frac{\pi}{3} - \frac{\pi}{4}\right) = \frac{\pi}{6}\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 5 du Moodle</i></span>
+          <p>Calculer \(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx\) avec \(t = e^x\).</p>
+          <p>\(t = e^x\) définit une bijection de \([0, 1]\) sur \([1, e]\). \(dt = e^x\,dx\) et \(e^{2x} = t^2\).<span class="c">ici dt apparaît tel quel</span></p>
+          <p>\(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx = \int_1^e \frac{dt}{t^2 + 1} = \arctan(e) - \arctan(1) = \arctan(e) - \frac{\pi}{4}\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 3, exercice 3.13</th><th>Après changement</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>\(I = \displaystyle\int_0^{1/2} \frac{4x^2}{(2x + 1)^2}\,dx\), \(t = 2x + 1\)</td><td>\(\displaystyle\frac{1}{2}\int_1^2 \left(1 - \frac{2}{t} + \frac{1}{t^2}\right)dt\)</td><td><span data-eq>\(\frac{3}{4} - \ln(2)\)</span></td></tr>
+            <tr><td>\(J = \displaystyle\int_0^{\ln\sqrt{3}} \frac{dt}{e^t + e^{-t}}\), \(x = e^t\)</td><td>\(\displaystyle\int_1^{\sqrt{3}} \frac{dx}{x^2 + 1}\)</td><td><span data-eq>\(\frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}\)</span></td></tr>
+            <tr><td>\(K = \displaystyle\int_1^e \frac{\ln(x)}{\sqrt{x}}\,dx\), \(t = \ln(x)\)</td><td>\(\displaystyle\int_0^1 t\,e^{t/2}\,dt\), puis une IPP</td><td><span data-eq>\(4 - 2\sqrt{e}\)</span></td></tr>
+            <tr><td>\(L = \displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\), \(t = \sqrt{x + 2}\)</td><td>\(\displaystyle 2\int_1^{\sqrt{3}} \frac{dt}{t^2 + 1}\)</td><td><span data-eq>\(\frac{\pi}{6}\)</span></td></tr>
+            <tr><td>\(M = \displaystyle\int_0^4 e^{\sqrt{x}}\,dx\), \(t = \sqrt{x}\)</td><td>\(\displaystyle\int_0^2 2t\,e^t\,dt\), puis une IPP</td><td><span data-eq>\(2e^2 + 2\)</span></td></tr>
+            <tr><td>★ \(N = \displaystyle\int_{\pi/6}^{\pi/3} \frac{dt}{\sin(t)\cos(t)}\), \(x = \tan(t)\)</td><td>\(\displaystyle\int_{1/\sqrt{3}}^{\sqrt{3}} \frac{dx}{x}\)</td><td><span data-eq>\(\ln(3)\)</span></td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé : valeurs recalculées (sympy). \(J\) est tombée à l’examen de janvier 2024, \(L\) au partiel de novembre 2022, \(K\) (par IPP) au partiel de novembre 2020.</caption>
+        </table></div>
+        <div class="prose"><p><b>Sans bornes</b> (exercice type 6) : \(\displaystyle\int \frac{\sin^3 t}{\cos^5 t}\,dt\) avec \(u = \tan(t)\), \(du = \frac{dt}{\cos^2 t}\) : \(\displaystyle\int \frac{\sin^3 t}{\cos^3 t} \times \frac{dt}{\cos^2 t} = \int u^3\,du = \frac{u^4}{4} + k = \frac{\tan^4 t}{4} + k\). On revient à la variable de départ à la fin.</p></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li><b>Oublier de changer les bornes</b> : l’erreur la plus fréquente. Les nouvelles bornes sont les valeurs de la nouvelle variable.</li>
+            <li>Remplacer \(dx\) par \(dt\) sans le facteur \(\varphi'(t)\) : avec \(x = t^2 - 2\), \(dx = 2t\,dt\).</li>
+            <li>Laisser un \(x\) dans l’intégrale en \(t\).</li>
+            <li>Quand la nouvelle borne du bas dépasse celle du haut, on garde l’ordre obtenu : le signe se règle tout seul.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="apis:ipp:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">sujets 2020 à 2024</span></div><h2>Aux examens : toujours le même trio</h2></div>
+      <div class="stack">
+        <div class="prose"><p>L’exercice d’intégrales des anciens sujets a une architecture stable : une primitive directe « sans intégration par parties ni changement de variable » (cours 1 et 2), une IPP, un changement de variable donné.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Sujet</th><th>Intégration par parties</th><th>Changement de variable donné</th></tr></thead>
+          <tbody>
+            <tr><td>Contrôle, octobre 2020</td><td>\(\displaystyle\int_0^{\pi/6} x\sin(3x)\,dx = \frac{1}{9}\)</td><td>—</td></tr>
+            <tr><td>Partiel, novembre 2020</td><td>\(\displaystyle\int_1^e \frac{\ln(x)}{\sqrt{x}}\,dx = 4 - 2\sqrt{e}\)</td><td>\(\displaystyle\int_0^1 \frac{dx}{x^2 + 3}\), \(t = \frac{x}{\sqrt{3}}\) : \(\frac{\pi\sqrt{3}}{18}\)</td></tr>
+            <tr><td>Partiel, novembre 2021</td><td>\(\displaystyle\int_0^1 (2x + 1)e^{2x}\,dx = e^2\)</td><td>\(\displaystyle\int_1^{2\sqrt{3}+1} \frac{dx}{(x - 1)^2 + 4}\), \(x = 2t + 1\) : \(\frac{\pi}{6}\)</td></tr>
+            <tr><td>Partiel, novembre 2022</td><td>\(\displaystyle\int_0^{\pi/4} (2x + 1)\sin(2x)\,dx = 1\)</td><td>\(\displaystyle\int_{-1}^{1} \frac{dx}{(x + 3)\sqrt{x + 2}}\), \(t = \sqrt{x + 2}\) : \(\frac{\pi}{6}\)</td></tr>
+            <tr><td>Examen, janvier 2024</td><td>\(\displaystyle\int_0^1 (3x + 1)e^{2x}\,dx = \frac{5e^2 + 1}{4}\)</td><td>\(\displaystyle\int_0^{\ln\sqrt{3}} \frac{dt}{e^{-t} + e^{t}}\), \(x = e^t\) : \(\frac{\pi}{12}\)</td></tr>
+            <tr><td>Examen, octobre 2024</td><td>\(\displaystyle\int_0^{\pi} (x + 1)\cos\left(\frac{x}{3}\right)dx = \frac{3\sqrt{3}\,\pi}{2} + \frac{3\sqrt{3}}{2} - \frac{9}{2}\)</td><td>\(\displaystyle\int_0^{\sqrt{3}} \frac{dx}{3 + x^2}\), \(t = \frac{x}{\sqrt{3}}\) : \(\frac{\pi\sqrt{3}}{12}\)</td></tr>
+          </tbody>
+          <caption>Résultats vérifiés par calcul formel. Chaque exercice est corrigé pas à pas dans l’entraînement.</caption>
+        </table></div>
+        <div class="box exam"><span class="tag">Ce que ça dit</span>
+          <ul>
+            <li>L’IPP est presque toujours « polynôme de degré 1 \(\times\) exponentielle ou sinus / cosinus » : dérive le polynôme.</li>
+            <li>Le changement de variable mène presque toujours à \(\displaystyle\int \frac{dt}{1 + t^2} = \arctan\). À connaître : \(\arctan(0) = 0\), \(\arctan\left(\frac{1}{\sqrt{3}}\right) = \frac{\pi}{6}\), \(\arctan(1) = \frac{\pi}{4}\), \(\arctan(\sqrt{3}) = \frac{\pi}{3}\).</li>
+            <li>Le contrôle de cours peut demander l’énoncé et la démonstration de l’IPP (octobre 2022).</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen d’octobre 2024</i></span>
+          <p>Calculer \(K = \displaystyle\int_0^{\sqrt{3}} \frac{dx}{3 + x^2}\) en posant \(t = \frac{x}{\sqrt{3}}\).</p>
+          <p>\(x = \sqrt{3}\,t\), donc \(dx = \sqrt{3}\,dt\). Bornes : \(x = 0 \Rightarrow t = 0\) ; \(x = \sqrt{3} \Rightarrow t = 1\).</p>
+          <p>\(K = \displaystyle\int_0^1 \frac{\sqrt{3}\,dt}{3 + 3t^2} = \frac{\sqrt{3}}{3}\int_0^1 \frac{dt}{1 + t^2} = \frac{\sqrt{3}}{3}\left[\arctan(t)\right]_0^1 = \frac{\pi\sqrt{3}}{12}\).<span class="c">on factorise 3 pour faire apparaître 1 + t²</span></p>
+        </div>
+        <div data-check-ref="apis/cours-3-ipp.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="apis:ipp:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours 3 du Moodle est terminé. Le cours 4, <a href="cours-4-suites.html">les suites numériques</a>, est la deuxième moitié du contrôle.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
