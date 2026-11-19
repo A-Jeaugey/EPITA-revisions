@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche · Maths APIS</title>
+<meta name="description" content="Maths, APIS : la fiche du contrôle de cours du 23 novembre sur deux pages A4. Recto : primitives, intégrales, intégration par parties, changement de variable. Verso : suites, bornes, monotonie, limites, gendarmes, suites géométriques, critère du quotient.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Fiche APIS : deux feuilles, intégrales au recto et suites au verso, des cases en colonnes. À l’impression : une page A4 par feuille,
+   aucune case coupée, aucune formule coupée ni défilante (les formules sont en ligne et courtes). */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:30px 18px}
+.top>*{min-width:0}
+.top h1{font-size:2.4rem;margin-top:.3rem}
+.top p{color:var(--muted);max-width:46em;margin-top:.4rem}
+.side-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap;margin:6px 0 10px}
+.side-h h2{font-size:1.6rem}
+.side-h span{font-family:var(--font-ui);font-size:.86rem;color:var(--muted)}
+.a4{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);padding:16px;columns:3 300px;column-gap:14px;margin-bottom:40px}
+.fb{break-inside:avoid;border:1px solid var(--line);border-top:2px solid var(--rule);padding:.55rem .65rem;margin:0 0 12px;display:grid;gap:.35rem;background:var(--bg);min-width:0}
+.fb>*{min-width:0}
+.fb h3{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0}
+.fb h3 a{color:inherit;text-decoration:none}
+.fb h3 a:hover{text-decoration:underline}
+.fb.hot{border-top-color:var(--exam);background:var(--exam-soft)}
+.fb.hot h3{color:var(--exam)}
+.fb.trapb{border-top-color:var(--red);background:var(--red-soft)}
+.fb.trapb h3{color:var(--red)}
+.fb.demo{border-top-color:var(--proof);background:var(--proof-soft)}
+.fb.demo h3{color:var(--proof)}
+.fb p,.fb li{font-size:.9rem;line-height:1.42}
+.fb ul{margin:0;padding-left:1.05rem;display:grid;gap:.15rem}
+.fb .katex{font-size:1em}
+.fb .muted{font-size:.84rem}
+.mt{width:100%;border-collapse:collapse;font-size:.86rem}
+.mt th,.mt td{padding:.12rem .3rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mt th{font-family:var(--font-ui);font-size:.66rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mt tr:last-child td{border-bottom:0}
+.mt.c td,.mt.c th{text-align:center}
+@media print{
+  @page{size:A4;margin:6mm}
+  html,body{background:#fff!important;color:#000}
+  .top .actions,#shell,.progress,.top p,.top .eyebrow{display:none!important}
+  .wrapx{padding:0}
+  .top{padding:0 0 1.5mm}
+  .top h1{font-size:13pt;margin:0}
+  .side-h{margin:0 0 1.5mm}
+  .side-h h2{font-size:11pt}
+  .side-h span{font-size:7pt}
+  .a4{border:0;padding:0;columns:3;column-gap:3mm;margin:0;background:#fff}
+  .side.dp{break-before:page}
+  .fb{padding:1.3mm 1.7mm;margin-bottom:2mm;gap:.6mm;background:#fff!important;border-color:#999!important}
+  .fb p,.fb li,.mt{font-size:8.6pt;line-height:1.32}
+  .fb .muted{font-size:7.2pt}
+  .fb h3{font-size:7.4pt}
+  .fb ul{gap:.15mm}
+  .mt th,.mt td{padding:.15mm .7mm}
+  .mt th{font-size:6.4pt}
+  .katex{font-size:1em!important}
+  .fb .katex{white-space:nowrap}   /* à l’impression, une formule ne se coupe jamais (KaTeX couperait après =) */
+}
+</style>
+</head>
+<body data-resume="Maths APIS · fiche">
+<div id="shell"></div>
+<div class="wrapx">
+  <div class="top">
+    <div><div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Maths APIS</a> · Fiche</div><h1>Le contrôle du 23 novembre sur une fiche</h1><p>À relire la veille et le matin. Deux pages A4 à l’impression : les intégrales au recto, les suites au verso. Chaque titre de case renvoie à la partie du cours. Ce qui s’ajoutera pour l’examen final est listé en bas du verso.</p></div>
+    <div class="actions row"><button type="button" class="btn primary" id="printBtn" hidden>Imprimer en A4</button><a class="btn" href="controle.html">La page du contrôle</a></div>
+  </div>
+
+  <div class="side obm">
+  <div class="side-h"><h2>Recto · Primitives et intégrales</h2><span>cours 3 du Moodle, en entier · cours 1 à 3 du site</span></div>
+  <div class="a4 obm">
+    <section class="fb hot"><h3><a href="controle.html#format">Au contrôle</a></h3>
+      <ul>
+        <li>Remplir un tableau de primitives ; calculer une intégrale « sans IPP ni changement de variable ».</li>
+        <li>Une intégrale par un calcul d’aires ; un encadrement par la méthode des rectangles.</li>
+        <li>Énoncer l’IPP avec ses hypothèses, la démontrer (octobre 2022), l’appliquer.</li>
+        <li>Un changement de variable, toujours donné.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-1-primitives.html#s1">Primitive</a></h3>
+      <ul>
+        <li>\(F\) primitive de \(f\) sur \(I\) : \(F\) dérivable sur \(I\) et \(F' = f\).</li>
+        <li>Toute fonction continue sur un intervalle a des primitives.</li>
+        <li>Deux primitives diffèrent d’une constante : \(F + c\).</li>
+        <li>Une seule primitive prend une valeur donnée en un point donné.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-1-primitives.html#s2">Tableau 1 : primitives usuelles</a></h3>
+      <table class="mt"><thead><tr><th>\(f(x)\)</th><th>\(F(x)\)</th></tr></thead><tbody>
+        <tr><td>\(a\)</td><td>\(ax\)</td></tr>
+        <tr><td>\(x^{\alpha}\) (\(\alpha \neq -1\))</td><td>\(\frac{x^{\alpha+1}}{\alpha+1}\)</td></tr>
+        <tr><td>\(\frac{1}{\sqrt{x}}\)</td><td>\(2\sqrt{x}\)</td></tr>
+        <tr><td>\(\frac{1}{x^2}\)</td><td>\(-\frac{1}{x}\)</td></tr>
+        <tr><td>\(\frac{1}{x}\)</td><td>\(\ln|x|\)</td></tr>
+        <tr><td>\(e^x\)</td><td>\(e^x\)</td></tr>
+        <tr><td>\(\cos x\)</td><td>\(\sin x\)</td></tr>
+        <tr><td>\(\sin x\)</td><td>\(-\cos x\)</td></tr>
+        <tr><td>\(\frac{1}{\cos^2 x} = 1 + \tan^2 x\)</td><td>\(\tan x\)</td></tr>
+        <tr><td>\(\frac{1}{1 + x^2}\)</td><td>\(\arctan x\)</td></tr>
+      </tbody></table></section>
+
+    <section class="fb"><h3><a href="cours-1-primitives.html#s4">Tableau 2 : formes composées</a></h3>
+      <table class="mt"><thead><tr><th>Forme</th><th>Primitive</th></tr></thead><tbody>
+        <tr><td>\(u'u^{\alpha}\) (\(\alpha \neq -1\))</td><td>\(\frac{u^{\alpha+1}}{\alpha+1}\)</td></tr>
+        <tr><td>\(\frac{u'}{2\sqrt{u}}\)</td><td>\(\sqrt{u}\)</td></tr>
+        <tr><td>\(\frac{u'}{u^2}\)</td><td>\(-\frac{1}{u}\)</td></tr>
+        <tr><td>\(\frac{u'}{u}\)</td><td>\(\ln|u|\)</td></tr>
+        <tr><td>\(u'e^u\)</td><td>\(e^u\)</td></tr>
+        <tr><td>\(u'\cos u\)</td><td>\(\sin u\)</td></tr>
+        <tr><td>\(u'\sin u\)</td><td>\(-\cos u\)</td></tr>
+        <tr><td>\(\frac{u'}{1 + u^2}\)</td><td>\(\arctan u\)</td></tr>
+      </tbody></table>
+      <p class="muted">\(e^{kx} \to \frac{e^{kx}}{k}\) ; \(\cos(kx) \to \frac{\sin(kx)}{k}\) ; \(\sin(kx) \to -\frac{\cos(kx)}{k}\).</p></section>
+
+    <section class="fb"><h3><a href="cours-1-primitives.html#s5">Reconnaître la forme</a></h3>
+      <ul>
+        <li>Nommer \(u\), calculer \(u'\), comparer : il manque souvent une constante.</li>
+        <li>\(\frac{x}{x^2+1} = \frac{1}{2}\cdot\frac{u'}{u}\) : primitive \(\frac{1}{2}\ln(x^2+1)\).</li>
+        <li>\(x\sqrt{x^2+1} = \frac{1}{2}u'u^{1/2}\) : primitive \(\frac{1}{3}(x^2+1)^{3/2}\).</li>
+        <li>\(\tan x = -\frac{u'}{u}\) avec \(u = \cos x\) : primitive \(-\ln|\cos x|\).</li>
+        <li>Vérifier en dérivant.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-2-integrales.html#s1">Intégrale et aire</a></h3>
+      <ul>
+        <li>\(f \geq 0\) : \(\int_a^b f\) est l’aire sous la courbe, en unités d’aire.</li>
+        <li>\(f \leq 0\) : \(\int_a^b f = -\) aire. Signe quelconque : + au-dessus, − en dessous.</li>
+        <li>Par aires : triangle \(\frac{b \times h}{2}\), trapèze \(\frac{(B+b)h}{2}\), demi-disque \(\frac{\pi r^2}{2}\).</li>
+        <li>Variable muette : \(\int_a^b f(x)\,dx = \int_a^b f(t)\,dt\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-2-integrales.html#s3">Méthode des rectangles</a></h3>
+      <ul>
+        <li>\(n\) intervalles de largeur \(h = \frac{b-a}{n}\).</li>
+        <li>\(f\) croissante : bord gauche = rectangles inférieurs, bord droit = supérieurs (l’inverse si décroissante).</li>
+        <li>\(f\) monotone : \(A_{n,i} \leq \int_a^b f \leq A_{n,s}\), et les deux tendent vers l’intégrale.</li>
+        <li>\(\int_0^1 x^2\,dx\), \(n = 5\) : \(0{,}24 \leq I \leq 0{,}44\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-2-integrales.html#s4">Propriétés</a></h3>
+      <ul>
+        <li>\(\int_a^a f = 0\) ; \(\int_b^a f = -\int_a^b f\).</li>
+        <li>Chasles : \(\int_a^b f = \int_a^c f + \int_c^b f\).</li>
+        <li>Paire : \(\int_{-a}^{a} f = 2\int_0^a f\). Impaire : \(\int_{-a}^{a} f = 0\).</li>
+        <li>Linéarité : \(\int (\alpha f + \beta g) = \alpha\int f + \beta\int g\).</li>
+        <li>\(f \leq g \Rightarrow \int_a^b f \leq \int_a^b g\) ; \(f \leq M \Rightarrow \int_a^b f \leq M(b-a)\).</li>
+        <li>Valeur moyenne : \(\frac{1}{b-a}\int_a^b f(x)\,dx\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-2-integrales.html#s5">Théorème fondamental</a></h3>
+      <ul>
+        <li>\(f\) continue : \(x \mapsto \int_a^x f(t)\,dt\) est la primitive de \(f\) qui s’annule en \(a\).</li>
+        <li>\(\int_a^b f(x)\,dx = \left[F(x)\right]_a^b = F(b) - F(a)\).</li>
+      </ul></section>
+
+    <section class="fb demo"><h3><a href="cours-3-ipp.html#s1">Intégration par parties</a></h3>
+      <ul>
+        <li>\(f\), \(g\) de classe \(C^1\) sur \([a,b]\) : \(\int_a^b fg' = \left[fg\right]_a^b - \int_a^b f'g\).</li>
+        <li>Preuve : \((fg)' = f'g + fg'\), on intègre, et \(\int_a^b (fg)' = \left[fg\right]_a^b\).</li>
+        <li>Polynôme \(\times\) (\(e^{kx}\), \(\cos\), \(\sin\)) : dériver le polynôme.</li>
+        <li>\(\ln\) : dériver \(\ln\) ; \(\ln x = 1 \times \ln x\).</li>
+        <li>\(e^x\sin x\) : deux IPP, l’intégrale revient.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-3-ipp.html#s4">Changement de variable</a></h3>
+      <ul>
+        <li>\(\varphi\) bijection \(C^1\) : \(\int_{\varphi(a)}^{\varphi(b)} f(x)\,dx = \int_a^b f(\varphi(t))\varphi'(t)\,dt\).</li>
+        <li>1. poser ; 2. exprimer \(x\) ; 3. \(dx = \varphi'(t)\,dt\) ; 4. <b>changer les bornes</b> ; 5. tout réécrire.</li>
+        <li>\(t = \sqrt{x+2}\) : \(x = t^2 - 2\), \(dx = 2t\,dt\).</li>
+        <li>\(\arctan 0 = 0\), \(\arctan\frac{1}{\sqrt{3}} = \frac{\pi}{6}\), \(\arctan 1 = \frac{\pi}{4}\), \(\arctan\sqrt{3} = \frac{\pi}{3}\).</li>
+      </ul></section>
+
+    <section class="fb trapb"><h3>Pièges</h3>
+      <ul>
+        <li>Primitive de \(\sin\) : \(-\cos\). De \(\frac{1}{x^2}\) : \(-\frac{1}{x}\), pas un logarithme.</li>
+        <li>\(F(a) - F(b)\) au lieu de \(F(b) - F(a)\).</li>
+        <li>Une aire est positive ; une intégrale peut être négative.</li>
+        <li>IPP : oublier le crochet, ou l’hypothèse \(C^1\).</li>
+        <li>Changement de variable : bornes non changées, \(dx\) remplacé par \(dt\) sans facteur.</li>
+        <li>Paire : on double. Impaire : zéro.</li>
+      </ul></section>
+  </div>
+  </div>
+
+  <div class="side dp">
+  <div class="side-h"><h2>Verso · Suites</h2><span>cours 4 du Moodle : introduction, limites, exemples remarquables · cours 4 du site</span></div>
+  <div class="a4 dp">
+    <section class="fb hot"><h3><a href="controle.html#format">Au contrôle</a></h3>
+      <ul>
+        <li>Définitions « avec les quantificateurs » : bornée, croissante, convergente (2022, 2023).</li>
+        <li>« Donner un exemple de suite… », parfois à justifier.</li>
+        <li>« Convergente ? Si oui, donner la limite. »</li>
+        <li>Condition sur \(q\) pour que \((q^n)\) converge (2022).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s2">Bornes</a></h3>
+      <ul>
+        <li>Majorée : \(\exists M \in \R,\ \forall n \in \N,\ u_n \leq M\).</li>
+        <li>Minorée : \(\exists m \in \R,\ \forall n \in \N,\ m \leq u_n\).</li>
+        <li>Bornée : majorée et minorée \(\iff \exists M,\ \forall n,\ |u_n| \leq M\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s3">Monotonie</a></h3>
+      <ul>
+        <li>Croissante : \(\forall n \in \N,\ u_{n+1} \geq u_n\) (strictement : \(\gt\)).</li>
+        <li>Monotone : croissante ou décroissante. Stationnaire : constante à partir d’un rang.</li>
+        <li>Méthodes : signe de \(u_{n+1} - u_n\) ; \(\frac{u_{n+1}}{u_n}\) comparé à 1 si \(u_n \gt 0\) ; variations de \(f\) ; récurrence.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s4">Limites : définitions</a></h3>
+      <ul>
+        <li>\(u_n \to \ell\) : \(\forall \varepsilon \gt 0,\ \exists n_\varepsilon \in \N,\ \forall n \geq n_\varepsilon,\ |u_n - \ell| \lt \varepsilon\).</li>
+        <li>\(u_n \to +\infty\) : \(\forall A \in \R,\ \exists n_0 \in \N,\ \forall n \geq n_0,\ u_n \gt A\).</li>
+        <li>Divergente : ne converge pas (limite infinie ou pas de limite).</li>
+        <li>La limite est unique. \(u_n \to 0 \iff |u_n| \to 0\).</li>
+        <li>\(u_n \gt 0\) pour tout \(n\) : seulement \(\ell \geq 0\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s5">Opérations, formes indéterminées</a></h3>
+      <ul>
+        <li>Limites finies : somme, produit, inverse (si \(\ell' \neq 0\)).</li>
+        <li>Indéterminées : \(\infty - \infty\), \(0 \times \infty\), \(\frac{\infty}{\infty}\), \(\frac{0}{0}\).</li>
+        <li>Factoriser par le terme dominant ; quantité conjuguée pour les racines.</li>
+        <li>\(\frac{\ln n}{n} \to 0\), \(\frac{n^k}{e^n} \to 0\), \(\frac{e^n}{n^k} \to +\infty\), \(\frac{a^n}{n!} \to 0\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s6">Comparaison, gendarmes</a></h3>
+      <ul>
+        <li>\(u_n \leq v_n\) : \(u_n \to +\infty \Rightarrow v_n \to +\infty\) ; \(v_n \to -\infty \Rightarrow u_n \to -\infty\).</li>
+        <li>Gendarmes : \(u_n \leq v_n \leq w_n\) à partir d’un rang, \((u_n)\) et \((w_n)\) de même limite \(\ell\) : \(v_n \to \ell\).</li>
+        <li>Bornée \(\times\) (tend vers 0) tend vers 0 : \(\frac{\sin n}{n} \to 0\).</li>
+      </ul></section>
+
+    <section class="fb demo"><h3><a href="cours-4-suites.html#s6">Démonstrations</a></h3>
+      <ul>
+        <li><b>Bornée \(\iff |u_n| \leq M\)</b> : \(\Leftarrow\) \(-M \leq u_n \leq M\) ; \(\Rightarrow\) \(M = \max(|m|, |K|)\).</li>
+        <li><b>Convergente \(\Rightarrow\) bornée</b> : \(\varepsilon = 1\), \(|u_n| \leq |u_n - \ell| + |\ell| \lt 1 + |\ell|\) pour \(n \geq N\) ; \(M = \max(|u_0|, \ldots, |u_{N-1}|, 1 + |\ell|)\).</li>
+        <li><b>Gendarmes</b> : \(\varepsilon \gt 0\), \(N_1\) pour \((u_n)\), \(N_2\) pour \((w_n)\), \(N = \max(N_1, N_2)\) : \(\ell - \varepsilon \lt u_n \leq v_n \leq w_n \lt \ell + \varepsilon\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s7">Suites géométriques</a></h3>
+      <ul>
+        <li>\(u_{n+1} = q\,u_n\) ; \(u_n = u_0 q^n = u_{n_0}q^{n-n_0}\).</li>
+        <li>\(u_0 + \cdots + u_n = u_0\frac{1 - q^{n+1}}{1 - q}\) (\(q \neq 1\)) ; \((n+1)u_0\) si \(q = 1\).</li>
+        <li>\(q \gt 1\) : \(+\infty\) ; \(q = 1\) : 1 ; \(|q| \lt 1\) : 0 ; \(q \leq -1\) : pas de limite.</li>
+        <li>\((q^n)\) converge \(\iff -1 \lt q \leq 1\).</li>
+        <li>Arithmétique : \(u_n = u_0 + nr\), somme \((n+1)\frac{u_0 + u_n}{2}\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s7">Arithmético-géométrique</a></h3>
+      <ul>
+        <li>\(u_{n+1} = au_n + b\) : point fixe \(\ell = a\ell + b\).</li>
+        <li>\(v_n = u_n - \ell\) est géométrique de raison \(a\).</li>
+        <li>\(u_n = \ell + (u_0 - \ell)a^n\) ; si \(|a| \lt 1\), \(u_n \to \ell\).</li>
+        <li>\(u_{n+1} = \frac{u_n + 4}{5}\), \(u_0 = 5\) : \(u_n = 1 + \frac{4}{5^n}\).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s8">Critère du quotient</a></h3>
+      <ul>
+        <li>\(u_n \neq 0\) et \(\left|\frac{u_{n+1}}{u_n}\right| \lt \ell \lt 1\) à partir d’un rang : \(u_n \to 0\).</li>
+        <li>Si \(\frac{u_{n+1}}{u_n} \to 0\), alors \(u_n \to 0\).</li>
+        <li>\(\ell\) est fixe : « quotient \(\lt 1\) » ne suffit pas (\(1 + \frac{1}{n}\)).</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="cours-4-suites.html#s8">Exemples à donner</a></h3>
+      <table class="mt"><tbody>
+        <tr><td>bornée, non convergente</td><td>\((-1)^n\)</td></tr>
+        <tr><td>ni croissante ni décroissante</td><td>\((-1)^n\)</td></tr>
+        <tr><td>majorée par 3</td><td>\(3 - n\)</td></tr>
+        <tr><td>strict. croissante, bornée</td><td>\(\frac{n}{n+1}\)</td></tr>
+        <tr><td>strict. croissante, convergente</td><td>\(-\frac{1}{n+1}\)</td></tr>
+        <tr><td>non constante, tend vers 2</td><td>\(2 + \frac{1}{n+1}\)</td></tr>
+        <tr><td>tend vers \(+\infty\), non croissante</td><td>\(n + 2(-1)^n\)</td></tr>
+        <tr><td>non majorée, pas de limite \(+\infty\)</td><td>\(n(1 + (-1)^n)\)</td></tr>
+        <tr><td>ni majorée ni minorée</td><td>\((-1)^n n\)</td></tr>
+      </tbody></table></section>
+
+    <section class="fb trapb"><h3>Pièges</h3>
+      <ul>
+        <li>« \(\forall n,\ \exists M\) » : l’ordre est faux, \(M\) vient d’abord.</li>
+        <li>Divergente ne veut pas dire « tend vers l’infini ».</li>
+        <li>Bornée n’implique pas convergente ; convergente implique bornée.</li>
+        <li>« Converge \(\iff |q| \lt 1\) » oublie \(q = 1\).</li>
+        <li>Somme géométrique : exposant = nombre de termes.</li>
+        <li>Quotient comparé à 1 : seulement pour des termes positifs.</li>
+      </ul></section>
+
+    <section class="fb"><h3><a href="index.html#final">Pour l’examen final, en plus</a></h3>
+      <ul>
+        <li>Théorèmes de convergence : croissante majorée, suites adjacentes, suites extraites.</li>
+        <li>Suites récurrentes \(u_{n+1} = f(u_n)\).</li>
+        <li>Comparaisons de Landau : \(o\), \(O\), \(\sim\).</li>
+      </ul><p class="muted">Hors contrôle du 23 novembre. La fiche sera complétée quand ces cours seront publiés.</p></section>
+  </div>
+  </div>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var b = document.getElementById('printBtn');
+  if (!REV.util.inFrame()) { b.hidden = false; b.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+</body>
+</html>

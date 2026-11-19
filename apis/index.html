@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maths · APIS · Primitives, intégrales et suites</title>
+<meta name="description" content="Maths, ECUE APIS (analyse : primitives, intégrales et suites numériques), bimestre 2. Deux échéances séparées : le contrôle de cours du lundi 23 novembre 2026 (cours 3 en entier, suites jusqu’aux exemples remarquables) et l’examen final de décembre (tout l’ECUE). Cours, exercices corrigés, QCM, fiche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Accueil APIS : deux blocs bien séparés, le contrôle de cours du 23 novembre puis l'examen final de décembre.
+   Mise en page de l'accueil des maths du B1. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:64px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap;padding-top:.8rem;border-top:2px solid var(--rule)}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.step{display:inline-block;font-family:var(--font-hand);font-weight:700;font-size:1.5rem;line-height:1;color:var(--red);margin-right:.5rem}
+.conv{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--exam);border-radius:0 0 var(--radius) var(--radius);display:grid;align-self:center;min-width:0}
+.conv-top{display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:.55rem 1rem;border-bottom:1px solid var(--line);background:var(--exam-soft);font-family:var(--font-ui);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--exam);font-weight:700}
+.conv-st{font-size:.82rem;letter-spacing:.02em;text-transform:none;color:var(--ink);background:var(--surface);border:1px solid var(--exam);border-radius:999px;padding:.1rem .6rem}
+.conv-st:empty{display:none}
+.conv-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.75rem}
+.conv-b>*{min-width:0}
+.conv h2{font-size:1.9rem}
+.slot{display:grid;grid-template-columns:5.6rem minmax(0,1fr);gap:4px 12px;padding:.6rem 0;border-top:1px dashed var(--line);align-items:baseline}
+.slot .h{font-family:var(--font-hand);font-weight:700;font-size:1.45rem;line-height:1;color:var(--red)}
+.slot b{font-family:var(--font-ui);font-weight:600}
+.slot p{grid-column:2;font-size:.95rem;color:var(--muted);line-height:1.45}
+.conv-side{margin:0;padding-top:.6rem;border-top:1px dashed var(--line);font-size:.9rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);padding:.95rem 1.05rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+a.stop:hover{border-color:var(--accent)}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stop h3{margin:0;font-size:1.3rem}
+.stop p{font-size:.95rem;color:var(--muted)}
+.stop .tg{display:flex;flex-wrap:wrap;gap:6px}
+.stop .tg span{font-family:var(--font-ui);font-size:.74rem;border:1px solid var(--line);border-radius:3px;padding:.05rem .45rem;color:var(--muted)}
+.stop .tg .hot{border-color:var(--exam);color:var(--exam)}
+.stop .mono{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.stop.soon{border-style:dashed;background:transparent}
+.bar{height:6px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tools .stop{border-top-width:1px;border-radius:var(--radius)}
+.tools .stop.key{border-top:3px solid var(--exam)}
+.eval{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .w{font-family:var(--font-display);font-weight:700;font-size:2.5rem;line-height:1;color:var(--accent)}
+.eval .card.ex .w{color:var(--exam)}
+.pts td.n,.pts th.n{text-align:right;white-space:nowrap;font-family:var(--font-ui);font-variant-numeric:tabular-nums;width:1%}
+.log{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule)}
+.log li{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:4px 16px;padding:.7rem 1rem;border-top:1px solid var(--line);align-items:baseline}
+.log li:first-child{border-top:0}
+.log .d{font-family:var(--font-ui);font-size:.82rem;color:var(--exam)}
+.log p{font-size:.97rem}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-resume="Maths APIS · accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — accueil de la matière</span><span>Cours 3 et 4 du Moodle · TD 3 et 4 · exercices types corrigés</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="2"></span>Maths · bimestre 2 · ECUE APIS</div>
+      <h1>Primitives, intégrales, suites : <span class="w">deux échéances, deux périmètres.</span></h1>
+      <p class="lead">L’APIS est l’ECUE d’analyse du semestre. D’abord un contrôle de cours, lundi 23 novembre, sur les intégrales et le début des suites. Ensuite l’examen final de décembre, sur tout l’ECUE, avec les théorèmes de convergence, les suites récurrentes et les comparaisons de Landau. Cette page sépare les deux.</p>
+      <ul class="feats">
+        <li><span><span class="k">Cours</span> 4, en 24 parties</span></li>
+        <li><span><span class="k">Exercices</span> <span id="nEx0">41 fiches corrigées</span></span></li>
+        <li><span><span class="k">QCM</span> <span id="nQ0">86 questions</span></span></li>
+        <li class="ex"><span><span class="k">Notation</span> DM 20 %, contrôle 20 %, examen 60 %</span></li>
+      </ul>
+    </div>
+    <aside class="conv" aria-labelledby="conv-h">
+      <div class="conv-top"><span>Les deux échéances</span><span class="conv-st" id="cdHero" aria-live="polite"></span></div>
+      <div class="conv-b">
+        <h2 id="conv-h">Maths · APIS</h2>
+        <div class="slot"><span class="h">23 nov.</span><b>Contrôle de cours · 1 h</b><p>Cours 3 en entier ; cours 4 : introduction, limites, exemples remarquables.</p></div>
+        <div class="slot"><span class="h">Décembre</span><b>Examen final</b><p>Tout l’ECUE. Date à venir ; DM 2 les 7 et 8 décembre.</p></div>
+        <div class="row"><a class="btn primary" href="controle.html">Préparer le contrôle</a><a class="btn" href="#final">L’examen final</a></div>
+        <p class="conv-side">Coefficient 4 dans l’UE Concevoir. Le DM 1 du 16 novembre (cours 3) est passé.</p>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+
+  <!-- ============================================================ 1. contrôle -->
+  <section id="controle" aria-labelledby="t-cc">
+    <div class="sec-title"><div><div class="eyebrow"><span class="step">1</span>Lundi 23 novembre · 20 % de l’ECUE</div><h2 id="t-cc">Le contrôle de cours</h2></div><p>Programme annoncé le 16 novembre : « Cours 3 sur les primitives, aires et intégrales : en entier ; cours 4 sur les suites : introduction, limites et exemples remarquables ». Les quatre cours ci-dessous le couvrent exactement.</p></div>
+    <div class="cards" id="path"></div>
+    <div class="tools">
+      <a class="stop key" href="controle.html"><div class="k">Lundi 23 novembre</div><h3>Ce qu’il faut savoir, comment ça tombe</h3><p>Le programme exact, la forme des questions, le par cœur, un contrôle blanc corrigé, un plan sur quatre jours.</p></a>
+      <a class="stop" href="entrainement.html#cc"><div class="k">Entraînement</div><h3>Moodle, TD, anciens contrôles</h3><p id="nEx">Les exercices types du Moodle, les TD 3 et 4, les anciens contrôles et sujets, corrigés pas à pas.</p></a>
+      <a class="stop" href="../qcm/index.html#apis"><div class="k">QCM</div><h3>Questions de cours</h3><p id="nQ">Répétition espacée : les questions ratées reviennent.</p></a>
+      <a class="stop" href="fiche.html"><div class="k">Fiche</div><h3>Tout le contrôle sur deux pages</h3><p>Tableaux de primitives, formules, définitions avec quantificateurs, théorèmes, pièges : à imprimer.</p></a>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2. examen final -->
+  <section id="final" aria-labelledby="t-fin">
+    <div class="sec-title"><div><div class="eyebrow"><span class="step">2</span>Décembre · 60 % de l’ECUE</div><h2 id="t-fin">Ensuite : l’examen final</h2></div><p>Il porte sur tout l’ECUE : ce qui est au contrôle, plus les trois modules publiés après. Les chapitres correspondants arrivent sur le site au rythme des MiMos.</p></div>
+    <div class="cards">
+      <div class="stop soon"><div class="k">Semaine du 23 novembre</div><h3>Théorèmes de convergence</h3><p>Suite croissante et majorée, suites adjacentes (théorème et démonstration), suites extraites \((u_{2n})\), \((u_{2n+1})\).</p><div class="tg"><span>TD 4, parties 3 et 4</span><span class="hot">examens 2024 et 2025</span></div></div>
+      <div class="stop soon"><div class="k">Semaine du 30 novembre</div><h3>Suites récurrentes</h3><p>\(u_{n+1} = f(u_n)\) : points fixes, intervalle stable, monotonie, limite.</p><div class="tg"><span>TD 4, partie 6</span><span class="hot">examens 2024 et 2025</span></div></div>
+      <div class="stop soon"><div class="k">Semaine du 30 novembre</div><h3>Comparaisons de Landau</h3><p>Négligeable \(o\), dominée \(O\), équivalente \(\sim\) ; classer des suites.</p><div class="tg"><span>TD 4, partie 5</span><span class="hot">examens 2024 et 2025</span></div></div>
+      <div class="stop soon"><div class="k">À connaître</div><h3>Démonstrations</h3><p>Bornée \(\iff |u_n| \leq M\), convergente \(\Rightarrow\) bornée, gendarmes (déjà dans le <a href="cours-4-suites.html#s6">cours 4</a>), suites adjacentes.</p><div class="tg"><span>fiche du Moodle</span><span class="hot">5 points en janvier 2024</span></div></div>
+    </div>
+    <div class="tbl pts"><table>
+      <thead><tr><th>Exercice</th><th>Examen de janvier 2024 (2 h, sur 40, corrigé)</th><th class="n">Points</th><th>Déjà au contrôle ?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Intégrales : tableau de huit primitives, une IPP dont on énonce la formule, un changement de variable donné</td><td class="n">10</td><td>oui : <a href="entrainement.html#f2024-ex1">fiche corrigée</a></td></tr>
+        <tr><td>2</td><td>Suites adjacentes : \(\sum \frac{1}{k!}\) et la même plus \(\frac{1}{n!}\)</td><td class="n">6</td><td>non</td></tr>
+        <tr><td>3</td><td>Comparaisons de Landau</td><td class="n">6</td><td>non</td></tr>
+        <tr><td>4</td><td>Énoncer et démontrer le théorème des gendarmes</td><td class="n">5</td><td>oui : <a href="cours-4-suites.html#s6">cours 4, partie 6</a></td></tr>
+        <tr><td>5</td><td>Suite récurrente \(u_{n+1} = \frac{u_n}{u_n + 8}\), suite auxiliaire géométrique</td><td class="n">10</td><td>en partie (suite géométrique)</td></tr>
+        <tr><td>6</td><td>Suites extraites</td><td class="n">3</td><td>non</td></tr>
+      </tbody>
+      <caption>Le meilleur modèle disponible : 15 points sur 40 relèvent déjà du programme du contrôle. L’examen de janvier 2025 (1 h 30, sur 30, sans corrigé) a la même architecture, sans les intégrales : suites adjacentes, sommes, Landau, une question de cours (convergente \(\Rightarrow\) bornée, réciproque, contraposée), suite récurrente, suites extraites.</caption>
+    </table></div>
+    <div class="note why"><span class="tag">Ce qui est sûr, ce qui ne l’est pas</span><ul>
+      <li><b>Sûr</b> : le programme du contrôle (annonce du 16 novembre) et la pondération (DM 20 %, contrôle 20 %, examen 60 %).</li>
+      <li><b>Sûr</b> : le DM 2 des 7 et 8 décembre porte sur « le cours de l’ECUE en entier ».</li>
+      <li><b>Pas encore connu</b> : la date et la durée de l’examen final, et son programme détaillé. Les deux examens précédents donnent l’architecture, pas le sujet.</li>
+      <li>Les TD 3 et 4 sont publiés sans corrigé : leurs réponses sont recalculées par programme.</li>
+    </ul></div>
+  </section>
+
+  <!-- ============================================================ Moodle -->
+  <section id="moodle" aria-labelledby="t-moodle">
+    <div class="sec-title"><div><div class="eyebrow">Journal</div><h2 id="t-moodle">Ce que le Moodle a publié</h2></div><p>Chaque document est intégré aux cours, aux exercices et aux QCM. Les chapitres suivants s’ajouteront ici.</p></div>
+    <ul class="log">
+      <li><span class="d">19 au 23 octobre</span><p><b>Cours 3, module 1 : primitives et intégrales</b> (polycopié de 16 pages, fiche de synthèse, exercices types). → <a href="cours-1-primitives.html">cours 1</a> et <a href="cours-2-integrales.html">cours 2</a>. Trois coquilles du polycopié sont signalées dans le cours 2.</p></li>
+      <li><span class="d">9 au 13 novembre</span><p><b>Cours 3, module 2 : intégration par parties et changement de variable</b> (vidéos, fiche, exercices types). → <a href="cours-3-ipp.html">cours 3</a>. Erratum officiel de la fiche : lire \(F \circ \varphi\).</p></li>
+      <li><span class="d">16 novembre</span><p><b>DM 1</b> (13 questions, 15 minutes, cours 3) : passé. <b>Annonce du contrôle de cours</b> du 23 novembre.</p></li>
+      <li><span class="d">16 au 20 novembre</span><p><b>Cours 4, modules 1 à 3 : introduction, limites, exemples remarquables</b> (vidéos, trois fiches, exercices types corrigés). → <a href="cours-4-suites.html">cours 4</a>.</p></li>
+      <li><span class="d">TD</span><p><b>TD 3</b> (primitives et intégrales) et <b>TD 4</b> (suites), sans corrigé. → <a href="entrainement.html">entraînement</a> : TD 3 en entier, TD 4 parties 1 et 2.</p></li>
+      <li><span class="d">À venir</span><p>Théorèmes de convergence (23 novembre), suites récurrentes et Landau (30 novembre), DM 2 (7 et 8 décembre), examen final.</p></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ évaluation -->
+  <section id="evaluation" aria-labelledby="t-eval">
+    <div class="sec-title"><div><div class="eyebrow">Évaluation</div><h2 id="t-eval">Comment l’ECUE est notée</h2></div><p>Même règle que pour l’OBM et le DP au premier bimestre.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">20 %</span><h4>Les DM en distanciel</h4><p>Tests Moodle : le 16 novembre (cours 3, passé) et les 7 et 8 décembre (tout l’ECUE).</p></div>
+      <div class="card ex"><span class="w">20 %</span><h4>Le contrôle de cours</h4><p>Lundi 23 novembre, 1 h. <a href="controle.html">La page du contrôle</a>.</p></div>
+      <div class="card"><span class="w">60 %</span><h4>L’examen final</h4><p>En décembre, sur papier, sur tout l’ECUE.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/apis/exams.js"></script>
+<script src="../data/apis/ex-integrales.js"></script>
+<script src="../data/apis/ex-suites.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('apis'), EX = window.APIS_EX || [];
+  /* une ligne par cours (ordre du registre de core.js) : contenu, source, ce qui tombe */
+  var DESC = ['Définition, les deux tableaux de primitives usuelles, linéarité, reconnaître la forme \\(u\' \\times g(u)\\).',
+    'Intégrale et aire, calcul par des aires, méthode des rectangles, Chasles, parité, \\(\\left[F\\right]_a^b\\), encadrement, valeur moyenne.',
+    'Formule d’IPP, hypothèses, démonstration, choix de \\(u\\) et \\(v\'\\), récurrence ; changement de variable donné, en cinq étapes.',
+    'Définir une suite, bornes, monotonie, limites avec \\(\\varepsilon\\), formes indéterminées, gendarmes, suites géométriques, critère du quotient.'];
+  var TAGS = [['Moodle : cours 3, module 1', 'tableau à remplir'], ['Moodle : cours 3, module 1', 'une aire, un encadrement'], ['Moodle : cours 3, module 2', 'énoncer, démontrer, calculer'], ['Moodle : cours 4, modules 1 à 3', 'définitions, exemples, limites']];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('apis', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Cours ' + (i + 1) + '</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="tg"><span>' + (TAGS[i] ? TAGS[i][0] : '') + '</span><span class="hot">' + (TAGS[i] ? TAGS[i][1] : '') + '</span></div><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parties comprises</div></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'apis'; }), st = R.qcm.stats('apis', bank);
+    var ok = R.exo.stats('apis').ok;
+    if (bank.length) {
+      document.getElementById('nQ').textContent = bank.length + ' questions de cours, dont ' + st.due + ' à revoir aujourd’hui.';
+      document.getElementById('nQ0').textContent = bank.length + ' questions';
+    }
+    if (EX.length) {
+      document.getElementById('nEx').textContent = EX.length + ' fiches corrigées pas à pas : exercices types du Moodle, TD 3 et 4, anciens contrôles et sujets. Réussies : ' + ok + ' / ' + EX.length + '.';
+      document.getElementById('nEx0').textContent = EX.length + ' fiches corrigées';
+    }
+    var iso = R.exams.get('apis'), d = R.exams.daysLeft(iso);
+    document.getElementById('cdHero').textContent = iso && d !== null && d >= 0 ? (d === 0 ? 'Contrôle : jour J' : 'Contrôle : J−' + d) : '';
+  }
+  paint();
+  R.store.on(paint);
+})();
+</script>
+</body>
+</html>

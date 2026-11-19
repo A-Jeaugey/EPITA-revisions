@@ -223,6 +223,29 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   sur 7, **pas encore au cours** (parties `prog: false`, notion `statique`) ; base de Frenet à 6 sur 7 (traduite en polaires,
   chapitre 2 partie 6) ; 2e loi + énergie sur un arc (sphère, gouttière, looping) à 4 sur 7. Quand le cours du B2 arrive
   (statique, Frenet…), ajouter les chapitres et corriger les exercices de statique.
+- **Maths · APIS** (id `apis`, dossier `apis/`, thème `maths.css` ; ECUE d'analyse du B2 : primitives, intégrales, suites ;
+  DM 20 %, contrôle de cours 20 %, examen 60 %, coefficient 4). **Deux périmètres toujours séparés** : le contrôle de cours
+  du lundi 23 novembre 2026 (annonce du 16 novembre : cours 3 du Moodle en entier ; cours 4 : introduction, limites, exemples
+  remarquables) et l'examen final de décembre (tout l'ECUE : s'ajoutent théorèmes de convergence, suites extraites, suites
+  récurrentes, Landau). Cours `apis/cours-1-primitives` (5 parties), `-2-integrales` (6), `-3-ipp` (5), `-4-suites` (8)
+  (`data-done="apis:<chapitre>:sN"`, chapitres primitives, integrales, ipp, suites) ; `controle` (la page du contrôle :
+  programme mot pour mot, forme des questions, par cœur, contrôle blanc sur 20 avec corrigé, plan sur quatre jours), `index`
+  (bloc 1 contrôle, bloc 2 examen final, journal du Moodle), `entrainement` (généré depuis celui des maths, sans générateurs ;
+  filtre « Périmètre » cc / final), `fiche` (recto intégrales, verso suites). Figures `assets/js/apis.js` (API en tête) :
+  `<div data-apis="area|rect|seq" data-opts='{…}'>` (aire sous une courbe, méthode des rectangles avec curseur, suite et bande ε).
+  Données : `data/apis/exams.js` (`APIS_TOPICS`, `APIS_STAGE` notion → 'cc' | 'final', `APIS_EXAMS` clés `ccAAAAm`, `pAAAA`,
+  `obm2024`, `fAAAA`), `ex-integrales.js` et `ex-suites.js` (`window.APIS_EX`, ids `mo-NN-k` exercices types du Moodle avec
+  corrigé officiel, `td3-…`, `td4-…`, `<clé>-…` contrôles et sujets ; champ `stage` ; progression `apis-<id>`) ; QCM
+  `data/qcm/apis.js` (`apis-cN-NN`, notions `apis-…` ; celles de l'examen final sont dans `QCM_OFF` jusqu'au 23 novembre
+  inclus). **Toute valeur est vérifiée avec sympy.** Points vérifiés : le contrôle de cours 1 du 12 octobre 2026 (Epidocs
+  `S1/CC/2031`) donne la forme (sections « Cours N (x points) », questions indépendantes, réponses sur le sujet) ; anciens
+  contrôles sur ces chapitres dans `S1/TDs/<promo>` (oct. 2020, oct. 2022 : intégrales, énoncer et démontrer l'IPP ; déc. 2022,
+  nov. 2023 : suites, définitions avec quantificateurs, exemples, (qⁿ)) ; les sujets ont toujours le trio primitive directe /
+  IPP / changement de variable donné ; modèles de l'examen final : ASI janvier 2024 (corrigé) et SR janvier 2025. Coquilles
+  du polycopié (p. 12 : « 2 × 9 = 18 », |sin| ; p. 14 : e^{2x} pour e^{−2x}) et erratum officiel de la fiche IPP (F∘φ) :
+  signalés dans les cours 2 et 3. TD 3 et TD 4 sans corrigé. **À faire quand les MiMos sortent** (semaines du 23 et du
+  30 novembre) : chapitres `cours-5-convergence`, `-6-recurrentes`, `-7-landau`, fiches du TD 4 parties 3 à 6, `annales`,
+  et passer les encarts « à venir » de `apis/index.html` en liens.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
