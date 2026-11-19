@@ -104,8 +104,10 @@
     var html = '<span class="eyebrow">' + T('Compte à rebours') + '</span>';
     if (dated.length) {
       var n = dated[0];
-      if (EN) html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'Today' : n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'is your ' + n.s.name + ' exam' : (n.d > 1 ? 'days' : 'day') + ' left before the ' + n.s.name + ' exam') + '</span></div>';
-      else html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'C’est aujourd’hui : examen ' : 'avant l’examen ') + (/^[aeiouyhéèêàâîôû]/i.test(n.s.short) ? 'd’' : 'de ') + n.s.short + '</span></div>';
+      /* l'épreuve officielle peut porter un nom (OFFICIAL.<id>.what : « contrôle de cours ») tant que la date n'a pas été changée */
+      var off = R.exams.official(n.s.id), named = off && off.what && R.exams.get(n.s.id) === off.date;
+      if (EN) html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'Today' : n.d) + '</span><span class="count-txt">' + (n.d === 0 ? 'is your ' + n.s.name + ' ' : (n.d > 1 ? 'days' : 'day') + ' left before the ' + n.s.name + ' ') + (named ? off.whatEn : 'exam') + '</span></div>';
+      else html += '<div class="count-main"><span class="count-num">' + (n.d === 0 ? 'J' : 'J−' + n.d) + '</span><span class="count-txt">' + (named ? (n.d === 0 ? 'C’est aujourd’hui : ' + off.what + ' ' : 'avant le ' + off.what + ' ') : (n.d === 0 ? 'C’est aujourd’hui : examen ' : 'avant l’examen ')) + (/^[aeiouyhéèêàâîôû]/i.test(n.s.short) ? 'd’' : 'de ') + n.s.short + '</span></div>';
       html += '<div class="count-list">' + dated.map(function (x) { return '<div><span>' + x.s.name + '</span><span class="mono">' + fmtDate(x.iso) + '</span></div>'; }).join('') + '</div>';
       html += '<button type="button" class="linkish" id="editDates">' + T('Modifier les dates') + '</button>';
     } else if (past) {

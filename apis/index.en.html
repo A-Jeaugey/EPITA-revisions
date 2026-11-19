@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maths · APIS · Primitives, integrals and sequences</title>
+<meta name="description" content="Maths, ECUE APIS (analysis: primitives, integrals and numerical sequences), term 2. Two separate deadlines: the course test on Monday 23 November 2026 (course 3 in full, sequences up to the remarkable examples) and the final exam in December (the whole ECUE). Lessons, worked exercises, MCQ, summary sheet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* APIS home: two clearly separate blocks, the 23 November course test then the final exam in December.
+   Layout of the B1 maths home page. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:64px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap;padding-top:.8rem;border-top:2px solid var(--rule)}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.step{display:inline-block;font-family:var(--font-hand);font-weight:700;font-size:1.5rem;line-height:1;color:var(--red);margin-right:.5rem}
+.conv{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--exam);border-radius:0 0 var(--radius) var(--radius);display:grid;align-self:center;min-width:0}
+.conv-top{display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:.55rem 1rem;border-bottom:1px solid var(--line);background:var(--exam-soft);font-family:var(--font-ui);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--exam);font-weight:700}
+.conv-st{font-size:.82rem;letter-spacing:.02em;text-transform:none;color:var(--ink);background:var(--surface);border:1px solid var(--exam);border-radius:999px;padding:.1rem .6rem}
+.conv-st:empty{display:none}
+.conv-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.75rem}
+.conv-b>*{min-width:0}
+.conv h2{font-size:1.9rem}
+.slot{display:grid;grid-template-columns:5.6rem minmax(0,1fr);gap:4px 12px;padding:.6rem 0;border-top:1px dashed var(--line);align-items:baseline}
+.slot .h{font-family:var(--font-hand);font-weight:700;font-size:1.45rem;line-height:1;color:var(--red)}
+.slot b{font-family:var(--font-ui);font-weight:600}
+.slot p{grid-column:2;font-size:.95rem;color:var(--muted);line-height:1.45}
+.conv-side{margin:0;padding-top:.6rem;border-top:1px dashed var(--line);font-size:.9rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:0 0 var(--radius) var(--radius);padding:.95rem 1.05rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+a.stop:hover{border-color:var(--accent)}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stop h3{margin:0;font-size:1.3rem}
+.stop p{font-size:.95rem;color:var(--muted)}
+.stop .tg{display:flex;flex-wrap:wrap;gap:6px}
+.stop .tg span{font-family:var(--font-ui);font-size:.74rem;border:1px solid var(--line);border-radius:3px;padding:.05rem .45rem;color:var(--muted)}
+.stop .tg .hot{border-color:var(--exam);color:var(--exam)}
+.stop .mono{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.stop.soon{border-style:dashed;background:transparent}
+.bar{height:6px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tools .stop{border-top-width:1px;border-radius:var(--radius)}
+.tools .stop.key{border-top:3px solid var(--exam)}
+.eval{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .w{font-family:var(--font-display);font-weight:700;font-size:2.5rem;line-height:1;color:var(--accent)}
+.eval .card.ex .w{color:var(--exam)}
+.pts td.n,.pts th.n{text-align:right;white-space:nowrap;font-family:var(--font-ui);font-variant-numeric:tabular-nums;width:1%}
+.log{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--rule)}
+.log li{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:4px 16px;padding:.7rem 1rem;border-top:1px solid var(--line);align-items:baseline}
+.log li:first-child{border-top:0}
+.log .d{font-family:var(--font-ui);font-size:.82rem;color:var(--exam)}
+.log p{font-size:.97rem}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-resume="Maths APIS · home">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — subject home</span><span>Moodle courses 3 and 4 · Tutorials 3 and 4 · worked model exercises</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="2"></span>Maths · term 2 · ECUE APIS</div>
+      <h1>Primitives, integrals, sequences: <span class="w">two deadlines, two scopes.</span></h1>
+      <p class="lead">APIS is the analysis ECUE of the semester. First a course test, on Monday 23 November, on integrals and the start of sequences. Then the final exam in December, on the whole ECUE, with the convergence theorems, recursive sequences and Landau comparisons. This page keeps the two apart.</p>
+      <ul class="feats">
+        <li><span><span class="k">Lessons</span> 4, in 24 parts</span></li>
+        <li><span><span class="k">Exercises</span> <span id="nEx0">41 worked exercises</span></span></li>
+        <li><span><span class="k">MCQ</span> <span id="nQ0">86 questions</span></span></li>
+        <li class="ex"><span><span class="k">Grading</span> homework 20%, course test 20%, exam 60%</span></li>
+      </ul>
+    </div>
+    <aside class="conv" aria-labelledby="conv-h">
+      <div class="conv-top"><span>The two deadlines</span><span class="conv-st" id="cdHero" aria-live="polite"></span></div>
+      <div class="conv-b">
+        <h2 id="conv-h">Maths · APIS</h2>
+        <div class="slot"><span class="h">23 Nov.</span><b>Course test · 1 hr</b><p>Course 3 in full; course 4: introduction, limits, remarkable examples.</p></div>
+        <div class="slot"><span class="h">December</span><b>Final exam</b><p>The whole ECUE. Date to be announced; homework 2 on 7 and 8 December.</p></div>
+        <div class="row"><a class="btn primary" href="controle.html">Prepare for the course test</a><a class="btn" href="#final">The final exam</a></div>
+        <p class="conv-side">Coefficient 4 in the Concevoir UE. Homework 1 of 16 November (course 3) is done.</p>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+
+  <!-- ============================================================ 1. course test -->
+  <section id="controle" aria-labelledby="t-cc">
+    <div class="sec-title"><div><div class="eyebrow"><span class="step">1</span>Monday 23 November · 20% of the ECUE</div><h2 id="t-cc">The course test</h2></div><p>Syllabus announced on 16 November: “Course 3 on primitives, areas and integrals: in full; course 4 on sequences: introduction, limits and remarkable examples”. The four lessons below cover it exactly.</p></div>
+    <div class="cards" id="path"></div>
+    <div class="tools">
+      <a class="stop key" href="controle.html"><div class="k">Monday 23 November</div><h3>What to know, how it comes up</h3><p>The exact syllabus, the form of the questions, what to know by heart, a mock test with answers, a four-day plan.</p></a>
+      <a class="stop" href="entrainement.html#cc"><div class="k">Practice</div><h3>Moodle, tutorials, past course tests</h3><p id="nEx">The Moodle model exercises, Tutorials 3 and 4, the past course tests and papers, worked step by step.</p></a>
+      <a class="stop" href="../qcm/index.html#apis"><div class="k">MCQ</div><h3>Questions on the lessons</h3><p id="nQ">Spaced repetition: the questions you miss come back.</p></a>
+      <a class="stop" href="fiche.html"><div class="k">Summary sheet</div><h3>The whole course test on two pages</h3><p>Tables of primitives, formulas, definitions with quantifiers, theorems, traps: to print.</p></a>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2. final exam -->
+  <section id="final" aria-labelledby="t-fin">
+    <div class="sec-title"><div><div class="eyebrow"><span class="step">2</span>December · 60% of the ECUE</div><h2 id="t-fin">Then: the final exam</h2></div><p>It covers the whole ECUE: what is in the course test, plus the three modules published afterwards. The matching chapters arrive on the site at the pace of the MiMos.</p></div>
+    <div class="cards">
+      <div class="stop soon"><div class="k">Week of 23 November</div><h3>Convergence theorems</h3><p>Increasing sequence bounded above, adjacent sequences (theorem and proof), subsequences \((u_{2n})\), \((u_{2n+1})\).</p><div class="tg"><span>Tutorial 4, parts 3 and 4</span><span class="hot">2024 and 2025 exams</span></div></div>
+      <div class="stop soon"><div class="k">Week of 30 November</div><h3>Recursive sequences</h3><p>\(u_{n+1} = f(u_n)\): fixed points, stable interval, monotonicity, limit.</p><div class="tg"><span>Tutorial 4, part 6</span><span class="hot">2024 and 2025 exams</span></div></div>
+      <div class="stop soon"><div class="k">Week of 30 November</div><h3>Landau comparisons</h3><p>Negligible \(o\), dominated \(O\), equivalent \(\sim\); ranking sequences.</p><div class="tg"><span>Tutorial 4, part 5</span><span class="hot">2024 and 2025 exams</span></div></div>
+      <div class="stop soon"><div class="k">To know</div><h3>Proofs</h3><p>Bounded \(\iff |u_n| \leq M\), convergent \(\Rightarrow\) bounded, squeeze theorem (already in <a href="cours-4-suites.html#s6">lesson 4</a>), adjacent sequences.</p><div class="tg"><span>Moodle summary sheet</span><span class="hot">5 points in January 2024</span></div></div>
+    </div>
+    <div class="tbl pts"><table>
+      <thead><tr><th>Exercise</th><th>January 2024 exam (2 hrs, out of 40, with answers)</th><th class="n">Points</th><th>Already in the course test?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Integrals: a table of eight primitives, an IBP whose formula you state, a given change of variable</td><td class="n">10</td><td>yes: <a href="entrainement.html#f2024-ex1">worked exercise</a></td></tr>
+        <tr><td>2</td><td>Adjacent sequences: \(\sum \frac{1}{k!}\) and the same plus \(\frac{1}{n!}\)</td><td class="n">6</td><td>no</td></tr>
+        <tr><td>3</td><td>Landau comparisons</td><td class="n">6</td><td>no</td></tr>
+        <tr><td>4</td><td>State and prove the squeeze theorem</td><td class="n">5</td><td>yes: <a href="cours-4-suites.html#s6">lesson 4, part 6</a></td></tr>
+        <tr><td>5</td><td>Recursive sequence \(u_{n+1} = \frac{u_n}{u_n + 8}\), geometric auxiliary sequence</td><td class="n">10</td><td>in part (geometric sequence)</td></tr>
+        <tr><td>6</td><td>Subsequences</td><td class="n">3</td><td>no</td></tr>
+      </tbody>
+      <caption>The best model available: 15 points out of 40 are already on the course test syllabus. The January 2025 exam (1 hr 30, out of 30, without answers) has the same structure, without the integrals: adjacent sequences, sums, Landau, a lesson question (convergent \(\Rightarrow\) bounded, converse, contrapositive), recursive sequence, subsequences.</caption>
+    </table></div>
+    <div class="note why"><span class="tag">What is certain, what is not</span><ul>
+      <li><b>Certain</b>: the course test syllabus (announcement of 16 November) and the weighting (homework 20%, course test 20%, exam 60%).</li>
+      <li><b>Certain</b>: homework 2 of 7 and 8 December covers “the whole ECUE course”.</li>
+      <li><b>Not yet known</b>: the date and length of the final exam, and its detailed syllabus. The two previous exams give the structure, not the paper.</li>
+      <li>Tutorials 3 and 4 are published without solutions: their answers are recomputed by a program.</li>
+    </ul></div>
+  </section>
+
+  <!-- ============================================================ Moodle -->
+  <section id="moodle" aria-labelledby="t-moodle">
+    <div class="sec-title"><div><div class="eyebrow">Log</div><h2 id="t-moodle">What the Moodle has published</h2></div><p>Each document is built into the lessons, the exercises and the MCQs. The next chapters will be added here.</p></div>
+    <ul class="log">
+      <li><span class="d">19 to 23 October</span><p><b>Course 3, module 1: primitives and integrals</b> (16-page course handout, summary sheet, model exercises). → <a href="cours-1-primitives.html">lesson 1</a> and <a href="cours-2-integrales.html">lesson 2</a>. Three typos in the handout are pointed out in lesson 2.</p></li>
+      <li><span class="d">9 to 13 November</span><p><b>Course 3, module 2: integration by parts and change of variable</b> (videos, summary sheet, model exercises). → <a href="cours-3-ipp.html">lesson 3</a>. Official erratum of the summary sheet: read \(F \circ \varphi\).</p></li>
+      <li><span class="d">16 November</span><p><b>Homework 1</b> (13 questions, 15 minutes, course 3): done. <b>Announcement of the course test</b> of 23 November.</p></li>
+      <li><span class="d">16 to 20 November</span><p><b>Course 4, modules 1 to 3: introduction, limits, remarkable examples</b> (videos, three summary sheets, worked model exercises). → <a href="cours-4-suites.html">lesson 4</a>.</p></li>
+      <li><span class="d">Tutorials</span><p><b>Tutorial 3</b> (primitives and integrals) and <b>Tutorial 4</b> (sequences), without solutions. → <a href="entrainement.html">practice</a>: Tutorial 3 in full, Tutorial 4 parts 1 and 2.</p></li>
+      <li><span class="d">Coming</span><p>Convergence theorems (23 November), recursive sequences and Landau (30 November), homework 2 (7 and 8 December), final exam.</p></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ assessment -->
+  <section id="evaluation" aria-labelledby="t-eval">
+    <div class="sec-title"><div><div class="eyebrow">Assessment</div><h2 id="t-eval">How the ECUE is graded</h2></div><p>Same rule as for OBM and DP in the first term.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">20%</span><h4>The remote homework</h4><p>Moodle tests: on 16 November (course 3, done) and on 7 and 8 December (the whole ECUE).</p></div>
+      <div class="card ex"><span class="w">20%</span><h4>The course test</h4><p>Monday 23 November, 1 hr. <a href="controle.html">The course test page</a>.</p></div>
+      <div class="card"><span class="w">60%</span><h4>The final exam</h4><p>In December, on paper, on the whole ECUE.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../data/apis/exams.js"></script>
+<script src="../data/en/apis/exams.js"></script>
+<script src="../data/apis/ex-integrales.js"></script>
+<script src="../data/en/apis/ex-integrales.js"></script>
+<script src="../data/apis/ex-suites.js"></script>
+<script src="../data/en/apis/ex-suites.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('apis'), EX = window.APIS_EX || [];
+  /* one line per lesson (order of the core.js registry): content, source, what comes up */
+  var DESC = ['Definition, the two tables of usual primitives, linearity, recognising the form \\(u\' \\times g(u)\\).',
+    'Integral and area, computing by areas, rectangle method, Chasles, parity, \\(\\left[F\\right]_a^b\\), bounds, mean value.',
+    'IBP formula, hypotheses, proof, choice of \\(u\\) and \\(v\'\\), induction; given change of variable, in five steps.',
+    'Defining a sequence, bounds, monotonicity, limits with \\(\\varepsilon\\), indeterminate forms, squeeze theorem, geometric sequences, ratio criterion.'];
+  var TAGS = [['Moodle: course 3, module 1', 'table to fill in'], ['Moodle: course 3, module 1', 'an area, bounds'], ['Moodle: course 3, module 2', 'state, prove, compute'], ['Moodle: course 4, modules 1 to 3', 'definitions, examples, limits']];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('apis', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Lesson ' + (i + 1) + '</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="tg"><span>' + (TAGS[i] ? TAGS[i][0] : '') + '</span><span class="hot">' + (TAGS[i] ? TAGS[i][1] : '') + '</span></div><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parts understood</div></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'apis'; }), st = R.qcm.stats('apis', bank);
+    var ok = R.exo.stats('apis').ok;
+    if (bank.length) {
+      document.getElementById('nQ').textContent = bank.length + ' questions on the lessons, ' + st.due + ' of them to review today.';
+      document.getElementById('nQ0').textContent = bank.length + ' questions';
+    }
+    if (EX.length) {
+      document.getElementById('nEx').textContent = EX.length + ' exercises worked step by step: Moodle model exercises, Tutorials 3 and 4, past course tests and papers. Solved: ' + ok + ' / ' + EX.length + '.';
+      document.getElementById('nEx0').textContent = EX.length + ' worked exercises';
+    }
+    var iso = R.exams.get('apis'), d = R.exams.daysLeft(iso);
+    document.getElementById('cdHero').textContent = iso && d !== null && d >= 0 ? (d === 0 ? 'Course test: today' : 'Course test: ' + d + (d > 1 ? ' days' : ' day')) : '';
+  }
+  paint();
+  R.store.on(paint);
+})();
+</script>
+</body>
+</html>

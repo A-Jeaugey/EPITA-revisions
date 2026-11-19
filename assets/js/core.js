@@ -396,7 +396,7 @@
     archi: { date: '2026-10-29', start: '13:00', end: '14:00' },
     piloter: { date: '2026-10-29', start: '14:15', end: '16:15' },
     /* bimestre 2 : contrôle de cours de l’ECUE APIS (annonce du 16 novembre 2026), durée 1 h, horaire non communiqué */
-    apis: { date: '2026-11-23' }
+    apis: { date: '2026-11-23', what: 'contrôle de cours', whatEn: 'course test' }
   };
   var exams = {
     /* date saisie par l’élève, sinon la date officielle de l’examen (OFFICIAL) */
