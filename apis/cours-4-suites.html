@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suites : définitions, limites, exemples remarquables · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 4 : suites numériques. Définir une suite, suites majorées, minorées, bornées, monotonie, limite finie et infinie avec les quantificateurs, opérations et formes indéterminées, comparaison et théorème des gendarmes, suites géométriques et arithmético-géométriques, critère du quotient, contre-exemples classiques. Au programme du contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 4 : suites">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 4 sur 4 du contrôle</span><span>Source : fiches « Introduction », « Limites », « Exemples remarquables », exercices types du Moodle, TD 4 parties 1 et 2</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="4"></span><a href="index.html">Maths APIS</a> · Cours 4 · <a href="controle.html">au contrôle du 23 novembre</a></div>
+      <h1>Une suite, <span class="w">et ce qu’elle devient quand n grandit.</span></h1>
+      <p class="lead">Trois modules du Moodle sont au programme du contrôle : l’introduction (définition, bornes, monotonie), les limites (définition avec \(\varepsilon\), opérations, gendarmes) et les exemples remarquables (suites géométriques, critère du quotient). Les définitions se récitent avec leurs quantificateurs, et chaque propriété doit venir avec un exemple et un contre-exemple.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 1 h 15</span></li>
+        <li><span><span class="k">Parties</span> 8</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 16 novembre · TD 4, parties 1 et 2</span></li>
+        <li class="ex"><span><span class="k">Contrôle</span> définitions avec quantificateurs, exemples, limites, suites géométriques</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0;align-self:start">
+      <div data-apis="seq" data-opts='{"preset":"hom","eps":0.2,"only":["hom","geo","alt"],"title":"Convergente, ou non"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — Converger vers \(\ell\) : pour toute bande autour de \(\ell\), les termes finissent tous dedans.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 4 · Suites</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Définir une suite</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Majorée, minorée, bornée</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Monotonie</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Limite d’une suite</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Opérations, formes indéterminées</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Comparaison, gendarmes</span></a></li>
+      <li><a href="#s7"><span class="pn" data-n="7"></span><span>Suites géométriques</span></a></li>
+      <li><a href="#s8"><span class="pn" data-n="8"></span><span>Critère du quotient, contre-exemples</span></a></li>
+    </ol>
+    <p class="toc-note">Hors contrôle, pour l’examen final : théorèmes de convergence, suites récurrentes, comparaisons de Landau.</p>
+    <div class="toc-nav"><a href="cours-3-ipp.html">← Cours 3 : IPP</a><a href="controle.html">Le contrôle du 23 novembre →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Définir une suite</a></li><li><a href="#s2">Majorée, minorée, bornée</a></li><li><a href="#s3">Monotonie</a></li><li><a href="#s4">Limite d’une suite</a></li><li><a href="#s5">Opérations, formes indéterminées</a></li><li><a href="#s6">Comparaison, gendarmes</a></li><li><a href="#s7">Suites géométriques</a></li><li><a href="#s8">Critère du quotient, contre-exemples</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche « Introduction » § 1</span></div><h2>Définir une suite</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>suite numérique</i></span>
+          <p>Une <b>suite numérique</b> est une fonction de \(\N\) dans \(\mathbb{K}\), où \(\mathbb{K} = \R\) ou \(\mathbb{C}\) :</p>
+          <div class="fm">\[u : \N \to \mathbb{K},\qquad n \mapsto u(n) = u_n.\]</div>
+          <p>\(u_n\) est le <b>terme d’indice \(n\)</b>. La suite se note \(u\), \((u_n)\) ou \((u_n)_{n \in \N}\). Si \(\mathbb{K} = \R\), c’est une suite réelle ; si \(\mathbb{K} = \mathbb{C}\), une suite complexe.</p>
+        </div>
+        <div class="prose">
+          <p>Deux façons de définir une suite :</p>
+          <ul>
+            <li><b>de manière explicite</b>, en fonction de \(n\) : \(\forall n \in \N,\ u_n = f(n)\). Exemple : \(u_n = \dfrac{n}{n + 3}\). On calcule n’importe quel terme directement : \(u_{100} = \frac{100}{103}\).</li>
+            <li><b>par récurrence</b> : un premier terme et une relation qui donne chaque terme à partir du précédent (ou des précédents). Exemple : \(u_0 = 0\) et \(u_{n+1} = \sqrt{1 + u_n}\). Pour obtenir \(u_3\), il faut \(u_1\) et \(u_2\) : \(u_1 = 1\), \(u_2 = \sqrt{2}\), \(u_3 = \sqrt{1 + \sqrt{2}}\).</li>
+          </ul>
+          <p>Une suite peut n’être définie qu’à partir d’un certain rang : \(\left(\frac{1}{n}\right)_{n \in \N^*}\) commence à \(n = 1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 3 du Moodle : la suite est bien définie</i></span>
+          <p>Soit \(u_0 = 0\) et \(u_{n+1} = \sqrt{1 + u_n}\). Montrer que \((u_n)\) est bien définie et que \(\forall n \in \N,\ 0 \leq u_n \leq 2\).</p>
+          <p>Par récurrence, avec \(\mathcal{P}_n\) : « \(u_n\) est défini et \(0 \leq u_n \leq 2\) ».<span class="c">la propriété inclut « est défini »</span></p>
+          <p><b>Initialisation.</b> \(u_0 = 0\) : \(\mathcal{P}_0\) est vraie.</p>
+          <p><b>Hérédité.</b> Supposons \(\mathcal{P}_n\) vraie pour un \(n \in \N\). Alors \(1 \leq 1 + u_n \leq 3\), donc \(1 + u_n \geq 0\) : \(\sqrt{1 + u_n}\) existe, c’est-à-dire \(u_{n+1}\) est défini. De plus \(\sqrt{1} \leq u_{n+1} \leq \sqrt{3}\), et comme \(0 \leq 1\) et \(\sqrt{3} \leq 2\) : \(0 \leq u_{n+1} \leq 2\). \(\mathcal{P}_{n+1}\) est vraie.</p>
+          <p><b>Conclusion.</b> Pour tout \(n \in \N\), \(u_n\) est défini et \(0 \leq u_n \leq 2\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>\((u_n)\) est la suite, \(u_n\) est un nombre. « \(u_n\) est croissante » se dit de la suite : \((u_n)\) est croissante.</li>
+            <li>\(u_{n+1}\) (le terme suivant) n’est pas \(u_n + 1\).</li>
+            <li>Pour une suite explicite, \(u_{n+1}\) s’obtient en remplaçant <b>chaque</b> \(n\) par \(n + 1\) : si \(u_n = \frac{n}{n + 3}\), alors \(u_{n+1} = \frac{n + 1}{n + 4}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">fiche « Introduction » § 3 · démonstrations § 1</span></div><h2>Suite majorée, minorée, bornée</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définitions <i>avec quantificateurs</i></span>
+          <ol>
+            <li>\((u_n)\) est <b>majorée</b> si \(\exists M \in \R,\ \forall n \in \N,\ u_n \leq M\).</li>
+            <li>\((u_n)\) est <b>minorée</b> si \(\exists m \in \R,\ \forall n \in \N,\ m \leq u_n\).</li>
+            <li>\((u_n)\) est <b>bornée</b> si elle est minorée et majorée.</li>
+          </ol>
+        </div>
+        <div class="prose"><p>L’ordre des quantificateurs compte : \(M\) est choisi <b>avant</b> \(n\), il ne dépend pas de \(n\). Un majorant n’est pas unique : si 1 majore la suite, 2 aussi. La négation, utile pour les contre-exemples : \((u_n)\) n’est pas majorée si \(\forall M \in \R,\ \exists n \in \N,\ u_n \gt M\).</p></div>
+        <div class="box thm"><span class="tag">Proposition <i>suite bornée</i></span>
+          <div class="fm">\[(u_n) \text{ bornée} \iff \exists M \in \R,\ \forall n \in \N,\ |u_n| \leq M.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>fiche « Démonstrations à connaître »</i></span>
+          <p>Rappel : pour \(M \in \R_+\), \(|a| \leq M \iff -M \leq a \leq M\).</p>
+          <p>\(\Leftarrow\) Supposons qu’il existe \(M \in \R\) tel que \(\forall n \in \N,\ |u_n| \leq M\). Alors \(\forall n \in \N,\ -M \leq u_n \leq M\) : \((u_n)\) est minorée par \(-M\) et majorée par \(M\), donc bornée.</p>
+          <p>\(\Rightarrow\) Supposons \((u_n)\) bornée : il existe \((m, K) \in \R^2\) tel que \(\forall n \in \N,\ m \leq u_n \leq K\). Or \(K \leq |K|\) et \(-|m| \leq m\), d’où \(-|m| \leq u_n \leq |K|\).</p>
+          <p>Posons \(M = \max(|m|, |K|)\). On a \(|K| \leq M\) et \(-M \leq -|m|\), d’où \(\forall n \in \N,\ -M \leq u_n \leq M\), c’est-à-dire \(|u_n| \leq M\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>majorer, minorer</i></span>
+          <ol>
+            <li>Calcule quelques termes pour deviner un majorant et un minorant.</li>
+            <li>Pars d’inégalités sûres : \(n \geq 0\), \(-1 \leq \cos(n) \leq 1\), \(-1 \leq (-1)^n \leq 1\), \(n \lt n + 3\).</li>
+            <li>Pour un quotient de termes positifs : majorer le numérateur, <b>minorer</b> le dénominateur.</li>
+            <li>Pour une suite définie par récurrence : démonstration par récurrence.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 1 du Moodle</i></span>
+          <p>Soit \(u_n = \dfrac{n}{n + 3}\) pour \(n \in \N\). Majorant, minorant ? La suite est-elle bornée ?</p>
+          <p>Soit \(n \in \N\). \(n \geq 0\) et \(n + 3 \gt 0\), donc \(u_n \geq 0\) : la suite est minorée par 0.</p>
+          <p>De plus \(n \lt n + 3\) et \(n + 3 \gt 0\), d’où \(\dfrac{n}{n + 3} \leq 1\) : la suite est majorée par 1.<span class="c">on divise par un nombre positif</span></p>
+          <p>Minorée et majorée : \((u_n)\) est bornée.</p>
+        </div>
+        <div class="prose">
+          <p><b>Exercice type 2.</b> \(u_n = \dfrac{n - 4}{7n - 22}\). Le dénominateur ne s’annule pas (\(\frac{22}{7}\) n’est pas entier). Premiers termes : \(u_0 = \frac{2}{11}\), \(u_1 = \frac{1}{5}\), \(u_2 = \frac{1}{4}\), \(u_3 = 1\), \(u_4 = 0\). Pour \(n \geq 4\) : \(n - 4 \geq 0\) et \(7n - 22 \geq 6\), donc \(u_n \geq 0\) ; et \(7(n - 4) = 7n - 28 \lt 7n - 22\), donc \(u_n \leq \frac{1}{7}\). Avec les quatre premiers termes : la suite est minorée par 0 et majorée par 1, donc bornée. On traite à part les premiers termes, puis « à partir du rang 4 ».</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Écrire « \(\forall n,\ \exists M,\ u_n \leq M\) » : c’est vrai pour toute suite (prendre \(M = u_n\)). Le majorant vient <b>en premier</b>.</li>
+            <li>« Majorée par 3 » ne veut pas dire que 3 est atteint, ni que la limite vaut 3.</li>
+            <li>\((-1)^n n\) n’est ni majorée ni minorée ; \((-1)^n\) est bornée : \(|(-1)^n| \leq 1\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">fiche « Introduction » § 2</span></div><h2>Monotonie</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définitions</span>
+          <ul>
+            <li>\((u_n)\) est <b>croissante</b> si \(\forall n \in \N,\ u_{n+1} \geq u_n\) ; <b>décroissante</b> si \(\forall n \in \N,\ u_{n+1} \leq u_n\).</li>
+            <li>\((u_n)\) est <b>strictement croissante</b> si \(\forall n \in \N,\ u_{n+1} \gt u_n\) ; <b>strictement décroissante</b> si \(\forall n \in \N,\ u_{n+1} \lt u_n\).</li>
+            <li>\((u_n)\) est <b>monotone</b> si elle est croissante ou décroissante (strictement monotone : strictement croissante ou strictement décroissante).</li>
+            <li>\((u_n)\) est <b>constante</b> si \(\exists C \in \R,\ \forall n \in \N,\ u_n = C\).</li>
+            <li>\((u_n)\) est <b>stationnaire</b> si elle est constante à partir d’un certain rang : \(\exists N \in \N,\ \forall n \geq N,\ u_n = u_N\).</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Méthode</th><th>Quand</th><th>Conclusion</th></tr></thead>
+          <tbody>
+            <tr><td>Signe de \(u_{n+1} - u_n\)</td><td>toujours possible ; sommes, fractions</td><td>\(\geq 0\) pour tout \(n\) : croissante</td></tr>
+            <tr><td>Comparer \(\dfrac{u_{n+1}}{u_n}\) à 1</td><td>seulement si \(u_n \gt 0\) ; produits, puissances, factorielles</td><td>\(\geq 1\) pour tout \(n\) : croissante</td></tr>
+            <tr><td>Variations de \(f\)</td><td>\(u_n = f(n)\) explicite</td><td>\(f\) croissante sur \([0, +\infty[\) : \((u_n)\) croissante</td></tr>
+            <tr><td>Récurrence</td><td>\(u_{n+1} = f(u_n)\)</td><td>montrer \(\mathcal{P}_n\) : \(u_n \leq u_{n+1}\)</td></tr>
+          </tbody>
+          <caption>« Choisir la bonne méthode pour étudier une monotonie » est un attendu du TD 4.</caption>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 1 : \(u_n = \frac{n}{n+3}\)</i></span>
+          <p>Soit \(n \in \N\). <span data-eq>\(u_{n+1} - u_n = \dfrac{n + 1}{n + 4} - \dfrac{n}{n + 3} = \dfrac{(n + 1)(n + 3) - n(n + 4)}{(n + 4)(n + 3)} = \dfrac{3}{(n + 4)(n + 3)}\)</span>.<span class="c">même dénominateur, on développe</span></p>
+          <p>Pour tout \(n \in \N\), \(u_{n+1} - u_n \gt 0\) : la suite est strictement croissante.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 3 : croissance par récurrence</i></span>
+          <p>\(u_0 = 0\), \(u_{n+1} = \sqrt{1 + u_n}\). Soit \(\mathcal{P}_n\) : « \(u_n \lt u_{n+1}\) ».</p>
+          <p><b>Initialisation.</b> \(u_1 = 1 \gt 0 = u_0\) : \(\mathcal{P}_0\) est vraie.</p>
+          <p><b>Hérédité.</b> Supposons \(u_n \lt u_{n+1}\). Alors \(1 + u_n \lt 1 + u_{n+1}\), et comme la racine carrée est strictement croissante, \(\sqrt{1 + u_n} \lt \sqrt{1 + u_{n+1}}\), c’est-à-dire \(u_{n+1} \lt u_{n+2}\).<span class="c">on applique une fonction croissante</span></p>
+          <p><b>Conclusion.</b> La suite est strictement croissante.</p>
+        </div>
+        <div class="prose">
+          <p><b>Monotone à partir d’un certain rang.</b> Dans l’exercice type 2, \(u_n = \frac{n - 4}{7n - 22}\) : pour \(n \geq 5\), \(u_n \gt 0\) et \(\dfrac{u_{n+1}}{u_n} = \dfrac{7n^2 - 43n + 66}{7n^2 - 43n + 60} \gt 1\), donc la suite est strictement croissante à partir du rang 5. Mais \(u_3 = 1 \gt u_4 = 0\) : elle n’est pas croissante sur \(\N\), donc pas monotone.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Le quotient ne se compare à 1 que si les termes sont <b>strictement positifs</b>. Avec \(u_n = -\frac{1}{n}\), le quotient est inférieur à 1 et la suite est croissante.</li>
+            <li>Une suite constante est à la fois croissante et décroissante (au sens large).</li>
+            <li>Une suite peut n’être ni croissante ni décroissante : \(((-1)^n)\).</li>
+            <li>Deux ou trois termes ne prouvent pas une monotonie ; un seul contre-exemple suffit à la réfuter.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche « Limites » § 1 et 2</span></div><h2>Limite d’une suite : finie, infinie, ou pas de limite</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>limite finie</i></span>
+          <p>Soit \((u_n)\) une suite réelle. On dit que \((u_n)\) <b>converge vers</b> \(\ell \in \R\) si</p>
+          <div class="fm">\[\forall \varepsilon \gt 0,\ \exists n_\varepsilon \in \N,\ \forall n \in \N,\ \left(n \geq n_\varepsilon \Rightarrow |u_n - \ell| \lt \varepsilon\right).\]</div>
+          <p>On note \(u_n \to \ell\) ou \(\displaystyle\lim_{n \to +\infty} u_n = \ell\).</p>
+        </div>
+        <div class="prose">
+          <p>\(|u_n - \ell| \lt \varepsilon\) équivaut à \(\ell - \varepsilon \lt u_n \lt \ell + \varepsilon\), c’est-à-dire \(u_n \in\ ]\ell - \varepsilon, \ell + \varepsilon[\). La définition dit : pour <b>toute</b> bande autour de \(\ell\), aussi étroite soit-elle, il existe un rang à partir duquel <b>tous</b> les termes sont dans la bande. Le rang dépend de \(\varepsilon\).</p>
+        </div>
+        <div data-apis="seq" data-opts='{"preset":"inv2","eps":0.2,"only":["inv2","hom","gend","alt","div"],"title":"La définition, à la main"}'></div>
+        <p class="fig-cap"><b>Figure 2</b> — Réduis \(\varepsilon\) : le rang recule, mais il existe toujours. Pour \((-1)^n\), aucune bande étroite ne convient.</p>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 1 : \(u_n = \frac{1}{n^2}\) converge, par la définition</i></span>
+          <p>Montrons que \((u_n)_{n \in \N^*}\) converge vers 0. Soit \(\varepsilon \gt 0\).<span class="c">ε est fixé, quelconque</span></p>
+          <p>\(|u_n - 0| = \dfrac{1}{n^2}\), et \(\dfrac{1}{n^2} \leq \varepsilon \iff n^2 \geq \dfrac{1}{\varepsilon} \iff n \geq \dfrac{1}{\sqrt{\varepsilon}}\).<span class="c">on cherche à partir de quel n</span></p>
+          <p>Soit \(N\) un entier supérieur à \(\dfrac{1}{\sqrt{\varepsilon}}\), par exemple \(N = E\left(\dfrac{1}{\sqrt{\varepsilon}}\right) + 1\). Alors \(n \geq N \Rightarrow |u_n - 0| \leq \varepsilon\).<span class="c">E : partie entière</span></p>
+          <p>Donc \((u_n)\) converge vers 0.</p>
+        </div>
+        <div class="box thm"><span class="tag">Propositions <i>suite convergente</i></span>
+          <ul>
+            <li><b>Unicité.</b> La limite d’une suite réelle convergente est unique.</li>
+            <li>\(\displaystyle\lim_{n \to +\infty} u_n = \ell \iff \lim_{n \to +\infty} (u_n - \ell) = 0\).</li>
+            <li>Si \(\ell \neq 0\), alors \(\exists n_0 \in \N,\ \forall n \geq n_0,\ u_n \neq 0\).</li>
+            <li>Si \(\forall n \in \N,\ u_n \gt 0\), alors \(\ell \geq 0\) : l’inégalité stricte devient <b>large</b> à la limite.</li>
+            <li>Si \(u_n \to \ell\), alors \(|u_n| \to |\ell|\). Et \(u_n \to 0 \iff |u_n| \to 0\).</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Définitions <i>suite divergente, limite infinie</i></span>
+          <p>Une suite est <b>divergente</b> si elle ne converge pas.</p>
+          <p>\((u_n)\) <b>tend vers \(+\infty\)</b> si \(\forall A \in \R,\ \exists n_0 \in \N,\ \forall n \in \N,\ \left(n \geq n_0 \Rightarrow u_n \gt A\right)\).</p>
+          <p>\((u_n)\) <b>tend vers \(-\infty\)</b> si \(\forall A \in \R,\ \exists n_0 \in \N,\ \forall n \in \N,\ \left(n \geq n_0 \Rightarrow u_n \lt A\right)\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Comportement</th><th>Vocabulaire</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>limite finie \(\ell\)</td><td><b>convergente</b></td><td>\(1 + \frac{1}{n} \to 1\)</td></tr>
+            <tr><td>limite \(+\infty\) ou \(-\infty\)</td><td><b>divergente</b> (elle a une limite, infinie)</td><td>\(n^2 \to +\infty\), \(\ln(n^2 + n) \to +\infty\)</td></tr>
+            <tr><td>pas de limite</td><td><b>divergente</b></td><td>\((-1)^n\), \(\cos(n)\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>« Divergente » ne veut pas dire « tend vers l’infini » : \(((-1)^n)\) diverge en restant bornée.</li>
+            <li>Dans la définition, \(\varepsilon\) vient avant le rang. « \(\exists N,\ \forall \varepsilon \gt 0\) » décrit une suite stationnaire.</li>
+            <li>\(\frac{1}{n} \gt 0\) pour tout \(n\), et pourtant la limite vaut 0 : on ne garde que \(\ell \geq 0\).</li>
+            <li>Une suite qui tend vers \(+\infty\) n’est pas forcément croissante (partie 8).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">fiche « Limites », propositions 3 et 4 · vidéo « Formes indéterminées »</span></div><h2>Opérations sur les limites, formes indéterminées</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>limites finies</i></span>
+          <p>Soient \((u_n)\) et \((v_n)\) convergentes, de limites \(\ell\) et \(\ell'\), et \(\lambda \in \R\). Alors :</p>
+          <ol>
+            <li>\((\lambda u_n + v_n)\) converge vers \(\lambda\ell + \ell'\) ;</li>
+            <li>\((u_n v_n)\) converge vers \(\ell\ell'\) ;</li>
+            <li>si \(\forall n \in \N,\ v_n \neq 0\) et \(\ell' \neq 0\), alors \(\left(\dfrac{1}{v_n}\right)\) converge vers \(\dfrac{1}{\ell'}\).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(\lim u_n\)</th><th>\(\lim v_n\)</th><th>Somme \(u_n + v_n\)</th><th>Produit \(u_n v_n\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(\ell\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\) selon le signe de \(\ell\) (si \(\ell \neq 0\))</td></tr>
+            <tr><td>\(+\infty\)</td><td>\(+\infty\)</td><td>\(+\infty\)</td><td>\(+\infty\)</td></tr>
+            <tr><td>\(-\infty\)</td><td>\(-\infty\)</td><td>\(-\infty\)</td><td>\(+\infty\)</td></tr>
+            <tr><td>\(-\infty\)</td><td>\(+\infty\)</td><td><b>on ne peut rien dire</b></td><td>\(-\infty\)</td></tr>
+            <tr><td>\(0\)</td><td>\(\pm\infty\)</td><td>\(\pm\infty\)</td><td><b>on ne peut rien dire</b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box def"><span class="tag">Les quatre formes indéterminées</span>
+          <div class="fm">\[\infty - \infty,\qquad 0 \times \infty,\qquad \frac{\infty}{\infty},\qquad \frac{0}{0}.\]</div>
+          <p>« Indéterminée » ne veut pas dire « pas de limite » : il faut transformer l’expression avant de conclure.</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>lever une forme indéterminée</i></span>
+          <ol>
+            <li><b>Factorise par le terme dominant</b> au numérateur et au dénominateur, puis simplifie.</li>
+            <li><b>Croissances comparées</b> : \(\displaystyle\lim_{n \to +\infty} \frac{\ln(n)}{n} = 0\), \(\displaystyle\lim_{n \to +\infty} \frac{n^2}{e^n} = 0\), \(\displaystyle\lim_{n \to +\infty} \frac{e^n}{n} = +\infty\). L’exponentielle l’emporte sur les puissances, qui l’emportent sur le logarithme.</li>
+            <li><b>Quantité conjuguée</b> pour une différence de racines : \(\sqrt{n + 1} - \sqrt{n} = \dfrac{1}{\sqrt{n + 1} + \sqrt{n}} \to 0\).</li>
+            <li>Sinon : encadrement et gendarmes (partie 6).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 2 du Moodle</i></span>
+          <p>Limite de \(u_n = \dfrac{2 + n - n^2}{n^2 + 3n + 4}\) ?</p>
+          <p>\(u_n = \dfrac{n^2\left(\frac{2}{n^2} + \frac{1}{n} - 1\right)}{n^2\left(1 + \frac{3}{n} + \frac{4}{n^2}\right)} = \dfrac{\frac{2}{n^2} + \frac{1}{n} - 1}{1 + \frac{3}{n} + \frac{4}{n^2}}\).<span class="c">on factorise par n², le terme dominant</span></p>
+          <p>Or \(\displaystyle\lim_{n \to +\infty} \left(\frac{2}{n^2} + \frac{1}{n} - 1\right) = -1\) et \(\displaystyle\lim_{n \to +\infty} \left(1 + \frac{3}{n} + \frac{4}{n^2}\right) = 1\). Par quotient, \(\displaystyle\lim_{n \to +\infty} u_n = -1\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 3 du Moodle</i></span>
+          <p>Limite de \(u_n = \dfrac{e^n - n^2}{n + \ln(n)}\) ?</p>
+          <p>\(u_n = \dfrac{e^n\left(1 - \frac{n^2}{e^n}\right)}{n\left(1 + \frac{\ln(n)}{n}\right)} = \dfrac{e^n}{n} \times \dfrac{1 - \frac{n^2}{e^n}}{1 + \frac{\ln(n)}{n}}\).<span class="c">eⁿ domine en haut, n en bas</span></p>
+          <p>Par croissances comparées, \(\dfrac{n^2}{e^n} \to 0\), \(\dfrac{\ln(n)}{n} \to 0\) et \(\dfrac{e^n}{n} \to +\infty\). Donc \(\displaystyle\lim_{n \to +\infty} u_n = +\infty\).</p>
+        </div>
+        <div class="prose"><p><b>Raccourci à connaître.</b> Un quotient de polynômes en \(n\) a la limite du quotient de ses termes de plus haut degré : \(\dfrac{3n^2 + 1}{2n^2 - n} \to \dfrac{3}{2}\), \(\dfrac{n + 1}{n^2} \to 0\), \(\dfrac{n^3}{n^2 + 1} \to +\infty\). Dans une copie, écris la factorisation.</p></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>« \(\infty - \infty = 0\) » et « \(0 \times \infty = 0\) » sont faux : \(n^2 - n \to +\infty\), \(\frac{1}{n} \times n^2 \to +\infty\), \(\frac{1}{n} \times n \to 1\).</li>
+            <li>Les opérations supposent que les deux limites <b>existent</b> : \((-1)^n + (-1)^{n+1} = 0\) converge alors qu’aucun des deux termes n’a de limite.</li>
+            <li>\(\ln(n^2 + n) \to +\infty\) : la suite diverge, même si elle croît lentement.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">fiche « Limites » § 3 · démonstrations § 2</span></div><h2>Comparaison, théorème des gendarmes, convergente donc bornée</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>comparaison</i></span>
+          <p>Soient \((u_n)\) et \((v_n)\) telles que \(\forall n \in \N,\ u_n \leq v_n\).</p>
+          <ol>
+            <li>Si \(\lim u_n = +\infty\), alors \(\lim v_n = +\infty\).</li>
+            <li>Si \(\lim v_n = -\infty\), alors \(\lim u_n = -\infty\).</li>
+          </ol>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>des gendarmes</i></span>
+          <p>Soient \((u_n)\), \((v_n)\) et \((w_n)\) trois suites réelles telles que :</p>
+          <ol>
+            <li>à partir d’un certain rang, \(u_n \leq v_n \leq w_n\) ;</li>
+            <li>\((u_n)\) et \((w_n)\) convergent vers une même limite \(\ell \in \R\).</li>
+          </ol>
+          <p>Alors \((v_n)\) converge vers \(\ell\).</p>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>fiche « Démonstrations à connaître » ; examen de janvier 2024, 5 points</i></span>
+          <p>Soit \(\varepsilon \gt 0\) fixé.</p>
+          <p>\((u_n)\) converge vers \(\ell\) : \(\exists N_1 \in \N,\ \forall n \geq N_1,\ \ell - \varepsilon \lt u_n \lt \ell + \varepsilon\).</p>
+          <p>\((w_n)\) converge vers \(\ell\) : \(\exists N_2 \in \N,\ \forall n \geq N_2,\ \ell - \varepsilon \lt w_n \lt \ell + \varepsilon\).</p>
+          <p>Posons \(N = \max(N_1, N_2)\) et soit \(n \geq N\). Alors \(n \geq N_1\) et \(n \geq N_2\), donc \(\ell - \varepsilon \lt u_n \leq v_n \leq w_n \lt \ell + \varepsilon\).</p>
+          <p>On a montré : \(\forall \varepsilon \gt 0\), il existe un rang \(N\) à partir duquel \(|v_n - \ell| \lt \varepsilon\). Donc \((v_n)\) converge vers \(\ell\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 4 du Moodle</i></span>
+          <p>Limite de \(u_n = \dfrac{2n + (-1)^n}{n^2 + \cos(n)}\) ?</p>
+          <p>\((-1)^n = \pm 1\), donc \(2n - 1 \leq 2n + (-1)^n \leq 2n + 1\). Et \(\cos(n) \in [-1, 1]\), donc \(n^2 - 1 \leq n^2 + \cos(n) \leq n^2 + 1\).</p>
+          <p>Pour \(n \geq 2\), tout est strictement positif : \(\dfrac{2n - 1}{n^2 + 1} \leq u_n \leq \dfrac{2n + 1}{n^2 - 1}\).<span class="c">petit numérateur sur grand dénominateur, et l’inverse</span></p>
+          <p>Or \(\dfrac{2n - 1}{n^2 + 1} = \dfrac{2 - \frac{1}{n}}{n + \frac{1}{n}} \to 0\) et \(\dfrac{2n + 1}{n^2 - 1} \to 0\). D’après le théorème des gendarmes, \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+        </div>
+        <div class="prose">
+          <p><b>Conséquence pratique.</b> Si \((u_n)\) est bornée et si \(v_n \to 0\), alors \(u_n v_n \to 0\) : \(|u_n v_n| \leq M|v_n|\). Exemples : \(\dfrac{\sin(n)}{n} \to 0\), \(\dfrac{(-1)^n}{n} \to 0\).</p>
+          <p><b>Comparaison vers l’infini</b> (exercice type 5). \(u_n = \sqrt{n}\) si \(n\) est pair, \(n^2\) si \(n\) est impair. Dans les deux cas \(u_n \geq \sqrt{n}\), et \(\sqrt{n} \to +\infty\) : par comparaison, \(u_n \to +\infty\). La suite n’est pourtant pas monotone : pour \(n\) impair, \(n \geq 3\), \(u_n = n^2 \gt \sqrt{n + 1} = u_{n+1}\).</p>
+          <p><b>TD 4, exercice 3.6.</b> \(u_n = \displaystyle\sum_{k=1}^{n} \frac{1}{n^2 + k}\) : chaque terme est entre \(\frac{1}{n^2 + n}\) et \(\frac{1}{n^2 + 1}\), et il y en a \(n\), donc \(\dfrac{n}{n^2 + n} \leq u_n \leq \dfrac{n}{n^2 + 1}\). Les deux gendarmes tendent vers 0 : \(u_n \to 0\). De même \(\dfrac{n^2}{n^2 + n} \leq n\,u_n \leq \dfrac{n^2}{n^2 + 1}\) : \(n\,u_n \to 1\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Proposition <i>propriété d’une suite convergente</i></span>
+          <div class="fm">\[(u_n) \text{ converge} \implies (u_n) \text{ bornée}.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>fiche « Démonstrations à connaître »</i></span>
+          <p>Supposons que \((u_n)\) converge et notons \(\ell \in \R\) sa limite : \(\forall \varepsilon \gt 0,\ \exists N \in \N,\ \forall n \geq N,\ |u_n - \ell| \lt \varepsilon\).</p>
+          <p>C’est vrai pour tout \(\varepsilon \gt 0\), donc pour \(\varepsilon = 1\) : il existe un rang \(N\) à partir duquel \(|u_n - \ell| \lt 1\). Pour \(n \geq N\), par l’inégalité triangulaire :</p>
+          <div class="fm">\[|u_n| = |(u_n - \ell) + \ell| \leq |u_n - \ell| + |\ell| \lt 1 + |\ell|.\]</div>
+          <p>La suite est bornée à partir du rang \(N\). Posons \(M = \max\left(|u_0|, |u_1|, \ldots, |u_{N-1}|, 1 + |\ell|\right)\). Alors \(\forall n \in \N,\ |u_n| \leq M\) : \((u_n)\) est bornée.</p>
+        </div>
+        <div class="prose"><p><b>Réciproque fausse</b> : \(((-1)^n)\) est bornée et ne converge pas. <b>Contraposée</b>, vraie et utile : une suite non bornée ne converge pas. L’examen de janvier 2025 demandait les quatre : la définition de « bornée », la démonstration, la réciproque (avec contre-exemple) et la contraposée.</p></div>
+        <div class="box exam"><span class="tag">Au contrôle et à l’examen</span>
+          <p>La fiche « Démonstrations à connaître » est un module à part du Moodle, qui n’est pas cité dans le programme du contrôle. Ses trois premières démonstrations (bornée \(\iff |u_n| \leq M\), convergente \(\Rightarrow\) bornée, gendarmes) portent pourtant sur les modules au programme, et un contrôle de cours peut demander une démonstration (l’IPP en octobre 2022). Apprends-les maintenant : elles sont exigibles à l’examen final de toute façon.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Gendarmes : les deux suites qui encadrent doivent avoir la <b>même</b> limite. \(-1 \leq (-1)^n \leq 1\) ne donne rien.</li>
+            <li>Diviser un encadrement : par un nombre <b>positif</b>, et l’inverse retourne les inégalités.</li>
+            <li>Passer à la limite dans une inégalité sans savoir que la limite existe.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s6"></button></div>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="sec" id="s7">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="7"></span>Partie 7 <span class="ref">fiche « Exemples remarquables » § 1 · TD 4 ex. 2.3 et 2.4</span></div><h2>Suites géométriques et arithmético-géométriques</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>suite géométrique</i></span>
+          <p>\((u_n)\) est <b>géométrique</b> s’il existe un réel \(q\) tel que \(\forall n \in \N,\ u_{n+1} = q\,u_n\). Le nombre \(q\) est la <b>raison</b>.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorèmes <i>terme général, somme</i></span>
+          <p>Soit \((u_n)\) géométrique de premier terme \(u_0\) et de raison \(q\).</p>
+          <div class="fm">\[\forall n \in \N,\ u_n = u_0\,q^n \qquad\text{et, pour } n \geq n_0,\quad u_n = u_{n_0}\,q^{n - n_0}.\]</div>
+          <div class="fm">\[u_0 + u_1 + \cdots + u_n = \begin{cases} u_0 \times \dfrac{1 - q^{n+1}}{1 - q} &amp; \text{si } q \neq 1,\\[2mm] (n + 1)\,u_0 &amp; \text{si } q = 1. \end{cases}\]</div>
+          <p>À partir du rang \(n_0\) : \(u_{n_0} + \cdots + u_n = u_{n_0}\dfrac{1 - q^{n - n_0 + 1}}{1 - q}\) pour \(q \neq 1\). À retenir : <b>premier terme \(\times \dfrac{1 - q^{\text{nombre de termes}}}{1 - q}\)</b>.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Raison \(q\)</th><th>\(\displaystyle\lim_{n \to +\infty} q^n\)</th><th>\((q^n)\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(q \gt 1\)</td><td>\(+\infty\)</td><td>diverge</td></tr>
+            <tr><td>\(q = 1\)</td><td>\(1\)</td><td>converge (constante)</td></tr>
+            <tr><td>\(-1 \lt q \lt 1\)</td><td>\(0\)</td><td>converge</td></tr>
+            <tr><td>\(q \leq -1\)</td><td>pas de limite</td><td>diverge</td></tr>
+          </tbody>
+          <caption>Donc \((q^n)\) converge si et seulement si \(-1 \lt q \leq 1\) : c’est la « condition nécessaire et suffisante » demandée au contrôle de cours de décembre 2022.</caption>
+        </table></div>
+        <div class="prose">
+          <p><b>Signe</b> (TD 4, ex. 2.3). Si \(q \gt 0\), tous les termes ont le signe de \(u_0\). Si \(q \lt 0\), les termes changent de signe à chaque rang. Si \(q = 0\), la suite est nulle à partir du rang 1.</p>
+          <p><b>Rappel : suite arithmétique.</b> \(u_{n+1} = u_n + r\), donc \(u_n = u_0 + nr\) et \(u_0 + \cdots + u_n = (n + 1)\dfrac{u_0 + u_n}{2}\). Elle diverge, sauf si \(r = 0\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>suite arithmético-géométrique \(u_{n+1} = a\,u_n + b\), \(a \neq 1\)</i></span>
+          <ol>
+            <li><b>Point fixe</b> : résous \(\ell = a\ell + b\). C’est la valeur de \(u_0\) pour laquelle la suite est constante.</li>
+            <li><b>Pose \(v_n = u_n - \ell\)</b> et montre que \((v_n)\) est géométrique de raison \(a\) : \(v_{n+1} = u_{n+1} - \ell = a\,u_n + b - (a\ell + b) = a(u_n - \ell) = a\,v_n\).</li>
+            <li><b>Écris</b> \(v_n = v_0\,a^n\), puis \(u_n = \ell + (u_0 - \ell)\,a^n\).</li>
+            <li><b>Conclus</b> : si \(|a| \lt 1\), \(u_n \to \ell\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 4, exercice 2.3 (3)</i></span>
+          <p>\(u_0 \in \R\) et \(\forall n \in \N,\ u_{n+1} = \dfrac{u_n + 4}{5}\).</p>
+          <p><b>(a)</b> La suite est constante si et seulement si \(u_1 = u_0\), soit \(u_0 = \dfrac{u_0 + 4}{5}\), soit \(u_0 = 1\). On a résolu l’équation \(\ell = \dfrac{\ell + 4}{5}\) : \(\ell = 1\).<span class="c">l’équation du point fixe</span></p>
+          <p><b>(b)</b> Soit \(v_n = u_n - 1\). \(v_{n+1} = \dfrac{u_n + 4}{5} - 1 = \dfrac{u_n - 1}{5} = \dfrac{1}{5}v_n\) : \((v_n)\) est géométrique de raison \(\dfrac{1}{5}\).</p>
+          <p><b>(c)</b> Avec \(u_0 = 5\) : \(v_0 = 4\), \(v_n = \dfrac{4}{5^n}\), donc <span data-eq>\(u_n = 1 + \dfrac{4}{5^n}\)</span>. Comme \(\left|\frac{1}{5}\right| \lt 1\), \(\displaystyle\lim_{n \to +\infty} u_n = 1\).</p>
+          <p><b>(d)</b> \(S = \displaystyle\sum_{k=0}^{5} u_k = 6 + 4\sum_{k=0}^{5} \frac{1}{5^k} = 6 + 4 \times \frac{1 - \frac{1}{5^6}}{1 - \frac{1}{5}} = 6 + 5\left(1 - \frac{1}{5^6}\right)\), soit <span data-eq>\(S = 11 - \dfrac{1}{3125} = \dfrac{34\,374}{3125}\)</span>.<span class="c">6 termes : exposant 6</span></p>
+        </div>
+        <div data-apis="seq" data-opts='{"preset":"ag","eps":0.2,"only":["ag","geo"],"title":"Deux suites du cours"}'></div>
+        <div class="prose">
+          <p><b>Exercice type 1 du Moodle.</b> \(u_0 = 0\), \(u_{n+1} = \dfrac{3 + u_n}{2}\). Avec \(v_n = u_n - l\) : \(v_{n+1} = \dfrac{v_n + 3 - l}{2}\), géométrique pour \(l = 3\), de raison \(\frac{1}{2}\). Donc \(v_n \to 0\) et \(u_n \to 3\).</p>
+          <p><b>Exercice type 3.</b> \(u_n = 0{,}11\ldots1\) (\(n\) chiffres 1) \(= \displaystyle\sum_{k=1}^{n} 10^{-k} = \frac{1}{10} \times \frac{1 - \left(\frac{1}{10}\right)^n}{1 - \frac{1}{10}} = \frac{1 - 10^{-n}}{9}\), qui converge vers \(\dfrac{1}{9}\).</p>
+          <p><b>TD 4, exercice 2.4</b> (la rumeur). \(\pi_{n+1} = p\,\pi_n + (1 - p)(1 - \pi_n) = (2p - 1)\pi_n + 1 - p\). Point fixe : \(\frac{1}{2}\). Donc \(\pi_n = \dfrac{1}{2} + \dfrac{1}{2}(2p - 1)^n\), et comme \(|2p - 1| \lt 1\), \(\pi_n \to \dfrac{1}{2}\) : au bout de nombreux relais, l’information ne vaut pas mieux qu’un tirage à pile ou face.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Somme : l’exposant est le <b>nombre de termes</b>, \(n + 1\) de \(u_0\) à \(u_n\), pas \(n\).</li>
+            <li>\(q = 1\) : la formule de la somme ne s’applique pas (division par 0), la somme vaut \((n + 1)u_0\).</li>
+            <li>\(q = -1\) : \(((-1)^n)\) n’a pas de limite. \(q = 1\) : la suite converge. Ne pas écrire « converge \(\iff |q| \lt 1\) ».</li>
+            <li>La limite de \(q^n\) n’est pas celle de \(u_0 q^n\) quand \(u_0 \lt 0\) et \(q \gt 1\) : \(-2^n \to -\infty\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s7" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 7 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s7"></button></div>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="sec" id="s8">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="8"></span>Partie 8 <span class="ref">fiche « Exemples remarquables » § 2 · TD 4 ex. 1.1 et 1.2</span></div><h2>Critère du quotient, exemples et contre-exemples</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>suites telles que \(\left|\frac{u_{n+1}}{u_n}\right| \lt \ell \lt 1\)</i></span>
+          <p>Soit \((u_n)\) une suite de réels non nuls. On suppose qu’il existe un réel \(\ell\) tel que, pour tout \(n\) (ou seulement à partir d’un certain rang) :</p>
+          <div class="fm">\[\left|\frac{u_{n+1}}{u_n}\right| \lt \ell \lt 1.\]</div>
+          <p>Alors \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+          <p><b>Corollaire.</b> Si \(\displaystyle\lim_{n \to +\infty} \frac{u_{n+1}}{u_n} = 0\), alors \(\displaystyle\lim_{n \to +\infty} u_n = 0\).</p>
+        </div>
+        <div class="prose"><p>L’idée : \(|u_n|\) est alors plus petit qu’une suite géométrique de raison \(\ell \lt 1\), qui tend vers 0. Le réel \(\ell\) est <b>fixe</b>, strictement entre le quotient et 1 : « le quotient est inférieur à 1 » ne suffit pas. Avec \(u_n = 1 + \frac{1}{n}\), le quotient est toujours inférieur à 1 et la suite tend vers 1, pas vers 0.</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type 2 du Moodle</i></span>
+          <p>Limite de \(u_n = \dfrac{3^n (n!)^2}{(2n)!}\) ?</p>
+          <p>\(u_n \gt 0\) pour tout \(n\). \(\dfrac{u_{n+1}}{u_n} = \dfrac{3^{n+1}\left((n + 1)!\right)^2 (2n)!}{3^n (n!)^2 (2n + 2)!}\). Or \((n + 1)! = (n + 1)\,n!\) et \((2n + 2)! = (2n + 2)(2n + 1)(2n)!\).<span class="c">on déplie les factorielles</span></p>
+          <p>Donc <span data-eq>\(\dfrac{u_{n+1}}{u_n} = \dfrac{3(n + 1)^2}{(2n + 2)(2n + 1)} = \dfrac{3(n + 1)}{2(2n + 1)}\)</span>, qui tend vers \(\dfrac{3}{4}\).</p>
+          <p>\(\dfrac{3(n + 1)}{2(2n + 1)} \lt \dfrac{4}{5} \iff 15n + 15 \lt 16n + 8 \iff n \gt 7\). Pour \(n \gt 7\) : \(0 \lt \dfrac{u_{n+1}}{u_n} \lt \dfrac{4}{5} \lt 1\).<span class="c">un ℓ fixe : 4/5</span></p>
+          <p>D’après le théorème, \((u_n)\) tend vers 0.</p>
+        </div>
+        <div class="prose"><p><b>Avec le corollaire.</b> \(u_n = \dfrac{a^n}{n!}\) (\(a \gt 0\)) : \(\dfrac{u_{n+1}}{u_n} = \dfrac{a}{n + 1} \to 0\), donc \(\dfrac{a^n}{n!} \to 0\). La factorielle l’emporte sur toute suite géométrique.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>On demande une suite…</th><th>Exemple</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>stationnaire, non constante</td><td>\(u_0 = 1\) et \(u_n = 0\) pour \(n \geq 1\)</td><td>constante à partir du rang 1</td></tr>
+            <tr><td>bornée, non constante</td><td>\(((-1)^n)\)</td><td>\(|u_n| \leq 1\)</td></tr>
+            <tr><td>majorée par 3</td><td>\((3 - n)\)</td><td>\(3 - n \leq 3\)</td></tr>
+            <tr><td>ni croissante ni décroissante</td><td>\(((-1)^n)\)</td><td>\(u_0 \gt u_1\) et \(u_1 \lt u_2\)</td></tr>
+            <tr><td>divergente</td><td>\((n)\), \(((-1)^n)\)</td><td>limite infinie, ou pas de limite</td></tr>
+            <tr><td>bornée et non convergente</td><td>\(((-1)^n)\)</td><td>la réciproque de « convergente \(\Rightarrow\) bornée » est fausse</td></tr>
+            <tr><td>strictement croissante et bornée</td><td>\(\left(\dfrac{n}{n + 1}\right)\)</td><td>\(0 \leq u_n \lt 1\), \(u_{n+1} - u_n = \dfrac{1}{(n + 1)(n + 2)} \gt 0\)</td></tr>
+            <tr><td>strictement croissante et convergente</td><td>\(\left(-\dfrac{1}{n + 1}\right)\)</td><td>tend vers 0 en croissant</td></tr>
+            <tr><td>non constante, convergeant vers 2</td><td>\(\left(2 + \dfrac{1}{n + 1}\right)\)</td><td>\(\frac{1}{n + 1} \to 0\)</td></tr>
+            <tr><td>tendant vers \(+\infty\), non croissante, même à partir d’un rang</td><td>\((n + 2(-1)^n)\)</td><td>\(u_n \geq n - 2\) ; \(u_{2k} = 2k + 2 \gt u_{2k+1} = 2k - 1\)</td></tr>
+            <tr><td>non majorée, ne tendant pas vers \(+\infty\)</td><td>\((n(1 + (-1)^n))\)</td><td>vaut \(2n\) aux rangs pairs, 0 aux rangs impairs</td></tr>
+            <tr><td>ni majorée ni minorée</td><td>\(((-1)^n n)\)</td><td>\(u_{2k} = 2k\), \(u_{2k+1} = -(2k + 1)\)</td></tr>
+          </tbody>
+          <caption>TD 4, exercices 1.1 et 1.2, et questions des contrôles de cours de décembre 2022 et novembre 2023. Sur \(\N^*\), \(1 - \frac{1}{n}\), \(-\frac{1}{n}\) et \(2 + \frac{1}{n}\) conviennent aussi.</caption>
+        </table></div>
+        <div class="prose"><p><b>Pourquoi une suite ni majorée ni minorée n’a pas de limite</b> (TD 4, ex. 1.2). Si elle convergeait, elle serait bornée. Si elle tendait vers \(+\infty\), elle serait supérieure à 0 à partir d’un rang \(n_0\), donc minorée par le plus petit des nombres \(u_0, \ldots, u_{n_0 - 1}, 0\). De même, si elle tendait vers \(-\infty\), elle serait majorée.</p></div>
+        <div class="box exam"><span class="tag">Au contrôle</span>
+          <p>Les deux contrôles de cours sur les suites retrouvés (décembre 2022 et novembre 2023) ne posent que ce type de questions : une définition avec quantificateurs, puis « donner un exemple de suite… ». Une suite donnée sans justification est acceptée quand elle est juste, mais une ligne de vérification te protège.</p>
+        </div>
+        <div data-check-ref="apis/cours-4-suites.html#s8" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 8 sur 8</span><button type="button" class="done-btn" data-done="apis:suites:s8"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le programme du contrôle s’arrête ici. La page <a href="controle.html">Contrôle du 23 novembre</a> rassemble ce qu’il faut savoir par cœur, la forme des questions et un contrôle blanc. Les théorèmes de convergence, les suites récurrentes et les comparaisons de Landau arrivent ensuite, pour l’examen final.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/apis.js"></script>
+</body>
+</html>
