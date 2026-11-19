@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intégrales · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 2 : intégrale et aire sous une courbe, calcul par des aires de triangles et de rectangles, méthode des rectangles et encadrement, relation de Chasles, fonctions paires et impaires, théorème fondamental, calcul par une primitive, linéarité, comparaison, encadrement, valeur moyenne. Au programme du contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 2 : intégrales">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 2 sur 4 du contrôle</span><span>Source : polycopié « Primitives et intégrales » § 2, fiche de synthèse, TD 3 parties 2 et 3</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Maths APIS</a> · Cours 2 · <a href="controle.html">au contrôle du 23 novembre</a></div>
+      <h1>Une intégrale est une aire, <span class="w">qu’une primitive calcule.</span></h1>
+      <p class="lead">\(\displaystyle\int_a^b f(x)\,dx\) mesure l’aire entre la courbe de \(f\) et l’axe des abscisses, comptée positivement au-dessus de l’axe et négativement en dessous. On peut la calculer avec des triangles et des rectangles, l’encadrer par la méthode des rectangles, ou la calculer exactement avec une primitive : \(F(b) - F(a)\).</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 6, avec la méthode des rectangles</span></li>
+        <li><span><span class="k">Cours</span> polycopié § 2 · TD 3, exercices 2.3 à 3.11</span></li>
+        <li class="ex"><span><span class="k">Contrôle</span> une aire, un encadrement, une intégrale par primitive</span></li>
+      </ul>
+    </div>
+    <figure style="margin:0;align-self:start">
+      <div data-apis="area" data-opts='{"f":{"m":1,"p":1},"a":0,"b":2,"x":[-0.6,3.2],"y":[-0.5,3.6],"title":"∫₀² (x + 1) dx = 4","labels":[[1,0.5,"2 × 1 = 2"],[1.35,1.75,"2"]],"alt":"Aire sous la droite y = x + 1 entre 0 et 2 : un rectangle d’aire 2 et un triangle d’aire 2"}'></div>
+      <figcaption class="fig-cap"><b>Figure 1</b> — L’exemple du polycopié : un rectangle d’aire 2 et un triangle d’aire 2. Par une primitive : \(\left[\frac{x^2}{2} + x\right]_0^2 = 4\).</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 2 · Intégrales</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Intégrale et aire</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Calculer par des aires</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Méthode des rectangles</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Chasles, parité</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Théorème fondamental</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Linéarité, encadrement</span></a></li>
+    </ol>
+    <p class="toc-note">Dans tout le cours, \(a\) et \(b\) sont deux réels avec \(a \lt b\).</p>
+    <div class="toc-nav"><a href="cours-1-primitives.html">← Cours 1 : primitives</a><a href="cours-3-ipp.html">Cours 3 : IPP, changement de variable →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Intégrale et aire</a></li><li><a href="#s2">Calculer par des aires</a></li><li><a href="#s3">Méthode des rectangles</a></li><li><a href="#s4">Chasles, parité</a></li><li><a href="#s5">Théorème fondamental</a></li><li><a href="#s6">Linéarité, encadrement</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">polycopié § 2.1</span></div><h2>L’intégrale comme aire sous la courbe</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>intégrale d’une fonction positive</i></span>
+          <p>Dans un repère orthogonal \((O, \vec{\imath}, \vec{\jmath})\), l’<b>unité d’aire</b> (u.a.) est l’aire du rectangle de côtés \([OI]\) et \([OJ]\).</p>
+          <p>Soit \(f\) continue et <b>positive</b> sur \([a, b]\). L’<b>intégrale de \(a\) à \(b\) de \(f\)</b> est l’aire, en unités d’aire, de la surface délimitée par la courbe de \(f\), l’axe des abscisses et les droites d’équations \(x = a\) et \(x = b\). On la note \(\displaystyle\int_a^b f(x)\,dx\).</p>
+        </div>
+        <div class="prose">
+          <ul>
+            <li>\(x\) est une variable <b>muette</b> : \(\displaystyle\int_a^b f(x)\,dx = \int_a^b f(t)\,dt = \int_a^b f(u)\,du\).</li>
+            <li>Le « \(dx\) » indique la variable d’intégration. On ne l’oublie jamais : il compte dans les changements de variable.</li>
+            <li>\(\displaystyle\int_a^a f(x)\,dx = 0\) : une surface de largeur nulle.</li>
+          </ul>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>fonction négative, signe quelconque</i></span>
+          <p>Si \(f\) est continue et <b>négative</b> sur \([a, b]\), et si \(\mathcal{A}\) est l’aire entre sa courbe et l’axe des abscisses, alors \(\displaystyle\int_a^b f(x)\,dx = -\mathcal{A}\).</p>
+          <p>Si \(f\) change de signe, on découpe : les morceaux au-dessus de l’axe comptent en plus, ceux en dessous en moins. Avec trois morceaux, sous, sur, sous : \(\displaystyle\int_a^b f(x)\,dx = -\mathcal{A}_1 + \mathcal{A}_2 - \mathcal{A}_3\).</p>
+        </div>
+        <div class="box why"><span class="tag">L’idée du polycopié</span>
+          <p>Sous la droite \(y = 2x\), entre 0 et 3 : un triangle d’aire \(\frac{3 \times 6}{2} = 9\). Or une primitive de \(x \mapsto 2x\) est \(F(x) = x^2\), et \(F(3) - F(0) = 9\). Sous \(y = x + 1\), entre 0 et 3 : \(3 \times 1 + \frac{3 \times 3}{2} = \frac{15}{2}\), et \(F(x) = \frac{x^2}{2} + x\) donne aussi \(F(3) - F(0) = \frac{15}{2}\). L’aire et la primitive racontent la même chose : c’est le théorème de la partie 5.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Une intégrale peut être négative ou nulle ; une aire, jamais. « L’aire de la partie colorée » se répond par un nombre positif (TD 3, exercice 3.10).</li>
+            <li>Les unités des deux axes peuvent différer : lis l’échelle avant de compter des carreaux.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">polycopié § 2.1 · TD 3 ex. 3.6 à 3.10</span></div><h2>Calculer une intégrale par des aires</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Objectif de l’ECUE : « calculer une intégrale simple par un calcul d’aires ». Quand la courbe est faite de segments (ou d’arcs de cercle), on découpe en triangles, rectangles, trapèzes et demi-disques.</p></div>
+        <div class="box meth"><span class="tag">Méthode <i>« déterminer à l’aide d’une représentation graphique »</i></span>
+          <ol>
+            <li><b>Trace</b> la courbe entre \(a\) et \(b\) et repère où elle coupe l’axe des abscisses.</li>
+            <li><b>Découpe</b> en figures simples, une par morceau de signe constant.</li>
+            <li><b>Calcule chaque aire</b> : triangle \(\frac{\text{base} \times \text{hauteur}}{2}\), rectangle, trapèze \(\frac{(B + b) \times h}{2}\), disque \(\pi r^2\).</li>
+            <li><b>Affecte le signe</b> : + au-dessus de l’axe, − en dessous, puis additionne.</li>
+          </ol>
+        </div>
+        <div class="grid2">
+          <figure style="margin:0"><div data-apis="area" data-opts='{"f":{"m":-1,"p":2},"a":2,"b":6,"x":[-0.6,7],"y":[-4.6,2.6],"title":"∫₂⁶ (−x + 2) dx = −8","labels":[[4.7,-1.3,"aire 8","neg"]],"alt":"Triangle sous l’axe entre 2 et 6, d’aire 8"}'></div><figcaption class="fig-cap"><b>Figure 2</b> — Fonction négative : un triangle de base 4 et de hauteur 4. L’intégrale vaut \(-8\).</figcaption></figure>
+          <figure style="margin:0"><div data-apis="area" data-opts='{"f":{"m":-1,"p":3},"a":2,"b":5,"x":[-0.6,6],"y":[-2.6,2.2],"title":"∫₂⁵ (3 − x) dx = −3/2","labels":[[2.3,0.25,"½"],[4.35,-0.6,"2","neg"]],"alt":"Petit triangle au-dessus de l’axe entre 2 et 3, grand triangle en dessous entre 3 et 5"}'></div><figcaption class="fig-cap"><b>Figure 3</b> — Signe quelconque : \(\frac{1}{2} - 2 = -\frac{3}{2}\).</figcaption></figure>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 3</th><th>Découpage</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>3.6 (1) \(\displaystyle\int_0^6 x\,dx\)</td><td>triangle \(\frac{6 \times 6}{2}\)</td><td><span data-eq>\(18\)</span></td></tr>
+            <tr><td>3.6 (2) \(\displaystyle\int_{-2}^{6} x\,dx\)</td><td>\(-\frac{2 \times 2}{2} + \frac{6 \times 6}{2}\)</td><td><span data-eq>\(-2 + 18 = 16\)</span></td></tr>
+            <tr><td>3.6 (3) \(\displaystyle\int_{-2}^{1} (2x + 1)\,dx\)</td><td>la droite s’annule en \(-\frac{1}{2}\) : \(-\frac{1{,}5 \times 3}{2} + \frac{1{,}5 \times 3}{2}\)</td><td><span data-eq>\(0\)</span></td></tr>
+            <tr><td>3.6 (4) \(\displaystyle\int_0^4 (-x + 3)\,dx\)</td><td>\(\frac{3 \times 3}{2} - \frac{1 \times 1}{2}\)</td><td><span data-eq>\(4\)</span></td></tr>
+            <tr><td>3.7 \(f = 1\) sur \([-1, 2]\), \(-x + 3\) sur \(]2, 4]\), \(x - 5\) sur \(]4, 6]\)</td><td>\(3 \times 1 + \left(\frac{1}{2} - \frac{1}{2}\right) - \frac{1}{2} + \frac{1}{2}\)</td><td><span data-eq>\(3\)</span></td></tr>
+            <tr><td>3.8 \(f = \frac{x+1}{2}\) sur \([-1, 1]\), \(-x + 2\) sur \(]1, 4]\), \(-2\) sur \(]4, 7]\)</td><td>\(1 + \frac{1}{2} - 2 - 6\)</td><td><span data-eq>\(-\frac{13}{2}\)</span></td></tr>
+            <tr><td>3.9 trapèze, palier, demi-cercle, trapèze sur \([-4, 2]\)</td><td>\(\frac{3}{2} + 2 + \left(4 - \frac{\pi}{2}\right) + 3\)</td><td><span data-eq>\(\frac{21}{2} - \frac{\pi}{2}\)</span></td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé : valeurs recalculées, chacune vérifiée par une primitive. Dans le 3.7 et le 3.8, la fonction est continue : chaque morceau se raccorde au suivant (c’est la question 2).</caption>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 3, exercice 3.9</i></span>
+          <p>La courbe est au-dessus de l’axe sur \([-4, 2]\) : l’intégrale est l’aire sous la courbe. Je découpe.</p>
+          <p>Sur \([-4, -3]\) : trapèze de bases 1 et 2, de hauteur 1 : \(\frac{(1 + 2) \times 1}{2} = \frac{3}{2}\). Sur \([-3, -2]\) : rectangle \(1 \times 2 = 2\).</p>
+          <p>Sur \([-2, 0]\) : rectangle \(2 \times 2 = 4\) dont on retire un demi-disque de rayon 1, d’aire \(\frac{\pi}{2}\) : \(4 - \frac{\pi}{2}\).<span class="c">le demi-cercle creuse le rectangle</span></p>
+          <p>Sur \([0, 2]\) : trapèze de bases 2 et 1, de hauteur 2 : \(\frac{(2 + 1) \times 2}{2} = 3\).</p>
+          <p>Donc \(\displaystyle\int_{-4}^{2} f(x)\,dx = \frac{3}{2} + 2 + 4 - \frac{\pi}{2} + 3 = \frac{21}{2} - \frac{\pi}{2}\).</p>
+        </div>
+        <div class="box exam"><span class="tag">Au contrôle</span>
+          <p>« Calculer une intégrale simple par un calcul d’aires » est un des sept objectifs listés pour ce cours : attends-toi à une fonction affine ou affine par morceaux, avec un morceau sous l’axe. Écris le découpage et une phrase par aire.</p>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">polycopié § 2.1 · TD 3 ex. 2.3 à 2.5</span></div><h2>La méthode des rectangles : encadrer une intégrale</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Pour une fonction « courbe », on ne peut plus découper en triangles. On encadre alors l’aire entre deux séries de rectangles : c’est l’objectif « encadrer une intégrale en utilisant la méthode des rectangles ».</p></div>
+        <div class="box thm"><span class="tag">Proposition <i>méthode des rectangles</i></span>
+          <p>Soit \(f\) continue et positive sur \([a, b]\). On partage \([a, b]\) en \(n\) intervalles de même longueur \(\frac{b - a}{n}\) et on construit des rectangles « inférieurs », sous la courbe, et « supérieurs », au-dessus. On note \(A_{n,i}\) et \(A_{n,s}\) leurs aires totales. Alors :</p>
+          <div class="fm">\[\lim_{n \to +\infty} A_{n,i} = \lim_{n \to +\infty} A_{n,s} = \int_a^b f(x)\,dx.\]</div>
+          <p>De plus, si \(f\) est <b>monotone</b> : \(A_{n,i} \leq \displaystyle\int_a^b f(x)\,dx \leq A_{n,s}\).</p>
+        </div>
+        <div data-apis="rect" data-opts='{"preset":"x2","n":5,"title":"Rectangles inférieurs et supérieurs"}'></div>
+        <p class="fig-cap"><b>Figure 4</b> — Fais varier \(n\). Avec \(x^2\) et \(n = 5\), tu retrouves l’exemple du polycopié ; avec \(\sqrt{x}\) et \(n = 4\), l’exercice 2.3 du TD ; avec \(\ln\) et \(n = 5\), l’exercice 2.4.</p>
+        <div class="box meth"><span class="tag">Méthode <i>encadrer avec n rectangles</i></span>
+          <ol>
+            <li>Largeur de chaque rectangle : \(h = \frac{b - a}{n}\). Points de découpage : \(a,\ a + h,\ a + 2h, \ldots, b\).</li>
+            <li>Si \(f\) est <b>croissante</b> : la hauteur du rectangle inférieur est la valeur au bord <b>gauche</b>, celle du rectangle supérieur la valeur au bord <b>droit</b>. Si \(f\) est décroissante, on échange.</li>
+            <li>Additionne : \(A_{n,i} = h \times (\text{somme des petites hauteurs})\), \(A_{n,s} = h \times (\text{somme des grandes hauteurs})\).</li>
+            <li>Conclus : \(A_{n,i} \leq \displaystyle\int_a^b f \leq A_{n,s}\), en citant la monotonie de \(f\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>polycopié : \(\int_0^1 x^2\,dx\) avec 5 intervalles</i></span>
+          <p>\(x \mapsto x^2\) est continue, positive et croissante sur \([0, 1]\). Je partage \([0, 1]\) en 5 intervalles de longueur 0,2.</p>
+          <p>Rectangles inférieurs (hauteur au bord gauche) : <span data-eq>\(A_{5,i} = 0{,}2 \times (0^2 + 0{,}2^2 + 0{,}4^2 + 0{,}6^2 + 0{,}8^2) = 0{,}24\)</span>.</p>
+          <p>Rectangles supérieurs (hauteur au bord droit) : <span data-eq>\(A_{5,s} = 0{,}2 \times (0{,}2^2 + 0{,}4^2 + 0{,}6^2 + 0{,}8^2 + 1^2) = 0{,}44\)</span>.</p>
+          <p>Donc \(0{,}24 \leq \displaystyle\int_0^1 x^2\,dx \leq 0{,}44\).<span class="c">avec 10 intervalles : 0,285 et 0,385</span></p>
+        </div>
+        <div class="prose">
+          <p><b>TD 3, exercice 2.3.</b> \(\sqrt{x}\) sur \([0, 4]\), quatre rectangles de base 1 : \(\sqrt{0} + \sqrt{1} + \sqrt{2} + \sqrt{3} \leq \displaystyle\int_0^4 \sqrt{x}\,dx \leq \sqrt{1} + \sqrt{2} + \sqrt{3} + \sqrt{4}\), soit environ \(4{,}15 \leq I \leq 6{,}15\) (valeur exacte \(\frac{16}{3}\)).</p>
+          <p><b>Exercice 2.4.</b> \(\ln\) sur \([1, 6]\), cinq intervalles de longueur 1 : \(\ln 1 + \ln 2 + \cdots + \ln 5 \leq \displaystyle\int_1^6 \ln(x)\,dx \leq \ln 2 + \cdots + \ln 6\), soit \(\ln(120) \leq I \leq \ln(720)\), environ \(4{,}79 \leq I \leq 6{,}58\).</p>
+          <p><b>Exercice 2.5.</b> « Encadrer \(\ln(2)\) » : \(\ln(2) = \displaystyle\int_1^2 \frac{dx}{x}\), et \(x \mapsto \frac{1}{x}\) est décroissante. L’écart entre les deux sommes vaut \(\left(f(1) - f(2)\right) \times \frac{1}{n} = \frac{1}{2n}\) : il passe sous \(10^{-1}\) dès \(n = 5\) ; avec \(n = 10\), \(0{,}669 \leq \ln 2 \leq 0{,}719\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Oublier de multiplier par la largeur \(h\) : la somme des hauteurs n’est pas une aire.</li>
+            <li>Pour une fonction décroissante, le bord gauche donne la valeur <b>par excès</b>.</li>
+            <li>Compter \(n + 1\) rectangles : avec \(n\) intervalles, il y a \(n\) rectangles de chaque sorte, et les deux sommes ont \(n - 1\) termes en commun.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">polycopié § 2.1, propriétés</span></div><h2>Relation de Chasles, fonctions paires et impaires</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Propriétés</span>
+          <p>Soit \(f\) une fonction continue sur \([a, b]\).</p>
+          <ol>
+            <li>\(\displaystyle\int_a^a f(x)\,dx = 0\).</li>
+            <li><b>Relation de Chasles</b> : \(\forall c \in [a, b],\ \displaystyle\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx\).</li>
+            <li>Si \(f\) est continue et <b>paire</b> sur \([-a, a]\) : \(\displaystyle\int_{-a}^{a} f(x)\,dx = 2\int_0^a f(x)\,dx\).</li>
+            <li>Si \(f\) est continue et <b>impaire</b> sur \([-a, a]\) : \(\displaystyle\int_{-a}^{a} f(x)\,dx = 0\).</li>
+          </ol>
+          <p>Et, par convention : \(\displaystyle\int_b^a f(t)\,dt = -\int_a^b f(t)\,dt\).</p>
+        </div>
+        <figure style="margin:0"><div data-apis="area" data-opts='{"f":"abs","a":-3,"b":3,"x":[-4,4],"y":[-0.6,3.8],"title":"∫₋₃³ |x| dx = 2 × 9/2 = 9","labels":[[-2,0.7,"9/2"],[2,0.7,"9/2"]],"alt":"Deux triangles symétriques d’aire 9/2 sous la courbe de la valeur absolue","ratio":0.5}'></div><figcaption class="fig-cap"><b>Figure 5</b> — Fonction paire : deux triangles symétriques d’aire \(\frac{9}{2}\).</figcaption></figure>
+        <div class="prose">
+          <p><b>Exemples du polycopié.</b> \(x \mapsto |x|\) est paire : <span data-eq>\(\displaystyle\int_{-3}^{3} |x|\,dx = 2 \times \frac{3 \times 3}{2} = 9\)</span>. \(x \mapsto \sin(x)\) est impaire : \(\displaystyle\int_{-\pi}^{\pi} \sin(x)\,dx = 0\).</p>
+          <p><b>TD 3, exercice 3.11.</b> \(x \mapsto \tan(x)(1 + \tan^2(x))\) est impaire et continue sur \(\left[-\frac{\pi}{4}, \frac{\pi}{4}\right]\) : \(I_7 = 0\), sans calcul.</p>
+        </div>
+        <div class="box trap"><span class="tag">Coquilles du polycopié (page 12)</span>
+          <ul>
+            <li>Il écrit « \(\displaystyle\int_{-3}^{3} |x|\,dx = 2 \times 9 = 18\) » alors que la ligne précédente donne bien l’aire du triangle de droite, \(\frac{9}{2}\). La valeur juste est <b>9</b>.</li>
+            <li>Il écrit « \(\displaystyle\int_{-\pi}^{\pi} |\sin(x)|\,dx = 0\) » : la valeur absolue est en trop. C’est \(\displaystyle\int_{-\pi}^{\pi} \sin(x)\,dx\) qui vaut 0 ; \(|\sin|\) est paire et positive, son intégrale vaut 4.</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Paire : on <b>double</b>. Impaire : <b>zéro</b>. Ne pas inverser, et vérifier que l’intervalle est symétrique \([-a, a]\).</li>
+            <li>Chasles sert pour les fonctions définies par morceaux : une intégrale par morceau, avec la bonne expression sur chacun.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">polycopié § 2.2 · fiche § 4 · TD 3 ex. 3.11</span></div><h2>Le théorème fondamental : intégrale et primitive</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème fondamental</span>
+          <p>Soit \(f\) continue sur \([a, b]\). La fonction \(F\) définie sur \([a, b]\) par</p>
+          <div class="fm">\[F(x) = \int_a^x f(t)\,dt\]</div>
+          <p>est <b>la</b> primitive de \(f\) qui s’annule en \(a\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Proposition <i>calcul d’une intégrale</i></span>
+          <p>Soient \(f\) continue sur \([a, b]\) et \(F\) <b>une</b> primitive de \(f\) sur \([a, b]\). Alors :</p>
+          <div class="fm">\[\int_a^b f(x)\,dx = F(b) - F(a) = \left[F(x)\right]_a^b.\]</div>
+        </div>
+        <div class="prose"><p>N’importe quelle primitive convient : avec \(F + c\), la constante disparaît dans la différence. Et \(\left[-F(x)\right]_a^b = -\left[F(x)\right]_a^b\) : un signe moins sort du crochet.</p></div>
+        <div class="box meth"><span class="tag">Méthode <i>« à l’aide de primitives, calculer »</i></span>
+          <ol>
+            <li>Trouve une primitive \(F\) (cours 1 : tableau ou forme \(u' \times g(u)\)).</li>
+            <li>Écris le crochet \(\left[F(x)\right]_a^b\).</li>
+            <li>Calcule \(F(b) - F(a)\), la borne du <b>haut</b> d’abord, avec des parenthèses.</li>
+            <li>Simplifie : \(\ln(1) = 0\), \(e^0 = 1\), \(\cos(0) = 1\), \(\arctan(1) = \frac{\pi}{4}\).</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Exemples du polycopié.</b> <span data-eq>\(\displaystyle\int_0^4 x^2\,dx = \left[\frac{x^3}{3}\right]_0^4 = \frac{64}{3}\)</span> ; \(\displaystyle\int_0^{\pi/2} \cos(x)\,dx = \left[\sin(x)\right]_0^{\pi/2} = 1\) ; \(\displaystyle\int_0^4 \frac{2x}{x^2 + 1}\,dx = \left[\ln(x^2 + 1)\right]_0^4 = \ln(17)\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>contrôle de cours d’octobre 2022</i></span>
+          <p>Sans intégration par parties ni changement de variable, calculer \(I = \displaystyle\int_0^1 x\sqrt{x^2 + 1}\,dx\).</p>
+          <p>Soit \(u(x) = x^2 + 1\) ; \(u'(x) = 2x\). Alors \(x\sqrt{x^2 + 1} = \frac{1}{2}u'(x)\,u(x)^{1/2}\), de primitive \(\frac{1}{2} \times \frac{u^{3/2}}{3/2} = \frac{1}{3}(x^2 + 1)^{3/2}\).<span class="c">la forme, puis la primitive</span></p>
+          <p>\(I = \left[\frac{1}{3}(x^2 + 1)^{3/2}\right]_0^1 = \frac{1}{3}\left(2^{3/2} - 1\right) = \dfrac{2\sqrt{2} - 1}{3}\).<span class="c">2^{3/2} = 2√2</span></p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 3, exercice 3.11</th><th>Primitive</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>\(I_1 = \displaystyle\int_0^2 3te^{-t^2}\,dt\)</td><td>\(-\frac{3}{2}e^{-t^2}\)</td><td><span data-eq>\(\frac{3}{2}\left(1 - e^{-4}\right)\)</span></td></tr>
+            <tr><td>\(I_2 = \displaystyle\int_0^1 4t(2t^2 + 1)^4\,dt\)</td><td>\(\frac{1}{5}(2t^2 + 1)^5\)</td><td><span data-eq>\(\frac{3^5 - 1}{5} = \frac{242}{5}\)</span></td></tr>
+            <tr><td>\(I_3 = \displaystyle\int_1^e \frac{(\ln t)^2}{t}\,dt\)</td><td>\(\frac{1}{3}(\ln t)^3\)</td><td><span data-eq>\(\frac{1}{3}\)</span></td></tr>
+            <tr><td>\(I_4 = \displaystyle\int_{\pi/6}^{\pi/3} \tan(x)\,dx\)</td><td>\(-\ln(\cos x)\)</td><td><span data-eq>\(\ln\left(\frac{\sqrt{3}}{2}\right) - \ln\left(\frac{1}{2}\right) = \frac{1}{2}\ln(3)\)</span></td></tr>
+            <tr><td>\(I_5 = \displaystyle\int_0^1 \frac{t^2 + 1}{2\sqrt{t^3 + 3t}}\,dt\)</td><td>\(\frac{1}{3}\sqrt{t^3 + 3t}\)</td><td><span data-eq>\(\frac{2}{3}\)</span></td></tr>
+            <tr><td>\(I_6 = \displaystyle\int_0^{\pi/4} \frac{\sin x}{\sqrt{\cos x}}\,dx\)</td><td>\(-2\sqrt{\cos x}\)</td><td><span data-eq>\(2 - 2^{3/4}\)</span></td></tr>
+            <tr><td>\(I_7 = \displaystyle\int_{-\pi/4}^{\pi/4} \tan(x)(1 + \tan^2 x)\,dx\)</td><td>\(\frac{1}{2}\tan^2 x\) (ou fonction impaire)</td><td><span data-eq>\(0\)</span></td></tr>
+            <tr><td>\(I_8 = \displaystyle\int_0^1 \frac{\arctan x}{1 + x^2}\,dx\)</td><td>\(\frac{1}{2}(\arctan x)^2\)</td><td><span data-eq>\(\frac{\pi^2}{32}\)</span></td></tr>
+            <tr><td>\(I_9 = \displaystyle\int_0^1 x\sqrt{x^2 + 1}\,dx\)</td><td>\(\frac{1}{3}(x^2 + 1)^{3/2}\)</td><td><span data-eq>\(\frac{2\sqrt{2} - 1}{3}\)</span></td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé : valeurs recalculées (sympy). \(I_9\) est l’intégrale du contrôle de cours d’octobre 2022.</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Calculer \(F(a) - F(b)\) : le signe est faux. Borne du haut moins borne du bas.</li>
+            <li>Oublier les parenthèses autour de \(F(a)\) quand il est négatif : \(-\frac{1}{2} - \left(-\frac{3}{2}\right)\).</li>
+            <li>Laisser \(\ln(1)\), \(e^0\) ou \(2^{3/2}\) non simplifiés.</li>
+          </ul>
+        </div>
+        <div class="box exam"><span class="tag">Aux contrôles et aux examens</span>
+          <p>Mêmes intégrales, mêmes consignes, d’une année à l’autre : octobre 2020, \(\displaystyle\int_1^2 \frac{3t^2 + 2}{(t^3 + 2t)^2}\,dt = \frac{1}{4}\) ; novembre 2021, \(\displaystyle\int_0^1 (x^2 + 1)\sqrt{x^3 + 3x + 1}\,dx = \frac{10\sqrt{5} - 2}{9}\) ; novembre 2022, \(\displaystyle\int_0^1 \frac{2x^3 + 1}{(x^4 + 2x + 1)^3}\,dx = \frac{15}{64}\) ; janvier 2023, \(\displaystyle\int_1^2 (x - 1)\sqrt{x - 1}\,dx = \frac{2}{5}\) ; octobre 2024, \(\displaystyle\int_0^1 \frac{2x + 2}{2x^2 + 4x + 1}\,dx = \frac{1}{2}\ln(7)\). Toutes sont corrigées dans <a href="entrainement.html#integrales">l’entraînement</a>.</p>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">polycopié § 2.3</span></div><h2>Linéarité, comparaison, encadrement, valeur moyenne</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>linéarité de l’intégrale</i></span>
+          <p>Soient \(f\) et \(g\) continues sur \([a, b]\) et \((\alpha, \beta) \in \R^2\). Alors :</p>
+          <div class="fm">\[\int_a^b \left(\alpha f(x) + \beta g(x)\right) dx = \alpha\int_a^b f(x)\,dx + \beta\int_a^b g(x)\,dx.\]</div>
+        </div>
+        <div class="prose">
+          <p><b>Exemples du polycopié.</b> \(I = \displaystyle\int_0^1 \frac{x}{(x^2 + 1)^2}\,dx = \frac{1}{2}\int_0^1 \frac{2x}{(x^2 + 1)^2}\,dx = \frac{1}{2}\left[-\frac{1}{x^2 + 1}\right]_0^1 = \frac{1}{2}\left(-\frac{1}{2} + 1\right) = \frac{1}{4}\).</p>
+          <p>\(J = \displaystyle\int_0^{\pi/2} \left(\cos(2x) + 3e^{-2x}\right) dx = \left[\frac{\sin(2x)}{2} - \frac{3}{2}e^{-2x}\right]_0^{\pi/2} = \left(0 - \frac{3}{2}e^{-\pi}\right) - \left(0 - \frac{3}{2}\right) = \frac{3}{2} - \frac{3}{2}e^{-\pi}\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Coquille du polycopié (page 14)</span>
+          <p>Dans le calcul de \(J\), le polycopié écrit \(\frac{-e^{2x}}{2}\) et conclut « \(\frac{3}{2} - \frac{3}{2}e^{\pi}\) ». La fonction à intégrer est \(3e^{-2x}\) : la primitive est \(-\frac{3}{2}e^{-2x}\) et le résultat \(\frac{3}{2} - \frac{3}{2}e^{-\pi}\), positif (la fonction est positive près de 0 et l’intégrale vaut environ 1,44). Un résultat négatif de l’ordre de \(-33\) aurait dû alerter.</p>
+        </div>
+        <div class="box thm"><span class="tag">Proposition <i>croissance de l’intégrale</i></span>
+          <p>Soient \(f\) et \(g\) continues sur \([a, b]\) telles que \(\forall x \in [a, b],\ f(x) \leq g(x)\). Alors \(\displaystyle\int_a^b f(x)\,dx \leq \int_a^b g(x)\,dx\).</p>
+          <p><b>Corollaire.</b> Soit \(M \in \R\). Si \(f \leq M\) sur \([a, b]\), alors \(\displaystyle\int_a^b f(x)\,dx \leq M(b - a)\) ; si \(f \geq M\), alors \(\displaystyle\int_a^b f(x)\,dx \geq M(b - a)\). En particulier, une fonction positive a une intégrale positive, une fonction négative une intégrale négative.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>polycopié : encadrer \(\int_0^1 e^{x^2}\,dx\)</i></span>
+          <p>\(x \mapsto e^{x^2}\) est croissante sur \([0, 1]\), donc \(\forall x \in [0, 1],\ e^0 \leq e^{x^2} \leq e^1\), soit \(1 \leq e^{x^2} \leq e\).<span class="c">on encadre la fonction</span></p>
+          <p>Par croissance de l’intégrale, sur un intervalle de longueur 1 : \(1 \leq \displaystyle\int_0^1 e^{x^2}\,dx \leq e\).<span class="c">puis on intègre l’encadrement</span></p>
+        </div>
+        <div class="box def"><span class="tag">Définition <i>valeur moyenne</i></span>
+          <p>Soit \(f\) continue sur \([a, b]\). La <b>valeur moyenne</b> de \(f\) sur \([a, b]\) est le réel</p>
+          <div class="fm">\[\frac{1}{b - a}\int_a^b f(x)\,dx.\]</div>
+          <p>Exemple : la valeur moyenne de \(x \mapsto e^x\) sur \([0, 1]\) est \(\frac{e - 1}{1 - 0} = e - 1\).</p>
+        </div>
+        <div class="box why"><span class="tag">Et après ?</span>
+          <p>Le polycopié se termine par : « pensez-vous savoir calculer n’importe quelle intégrale ? ». Non : quand aucune forme \(u' \times g(u)\) n’apparaît, il reste deux techniques, l’intégration par parties et le changement de variable. C’est le <a href="cours-3-ipp.html">cours 3</a>.</p>
+        </div>
+        <div data-check-ref="apis/cours-2-integrales.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 6</span><button type="button" class="done-btn" data-done="apis:integrales:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours 3, <a href="cours-3-ipp.html">intégration par parties et changement de variable</a>, donne les deux techniques pour les intégrales qui ne se lisent pas dans les tableaux.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/apis.js"></script>
+</body>
+</html>
