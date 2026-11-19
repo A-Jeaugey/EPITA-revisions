@@ -185,6 +185,18 @@
       ]
     },
     {
+      id: 'apis', period: 'b2', name: 'Maths · APIS', short: 'Maths', code: 'S1 · ECUE APIS',
+      course: 'Analyse : primitives, intégrales et suites numériques', path: 'apis/index.html', dir: 'apis/', status: 'ready',
+      train: 'apis/entrainement.html', fiche: 'apis/fiche.html', open: 'Ouvrir l’APIS',
+      exam: 'Contrôle de cours lundi 23 novembre (1 h) · examen final en décembre · DM 20 %, contrôle de cours 20 %, examen 60 %',
+      chapters: [
+        { id: 'primitives', title: 'Primitives', ecue: 'Contrôle', path: 'apis/cours-1-primitives.html', sections: 5 },
+        { id: 'integrales', title: 'Intégrales', ecue: 'Contrôle', path: 'apis/cours-2-integrales.html', sections: 6 },
+        { id: 'ipp', title: 'Intégration par parties, changement de variable', ecue: 'Contrôle', path: 'apis/cours-3-ipp.html', sections: 5 },
+        { id: 'suites', title: 'Suites : définitions, limites, exemples remarquables', ecue: 'Contrôle', path: 'apis/cours-4-suites.html', sections: 8 }
+      ]
+    },
+    {
       id: 'phys2', period: 'b2', name: 'Physique · Mouvement circulaire', short: 'Physique', code: 'Physique S1 · fin de semestre',
       course: 'Mécanique du point : coordonnées polaires, mouvement circulaire', path: 'phys2/index.html', dir: 'phys2/', status: 'ready',
       train: 'phys2/entrainement.html', fiche: 'phys2/fiche.html', open: 'Ouvrir la physique B2',
@@ -232,6 +244,9 @@
       chapters: ['Working methodology', 'Group management'] },
     elec2: { name: 'Electronics · Theorems', short: 'Elec', course: 'Circuit analysis tools: Thévenin, Norton, Millman', open: 'Open Elec B2',
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents · 45% of the grade', chapters: ['Thévenin and Norton', 'Millman and superposition'] },
+    apis: { name: 'Maths · APIS', short: 'Maths', course: 'Analysis: antiderivatives, integrals and sequences', open: 'Open APIS',
+      exam: 'Course test on Monday 23 November (1 hr) · final exam in December · homework 20%, course test 20%, exam 60%',
+      chapters: ['Antiderivatives', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples'] },
     phys2: { name: 'Physics · Circular motion', short: 'Physics', course: 'Point mechanics: polar coordinates, circular motion', open: 'Open Physics B2',
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents', chapters: ['Polar coordinates', 'Dynamics of circular motion'] },
     boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',
@@ -379,7 +394,9 @@
     maths: { date: '2026-10-28', start: '10:30', end: '16:00' },
     elec: { date: '2026-10-29', start: '10:30', end: '11:30' },
     archi: { date: '2026-10-29', start: '13:00', end: '14:00' },
-    piloter: { date: '2026-10-29', start: '14:15', end: '16:15' }
+    piloter: { date: '2026-10-29', start: '14:15', end: '16:15' },
+    /* bimestre 2 : contrôle de cours de l’ECUE APIS (annonce du 16 novembre 2026), durée 1 h, horaire non communiqué */
+    apis: { date: '2026-11-23' }
   };
   var exams = {
     /* date saisie par l’élève, sinon la date officielle de l’examen (OFFICIAL) */

@@ -1,0 +1,319 @@
+/* Banque de questions — Maths, ECUE APIS (analyse : primitives, intégrales et suites numériques), bimestre 2.
+   Sources : cours 3 « Primitives et intégrales : révisions de Terminale » et ses deux fiches de synthèse, cours 4
+   « Suites numériques » (fiches de synthèse, exercices types corrigés du Moodle, page « Démonstrations à connaître »),
+   TD 3 et TD 4, anciens contrôles de cours (octobre et novembre 2020 à 2024) et examens (janvier 2020 à 2025).
+   Deux périmètres, voulus par l'annonce du 16 novembre 2026 :
+   - contrôle de cours du lundi 23 novembre : cours 3 en entier, cours 4 jusqu'aux exemples remarquables
+     (notions apis-primitives, apis-integrales, apis-ipp, apis-cdv, apis-suites, apis-limites, apis-remarquables) ;
+   - examen final de décembre : tout l'ECUE (s'ajoutent apis-convergence, apis-recurrentes, apis-landau). Ces trois
+     notions restent décochées par défaut (window.QCM_OFF) jusqu'au 23 novembre 2026 inclus, puis se cochent seules.
+   Ids « apis-cN-NN » : cours N du site (apis/cours-N-….html), dans l'ordre des parties ; les premières questions
+   d'une partie servent à sa vérification (<div data-check-ref="…#sK" data-n="3">).
+   Exactitude : chaque valeur (primitive, intégrale, limite, somme) est recalculée avec sympy ; les distracteurs
+   reprennent les erreurs classiques (constante oubliée, signe de la primitive de sin, bornes non changées, majorant
+   pris pour une limite). Formules en KaTeX \( … \), écrites en String.raw ; pas de signes < > dans les formules
+   (\lt, \gt, \leq, \geq). */
+(function () {
+  var B = window.QCM_BANK = window.QCM_BANK || [];
+  var T = window.QCM_TOPICS = window.QCM_TOPICS || {};
+  T['apis-primitives'] = 'Contrôle · Primitives usuelles et composées';
+  T['apis-integrales'] = 'Contrôle · Intégrales : aires, propriétés, calcul';
+  T['apis-ipp'] = 'Contrôle · Intégration par parties';
+  T['apis-cdv'] = 'Contrôle · Changement de variable';
+  T['apis-suites'] = 'Contrôle · Suites : bornes, monotonie';
+  T['apis-limites'] = 'Contrôle · Limites de suites';
+  T['apis-remarquables'] = 'Contrôle · Suites géométriques, exemples remarquables';
+  T['apis-convergence'] = 'Examen final · Théorèmes de convergence';
+  T['apis-recurrentes'] = 'Examen final · Suites récurrentes';
+  T['apis-landau'] = 'Examen final · Comparaisons de Landau';
+  /* hors du contrôle de cours : décochées jusqu'au soir du 23 novembre 2026 */
+  if (new Date() < new Date(2026, 10, 24)) window.QCM_OFF = (window.QCM_OFF || []).concat(['apis-convergence', 'apis-recurrentes', 'apis-landau']);
+
+  var r = String.raw;
+  var C1 = 'apis/cours-1-primitives.html', C2 = 'apis/cours-2-integrales.html', C3 = 'apis/cours-3-ipp.html', C4 = 'apis/cours-4-suites.html';
+  var Q = [
+    /* =============================================================== cours 1 : primitives */
+    /* ---------- 1. définition ---------- */
+    { id: 'apis-c1-01', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Soit \(f\) continue sur un intervalle \(I\). « \(F\) est une primitive de \(f\) sur \(I\) » signifie :`,
+      o: [r`\(F\) est dérivable sur \(I\) et \(F' = f\)`, r`\(f\) est dérivable sur \(I\) et \(f' = F\)`, r`\(F\) est continue sur \(I\) et \(F = f\)`, r`\(F(x) = f(x) + c\) avec \(c\) réel`], a: 0,
+      x: r`C’est la définition du cours : \(\forall x \in I,\ F'(x) = f(x)\). Chercher une primitive, c’est dériver « à l’envers ». La deuxième réponse inverse les rôles de \(f\) et de \(F\).`, ref: C1 + '#s1' },
+    { id: 'apis-c1-02', topic: 'apis-primitives', lvl: 1, type: 'tf', a: true, q: r`Si \(F\) est une primitive de \(f\) sur un intervalle \(I\), alors \(x \mapsto F(x) + 5\) en est une aussi.`,
+      x: r`Vrai : \((F + 5)' = F' = f\). Sur un intervalle, toutes les primitives de \(f\) sont de la forme \(F + c\), \(c\) réel : il y en a une infinité.`, ref: C1 + '#s1' },
+    { id: 'apis-c1-03', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Quelle est la primitive de \(x \mapsto \dfrac{1}{\sqrt{x}}\) sur \(]0, +\infty[\) qui vaut 3 en 4 ?`,
+      o: [r`\(x \mapsto 2\sqrt{x} - 1\)`, r`\(x \mapsto 2\sqrt{x} + 3\)`, r`\(x \mapsto \sqrt{x} + 1\)`, r`\(x \mapsto 2\sqrt{x}\)`], a: 0,
+      x: r`Les primitives sont \(F(x) = 2\sqrt{x} + c\). \(F(4) = 4 + c = 3\) donne \(c = -1\). Imposer une valeur en un point fixe la constante : il ne reste qu’une primitive (exemple du cours).`, ref: C1 + '#s1' },
+    /* ---------- 2. primitives usuelles ---------- */
+    { id: 'apis-c1-04', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto x^\alpha\), pour \(\alpha\) réel différent de \(-1\), est :`,
+      o: [r`\(x \mapsto \dfrac{x^{\alpha+1}}{\alpha+1}\)`, r`\(x \mapsto \alpha\, x^{\alpha-1}\)`, r`\(x \mapsto \dfrac{x^{\alpha+1}}{\alpha}\)`, r`\(x \mapsto \dfrac{x^{\alpha}}{\alpha+1}\)`], a: 0,
+      x: r`On augmente l’exposant de 1 et on divise par le nouvel exposant. \(\alpha x^{\alpha-1}\) est la dérivée. Le cas \(\alpha = -1\) est à part : \(\frac{1}{x}\) a pour primitive \(\ln|x|\).`, ref: C1 + '#s2' },
+    { id: 'apis-c1-05', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto \sin(x)\) sur \(\R\) est :`,
+      o: [r`\(x \mapsto -\cos(x)\)`, r`\(x \mapsto \cos(x)\)`, r`\(x \mapsto -\sin(x)\)`, r`\(x \mapsto \tan(x)\)`], a: 0,
+      x: r`\((-\cos)' = \sin\). Le signe moins est du côté de la primitive de sin et de la dérivée de cos : \((\cos)' = -\sin\), donc \(\cos\) est une primitive de \(-\sin\).`, ref: C1 + '#s2' },
+    { id: 'apis-c1-06', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto \dfrac{1}{1 + x^2}\) sur \(\R\) est :`,
+      o: [r`\(x \mapsto \arctan(x)\)`, r`\(x \mapsto \ln(1 + x^2)\)`, r`\(x \mapsto \tan(x)\)`, r`\(x \mapsto -\dfrac{1}{1+x}\)`], a: 0,
+      x: r`\(\arctan'(x) = \frac{1}{1+x^2}\) (démontré au TD 3, exercice 1.1). \(\ln(1+x^2)\) a pour dérivée \(\frac{2x}{1+x^2}\) : il faudrait un \(2x\) au numérateur.`, ref: C1 + '#s2' },
+    { id: 'apis-c1-07', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto \dfrac{1}{x^2}\) sur \(]0, +\infty[\) est :`,
+      o: [r`\(x \mapsto -\dfrac{1}{x}\)`, r`\(x \mapsto \dfrac{1}{x}\)`, r`\(x \mapsto \ln(x^2)\)`, r`\(x \mapsto -\dfrac{2}{x^3}\)`], a: 0,
+      x: r`\(\frac{1}{x^2} = x^{-2}\) : primitive \(\frac{x^{-1}}{-1} = -\frac{1}{x}\). \(-\frac{2}{x^3}\) est la dérivée. \(\ln(x^2)\) a pour dérivée \(\frac{2}{x}\).`, ref: C1 + '#s2' },
+    { id: 'apis-c1-08', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Sur un intervalle où le cosinus ne s’annule pas, une primitive de \(x \mapsto \dfrac{1}{\cos^2(x)} = 1 + \tan^2(x)\) est :`,
+      o: [r`\(x \mapsto \tan(x)\)`, r`\(x \mapsto -\dfrac{1}{\cos(x)}\)`, r`\(x \mapsto \dfrac{\tan^3(x)}{3}\)`, r`\(x \mapsto \ln|\cos(x)|\)`], a: 0,
+      x: r`\(\tan' = \frac{1}{\cos^2} = 1 + \tan^2\) : ligne du tableau à connaître. Elle sert en intégration par parties (\(\int \frac{x}{\cos^2 x}\,dx\), TD 3) et dans les changements de variable \(u = \tan t\).`, ref: C1 + '#s2' },
+    { id: 'apis-c1-09', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Une primitive de \(x \mapsto x\sqrt{x}\) sur \([0, +\infty[\) est :`,
+      o: [r`\(x \mapsto \dfrac{2}{5}\,x^{5/2}\)`, r`\(x \mapsto \dfrac{x^2}{2}\cdot\dfrac{2}{3}x^{3/2}\)`, r`\(x \mapsto \dfrac{3}{2}\,x^{1/2}\)`, r`\(x \mapsto \dfrac{2}{3}\,x^{3/2}\)`], a: 0,
+      x: r`\(x\sqrt{x} = x^{3/2}\), de primitive \(\frac{x^{5/2}}{5/2} = \frac{2}{5}x^{5/2}\) (TD 3, exercice 1.2). On ne multiplie jamais les primitives des deux facteurs.`, ref: C1 + '#s2' },
+    /* ---------- 3. linéarité ---------- */
+    { id: 'apis-c1-10', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto \dfrac{3}{x} - 5x + 6x^4\) sur \(]0, +\infty[\) est :`,
+      o: [r`\(x \mapsto 3\ln(x) - \dfrac{5}{2}x^2 + \dfrac{6}{5}x^5\)`, r`\(x \mapsto -\dfrac{3}{x^2} - 5 + 24x^3\)`, r`\(x \mapsto 3\ln(x) - 5x^2 + 6x^5\)`, r`\(x \mapsto \ln(3x) - \dfrac{5}{2}x^2 + \dfrac{6}{5}x^5\)`], a: 0,
+      x: r`Linéarité : on prend une primitive de chaque terme et on garde les coefficients. La deuxième réponse est la dérivée ; la troisième oublie de diviser par le nouvel exposant.`, ref: C1 + '#s3' },
+    { id: 'apis-c1-11', topic: 'apis-primitives', lvl: 2, type: 'tf', a: false, q: r`Si \(F\) est une primitive de \(f\) et \(G\) une primitive de \(g\), alors \(F \times G\) est une primitive de \(f \times g\).`,
+      x: r`Faux : \((FG)' = fG + Fg\), pas \(fg\). Les primitives respectent les sommes et les multiplications par un réel, pas les produits. Pour un produit, on cherche une forme \(u'\times g(u)\) ou on intègre par parties.`, ref: C1 + '#s3' },
+    /* ---------- 4. fonctions composées ---------- */
+    { id: 'apis-c1-12', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(\dfrac{u'}{u}\), où \(u\) ne s’annule pas sur l’intervalle, est :`,
+      o: [r`\(\ln|u|\)`, r`\(-\dfrac{1}{u^2}\)`, r`\(\dfrac{u^2}{2}\)`, r`\(\ln(u')\)`], a: 0,
+      x: r`\((\ln|u|)' = \frac{u'}{u}\). La valeur absolue évite de se demander le signe de \(u\).`, ref: C1 + '#s4' },
+    { id: 'apis-c1-13', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto e^{2x}\) sur \(\R\) est :`,
+      o: [r`\(x \mapsto \dfrac{e^{2x}}{2}\)`, r`\(x \mapsto 2e^{2x}\)`, r`\(x \mapsto e^{2x}\)`, r`\(x \mapsto \dfrac{e^{2x+1}}{2x+1}\)`], a: 0,
+      x: r`Avec \(u = 2x\) : \(e^{2x} = \frac{1}{2}\,u' e^{u}\), de primitive \(\frac{1}{2}e^{u}\). On <b>divise</b> par 2 ; multiplier par 2, c’est dériver.`, ref: C1 + '#s4' },
+    { id: 'apis-c1-14', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(u'\,u^\alpha\) (\(\alpha \neq -1\)) est :`,
+      o: [r`\(\dfrac{u^{\alpha+1}}{\alpha+1}\)`, r`\(\dfrac{u^{\alpha+1}}{(\alpha+1)\,u'}\)`, r`\(\alpha\,u'\,u^{\alpha-1}\)`, r`\(u^{\alpha+1}\)`], a: 0,
+      x: r`\(\left(\frac{u^{\alpha+1}}{\alpha+1}\right)' = u' u^\alpha\). Le \(u'\) est « consommé » : il ne reste pas dans la primitive.`, ref: C1 + '#s4' },
+    { id: 'apis-c1-15', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Une primitive de \(\dfrac{u'}{\sqrt{u}}\) (avec \(u \gt 0\)) est :`,
+      o: [r`\(2\sqrt{u}\)`, r`\(\sqrt{u}\)`, r`\(\dfrac{1}{2\sqrt{u}}\)`, r`\(\ln(\sqrt{u})\)`], a: 0,
+      x: r`\((\sqrt{u})' = \frac{u'}{2\sqrt{u}}\), donc \(\frac{u'}{\sqrt{u}}\) a pour primitive \(2\sqrt{u}\). Le tableau du cours donne la ligne \(\frac{u'}{2\sqrt{u}} \to \sqrt{u}\) : attention au 2.`, ref: C1 + '#s4' },
+    { id: 'apis-c1-16', topic: 'apis-primitives', lvl: 1, type: 'single', q: r`Une primitive de \(x \mapsto \cos(3x)\) sur \(\R\) est :`,
+      o: [r`\(x \mapsto \dfrac{\sin(3x)}{3}\)`, r`\(x \mapsto 3\sin(3x)\)`, r`\(x \mapsto -\dfrac{\sin(3x)}{3}\)`, r`\(x \mapsto \sin(3x)\)`], a: 0,
+      x: r`\(u = 3x\), \(u' = 3\) : \(\cos(3x) = \frac{1}{3}u'\cos(u)\), de primitive \(\frac{1}{3}\sin(u)\). Vérification en dérivant : \(\left(\frac{\sin(3x)}{3}\right)' = \cos(3x)\).`, ref: C1 + '#s4' },
+    /* ---------- 5. reconnaître la forme ---------- */
+    { id: 'apis-c1-17', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Une primitive de \(x \mapsto \tan(x)\) sur \(\left]-\frac{\pi}{2}, \frac{\pi}{2}\right[\) est :`,
+      o: [r`\(x \mapsto -\ln(\cos(x))\)`, r`\(x \mapsto \ln(\cos(x))\)`, r`\(x \mapsto \dfrac{1}{\cos^2(x)}\)`, r`\(x \mapsto \ln(\sin(x))\)`], a: 0,
+      x: r`\(\tan = \frac{\sin}{\cos} = -\frac{u'}{u}\) avec \(u = \cos\), \(u' = -\sin\). Primitive : \(-\ln|\cos x|\) (exercice type du Moodle, TD 3 ex. 1.2). \(\frac{1}{\cos^2}\) est la dérivée de tan.`, ref: C1 + '#s5' },
+    { id: 'apis-c1-18', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Une primitive de \(x \mapsto x\,e^{x^2}\) sur \(\R\) est :`,
+      o: [r`\(x \mapsto \dfrac{e^{x^2}}{2}\)`, r`\(x \mapsto \dfrac{x^2}{2}\,e^{x^2}\)`, r`\(x \mapsto e^{x^2}\)`, r`\(x \mapsto 2x\,e^{x^2}\)`], a: 0,
+      x: r`\(u = x^2\), \(u' = 2x\) : \(x e^{x^2} = \frac{1}{2}u'e^{u}\). Il manquait un facteur 2 : on le fait apparaître et on compense par \(\frac{1}{2}\) (entraînement du cours).`, ref: C1 + '#s5' },
+    { id: 'apis-c1-19', topic: 'apis-primitives', lvl: 2, type: 'single', q: r`Une primitive de \(x \mapsto \dfrac{4x + 8}{\sqrt{x^2 + 4x + 1}}\) est (TD 3) :`,
+      o: [r`\(x \mapsto 4\sqrt{x^2 + 4x + 1}\)`, r`\(x \mapsto 2\sqrt{x^2 + 4x + 1}\)`, r`\(x \mapsto \ln(x^2 + 4x + 1)\)`, r`\(x \mapsto \dfrac{2x^2 + 8x}{\sqrt{x^2 + 4x + 1}}\)`], a: 0,
+      x: r`\(u = x^2 + 4x + 1\), \(u' = 2x + 4\) : le numérateur vaut \(2u'\). \(\frac{2u'}{\sqrt{u}}\) a pour primitive \(2 \times 2\sqrt{u} = 4\sqrt{u}\).`, ref: C1 + '#s5' },
+    { id: 'apis-c1-20', topic: 'apis-primitives', lvl: 3, type: 'single', q: r`Peut-on écrire une primitive de \(x \mapsto e^{x^2}\) en reconnaissant une forme \(u'e^{u}\) ?`,
+      o: [r`Non : il manque le facteur \(u' = 2x\), qui n’est pas une constante`, r`Oui : \(x \mapsto \dfrac{e^{x^2}}{2x}\)`, r`Oui : \(x \mapsto e^{x^2}\)`, r`Oui : \(x \mapsto \dfrac{e^{x^3}}{3}\)`], a: 0,
+      x: r`On ne peut compenser qu’une <b>constante</b> manquante. \(\frac{e^{x^2}}{2x}\) ne convient pas : sa dérivée n’est pas \(e^{x^2}\) (dérive un quotient). C’est la question du TD 3 : « savez-vous calculer une primitive de \(e^{2x}\) ? de \(e^{x^2}\) ? ». La fonction a des primitives (elle est continue), mais on ne sait pas les écrire avec les fonctions usuelles.`, ref: C1 + '#s5' },
+
+    /* =============================================================== cours 2 : intégrales */
+    /* ---------- 1. intégrale et aire ---------- */
+    { id: 'apis-c2-01', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Pour \(f\) continue et <b>positive</b> sur \([a, b]\), \(\displaystyle\int_a^b f(x)\,dx\) est :`,
+      o: [r`l’aire, en unités d’aire, entre la courbe de \(f\), l’axe des abscisses et les droites \(x = a\) et \(x = b\)`, r`la pente de la courbe de \(f\) entre \(a\) et \(b\)`, r`la longueur de la courbe de \(f\) entre \(a\) et \(b\)`, r`la valeur \(f(b) - f(a)\)`], a: 0,
+      x: r`C’est la définition du cours. \(f(b) - f(a)\) serait l’intégrale de \(f'\), pas de \(f\).`, ref: C2 + '#s1' },
+    { id: 'apis-c2-02', topic: 'apis-integrales', lvl: 1, type: 'num', a: 4, q: r`Par un calcul d’aires (un rectangle et un triangle), que vaut \(\displaystyle\int_0^2 (x + 1)\,dx\) ?`,
+      x: r`Rectangle \(2 \times 1 = 2\), triangle \(\frac{2 \times 2}{2} = 2\) : total 4 (exemple du cours). Vérification : \(\left[\frac{x^2}{2} + x\right]_0^2 = 2 + 2 = 4\).`, ref: C2 + '#s1' },
+    { id: 'apis-c2-03', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Si \(f\) est continue et <b>négative</b> sur \([a, b]\), et si \(\mathcal{A}\) est l’aire entre sa courbe et l’axe des abscisses, alors \(\displaystyle\int_a^b f(x)\,dx\) vaut :`,
+      o: [r`\(-\mathcal{A}\)`, r`\(\mathcal{A}\)`, r`0`, r`\(|\mathcal{A}|^2\)`], a: 0,
+      x: r`Une aire est positive ; l’intégrale d’une fonction négative est l’opposé de l’aire. Pour une fonction de signe quelconque, on compte en plus les morceaux au-dessus de l’axe et en moins ceux en dessous.`, ref: C2 + '#s1' },
+    /* ---------- 2. calculs par aires ---------- */
+    { id: 'apis-c2-04', topic: 'apis-integrales', lvl: 2, type: 'num', a: -8, q: r`Par un calcul d’aire, que vaut \(\displaystyle\int_2^6 (-x + 2)\,dx\) ?`,
+      x: r`Sur \([2, 6]\), \(-x + 2 \leq 0\) : la courbe est sous l’axe et forme un triangle de base 4 et de hauteur 4, d’aire 8. L’intégrale vaut \(-8\) (exemple du cours).`, ref: C2 + '#s2' },
+    { id: 'apis-c2-05', topic: 'apis-integrales', lvl: 2, type: 'num', a: 16, q: r`Par un calcul d’aires, que vaut \(\displaystyle\int_{-2}^{6} x\,dx\) (TD 3, exercice 3.6) ?`,
+      x: r`Triangle sous l’axe sur \([-2, 0]\) : aire 2, compté \(-2\). Triangle au-dessus sur \([0, 6]\) : aire 18. Total \(18 - 2 = 16\).`, ref: C2 + '#s2' },
+    { id: 'apis-c2-06', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\int_2^5 (3 - x)\,dx\) ?`,
+      o: [r`\(-\dfrac{3}{2}\)`, r`\(\dfrac{5}{2}\)`, r`\(\dfrac{3}{2}\)`, r`\(-\dfrac{5}{2}\)`], a: 0,
+      x: r`Petit triangle au-dessus de l’axe sur \([2, 3]\), d’aire \(\frac{1}{2}\) ; grand triangle en dessous sur \([3, 5]\), d’aire 2. Intégrale : \(\frac{1}{2} - 2 = -\frac{3}{2}\). \(\frac{5}{2}\) est l’aire totale, sans tenir compte du signe.`, ref: C2 + '#s2' },
+    /* ---------- 3. méthode des rectangles ---------- */
+    { id: 'apis-c2-07', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`On encadre \(I = \displaystyle\int_0^1 x^2\,dx\) par la méthode des rectangles avec 5 intervalles de longueur 0,2. On obtient :`,
+      o: [r`\(0{,}24 \leq I \leq 0{,}44\)`, r`\(0{,}2 \leq I \leq 0{,}4\)`, r`\(0{,}285 \leq I \leq 0{,}385\)`, r`\(0{,}30 \leq I \leq 0{,}36\)`], a: 0,
+      x: r`Rectangles inférieurs : \(0{,}2 \times (0 + 0{,}04 + 0{,}16 + 0{,}36 + 0{,}64) = 0{,}24\). Supérieurs : \(0{,}2 \times (0{,}04 + 0{,}16 + 0{,}36 + 0{,}64 + 1) = 0{,}44\). L’encadrement \(0{,}285 \leq I \leq 0{,}385\) est celui de 10 intervalles. Valeur exacte : \(\frac{1}{3}\).`, ref: C2 + '#s3' },
+    { id: 'apis-c2-08', topic: 'apis-integrales', lvl: 1, type: 'tf', a: true, q: r`Pour une fonction positive et <b>croissante</b>, les rectangles dont la hauteur est prise au bord gauche de chaque intervalle donnent une valeur par défaut de l’intégrale.`,
+      x: r`Vrai : si \(f\) est croissante, sa plus petite valeur sur chaque intervalle est au bord gauche, donc ces rectangles sont sous la courbe. Pour une fonction décroissante, c’est l’inverse : le bord gauche donne la valeur par excès.`, ref: C2 + '#s3' },
+    { id: 'apis-c2-09', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`On encadre \(\displaystyle\int_0^4 \sqrt{x}\,dx\) par deux séries de quatre rectangles de base 1 (TD 3, exercice 2.3). L’encadrement est :`,
+      o: [r`\(1 + \sqrt{2} + \sqrt{3} \leq I \leq 3 + \sqrt{2} + \sqrt{3}\)`, r`\(\sqrt{2} + \sqrt{3} \leq I \leq 1 + \sqrt{2} + \sqrt{3}\)`, r`\(1 + \sqrt{2} + \sqrt{3} \leq I \leq 4\)`, r`\(4 \leq I \leq 8\)`], a: 0,
+      x: r`Rectangles inférieurs : \(\sqrt{0} + \sqrt{1} + \sqrt{2} + \sqrt{3} \approx 4{,}15\). Supérieurs : \(\sqrt{1} + \sqrt{2} + \sqrt{3} + \sqrt{4} \approx 6{,}15\). L’écart vaut \(f(4) - f(0) = 2\). Valeur exacte : \(\frac{16}{3} \approx 5{,}33\).`, ref: C2 + '#s3' },
+    /* ---------- 4. propriétés ---------- */
+    { id: 'apis-c2-10', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`La relation de Chasles, pour \(f\) continue sur \([a, b]\) et \(c \in [a, b]\), s’écrit :`,
+      o: [r`\(\displaystyle\int_a^b f = \int_a^c f + \int_c^b f\)`, r`\(\displaystyle\int_a^b f = \int_a^c f \times \int_c^b f\)`, r`\(\displaystyle\int_a^b f = \int_a^c f - \int_c^b f\)`, r`\(\displaystyle\int_a^b f = \int_c^a f + \int_c^b f\)`], a: 0,
+      x: r`On coupe l’intervalle en deux et on additionne les deux intégrales. C’est elle qui sert pour une fonction définie par morceaux (TD 3, exercices 3.7 et 3.8).`, ref: C2 + '#s4' },
+    { id: 'apis-c2-11', topic: 'apis-integrales', lvl: 2, type: 'num', a: 9, q: r`Que vaut \(\displaystyle\int_{-3}^{3} |x|\,dx\) ?`,
+      x: r`\(x \mapsto |x|\) est paire : l’intégrale vaut \(2\displaystyle\int_0^3 x\,dx = 2 \times \frac{9}{2} = 9\). Le polycopié écrit « \(2 \times 9 = 18\) » : coquille, l’aire du triangle de droite est bien \(\frac{9}{2}\).`, ref: C2 + '#s4' },
+    { id: 'apis-c2-12', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Pour \(f\) continue et <b>impaire</b> sur \([-a, a]\), \(\displaystyle\int_{-a}^{a} f(x)\,dx\) vaut :`,
+      o: [r`0`, r`\(2\displaystyle\int_0^a f(x)\,dx\)`, r`\(f(a) - f(-a)\)`, r`\(2f(a)\)`], a: 0,
+      x: r`Les aires de part et d’autre de 0 se compensent : par exemple \(\displaystyle\int_{-\pi}^{\pi} \sin(x)\,dx = 0\). Le doublement, \(2\int_0^a f\), est la propriété des fonctions <b>paires</b>.`, ref: C2 + '#s4' },
+    { id: 'apis-c2-13', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Quand on échange les bornes : \(\displaystyle\int_b^a f(t)\,dt = \)`,
+      o: [r`\(-\displaystyle\int_a^b f(t)\,dt\)`, r`\(\displaystyle\int_a^b f(t)\,dt\)`, r`\(\displaystyle\int_a^b f(-t)\,dt\)`, r`0`], a: 0,
+      x: r`\(F(a) - F(b) = -(F(b) - F(a))\). Utile après un changement de variable qui renverse l’ordre des bornes.`, ref: C2 + '#s4' },
+    /* ---------- 5. théorème fondamental ---------- */
+    { id: 'apis-c2-14', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Si \(F\) est une primitive de \(f\), continue sur \([a, b]\), alors \(\displaystyle\int_a^b f(x)\,dx = \)`,
+      o: [r`\(F(b) - F(a)\)`, r`\(F(a) - F(b)\)`, r`\(f(b) - f(a)\)`, r`\(F(b) + F(a)\)`], a: 0,
+      x: r`On note \(\left[F(x)\right]_a^b = F(b) - F(a)\) : la borne du haut d’abord. Le résultat ne dépend pas de la primitive choisie, la constante se simplifie.`, ref: C2 + '#s5' },
+    { id: 'apis-c2-15', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`Théorème fondamental : pour \(f\) continue sur \([a, b]\), la fonction \(F : x \mapsto \displaystyle\int_a^x f(t)\,dt\) est :`,
+      o: [r`la primitive de \(f\) qui s’annule en \(a\)`, r`la dérivée de \(f\)`, r`une primitive de \(f\) qui s’annule en \(b\)`, r`une fonction constante`], a: 0,
+      x: r`\(F' = f\) et \(F(a) = \displaystyle\int_a^a f = 0\). C’est ce théorème qui relie le calcul d’aire au calcul de primitive.`, ref: C2 + '#s5' },
+    { id: 'apis-c2-16', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Que vaut \(\displaystyle\int_0^4 x^2\,dx\) ?`,
+      o: [r`\(\dfrac{64}{3}\)`, r`16`, r`64`, r`8`], a: 0,
+      x: r`\(\left[\frac{x^3}{3}\right]_0^4 = \frac{64}{3}\). 16 est \(f(4)\), 8 est la dérivée en 4.`, ref: C2 + '#s5' },
+    { id: 'apis-c2-17', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\int_0^4 \frac{2x}{x^2 + 1}\,dx\) ?`,
+      o: [r`\(\ln(17)\)`, r`\(\ln(16)\)`, r`\(\dfrac{8}{17}\)`, r`\(2\ln(17)\)`], a: 0,
+      x: r`Forme \(\frac{u'}{u}\) avec \(u = x^2 + 1\) : \(\left[\ln(x^2 + 1)\right]_0^4 = \ln(17) - \ln(1) = \ln(17)\) (exemple du cours).`, ref: C2 + '#s5' },
+    /* ---------- 6. linéarité, comparaison, valeur moyenne ---------- */
+    { id: 'apis-c2-18', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`Si \(f(x) \leq g(x)\) pour tout \(x\) de \([a, b]\) (avec \(a \lt b\)), alors :`,
+      o: [r`\(\displaystyle\int_a^b f(x)\,dx \leq \int_a^b g(x)\,dx\)`, r`\(\displaystyle\int_a^b f(x)\,dx \geq \int_a^b g(x)\,dx\)`, r`\(\displaystyle\int_a^b f(x)\,dx = \int_a^b g(x)\,dx\)`, r`on ne peut rien dire`], a: 0,
+      x: r`L’intégrale conserve l’ordre (croissance de l’intégrale), à condition que les bornes soient dans le bon sens. En particulier, une fonction positive a une intégrale positive.`, ref: C2 + '#s6' },
+    { id: 'apis-c2-19', topic: 'apis-integrales', lvl: 2, type: 'single', q: r`Sans calculer de primitive, quel encadrement de \(I = \displaystyle\int_0^1 e^{x^2}\,dx\) obtient-on ?`,
+      o: [r`\(1 \leq I \leq e\)`, r`\(0 \leq I \leq 1\)`, r`\(e \leq I \leq e^2\)`, r`\(I = e - 1\)`], a: 0,
+      x: r`Sur \([0, 1]\), \(x \mapsto e^{x^2}\) est croissante : \(1 \leq e^{x^2} \leq e\). On intègre sur un intervalle de longueur 1 : \(1 \leq I \leq e\) (exemple du cours). \(e - 1\) est l’intégrale de \(e^x\), pas de \(e^{x^2}\).`, ref: C2 + '#s6' },
+    { id: 'apis-c2-20', topic: 'apis-integrales', lvl: 1, type: 'single', q: r`La valeur moyenne d’une fonction \(f\) continue sur \([a, b]\) est :`,
+      o: [r`\(\dfrac{1}{b - a}\displaystyle\int_a^b f(x)\,dx\)`, r`\(\dfrac{f(a) + f(b)}{2}\)`, r`\((b - a)\displaystyle\int_a^b f(x)\,dx\)`, r`\(\dfrac{f(b) - f(a)}{b - a}\)`], a: 0,
+      x: r`C’est la hauteur du rectangle de base \([a, b]\) qui a la même aire que la surface sous la courbe. Exemple du cours : la valeur moyenne de \(e^x\) sur \([0, 1]\) est \(\frac{e - 1}{1 - 0} = e - 1\).`, ref: C2 + '#s6' },
+
+    /* =============================================================== cours 3 : IPP et changement de variable */
+    /* ---------- 1. la formule ---------- */
+    { id: 'apis-c3-01', topic: 'apis-ipp', lvl: 1, type: 'single', q: r`La formule d’intégration par parties, pour \(u\) et \(v\) de classe \(\mathcal{C}^1\) sur \([a, b]\), s’écrit :`,
+      o: [r`\(\displaystyle\int_a^b u(x)v'(x)\,dx = \left[u(x)v(x)\right]_a^b - \int_a^b u'(x)v(x)\,dx\)`, r`\(\displaystyle\int_a^b u(x)v'(x)\,dx = \left[u(x)v(x)\right]_a^b + \int_a^b u'(x)v(x)\,dx\)`, r`\(\displaystyle\int_a^b u(x)v'(x)\,dx = \left[u'(x)v(x)\right]_a^b - \int_a^b u(x)v(x)\,dx\)`, r`\(\displaystyle\int_a^b u(x)v(x)\,dx = \int_a^b u(x)\,dx \times \int_a^b v(x)\,dx\)`], a: 0,
+      x: r`Le crochet porte sur le produit \(uv\), puis on retranche l’intégrale où la dérivée a changé de côté. Le contrôle de cours d’octobre 2022 demandait de l’énoncer « sans oublier ses hypothèses » : \(u\) et \(v\) de classe \(\mathcal{C}^1\) sur \([a, b]\).`, ref: C3 + '#s1' },
+    { id: 'apis-c3-02', topic: 'apis-ipp', lvl: 2, type: 'single', q: r`La démonstration de la formule d’intégration par parties part de :`,
+      o: [r`\((uv)' = u'v + uv'\), que l’on intègre entre \(a\) et \(b\)`, r`\((u \circ v)' = (u' \circ v) \times v'\)`, r`la relation de Chasles`, r`la méthode des rectangles`], a: 0,
+      x: r`\(uv\) est une primitive de \(u'v + uv'\) : \(\left[uv\right]_a^b = \displaystyle\int_a^b u'v + \int_a^b uv'\) par linéarité, et on isole \(\displaystyle\int_a^b uv'\). Démonstration demandée au contrôle de cours d’octobre 2022.`, ref: C3 + '#s1' },
+    { id: 'apis-c3-03', topic: 'apis-ipp', lvl: 1, type: 'single', q: r`« \(u\) est de classe \(\mathcal{C}^1\) sur \([a, b]\) » signifie :`,
+      o: [r`\(u\) est dérivable sur \([a, b]\) et \(u'\) est continue`, r`\(u\) est continue sur \([a, b]\)`, r`\(u\) est positive sur \([a, b]\)`, r`\(u\) est une primitive d’une fonction dérivable`], a: 0,
+      x: r`Dérivable et de dérivée continue : il faut cela pour que \(u'v\) et \(uv'\) soient continues, donc intégrables. C’est l’hypothèse de la formule.`, ref: C3 + '#s1' },
+    /* ---------- 2. choisir u et v' ---------- */
+    { id: 'apis-c3-04', topic: 'apis-ipp', lvl: 1, type: 'single', q: r`Pour calculer \(\displaystyle\int_0^1 (2x + 3)e^{3x}\,dx\) par parties, on pose :`,
+      o: [r`\(u(x) = 2x + 3\) et \(v'(x) = e^{3x}\)`, r`\(u(x) = e^{3x}\) et \(v'(x) = 2x + 3\)`, r`\(u(x) = 2x\) et \(v'(x) = 3e^{3x}\)`, r`\(u(x) = (2x+3)e^{3x}\) et \(v'(x) = 1\)`], a: 0,
+      x: r`On dérive le polynôme (son degré baisse) et on intègre l’exponentielle (elle reste une exponentielle). L’autre choix ferait monter le degré : l’intégrale se compliquerait.`, ref: C3 + '#s2' },
+    { id: 'apis-c3-05', topic: 'apis-ipp', lvl: 2, type: 'single', q: r`Pour calculer \(\displaystyle\int_1^e \ln(x)\,dx\) par parties, on pose :`,
+      o: [r`\(u(x) = \ln(x)\) et \(v'(x) = 1\)`, r`\(u(x) = 1\) et \(v'(x) = \ln(x)\)`, r`\(u(x) = x\) et \(v'(x) = \ln(x)\)`, r`on ne peut pas : il n’y a qu’un seul facteur`], a: 0,
+      x: r`On écrit \(\ln(x) = \ln(x) \times 1\) : on dérive le logarithme (\(u' = \frac{1}{x}\)) et on intègre 1 (\(v = x\)). Alors \(\left[x\ln x\right]_1^e - \displaystyle\int_1^e 1\,dx = e - (e - 1) = 1\).`, ref: C3 + '#s2' },
+    { id: 'apis-c3-06', topic: 'apis-ipp', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\int_0^1 (3x + 1)e^{2x}\,dx\) (examen de janvier 2024) ?`,
+      o: [r`\(\dfrac{5e^2 + 1}{4}\)`, r`\(2e^2 - \dfrac{1}{2}\)`, r`\(\dfrac{5e^2 - 1}{4}\)`, r`\(\dfrac{3e^2}{4}\)`], a: 0,
+      x: r`\(u = 3x + 1\), \(v' = e^{2x}\), \(v = \frac{e^{2x}}{2}\) : \(\left[(3x+1)\frac{e^{2x}}{2}\right]_0^1 - \displaystyle\int_0^1 \frac{3}{2}e^{2x}\,dx = 2e^2 - \frac{1}{2} - \frac{3}{4}(e^2 - 1) = \frac{5e^2 + 1}{4}\). La réponse \(2e^2 - \frac{1}{2}\) s’arrête au crochet.`, ref: C3 + '#s2' },
+    /* ---------- 3. IPP répétées ---------- */
+    { id: 'apis-c3-07', topic: 'apis-ipp', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\int_0^{\pi} x^2\cos(x)\,dx\) (exercice type du Moodle) ?`,
+      o: [r`\(-2\pi\)`, r`\(2\pi\)`, r`\(\pi^2\)`, r`0`], a: 0,
+      x: r`Première intégration par parties : \(\left[x^2\sin x\right]_0^\pi - \displaystyle\int_0^\pi 2x\sin x\,dx = -2\int_0^\pi x\sin x\,dx\). Seconde : \(\displaystyle\int_0^\pi x\sin x\,dx = \left[-x\cos x\right]_0^\pi + \int_0^\pi \cos x\,dx = \pi\). Résultat : \(-2\pi\).`, ref: C3 + '#s3' },
+    { id: 'apis-c3-08', topic: 'apis-ipp', lvl: 3, type: 'single', q: r`Pour \(M = \displaystyle\int_0^\pi e^x\sin(x)\,dx\) (TD 3), deux intégrations par parties donnent \(M = e^\pi + 1 - M\). Donc :`,
+      o: [r`\(M = \dfrac{e^\pi + 1}{2}\)`, r`\(M = e^\pi + 1\)`, r`on tourne en rond : la méthode échoue`, r`\(M = 0\)`], a: 0,
+      x: r`Retrouver l’intégrale de départ n’est pas un échec : on obtient une équation d’inconnue \(M\), \(2M = e^\pi + 1\). Il faut garder le même choix aux deux étapes (dériver deux fois la fonction trigonométrique, ou deux fois l’exponentielle).`, ref: C3 + '#s3' },
+    { id: 'apis-c3-09', topic: 'apis-ipp', lvl: 3, type: 'single', q: r`Pour \(I_n = \displaystyle\int_0^1 t^n e^{-t}\,dt\), une intégration par parties donne (exercice type du Moodle) :`,
+      o: [r`\(I_{n+1} = (n+1)I_n - \dfrac{1}{e}\)`, r`\(I_{n+1} = (n+1)I_n + \dfrac{1}{e}\)`, r`\(I_{n+1} = nI_n - \dfrac{1}{e}\)`, r`\(I_{n+1} = I_n - \dfrac{n+1}{e}\)`], a: 0,
+      x: r`\(u = t^{n+1}\), \(v' = e^{-t}\), \(v = -e^{-t}\) : \(I_{n+1} = \left[-t^{n+1}e^{-t}\right]_0^1 + (n+1)\displaystyle\int_0^1 t^n e^{-t}\,dt = -e^{-1} + (n+1)I_n\). Vérification : \(I_0 = 1 - \frac{1}{e}\), \(I_1 = 1 - \frac{2}{e}\).`, ref: C3 + '#s3' },
+    /* ---------- 4. changement de variable ---------- */
+    { id: 'apis-c3-10', topic: 'apis-cdv', lvl: 1, type: 'single', q: r`Dans un changement de variable \(t = \varphi(x)\), l’élément différentiel devient :`,
+      o: [r`\(dt = \varphi'(x)\,dx\)`, r`\(dt = dx\)`, r`\(dt = \varphi(x)\,dx\)`, r`\(dx = \varphi'(x)\,dt\)`], a: 0,
+      x: r`On dérive la relation \(t = \varphi(x)\). Oublier ce facteur est l’erreur la plus fréquente : remplacer \(dx\) par \(dt\) sans rien changer est faux dès que \(\varphi' \neq 1\).`, ref: C3 + '#s4' },
+    { id: 'apis-c3-11', topic: 'apis-cdv', lvl: 1, type: 'single', q: r`Dans \(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx\), on pose \(t = e^x\). Les nouvelles bornes sont :`,
+      o: [r`1 et \(e\)`, r`0 et 1`, r`0 et \(e\)`, r`1 et \(e^2\)`], a: 0,
+      x: r`\(x = 0\) donne \(t = e^0 = 1\) ; \(x = 1\) donne \(t = e\). Les bornes sont celles de la <b>nouvelle</b> variable : garder 0 et 1 est une erreur classique.`, ref: C3 + '#s4' },
+    { id: 'apis-c3-12', topic: 'apis-cdv', lvl: 2, type: 'single', q: r`Avec \(t = e^x\), \(\displaystyle\int_0^1 \frac{e^x}{e^{2x} + 1}\,dx\) devient :`,
+      o: [r`\(\displaystyle\int_1^e \frac{dt}{t^2 + 1}\)`, r`\(\displaystyle\int_1^e \frac{t}{t^2 + 1}\,dt\)`, r`\(\displaystyle\int_0^1 \frac{dt}{t^2 + 1}\)`, r`\(\displaystyle\int_1^e \frac{dt}{2t + 1}\)`], a: 0,
+      x: r`\(dt = e^x\,dx\) : le \(e^x\) du numérateur est absorbé par \(dt\) ; \(e^{2x} = t^2\). On reconnaît la dérivée d’arctan : résultat \(\arctan(e) - \frac{\pi}{4}\) (exercice type du Moodle).`, ref: C3 + '#s4' },
+    /* ---------- 5. aux examens ---------- */
+    { id: 'apis-c3-13', topic: 'apis-cdv', lvl: 3, type: 'single', q: r`Que vaut \(K = \displaystyle\int_0^{\ln(\sqrt{3})} \frac{dt}{e^{-t} + e^{t}}\), calculée en posant \(x = e^t\) (TD 3 et examen de janvier 2024) ?`,
+      o: [r`\(\dfrac{\pi}{12}\)`, r`\(\dfrac{\pi}{3}\)`, r`\(\dfrac{\pi}{4}\)`, r`\(\ln(\sqrt{3})\)`], a: 0,
+      x: r`\(dx = e^t\,dt\), donc \(dt = \frac{dx}{x}\) ; \(\frac{1}{e^{-t} + e^t} = \frac{x}{1 + x^2}\). \(K = \displaystyle\int_1^{\sqrt{3}} \frac{dx}{1 + x^2} = \arctan(\sqrt{3}) - \arctan(1) = \frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}\). \(\frac{\pi}{3}\) oublie la borne du bas.`, ref: C3 + '#s5' },
+    { id: 'apis-c3-14', topic: 'apis-cdv', lvl: 2, type: 'single', q: r`La fiche de synthèse a un erratum signalé sur le Moodle. L’énoncé correct est : si \(F\) est une primitive de \(f\), alors une primitive de \((f \circ \varphi)\times\varphi'\) est :`,
+      o: [r`\(F \circ \varphi\)`, r`\(F \circ f\)`, r`\(F \times \varphi\)`, r`\(f \circ \varphi\)`], a: 0,
+      x: r`\((F \circ \varphi)' = (F' \circ \varphi) \times \varphi' = (f \circ \varphi)\times\varphi'\). La fiche écrit \(F \circ f\) par erreur. C’est la forme \(u' \times g(u)\) du cours 1, vue autrement.`, ref: C3 + '#s5' },
+
+    /* =============================================================== cours 4 : suites */
+    /* ---------- 1. définir une suite ---------- */
+    { id: 'apis-c4-01', topic: 'apis-suites', lvl: 1, type: 'single', q: r`Une suite réelle est :`,
+      o: [r`une application de \(\N\) dans \(\R\)`, r`une application de \(\R\) dans \(\N\)`, r`une liste finie de réels`, r`une fonction continue sur \(\R\)`], a: 0,
+      x: r`\(u : \N \to \R\), \(n \mapsto u_n\). \(u_n\) est le terme d’indice \(n\) ; la suite se note \((u_n)\) ou \((u_n)_{n \in \N}\), avec les parenthèses.`, ref: C4 + '#s1' },
+    { id: 'apis-c4-02', topic: 'apis-suites', lvl: 1, type: 'single', q: r`La suite définie par \(u_0 = 0\) et \(u_{n+1} = \sqrt{1 + u_n}\) est définie :`,
+      o: [r`par récurrence : chaque terme se calcule à partir du précédent`, r`explicitement : \(u_n\) est donné en fonction de \(n\)`, r`par une somme`, r`seulement pour \(n\) pair`], a: 0,
+      x: r`Une définition explicite donnerait \(u_n = f(n)\). Ici il faut \(u_n\) pour calculer \(u_{n+1}\) : \(u_1 = 1\), \(u_2 = \sqrt{2}\)… Il faut aussi vérifier que chaque terme existe (exercice type du Moodle).`, ref: C4 + '#s1' },
+    /* ---------- 2. majorée, minorée, bornée ---------- */
+    { id: 'apis-c4-03', topic: 'apis-suites', lvl: 1, type: 'single', q: r`« \((u_n)\) est majorée » s’écrit avec des quantificateurs :`,
+      o: [r`\(\exists M \in \R,\ \forall n \in \N,\ u_n \leq M\)`, r`\(\forall n \in \N,\ \exists M \in \R,\ u_n \leq M\)`, r`\(\forall M \in \R,\ \exists n \in \N,\ u_n \leq M\)`, r`\(\exists M \in \R,\ \exists n \in \N,\ u_n \leq M\)`], a: 0,
+      x: r`Un <b>même</b> \(M\) doit convenir pour tous les \(n\) : \(\exists M\) vient en premier. La deuxième phrase est vraie pour toute suite (prendre \(M = u_n\)) : elle ne dit rien.`, ref: C4 + '#s2' },
+    { id: 'apis-c4-04', topic: 'apis-suites', lvl: 1, type: 'single', q: r`« \((u_n)\) est bornée » équivaut à :`,
+      o: [r`\(\exists M \in \R,\ \forall n \in \N,\ |u_n| \leq M\)`, r`\(\forall n \in \N,\ \exists M \in \R,\ |u_n| \leq M\)`, r`\(\exists M \in \R,\ \forall n \in \N,\ u_n \leq M\)`, r`\((u_n)\) converge`], a: 0,
+      x: r`Bornée = majorée et minorée, ce qui équivaut à \(|u_n| \leq M\) (démonstration à connaître, avec \(M = \max(|m|, |K|)\)). La troisième réponse dit seulement « majorée ». Une suite bornée ne converge pas forcément : \(((-1)^n)\).`, ref: C4 + '#s2' },
+    { id: 'apis-c4-05', topic: 'apis-suites', lvl: 2, type: 'single', q: r`La négation de « \((u_n)\) est majorée » est :`,
+      o: [r`\(\forall M \in \R,\ \exists n \in \N,\ u_n \gt M\)`, r`\(\exists M \in \R,\ \forall n \in \N,\ u_n \gt M\)`, r`\(\forall M \in \R,\ \forall n \in \N,\ u_n \gt M\)`, r`\(\exists M \in \R,\ \exists n \in \N,\ u_n \geq M\)`], a: 0,
+      x: r`On échange \(\exists\) et \(\forall\) et on nie l’inégalité : quel que soit le candidat \(M\), un terme le dépasse. La deuxième réponse dit « minorée strictement ». Question de l’examen de janvier 2020 (« \((u_n)\) n’est pas bornée »).`, ref: C4 + '#s2' },
+    { id: 'apis-c4-06', topic: 'apis-suites', lvl: 2, type: 'single', q: r`La suite \(u_n = \dfrac{n}{n+3}\) (\(n \in \N\)) est :`,
+      o: [r`minorée par 0 et majorée par 1`, r`minorée par 0, non majorée`, r`majorée par 1, non minorée`, r`non bornée`], a: 0,
+      x: r`\(n \geq 0\) et \(n + 3 \gt 0\) : \(u_n \geq 0\). \(n \lt n + 3\) : \(u_n \lt 1\). La suite est bornée (exercice type du Moodle). 1 est un majorant, jamais atteint.`, ref: C4 + '#s2' },
+    /* ---------- 3. monotonie ---------- */
+    { id: 'apis-c4-07', topic: 'apis-suites', lvl: 1, type: 'single', q: r`« \((u_n)\) est croissante » s’écrit :`,
+      o: [r`\(\forall n \in \N,\ u_{n+1} \geq u_n\)`, r`\(\exists n \in \N,\ u_{n+1} \geq u_n\)`, r`\(\forall n \in \N,\ u_n \geq 0\)`, r`\(\forall n \in \N,\ u_{n+1} \gt u_n\)`], a: 0,
+      x: r`Inégalité large, pour tout \(n\). Avec l’inégalité stricte, la suite est <b>strictement</b> croissante. « Monotone » veut dire croissante ou décroissante. Définition demandée aux contrôles de cours de 2022 et de 2023.`, ref: C4 + '#s3' },
+    { id: 'apis-c4-08', topic: 'apis-suites', lvl: 1, type: 'single', q: r`Pour étudier la monotonie de \((u_n)\) avec le quotient \(\dfrac{u_{n+1}}{u_n}\) comparé à 1, il faut que :`,
+      o: [r`tous les termes soient strictement positifs`, r`la suite soit géométrique`, r`la suite soit bornée`, r`\(u_0 = 1\)`], a: 0,
+      x: r`Si \(u_n \gt 0\), \(\frac{u_{n+1}}{u_n} \geq 1 \iff u_{n+1} \geq u_n\). Avec des termes négatifs, multiplier par \(u_n\) renverse l’inégalité. Sinon, on étudie le signe de \(u_{n+1} - u_n\), qui marche toujours.`, ref: C4 + '#s3' },
+    { id: 'apis-c4-09', topic: 'apis-suites', lvl: 2, type: 'single', q: r`Pour \(u_n = \dfrac{n}{n+3}\), \(u_{n+1} - u_n\) vaut :`,
+      o: [r`\(\dfrac{3}{(n+3)(n+4)}\), donc la suite est strictement croissante`, r`\(\dfrac{-3}{(n+3)(n+4)}\), donc la suite est strictement décroissante`, r`\(\dfrac{1}{n+4}\), donc la suite est strictement croissante`, r`0, donc la suite est constante`], a: 0,
+      x: r`\(\frac{n+1}{n+4} - \frac{n}{n+3} = \frac{(n+1)(n+3) - n(n+4)}{(n+3)(n+4)} = \frac{3}{(n+3)(n+4)} \gt 0\) (corrigé du Moodle).`, ref: C4 + '#s3' },
+    { id: 'apis-c4-10', topic: 'apis-suites', lvl: 1, type: 'single', q: r`Laquelle de ces suites n’est ni croissante ni décroissante ?`,
+      o: [r`\(u_n = (-1)^n\)`, r`\(u_n = n^2\)`, r`\(u_n = \dfrac{1}{n+1}\)`, r`\(u_n = 3\)`], a: 0,
+      x: r`\(1, -1, 1, -1\ldots\) monte et descend. \((n^2)\) est croissante, \(\left(\frac{1}{n+1}\right)\) décroissante, une suite constante est les deux à la fois. Exemple demandé au contrôle de cours de novembre 2023.`, ref: C4 + '#s3' },
+    { id: 'apis-c4-11', topic: 'apis-suites', lvl: 1, type: 'single', q: r`Une suite stationnaire est une suite :`,
+      o: [r`constante à partir d’un certain rang`, r`bornée`, r`périodique`, r`qui tend vers 0`], a: 0,
+      x: r`Fiche de synthèse : \(\exists N \in \N,\ \forall n \geq N,\ u_n = u_N\). Une suite constante est stationnaire ; la réciproque est fausse.`, ref: C4 + '#s3' },
+    /* ---------- 4. limite finie, limite infinie ---------- */
+    { id: 'apis-c4-12', topic: 'apis-limites', lvl: 1, type: 'single', q: r`« \((u_n)\) converge vers \(\ell\) » s’écrit :`,
+      o: [r`\(\forall \varepsilon \gt 0,\ \exists N \in \N,\ \forall n \geq N,\ |u_n - \ell| \lt \varepsilon\)`, r`\(\exists \varepsilon \gt 0,\ \forall N \in \N,\ \forall n \geq N,\ |u_n - \ell| \lt \varepsilon\)`, r`\(\exists N \in \N,\ \forall \varepsilon \gt 0,\ \forall n \geq N,\ |u_n - \ell| \lt \varepsilon\)`, r`\(\forall \varepsilon \gt 0,\ \forall n \in \N,\ |u_n - \ell| \lt \varepsilon\)`], a: 0,
+      x: r`Pour toute précision \(\varepsilon\), il existe un rang (qui dépend de \(\varepsilon\)) à partir duquel tous les termes sont dans \(]\ell - \varepsilon, \ell + \varepsilon[\). La troisième phrase, avec \(N\) avant \(\varepsilon\), dit que la suite est stationnaire. Définition demandée à l’examen de janvier 2023.`, ref: C4 + '#s4' },
+    { id: 'apis-c4-13', topic: 'apis-limites', lvl: 1, type: 'single', q: r`« \((u_n)\) tend vers \(+\infty\) » s’écrit :`,
+      o: [r`\(\forall A \in \R,\ \exists N \in \N,\ \forall n \geq N,\ u_n \gt A\)`, r`\(\exists A \in \R,\ \forall n \in \N,\ u_n \gt A\)`, r`\(\forall A \in \R,\ \exists n \in \N,\ u_n \gt A\)`, r`\(\forall n \in \N,\ u_{n+1} \gt u_n\)`], a: 0,
+      x: r`Tout seuil \(A\) est dépassé <b>à partir d’un certain rang</b>, et pour toujours. La troisième phrase dit seulement « non majorée » : \(u_n = n\) si \(n\) pair, 0 sinon, la vérifie sans tendre vers \(+\infty\). La deuxième dit « minorée ».`, ref: C4 + '#s4' },
+    { id: 'apis-c4-14', topic: 'apis-limites', lvl: 1, type: 'single', q: r`Une suite divergente est une suite :`,
+      o: [r`qui ne converge pas : elle tend vers \(\pm\infty\) ou n’a pas de limite`, r`qui tend vers \(+\infty\)`, r`non bornée`, r`décroissante`], a: 0,
+      x: r`« Divergente » est la négation de « convergente ». \(((-1)^n)\) diverge en restant bornée ; \((n)\) diverge vers \(+\infty\).`, ref: C4 + '#s4' },
+    { id: 'apis-c4-15', topic: 'apis-limites', lvl: 2, type: 'single', q: r`Pour montrer avec la définition que \(u_n = \dfrac{1}{n^2}\) converge vers 0, on peut prendre, pour \(\varepsilon \gt 0\) donné :`,
+      o: [r`un entier \(N \geq \dfrac{1}{\sqrt{\varepsilon}}\)`, r`\(N = \varepsilon\)`, r`\(N = \dfrac{1}{\varepsilon^2}\) dans tous les cas`, r`\(N = 0\)`], a: 0,
+      x: r`\(\frac{1}{n^2} \leq \varepsilon \iff n \geq \frac{1}{\sqrt{\varepsilon}}\). Tout entier \(N\) au-dessus de \(\frac{1}{\sqrt{\varepsilon}}\) convient, par exemple \(E\!\left(\frac{1}{\sqrt{\varepsilon}}\right) + 1\) (corrigé du Moodle).`, ref: C4 + '#s4' },
+    /* ---------- 5. opérations, formes indéterminées ---------- */
+    { id: 'apis-c4-16', topic: 'apis-limites', lvl: 1, type: 'single', q: r`Que vaut \(\displaystyle\lim_{n \to +\infty} \frac{2 + n - n^2}{n^2 + 3n + 4}\) ?`,
+      o: [r`\(-1\)`, r`\(1\)`, r`\(\dfrac{1}{2}\)`, r`\(-\infty\)`], a: 0,
+      x: r`On factorise par \(n^2\) en haut et en bas : \(\frac{\frac{2}{n^2} + \frac{1}{n} - 1}{1 + \frac{3}{n} + \frac{4}{n^2}} \to \frac{-1}{1} = -1\) (exercice type du Moodle). Le quotient des termes de plus haut degré donne le résultat.`, ref: C4 + '#s5' },
+    { id: 'apis-c4-17', topic: 'apis-limites', lvl: 1, type: 'single', q: r`Laquelle de ces situations est une forme indéterminée ?`,
+      o: [r`\(u_n \to +\infty\) et \(v_n \to -\infty\), limite de \(u_n + v_n\)`, r`\(u_n \to +\infty\) et \(v_n \to +\infty\), limite de \(u_n + v_n\)`, r`\(u_n \to 2\) et \(v_n \to +\infty\), limite de \(u_n v_n\)`, r`\(u_n \to 0\) et \(v_n \to 3\), limite de \(u_n v_n\)`], a: 0,
+      x: r`« \(+\infty - \infty\) » : on ne peut rien dire sans transformer l’expression. Les quatre formes indéterminées : \(\infty - \infty\), \(0 \times \infty\), \(\frac{\infty}{\infty}\), \(\frac{0}{0}\).`, ref: C4 + '#s5' },
+    { id: 'apis-c4-18', topic: 'apis-limites', lvl: 2, type: 'single', q: r`Par croissances comparées, \(\displaystyle\lim_{n \to +\infty} \frac{n^2}{e^n}\) vaut :`,
+      o: [r`0`, r`\(+\infty\)`, r`1`, r`\(\dfrac{2}{e}\)`], a: 0,
+      x: r`L’exponentielle l’emporte sur toute puissance de \(n\), qui l’emporte sur le logarithme : \(\frac{n^\alpha}{e^n} \to 0\) et \(\frac{\ln n}{n} \to 0\). Résultats à citer tels quels.`, ref: C4 + '#s5' },
+    { id: 'apis-c4-19', topic: 'apis-limites', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\lim_{n \to +\infty} \frac{e^n - n^2}{n + \ln(n)}\) ?`,
+      o: [r`\(+\infty\)`, r`0`, r`1`, r`\(-\infty\)`], a: 0,
+      x: r`On factorise par le terme dominant : \(\frac{e^n}{n} \times \frac{1 - \frac{n^2}{e^n}}{1 + \frac{\ln n}{n}}\). Le second facteur tend vers 1 et \(\frac{e^n}{n} \to +\infty\) (exercice type du Moodle).`, ref: C4 + '#s5' },
+    /* ---------- 6. comparaison, gendarmes, convergente donc bornée ---------- */
+    { id: 'apis-c4-20', topic: 'apis-limites', lvl: 1, type: 'single', q: r`Le théorème des gendarmes : si, à partir d’un certain rang, \(u_n \leq v_n \leq w_n\), alors \((v_n)\) converge vers \(\ell\) dès que :`,
+      o: [r`\((u_n)\) et \((w_n)\) convergent vers le même réel \(\ell\)`, r`\((u_n)\) et \((w_n)\) convergent`, r`\((u_n)\) converge vers \(\ell\)`, r`\((u_n)\) et \((w_n)\) sont bornées`], a: 0,
+      x: r`Les deux suites qui encadrent doivent avoir la <b>même</b> limite. Avec deux limites différentes, \((v_n)\) peut ne pas converger : \(-1 \leq (-1)^n \leq 1\). Énoncé et démonstration demandés à l’examen de janvier 2024 (5 points).`, ref: C4 + '#s6' },
+    { id: 'apis-c4-21', topic: 'apis-limites', lvl: 2, type: 'single', q: r`Que vaut \(\displaystyle\lim_{n \to +\infty} \frac{2n + (-1)^n}{n^2 + \cos(n)}\) ?`,
+      o: [r`0`, r`2`, r`elle n’existe pas, à cause de \((-1)^n\)`, r`\(+\infty\)`], a: 0,
+      x: r`Pour \(n \geq 2\) : \(\frac{2n - 1}{n^2 + 1} \leq u_n \leq \frac{2n + 1}{n^2 - 1}\), et les deux bornes tendent vers 0. Par le théorème des gendarmes, \(u_n \to 0\) (exercice type du Moodle). Les termes oscillants sont bornés : ils ne pèsent rien devant \(n\) et \(n^2\).`, ref: C4 + '#s6' },
+    { id: 'apis-c4-22', topic: 'apis-limites', lvl: 1, type: 'tf', a: true, q: r`Toute suite convergente est bornée.`,
+      x: r`Vrai, et la démonstration est à connaître (demandée aux examens de janvier 2023 et de janvier 2025) : avec \(\varepsilon = 1\), il existe \(N\) tel que \(|u_n| \lt 1 + |\ell|\) pour \(n \geq N\) ; on pose \(M = \max(|u_0|, \ldots, |u_{N-1}|, 1 + |\ell|)\).`, ref: C4 + '#s6' },
+    { id: 'apis-c4-23', topic: 'apis-limites', lvl: 1, type: 'tf', a: false, q: r`Toute suite bornée est convergente.`,
+      x: r`Faux : \(((-1)^n)\) est bornée par 1 et ne converge pas. C’est la réciproque (fausse) du théorème « convergente \(\Rightarrow\) bornée ». Sa contraposée, elle, est vraie : une suite non bornée diverge.`, ref: C4 + '#s6' },
+    /* ---------- 7. suites géométriques, arithmético-géométriques ---------- */
+    { id: 'apis-c4-24', topic: 'apis-remarquables', lvl: 1, type: 'single', q: r`La suite \((q^n)\), avec \(q\) réel, converge si et seulement si :`,
+      o: [r`\(-1 \lt q \leq 1\)`, r`\(-1 \leq q \leq 1\)`, r`\(0 \leq q \lt 1\)`, r`\(q \lt 1\)`], a: 0,
+      x: r`Si \(|q| \lt 1\), \(q^n \to 0\) ; si \(q = 1\), la suite est constante égale à 1 ; si \(q \gt 1\), \(q^n \to +\infty\) ; si \(q \leq -1\), pas de limite (pour \(q = -1\) : \(1, -1, 1\ldots\)). Question du contrôle de cours de décembre 2022.`, ref: C4 + '#s7' },
+    { id: 'apis-c4-25', topic: 'apis-remarquables', lvl: 1, type: 'single', q: r`Pour \(q \neq 1\), \(\displaystyle\sum_{k=0}^{n} q^k = \)`,
+      o: [r`\(\dfrac{1 - q^{n+1}}{1 - q}\)`, r`\(\dfrac{1 - q^{n}}{1 - q}\)`, r`\(\dfrac{1 - q^{n+1}}{1 + q}\)`, r`\((n+1)\,q^n\)`], a: 0,
+      x: r`Il y a \(n + 1\) termes, d’où l’exposant \(n + 1\). Pour \(q = 1\), la somme vaut \(n + 1\). Pour une suite géométrique : premier terme \(\times \frac{1 - q^{\text{nombre de termes}}}{1 - q}\).`, ref: C4 + '#s7' },
+    { id: 'apis-c4-26', topic: 'apis-remarquables', lvl: 1, type: 'single', q: r`La suite \(w_n = \left(-\dfrac{2}{3}\right)^n\) (contrôle de cours de novembre 2023) :`,
+      o: [r`converge vers 0`, r`n’a pas de limite, car son signe alterne`, r`tend vers \(-\infty\)`, r`converge vers \(-\dfrac{2}{3}\)`], a: 0,
+      x: r`Suite géométrique de raison \(q = -\frac{2}{3}\), avec \(|q| \lt 1\) : elle converge vers 0. Le signe alterne, mais \(|w_n| = \left(\frac{2}{3}\right)^n \to 0\).`, ref: C4 + '#s7' },
+    { id: 'apis-c4-27', topic: 'apis-remarquables', lvl: 2, type: 'single', q: r`Pour \(u_{n+1} = \dfrac{u_n + 4}{5}\) (TD 4), la suite est constante si et seulement si \(u_0\) vaut :`,
+      o: [r`1`, r`4`, r`\(\dfrac{4}{5}\)`, r`0`], a: 0,
+      x: r`On résout \(\ell = \frac{\ell + 4}{5}\) : \(5\ell = \ell + 4\), \(\ell = 1\). C’est l’équation du point fixe ; c’est ce \(\ell\) qu’on retranche pour obtenir une suite géométrique.`, ref: C4 + '#s7' },
+    { id: 'apis-c4-28', topic: 'apis-remarquables', lvl: 2, type: 'single', q: r`Toujours pour \(u_{n+1} = \dfrac{u_n + 4}{5}\), avec \(u_0 = 5\) : la suite \(v_n = u_n - 1\) est géométrique de raison \(\frac{1}{5}\), donc :`,
+      o: [r`\(u_n = 1 + \dfrac{4}{5^n}\), qui tend vers 1`, r`\(u_n = \dfrac{5}{5^n}\), qui tend vers 0`, r`\(u_n = 1 + \dfrac{5}{5^n}\), qui tend vers 1`, r`\(u_n = 4 + \dfrac{1}{5^n}\), qui tend vers 4`], a: 0,
+      x: r`\(v_0 = u_0 - 1 = 4\), donc \(v_n = \frac{4}{5^n}\) et \(u_n = 1 + \frac{4}{5^n}\). Vérification : \(u_1 = \frac{9}{5} = 1 + \frac{4}{5}\). La limite est le point fixe.`, ref: C4 + '#s7' },
+    { id: 'apis-c4-29', topic: 'apis-remarquables', lvl: 2, type: 'single', q: r`\(u_n = 0{,}11\ldots1\) (avec \(n\) chiffres 1 après la virgule). La suite \((u_n)\) converge vers :`,
+      o: [r`\(\dfrac{1}{9}\)`, r`\(\dfrac{1}{10}\)`, r`\(0{,}2\)`, r`\(\dfrac{11}{100}\)`], a: 0,
+      x: r`\(u_n = \displaystyle\sum_{k=1}^{n} 10^{-k} = \frac{1}{10}\cdot\frac{1 - 10^{-n}}{1 - \frac{1}{10}} = \frac{1 - 10^{-n}}{9} \to \frac{1}{9}\) (exercice type du Moodle).`, ref: C4 + '#s7' },
+    /* ---------- 8. critère du quotient, contre-exemples ---------- */
+    { id: 'apis-c4-30', topic: 'apis-remarquables', lvl: 2, type: 'single', q: r`Soit \((u_n)\) une suite de réels non nuls. S’il existe \(\ell\) tel que, à partir d’un certain rang, \(\left|\dfrac{u_{n+1}}{u_n}\right| \lt \ell \lt 1\), alors :`,
+      o: [r`\(u_n \to 0\)`, r`\(u_n \to \ell\)`, r`\((u_n)\) est géométrique`, r`\((u_n)\) est croissante`], a: 0,
+      x: r`Théorème de la fiche « Exemples remarquables » : la suite décroît en valeur absolue au moins aussi vite qu’une suite géométrique de raison \(\ell \lt 1\). Corollaire : si \(\frac{u_{n+1}}{u_n} \to 0\), alors \(u_n \to 0\).`, ref: C4 + '#s8' },
+    { id: 'apis-c4-31', topic: 'apis-remarquables', lvl: 3, type: 'single', q: r`Pour \(u_n = \dfrac{3^n (n!)^2}{(2n)!}\), on trouve \(\dfrac{u_{n+1}}{u_n} = \dfrac{3(n+1)}{2(2n+1)}\). On en déduit :`,
+      o: [r`le quotient tend vers \(\frac{3}{4} \lt 1\), donc \(u_n \to 0\)`, r`le quotient tend vers \(\frac{3}{4}\), donc \(u_n \to \frac{3}{4}\)`, r`le quotient est plus petit que 1, donc la suite est croissante`, r`le quotient tend vers \(\frac{3}{2}\), donc \(u_n \to +\infty\)`], a: 0,
+      x: r`\(\frac{3(n+1)}{2(2n+1)} \to \frac{3}{4}\) : à partir d’un certain rang (\(n \gt 7\)) le quotient est inférieur à \(\frac{4}{5} \lt 1\), et le critère donne \(u_n \to 0\) (exercice type du Moodle). La limite du quotient n’est pas la limite de la suite.`, ref: C4 + '#s8' },
+    { id: 'apis-c4-32', topic: 'apis-limites', lvl: 2, type: 'single', q: r`Laquelle de ces suites tend vers \(+\infty\) sans être croissante (TD 4, contre-exemples classiques) ?`,
+      o: [r`\(u_n = n + 2(-1)^n\)`, r`\(u_n = n^2\)`, r`\(u_n = (-1)^n\,n\)`, r`\(u_n = \dfrac{1}{n+1}\)`], a: 0,
+      x: r`\(u_n \geq n - 2 \to +\infty\), mais \(u_2 = 4\) et \(u_3 = 1\) : la suite redescend à chaque rang impair. \(((-1)^n n)\) n’a pas de limite : elle n’est ni majorée ni minorée.`, ref: C4 + '#s8' }
+  ];
+
+  Q.forEach(function (q) { q.s = 'apis'; });
+  Array.prototype.push.apply(B, Q);
+})();
