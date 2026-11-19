@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suites récurrentes · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 6 : suites récurrentes u(n+1) = f(u(n)). Intervalle stable, points fixes, limite possible, monotonie selon les variations de f et le signe de f(x) − x, méthode complète, méthode de Héron. Pour l’examen final, hors contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 6 : suites récurrentes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 6 · examen final</span><span>Source : module « Suites récurrentes » du Moodle, TD 4 partie 6, examens de janvier 2024 et 2025</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="6"></span><a href="index.html">Maths APIS</a> · Cours 6 · <a href="index.html#final">pour l’examen final</a></div>
+      <h1>\(u_{n+1} = f(u_n)\) : <span class="w">la fonction décide de tout.</span></h1>
+      <p class="lead">Une suite récurrente se lit sur la fonction \(f\) qui fait passer d’un terme au suivant. Un intervalle stable garantit que la suite est bien définie et bornée, les variations de \(f\) donnent la monotonie, et les points fixes sont les seules limites possibles. La rédaction suit toujours le même plan.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 30 novembre · TD 4, partie 6</span></li>
+        <li class="ex"><span><span class="k">Examen</span> un exercice en 2024 (10 points) et en 2025 (4,5 points)</span></li>
+      </ul>
+    </div>
+    <div class="box meth" style="align-self:start"><span class="tag">Le plan, toujours le même</span>
+      <ol>
+        <li>La suite est bien définie et reste dans un intervalle \(I\).</li>
+        <li>Monotonie.</li>
+        <li>Convergence : théorème de la limite monotone.</li>
+        <li>Limite : un point fixe de \(f\), choisi grâce aux bornes.</li>
+      </ol>
+      <p class="muted">Hors contrôle du 23 novembre.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 6 · Suites récurrentes</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Intervalle stable</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Points fixes et limite</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Monotonie</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>L’étude complète</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Héron, et les examens</span></a></li>
+    </ol>
+    <p class="toc-note">Dans tout le cours, \(f\) est une fonction définie sur un intervalle \(I\), et \(u_{n+1} = f(u_n)\).</p>
+    <div class="toc-nav"><a href="cours-5-convergence.html">← Cours 5 : théorèmes de convergence</a><a href="cours-7-landau.html">Cours 7 : Landau →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Intervalle stable</a></li><li><a href="#s2">Points fixes et limite</a></li><li><a href="#s3">Monotonie</a></li><li><a href="#s4">L’étude complète</a></li><li><a href="#s5">Héron, et les examens</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">module « Généralités » · TD 4 ex. 6.15</span></div><h2>Une suite bien définie : l’intervalle stable</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>suite récurrente, intervalle stable</i></span>
+          <p>Une <b>suite récurrente</b> est définie par son premier terme \(u_0\) et une relation \(\forall n \in \N,\ u_{n+1} = f(u_n)\).</p>
+          <p>Un intervalle \(I\) est <b>stable</b> par \(f\) si \(f(I) \subset I\) : pour tout \(x \in I\), \(f(x) \in I\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Propriété</span>
+          <p>Si \(I\) est stable par \(f\) et si \(u_0 \in I\), alors la suite est bien définie et \(\forall n \in \N,\ u_n \in I\).</p>
+        </div>
+        <div class="prose">
+          <p>La preuve est une récurrence d’une ligne : si \(u_n \in I\), alors \(u_{n+1} = f(u_n) \in I\). C’est exactement ce que les sujets font écrire : « montrer par récurrence que \(\forall n \in \N,\ 1 \lt u_n \lt 2\) ». Un intervalle stable borné donne une suite <b>bornée</b>.</p>
+          <p><b>Lecture graphique.</b> On trace la courbe de \(f\) et la droite \(y = x\). On part de \(u_0\) sur l’axe des abscisses, on monte jusqu’à la courbe (hauteur \(u_1\)), on rejoint la droite \(y = x\) à l’horizontale pour reporter \(u_1\) en abscisse, et on recommence.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 6.15 : \(f(x) = x^2\)</th><th>Premiers termes</th><th>Comportement</th></tr></thead>
+          <tbody>
+            <tr><td>\(u_0 = 0\)</td><td>0 ; 0 ; 0</td><td>constante (0 est un point fixe)</td></tr>
+            <tr><td>\(u_0 = 1\)</td><td>1 ; 1 ; 1</td><td>constante (1 est un point fixe)</td></tr>
+            <tr><td>\(u_0 = 0{,}8\)</td><td><span data-eq>\(0{,}8\) ; \(0{,}64\) ; \(0{,}4096\) ; \(\approx 0{,}168\)</span></td><td>décroissante, tend vers 0</td></tr>
+            <tr><td>\(u_0 = 1{,}3\)</td><td><span data-eq>\(1{,}3\) ; \(1{,}69\) ; \(\approx 2{,}86\) ; \(\approx 8{,}16\)</span></td><td>croissante, tend vers \(+\infty\)</td></tr>
+            <tr><td>\(u_0 = -1{,}2\)</td><td><span data-eq>\(-1{,}2\) ; \(1{,}44\) ; \(\approx 2{,}07\) ; \(\approx 4{,}30\)</span></td><td>croissante, tend vers \(+\infty\)</td></tr>
+          </tbody>
+          <caption>\(f\) est croissante sur \([0, +\infty[\) dans tous les cas ; la suite, elle, croît ou décroît selon la position de \(u_0\) par rapport aux points fixes.</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>« \(f\) croissante donc \((u_n)\) croissante » : faux (\(u_0 = 0{,}8\) ci-dessus). \(f\) croissante donne \((u_n)\) <b>monotone</b>.</li>
+            <li>Vérifier que \(f(u_n)\) existe : une racine, un quotient ou un logarithme imposent un intervalle.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">TD 4 ex. 6.15 (2) · examen de janvier 2024</span></div><h2>Points fixes : les seules limites possibles</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>point fixe</i></span>
+          <p>Un <b>point fixe</b> de \(f\) est un réel \(\ell\) tel que \(f(\ell) = \ell\). Si \(u_0\) est un point fixe, la suite est constante.</p>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>limite d’une suite récurrente</i></span>
+          <p>Soit \((u_n)\) définie par \(u_{n+1} = f(u_n)\), avec \(f\) <b>continue</b> sur \(I\). Si \((u_n)\) converge vers un réel \(\ell \in I\), alors</p>
+          <div class="fm">\[\ell = f(\ell).\]</div>
+        </div>
+        <div class="prose">
+          <p>Pourquoi : \(u_{n+1} \to \ell\) (suite extraite), et \(f(u_n) \to f(\ell)\) par continuité ; les deux membres de \(u_{n+1} = f(u_n)\) ont donc la même limite.</p>
+          <p>Le théorème ne dit <b>pas</b> que la suite converge. Il dit : si elle converge, c’est vers un point fixe. On prouve d’abord la convergence (cours 5), puis on résout \(\ell = f(\ell)\), puis on choisit parmi les solutions grâce aux bornes ou à la monotonie.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 6.15 (2) : \(f\) continue sur \(I\), \(u_0 \in I\)</th><th>Vrai ?</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>« Si \(\ell = f(\ell)\) alors \((u_n)\) converge vers \(\ell\) »</td><td>faux</td><td>\(f(x) = x^2\), \(u_0 = 1{,}3\) : 0 et 1 sont des points fixes, la suite tend vers \(+\infty\)</td></tr>
+            <tr><td>« Si \((u_n)\) converge vers un réel \(\ell\) alors \(\ell = f(\ell)\) »</td><td><b>vrai</b></td><td>le théorème (avec \(\ell \in I\))</td></tr>
+            <tr><td>« \((u_n)\) converge vers \(\ell\) si et seulement si \(\ell = f(\ell)\) »</td><td>faux</td><td>un seul sens est vrai</td></tr>
+            <tr><td>« Si \(f\) est croissante alors \((u_n)\) est croissante »</td><td>faux</td><td>\(f(x) = x^2\), \(u_0 = 0{,}8\) : la suite décroît</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2024, exercice 5, question 1 (b)</i></span>
+          <p>\(u_0 = 1\), \(u_{n+1} = \dfrac{u_n}{u_n + 8}\), et on a montré \(u_n \gt 0\). « Supposons que \((u_n)\) converge vers un réel \(\ell\). Quelles sont les valeurs possibles de \(\ell\) ? »</p>
+          <p>Soit \(f : x \mapsto \dfrac{x}{x + 8}\). \(f\) est continue sur \(\R_+\), donc \(\ell = f(\ell)\).<span class="c">continuité, puis ℓ = f(ℓ)</span></p>
+          <p>\(\ell = \dfrac{\ell}{\ell + 8} \iff \ell^2 + 8\ell = \ell \iff \ell(\ell + 7) = 0\). Si la suite converge, c’est vers 0 ou vers \(-7\).</p>
+          <p>Plus loin dans l’exercice : \(u_n \gt 0\) pour tout \(n\) donne \(\ell \geq 0\), donc \(\ell = 0\).<span class="c">les bornes éliminent −7</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Résoudre \(\ell = f(\ell)\) et conclure « donc la suite converge vers \(\ell\) » : il manque la preuve de convergence.</li>
+            <li>Oublier le mot « continue » : c’est l’hypothèse qui permet de passer à la limite.</li>
+            <li>Garder un point fixe incompatible avec les bornes de la suite.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s2" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">module « Généralités » : \(f\) monotone</span></div><h2>La monotonie de la suite</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Propriétés</span>
+          <p>Soit \(I\) un intervalle stable par \(f\) et \(u_0 \in I\).</p>
+          <ol>
+            <li>Si \(f\) est <b>croissante</b> sur \(I\), alors \((u_n)\) est <b>monotone</b> : croissante si \(u_1 \geq u_0\), décroissante si \(u_1 \leq u_0\).</li>
+            <li>Si \(f\) est <b>décroissante</b> sur \(I\), alors \((u_{2n})\) et \((u_{2n+1})\) sont monotones, de sens contraires.</li>
+            <li>Dans tous les cas, \(u_{n+1} - u_n = f(u_n) - u_n\) : le signe de \(g(x) = f(x) - x\) sur \(I\) donne la monotonie.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Pourquoi 1.</b> Par récurrence : si \(u_n \leq u_{n+1}\), alors, \(f\) étant croissante, \(f(u_n) \leq f(u_{n+1})\), soit \(u_{n+1} \leq u_{n+2}\). L’ordre des deux premiers termes se propage.</p>
+          <p><b>Pourquoi 2.</b> \(u_{n+2} = f(f(u_n))\) et \(f \circ f\) est croissante : on applique 1 aux termes de rangs pairs, puis impairs.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Méthode</th><th>Ce qu’on écrit</th><th>Quand</th></tr></thead>
+          <tbody>
+            <tr><td>Signe de \(u_{n+1} - u_n\)</td><td>\(u_{n+1} - u_n = f(u_n) - u_n\), à <b>factoriser</b>, puis signe sur l’intervalle où vit \(u_n\)</td><td>le plus fréquent aux examens (2024, 2025)</td></tr>
+            <tr><td>Récurrence</td><td>\(\mathcal{P}_n\) : « \(u_n \leq u_{n+1}\) », avec \(f\) croissante</td><td>exercices types du Moodle</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2025, exercice 5, question 1</i></span>
+          <p>\(u_0 = \dfrac{3}{2}\), \(u_{n+1} = 1 + \dfrac{1}{4}u_n^2\). Étudier la monotonie (« vous chercherez à factoriser »).</p>
+          <p><span data-eq>\(u_{n+1} - u_n = \dfrac{u_n^2}{4} - u_n + 1 = \dfrac{u_n^2 - 4u_n + 4}{4} = \dfrac{(u_n - 2)^2}{4} \geq 0\)</span>.<span class="c">une identité remarquable</span></p>
+          <p>Pour tout \(n\), \(u_{n+1} - u_n \geq 0\) : la suite est croissante.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Le signe de \(f(x) - x\) dépend de l’intervalle : il faut d’abord savoir où sont les \(u_n\).</li>
+            <li>\(f\) décroissante : la suite n’est en général <b>pas</b> monotone, elle oscille autour du point fixe.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">TD 4 ex. 6.16</span></div><h2>L’étude complète, selon \(u_0\)</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Méthode <i>étudier \(u_{n+1} = f(u_n)\)</i></span>
+          <ol>
+            <li><b>Points fixes</b> : résoudre \(f(x) = x\).</li>
+            <li><b>Variations de \(f\)</b> : tableau de variations, avec les valeurs aux points fixes.</li>
+            <li><b>Intervalle stable</b> contenant \(u_0\), délimité par les points fixes : récurrence « \(u_n \in I\) ».</li>
+            <li><b>Monotonie</b> : signe de \(f(x) - x\) sur \(I\), factorisé avec les points fixes.</li>
+            <li><b>Convergence</b> : croissante et majorée, ou décroissante et minorée. Sinon : monotone et non convergente, donc limite infinie.</li>
+            <li><b>Limite</b> : un point fixe (\(f\) continue), compatible avec les bornes et la monotonie.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 4, exercice 6.16 : \(f(x) = \frac{x^2 + 3}{4}\)</i></span>
+          <p><b>1.</b> Pour tout réel \(x\), \(f(x) \geq \frac{3}{4} \gt 0\). Donc \(\forall n \in \N^*,\ u_n = f(u_{n-1}) \gt 0\).</p>
+          <p><b>2.</b> \(f(x) = x \iff x^2 - 4x + 3 = 0 \iff (x - 1)(x - 3) = 0\). Points fixes : 1 et 3. Si \(u_0\) vaut 1 ou 3, la suite est constante.</p>
+          <p><b>3.</b> \(f'(x) = \frac{x}{2}\) : \(f\) décroît sur \(]-\infty, 0]\), croît sur \([0, +\infty[\), avec \(f(0) = \frac{3}{4}\), \(f(1) = 1\), \(f(3) = 3\).</p>
+          <p><b>4.</b> Soit \(u_0 \in [0, 1[\). (a) Par récurrence : si \(0 \leq u_n \lt 1\), comme \(f\) est strictement croissante sur \([0, 1]\), \(f(0) \leq f(u_n) \lt f(1)\), soit \(\frac{3}{4} \leq u_{n+1} \lt 1\).<span class="c">[0, 1[ est stable</span></p>
+          <p>(b) <span data-eq>\(u_{n+1} - u_n = \dfrac{u_n^2 - 4u_n + 3}{4} = \dfrac{(u_n - 1)(u_n - 3)}{4}\)</span>. Sur \([0, 1[\), les deux facteurs sont négatifs : \(u_{n+1} - u_n \gt 0\). La suite est strictement croissante.<span class="c">factorisé avec les points fixes</span></p>
+          <p>(c) Croissante et majorée par 1 : elle converge vers \(\ell\). \(f\) est continue, donc \(\ell \in \{1, 3\}\) ; et \(\ell \leq 1\). Donc \(\ell = 1\).</p>
+          <p><b>5.</b> Soit \(u_0 \gt 3\). Par récurrence \(u_n \gt 3\) (\(f\) croissante, \(f(3) = 3\)). Les deux facteurs sont positifs : la suite est strictement croissante. Si elle convergeait, sa limite serait 1 ou 3 ; or \(\ell \geq u_0 \gt 3\) : impossible. Croissante et non convergente, elle n’est pas majorée : \(u_n \to +\infty\).<span class="c">raisonnement par l’absurde</span></p>
+          <p><b>6.</b> Soit \(u_0 \in\ ]1, 3[\). Par récurrence \(1 \lt u_n \lt 3\). Les facteurs sont de signes contraires : la suite est strictement décroissante, minorée par 1, donc convergente ; \(\ell \leq u_0 \lt 3\), donc \(\ell = 1\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(u_0\)</th><th>Suite</th><th>Limite</th></tr></thead>
+          <tbody>
+            <tr><td>\([0, 1[\)</td><td>croissante, majorée par 1</td><td>1</td></tr>
+            <tr><td>\(1\) ou \(3\)</td><td>constante</td><td>1 ou 3</td></tr>
+            <tr><td>\(]1, 3[\)</td><td>décroissante, minorée par 1</td><td>1</td></tr>
+            <tr><td>\(]3, +\infty[\)</td><td>croissante, non majorée</td><td>\(+\infty\)</td></tr>
+          </tbody>
+          <caption>Bilan du TD 4, exercice 6.16. Pour \(u_0 \lt 0\), \(u_1 = f(u_0) \gt 0\) ramène à l’un de ces cas.</caption>
+        </table></div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">TD 4 ex. 6.17 · examens de janvier 2024 et 2025</span></div><h2>La méthode de Héron, et les exercices d’examen</h2></div>
+      <div class="stack">
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 4, exercice 6.17 : approcher \(\sqrt{a}\)</i></span>
+          <p>\(a \gt 0\), \(f(x) = \dfrac{1}{2}\left(x + \dfrac{a}{x}\right)\) sur \(\R_+^*\), \(u_0 \gt 0\), \(u_{n+1} = f(u_n)\).</p>
+          <p><b>1.</b> Si \(u_n \gt 0\), alors \(u_{n+1} = \frac{1}{2}\left(u_n + \frac{a}{u_n}\right) \gt 0\) : par récurrence, la suite est bien définie et strictement positive.</p>
+          <p><b>2.</b> \(f(x) = x \iff \dfrac{a}{x} = x \iff x^2 = a \iff x = \sqrt{a}\) (car \(x \gt 0\)). Si \(u_0 = \sqrt{a}\), la suite est constante.</p>
+          <p><b>3.</b> \(f'(x) = \dfrac{1}{2}\left(1 - \dfrac{a}{x^2}\right)\) : \(f\) décroît sur \(]0, \sqrt{a}]\), croît sur \([\sqrt{a}, +\infty[\), et son minimum vaut \(f(\sqrt{a}) = \sqrt{a}\). Donc \(\forall x \gt 0,\ f(x) \geq \sqrt{a}\), et \(\forall n \in \N^*,\ u_n \geq \sqrt{a}\).<span class="c">le minimum de f minore la suite</span></p>
+          <p><b>4.</b> <span data-eq>\(u_{n+1} - u_n = \dfrac{1}{2}\left(\dfrac{a}{u_n} - u_n\right) = \dfrac{a - u_n^2}{2u_n}\)</span>. Pour \(n \geq 1\), \(u_n \geq \sqrt{a}\) donc \(a - u_n^2 \leq 0\) : la suite est décroissante à partir du rang 1.</p>
+          <p><b>5.</b> Décroissante et minorée par \(\sqrt{a}\) : elle converge vers \(\ell \geq \sqrt{a} \gt 0\). \(f\) est continue sur \(\R_+^*\), donc \(\ell = f(\ell)\), d’où \(\ell = \sqrt{a}\).</p>
+        </div>
+        <div class="prose"><p><b>En chiffres</b>, avec \(a = 2\) et \(u_0 = 1\) : <span data-eq>\(u_1 = 1{,}5\), \(u_2 \approx 1{,}41667\), \(u_3 \approx 1{,}414216\)</span>, pour \(\sqrt{2} \approx 1{,}414214\). Le nombre de décimales exactes double à peu près à chaque étape.</p></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2025, exercice 5 (4,5 points)</i></span>
+          <p>\(u_0 = \dfrac{3}{2}\), \(u_{n+1} = 1 + \dfrac{1}{4}u_n^2\). On a vu (partie 3) : \(u_{n+1} - u_n = \dfrac{(u_n - 2)^2}{4} \geq 0\), la suite est croissante.</p>
+          <p><b>Récurrence</b> sur « \(1 \lt u_n \lt 2\) ». \(u_0 = \frac{3}{2}\). Si \(1 \lt u_n \lt 2\), alors \(1 \lt u_n^2 \lt 4\), donc \(\frac{1}{4} \lt \frac{u_n^2}{4} \lt 1\) et \(\frac{5}{4} \lt u_{n+1} \lt 2\) ; en particulier \(1 \lt u_{n+1} \lt 2\).</p>
+          <p><b>Conclusion.</b> Croissante et majorée par 2 : la suite converge vers \(\ell\). \(x \mapsto 1 + \frac{x^2}{4}\) est continue, donc \(\ell = 1 + \dfrac{\ell^2}{4} \iff (\ell - 2)^2 = 0\). Donc \(\ell = 2\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2024, exercice 5 (10 points) : la suite auxiliaire</i></span>
+          <p>\(u_0 = 1\), \(u_{n+1} = \dfrac{u_n}{u_n + 8}\). Partie 1 : \(u_n \gt 0\) par récurrence ; <span data-eq>\(u_{n+1} - u_n = -\dfrac{u_n(u_n + 7)}{u_n + 8} \leq 0\)</span> ; décroissante et minorée par 0, donc convergente, vers 0 (voir partie 2).</p>
+          <p>Partie 2 : \(v_n = 1 + \dfrac{7}{u_n}\). \(v_{n+1} = 1 + \dfrac{7(u_n + 8)}{u_n} = 8 + \dfrac{56}{u_n} = 8\left(1 + \dfrac{7}{u_n}\right) = 8v_n\) : géométrique de raison 8, \(v_0 = 8\), donc \(v_n = 8^{n+1}\).<span class="c">on fait apparaître vₙ</span></p>
+          <p>D’où <span data-eq>\(u_n = \dfrac{7}{v_n - 1} = \dfrac{7}{8^{n+1} - 1}\)</span>, qui tend bien vers 0.</p>
+        </div>
+        <div class="box exam"><span class="tag">À l’examen</span>
+          <ul>
+            <li>Les questions suivent le plan : positivité ou encadrement par récurrence, « valeurs possibles de \(\ell\) », monotonie, « est-elle convergente ? préciser sa limite ».</li>
+            <li>La monotonie se fait par le signe de \(u_{n+1} - u_n\), à factoriser.</li>
+            <li>Souvent une suite auxiliaire géométrique donne ensuite \(u_n\) en fonction de \(n\) (cours 4, partie 7).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours 7, <a href="cours-7-landau.html">les comparaisons de Landau</a>, compare les vitesses de deux suites.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

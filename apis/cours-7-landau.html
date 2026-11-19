@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comparaisons de Landau · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 7 : comparaisons asymptotiques de suites. Négligeable (petit o), dominée (grand O), équivalente, échelle de comparaison, règles de calcul sur les équivalents, « citer toutes les comparaisons possibles ». Pour l’examen final, hors contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 7 : comparaisons de Landau">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 7 · examen final</span><span>Source : fiche « Comparaisons de suites », TD 4 partie 5, examens de janvier 2024 et 2025</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="7"></span><a href="index.html">Maths APIS</a> · Cours 7 · <a href="index.html#final">pour l’examen final</a></div>
+      <h1>Comparer deux suites <span class="w">par leur quotient.</span></h1>
+      <p class="lead">Les notations de Landau disent laquelle de deux suites « pèse » le plus à l’infini : \(u_n = o(v_n)\) quand \(u_n\) est négligeable devant \(v_n\), \(u_n = O(v_n)\) quand elle est dominée, \(u_n \sim v_n\) quand elles sont équivalentes. En pratique, tout se lit sur la limite de \(\dfrac{u_n}{v_n}\).</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 30 novembre · TD 4, partie 5</span></li>
+        <li class="ex"><span><span class="k">Examen</span> 6 points en 2024, 7,5 points en 2025</span></li>
+      </ul>
+    </div>
+    <div class="box thm" style="align-self:start"><span class="tag">Tout sur un quotient</span>
+      <p>Quand \((v_n)\) ne s’annule pas à partir d’un certain rang :</p>
+      <div class="fm">\[u_n = o(v_n) \iff \frac{u_n}{v_n} \to 0\]</div>
+      <div class="fm">\[u_n = O(v_n) \iff \left(\frac{u_n}{v_n}\right) \text{ est bornée}\]</div>
+      <div class="fm">\[u_n \sim v_n \iff \frac{u_n}{v_n} \to 1\]</div>
+      <p class="muted">Hors contrôle du 23 novembre.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 7 · Comparaisons de Landau</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Les trois définitions</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Liens et cas particuliers</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>L’échelle de comparaison</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Calculer avec les équivalents</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Aux examens</span></a></li>
+    </ol>
+    <p class="toc-note">Toutes les comparaisons sont « en \(+\infty\) » : seuls les grands rangs comptent.</p>
+    <div class="toc-nav"><a href="cours-6-recurrentes.html">← Cours 6 : suites récurrentes</a><a href="entrainement.html#final">Entraînement : examen final →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Les trois définitions</a></li><li><a href="#s2">Liens et cas particuliers</a></li><li><a href="#s3">L’échelle de comparaison</a></li><li><a href="#s4">Calculer avec les équivalents</a></li><li><a href="#s5">Aux examens</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche, définition 1 · TD 4 § 5.2 « à connaître »</span></div><h2>Négligeable, dominée, équivalente</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>notations de Landau</i></span>
+          <p>Soient \((u_n)\) et \((v_n)\) deux suites réelles.</p>
+          <ol>
+            <li>\((u_n)\) est <b>négligeable</b> devant \((v_n)\), noté \(u_n = o(v_n)\) ou \(u_n \ll v_n\), s’il existe une suite \((\varepsilon_n)\) de limite nulle telle que, à partir d’un certain rang, \(u_n = \varepsilon_n v_n\).</li>
+            <li>\((u_n)\) est <b>dominée</b> par \((v_n)\), noté \(u_n = O(v_n)\), s’il existe une suite \((b_n)\) bornée telle que, à partir d’un certain rang, \(u_n = b_n v_n\).</li>
+            <li>\((u_n)\) est <b>équivalente</b> à \((v_n)\), noté \(u_n \sim v_n\), s’il existe une suite \((k_n)\) de limite 1 telle que, à partir d’un certain rang, \(u_n = k_n v_n\). (TD : \(u_n = v_n(1 + \varepsilon_n)\) avec \(\varepsilon_n \to 0\).)</li>
+          </ol>
+        </div>
+        <div class="box thm"><span class="tag">En pratique <i>\((v_n)\) à termes non nuls à partir d’un certain rang</i></span>
+          <div class="fm">\[u_n = o(v_n) \iff \frac{u_n}{v_n} \xrightarrow[n \to +\infty]{} 0 \qquad u_n = O(v_n) \iff \left(\frac{u_n}{v_n}\right) \text{ bornée} \qquad u_n \sim v_n \iff \frac{u_n}{v_n} \xrightarrow[n \to +\infty]{} 1\]</div>
+        </div>
+        <div class="prose">
+          <p>Exemples immédiats : \(n = o(n^2)\) car \(\frac{n}{n^2} = \frac{1}{n} \to 0\) ; \(n\sin(n) = O(n)\) car \(\frac{n\sin n}{n} = \sin(n)\) est bornée ; \(n + 1 \sim n\) car \(\frac{n+1}{n} = 1 + \frac{1}{n} \to 1\).</p>
+          <p>L’examen de janvier 2025 commence par : « Rappeler la définition de \(u_n = o(v_n)\), \(u_n = O(v_n)\) et \(u_n \sim v_n\) » pour deux suites <b>ne s’annulant pas</b> : dans ce cas, les trois caractérisations par le quotient sont la réponse attendue.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Le signe « = » de \(u_n = o(v_n)\) n’est pas une égalité : il se lit « est un », et ne se retourne pas.</li>
+            <li>\(\sim\) demande la limite <b>1</b>, pas « une limite finie » : \(2n\) et \(n\) ne sont pas équivalentes.</li>
+            <li>\(O\) n’exige pas de limite : un quotient borné suffit.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-7-landau.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="apis:landau:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">fiche, remarque 1 · TD 4 ex. 5.14 (1) et (7)</span></div><h2>Liens entre les trois, cas particuliers</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Remarques de la fiche</span>
+          <ol>
+            <li>\(u_n = o(v_n) \Rightarrow u_n = O(v_n)\) et \(u_n \sim v_n \Rightarrow u_n = O(v_n)\).</li>
+            <li>\(u_n = o(1)\) signifie \(u_n \to 0\).</li>
+            <li>\(u_n \sim 0\) signifie que \((u_n)\) est nulle à partir d’un certain rang.</li>
+            <li>Si \(u_n \sim v_n\), alors \((u_n)\) et \((v_n)\) ont la même limite (quand elle existe).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 5.14 (1)</th><th>Signifie</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>\(u_n = o(1)\)</td><td>\(u_n \to 0\)</td><td>\(u_n = \varepsilon_n \times 1\)</td></tr>
+            <tr><td>\(u_n = O(1)\)</td><td>\((u_n)\) est bornée</td><td>\(u_n = b_n \times 1\)</td></tr>
+            <tr><td>\(u_n = o(0)\)</td><td>\((u_n)\) est nulle à partir d’un certain rang</td><td>\(u_n = \varepsilon_n \times 0\)</td></tr>
+            <tr><td>\(u_n \sim 0\)</td><td>\((u_n)\) est nulle à partir d’un certain rang</td><td>\(u_n = k_n \times 0\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box thm"><span class="tag">Propriété <i>TD 4, ex. 5.14 (7)</i></span>
+          <div class="fm">\[u_n \sim v_n \iff u_n = v_n + o(v_n).\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration</span>
+          <p>\(u_n \sim v_n\) signifie : à partir d’un certain rang, \(u_n = v_n(1 + \varepsilon_n)\) avec \(\varepsilon_n \to 0\), c’est-à-dire \(u_n = v_n + \varepsilon_n v_n\). Or \(\varepsilon_n v_n\) est, par définition, un \(o(v_n)\). Les deux écritures disent la même chose.</p>
+        </div>
+        <div class="prose">
+          <p><b>A-t-on \(u_n \sim v_n \iff u_n - v_n \to 0\) ?</b> Non, dans aucun sens.</p>
+          <ul>
+            <li>\(n + 1 \sim n\), mais \((n + 1) - n = 1\) ne tend pas vers 0.</li>
+            <li>\(\frac{1}{n} - \frac{1}{n^2} \to 0\), mais \(\frac{1/n}{1/n^2} = n\) ne tend pas vers 1 : les suites ne sont pas équivalentes.</li>
+          </ul>
+          <p>L’équivalence compare des <b>quotients</b>, pas des différences.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Écrire \(u_n \sim 0\) pour dire « tend vers 0 » : c’est \(u_n = o(1)\).</li>
+            <li>\(u_n = O(v_n)\) n’entraîne ni \(o\) ni \(\sim\) : \(2n = O(n)\) seulement.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-7-landau.html#s2" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="apis:landau:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">TD 4 ex. 5.14 (3) à (5)</span></div><h2>L’échelle de comparaison</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">À connaître <i>croissances comparées, avec \(\ll\)</i></span>
+          <p>Pour \(0 \lt \alpha \lt \beta\) et \(q \gt 1\) :</p>
+          <div class="fm">\[1 \ll \ln(n) \ll n^{\alpha} \ll n^{\beta} \ll q^n \ll n!\]</div>
+          <p>Le TD donne l’exemple \(\ln(n) \ll n \ll e^n\). En prenant les inverses, l’ordre se retourne : \(\dfrac{1}{e^n} \ll \dfrac{1}{n^2} \ll \dfrac{1}{n} \ll \dfrac{1}{\ln(n)} \ll 1\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>classer des suites avec \(\ll\)</i></span>
+          <ol>
+            <li>Range d’abord par « famille » : constantes, logarithmes, puissances, exponentielles.</li>
+            <li>Pour deux voisines, forme le quotient et simplifie : il doit tendre vers 0.</li>
+            <li>Un facteur \(\ln(n)\) pèse plus que 1 et moins que toute puissance \(n^{\alpha}\), \(\alpha \gt 0\).</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 5.14</th><th>Classement</th><th>Quotient à vérifier</th></tr></thead>
+          <tbody>
+            <tr><td>(3)</td><td>\(1 \ll \ln(n) \ll n \ll n\ln(n) \ll n^2 \ll n^3 \ll 2^n\)</td><td>\(\frac{n}{n\ln n} = \frac{1}{\ln n} \to 0\) ; \(\frac{n\ln n}{n^2} = \frac{\ln n}{n} \to 0\)</td></tr>
+            <tr><td>(4)</td><td>\(\ln(n) \ll n \ll n\ln(n) \ll \dfrac{n^2}{\ln(n)} \ll n^2 \ll e^n\)</td><td>\(\dfrac{n\ln n}{n^2/\ln n} = \dfrac{(\ln n)^2}{n} \to 0\)</td></tr>
+            <tr><td>(5)</td><td>\(\dfrac{1}{n^2} \ll \dfrac{\ln(n)}{n^2} \ll \dfrac{1}{n\ln(n)} \ll \dfrac{1}{n} \ll \dfrac{\ln(n)}{n} \ll \dfrac{1}{\ln(n)}\)</td><td>\(\dfrac{\ln n/n^2}{1/(n\ln n)} = \dfrac{(\ln n)^2}{n} \to 0\)</td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé : chaque quotient de deux voisines a été recalculé. \(\frac{(\ln n)^2}{n} \to 0\) : toute puissance du logarithme est négligeable devant \(n\).</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>\(n\ln(n)\) est entre \(n\) et \(n^2\), pas au-dessus de \(n^2\).</li>
+            <li>Pour des suites qui tendent vers 0, « négligeable » veut dire « tend vers 0 plus vite » : \(\frac{1}{n^2} \ll \frac{1}{n}\).</li>
+            <li>\(2^n \ll 3^n\) : deux exponentielles de bases différentes ne sont pas du même ordre.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-7-landau.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="apis:landau:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche, proposition 1 · TD 4 ex. 5.14 (2) et (6)</span></div><h2>Calculer avec les équivalents</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>opérations sur les équivalents</i></span>
+          <p>Soient \((u_n)\), \((v_n)\), \((w_n)\), \((x_n)\) quatre suites ne s’annulant jamais, avec \(u_n \sim v_n\) et \(w_n \sim x_n\). Alors :</p>
+          <ol>
+            <li>\(u_n w_n \sim v_n x_n\) et \(\dfrac{u_n}{w_n} \sim \dfrac{v_n}{x_n}\) ;</li>
+            <li>\(|u_n| \sim |v_n|\) ;</li>
+            <li>pour \(\alpha \in \R^*\), \(u_n^{\alpha} \sim v_n^{\alpha}\) ;</li>
+            <li>pour \(\ell \in \R^*\) : \(u_n \to \ell \iff u_n \sim \ell\).</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p>Les équivalents passent au <b>produit</b>, au <b>quotient</b> et aux <b>puissances</b>. Ils ne passent <b>pas</b> à la somme : \(n + 1 \sim n\) et \(-n \sim -n\), mais \((n + 1) - n = 1\) n’est pas équivalent à \(n - n = 0\).</p>
+          <p><b>Pour une somme</b>, on garde le terme dominant : si \(v_n = o(u_n)\), alors \(u_n + v_n \sim u_n\). En particulier, un polynôme en \(n\) est équivalent à son terme de plus haut degré.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>TD 4, ex. 5.14 (6) : un équivalent simple</i></span>
+          <p>\(\ln(n) + 2n - 3\) : \(\ln(n) = o(n)\) et \(3 = o(n)\), donc \(\ln(n) + 2n - 3 \sim 2n\).<span class="c">le terme dominant</span></p>
+          <p><span data-eq>\(\dfrac{1}{n - 1} - \dfrac{1}{n + 1} = \dfrac{2}{n^2 - 1}\)</span>, et \(n^2 - 1 \sim n^2\), donc par quotient \(\dfrac{1}{n-1} - \dfrac{1}{n+1} \sim \dfrac{2}{n^2}\).<span class="c">on réduit d’abord : pas d’équivalent dans une différence</span></p>
+          <p>\(2e^n - n \sim 2e^n\) (car \(n = o(e^n)\)) et \(n + 1 \sim n\) : par quotient \(\dfrac{2e^n - n}{n + 1} \sim \dfrac{2e^n}{n}\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 5.14 (2) : \(u_n \ \ldots\ v_n\)</th><th>\(\dfrac{u_n}{v_n}\)</th><th>Ce qu’on peut écrire</th></tr></thead>
+          <tbody>
+            <tr><td>\(\dfrac{n(n+1)}{2}\) et \(n^2\)</td><td>\(\to \frac{1}{2}\)</td><td>\(= O\)</td></tr>
+            <tr><td>\(n\) et \(n^2\)</td><td>\(\to 0\)</td><td>\(= o\), \(= O\)</td></tr>
+            <tr><td>\(n\sin(n)\) et \(n\)</td><td>\(\sin(n)\), bornée, sans limite</td><td>\(= O\)</td></tr>
+            <tr><td>\(2n^2 - n + 10\) et \(e^n - n\)</td><td>\(\to 0\)</td><td>\(= o\), \(= O\)</td></tr>
+            <tr><td>\(-8n^3 + 2n^2 - n + 10\) et \(-8n^3\)</td><td>\(\to 1\)</td><td>\(\sim\), \(= O\)</td></tr>
+            <tr><td>\(2n^2 - n + 10\) et \(-n + 10\)</td><td>\(\to -\infty\)</td><td>aucun des trois (c’est \(-n + 10\) qui est \(o\) de l’autre)</td></tr>
+            <tr><td>\(n^2 + 3n\) et \(2n^2 + 3\)</td><td>\(\to \frac{1}{2}\)</td><td>\(= O\)</td></tr>
+            <tr><td>\(n + 1\) et \(n\)</td><td>\(\to 1\)</td><td>\(\sim\), \(= O\)</td></tr>
+            <tr><td>\(\ln(n + 1)\) et \(\ln(n)\)</td><td>\(1 + \dfrac{\ln(1 + \frac{1}{n})}{\ln n} \to 1\)</td><td>\(\sim\), \(= O\)</td></tr>
+            <tr><td>\(e^{n+1}\) et \(e^n\)</td><td>\(= e\)</td><td>\(= O\)</td></tr>
+          </tbody>
+          <caption>TD publié sans corrigé. « Il peut y avoir plusieurs possibilités » : \(o\) et \(\sim\) entraînent toujours \(O\).</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Additionner ou soustraire des équivalents : interdit. Réduis au même dénominateur ou factorise d’abord.</li>
+            <li>\(e^{n+1}\) n’est pas équivalent à \(e^n\) : le quotient vaut \(e\). On ne compose pas un équivalent par l’exponentielle.</li>
+            <li>Un équivalent se donne <b>simple</b> : un seul terme, sans somme.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-7-landau.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="apis:landau:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">examens de janvier 2024 (6 points) et janvier 2025 (7,5 points)</span></div><h2>Aux examens : « citer toutes les comparaisons possibles »</h2></div>
+      <div class="stack">
+        <div class="prose"><p>La consigne est la même les deux années : « Comparer en \(+\infty\) les suites \((u_n)\) et \((v_n)\) à l’aide des comparateurs de Landau \(\sim\), \(= o(\cdot)\), \(= O(\cdot)\) en citant toutes les comparaisons possibles et en justifiant vos réponses ».</p></div>
+        <div class="box meth"><span class="tag">Méthode <i>une seule limite, puis un tableau</i></span>
+          <ol>
+            <li>Forme \(\dfrac{u_n}{v_n}\) et factorise les termes dominants.</li>
+            <li>Calcule sa limite (croissances comparées si besoin).</li>
+            <li>Lis <b>toutes</b> les comparaisons dans le tableau ci-dessous, et justifie le \(O\) : « la suite \(\left(\frac{u_n}{v_n}\right)\) converge, donc elle est bornée ».</li>
+          </ol>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(\displaystyle\lim \frac{u_n}{v_n}\)</th><th>Comparaisons à citer</th></tr></thead>
+          <tbody>
+            <tr><td>\(0\)</td><td>\(u_n = o(v_n)\), \(u_n = O(v_n)\)</td></tr>
+            <tr><td>\(1\)</td><td>\(u_n \sim v_n\), \(u_n = O(v_n)\), \(v_n = O(u_n)\)</td></tr>
+            <tr><td>\(\ell\) réel, \(\ell \neq 0\) et \(\ell \neq 1\)</td><td>\(u_n = O(v_n)\), \(v_n = O(u_n)\) ; ni \(o\), ni \(\sim\)</td></tr>
+            <tr><td>\(\pm\infty\)</td><td>\(\dfrac{v_n}{u_n} \to 0\) : \(v_n = o(u_n)\), \(v_n = O(u_n)\)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2024, exercice 3 (corrigé officiel)</i></span>
+          <p><b>1.</b> \(u_n = 1 - 2n^2\), \(v_n = -2n^2 + n - 3\). \(\dfrac{u_n}{v_n} = \dfrac{-2n^2\left(1 - \frac{1}{2n^2}\right)}{-2n^2\left(1 - \frac{1}{2n} + \frac{3}{2n^2}\right)} \to 1\). Donc \(u_n \sim v_n\). La suite \(\left(\frac{u_n}{v_n}\right)\) converge, donc elle est bornée : \(u_n = O(v_n)\).<span class="c">factoriser −2n²</span></p>
+          <p><b>2.</b> \(u_n = e^{2n} - \sqrt{n}\), \(v_n = n + 1\). \(\dfrac{u_n}{v_n} = \dfrac{e^{2n}}{n} \times \dfrac{1 - \frac{\sqrt{n}}{e^{2n}}}{1 + \frac{1}{n}}\). Par croissances comparées, \(\dfrac{e^{2n}}{n} \to +\infty\) et \(\dfrac{\sqrt{n}}{e^{2n}} \to 0\) : \(\dfrac{u_n}{v_n} \to +\infty\), donc \(\dfrac{v_n}{u_n} \to 0\). Ainsi \(v_n = o(u_n)\), et aussi \(v_n = O(u_n)\).<span class="c">le quotient part à l’infini : on retourne</span></p>
+          <p><b>3.</b> \(u_n = 4^n + 1\), \(v_n = 5^n\). \(\dfrac{u_n}{v_n} = \left(\dfrac{4}{5}\right)^n + \dfrac{1}{5^n} \to 0\), car \(-1 \lt \frac{4}{5} \lt 1\) et \(5^n \to +\infty\). Donc \(u_n = o(v_n)\), et \(u_n = O(v_n)\).</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2025, exercice 3 (sans corrigé publié)</i></span>
+          <p><b>(a)</b> \(u_n = -n^3 + n - 2\), \(v_n = -2n^2 + n\). \(\dfrac{u_n}{v_n} = \dfrac{-n^3\left(1 - \frac{1}{n^2} + \frac{2}{n^3}\right)}{-2n^2\left(1 - \frac{1}{2n}\right)} = \dfrac{n}{2} \times \dfrac{1 - \frac{1}{n^2} + \frac{2}{n^3}}{1 - \frac{1}{2n}} \to +\infty\). Donc \(v_n = o(u_n)\) et \(v_n = O(u_n)\).</p>
+          <p><b>(b)</b> \(u_n = e^n + \sqrt{n}\), \(v_n = e^n + e^{-n}\). \(\dfrac{u_n}{v_n} = \dfrac{1 + \sqrt{n}\,e^{-n}}{1 + e^{-2n}} \to 1\). Donc \(u_n \sim v_n\), \(u_n = O(v_n)\) et \(v_n = O(u_n)\).</p>
+          <p><b>(c)</b> \(u_n = 3n + 6\), \(v_n = 5n - 1\). \(\dfrac{u_n}{v_n} = \dfrac{3 + \frac{6}{n}}{5 - \frac{1}{n}} \to \dfrac{3}{5}\). Le quotient converge vers un réel non nul : \(u_n = O(v_n)\) et \(v_n = O(u_n)\). Les suites ne sont pas équivalentes (\(\frac{3}{5} \neq 1\)) et aucune n’est négligeable devant l’autre.</p>
+        </div>
+        <div class="box exam"><span class="tag">À l’examen</span>
+          <p>« Toutes les comparaisons possibles » : on perd des points en s’arrêtant à la première. Après \(\sim\) ou \(o\), ajoute toujours le \(O\), avec sa justification.</p>
+        </div>
+        <div data-check-ref="apis/cours-7-landau.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="apis:landau:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours de l’ECUE est complet. Les <a href="annales.html">annales</a> montrent comment les sept cours se répartissent dans un sujet, et l’<a href="entrainement.html#final">entraînement</a> corrige les exercices des deux derniers examens.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Convergence theorems · Maths APIS</title>
+<meta name="description" content="Maths, APIS, lesson 5: convergence theorems. Increasing and bounded above sequences, adjacent sequences (definition, theorem, proof), subsequences, the Bolzano-Weierstrass theorem. For the final exam, not in the 23 November course test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · lesson 5: convergence theorems">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — lesson 5 · final exam</span><span>Source: summary sheets “Convergence theorems” and “Proofs to know”, Moodle model exercise, Tutorial 4 parts 3 and 4</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="5"></span><a href="index.html">Maths APIS</a> · Lesson 5 · <a href="index.html#final">for the final exam</a></div>
+      <h1>Proving that a sequence converges <span class="w">without knowing its limit.</span></h1>
+      <p class="lead">Until now, a limit was something you computed. The theorems in this lesson guarantee that a limit exists without giving it: an increasing sequence that is bounded above converges, and two adjacent sequences have the same limit. Subsequences are mostly used the other way round: two subsequences with different limits, and the sequence diverges.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 1 h</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 23 November · Tutorial 4, parts 3 and 4</span></li>
+        <li class="ex"><span><span class="k">Exam</span> adjacent sequences in 2024 and 2025 (6 and 7 points)</span></li>
+      </ul>
+    </div>
+    <div class="box why" style="align-self:start"><span class="tag">Not in the 23 November course test</span>
+      <p>This lesson is not on the course test syllabus: the announcement stops at “remarkable examples”. It is on the syllabus of the homework (Moodle test) of 7 and 8 December and of the final exam.</p>
+      <p>Prerequisites: <a href="cours-4-suites.html">lesson 4</a>, in particular the definitions of “bounded above”, “increasing” and “converges”.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 5 · Convergence theorems</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Monotonic sequences</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Adjacent sequences</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Subsequences</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Bolzano-Weierstrass</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>In the exams</span></a></li>
+    </ol>
+    <p class="toc-note">All the results remain true if the hypotheses hold only from some rank on.</p>
+    <div class="toc-nav"><a href="cours-4-suites.html">← Lesson 4: sequences</a><a href="cours-6-recurrentes.html">Lesson 6: recursive sequences →</a><a href="../qcm/index.html#apis">APIS MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Monotonic sequences</a></li><li><a href="#s2">Adjacent sequences</a></li><li><a href="#s3">Subsequences</a></li><li><a href="#s4">Bolzano-Weierstrass</a></li><li><a href="#s5">In the exams</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">summary sheet § 1 · Moodle model exercise · Tutorial 4 ex. 3.5</span></div><h2>Monotonic sequences: the monotone convergence theorem</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>convergent or monotonic sequences</i></span>
+          <ol>
+            <li>Every convergent sequence is bounded.</li>
+            <li>Every sequence that is <b>increasing and bounded above</b> is convergent.</li>
+            <li>Every sequence that is <b>decreasing and bounded below</b> is convergent.</li>
+            <li>Every increasing sequence that is not bounded above tends to \(+\infty\).</li>
+            <li>Every decreasing sequence that is not bounded below tends to \(-\infty\).</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p>A monotonic sequence therefore always has a limit, finite or infinite: the only question is whether it is bounded on the right side.</p>
+          <ul>
+            <li>The theorem says the limit <b>exists</b>. It does not say what it equals.</li>
+            <li>If \((u_n)\) is increasing and bounded above by \(M\), its limit \(\ell\) satisfies \(\ell \leq M\): an upper bound is not the limit. Moreover \(u_n \leq \ell\) for every \(n\).</li>
+            <li>“Increasing and bounded below” gives nothing: \((n)\) is increasing, bounded below by 0, and diverges.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>showing that a sequence converges by monotonicity</i></span>
+          <ol>
+            <li><b>Monotonicity</b>: sign of \(u_{n+1} - u_n\), or induction (lesson 4, part 3).</li>
+            <li><b>Bound on the right side</b>: bounded above if increasing, bounded below if decreasing. Often by induction.</li>
+            <li><b>Conclude</b> by quoting the theorem: “the sequence is increasing and bounded above, hence it converges”.</li>
+            <li>If the limit is asked for: pass to the limit in the recurrence relation (<a href="cours-6-recurrentes.html#s2">lesson 6</a>), then rule out the impossible values using the bounds.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Moodle model exercise</i></span>
+          <p>Show that the sequence defined by \(u_0 = 0\) and \(\forall n \in \N,\ u_{n+1} = \dfrac{1 + u_n^2}{3}\) converges.</p>
+          <p>\(u_1 = \frac{1}{3}\), \(u_2 = \frac{10}{27}\). All the terms are defined and positive.</p>
+          <p><b>Increasing</b>, by induction on “\(u_n \lt u_{n+1}\)”. \(u_0 \lt u_1\). If \(u_n \lt u_{n+1}\), since the terms are positive, \(u_n^2 \lt u_{n+1}^2\), hence \(\dfrac{1 + u_n^2}{3} \lt \dfrac{1 + u_{n+1}^2}{3}\), that is, \(u_{n+1} \lt u_{n+2}\).<span class="c">squaring is increasing on the positives</span></p>
+          <p><b>Bounded above by 1</b>, by induction. \(u_0 \leq 1\). If \(u_n \leq 1\), then \(u_n^2 \leq 1\) and \(u_{n+1} \leq \frac{2}{3} \leq 1\).</p>
+          <p>The sequence is increasing and bounded above: it converges.<span class="c">we quote the theorem</span></p>
+        </div>
+        <div class="prose">
+          <p><b>Going all the way.</b> The limit \(\ell\) satisfies \(\ell = \dfrac{1 + \ell^2}{3}\), that is, \(\ell^2 - 3\ell + 1 = 0\): \(\ell = \dfrac{3 \pm \sqrt{5}}{2}\). Since \(\ell \leq 1\), <span data-eq>\(\ell = \dfrac{3 - \sqrt{5}}{2} \approx 0.38\)</span>.</p>
+          <p><b>Tutorial 4, exercise 3.5.</b> \(u_n = \displaystyle\sum_{k=0}^{n} \frac{1}{k!}\). Increasing: \(u_{n+1} - u_n = \frac{1}{(n+1)!} \gt 0\). By induction, \(k! \geq 2^{k-1}\) for \(k \geq 1\) (since \((k+1)! = (k+1)\,k! \geq 2 \times 2^{k-1}\)). Hence \(u_n \leq 1 + \displaystyle\sum_{k=1}^{n} \frac{1}{2^{k-1}} = 1 + 2\left(1 - \frac{1}{2^n}\right) \leq 3\). Increasing and bounded above by 3: it converges, and \(u_2 = 2.5 \leq \ell \leq 3\). (Its limit is the number \(e\).)</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>“Bounded above by 3, so it tends to 3”: false. The theorem does not give the limit.</li>
+            <li>Forgetting one of the two ingredients: monotonicity <b>and</b> the bound.</li>
+            <li>This theorem is not in the 23 November course test: do not use it on Monday.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="apis:convergence:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">summary sheet § 2 · proofs § 3 · Tutorial 4 ex. 3.8 and 3.9</span></div><h2>Adjacent sequences</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>adjacent sequences</i></span>
+          <p>Two sequences \((u_n)\) and \((v_n)\) are <b>adjacent</b> if:</p>
+          <ol>
+            <li>\((u_n)\) is increasing;</li>
+            <li>\((v_n)\) is decreasing;</li>
+            <li>\(\displaystyle\lim_{n \to +\infty} (v_n - u_n) = 0\).</li>
+          </ol>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>adjacent sequences</i></span>
+          <p>Let \((u_n)\) and \((v_n)\) be two adjacent sequences. Then they converge to the same limit \(\ell\), and (with \((u_n)\) increasing and \((v_n)\) decreasing):</p>
+          <div class="fm">\[\forall n \in \N,\quad u_n \leq u_{n+1} \leq \ell \leq v_{n+1} \leq v_n.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Proof <i>the “Proofs to know” sheet</i></span>
+          <p><b>1.</b> Let \(w_n = v_n - u_n\). For every \(n\), \(w_{n+1} - w_n = (v_{n+1} - v_n) + (u_n - u_{n+1})\). Both brackets are negative or zero, so \((w_n)\) is decreasing.</p>
+          <p>\((w_n)\) is decreasing and tends to 0, so it is nonnegative: \(\forall n \in \N,\ w_n \geq 0\), that is, \(v_n \geq u_n\).</p>
+          <p>Since \((u_n)\) is increasing and \((v_n)\) is decreasing: \(\forall n \in \N,\ u_0 \leq u_n \leq v_n \leq v_0\).</p>
+          <p>\((u_n)\) is increasing and bounded above by \(v_0\): it converges to a real number \(\ell\). \((v_n)\) is decreasing and bounded below by \(u_0\): it converges to a real number \(\ell'\).</p>
+          <p>Finally \(\ell' - \ell = \lim v_n - \lim u_n = \lim (v_n - u_n) = 0\), so \(\ell = \ell'\).</p>
+          <p><b>2.</b> \((u_n)\) is increasing and tends to \(\ell\), so \((u_n - \ell)\) is increasing and tends to 0: it is nonpositive, that is, \(u_n \leq \ell\). Likewise \(v_n \geq \ell\). Hence \(u_n \leq u_{n+1} \leq \ell \leq v_{n+1} \leq v_n\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Method <i>“show that the sequences are adjacent”</i></span>
+          <ol>
+            <li><b>State the definition</b> (the question often asks for it: “after recalling the definition”).</li>
+            <li>Sign of \(u_{n+1} - u_n\): positive.</li>
+            <li>Sign of \(v_{n+1} - v_n\): negative. This is the tricky computation: same denominator, then simplify.</li>
+            <li>\(\lim (v_n - u_n) = 0\).</li>
+            <li>Conclude, then use the result: both sequences converge to the same limit, and \(u_n \leq \ell \leq v_n\) for every \(n\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>January 2024 exam, exercise 2 (6 points)</i></span>
+          <p>For \(n \geq 2\): \(u_n = \displaystyle\sum_{k=0}^{n} \frac{1}{k!}\) and \(v_n = u_n + \dfrac{1}{n!}\).</p>
+          <p>\((u_n)\) and \((v_n)\) are adjacent if \((u_n)\) is increasing, \((v_n)\) is decreasing and \(\lim (v_n - u_n) = 0\).<span class="c">the definition first</span></p>
+          <p>\(u_{n+1} - u_n = \dfrac{1}{(n+1)!} \geq 0\): \((u_n)\) is increasing.</p>
+          <p><span data-eq>\(v_{n+1} - v_n = \dfrac{1}{(n+1)!} + \dfrac{1}{(n+1)!} - \dfrac{1}{n!} = \dfrac{2 - (n + 1)}{(n+1)!} = \dfrac{1 - n}{(n+1)!}\)</span>. Since \(n \geq 2\), \(v_{n+1} - v_n \leq 0\): \((v_n)\) is decreasing.<span class="c">1/n! = (n+1)/(n+1)!</span></p>
+          <p>\(v_n - u_n = \dfrac{1}{n!} \to 0\). The two sequences are adjacent.</p>
+          <p>So they converge to the same limit: \((u_n)\) converges. And every convergent sequence is bounded: \((u_n)\) is bounded above.<span class="c">questions 2 and 3 of the paper</span></p>
+        </div>
+        <div class="prose">
+          <p><b>Tutorial 4, exercise 3.8.</b> \(u_n = \displaystyle\sum_{k=1}^{n} \frac{1}{k^2}\), \(v_n = u_n + \frac{1}{n}\). \(u_{n+1} - u_n = \frac{1}{(n+1)^2} \gt 0\). <span data-eq>\(v_{n+1} - v_n = \dfrac{1}{(n+1)^2} + \dfrac{1}{n+1} - \dfrac{1}{n} = \dfrac{n + n(n+1) - (n+1)^2}{n(n+1)^2} = -\dfrac{1}{n(n+1)^2}\)</span>, negative. \(v_n - u_n = \frac{1}{n} \to 0\). Adjacent.</p>
+          <p><b>Tutorial 4, exercise 3.9: approximating the limit.</b> \(u_n = \displaystyle\sum_{k=1}^{n-1} \frac{1}{k^2(k+1)^2}\), \(v_n = u_n + \frac{1}{3n^2}\). We find \(u_{n+1} - u_n = \frac{1}{n^2(n+1)^2} \gt 0\) and <span data-eq>\(v_{n+1} - v_n = \dfrac{3 + n^2 - (n+1)^2}{3n^2(n+1)^2} = \dfrac{2 - 2n}{3n^2(n+1)^2} \leq 0\)</span>. Since \(u_n \leq \ell \leq v_n\), the error is at most \(v_n - u_n = \frac{1}{3n^2}\): it drops below \(0.01\) as soon as \(n^2 \geq \frac{100}{3}\), that is, \(n = 6\). Then \(u_6 \approx 0.2883 \leq \ell \leq v_6 \approx 0.2976\): \(\ell \approx 0.29\) to within \(0.01\).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Forgetting the third condition, or showing only that \(u_n \leq v_n\).</li>
+            <li>Factorial mistake: \(\dfrac{1}{n!} = \dfrac{n + 1}{(n+1)!}\).</li>
+            <li>The decrease of \((v_n)\) may hold only from some rank on (here \(n \geq 2\)): that is enough, but you have to say so.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="apis:convergence:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">summary sheet § 3 · Tutorial 4 ex. 4.10 to 4.12</span></div><h2>Subsequences</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>subsequence</i></span>
+          <p>Let \((u_n)\) be a sequence. A <b>subsequence</b> of \((u_n)\) is any sequence of the form \((u_{\varphi(n)})\), where \(\varphi\) is a <b>strictly increasing</b> map from \(\N\) to \(\N\).</p>
+        </div>
+        <div class="prose"><p>You keep some of the terms, in order, without going back. The most useful ones: \((u_{2n})\) (even ranks), \((u_{2n+1})\) (odd ranks), \((u_{3n})\), \((u_{n+1})\).</p></div>
+        <div class="box thm"><span class="tag">Proposition and corollary</span>
+          <p>If \(u_n \to \ell\), then <b>every</b> subsequence of \((u_n)\) converges to \(\ell\).</p>
+          <p><b>Corollary.</b> If \((u_n)\) has a divergent subsequence, or two subsequences converging to <b>different</b> limits, then \((u_n)\) diverges.</p>
+        </div>
+        <div class="box thm"><span class="tag">Result to know <i>Tutorial 4, exercise 4.10: “you are allowed to use it”</i></span>
+          <div class="fm">\[u_n \xrightarrow[n \to +\infty]{} \ell \iff \left(u_{2n} \xrightarrow[n \to +\infty]{} \ell \ \text{ and } \ u_{2n+1} \xrightarrow[n \to +\infty]{} \ell\right).\]</div>
+          <p>Even and odd ranks cover all the ranks: that is why the equivalence is true.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 4, ex. 4.10</th><th>\(P\)</th><th>\(Q\)</th><th>Symbol</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>\(u_n \to \ell\)</td><td>\(u_{2n} \to \ell\)</td><td>\(P \Rightarrow Q\) only: \(((-1)^n)\) has \(u_{2n} \to 1\) without converging</td></tr>
+            <tr><td>2</td><td>\(u_n \to \ell\)</td><td>\(u_{2n} \to \ell\) and \(u_{2n+1} \to \ell\)</td><td>\(P \Leftrightarrow Q\)</td></tr>
+            <tr><td>3</td><td>\(u_n \to \ell\)</td><td>\(u_{3n} \to \ell\) and \(u_{3n+1} \to \ell\)</td><td>\(P \Rightarrow Q\) only: the ranks \(3n + 2\) are not covered</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Showing that a sequence diverges <i>January 2025 exam, exercise 6</i></span>
+          <p>\(u_n = \sin\left(\dfrac{n\pi}{3}\right)\). \(u_{3n} = \sin(n\pi) = 0\): the sequence \((u_{3n})\) is zero, it converges to 0.</p>
+          <p>\(u_{6n+1} = \sin\left(2n\pi + \dfrac{\pi}{3}\right) = \dfrac{\sqrt{3}}{2}\): \((u_{6n+1})\) converges to \(\dfrac{\sqrt{3}}{2}\).</p>
+          <p>\((u_n)\) has two subsequences converging to different limits: by the course, it diverges.<span class="c">we quote the corollary</span></p>
+        </div>
+        <div class="box model"><span class="tag">Showing that a sequence converges <i>January 2024 exam, exercise 6</i></span>
+          <p>\(u_n = \dfrac{1}{n}\displaystyle\sum_{k=0}^{n-1} (-1)^k\) for \(n \in \N^*\). Geometric sum with common ratio \(-1\): \(u_n = \dfrac{1 - (-1)^n}{2n}\).</p>
+          <p>So \(u_{2n} = 0\) and \(u_{2n+1} = \dfrac{2}{4n + 2} = \dfrac{1}{2n + 1}\). The two subsequences converge to the same limit 0: \((u_n)\) converges to 0.</p>
+        </div>
+        <div class="prose">
+          <p><b>Tutorial 4, exercise 4.11: the harmonic series diverges.</b> \(h_n = \displaystyle\sum_{k=1}^{n} \frac{1}{k}\) is increasing. \(h_{2n} - h_n = \displaystyle\sum_{k=n+1}^{2n} \frac{1}{k} \geq n \times \frac{1}{2n} = \frac{1}{2}\). If \((h_n)\) converged to \(\ell\), so would \((h_{2n})\), and \(h_{2n} - h_n \to 0\): absurd. \((h_n)\) is increasing and does not converge, so it is not bounded above: it tends to \(+\infty\).</p>
+          <p><b>Exercise 4.12.</b> \(a_n = \displaystyle\sum_{k=1}^{n} \frac{(-1)^k}{k}\). \(a_{2n+2} - a_{2n} = \frac{1}{2n+2} - \frac{1}{2n+1} \lt 0\): \((a_{2n})\) decreases. \(a_{2n+3} - a_{2n+1} = \frac{1}{2n+2} - \frac{1}{2n+3} \gt 0\): \((a_{2n+1})\) increases. \(a_{2n} - a_{2n+1} = \frac{1}{2n+1} \to 0\). The two subsequences are adjacent, so they have the same limit: \((a_n)\) converges.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>A single convergent subsequence proves nothing about \((u_n)\).</li>
+            <li>To conclude that the sequence converges, you need subsequences that <b>cover all the ranks</b> and have the same limit.</li>
+            <li>\(u_{2n+1}\) is obtained by replacing \(n\) with \(2n + 1\) everywhere: \(\frac{1 - (-1)^{2n+1}}{2(2n+1)} = \frac{2}{4n+2}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="apis:convergence:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">summary sheet § 3</span></div><h2>The Bolzano-Weierstrass theorem</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Theorem <i>Bolzano-Weierstrass</i></span>
+          <p>From every <b>bounded</b> sequence, you can extract a <b>convergent</b> subsequence.</p>
+        </div>
+        <div class="prose">
+          <p>This is what remains true of the false converse “bounded, hence convergent”: a bounded sequence does not necessarily converge, but one of its subsequences does.</p>
+          <ul>
+            <li>\(((-1)^n)\) is bounded and diverges; \((u_{2n})\) is constant equal to 1, hence convergent.</li>
+            <li>\((\cos(n))\) is bounded: it has a convergent subsequence, even though we cannot write it down.</li>
+            <li>\((n)\) is not bounded: none of its subsequences converges, the theorem does not apply.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Hypothesis</th><th>Conclusion</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>convergent</td><td>bounded</td><td>lesson 4, part 6</td></tr>
+            <tr><td>bounded</td><td>a subsequence converges</td><td>Bolzano-Weierstrass</td></tr>
+            <tr><td>bounded and monotonic</td><td>convergent</td><td>part 1</td></tr>
+            <tr><td>convergent to \(\ell\)</td><td>every subsequence converges to \(\ell\)</td><td>part 3</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Trap</span>
+          <p>“Bounded, hence convergent” is still false. The theorem speaks of <b>a</b> subsequence, not of the sequence.</p>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="apis:convergence:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">January 2024 and January 2025 exams</span></div><h2>In the exams</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Paper</th><th>Adjacent or monotonic sequences</th><th>Subsequences</th></tr></thead>
+          <tbody>
+            <tr><td>January 2024 (out of 40)</td><td>Ex 2, 6 points: \(\sum \frac{1}{k!}\) and \(\sum \frac{1}{k!} + \frac{1}{n!}\); “is it convergent? bounded above?”</td><td>Ex 6, 3 points: \(u_{2n}\), \(u_{2n+1}\), conclude</td></tr>
+            <tr><td>January 2025 (out of 30)</td><td>Ex 1, 7 points: two coupled sequences, \(w_n = v_n - u_n\) geometric. Ex 2, 5 points: decreasing and bounded below</td><td>Ex 6, 3 points: \(\sin\left(\frac{n\pi}{3}\right)\) diverges, “by properly quoting a result from your course”</td></tr>
+          </tbody>
+          <caption>Between a third and a half of the marks of the last two exams rest on this lesson.</caption>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>January 2025 exam, exercise 1 (7 points)</i></span>
+          <p>\(u_0 = 2\), \(v_0 = 3\), \(u_{n+1} = \dfrac{3u_n + 2v_n}{5}\), \(v_{n+1} = \dfrac{2u_n + 3v_n}{5}\), and \(w_n = v_n - u_n\).</p>
+          <p>\(w_{n+1} = \dfrac{2u_n + 3v_n - 3u_n - 2v_n}{5} = \dfrac{1}{5}w_n\): \((w_n)\) is geometric with common ratio \(\frac{1}{5}\), \(w_0 = 1\), so <span data-eq>\(w_n = \dfrac{1}{5^n} \gt 0\)</span>.</p>
+          <p>\(u_{n+1} - u_n = \dfrac{2(v_n - u_n)}{5} = \dfrac{2}{5}w_n \gt 0\): \((u_n)\) increases. \(v_{n+1} - v_n = -\dfrac{2}{5}w_n \lt 0\): \((v_n)\) decreases. And \(v_n - u_n = w_n \to 0\). The sequences are adjacent: they converge to the same limit \(\ell\).<span class="c">the sign of wₙ gives both monotonicities</span></p>
+          <p>\(x_n = u_n + v_n\): \(x_{n+1} = \dfrac{5u_n + 5v_n}{5} = x_n\). The sequence is constant: \(x_n = 5\). In the limit, \(2\ell = 5\), so <span data-eq>\(\ell = \dfrac{5}{2}\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>January 2025 exam, exercise 2 (5 points)</i></span>
+          <p>\(u_n = \displaystyle\sum_{k=n}^{2n-1} \frac{1}{k}\) for \(n \in \N^*\).</p>
+          <p><span data-eq>\(u_{n+1} - u_n = \dfrac{1}{2n} + \dfrac{1}{2n+1} - \dfrac{1}{n} = \dfrac{1}{2n+1} - \dfrac{1}{2n} \lt 0\)</span>: the sequence is strictly decreasing.<span class="c">two terms come in, one goes out</span></p>
+          <p>The sum has \(n\) terms, each between \(\dfrac{1}{2n-1}\) and \(\dfrac{1}{n}\): \(\dfrac{n}{2n-1} \leq u_n \leq 1\). Since \(\dfrac{n}{2n-1} \geq \dfrac{1}{2}\), the sequence is bounded below by \(\frac{1}{2}\) and bounded above by 1.</p>
+          <p>Decreasing and bounded below: it converges, and its limit satisfies \(\dfrac{1}{2} \leq \ell \leq 1\).</p>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="apis:convergence:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Lesson 6, <a href="cours-6-recurrentes.html">recursive sequences</a>, applies the monotone convergence theorem to sequences \(u_{n+1} = f(u_n)\).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

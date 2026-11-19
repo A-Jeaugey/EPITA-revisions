@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recursive sequences · Maths APIS</title>
+<meta name="description" content="Maths, APIS, lesson 6: recursive sequences u(n+1) = f(u(n)). Stable interval, fixed points, possible limit, monotonicity from the variations of f and the sign of f(x) − x, the complete method, Heron’s method. For the final exam, not in the 23 November course test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · lesson 6: recursive sequences">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — lesson 6 · final exam</span><span>Source: Moodle module “Recursive sequences”, Tutorial 4 part 6, January 2024 and 2025 exams</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="6"></span><a href="index.html">Maths APIS</a> · Lesson 6 · <a href="index.html#final">for the final exam</a></div>
+      <h1>\(u_{n+1} = f(u_n)\): <span class="w">the function decides everything.</span></h1>
+      <p class="lead">A recursive sequence is read from the function \(f\) that takes you from one term to the next. A stable interval guarantees that the sequence is well defined and bounded, the variations of \(f\) give the monotonicity, and the fixed points are the only possible limits. The write-up always follows the same plan.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 30 November · Tutorial 4, part 6</span></li>
+        <li class="ex"><span><span class="k">Exam</span> one exercise in 2024 (10 points) and in 2025 (4.5 points)</span></li>
+      </ul>
+    </div>
+    <div class="box meth" style="align-self:start"><span class="tag">The plan, always the same</span>
+      <ol>
+        <li>The sequence is well defined and stays in an interval \(I\).</li>
+        <li>Monotonicity.</li>
+        <li>Convergence: monotone convergence theorem.</li>
+        <li>Limit: a fixed point of \(f\), chosen thanks to the bounds.</li>
+      </ol>
+      <p class="muted">Not in the 23 November course test.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Lesson contents">
+    <div class="toc-title">Lesson 6 · Recursive sequences</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Stable interval</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Fixed points and limit</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Monotonicity</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>The complete study</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Heron, and the exams</span></a></li>
+    </ol>
+    <p class="toc-note">Throughout the lesson, \(f\) is a function defined on an interval \(I\), and \(u_{n+1} = f(u_n)\).</p>
+    <div class="toc-nav"><a href="cours-5-convergence.html">← Lesson 5: convergence theorems</a><a href="cours-7-landau.html">Lesson 7: Landau →</a><a href="../qcm/index.html#apis">APIS MCQs</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Lesson contents</summary><ol>
+      <li><a href="#s1">Stable interval</a></li><li><a href="#s2">Fixed points and limit</a></li><li><a href="#s3">Monotonicity</a></li><li><a href="#s4">The complete study</a></li><li><a href="#s5">Heron, and the exams</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">“General facts” module · Tutorial 4 ex. 6.15</span></div><h2>A well-defined sequence: the stable interval</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>recursive sequence, stable interval</i></span>
+          <p>A <b>recursive sequence</b> is defined by its first term \(u_0\) and a relation \(\forall n \in \N,\ u_{n+1} = f(u_n)\).</p>
+          <p>An interval \(I\) is <b>stable</b> under \(f\) if \(f(I) \subset I\): for every \(x \in I\), \(f(x) \in I\).</p>
+        </div>
+        <div class="box thm"><span class="tag">Property</span>
+          <p>If \(I\) is stable under \(f\) and \(u_0 \in I\), then the sequence is well defined and \(\forall n \in \N,\ u_n \in I\).</p>
+        </div>
+        <div class="prose">
+          <p>The proof is a one-line induction: if \(u_n \in I\), then \(u_{n+1} = f(u_n) \in I\). This is exactly what the papers have you write: “show by induction that \(\forall n \in \N,\ 1 \lt u_n \lt 2\)”. A bounded stable interval gives a <b>bounded</b> sequence.</p>
+          <p><b>Reading it on a graph.</b> Draw the curve of \(f\) and the line \(y = x\). Start from \(u_0\) on the x-axis, go up to the curve (height \(u_1\)), move horizontally to the line \(y = x\) to carry \(u_1\) over to the x-axis, and start again.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 4, ex. 6.15: \(f(x) = x^2\)</th><th>First terms</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td>\(u_0 = 0\)</td><td>0; 0; 0</td><td>constant (0 is a fixed point)</td></tr>
+            <tr><td>\(u_0 = 1\)</td><td>1; 1; 1</td><td>constant (1 is a fixed point)</td></tr>
+            <tr><td>\(u_0 = 0.8\)</td><td><span data-eq>\(0.8\); \(0.64\); \(0.4096\); \(\approx 0.168\)</span></td><td>decreasing, tends to 0</td></tr>
+            <tr><td>\(u_0 = 1.3\)</td><td><span data-eq>\(1.3\); \(1.69\); \(\approx 2.86\); \(\approx 8.16\)</span></td><td>increasing, tends to \(+\infty\)</td></tr>
+            <tr><td>\(u_0 = -1.2\)</td><td><span data-eq>\(-1.2\); \(1.44\); \(\approx 2.07\); \(\approx 4.30\)</span></td><td>increasing, tends to \(+\infty\)</td></tr>
+          </tbody>
+          <caption>\(f\) is increasing on \([0, +\infty[\) in every case; the sequence itself increases or decreases depending on where \(u_0\) sits relative to the fixed points.</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>“\(f\) increasing, so \((u_n)\) increasing”: false (\(u_0 = 0.8\) above). \(f\) increasing gives \((u_n)\) <b>monotonic</b>.</li>
+            <li>Check that \(f(u_n)\) exists: a square root, a quotient or a logarithm imposes an interval.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">Tutorial 4 ex. 6.15 (2) · January 2024 exam</span></div><h2>Fixed points: the only possible limits</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition <i>fixed point</i></span>
+          <p>A <b>fixed point</b> of \(f\) is a real number \(\ell\) such that \(f(\ell) = \ell\). If \(u_0\) is a fixed point, the sequence is constant.</p>
+        </div>
+        <div class="box thm"><span class="tag">Theorem <i>limit of a recursive sequence</i></span>
+          <p>Let \((u_n)\) be defined by \(u_{n+1} = f(u_n)\), with \(f\) <b>continuous</b> on \(I\). If \((u_n)\) converges to a real number \(\ell \in I\), then</p>
+          <div class="fm">\[\ell = f(\ell).\]</div>
+        </div>
+        <div class="prose">
+          <p>Why: \(u_{n+1} \to \ell\) (subsequence), and \(f(u_n) \to f(\ell)\) by continuity; so both sides of \(u_{n+1} = f(u_n)\) have the same limit.</p>
+          <p>The theorem does <b>not</b> say that the sequence converges. It says: if it converges, it is to a fixed point. You first prove convergence (lesson 5), then solve \(\ell = f(\ell)\), then choose among the solutions using the bounds or the monotonicity.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Tutorial 4, ex. 6.15 (2): \(f\) continuous on \(I\), \(u_0 \in I\)</th><th>True?</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>“If \(\ell = f(\ell)\) then \((u_n)\) converges to \(\ell\)”</td><td>false</td><td>\(f(x) = x^2\), \(u_0 = 1.3\): 0 and 1 are fixed points, the sequence tends to \(+\infty\)</td></tr>
+            <tr><td>“If \((u_n)\) converges to a real number \(\ell\) then \(\ell = f(\ell)\)”</td><td><b>true</b></td><td>the theorem (with \(\ell \in I\))</td></tr>
+            <tr><td>“\((u_n)\) converges to \(\ell\) if and only if \(\ell = f(\ell)\)”</td><td>false</td><td>only one direction is true</td></tr>
+            <tr><td>“If \(f\) is increasing then \((u_n)\) is increasing”</td><td>false</td><td>\(f(x) = x^2\), \(u_0 = 0.8\): the sequence decreases</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>January 2024 exam, exercise 5, question 1 (b)</i></span>
+          <p>\(u_0 = 1\), \(u_{n+1} = \dfrac{u_n}{u_n + 8}\), and we have shown \(u_n \gt 0\). “Suppose that \((u_n)\) converges to a real number \(\ell\). What are the possible values of \(\ell\)?”</p>
+          <p>Let \(f : x \mapsto \dfrac{x}{x + 8}\). \(f\) is continuous on \(\R_+\), so \(\ell = f(\ell)\).<span class="c">continuity, then ℓ = f(ℓ)</span></p>
+          <p>\(\ell = \dfrac{\ell}{\ell + 8} \iff \ell^2 + 8\ell = \ell \iff \ell(\ell + 7) = 0\). If the sequence converges, it is to 0 or to \(-7\).</p>
+          <p>Later in the exercise: \(u_n \gt 0\) for every \(n\) gives \(\ell \geq 0\), so \(\ell = 0\).<span class="c">the bounds rule out −7</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Solving \(\ell = f(\ell)\) and concluding “so the sequence converges to \(\ell\)”: the proof of convergence is missing.</li>
+            <li>Forgetting the word “continuous”: it is the hypothesis that lets you pass to the limit.</li>
+            <li>Keeping a fixed point that is incompatible with the bounds of the sequence.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s2" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">“General facts” module: \(f\) monotonic</span></div><h2>The monotonicity of the sequence</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Properties</span>
+          <p>Let \(I\) be an interval stable under \(f\) and \(u_0 \in I\).</p>
+          <ol>
+            <li>If \(f\) is <b>increasing</b> on \(I\), then \((u_n)\) is <b>monotonic</b>: increasing if \(u_1 \geq u_0\), decreasing if \(u_1 \leq u_0\).</li>
+            <li>If \(f\) is <b>decreasing</b> on \(I\), then \((u_{2n})\) and \((u_{2n+1})\) are monotonic, in opposite directions.</li>
+            <li>In every case, \(u_{n+1} - u_n = f(u_n) - u_n\): the sign of \(g(x) = f(x) - x\) on \(I\) gives the monotonicity.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p><b>Why 1.</b> By induction: if \(u_n \leq u_{n+1}\), then, since \(f\) is increasing, \(f(u_n) \leq f(u_{n+1})\), that is, \(u_{n+1} \leq u_{n+2}\). The order of the first two terms propagates.</p>
+          <p><b>Why 2.</b> \(u_{n+2} = f(f(u_n))\) and \(f \circ f\) is increasing: apply 1 to the terms of even ranks, then of odd ranks.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Method</th><th>What you write</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Sign of \(u_{n+1} - u_n\)</td><td>\(u_{n+1} - u_n = f(u_n) - u_n\), to <b>factor</b>, then the sign on the interval where \(u_n\) lives</td><td>the most frequent in the exams (2024, 2025)</td></tr>
+            <tr><td>Induction</td><td>\(\mathcal{P}_n\): “\(u_n \leq u_{n+1}\)”, with \(f\) increasing</td><td>Moodle model exercises</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Model answer <i>January 2025 exam, exercise 5, question 1</i></span>
+          <p>\(u_0 = \dfrac{3}{2}\), \(u_{n+1} = 1 + \dfrac{1}{4}u_n^2\). Study the monotonicity (“try to factor”).</p>
+          <p><span data-eq>\(u_{n+1} - u_n = \dfrac{u_n^2}{4} - u_n + 1 = \dfrac{u_n^2 - 4u_n + 4}{4} = \dfrac{(u_n - 2)^2}{4} \geq 0\)</span>.<span class="c">a perfect-square identity</span></p>
+          <p>For every \(n\), \(u_{n+1} - u_n \geq 0\): the sequence is increasing.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The sign of \(f(x) - x\) depends on the interval: you first need to know where the \(u_n\) are.</li>
+            <li>\(f\) decreasing: the sequence is in general <b>not</b> monotonic, it oscillates around the fixed point.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">Tutorial 4 ex. 6.16</span></div><h2>The complete study, depending on \(u_0\)</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Method <i>studying \(u_{n+1} = f(u_n)\)</i></span>
+          <ol>
+            <li><b>Fixed points</b>: solve \(f(x) = x\).</li>
+            <li><b>Variations of \(f\)</b>: table of variations, with the values at the fixed points.</li>
+            <li><b>Stable interval</b> containing \(u_0\), bounded by the fixed points: induction on “\(u_n \in I\)”.</li>
+            <li><b>Monotonicity</b>: sign of \(f(x) - x\) on \(I\), factored using the fixed points.</li>
+            <li><b>Convergence</b>: increasing and bounded above, or decreasing and bounded below. Otherwise: monotonic and not convergent, hence an infinite limit.</li>
+            <li><b>Limit</b>: a fixed point (\(f\) continuous), compatible with the bounds and the monotonicity.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>Tutorial 4, exercise 6.16: \(f(x) = \frac{x^2 + 3}{4}\)</i></span>
+          <p><b>1.</b> For every real \(x\), \(f(x) \geq \frac{3}{4} \gt 0\). So \(\forall n \in \N^*,\ u_n = f(u_{n-1}) \gt 0\).</p>
+          <p><b>2.</b> \(f(x) = x \iff x^2 - 4x + 3 = 0 \iff (x - 1)(x - 3) = 0\). Fixed points: 1 and 3. If \(u_0\) equals 1 or 3, the sequence is constant.</p>
+          <p><b>3.</b> \(f'(x) = \frac{x}{2}\): \(f\) decreases on \(]-\infty, 0]\), increases on \([0, +\infty[\), with \(f(0) = \frac{3}{4}\), \(f(1) = 1\), \(f(3) = 3\).</p>
+          <p><b>4.</b> Let \(u_0 \in [0, 1[\). (a) By induction: if \(0 \leq u_n \lt 1\), since \(f\) is strictly increasing on \([0, 1]\), \(f(0) \leq f(u_n) \lt f(1)\), that is, \(\frac{3}{4} \leq u_{n+1} \lt 1\).<span class="c">[0, 1[ is stable</span></p>
+          <p>(b) <span data-eq>\(u_{n+1} - u_n = \dfrac{u_n^2 - 4u_n + 3}{4} = \dfrac{(u_n - 1)(u_n - 3)}{4}\)</span>. On \([0, 1[\), both factors are negative: \(u_{n+1} - u_n \gt 0\). The sequence is strictly increasing.<span class="c">factored using the fixed points</span></p>
+          <p>(c) Increasing and bounded above by 1: it converges to \(\ell\). \(f\) is continuous, so \(\ell \in \{1, 3\}\); and \(\ell \leq 1\). So \(\ell = 1\).</p>
+          <p><b>5.</b> Let \(u_0 \gt 3\). By induction \(u_n \gt 3\) (\(f\) increasing, \(f(3) = 3\)). Both factors are positive: the sequence is strictly increasing. If it converged, its limit would be 1 or 3; but \(\ell \geq u_0 \gt 3\): impossible. Increasing and not convergent, it is not bounded above: \(u_n \to +\infty\).<span class="c">argument by contradiction</span></p>
+          <p><b>6.</b> Let \(u_0 \in\ ]1, 3[\). By induction \(1 \lt u_n \lt 3\). The factors have opposite signs: the sequence is strictly decreasing, bounded below by 1, hence convergent; \(\ell \leq u_0 \lt 3\), so \(\ell = 1\).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>\(u_0\)</th><th>Sequence</th><th>Limit</th></tr></thead>
+          <tbody>
+            <tr><td>\([0, 1[\)</td><td>increasing, bounded above by 1</td><td>1</td></tr>
+            <tr><td>\(1\) or \(3\)</td><td>constant</td><td>1 or 3</td></tr>
+            <tr><td>\(]1, 3[\)</td><td>decreasing, bounded below by 1</td><td>1</td></tr>
+            <tr><td>\(]3, +\infty[\)</td><td>increasing, not bounded above</td><td>\(+\infty\)</td></tr>
+          </tbody>
+          <caption>Summary of Tutorial 4, exercise 6.16. For \(u_0 \lt 0\), \(u_1 = f(u_0) \gt 0\) brings you back to one of these cases.</caption>
+        </table></div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">Tutorial 4 ex. 6.17 · January 2024 and 2025 exams</span></div><h2>Heron’s method, and the exam exercises</h2></div>
+      <div class="stack">
+        <div class="box model"><span class="tag">Model answer <i>Tutorial 4, exercise 6.17: approximating \(\sqrt{a}\)</i></span>
+          <p>\(a \gt 0\), \(f(x) = \dfrac{1}{2}\left(x + \dfrac{a}{x}\right)\) on \(\R_+^*\), \(u_0 \gt 0\), \(u_{n+1} = f(u_n)\).</p>
+          <p><b>1.</b> If \(u_n \gt 0\), then \(u_{n+1} = \frac{1}{2}\left(u_n + \frac{a}{u_n}\right) \gt 0\): by induction, the sequence is well defined and strictly positive.</p>
+          <p><b>2.</b> \(f(x) = x \iff \dfrac{a}{x} = x \iff x^2 = a \iff x = \sqrt{a}\) (since \(x \gt 0\)). If \(u_0 = \sqrt{a}\), the sequence is constant.</p>
+          <p><b>3.</b> \(f'(x) = \dfrac{1}{2}\left(1 - \dfrac{a}{x^2}\right)\): \(f\) decreases on \(]0, \sqrt{a}]\), increases on \([\sqrt{a}, +\infty[\), and its minimum is \(f(\sqrt{a}) = \sqrt{a}\). So \(\forall x \gt 0,\ f(x) \geq \sqrt{a}\), and \(\forall n \in \N^*,\ u_n \geq \sqrt{a}\).<span class="c">the minimum of f bounds the sequence below</span></p>
+          <p><b>4.</b> <span data-eq>\(u_{n+1} - u_n = \dfrac{1}{2}\left(\dfrac{a}{u_n} - u_n\right) = \dfrac{a - u_n^2}{2u_n}\)</span>. For \(n \geq 1\), \(u_n \geq \sqrt{a}\) so \(a - u_n^2 \leq 0\): the sequence is decreasing from rank 1 on.</p>
+          <p><b>5.</b> Decreasing and bounded below by \(\sqrt{a}\): it converges to \(\ell \geq \sqrt{a} \gt 0\). \(f\) is continuous on \(\R_+^*\), so \(\ell = f(\ell)\), hence \(\ell = \sqrt{a}\).</p>
+        </div>
+        <div class="prose"><p><b>In numbers</b>, with \(a = 2\) and \(u_0 = 1\): <span data-eq>\(u_1 = 1.5\), \(u_2 \approx 1.41667\), \(u_3 \approx 1.414216\)</span>, for \(\sqrt{2} \approx 1.414214\). The number of correct decimals roughly doubles at each step.</p></div>
+        <div class="box model"><span class="tag">Model answer <i>January 2025 exam, exercise 5 (4.5 points)</i></span>
+          <p>\(u_0 = \dfrac{3}{2}\), \(u_{n+1} = 1 + \dfrac{1}{4}u_n^2\). We saw (part 3): \(u_{n+1} - u_n = \dfrac{(u_n - 2)^2}{4} \geq 0\), the sequence is increasing.</p>
+          <p><b>Induction</b> on “\(1 \lt u_n \lt 2\)”. \(u_0 = \frac{3}{2}\). If \(1 \lt u_n \lt 2\), then \(1 \lt u_n^2 \lt 4\), so \(\frac{1}{4} \lt \frac{u_n^2}{4} \lt 1\) and \(\frac{5}{4} \lt u_{n+1} \lt 2\); in particular \(1 \lt u_{n+1} \lt 2\).</p>
+          <p><b>Conclusion.</b> Increasing and bounded above by 2: the sequence converges to \(\ell\). \(x \mapsto 1 + \frac{x^2}{4}\) is continuous, so \(\ell = 1 + \dfrac{\ell^2}{4} \iff (\ell - 2)^2 = 0\). So \(\ell = 2\).</p>
+        </div>
+        <div class="box model"><span class="tag">Model answer <i>January 2024 exam, exercise 5 (10 points): the auxiliary sequence</i></span>
+          <p>\(u_0 = 1\), \(u_{n+1} = \dfrac{u_n}{u_n + 8}\). Part 1: \(u_n \gt 0\) by induction; <span data-eq>\(u_{n+1} - u_n = -\dfrac{u_n(u_n + 7)}{u_n + 8} \leq 0\)</span>; decreasing and bounded below by 0, hence convergent, to 0 (see part 2).</p>
+          <p>Part 2: \(v_n = 1 + \dfrac{7}{u_n}\). \(v_{n+1} = 1 + \dfrac{7(u_n + 8)}{u_n} = 8 + \dfrac{56}{u_n} = 8\left(1 + \dfrac{7}{u_n}\right) = 8v_n\): geometric with common ratio 8, \(v_0 = 8\), so \(v_n = 8^{n+1}\).<span class="c">we make vₙ appear</span></p>
+          <p>Hence <span data-eq>\(u_n = \dfrac{7}{v_n - 1} = \dfrac{7}{8^{n+1} - 1}\)</span>, which indeed tends to 0.</p>
+        </div>
+        <div class="box exam"><span class="tag">In the exam</span>
+          <ul>
+            <li>The questions follow the plan: positivity or bounds by induction, “possible values of \(\ell\)”, monotonicity, “is it convergent? give its limit”.</li>
+            <li>Monotonicity is done through the sign of \(u_{n+1} - u_n\), to be factored.</li>
+            <li>Often a geometric auxiliary sequence then gives \(u_n\) as a function of \(n\) (lesson 4, part 7).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-6-recurrentes.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="apis:recurrentes:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Lesson 7, <a href="cours-7-landau.html">Landau comparisons</a>, compares the speeds of two sequences.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../data/en/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>

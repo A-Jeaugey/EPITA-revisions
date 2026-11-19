@@ -243,9 +243,20 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   nov. 2023 : suites, définitions avec quantificateurs, exemples, (qⁿ)) ; les sujets ont toujours le trio primitive directe /
   IPP / changement de variable donné ; modèles de l'examen final : ASI janvier 2024 (corrigé) et SR janvier 2025. Coquilles
   du polycopié (p. 12 : « 2 × 9 = 18 », |sin| ; p. 14 : e^{2x} pour e^{−2x}) et erratum officiel de la fiche IPP (F∘φ) :
-  signalés dans les cours 2 et 3. TD 3 et TD 4 sans corrigé. **À faire quand les MiMos sortent** (semaines du 23 et du
-  30 novembre) : chapitres `cours-5-convergence`, `-6-recurrentes`, `-7-landau`, fiches du TD 4 parties 3 à 6, `annales`,
-  et passer les encarts « à venir » de `apis/index.html` en liens.
+  signalés dans les cours 2 et 3. TD 3 et TD 4 sans corrigé.
+  Examen final : `apis/cours-5-convergence` (5 parties : limite monotone, suites adjacentes avec démonstration, suites
+  extraites, Bolzano-Weierstrass, examens), `-6-recurrentes` (5 : intervalle stable, points fixes, monotonie, étude complète
+  du TD 4 ex. 6.16, Héron et examens), `-7-landau` (5 : définitions, liens, échelle, équivalents, « citer toutes les
+  comparaisons ») ; chapitres convergence, recurrentes, landau (`ecue: 'Examen final'` dans `core.js` : l'accueil de la
+  matière range les cours dans le bloc 1 ou 2 d'après ce champ) ; `annales` (barème des deux examens par cours, puis chaque
+  sujet de `APIS_EXAMS` avec ses fiches) ; fiches `data/apis/ex-final.js` (`mo-34-1`, `td4-3-5`… `td4-6-17`, `f2024-ex2`…
+  `-ex6` corrigé officiel, `f2025-ex1`… `-ex6` sans corrigé) ; QCM `apis-c5-NN`, `-c6-`, `-c7-`. Points vérifiés : janvier
+  2024 (sur 40) = intégrales 10, adjacentes 6, Landau 6, gendarmes à démontrer 5, récurrente 10, extraites 3 ; janvier 2025
+  (sur 30, ECUE « SR » sans intégrales) = adjacentes 7, somme décroissante minorée 5, Landau 7,5, convergente ⇒ bornée 3,
+  récurrente 4,5, extraites 3. Non faits : TD 4 ex. 3.7, 4.13 ★, 6.18 ★ ; liens depuis `annales/index.html` (page partagée).
+  **À faire quand les MiMos des semaines du 23 et du 30 novembre sortent** : relire les cours 5 à 7 contre les vidéos et les
+  exercices types (seule la fiche et un exercice type étaient publiés), ajouter ce qui manque ; date de l'examen final dans
+  `OFFICIAL.apis` une fois le contrôle passé.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone

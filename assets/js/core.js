@@ -193,7 +193,10 @@
         { id: 'primitives', title: 'Primitives', ecue: 'Contrôle', path: 'apis/cours-1-primitives.html', sections: 5 },
         { id: 'integrales', title: 'Intégrales', ecue: 'Contrôle', path: 'apis/cours-2-integrales.html', sections: 6 },
         { id: 'ipp', title: 'Intégration par parties, changement de variable', ecue: 'Contrôle', path: 'apis/cours-3-ipp.html', sections: 5 },
-        { id: 'suites', title: 'Suites : définitions, limites, exemples remarquables', ecue: 'Contrôle', path: 'apis/cours-4-suites.html', sections: 8 }
+        { id: 'suites', title: 'Suites : définitions, limites, exemples remarquables', ecue: 'Contrôle', path: 'apis/cours-4-suites.html', sections: 8 },
+        { id: 'convergence', title: 'Théorèmes de convergence', ecue: 'Examen final', path: 'apis/cours-5-convergence.html', sections: 5 },
+        { id: 'recurrentes', title: 'Suites récurrentes', ecue: 'Examen final', path: 'apis/cours-6-recurrentes.html', sections: 5 },
+        { id: 'landau', title: 'Comparaisons de Landau', ecue: 'Examen final', path: 'apis/cours-7-landau.html', sections: 5 }
       ]
     },
     {
@@ -246,7 +249,7 @@
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents · 45% of the grade', chapters: ['Thévenin and Norton', 'Millman and superposition'] },
     apis: { name: 'Maths · APIS', short: 'Maths', course: 'Analysis: primitive functions, integrals and numerical sequences', open: 'Open APIS',
       exam: 'Course test on Monday 23 November (1 hr) · final exam in December · homework 20%, course test 20%, exam 60%',
-      chapters: ['Primitive functions', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples'] },
+      chapters: ['Primitive functions', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples', 'Convergence theorems', 'Recursive sequences', 'Landau comparisons'] },
     phys2: { name: 'Physics · Circular motion', short: 'Physics', course: 'Point mechanics: polar coordinates, circular motion', open: 'Open Physics B2',
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents', chapters: ['Polar coordinates', 'Dynamics of circular motion'] },
     boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',

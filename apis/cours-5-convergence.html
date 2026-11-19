@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Théorèmes de convergence · Maths APIS</title>
+<meta name="description" content="Maths, APIS, cours 5 : théorèmes de convergence. Suite croissante et majorée, suites adjacentes (définition, théorème, démonstration), suites extraites, théorème de Bolzano-Weierstrass. Pour l’examen final, hors contrôle de cours du 23 novembre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Jost:wght@400..700&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/maths.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Maths APIS · cours 5 : théorèmes de convergence">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Maths · APIS</b> — cours 5 · examen final</span><span>Source : fiche « Théorèmes de convergence », « Démonstrations à connaître », exercice type du Moodle, TD 4 parties 3 et 4</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="5"></span><a href="index.html">Maths APIS</a> · Cours 5 · <a href="index.html#final">pour l’examen final</a></div>
+      <h1>Prouver qu’une suite converge <span class="w">sans connaître sa limite.</span></h1>
+      <p class="lead">Jusqu’ici, une limite se calculait. Les théorèmes de ce cours garantissent qu’une limite existe sans la donner : une suite croissante et majorée converge, deux suites adjacentes ont la même limite. Les suites extraites servent surtout dans l’autre sens : deux sous-suites de limites différentes, et la suite diverge.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 1 h</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 23 novembre · TD 4, parties 3 et 4</span></li>
+        <li class="ex"><span><span class="k">Examen</span> suites adjacentes en 2024 et 2025 (6 et 7 points)</span></li>
+      </ul>
+    </div>
+    <div class="box why" style="align-self:start"><span class="tag">Hors contrôle du 23 novembre</span>
+      <p>Ce cours n’est pas au programme du contrôle de cours : l’annonce s’arrête aux « exemples remarquables ». Il est au programme du DM des 7 et 8 décembre et de l’examen final.</p>
+      <p>Prérequis : le <a href="cours-4-suites.html">cours 4</a>, en particulier les définitions de « majorée », « croissante » et « converge ».</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 5 · Théorèmes de convergence</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Suites monotones</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Suites adjacentes</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Suites extraites</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Bolzano-Weierstrass</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Aux examens</span></a></li>
+    </ol>
+    <p class="toc-note">Tous les résultats restent vrais si les hypothèses ne sont vérifiées qu’à partir d’un certain rang.</p>
+    <div class="toc-nav"><a href="cours-4-suites.html">← Cours 4 : suites</a><a href="cours-6-recurrentes.html">Cours 6 : suites récurrentes →</a><a href="../qcm/index.html#apis">QCM d’APIS</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Suites monotones</a></li><li><a href="#s2">Suites adjacentes</a></li><li><a href="#s3">Suites extraites</a></li><li><a href="#s4">Bolzano-Weierstrass</a></li><li><a href="#s5">Aux examens</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche § 1 · exercice type · TD 4 ex. 3.5</span></div><h2>Suites monotones : le théorème de la limite monotone</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Proposition <i>suites convergentes ou monotones</i></span>
+          <ol>
+            <li>Toute suite convergente est bornée.</li>
+            <li>Toute suite <b>croissante et majorée</b> est convergente.</li>
+            <li>Toute suite <b>décroissante et minorée</b> est convergente.</li>
+            <li>Toute suite croissante, non majorée, tend vers \(+\infty\).</li>
+            <li>Toute suite décroissante, non minorée, tend vers \(-\infty\).</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <p>Une suite monotone a donc toujours une limite, finie ou infinie : la seule question est de savoir si elle est bornée du bon côté.</p>
+          <ul>
+            <li>Le théorème dit que la limite <b>existe</b>. Il ne dit pas combien elle vaut.</li>
+            <li>Si \((u_n)\) est croissante et majorée par \(M\), sa limite \(\ell\) vérifie \(\ell \leq M\) : un majorant n’est pas la limite. De plus \(u_n \leq \ell\) pour tout \(n\).</li>
+            <li>« Croissante et minorée » ne donne rien : \((n)\) est croissante, minorée par 0, et diverge.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>montrer qu’une suite converge par monotonie</i></span>
+          <ol>
+            <li><b>Monotonie</b> : signe de \(u_{n+1} - u_n\), ou récurrence (cours 4, partie 3).</li>
+            <li><b>Borne du bon côté</b> : majorée si croissante, minorée si décroissante. Souvent par récurrence.</li>
+            <li><b>Conclure</b> en citant le théorème : « la suite est croissante et majorée, donc elle converge ».</li>
+            <li>Si on demande la limite : passer à la limite dans la relation de récurrence (<a href="cours-6-recurrentes.html#s2">cours 6</a>), puis écarter les valeurs impossibles avec les bornes.</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>exercice type du Moodle</i></span>
+          <p>Montrer que la suite définie par \(u_0 = 0\) et \(\forall n \in \N,\ u_{n+1} = \dfrac{1 + u_n^2}{3}\) converge.</p>
+          <p>\(u_1 = \frac{1}{3}\), \(u_2 = \frac{10}{27}\). Tous les termes sont définis et positifs.</p>
+          <p><b>Croissante</b>, par récurrence sur « \(u_n \lt u_{n+1}\) ». \(u_0 \lt u_1\). Si \(u_n \lt u_{n+1}\), les termes étant positifs, \(u_n^2 \lt u_{n+1}^2\), donc \(\dfrac{1 + u_n^2}{3} \lt \dfrac{1 + u_{n+1}^2}{3}\), soit \(u_{n+1} \lt u_{n+2}\).<span class="c">le carré est croissant sur les positifs</span></p>
+          <p><b>Majorée par 1</b>, par récurrence. \(u_0 \leq 1\). Si \(u_n \leq 1\), alors \(u_n^2 \leq 1\) et \(u_{n+1} \leq \frac{2}{3} \leq 1\).</p>
+          <p>La suite est croissante et majorée : elle converge.<span class="c">on cite le théorème</span></p>
+        </div>
+        <div class="prose">
+          <p><b>Pour aller au bout.</b> La limite \(\ell\) vérifie \(\ell = \dfrac{1 + \ell^2}{3}\), soit \(\ell^2 - 3\ell + 1 = 0\) : \(\ell = \dfrac{3 \pm \sqrt{5}}{2}\). Comme \(\ell \leq 1\), <span data-eq>\(\ell = \dfrac{3 - \sqrt{5}}{2} \approx 0{,}38\)</span>.</p>
+          <p><b>TD 4, exercice 3.5.</b> \(u_n = \displaystyle\sum_{k=0}^{n} \frac{1}{k!}\). Croissante : \(u_{n+1} - u_n = \frac{1}{(n+1)!} \gt 0\). Par récurrence, \(k! \geq 2^{k-1}\) pour \(k \geq 1\) (car \((k+1)! = (k+1)\,k! \geq 2 \times 2^{k-1}\)). Donc \(u_n \leq 1 + \displaystyle\sum_{k=1}^{n} \frac{1}{2^{k-1}} = 1 + 2\left(1 - \frac{1}{2^n}\right) \leq 3\). Croissante et majorée par 3 : elle converge, et \(u_2 = 2{,}5 \leq \ell \leq 3\). (Sa limite est le nombre \(e\).)</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>« Majorée par 3 donc tend vers 3 » : faux. Le théorème ne donne pas la limite.</li>
+            <li>Oublier un des deux ingrédients : la monotonie <b>et</b> la borne.</li>
+            <li>Ce théorème n’est pas au contrôle du 23 novembre : ne l’utilise pas lundi.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="apis:convergence:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">fiche § 2 · démonstrations § 3 · TD 4 ex. 3.8 et 3.9</span></div><h2>Suites adjacentes</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>suites adjacentes</i></span>
+          <p>Deux suites \((u_n)\) et \((v_n)\) sont <b>adjacentes</b> si :</p>
+          <ol>
+            <li>\((u_n)\) est croissante ;</li>
+            <li>\((v_n)\) est décroissante ;</li>
+            <li>\(\displaystyle\lim_{n \to +\infty} (v_n - u_n) = 0\).</li>
+          </ol>
+        </div>
+        <div class="box thm"><span class="tag">Théorème <i>des suites adjacentes</i></span>
+          <p>Soient \((u_n)\) et \((v_n)\) deux suites adjacentes. Alors elles convergent vers une même limite \(\ell\), et (avec \((u_n)\) croissante et \((v_n)\) décroissante) :</p>
+          <div class="fm">\[\forall n \in \N,\quad u_n \leq u_{n+1} \leq \ell \leq v_{n+1} \leq v_n.\]</div>
+        </div>
+        <div class="box proof"><span class="tag">Démonstration <i>fiche « Démonstrations à connaître »</i></span>
+          <p><b>1.</b> Posons \(w_n = v_n - u_n\). Pour tout \(n\), \(w_{n+1} - w_n = (v_{n+1} - v_n) + (u_n - u_{n+1})\). Les deux parenthèses sont négatives ou nulles, donc \((w_n)\) est décroissante.</p>
+          <p>\((w_n)\) est décroissante et tend vers 0, donc elle est positive : \(\forall n \in \N,\ w_n \geq 0\), c’est-à-dire \(v_n \geq u_n\).</p>
+          <p>Par croissance de \((u_n)\) et décroissance de \((v_n)\) : \(\forall n \in \N,\ u_0 \leq u_n \leq v_n \leq v_0\).</p>
+          <p>\((u_n)\) est croissante et majorée par \(v_0\) : elle converge vers un réel \(\ell\). \((v_n)\) est décroissante et minorée par \(u_0\) : elle converge vers un réel \(\ell'\).</p>
+          <p>Enfin \(\ell' - \ell = \lim v_n - \lim u_n = \lim (v_n - u_n) = 0\), donc \(\ell = \ell'\).</p>
+          <p><b>2.</b> \((u_n)\) est croissante et tend vers \(\ell\), donc \((u_n - \ell)\) est croissante et tend vers 0 : elle est négative, soit \(u_n \leq \ell\). De même \(v_n \geq \ell\). D’où \(u_n \leq u_{n+1} \leq \ell \leq v_{n+1} \leq v_n\).</p>
+        </div>
+        <div class="box meth"><span class="tag">Méthode <i>« montrer que les suites sont adjacentes »</i></span>
+          <ol>
+            <li><b>Rappelle la définition</b> (l’énoncé le demande souvent : « après avoir rappelé la définition »).</li>
+            <li>Signe de \(u_{n+1} - u_n\) : positif.</li>
+            <li>Signe de \(v_{n+1} - v_n\) : négatif. C’est le calcul délicat : même dénominateur, puis on simplifie.</li>
+            <li>\(\lim (v_n - u_n) = 0\).</li>
+            <li>Conclus, puis exploite : les deux suites convergent vers la même limite, et \(u_n \leq \ell \leq v_n\) pour tout \(n\).</li>
+          </ol>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2024, exercice 2 (6 points)</i></span>
+          <p>Pour \(n \geq 2\) : \(u_n = \displaystyle\sum_{k=0}^{n} \frac{1}{k!}\) et \(v_n = u_n + \dfrac{1}{n!}\).</p>
+          <p>\((u_n)\) et \((v_n)\) sont adjacentes si \((u_n)\) est croissante, \((v_n)\) décroissante et \(\lim (v_n - u_n) = 0\).<span class="c">la définition d’abord</span></p>
+          <p>\(u_{n+1} - u_n = \dfrac{1}{(n+1)!} \geq 0\) : \((u_n)\) est croissante.</p>
+          <p><span data-eq>\(v_{n+1} - v_n = \dfrac{1}{(n+1)!} + \dfrac{1}{(n+1)!} - \dfrac{1}{n!} = \dfrac{2 - (n + 1)}{(n+1)!} = \dfrac{1 - n}{(n+1)!}\)</span>. Comme \(n \geq 2\), \(v_{n+1} - v_n \leq 0\) : \((v_n)\) est décroissante.<span class="c">1/n! = (n+1)/(n+1)!</span></p>
+          <p>\(v_n - u_n = \dfrac{1}{n!} \to 0\). Les deux suites sont adjacentes.</p>
+          <p>Elles convergent donc vers une même limite : \((u_n)\) converge. Et toute suite convergente est bornée : \((u_n)\) est majorée.<span class="c">questions 2 et 3 du sujet</span></p>
+        </div>
+        <div class="prose">
+          <p><b>TD 4, exercice 3.8.</b> \(u_n = \displaystyle\sum_{k=1}^{n} \frac{1}{k^2}\), \(v_n = u_n + \frac{1}{n}\). \(u_{n+1} - u_n = \frac{1}{(n+1)^2} \gt 0\). <span data-eq>\(v_{n+1} - v_n = \dfrac{1}{(n+1)^2} + \dfrac{1}{n+1} - \dfrac{1}{n} = \dfrac{n + n(n+1) - (n+1)^2}{n(n+1)^2} = -\dfrac{1}{n(n+1)^2}\)</span>, négatif. \(v_n - u_n = \frac{1}{n} \to 0\). Adjacentes.</p>
+          <p><b>TD 4, exercice 3.9 : approcher la limite.</b> \(u_n = \displaystyle\sum_{k=1}^{n-1} \frac{1}{k^2(k+1)^2}\), \(v_n = u_n + \frac{1}{3n^2}\). On trouve \(u_{n+1} - u_n = \frac{1}{n^2(n+1)^2} \gt 0\) et <span data-eq>\(v_{n+1} - v_n = \dfrac{3 + n^2 - (n+1)^2}{3n^2(n+1)^2} = \dfrac{2 - 2n}{3n^2(n+1)^2} \leq 0\)</span>. Comme \(u_n \leq \ell \leq v_n\), l’erreur est au plus \(v_n - u_n = \frac{1}{3n^2}\) : elle passe sous \(0{,}01\) dès que \(n^2 \geq \frac{100}{3}\), soit \(n = 6\). Alors \(u_6 \approx 0{,}2883 \leq \ell \leq v_6 \approx 0{,}2976\) : \(\ell \approx 0{,}29\) à \(0{,}01\) près.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Oublier la troisième condition, ou montrer seulement que \(u_n \leq v_n\).</li>
+            <li>Erreur de factorielle : \(\dfrac{1}{n!} = \dfrac{n + 1}{(n+1)!}\).</li>
+            <li>La décroissance de \((v_n)\) peut n’être vraie qu’à partir d’un rang (ici \(n \geq 2\)) : c’est suffisant, mais il faut le dire.</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="apis:convergence:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">fiche § 3 · TD 4 ex. 4.10 à 4.12</span></div><h2>Suites extraites</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition <i>suite extraite</i></span>
+          <p>Soit \((u_n)\) une suite. On appelle <b>suite extraite</b> (ou sous-suite) de \((u_n)\) toute suite de la forme \((u_{\varphi(n)})\), où \(\varphi\) est une application <b>strictement croissante</b> de \(\N\) dans \(\N\).</p>
+        </div>
+        <div class="prose"><p>On garde certains termes, dans l’ordre, sans revenir en arrière. Les plus utiles : \((u_{2n})\) (rangs pairs), \((u_{2n+1})\) (rangs impairs), \((u_{3n})\), \((u_{n+1})\).</p></div>
+        <div class="box thm"><span class="tag">Proposition et corollaire</span>
+          <p>Si \(u_n \to \ell\), alors <b>toute</b> suite extraite de \((u_n)\) converge vers \(\ell\).</p>
+          <p><b>Corollaire.</b> Si \((u_n)\) admet une sous-suite divergente, ou deux sous-suites convergeant vers des limites <b>distinctes</b>, alors \((u_n)\) diverge.</p>
+        </div>
+        <div class="box thm"><span class="tag">Résultat à connaître <i>TD 4, exercice 4.10 : « vous avez le droit de l’utiliser »</i></span>
+          <div class="fm">\[u_n \xrightarrow[n \to +\infty]{} \ell \iff \left(u_{2n} \xrightarrow[n \to +\infty]{} \ell \ \text{ et } \ u_{2n+1} \xrightarrow[n \to +\infty]{} \ell\right).\]</div>
+          <p>Les rangs pairs et impairs recouvrent tous les rangs : c’est pour cela que l’équivalence est vraie.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>TD 4, ex. 4.10</th><th>\(P\)</th><th>\(Q\)</th><th>Symbole</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>\(u_n \to \ell\)</td><td>\(u_{2n} \to \ell\)</td><td>\(P \Rightarrow Q\) seulement : \(((-1)^n)\) a \(u_{2n} \to 1\) sans converger</td></tr>
+            <tr><td>2</td><td>\(u_n \to \ell\)</td><td>\(u_{2n} \to \ell\) et \(u_{2n+1} \to \ell\)</td><td>\(P \Leftrightarrow Q\)</td></tr>
+            <tr><td>3</td><td>\(u_n \to \ell\)</td><td>\(u_{3n} \to \ell\) et \(u_{3n+1} \to \ell\)</td><td>\(P \Rightarrow Q\) seulement : les rangs \(3n + 2\) ne sont pas couverts</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Montrer qu’une suite diverge <i>examen de janvier 2025, exercice 6</i></span>
+          <p>\(u_n = \sin\left(\dfrac{n\pi}{3}\right)\). \(u_{3n} = \sin(n\pi) = 0\) : la suite \((u_{3n})\) est nulle, elle converge vers 0.</p>
+          <p>\(u_{6n+1} = \sin\left(2n\pi + \dfrac{\pi}{3}\right) = \dfrac{\sqrt{3}}{2}\) : \((u_{6n+1})\) converge vers \(\dfrac{\sqrt{3}}{2}\).</p>
+          <p>\((u_n)\) admet deux sous-suites convergeant vers des limites distinctes : d’après le cours, elle diverge.<span class="c">on cite le corollaire</span></p>
+        </div>
+        <div class="box model"><span class="tag">Montrer qu’une suite converge <i>examen de janvier 2024, exercice 6</i></span>
+          <p>\(u_n = \dfrac{1}{n}\displaystyle\sum_{k=0}^{n-1} (-1)^k\) pour \(n \in \N^*\). Somme géométrique de raison \(-1\) : \(u_n = \dfrac{1 - (-1)^n}{2n}\).</p>
+          <p>Donc \(u_{2n} = 0\) et \(u_{2n+1} = \dfrac{2}{4n + 2} = \dfrac{1}{2n + 1}\). Les deux suites extraites convergent vers la même limite 0 : \((u_n)\) converge vers 0.</p>
+        </div>
+        <div class="prose">
+          <p><b>TD 4, exercice 4.11 : la série harmonique diverge.</b> \(h_n = \displaystyle\sum_{k=1}^{n} \frac{1}{k}\) est croissante. \(h_{2n} - h_n = \displaystyle\sum_{k=n+1}^{2n} \frac{1}{k} \geq n \times \frac{1}{2n} = \frac{1}{2}\). Si \((h_n)\) convergeait vers \(\ell\), \((h_{2n})\) aussi, et \(h_{2n} - h_n \to 0\) : absurde. \((h_n)\) est croissante et ne converge pas, donc elle n’est pas majorée : elle tend vers \(+\infty\).</p>
+          <p><b>Exercice 4.12.</b> \(a_n = \displaystyle\sum_{k=1}^{n} \frac{(-1)^k}{k}\). \(a_{2n+2} - a_{2n} = \frac{1}{2n+2} - \frac{1}{2n+1} \lt 0\) : \((a_{2n})\) décroît. \(a_{2n+3} - a_{2n+1} = \frac{1}{2n+2} - \frac{1}{2n+3} \gt 0\) : \((a_{2n+1})\) croît. \(a_{2n} - a_{2n+1} = \frac{1}{2n+1} \to 0\). Les deux sous-suites sont adjacentes, donc de même limite : \((a_n)\) converge.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Une seule sous-suite convergente ne prouve rien sur \((u_n)\).</li>
+            <li>Pour conclure à la convergence, il faut des sous-suites qui <b>recouvrent tous les rangs</b> et de même limite.</li>
+            <li>\(u_{2n+1}\) s’obtient en remplaçant \(n\) par \(2n + 1\) partout : \(\frac{1 - (-1)^{2n+1}}{2(2n+1)} = \frac{2}{4n+2}\).</li>
+          </ul>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="apis:convergence:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche § 3</span></div><h2>Le théorème de Bolzano-Weierstrass</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Théorème <i>Bolzano-Weierstrass</i></span>
+          <p>De toute suite <b>bornée</b>, on peut extraire une sous-suite <b>convergente</b>.</p>
+        </div>
+        <div class="prose">
+          <p>C’est ce qui reste de vrai dans la réciproque fausse « bornée donc convergente » : une suite bornée ne converge pas forcément, mais une de ses sous-suites, si.</p>
+          <ul>
+            <li>\(((-1)^n)\) est bornée et diverge ; \((u_{2n})\) est constante égale à 1, donc convergente.</li>
+            <li>\((\cos(n))\) est bornée : elle a une sous-suite convergente, même si on ne sait pas l’écrire.</li>
+            <li>\((n)\) n’est pas bornée : aucune de ses sous-suites ne converge, le théorème ne s’applique pas.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Hypothèse</th><th>Conclusion</th><th>Résultat</th></tr></thead>
+          <tbody>
+            <tr><td>convergente</td><td>bornée</td><td>cours 4, partie 6</td></tr>
+            <tr><td>bornée</td><td>une sous-suite converge</td><td>Bolzano-Weierstrass</td></tr>
+            <tr><td>bornée et monotone</td><td>convergente</td><td>partie 1</td></tr>
+            <tr><td>convergente vers \(\ell\)</td><td>toute sous-suite converge vers \(\ell\)</td><td>partie 3</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Piège</span>
+          <p>« Bornée donc convergente » reste faux. Le théorème parle d’<b>une</b> sous-suite, pas de la suite.</p>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="apis:convergence:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">examens de janvier 2024 et janvier 2025</span></div><h2>Aux examens</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Sujet</th><th>Suites adjacentes ou monotones</th><th>Suites extraites</th></tr></thead>
+          <tbody>
+            <tr><td>Janvier 2024 (sur 40)</td><td>Ex 2, 6 points : \(\sum \frac{1}{k!}\) et \(\sum \frac{1}{k!} + \frac{1}{n!}\) ; « est-elle convergente ? majorée ? »</td><td>Ex 6, 3 points : \(u_{2n}\), \(u_{2n+1}\), conclure</td></tr>
+            <tr><td>Janvier 2025 (sur 30)</td><td>Ex 1, 7 points : deux suites couplées, \(w_n = v_n - u_n\) géométrique. Ex 2, 5 points : décroissante et minorée</td><td>Ex 6, 3 points : \(\sin\left(\frac{n\pi}{3}\right)\) diverge, « en citant proprement un résultat de votre cours »</td></tr>
+          </tbody>
+          <caption>Entre un tiers et la moitié du barème des deux derniers examens repose sur ce cours.</caption>
+        </table></div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2025, exercice 1 (7 points)</i></span>
+          <p>\(u_0 = 2\), \(v_0 = 3\), \(u_{n+1} = \dfrac{3u_n + 2v_n}{5}\), \(v_{n+1} = \dfrac{2u_n + 3v_n}{5}\), et \(w_n = v_n - u_n\).</p>
+          <p>\(w_{n+1} = \dfrac{2u_n + 3v_n - 3u_n - 2v_n}{5} = \dfrac{1}{5}w_n\) : \((w_n)\) est géométrique de raison \(\frac{1}{5}\), \(w_0 = 1\), donc <span data-eq>\(w_n = \dfrac{1}{5^n} \gt 0\)</span>.</p>
+          <p>\(u_{n+1} - u_n = \dfrac{2(v_n - u_n)}{5} = \dfrac{2}{5}w_n \gt 0\) : \((u_n)\) croît. \(v_{n+1} - v_n = -\dfrac{2}{5}w_n \lt 0\) : \((v_n)\) décroît. Et \(v_n - u_n = w_n \to 0\). Les suites sont adjacentes : elles convergent vers une même limite \(\ell\).<span class="c">le signe de wₙ donne les deux monotonies</span></p>
+          <p>\(x_n = u_n + v_n\) : \(x_{n+1} = \dfrac{5u_n + 5v_n}{5} = x_n\). La suite est constante : \(x_n = 5\). À la limite, \(2\ell = 5\), donc <span data-eq>\(\ell = \dfrac{5}{2}\)</span>.</p>
+        </div>
+        <div class="box model"><span class="tag">Rédaction modèle <i>examen de janvier 2025, exercice 2 (5 points)</i></span>
+          <p>\(u_n = \displaystyle\sum_{k=n}^{2n-1} \frac{1}{k}\) pour \(n \in \N^*\).</p>
+          <p><span data-eq>\(u_{n+1} - u_n = \dfrac{1}{2n} + \dfrac{1}{2n+1} - \dfrac{1}{n} = \dfrac{1}{2n+1} - \dfrac{1}{2n} \lt 0\)</span> : la suite est strictement décroissante.<span class="c">deux termes entrent, un sort</span></p>
+          <p>La somme a \(n\) termes, chacun entre \(\dfrac{1}{2n-1}\) et \(\dfrac{1}{n}\) : \(\dfrac{n}{2n-1} \leq u_n \leq 1\). Comme \(\dfrac{n}{2n-1} \geq \dfrac{1}{2}\), la suite est minorée par \(\frac{1}{2}\) et majorée par 1.</p>
+          <p>Décroissante et minorée : elle converge, et sa limite vérifie \(\dfrac{1}{2} \leq \ell \leq 1\).</p>
+        </div>
+        <div data-check-ref="apis/cours-5-convergence.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="apis:convergence:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours 6, <a href="cours-6-recurrentes.html">les suites récurrentes</a>, applique le théorème de la limite monotone aux suites \(u_{n+1} = f(u_n)\).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/apis.js"></script>
+<script src="../assets/js/maths.js"></script>
+</body>
+</html>
