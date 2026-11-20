@@ -2,7 +2,7 @@
    Chargé après core.js, mathrender.js (formules KaTeX) et, s'il y a des QCM, qcm-engine.js et la banque.
 
    PAGES
-   Numéros de parties : <span class="pn" data-n="3"></span> (le chiffre entouré au stylo rouge). Sommaire actif
+   Numéros de parties : <span class="pn" data-n="3"></span> (le chiffre dans une tuile ; le tracé SVG produit ici est masqué par maths.css). Sommaire actif
    (.toc a[href^="#"] + .sec[id]), barre de lecture (#prog), vérifications de fin de partie (<div data-check="id1,id2">
    ou <div data-check-ref="maths/cours-1-logique.html#s2" data-n="3"> : les premières questions de la banque dont ref
    vaut cette partie ; le bloc se masque si la banque n'en a pas), boutons « J'ai compris »

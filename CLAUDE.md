@@ -64,7 +64,13 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 - `maths.js` (pages de maths, API en tête du fichier) : fractions exactes en BigInt, et outils `data-maths="truth|negate|
   venn|sagittal|tree|law|pascal|choose|curve" data-opts='{…}'` (table de vérité, négation pas à pas, Venn, sagittal,
   arbre pondéré et Bayes, loi et binomiale, triangle de Pascal, « quelle formule ? », courbe avec images directes et
-  réciproques exactes). Thème `maths.css` : copie double à carreaux en clair, tableau noir en sombre.
+  réciproques exactes). Thème `maths.css` (maths du B1 et APIS, refait en novembre 2026 à la demande de l'élève, qui
+  trouvait l'ancienne « copie double » terne et peu lisible) : « plan de travail », fond clair net **sans motif derrière
+  le texte**, Outfit (titres, chiffres) + Inter (texte), formules KaTeX ; accent indigo, contre-accent framboise, sombre
+  bleu nuit ; encadrés = cartes arrondies teintées avec étiquette de couleur (jetons `--c` / `--cs`), numéros de parties
+  en tuiles (`.pn`, le tracé SVG de `maths.js` est masqué), sommaire en carte, rédaction modèle en carte blanche à barre
+  bleue (remarques `.c` en pastilles). Les pages gardent leurs styles propres ; la fin de `maths.css` (« éléments communs
+  des pages ») les ramène à la forme du thème. Ne pas remettre de quadrillage ni de police manuscrite.
 
 ## Deux langues
 
