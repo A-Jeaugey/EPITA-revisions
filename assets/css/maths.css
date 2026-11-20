@@ -1,29 +1,29 @@
 /* Maths (OBM · DP · APIS) — le plan de travail.
    Une page claire et nette, faite pour lire longtemps : fond blanc cassé froid, texte en Inter, titres en Outfit
-   (géométrique, comme une figure), formules KaTeX en serif pour qu'elles ressortent du texte. Aucun motif derrière le
-   texte ; la seule décoration est dans l'en-tête (halo de couleur et points de papier millimétré, à droite).
-   Couleurs : encre bleu nuit, accent indigo, contre-accent framboise (la couleur des maths sur l'accueil du site).
-   En sombre : la nuit, bleu très sombre, accents lumineux.
+   (géométrique, comme une figure), formules KaTeX en serif pour qu'elles ressortent du texte.
+   Tout est À PLAT : aucun dégradé, aucun halo, aucune ombre colorée, aucun motif derrière le texte (l'élève a rejeté
+   le quadrillage de l'ancienne « copie double », puis un premier essai à titre en dégradé : « AI slop »). La couleur
+   ne sert qu'à dire quelque chose : bleu encre pour l'accent (le même que la barre du site), framboise pour les dates
+   et les remarques, une couleur par type d'encadré. En sombre : bleu nuit, mêmes règles.
    Encadrés du cours de prépa, tous de la même forme (carte arrondie teintée, étiquette de couleur), chacun sa
-   couleur, la même dans le texte et dans les outils : Définition (vert), Théorème (indigo, carte blanche cerclée),
-   Démonstration à connaître (gris, pointillés, finit par ∎), Méthode (ambre), Rédaction modèle (carte blanche à barre
-   bleue, remarques en pastilles), Piège (rouge), Au contrôle / à l'examen (fuchsia), Pourquoi (bleu ciel).
+   couleur, la même dans le texte et dans les outils : Définition (vert), Théorème (bleu, carte blanche cerclée),
+   Démonstration à connaître (gris, pointillés, finit par un carré), Méthode (ambre), Rédaction modèle (carte blanche
+   à barre bleue, remarques en pastilles), Piège (rouge), Au contrôle / à l'examen (fuchsia), Pourquoi (bleu ciel).
    Numéros de parties : tuiles (maths.js écrit le chiffre ; son tracé SVG n'est plus affiché).
    Polices : Outfit (titres, chiffres), Inter (texte, étiquettes, outils). Formules : KaTeX (mathrender.js).
    Les pages gardent leurs propres styles (accueil, contrôle, annales, fiche) : elles n'utilisent que les jetons
    ci-dessous ; la fin du fichier ajuste leurs éléments communs (cartes, créneaux, dates). */
 :root{
   --bg:#F6F7FB; --surface:#FFFFFF; --surface-2:#EEF0F8; --ink:#14162E; --muted:#5A5F7B; --line:#E0E3EF; --rule:#14162E;
-  --accent:#4A3AE0; --accent-soft:#ECEAFD; --on-accent:#FFFFFF;
-  --pen:#2B3CC4;                                   /* la rédaction modèle */
+  --accent:#2340B8; --accent-soft:#E6EBFB; --on-accent:#FFFFFF;
+  --pen:#1C3399;                                   /* la rédaction modèle */
   --red:#CF1F52; --red-soft:#FDE6ED;               /* contre-accent framboise : dates, remarques, pièges */
   --seyes:#E0E3EF; --seyes-2:#EEF0F8; --margin:#CF1F52;     /* anciens jetons de la copie, gardés pour les pages */
-  --def:#0B7A62; --def-soft:#DFF5EE; --thm:#4A3AE0; --thm-soft:#ECEAFD; --proof:#4B5170; --proof-soft:#EFF0F6;
+  --def:#0B7A62; --def-soft:#DFF5EE; --thm:#2340B8; --thm-soft:#E6EBFB; --proof:#4B5170; --proof-soft:#EFF0F6;
   --meth:#925600; --meth-soft:#FFF0D2; --exam:#9B1FAE; --exam-soft:#FAE7FC; --why:#0A69A6; --why-soft:#E1F1FB;
   --warn:#CF1F52; --warn-soft:#FDE6ED; --ok:#12804D; --ok-soft:#DCF3E5; --bad:#C2281B; --bad-soft:#FBE2DF;
   --vt:#12804D; --fx:#C2281B;                      /* vrai / faux dans les tables */
-  --z1:#4A3AE0; --z2:#D9480F; --z3:#0B7A62;        /* ensembles A, B, C (Venn), branches, courbes */
-  --glow-1:#E2DEFF; --glow-2:#FFE1EA; --dot:#C6CAE2;
+  --z1:#2340B8; --z2:#D9480F; --z3:#0B7A62;        /* ensembles A, B, C (Venn), branches, courbes */
   --shadow:0 1px 2px rgba(20,22,46,.05),0 10px 28px -16px rgba(20,22,46,.18);
   --font-body:"Inter","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
   --font-display:"Outfit","Inter","Segoe UI",system-ui,sans-serif;
@@ -37,28 +37,26 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0C0F20; --surface:#151930; --surface-2:#1E2340; --ink:#EEF0FA; --muted:#A3A9C6; --line:#2B3152; --rule:#C8CDE6;
-    --accent:#A39DFF; --accent-soft:#25254E; --on-accent:#0C0F20;
+    --accent:#93A6FF; --accent-soft:#1D2550; --on-accent:#0C0F20;
     --pen:#B4C0FF; --red:#FF8FAB; --red-soft:#3A1826;
     --seyes:#2B3152; --seyes-2:#1E2340; --margin:#FF8FAB;
-    --def:#6FE0C0; --def-soft:#11302A; --thm:#A39DFF; --thm-soft:#22224A; --proof:#BEC3DC; --proof-soft:#1A1F38;
+    --def:#6FE0C0; --def-soft:#11302A; --thm:#93A6FF; --thm-soft:#1D2550; --proof:#BEC3DC; --proof-soft:#1A1F38;
     --meth:#FFD27A; --meth-soft:#33290F; --exam:#F0A6FF; --exam-soft:#33173A; --why:#8CCBFA; --why-soft:#122A3E;
     --warn:#FF8FAB; --warn-soft:#3A1826; --ok:#7BE0A4; --ok-soft:#12301F; --bad:#FF9388; --bad-soft:#3B1B19;
-    --vt:#7BE0A4; --fx:#FF9388; --z1:#A39DFF; --z2:#FFB27A; --z3:#6FE0C0;
-    --glow-1:rgba(124,114,255,.24); --glow-2:rgba(255,110,150,.13); --dot:rgba(200,205,230,.16);
+    --vt:#7BE0A4; --fx:#FF9388; --z1:#93A6FF; --z2:#FFB27A; --z3:#6FE0C0;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -18px rgba(0,0,0,.6);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0C0F20; --surface:#151930; --surface-2:#1E2340; --ink:#EEF0FA; --muted:#A3A9C6; --line:#2B3152; --rule:#C8CDE6;
-  --accent:#A39DFF; --accent-soft:#25254E; --on-accent:#0C0F20;
+  --accent:#93A6FF; --accent-soft:#1D2550; --on-accent:#0C0F20;
   --pen:#B4C0FF; --red:#FF8FAB; --red-soft:#3A1826;
   --seyes:#2B3152; --seyes-2:#1E2340; --margin:#FF8FAB;
-  --def:#6FE0C0; --def-soft:#11302A; --thm:#A39DFF; --thm-soft:#22224A; --proof:#BEC3DC; --proof-soft:#1A1F38;
+  --def:#6FE0C0; --def-soft:#11302A; --thm:#93A6FF; --thm-soft:#1D2550; --proof:#BEC3DC; --proof-soft:#1A1F38;
   --meth:#FFD27A; --meth-soft:#33290F; --exam:#F0A6FF; --exam-soft:#33173A; --why:#8CCBFA; --why-soft:#122A3E;
   --warn:#FF8FAB; --warn-soft:#3A1826; --ok:#7BE0A4; --ok-soft:#12301F; --bad:#FF9388; --bad-soft:#3B1B19;
-  --vt:#7BE0A4; --fx:#FF9388; --z1:#A39DFF; --z2:#FFB27A; --z3:#6FE0C0;
-  --glow-1:rgba(124,114,255,.24); --glow-2:rgba(255,110,150,.13); --dot:rgba(200,205,230,.16);
+  --vt:#7BE0A4; --fx:#FF9388; --z1:#93A6FF; --z2:#FFB27A; --z3:#6FE0C0;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -18px rgba(0,0,0,.6);
   color-scheme:dark;
 }
@@ -92,17 +90,10 @@ code,kbd{font-family:var(--font-mono);font-size:.84em;background:var(--surface-2
 
 /* ---------- barre de lecture ---------- */
 .progress{position:fixed;top:calc(env(safe-area-inset-top,0px) + var(--sh-h,52px));left:0;right:0;z-index:54;pointer-events:none}
-.progress i{display:block;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--red));border-radius:0 3px 3px 0}
+.progress i{display:block;height:3px;width:0;background:var(--accent)}
 
-/* ---------- en-tête : titre, résumé, repères ; halo et points à droite, jamais sous le texte ---------- */
-.hero{position:relative;background:var(--surface);border-bottom:1px solid var(--line);overflow:hidden;isolation:isolate}
-.hero::before,.hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0}
-.hero::before{background:
-    radial-gradient(54rem 28rem at 92% -12%,var(--glow-1),transparent 64%),
-    radial-gradient(36rem 22rem at -4% 122%,var(--glow-2),transparent 62%)}
-.hero::after{background:radial-gradient(circle at 1px 1px,var(--dot) 1.1px,transparent 1.7px) 0 0/22px 22px;
-  -webkit-mask:linear-gradient(100deg,transparent 46%,#000 82%);mask:linear-gradient(100deg,transparent 46%,#000 82%)}
-.hero>*{position:relative;z-index:1}
+/* ---------- en-tête : titre, résumé, repères. Fond uni, aucun dégradé, aucun halo : seul le titre porte la couleur ---------- */
+.hero{position:relative;background:var(--surface);border-bottom:1px solid var(--line)}
 .doc-strip{max-width:1180px;margin:0 auto;padding:.75rem max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 18px;
   font-family:var(--font-ui);font-size:.78rem;color:var(--muted)}
 .doc-strip a{color:inherit}
@@ -111,7 +102,7 @@ code,kbd{font-family:var(--font-mono);font-size:.84em;background:var(--surface-2
 .eyebrow{font-family:var(--font-ui);font-size:var(--step--1);font-weight:500;color:var(--muted);display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px}
 .eyebrow a{color:inherit}
 .hero h1{font-size:var(--step-4);font-weight:700;letter-spacing:-.035em;margin-top:.8rem;line-height:1.03}
-.hero h1 .w{color:var(--accent);background:linear-gradient(100deg,var(--accent) 10%,var(--red) 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hero h1 .w{color:var(--accent)}
 .lead{font-size:1.14rem;line-height:1.62;margin-top:1.15rem;max-width:36em;color:var(--ink)}
 .feats{list-style:none;margin:1.5rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;font-size:.95rem;line-height:1.38}
 .feats li{min-width:0;background:var(--surface-2);border-radius:12px;padding:.62rem .85rem .7rem}
@@ -120,7 +111,7 @@ code,kbd{font-family:var(--font-mono);font-size:.84em;background:var(--surface-2
 .feats li.ex .k{color:var(--exam)}
 .fig-cap{font-family:var(--font-ui);font-size:.82rem;line-height:1.5;color:var(--muted);margin-top:.6rem}
 .fig-cap b{color:var(--ink);font-weight:650}
-@media (max-width:960px){.hero-in{grid-template-columns:minmax(0,1fr);padding-block:22px 44px;gap:28px}.hero h1{font-size:2.55rem}.hero::after{display:none}}
+@media (max-width:960px){.hero-in{grid-template-columns:minmax(0,1fr);padding-block:22px 44px;gap:28px}.hero h1{font-size:2.55rem}}
 @media (max-width:520px){.hero h1{font-size:2.1rem}.lead{font-size:1.06rem}.doc-strip span+span{display:none}}
 
 /* ---------- grille de page : sommaire en carte + colonne de lecture ---------- */
@@ -271,7 +262,7 @@ main{min-width:0;max-width:780px;position:relative}
 .cnt{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin-left:auto}
 .btn{font:inherit;font-family:var(--font-ui);font-size:.92rem;font-weight:650;line-height:1.2;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:.45rem .95rem;cursor:pointer;min-height:42px;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px -8px var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{color:var(--on-accent);filter:brightness(1.08)}
 .btn.ghost{background:transparent}
 .btn:disabled{opacity:.45;cursor:not-allowed}
@@ -386,9 +377,7 @@ body .sol-step>b{font-size:.86rem;letter-spacing:0}
   .ctrls,.done-btn,.progress,.toc,.mobile-toc,.hint,.fld,.presets{display:none !important}
   .page{display:block;padding:0}
   main{max-width:none}
-  .hero::before,.hero::after{display:none}
   .hero{border-bottom:1px solid #999}
-  .hero h1 .w{-webkit-text-fill-color:currentColor;background:none}
   .hero-in{grid-template-columns:minmax(0,1fr);padding-block:8px 16px}
   .sec{padding-top:18px;break-inside:auto}
   .box,.note,.model,.card,.bench,.tbl,.calc,.steps>li,.ng-steps li{break-inside:avoid;box-shadow:none}

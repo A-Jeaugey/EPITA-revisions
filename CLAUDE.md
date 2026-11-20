@@ -66,11 +66,12 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   arbre pondéré et Bayes, loi et binomiale, triangle de Pascal, « quelle formule ? », courbe avec images directes et
   réciproques exactes). Thème `maths.css` (maths du B1 et APIS, refait en novembre 2026 à la demande de l'élève, qui
   trouvait l'ancienne « copie double » terne et peu lisible) : « plan de travail », fond clair net **sans motif derrière
-  le texte**, Outfit (titres, chiffres) + Inter (texte), formules KaTeX ; accent indigo, contre-accent framboise, sombre
-  bleu nuit ; encadrés = cartes arrondies teintées avec étiquette de couleur (jetons `--c` / `--cs`), numéros de parties
+  le texte**, Outfit (titres, chiffres) + Inter (texte), formules KaTeX ; **tout à plat** (un premier essai avec titre en dégradé violet-rose et
+  halos a été rejeté : « AI slop ») : accent bleu encre `#2340B8` (celui de la barre du site), contre-accent framboise,
+  sombre bleu nuit ; encadrés = cartes arrondies teintées avec étiquette de couleur (jetons `--c` / `--cs`), numéros de parties
   en tuiles (`.pn`, le tracé SVG de `maths.js` est masqué), sommaire en carte, rédaction modèle en carte blanche à barre
   bleue (remarques `.c` en pastilles). Les pages gardent leurs styles propres ; la fin de `maths.css` (« éléments communs
-  des pages ») les ramène à la forme du thème. Ne pas remettre de quadrillage ni de police manuscrite.
+  des pages ») les ramène à la forme du thème. Ne pas remettre de quadrillage, de police manuscrite, de dégradé, de halo ni d'ombre colorée.
 
 ## Deux langues
 
