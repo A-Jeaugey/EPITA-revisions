@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recherches séquentielles · Algo LiMa</title>
+<meta name="description" content="Algo LiMa, cours 2 : recherches séquentielles. Vocabulaire (associative, positive, négative), recherche dans une liste non triée, recherche auto-adaptative (agressive, molle, raisonnable), recherche dans une liste triée, complexités, et les parcours de listes du TD 1 en Python. Au programme du DM 1.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Algo LiMa · cours 2 : recherches séquentielles">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — cours 2</span><span>Source : fiche « Recherches : séquentielles », vidéos 487 du Moodle, TD 1 parties 2 et 3</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Algo LiMa</a> · Cours 2 · <a href="dm1.html">au DM 1</a></div>
+      <h1>Chercher un élément, <span class="w">une case après l’autre.</span></h1>
+      <p class="lead">La recherche séquentielle compare la clé cherchée à chaque élément, du premier au dernier, jusqu’à la trouver ou sortir de la liste. C’est la plus simple des recherches, elle marche sur toutes les listes, et elle coûte jusqu’à n comparaisons. Sur une liste triée, on peut s’arrêter dès qu’on a dépassé la clé ; sur une liste non triée, on peut rapprocher de la tête les éléments souvent cherchés.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parties</span> 6</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 16 novembre</span></li>
+        <li class="ex"><span><span class="k">DM 1</span> au programme, avec les parcours Python du TD 1</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th>Comparaisons en moyenne</th><th>positive</th><th>négative</th></tr></thead>
+      <tbody>
+        <tr><th>liste non triée</th><td>n / 2</td><td>n</td></tr>
+        <tr><th>liste triée</th><td>n / 2</td><td>n / 2</td></tr>
+      </tbody>
+      <caption>Le tableau de la fiche, à savoir par cœur. Dans le pire des cas : toujours n. Tout est en O(n).</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 2 · Recherches séquentielles</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Le vocabulaire</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Liste non triée</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Recherche auto-adaptative</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Liste triée</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Complexités</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Parcours en Python (TD 1)</span></a></li>
+    </ol>
+    <p class="toc-note">n désigne la longueur de la liste ; on compte les comparaisons de la clé cherchée x avec les éléments.</p>
+    <div class="toc-nav"><a href="cours-1-listes.html">← Cours 1 : implémentations</a><a href="dm1.html">Le DM 1 →</a><a href="../qcm/index.html#lima">QCM de LiMa</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Le vocabulaire</a></li><li><a href="#s2">Liste non triée</a></li><li><a href="#s3">Recherche auto-adaptative</a></li><li><a href="#s4">Liste triée</a></li><li><a href="#s5">Complexités</a></li><li><a href="#s6">Parcours en Python (TD 1)</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">fiche, introduction · vidéo « Recherches : introduction »</span></div><h2>Le vocabulaire des recherches</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Pour manipuler des données (les modifier, les supprimer…), il faut d’abord les <b>trouver</b>. Chaque élément est représenté par une <b>clé</b> ; on cherche un élément par sa clé, le plus vite possible, qu’il soit présent ou non.</p></div>
+        <div class="box def"><span class="tag">Définitions</span>
+          <ul>
+            <li>Une recherche est <b>associative</b> quand le critère ne porte que sur la <b>valeur de la clé</b> de l’élément cherché. (Chercher « les éléments présents depuis plus de six mois » ne serait pas associatif.)</li>
+            <li>Une recherche est <b>positive</b> quand la clé cherchée est <b>présente</b> dans la collection.</li>
+            <li>Une recherche est <b>négative</b> quand la clé cherchée est <b>absente</b>.</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">Comment on compte</span>
+          <p>L’<b>opération fondamentale</b> est la <b>comparaison</b> de la clé cherchée x à une clé de la liste. Les complexités s’expriment en fonction de n, la longueur de la liste.</p>
+        </div>
+        <div class="box why"><span class="tag">Remarque de la vidéo</span>
+          <p>C’est la recherche <b>négative</b> qui doit être la plus rapide : un utilisateur supporte encore moins d’attendre quand la recherche échoue.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">fiche § 1 · vidéo « Listes non triées »</span></div><h2>Recherche séquentielle dans une liste non triée</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Principe</span>
+          <p>On se place sur le premier élément. Tant qu’il reste des éléments et que l’élément courant n’est pas x, on avance. Si on a parcouru toute la liste, la recherche est négative ; sinon, on s’est arrêté sur x.</p>
+        </div>
+        <div class="cols">
+          <pre class="algo"><b>fonction</b> rechercher(liste L, élément x) : booléen
+<b>variables</b>
+    entier i
+<b>debut</b>
+    i ← 1
+    <b>tant que</b> i &lt;= longueur(L) <b>faire</b>
+        <b>si</b> x = ième(L, i) <b>alors</b>
+            <b>retourne</b> vrai
+        <b>fin si</b>
+        i ← i + 1
+    <b>fin tant que</b>
+    <b>retourne</b> faux
+<b>fin</b></pre>
+          <pre class="algo">/* Autre version */
+i ← 1
+<b>tant que</b> i &lt;= longueur(L)
+      <b>et</b> x &lt;&gt; ième(L, i) <b>faire</b>
+    i ← i + 1
+<b>fin tant que</b>
+<b>retourne</b> (i &lt;= longueur(L))</pre>
+        </div>
+        <pre class="py">
+def rechercher(L, x):
+    i = 0
+    while i &lt; len(L) and L[i] != x:
+        i += 1
+    return i &lt; len(L)
+</pre>
+        <p class="codecap">La deuxième version en Python : les indices vont de 0 à <code>len(L) - 1</code>, donc « i ≤ longueur » devient <code>i &lt; len(L)</code>.</p>
+        <div class="box model"><span class="tag">Exemples de la vidéo <i>liste non triée de 7 éléments</i></span>
+          <div class="mem-i"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+          <div class="mem"><span>12</span><span>2</span><span>31</span><span class="used">4</span><span>25</span><span>8</span><span>17</span></div>
+          <p>Chercher 4 : on compare à 12, 2, 31, puis 4. Recherche positive en 4 comparaisons.<span class="c">on s’arrête dès qu’on trouve</span></p>
+          <p>Chercher 18 : on compare aux 7 éléments, puis on sort de la liste. Recherche négative en 7 comparaisons.<span class="c">négative : toujours n</span></p>
+        </div>
+        <div class="box thm"><span class="tag">Complexité</span>
+          <ul>
+            <li><b>Négative</b> : n comparaisons, <b>dans tous les cas</b>.</li>
+            <li><b>Positive</b> : n au pire (x est le dernier) ; sur un grand nombre de recherches, <b>n / 2 en moyenne</b>.</li>
+          </ul>
+          <p>La liste peut être implémentée en tableau ou en chaîné : on la parcourt dans l’ordre, sans accès direct.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">fiche § 1, « Modification » · vidéo « Listes non triées »</span></div><h2>La recherche auto-adaptative</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Pour une recherche positive, le coût est la position de l’élément. On ne connaît pas à l’avance quels éléments seront les plus demandés ; alors on les fait <b>avancer vers la tête au fur et à mesure qu’on les cherche</b>. Les éléments souvent recherchés finissent en début de liste.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Variante</th><th>À chaque élément trouvé…</th><th>Défaut</th><th>Contigu / chaîné</th></tr></thead>
+          <tbody>
+            <tr><td><b>agressive</b></td><td>on le place directement en tête</td><td>met en tête des éléments très peu recherchés</td><td>chaîné seulement : en tableau, il faut décaler tous les éléments qui le précèdent</td></tr>
+            <tr><td><b>molle</b></td><td>on le fait avancer d’une place</td><td>progrès très lent : 2 000 recherches pour amener en tête l’élément de la 2 001e place</td><td>les deux : un simple échange de deux voisins</td></tr>
+            <tr><td><b>raisonnable</b></td><td>on le fait avancer d’un certain nombre de places, par exemple la moitié de sa distance à la tête</td><td>—</td><td>les deux, mais le chaîné est le plus intéressant : un second pointeur qui avance deux fois moins vite donne la future place, sans décalage</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Chercher 4 dans [12, 2, 31, 4, 25]</span>
+          <p>Agressive : <code>[4, 12, 2, 31, 25]</code>. Molle : <code>[12, 2, 4, 31, 25]</code>.<span class="c">résultats obtenus en exécutant le code ci-dessous</span></p>
+        </div>
+        <div class="cols">
+          <pre class="py">
+def search_aggressive(L, x):
+    for i in range(len(L)):
+        if L[i] == x:
+            for j in range(i, 0, -1):
+                L[j] = L[j - 1]   # décalages
+            L[0] = x
+            return True
+    return False
+</pre>
+          <pre class="py">
+def search_soft(L, x):
+    for i in range(len(L)):
+        if L[i] == x:
+            if i &gt; 0:             # un échange
+                L[i - 1], L[i] = L[i], L[i - 1]
+            return True
+    return False
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">À retenir</span>
+          <ul>
+            <li>La recherche auto-adaptative ne s’applique <b>pas aux listes triées</b> : elle change l’ordre des éléments.</li>
+            <li>Elle améliore les recherches <b>positives</b>. Une recherche négative coûte toujours n.</li>
+            <li>Conclusion de la fiche : toutes les recherches séquentielles s’implémentent en contigu ou en chaîné, <b>sauf l’agressive en contigu</b> (décalages coûteux).</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche § 2 · vidéo « Listes triées »</span></div><h2>Recherche séquentielle dans une liste triée</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Principe</span>
+          <p>La liste est triée en ordre croissant. Tant qu’il reste des éléments et que l’élément courant <b>n’a pas dépassé x</b>, on avance. On a trouvé x si on n’a pas parcouru toute la liste et si l’élément où l’on s’est arrêté est x.</p>
+          <p>Le gain : une recherche <b>négative</b> s’arrête dès qu’on dépasse x, au lieu d’aller jusqu’au bout.</p>
+        </div>
+        <div class="cols">
+          <pre class="algo">i ← 1
+<b>tant que</b> i &lt;= longueur(L)
+      <b>et</b> x &gt;= ième(L, i) <b>faire</b>
+    <b>si</b> x = ième(L, i) <b>alors</b>
+        <b>retourne</b> vrai
+    <b>fin si</b>
+    i ← i + 1
+<b>fin tant que</b>
+<b>retourne</b> faux</pre>
+          <pre class="algo">/* Autre version */
+i ← 1
+<b>tant que</b> i &lt;= longueur(L)
+      <b>et</b> x &gt; ième(L, i) <b>faire</b>
+    i ← i + 1
+<b>fin tant que</b>
+<b>retourne</b> (i &lt;= longueur(L)
+         <b>et</b> x = ième(L, i))</pre>
+        </div>
+        <div class="box model"><span class="tag">Exemple <i>liste triée de 7 éléments</i></span>
+          <div class="mem"><span>−11</span><span>−2</span><span>1</span><span class="used">4</span><span>15</span><span>63</span><span>70</span></div>
+          <p>Chercher 4 : −11, −2, 1, puis 4. Positive, 4 comparaisons.</p>
+          <p>Chercher 18 : −11, −2, 1, 4, 15 sont plus petits ; 63 dépasse 18 : on s’arrête. Négative, 6 comparaisons au lieu de 7.<span class="c">plus loin, tout est encore plus grand</span></p>
+        </div>
+        <div class="box thm"><span class="tag">Complexité</span>
+          <p>Positive ou négative, c’est la même : <b>n au pire</b> (x est le dernier, ou plus grand que le dernier), <b>n / 2 en moyenne</b>. Implémentable en contigu ou en chaîné. Pas de recherche auto-adaptative sur une liste triée.</p>
+        </div>
+        <div class="box trap"><span class="tag">Piège</span>
+          <p>La note de la fiche : la première version fait <b>2 comparaisons par tour de boucle</b> (x ≥ … puis x = …), la deuxième une seule, plus une égalité à la fin. La deuxième est meilleure.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">fiche, conclusion</span></div><h2>Complexités : le tableau à savoir</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Cas moyen</th><th>positive</th><th>négative</th></tr></thead>
+          <tbody>
+            <tr><th>non triée</th><td>n / 2</td><td>n</td></tr>
+            <tr><th>triée</th><td>n / 2</td><td>n / 2</td></tr>
+          </tbody>
+          <caption>En supposant que, sur un grand nombre de recherches, chaque position a autant de chances d’être atteinte. Pire cas : toujours n.</caption>
+        </table></div>
+        <div class="box thm"><span class="tag">Complexité linéaire</span>
+          <p>Même si la recherche dans une liste triée est un peu plus efficace, toutes ces recherches sont en <b>O(n)</b>. Sur un grand nombre d’éléments, la fiche conseille des recherches plus efficaces : la recherche <b>dichotomique</b> (semaine du 23 novembre) et la recherche <b>par interpolation</b> (semaine du 30 novembre), au programme du DM 2.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Question type</th><th>Réponse</th></tr></thead>
+          <tbody>
+            <tr><td>Négative, non triée : combien de comparaisons ?</td><td>n, toujours</td></tr>
+            <tr><td>Positive, non triée, en moyenne ?</td><td>n / 2</td></tr>
+            <tr><td>Négative, triée, en moyenne ?</td><td>n / 2</td></tr>
+            <tr><td>Le pire cas d’une recherche séquentielle ?</td><td>n (élément en dernier, absent, ou plus grand que le dernier)</td></tr>
+            <tr><td>Quelle recherche n’a pas de cas moyen différent du pire ?</td><td>la négative sur liste non triée</td></tr>
+          </tbody>
+        </table></div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">TD 1, ex. 2.2, 3.1, 3.2, 3.3</span></div><h2>Parcours de listes en Python (TD 1)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le DM porte aussi sur « TD : parcours des listes en Python ». Deux formes de parcours reviennent : le <b>parcours complet</b> (<code>for</code>, on regarde tout) et le <b>parcours interrompu</b> (<code>while</code> avec deux conditions, on s’arrête dès que la réponse est connue).</p></div>
+        <div class="box model"><span class="tag">Histogramme <i>TD 1, ex. 2.2</i></span>
+          <p>Une liste de 256 compteurs, un par code ASCII : <code>H[ord(c)]</code> compte les c. On parcourt la chaîne <b>une seule fois</b>.</p>
+          <pre class="py">
+def histogram(s):
+    H = [0] * 256
+    for c in s:
+        H[ord(c)] += 1
+    return H
+
+def nb_different(s):
+    cpt = 0
+    for v in histogram(s):
+        if v != 0:
+            cpt += 1
+    return cpt
+
+def most_frequent(s):
+    H = histogram(s)
+    imax = 0
+    for i in range(1, 256):
+        if H[i] &gt; H[imax]:
+            imax = i
+    return chr(imax), H[imax]
+</pre>
+          <pre class="out">
+>>> nb_different("character")
+6
+>>> most_frequent("character")
+('a', 2)
+>>> most_frequent("abracadabra")
+('a', 5)
+</pre>
+        </div>
+        <div class="box model"><span class="tag">Position dans une liste triée <i>TD 1, ex. 3.1</i></span>
+          <p>La recherche séquentielle sur liste triée (partie 4), qui renvoie la position du premier x, ou −1.</p>
+          <pre class="py">
+def search_sorted(x, L):
+    i = 0
+    while i &lt; len(L) and L[i] &lt; x:
+        i += 1
+    if i &lt; len(L) and L[i] == x:
+        return i
+    return -1
+</pre>
+          <pre class="out">
+>>> search_sorted(5, [1, 3, 5, 5, 8]), search_sorted(4, [1, 3, 5, 8])
+(2, -1)
+</pre>
+        </div>
+        <div class="cols">
+          <div><pre class="py">
+def replace(L, k, new_v):
+    i = 0
+    while i &lt; len(L) and L[i][0] &lt; k:
+        i += 1
+    if i &lt; len(L) and L[i][0] == k:
+        L[i] = (k, new_v)   # tuple : on remplace le couple
+</pre><p class="codecap" style="margin-top:.4rem">TD 1, ex. 3.2 : <code>L[i][1] = new_v</code> lève <code>TypeError</code>, un tuple est immuable.</p></div>
+          <div><pre class="py">
+def is_sorted(L):
+    i = 1
+    while i &lt; len(L) and L[i - 1] &lt;= L[i]:
+        i += 1
+    return i &gt;= len(L)
+</pre><p class="codecap" style="margin-top:.4rem">TD 1, ex. 3.3 : on s’arrête au premier couple de voisins mal rangé. <code>is_sorted([])</code> et <code>is_sorted([4])</code> valent <code>True</code>.</p></div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Dans <code>while i &lt; len(L) and L[i] != x</code>, le test d’indice vient <b>en premier</b> : <code>and</code> s’arrête au premier faux, donc <code>L[i]</code> n’est jamais lu hors de la liste.</li>
+            <li>Après la boucle, on ne sait pas encore pourquoi elle s’est arrêtée : on reteste <code>i &lt; len(L)</code> avant de lire <code>L[i]</code>.</li>
+            <li>Un parcours interrompu se fait avec <code>while</code> (ou un <code>return</code> dans le <code>for</code>) : un <code>for</code> qui va jusqu’au bout fait des comparaisons inutiles.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Avant 21 h : la page <a href="dm1.html">DM 1</a> résume tout et lance le QCM. Ensuite, la recherche dichotomique (semaine du 23 novembre).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/lima.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/lima.js"></script>
+</body>
+</html>

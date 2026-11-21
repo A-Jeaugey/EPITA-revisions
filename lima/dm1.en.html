@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Homework 1 · Algo LiMa</title>
+<meta name="description" content="Algo LiMa: Homework 1 (Moodle test, 24 minutes, until Saturday 21 November 2026, 9 pm). The announced syllabus, what you need to know about list implementations, linear searches and list traversals in Python, the traps, and the practice quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Homework 1: the deadline, the syllabus, the essentials in cards, the traps, then the quiz. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:56px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.deadline{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);border-radius:var(--radius);display:grid;align-self:center;min-width:0;overflow:hidden}
+.deadline-top{display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:.6rem 1rem;border-bottom:1px solid var(--line);background:var(--red-soft);font-family:var(--font-ui);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:700}
+.deadline-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.8rem}
+.deadline-b>*{min-width:0}
+.deadline h2{font-size:1.8rem}
+.cd{font-family:var(--font-display);font-size:2.4rem;font-weight:700;letter-spacing:-.03em;color:var(--red);line-height:1}
+.cd small{font-family:var(--font-ui);font-size:.95rem;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:.5rem}
+.facts{list-style:none;margin:0;padding:0;display:grid;gap:.45rem;font-size:.98rem}
+.facts li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:8px;border-top:1px solid var(--line);padding-top:.45rem}
+.facts b{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;padding-top:.15rem}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+@media (max-width:980px){.grid3{grid-template-columns:minmax(0,1fr)}}
+.kc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:grid;gap:.6rem;min-width:0}
+.kc>*{min-width:0}
+.kc h3{margin:0;font-size:1.2rem}
+.kc ul{margin:0;padding-left:1.15rem;display:grid;gap:.35rem}
+.kc .lk{font-family:var(--font-ui);font-size:.86rem;font-weight:600}
+.quote{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--radius);padding:.9rem 1.1rem;display:grid;gap:.45rem;max-width:62rem}
+.quote .who{font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+.quote ul{margin:0;padding-left:1.2rem}
+.go{display:flex;flex-wrap:wrap;gap:10px}
+</style>
+</head>
+<body data-resume="Algo LiMa · Homework 1">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — Homework 1</span><span>Announcement of 13 November 2026 · Moodle sheets · Tutorial 1</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Algo LiMa</a> · Homework 1</div>
+      <h1>Homework 1, <span class="w">in twenty minutes of review.</span></h1>
+      <p class="lead">A 24-minute Moodle test, a single attempt. The syllabus: how a list is stored in memory, how to search it one cell at a time, and how to traverse a list in Python. Read the three cards below, do the quiz, and start the test without waiting for the last hour.</p>
+      <div class="go" style="margin-top:1.3rem"><a class="btn primary" href="../qcm/index.html#lima">Do the homework quiz (42 questions)</a><a class="btn" href="cours-1-listes.html">Course 1</a><a class="btn" href="cours-2-sequentielles.html">Course 2</a></div>
+    </div>
+    <aside class="deadline" aria-labelledby="dl-h">
+      <div class="deadline-top"><span>Graded test</span><span id="dlState"></span></div>
+      <div class="deadline-b">
+        <h2 id="dl-h">Saturday 21 November, 9 pm</h2>
+        <div class="cd" id="cd" aria-live="polite"></div>
+        <ul class="facts">
+          <li><b>Duration</b><span>24 minutes, one attempt</span></li>
+          <li><b>Open</b><span>from Friday 20 November, 12 pm, to Saturday 21 November, 9 pm; not accessible afterwards</span></li>
+          <li><b>Weight</b><span>the homework makes up 20% of the ECUE grade (exam: 80%)</span></li>
+          <li><b>Warning</b><span>Moodle goes down every night around 3:30 am for about 15 minutes</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-prog">
+    <div class="sec-title"><div><div class="eyebrow">Announcement of 13 November 2026</div><h2 id="t-prog">The syllabus, word for word</h2></div><p>No binary or interpolation search: they are in Homework 2 (end of the week of 30 November).</p></div>
+    <div class="quote">
+      <div class="who">“Announcements” forum of the LiMa course</div>
+      <p>“Content of the test:</p>
+      <ul><li>Course: list implementations, linear searches</li><li>Tutorial: list traversals in Python”</li></ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-sav">
+    <div class="sec-title"><div><div class="eyebrow">To know</div><h2 id="t-sav">The essentials in three cards</h2></div><p>Each line points to the part of the course that explains it.</p></div>
+    <div class="grid3">
+      <div class="kc"><h3>Implementations</h3><ul>
+        <li>Static = array; dynamic = records linked by pointers.</li>
+        <li><b>Recursive</b> list in an array: array + <b>head index</b>. Add: increment, then write; remove: decrement (the value stays in the cell).</li>
+        <li><b>Iterative</b> list in an array: array + <b>length</b>. Access to the k-th element is immediate; insertion / deletion: shifts, at most <b>n − 1</b> assignments, worst case at the <b>1st position</b>.</li>
+        <li>Linked: the list is the pointer to the 1st record; empty = <b>null</b>. <b>cons</b>: allocate, val ← e, suiv ← L, L ← new.</li>
+        <li>Iterative linked list: k-th element by following <b>k − 1 links</b>; no shift; to delete, keep the <b>previous</b> one, then free the memory.</li>
+        <li>Recursive lists: everything in <b>constant time</b> in both implementations.</li>
+      </ul><a class="lk" href="cours-1-listes.html">Course 1 →</a></div>
+      <div class="kc"><h3>Linear searches</h3><ul>
+        <li><b>Associative</b>: criterion on the key value only. <b>Positive</b> (successful): key present; <b>negative</b> (unsuccessful): absent.</li>
+        <li>We count the <b>comparisons</b> of x with the elements.</li>
+        <li>Unsorted: negative <b>n</b> always; positive n in the worst case, <b>n / 2</b> on average.</li>
+        <li>Sorted: we stop as soon as we <b>go past x</b>; n in the worst case, <b>n / 2</b> on average, positive and negative alike.</li>
+        <li>Self-adjusting: <b>aggressive</b> (to the head), <b>soft</b> (one place), <b>reasonable</b> (several places). Not on a sorted list; the aggressive one is costly in a contiguous list.</li>
+        <li>Everything is <b>O(n)</b>.</li>
+      </ul><a class="lk" href="cours-2-sequentielles.html">Course 2 →</a></div>
+      <div class="kc"><h3>Python (Tutorial 1)</h3><ul>
+        <li>Indices from <b>0</b> to <code>len(L) - 1</code>; nth(λ, k) = <code>L[k - 1]</code>.</li>
+        <li><code>range(n)</code> : 0 … n − 1 ; <code>range(a, b)</code> : a … b − 1.</li>
+        <li><code>L.append(x)</code> adds at the end and returns <code>None</code>.</li>
+        <li>Interrupted traversal: <code>while i &lt; len(L) and L[i] != x</code>, index test <b>first</b>.</li>
+        <li>Histogram: <code>H = [0] * 256</code>, <code>H[ord(c)] += 1</code>.</li>
+        <li>A tuple is immutable: <code>L[i] = (k, v)</code>, not <code>L[i][1] = v</code>.</li>
+        <li><code>M = L</code> does not copy the list.</li>
+      </ul><a class="lk" href="cours-2-sequentielles.html#s6">Course 2, part 6 →</a></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-pg">
+    <div class="sec-title"><div><div class="eyebrow">The mistakes that cost you</div><h2 id="t-pg">Six traps</h2></div></div>
+    <div class="box trap"><span class="tag">Re-read just before</span>
+      <ol>
+        <li>Copying the bounds of an algorithm (1 to length) into Python (0 to <code>len(L) - 1</code>).</li>
+        <li>Believing that a negative search on an unsorted list costs n / 2 on average: it is <b>n, always</b>.</li>
+        <li>Mixing up the variants: aggressive = to the head, soft = by one place.</li>
+        <li>Applying self-adjusting search to a sorted list: forbidden.</li>
+        <li>cons in the wrong order: <code>new↑.suiv ← L</code> <b>before</b> <code>L ← new</code>.</li>
+        <li>Inserting into an array: shift starting from the <b>end</b>; the worst case is the <b>first</b> position.</li>
+      </ol>
+    </div>
+    <div class="go"><a class="btn primary" href="../qcm/index.html#lima">Start the quiz</a><span class="muted" style="align-self:center">“Mock exam” mode: timed, like the test.</span></div>
+  </section>
+</main>
+
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV;
+  /* end of the homework: Saturday 21 November 2026, 9 pm, Paris time (UTC+1 in November) */
+  var END = Date.UTC(2026, 10, 21, 20, 0, 0);
+  function paint() {
+    var ms = END - Date.now(), el = document.getElementById('cd'), st = document.getElementById('dlState');
+    if (ms <= 0) { el.textContent = 'Finished'; st.textContent = 'closed'; return; }
+    var h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+    if (h >= 48) { el.innerHTML = Math.floor(h / 24) + ' days<small>before closing</small>'; st.textContent = ''; return; }
+    el.innerHTML = h + ' h ' + (m < 10 ? '0' : '') + m + '<small>before closing</small>';
+    st.textContent = 'open';
+  }
+  paint(); setInterval(paint, 30000);
+})();
+</script>
+</body>
+</html>

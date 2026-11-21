@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Implémentations des listes · Algo LiMa</title>
+<meta name="description" content="Algo LiMa, cours 1 : implémenter une liste. Liste récursive et liste itérative dans un tableau (statique) ou par chaînage (dynamique), opérations et coûts, puis les listes Python : indices à partir de 0, len, append, range. Au programme du DM 1.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Algo LiMa · cours 1 : implémentations des listes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — cours 1</span><span>Source : fiche « Les listes : implémentations », vidéos 469 du Moodle, TD 1 partie 1</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Algo LiMa</a> · Cours 1 · <a href="dm1.html">au DM 1</a></div>
+      <h1>Une liste, <span class="w">c’est un tableau ou une chaîne.</span></h1>
+      <p class="lead">En TAA, la liste était un type abstrait : des opérations et des axiomes, sans mémoire. Ici on la range vraiment en mémoire. Deux façons : dans un tableau (implémentation statique) ou en enregistrements reliés par des pointeurs (implémentation dynamique). Le choix change le coût de chaque opération. En Python, la liste est déjà fournie : il reste à bien l’utiliser.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parties</span> 6</span></li>
+        <li><span><span class="k">Cours</span> MiMos de la semaine du 9 novembre</span></li>
+        <li class="ex"><span><span class="k">DM 1</span> au programme, en entier</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th></th><th>Tableau (statique)</th><th>Chaînage (dynamique)</th></tr></thead>
+      <tbody>
+        <tr><th>Liste récursive</th><td>tableau + indice de tête<br>tout en temps constant</td><td>pointeur sur la tête<br>tout en temps constant</td></tr>
+        <tr><th>Liste itérative</th><td>tableau + longueur<br>accès direct, insertion avec décalages</td><td>pointeur sur la tête<br>pas de décalage, accès en suivant les liens</td></tr>
+      </tbody>
+      <caption>Le cours en quatre cases. La fiche dit : le tableau est « parfaitement adapté » aux listes itératives, le chaînage « bien adapté » aux listes récursives.</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 1 · Implémentations</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Du type abstrait au code</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Liste récursive en tableau</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Liste itérative en tableau</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Liste récursive chaînée</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Liste itérative chaînée</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Bilan, et les listes Python</span></a></li>
+    </ol>
+    <p class="toc-note">En algo, les listes sont indexées à partir de 1 ; en Python, à partir de 0.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil LiMa</a><a href="cours-2-sequentielles.html">Cours 2 : recherches séquentielles →</a><a href="../qcm/index.html#lima">QCM de LiMa</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Du type abstrait au code</a></li><li><a href="#s2">Liste récursive en tableau</a></li><li><a href="#s3">Liste itérative en tableau</a></li><li><a href="#s4">Liste récursive chaînée</a></li><li><a href="#s5">Liste itérative chaînée</a></li><li><a href="#s6">Bilan, et les listes Python</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">vidéo « Introduction » · TD 1 § 1</span></div><h2>Du type abstrait à la mémoire</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>Les deux listes de TAA ne se manipulent pas de la même façon :</p>
+          <ul>
+            <li>la <b>liste récursive</b> ne se travaille que par la tête : <i>liste-vide</i>, <i>cons</i> (ajout en tête), <i>tête</i> / <i>first</i>, <i>fin</i> (le reste) ;</li>
+            <li>la <b>liste itérative</b> se travaille par les places : <i>longueur</i>, <i>ième(λ, k)</i>, <i>insérer</i> et <i>supprimer</i> à la k-ième place.</li>
+          </ul>
+          <p>Quand un langage fournit déjà une liste (les listes Caml, les <code>list</code> de Python, <code>ArrayList</code> et <code>LinkedList</code> en Java), on l’utilise. Sinon, il faut choisir une <b>représentation mémoire</b> et écrire soi-même les opérations. C’est l’objet de ce cours.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Type abstrait : liste itérative</th><th>Python : type <code>list</code></th></tr></thead>
+          <tbody>
+            <tr><td>λ : Liste</td><td><code>type(L) = list</code></td></tr>
+            <tr><td>λ ← liste-vide</td><td><code>L = []</code></td></tr>
+            <tr><td>longueur(λ)</td><td><code>len(L)</code></td></tr>
+            <tr><td>ième(λ, k), avec 1 ≤ k ≤ longueur(λ)</td><td><code>L[k - 1]</code>, avec 0 ≤ k − 1 ≤ <code>len(L) - 1</code></td></tr>
+          </tbody>
+          <caption>TD 1, tableau d’en-tête. Le TD écrit <code>L[k]</code> en ajoutant : « en Algo, les listes sont indexées à partir de 1, en Python, à partir de 0 ».</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Piège n° 1 du DM</span>
+          <p>Un algorithme écrit « pour i ← 1 jusqu’à longueur(λ) » devient en Python <code>for i in range(len(L))</code>, qui fait varier <code>i</code> de 0 à <code>len(L) - 1</code>. Recopier les bornes de l’algo donne une erreur d’indice ou oublie un élément.</p>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">vidéo « Les listes récursives : implémentations »</span></div><h2>Liste récursive dans un tableau</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Représentation <i>statique</i></span>
+          <p>Un <b>enregistrement</b> qui contient le tableau des éléments et un <b>entier : la position de la tête</b>. Les éléments sont rangés à la suite ; la tête est le dernier rangé.</p>
+          <p>« Statique » : la mémoire de tout le tableau est réservée dès la création. Le nombre d’éléments est donc limité ; agrandir est possible mais coûte (recopie dans un tableau plus grand).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Opération</th><th>Ce qu’on fait (tableau en base 1)</th><th>Coût</th></tr></thead>
+          <tbody>
+            <tr><td>créer la liste vide</td><td>indice de tête ← 0 (en base 0 : −1)</td><td>constant</td></tr>
+            <tr><td>ajouter en tête (cons)</td><td>incrémenter l’indice, puis écrire l’élément à cette position</td><td>constant</td></tr>
+            <tr><td>lire la tête</td><td>lire la case à la position de tête</td><td>constant</td></tr>
+            <tr><td>supprimer la tête</td><td>vérifier que la liste n’est pas vide (indice ≠ 0), puis décrémenter l’indice</td><td>constant</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">L’exemple de la vidéo <i>tableau en base 1</i></span>
+          <p>On ajoute a, b, c, d, e : l’indice de tête vaut 5, la tête est e.</p>
+          <div class="mem-i"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+          <div class="mem"><span class="used">a</span><span class="used">b</span><span class="used">c</span><span class="used">d</span><span class="used">e</span><span></span><span></span></div>
+          <p>On supprime e : l’indice passe à 4, la tête est d. La valeur e <b>reste</b> dans la case 5.<span class="c">on ne l’efface pas</span></p>
+          <div class="mem"><span class="used">a</span><span class="used">b</span><span class="used">c</span><span class="used">d</span><span class="ghost">e</span><span></span><span></span></div>
+          <p>Cela n’a pas d’importance : on ne lit jamais au-delà de la tête, et le prochain ajout écrasera la case 5.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Ajouter : on incrémente <b>puis</b> on écrit. Dans l’autre ordre, on écrase la tête actuelle.</li>
+            <li>Supprimer sur une liste vide (indice à 0) : interdit, à tester avant.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">fiche § 1 · vidéo « Les listes itératives »</span></div><h2>Liste itérative dans un tableau</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Le type <i>fiche § 1.1</i></span>
+          <p>La i-ème case du tableau contient le i-ème élément de la liste. La liste est un couple ⟨Tableau, Entier⟩ : le tableau et la <b>longueur</b>, qui dit quelles cases comptent.</p>
+        </div>
+        <pre class="algo">constantes
+    LMax = ...
+types
+    t_vect_elts = LMax t_element
+    t_list = enregistrement
+        t_vect_elts  elts
+        entier       longueur
+    fin enregistrement t_list</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Type abstrait : liste itérative</th><th>Implémentation : <code>t_list</code></th></tr></thead>
+          <tbody>
+            <tr><td>λ ← liste-vide</td><td><code>L.longueur ← 0</code></td></tr>
+            <tr><td>longueur(λ)</td><td><code>L.longueur</code></td></tr>
+            <tr><td>ième(λ, k)</td><td><code>L.elts[k]</code></td></tr>
+          </tbody>
+          <caption>Fiche § 1.2.1 : « de simples correspondances ».</caption>
+        </table></div>
+        <div class="box thm"><span class="tag">Coûts <i>fiche § 1.2.2</i></span>
+          <ul>
+            <li>L’accès au k-ième élément est <b>immédiat</b>.</li>
+            <li>Insérer ou supprimer oblige à <b>déplacer</b> (avec une boucle) tous les éléments de la place visée jusqu’à la fin.</li>
+            <li>Pour une liste de longueur n : au plus <b>n − 1 affectations</b>. Le pire cas est l’insertion ou la suppression en <b>première place</b>.</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Insérer c en 2e place <i>vidéo, tableau en base 1</i></span>
+          <div class="mem"><span class="used">a</span><span class="used">e</span><span></span><span></span></div>
+          <p>On décale e d’une case vers la droite, puis on écrit c en case 2, et la longueur passe de 2 à 3.<span class="c">décaler d’abord, depuis la fin</span></p>
+          <div class="mem"><span class="used">a</span><span class="used">c</span><span class="used">e</span><span></span></div>
+          <p>Supprimer en 2e place fait l’inverse : on décale vers la gauche les éléments qui suivent, puis la longueur diminue de 1. Supprimer la dernière place : on diminue seulement la longueur.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Décaler vers la droite en partant du début : chaque case écrase la suivante. Pour insérer, on décale <b>en partant de la fin</b>.</li>
+            <li>Insérer dans un tableau plein (longueur = LMax) : impossible sans agrandir.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">fiche § 2 · vidéo « Les listes récursives »</span></div><h2>Liste récursive chaînée</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Représentation <i>dynamique, chaînée</i></span>
+          <p>Chaque élément est dans un <b>enregistrement</b> à deux champs : la valeur et un <b>pointeur</b> vers l’enregistrement suivant (nul pour le dernier). La liste est un pointeur sur le premier enregistrement, ou le pointeur <b>nul</b> si elle est vide.</p>
+        </div>
+        <pre class="algo">types
+    t_pList = ↑ t_node
+    t_node = enregistrement
+        t_element  val
+        t_pList    suiv
+    fin enregistrement t_node</pre>
+        <div class="chain"><span class="hd">L →</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>a</b><i>nul</i></span></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Type abstrait : liste récursive</th><th>Implémentation : <code>t_pList</code></th></tr></thead>
+          <tbody>
+            <tr><td>liste-vide</td><td><code>nul</code></td></tr>
+            <tr><td>tête(λ)</td><td><code>L</code></td></tr>
+            <tr><td>fin(λ)</td><td><code>L↑.suiv</code></td></tr>
+            <tr><td>first(λ)</td><td><code>L↑.val</code></td></tr>
+            <tr><td>contenu(p), succ(p)</td><td><code>p↑.val</code>, <code>p↑.suiv</code></td></tr>
+          </tbody>
+          <caption>Fiche § 2.2 : une place a le même type qu’une liste ; une liste est la place de son premier élément.</caption>
+        </table></div>
+        <div class="box meth"><span class="tag">L’opération cons <i>ajouter e en tête de L</i></span>
+          <pre class="algo">allouer(new)
+new↑.val  ← e
+new↑.suiv ← L
+L ← new</pre>
+          <p>L’ordre compte : le nouvel enregistrement pointe sur l’ancienne tête <b>avant</b> que L ne change.</p>
+        </div>
+        <div class="prose">
+          <p><b>Supprimer la tête</b> : on fait avancer le pointeur de tête sur l’élément suivant, puis on <b>libère</b> la mémoire de l’enregistrement détaché.</p>
+          <p><b>Bilan de la vidéo</b> : avec le tableau comme avec le chaînage, les opérations des listes récursives se font en <b>temps constant</b>, qui ne dépend pas de la taille de la liste (sauf agrandissement du tableau). Utiliser une liste récursive ne change donc pas la complexité d’un algorithme.</p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Écrire <code>L ← new</code> avant <code>new↑.suiv ← L</code> : new pointe sur lui-même, la liste est perdue.</li>
+            <li>Oublier de libérer l’enregistrement supprimé.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">fiche, remarque · vidéo « Les listes itératives »</span></div><h2>Liste itérative chaînée</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>On peut aussi implémenter une liste itérative par chaînage. On gagne : plus aucun décalage de valeurs. On perd : l’<b>accès direct</b>.</p>
+          <ul>
+            <li><b>ième(λ, k)</b> : depuis le premier élément, on suit <b>k − 1 liens</b>. Pour le 4e élément : 3 liens.</li>
+            <li><b>Insérer</b> en k-ième place : on crée l’enregistrement, on parcourt jusqu’au précédent, le nouveau pointe sur l’ancien k-ième, puis le précédent pointe sur le nouveau. En première place, c’est le pointeur de tête qui change.</li>
+            <li><b>Supprimer</b> la k-ième place : le pointeur du <b>précédent</b> prend l’adresse du suivant, puis on libère l’enregistrement. Il faut donc garder l’accès au précédent pendant le parcours.</li>
+            <li><b>Longueur</b> : il faut tout parcourir, sauf si on la stocke.</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Supprimer la 2e place <i>vidéo</i></span>
+          <div class="chain"><span class="hd">L →</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>a</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>nul</i></span></div>
+          <p>a est entre b et c : le pointeur de b reçoit l’adresse de c, puis on libère a.<span class="c">le précédent saute l’élément</span></p>
+          <div class="chain"><span class="hd">L →</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>nul</i></span></div>
+        </div>
+        <div class="box why"><span class="tag">Améliorations <i>citées par la vidéo</i></span>
+          <ul>
+            <li><b>Stocker la longueur</b> : la liste devient un enregistrement ⟨pointeur de tête, longueur⟩. On refuse tout de suite une opération impossible, comme supprimer le 8e élément d’une liste de 5. La longueur augmente de 1 à chaque ajout et diminue de 1 à chaque suppression.</li>
+            <li><b>Liste circulaire</b> : le suivant du dernier est le premier, et la liste pointe sur le dernier : on a accès aux deux extrémités.</li>
+            <li><b>Double chaînage</b> : chaque élément pointe aussi sur son précédent ; la liste garde un pointeur de tête, un pointeur de fin et la longueur.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">bilan · TD 1 ex. 1.1, 1.2 et 2.1</span></div><h2>Bilan, et les listes Python</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Liste itérative de longueur n</th><th>Tableau</th><th>Chaînage</th></tr></thead>
+          <tbody>
+            <tr><td>accès au k-ième</td><td>immédiat</td><td>k − 1 liens à suivre</td></tr>
+            <tr><td>insérer / supprimer</td><td>décalages : au plus n − 1 affectations</td><td>aucun décalage, mais un parcours pour trouver la place</td></tr>
+            <tr><td>longueur</td><td>stockée</td><td>à parcourir (ou à stocker)</td></tr>
+            <tr><td>taille maximale</td><td>fixée à la création (LMax)</td><td>aucune (allocation à la demande)</td></tr>
+          </tbody>
+          <caption>Conclusion de la vidéo : pour les listes itératives, aucune des deux représentations n’a toutes ses opérations en temps constant.</caption>
+        </table></div>
+        <div class="prose"><p>La <code>list</code> de Python est un tableau qui s’agrandit tout seul : <code>L[i]</code> est un accès direct, <code>L.append(x)</code> ajoute à la fin sans décalage, et insérer au début décale tout. Ce sont exactement les coûts de la colonne « tableau ».</p></div>
+        <div class="cols">
+          <div><pre class="py">
+def compte(x, L):
+    cpt = 0
+    for i in range(len(L)):
+        if L[i] == x:
+            cpt += 1
+    return cpt
+</pre><p class="codecap" style="margin-top:.4rem">TD 1, ex. 1.1 (1) : « pour i ← 1 jusqu’à longueur(λ) » devient <code>range(len(L))</code>.</p></div>
+          <div><pre class="py">
+def est_present(x, L):
+    i = 0
+    while i &lt; len(L) and L[i] != x:
+        i += 1
+    return i &lt; len(L)
+</pre><p class="codecap" style="margin-top:.4rem">TD 1, ex. 1.1 (2) : « retourne (i &lt;= longueur(λ)) » devient <code>i &lt; len(L)</code>.</p></div>
+        </div>
+        <pre class="out">
+>>> compte(3, [1, 3, 2, 3, 3])
+3
+>>> est_present(2, [5, 2, 7]), est_present(4, [5, 2, 7]), est_present(1, [])
+(True, False, False)
+</pre>
+        <div class="box model"><span class="tag">Supprimer en place <i>TD 1, ex. 1.2</i></span>
+          <p>Précondition : 1 ≤ k ≤ longueur(λ). Les axiomes disent : avant k, rien ne bouge ; à partir de k, le i-ème devient l’ancien (i + 1)-ième ; la longueur diminue de 1. C’est la suppression avec décalage de la partie 3.</p>
+          <pre class="py">
+def supprimer(L, k):          # k : place algo, de 1 à len(L)
+    if not (1 &lt;= k &lt;= len(L)):
+        raise Exception("position invalide")
+    for i in range(k - 1, len(L) - 1):
+        L[i] = L[i + 1]       # décalage vers la gauche
+    L.pop()                   # la longueur diminue de 1
+</pre>
+          <pre class="out">
+>>> L = [10, 20, 30, 40, 50]
+>>> supprimer(L, 2)
+>>> L
+[10, 30, 40, 50]
+</pre>
+        </div>
+        <div class="cols">
+          <div><pre class="py">
+def new_list(n, val):
+    L = []
+    for i in range(n):
+        L.append(val)
+    return L
+</pre><p class="codecap" style="margin-top:.4rem">TD 1, ex. 2.1 : <code>new_list(5, 42)</code> donne <code>[42, 42, 42, 42, 42]</code> ; <code>[val] * n</code> fait la même chose.</p></div>
+          <div class="tbl"><table>
+            <thead><tr><th>Code</th><th>Résultat</th></tr></thead>
+            <tbody>
+              <tr><td><code>len([3, 8, 1])</code></td><td><code>3</code></td></tr>
+              <tr><td><code>[3, 8, 1][-1]</code></td><td><code>1</code></td></tr>
+              <tr><td><code>list(range(1, 5))</code></td><td><code>[1, 2, 3, 4]</code></td></tr>
+              <tr><td><code>list(range(5, 0, -1))</code></td><td><code>[5, 4, 3, 2, 1]</code></td></tr>
+              <tr><td><code>[0] * 3</code></td><td><code>[0, 0, 0]</code></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges Python</span>
+          <ul>
+            <li><code>M = L</code> ne copie pas : les deux noms désignent la même liste. Après <code>M.append(4)</code>, <code>L</code> a aussi changé.</li>
+            <li><code>L[len(L)]</code> lève <code>IndexError</code> : le dernier indice est <code>len(L) - 1</code>.</li>
+            <li><code>L.append(x)</code> renvoie <code>None</code> : <code>L = L.append(x)</code> perd la liste.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 6</span><button type="button" class="done-btn" data-done="lima:listes:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Les données sont rangées ; il faut maintenant les retrouver : <a href="cours-2-sequentielles.html">cours 2, les recherches séquentielles</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/lima.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/lima.js"></script>
+</body>
+</html>

@@ -185,6 +185,16 @@
       ]
     },
     {
+      id: 'lima', period: 'b2', name: 'Algo · LiMa', short: 'LiMa', code: 'S1 · ECUE LiMa',
+      course: 'Listes et matrices, en Python', path: 'lima/index.html', dir: 'lima/', status: 'ready',
+      train: 'lima/dm1.html', fiche: 'lima/dm1.html', open: 'Ouvrir LiMa',
+      exam: 'DM 1 jusqu’au samedi 21 novembre, 21 h (24 min) · DM 2 fin de semaine du 30 novembre · examen écrit fin B2 · DM 20 %, examen 80 %',
+      chapters: [
+        { id: 'listes', title: 'Implémentations des listes', path: 'lima/cours-1-listes.html', sections: 6 },
+        { id: 'sequentielles', title: 'Recherches séquentielles', path: 'lima/cours-2-sequentielles.html', sections: 6 }
+      ]
+    },
+    {
       id: 'apis', period: 'b2', name: 'Maths · APIS', short: 'Maths', code: 'S1 · ECUE APIS',
       course: 'Analyse : primitives, intégrales et suites numériques', path: 'apis/index.html', dir: 'apis/', status: 'ready',
       train: 'apis/entrainement.html', fiche: 'apis/fiche.html', open: 'Ouvrir l’APIS',
@@ -247,6 +257,9 @@
       chapters: ['Working methodology', 'Group management'] },
     elec2: { name: 'Electronics · Theorems', short: 'Elec', course: 'Circuit analysis tools: Thévenin, Norton, Millman', open: 'Open Elec B2',
       exam: 'End-of-semester exam (date to come) · written, no calculator, no documents · 45% of the grade', chapters: ['Thévenin and Norton', 'Millman and superposition'] },
+    lima: { name: 'Algo · LiMa', short: 'LiMa', course: 'Lists and matrices, in Python', open: 'Open LiMa',
+      exam: 'Homework 1 until Saturday 21 November, 9 pm (24 min) · Homework 2 end of the week of 30 November · written exam end of term 2 · homework 20%, exam 80%',
+      chapters: ['List implementations', 'Sequential search'] },
     apis: { name: 'Maths · APIS', short: 'Maths', course: 'Analysis: primitive functions, integrals and numerical sequences', open: 'Open APIS',
       exam: 'Course test on Monday 23 November (1 hr) · final exam in December · homework 20%, course test 20%, exam 60%',
       chapters: ['Primitive functions', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples', 'Convergence theorems', 'Recursive sequences', 'Landau comparisons'] },
@@ -399,6 +412,7 @@
     archi: { date: '2026-10-29', start: '13:00', end: '14:00' },
     piloter: { date: '2026-10-29', start: '14:15', end: '16:15' },
     /* bimestre 2 : contrôle de cours de l’ECUE APIS (annonce du 16 novembre 2026), durée 1 h, horaire non communiqué */
+    lima: { date: '2026-11-21', end: '21:00', what: 'DM 1', whatEn: 'Homework 1' },
     apis: { date: '2026-11-23', what: 'contrôle de cours', whatEn: 'course test' }
   };
   var exams = {
