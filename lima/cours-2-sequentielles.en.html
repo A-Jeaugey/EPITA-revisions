@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linear searches · Algo LiMa</title>
+<meta name="description" content="Algo LiMa, course 2: linear (sequential) searches. Vocabulary (associative, positive, negative), search in an unsorted list, self-adjusting search (aggressive, soft, reasonable), search in a sorted list, complexities, and the list traversals of Tutorial 1 in Python. On the Homework 1 syllabus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Algo LiMa · course 2: linear searches">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — course 2</span><span>Source: sheet “Searches: sequential”, Moodle videos 487, Tutorial 1 parts 2 and 3</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Algo LiMa</a> · Course 2 · <a href="dm1.html">on Homework 1</a></div>
+      <h1>Looking for an element, <span class="w">one cell after the other.</span></h1>
+      <p class="lead">Linear (sequential) search compares the searched key with each element, from the first to the last, until it finds it or leaves the list. It is the simplest search, it works on every list, and it costs up to n comparisons. On a sorted list, we can stop as soon as we have gone past the key; on an unsorted list, we can bring the often-searched elements closer to the head.</p>
+      <ul class="feats">
+        <li><span><span class="k">Duration</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parts</span> 6</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 16 November</span></li>
+        <li class="ex"><span><span class="k">Homework 1</span> on the syllabus, with the Python traversals of Tutorial 1</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th>Comparisons on average</th><th>positive</th><th>negative</th></tr></thead>
+      <tbody>
+        <tr><th>unsorted list</th><td>n / 2</td><td>n</td></tr>
+        <tr><th>sorted list</th><td>n / 2</td><td>n / 2</td></tr>
+      </tbody>
+      <caption>The sheet’s table, to know by heart. In the worst case: always n. Everything is O(n).</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Course contents">
+    <div class="toc-title">Course 2 · Linear searches</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>The vocabulary</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Unsorted list</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Self-adjusting search</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Sorted list</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Complexities</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Traversals in Python (Tutorial 1)</span></a></li>
+    </ol>
+    <p class="toc-note">n is the length of the list; we count the comparisons of the searched key x with the elements.</p>
+    <div class="toc-nav"><a href="cours-1-listes.html">← Course 1: implementations</a><a href="dm1.html">Homework 1 →</a><a href="../qcm/index.html#lima">LiMa quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Course contents</summary><ol>
+      <li><a href="#s1">The vocabulary</a></li><li><a href="#s2">Unsorted list</a></li><li><a href="#s3">Self-adjusting search</a></li><li><a href="#s4">Sorted list</a></li><li><a href="#s5">Complexities</a></li><li><a href="#s6">Traversals in Python (Tutorial 1)</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">sheet, introduction · video “Searches: introduction”</span></div><h2>The vocabulary of searches</h2></div>
+      <div class="stack">
+        <div class="prose"><p>To handle data (modify it, delete it…), we first have to <b>find</b> it. Each element is represented by a <b>key</b>; we look for an element by its key, as fast as possible, whether it is present or not.</p></div>
+        <div class="box def"><span class="tag">Definitions</span>
+          <ul>
+            <li>A search is <b>associative</b> when the criterion only concerns the <b>value of the key</b> of the searched element. (Looking for “the elements present for more than six months” would not be associative.)</li>
+            <li>A search is <b>positive</b> (successful) when the searched key is <b>present</b> in the collection.</li>
+            <li>A search is <b>negative</b> (unsuccessful) when the searched key is <b>absent</b>.</li>
+          </ul>
+        </div>
+        <div class="box thm"><span class="tag">How we count</span>
+          <p>The <b>fundamental operation</b> is the <b>comparison</b> of the searched key x with a key of the list. Complexities are expressed as a function of n, the length of the list.</p>
+        </div>
+        <div class="box why"><span class="tag">Remark from the video</span>
+          <p>It is the <b>negative</b> search that should be the fastest: a user is even less willing to wait when the search fails.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">sheet § 1 · video “Unsorted lists”</span></div><h2>Linear search in an unsorted list</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Principle</span>
+          <p>We start on the first element. As long as elements remain and the current element is not x, we move on. If we have traversed the whole list, the search is negative; otherwise, we stopped on x.</p>
+        </div>
+        <div class="cols">
+          <pre class="algo"><b>function</b> rechercher(list L, element x) : boolean
+<b>variables</b>
+    integer i
+<b>begin</b>
+    i ← 1
+    <b>while</b> i &lt;= length(L) <b>do</b>
+        <b>if</b> x = nth(L, i) <b>then</b>
+            <b>return</b> true
+        <b>end if</b>
+        i ← i + 1
+    <b>end while</b>
+    <b>return</b> false
+<b>end</b></pre>
+          <pre class="algo">/* Other version */
+i ← 1
+<b>while</b> i &lt;= length(L)
+      <b>and</b> x &lt;&gt; nth(L, i) <b>do</b>
+    i ← i + 1
+<b>end while</b>
+<b>return</b> (i &lt;= length(L))</pre>
+        </div>
+        <pre class="py">
+def rechercher(L, x):
+    i = 0
+    while i &lt; len(L) and L[i] != x:
+        i += 1
+    return i &lt; len(L)
+</pre>
+        <p class="codecap">The second version in Python: indices go from 0 to <code>len(L) - 1</code>, so “i ≤ length” becomes <code>i &lt; len(L)</code>.</p>
+        <div class="box model"><span class="tag">Examples from the video <i>unsorted list of 7 elements</i></span>
+          <div class="mem-i"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+          <div class="mem"><span>12</span><span>2</span><span>31</span><span class="used">4</span><span>25</span><span>8</span><span>17</span></div>
+          <p>Search for 4: we compare with 12, 2, 31, then 4. Positive search in 4 comparisons.<span class="c">we stop as soon as we find it</span></p>
+          <p>Search for 18: we compare with the 7 elements, then leave the list. Negative search in 7 comparisons.<span class="c">negative: always n</span></p>
+        </div>
+        <div class="box thm"><span class="tag">Complexity</span>
+          <ul>
+            <li><b>Negative</b>: n comparisons, <b>in every case</b>.</li>
+            <li><b>Positive</b>: n in the worst case (x is the last one); over a large number of searches, <b>n / 2 on average</b>.</li>
+          </ul>
+          <p>The list can be implemented as an array or as a linked list: we traverse it in order, without direct access.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">sheet § 1, “Modification” · video “Unsorted lists”</span></div><h2>Self-adjusting search</h2></div>
+      <div class="stack">
+        <div class="prose"><p>For a positive search, the cost is the position of the element. We do not know in advance which elements will be requested most; so we make them <b>move towards the head as we search for them</b>. The often-searched elements end up at the beginning of the list.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Variant</th><th>For each element found…</th><th>Drawback</th><th>Contiguous / linked</th></tr></thead>
+          <tbody>
+            <tr><td><b>aggressive</b></td><td>we place it directly at the head</td><td>puts very rarely searched elements at the head</td><td>linked only: in an array, all the elements before it have to be shifted</td></tr>
+            <tr><td><b>soft</b></td><td>we move it forward by one place</td><td>very slow progress: 2,000 searches to bring the element at position 2,001 to the head</td><td>both: a simple swap of two neighbours</td></tr>
+            <tr><td><b>reasonable</b></td><td>we move it forward by a certain number of places, for example half of its distance to the head</td><td>—</td><td>both, but linked is the most interesting: a second pointer that advances half as fast gives the future position, without shifting</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Search for 4 in [12, 2, 31, 4, 25]</span>
+          <p>Aggressive: <code>[4, 12, 2, 31, 25]</code>. Soft: <code>[12, 2, 4, 31, 25]</code>.<span class="c">results obtained by running the code below</span></p>
+        </div>
+        <div class="cols">
+          <pre class="py">
+def search_aggressive(L, x):
+    for i in range(len(L)):
+        if L[i] == x:
+            for j in range(i, 0, -1):
+                L[j] = L[j - 1]   # shifts
+            L[0] = x
+            return True
+    return False
+</pre>
+          <pre class="py">
+def search_soft(L, x):
+    for i in range(len(L)):
+        if L[i] == x:
+            if i &gt; 0:             # one swap
+                L[i - 1], L[i] = L[i], L[i - 1]
+            return True
+    return False
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">To remember</span>
+          <ul>
+            <li>Self-adjusting search does <b>not apply to sorted lists</b>: it changes the order of the elements.</li>
+            <li>It improves <b>positive</b> searches. A negative search always costs n.</li>
+            <li>Conclusion of the sheet: all linear searches can be implemented in a contiguous or linked list, <b>except the aggressive one in a contiguous list</b> (costly shifts).</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">sheet § 2 · video “Sorted lists”</span></div><h2>Linear search in a sorted list</h2></div>
+      <div class="stack">
+        <div class="box meth"><span class="tag">Principle</span>
+          <p>The list is sorted in increasing order. As long as elements remain and the current element <b>has not gone past x</b>, we move on. We have found x if we have not traversed the whole list and if the element where we stopped is x.</p>
+          <p>The gain: a <b>negative</b> search stops as soon as we go past x, instead of going to the end.</p>
+        </div>
+        <div class="cols">
+          <pre class="algo">i ← 1
+<b>while</b> i &lt;= length(L)
+      <b>and</b> x &gt;= nth(L, i) <b>do</b>
+    <b>if</b> x = nth(L, i) <b>then</b>
+        <b>return</b> true
+    <b>end if</b>
+    i ← i + 1
+<b>end while</b>
+<b>return</b> false</pre>
+          <pre class="algo">/* Other version */
+i ← 1
+<b>while</b> i &lt;= length(L)
+      <b>and</b> x &gt; nth(L, i) <b>do</b>
+    i ← i + 1
+<b>end while</b>
+<b>return</b> (i &lt;= length(L)
+         <b>and</b> x = nth(L, i))</pre>
+        </div>
+        <div class="box model"><span class="tag">Example <i>sorted list of 7 elements</i></span>
+          <div class="mem"><span>−11</span><span>−2</span><span>1</span><span class="used">4</span><span>15</span><span>63</span><span>70</span></div>
+          <p>Search for 4: −11, −2, 1, then 4. Positive, 4 comparisons.</p>
+          <p>Search for 18: −11, −2, 1, 4, 15 are smaller; 63 goes past 18: we stop. Negative, 6 comparisons instead of 7.<span class="c">further on, everything is even bigger</span></p>
+        </div>
+        <div class="box thm"><span class="tag">Complexity</span>
+          <p>Positive or negative, it is the same: <b>n in the worst case</b> (x is the last one, or bigger than the last one), <b>n / 2 on average</b>. Can be implemented in a contiguous or linked list. No self-adjusting search on a sorted list.</p>
+        </div>
+        <div class="box trap"><span class="tag">Trap</span>
+          <p>The sheet’s note: the first version makes <b>2 comparisons per loop iteration</b> (x ≥ … then x = …), the second only one, plus an equality test at the end. The second one is better.</p>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">sheet, conclusion</span></div><h2>Complexities: the table to know</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Average case</th><th>positive</th><th>negative</th></tr></thead>
+          <tbody>
+            <tr><th>unsorted</th><td>n / 2</td><td>n</td></tr>
+            <tr><th>sorted</th><td>n / 2</td><td>n / 2</td></tr>
+          </tbody>
+          <caption>Assuming that, over a large number of searches, each position is equally likely to be reached. Worst case: always n.</caption>
+        </table></div>
+        <div class="box thm"><span class="tag">Linear complexity</span>
+          <p>Even if searching in a sorted list is a little more efficient, all these searches are <b>O(n)</b>. On a large number of elements, the sheet recommends more efficient searches: <b>binary search</b> (week of 23 November) and <b>linear interpolation search</b> (week of 30 November), on the Homework 2 syllabus.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Typical question</th><th>Answer</th></tr></thead>
+          <tbody>
+            <tr><td>Negative, unsorted: how many comparisons?</td><td>n, always</td></tr>
+            <tr><td>Positive, unsorted, on average?</td><td>n / 2</td></tr>
+            <tr><td>Negative, sorted, on average?</td><td>n / 2</td></tr>
+            <tr><td>The worst case of a linear search?</td><td>n (element last, absent, or bigger than the last one)</td></tr>
+            <tr><td>Which search has an average case no different from the worst case?</td><td>the negative one on an unsorted list</td></tr>
+          </tbody>
+        </table></div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">Tutorial 1, ex. 2.2, 3.1, 3.2, 3.3</span></div><h2>List traversals in Python (Tutorial 1)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The homework also covers “Tutorial: list traversals in Python”. Two forms of traversal keep coming back: the <b>full traversal</b> (<code>for</code>, we look at everything) and the <b>interrupted traversal</b> (<code>while</code> with two conditions, we stop as soon as the answer is known).</p></div>
+        <div class="box model"><span class="tag">Histogram <i>Tutorial 1, ex. 2.2</i></span>
+          <p>A list of 256 counters, one per ASCII code: <code>H[ord(c)]</code> counts the c’s. We traverse the string <b>only once</b>.</p>
+          <pre class="py">
+def histogram(s):
+    H = [0] * 256
+    for c in s:
+        H[ord(c)] += 1
+    return H
+
+def nb_different(s):
+    cpt = 0
+    for v in histogram(s):
+        if v != 0:
+            cpt += 1
+    return cpt
+
+def most_frequent(s):
+    H = histogram(s)
+    imax = 0
+    for i in range(1, 256):
+        if H[i] &gt; H[imax]:
+            imax = i
+    return chr(imax), H[imax]
+</pre>
+          <pre class="out">
+>>> nb_different("character")
+6
+>>> most_frequent("character")
+('a', 2)
+>>> most_frequent("abracadabra")
+('a', 5)
+</pre>
+        </div>
+        <div class="box model"><span class="tag">Position in a sorted list <i>Tutorial 1, ex. 3.1</i></span>
+          <p>Linear search on a sorted list (part 4), which returns the position of the first x, or −1.</p>
+          <pre class="py">
+def search_sorted(x, L):
+    i = 0
+    while i &lt; len(L) and L[i] &lt; x:
+        i += 1
+    if i &lt; len(L) and L[i] == x:
+        return i
+    return -1
+</pre>
+          <pre class="out">
+>>> search_sorted(5, [1, 3, 5, 5, 8]), search_sorted(4, [1, 3, 5, 8])
+(2, -1)
+</pre>
+        </div>
+        <div class="cols">
+          <div><pre class="py">
+def replace(L, k, new_v):
+    i = 0
+    while i &lt; len(L) and L[i][0] &lt; k:
+        i += 1
+    if i &lt; len(L) and L[i][0] == k:
+        L[i] = (k, new_v)   # tuple: we replace the pair
+</pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 3.2: <code>L[i][1] = new_v</code> raises <code>TypeError</code>, a tuple is immutable.</p></div>
+          <div><pre class="py">
+def is_sorted(L):
+    i = 1
+    while i &lt; len(L) and L[i - 1] &lt;= L[i]:
+        i += 1
+    return i &gt;= len(L)
+</pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 3.3: we stop at the first pair of neighbours in the wrong order. <code>is_sorted([])</code> and <code>is_sorted([4])</code> are <code>True</code>.</p></div>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>In <code>while i &lt; len(L) and L[i] != x</code>, the index test comes <b>first</b>: <code>and</code> stops at the first false, so <code>L[i]</code> is never read outside the list.</li>
+            <li>After the loop, we do not yet know why it stopped: we test <code>i &lt; len(L)</code> again before reading <code>L[i]</code>.</li>
+            <li>An interrupted traversal is done with <code>while</code> (or a <code>return</code> inside the <code>for</code>): a <code>for</code> that goes all the way to the end makes useless comparisons.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-2-sequentielles.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 6</span><button type="button" class="done-btn" data-done="lima:sequentielles:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>Before 9 pm: the <a href="dm1.html">Homework 1</a> page sums everything up and starts the quiz. Then, binary search (week of 23 November).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/lima.js"></script>
+<script src="../data/en/qcm/lima.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/lima.js"></script>
+</body>
+</html>

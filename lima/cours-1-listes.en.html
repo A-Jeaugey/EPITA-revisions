@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>List implementations · Algo LiMa</title>
+<meta name="description" content="Algo LiMa, course 1: implementing a list. Recursive list and iterative list in an array (static) or by linking (dynamic), operations and costs, then Python lists: indices from 0, len, append, range. On the Homework 1 syllabus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Algo LiMa · course 1: list implementations">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — course 1</span><span>Source: sheet “Lists: implementations”, Moodle videos 469, Tutorial 1 part 1</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Algo LiMa</a> · Course 1 · <a href="dm1.html">on Homework 1</a></div>
+      <h1>A list is <span class="w">an array or a chain.</span></h1>
+      <p class="lead">In TAA, the list was an abstract type: operations and axioms, with no memory. Here we really store it in memory. There are two ways: in an array (static implementation) or in records linked by pointers (dynamic implementation). The choice changes the cost of each operation. In Python the list is already provided: what remains is to use it well.</p>
+      <ul class="feats">
+        <li><span><span class="k">Duration</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parts</span> 6</span></li>
+        <li><span><span class="k">Course</span> MiMos of the week of 9 November</span></li>
+        <li class="ex"><span><span class="k">Homework 1</span> on the syllabus, in full</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th></th><th>Array (static)</th><th>Linking (dynamic)</th></tr></thead>
+      <tbody>
+        <tr><th>Recursive list</th><td>array + head index<br>everything in constant time</td><td>pointer to the head<br>everything in constant time</td></tr>
+        <tr><th>Iterative list</th><td>array + length<br>direct access, insertion with shifts</td><td>pointer to the head<br>no shift, access by following the links</td></tr>
+      </tbody>
+      <caption>The course in four boxes. The sheet says: the array is “perfectly suited” to iterative lists, linking is “well suited” to recursive lists.</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Course contents">
+    <div class="toc-title">Course 1 · Implementations</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>From abstract type to code</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Recursive list in an array</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Iterative list in an array</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Recursive linked list</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Iterative linked list</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Summary, and Python lists</span></a></li>
+    </ol>
+    <p class="toc-note">In algorithms, lists are indexed from 1; in Python, from 0.</p>
+    <div class="toc-nav"><a href="index.html">← LiMa home</a><a href="cours-2-sequentielles.html">Course 2: linear searches →</a><a href="../qcm/index.html#lima">LiMa quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Course contents</summary><ol>
+      <li><a href="#s1">From abstract type to code</a></li><li><a href="#s2">Recursive list in an array</a></li><li><a href="#s3">Iterative list in an array</a></li><li><a href="#s4">Recursive linked list</a></li><li><a href="#s5">Iterative linked list</a></li><li><a href="#s6">Summary, and Python lists</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">video “Introduction” · Tutorial 1 § 1</span></div><h2>From abstract type to memory</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The two lists of TAA are not handled in the same way:</p>
+          <ul>
+            <li>the <b>recursive list</b> is only worked on through its head: <i>emptylist</i>, <i>cons</i> (add at the head), <i>head</i> / <i>first</i>, <i>tail</i> (the rest);</li>
+            <li>the <b>iterative list</b> is worked on through positions: <i>length</i>, <i>nth(λ, k)</i>, <i>insert</i> and <i>delete</i> at the k-th position.</li>
+          </ul>
+          <p>When a language already provides a list (Caml lists, Python <code>list</code>, <code>ArrayList</code> and <code>LinkedList</code> in Java), we use it. Otherwise we have to choose a <b>memory representation</b> and write the operations ourselves. That is the subject of this course.</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Abstract type: iterative list</th><th>Python: <code>list</code> type</th></tr></thead>
+          <tbody>
+            <tr><td>λ : List</td><td><code>type(L) = list</code></td></tr>
+            <tr><td>λ ← emptylist</td><td><code>L = []</code></td></tr>
+            <tr><td>length(λ)</td><td><code>len(L)</code></td></tr>
+            <tr><td>nth(λ, k), with 1 ≤ k ≤ length(λ)</td><td><code>L[k - 1]</code>, with 0 ≤ k − 1 ≤ <code>len(L) - 1</code></td></tr>
+          </tbody>
+          <caption>Tutorial 1, header table. The tutorial writes <code>L[k]</code> and adds: “in Algo, lists are indexed from 1, in Python, from 0”.</caption>
+        </table></div>
+        <div class="box trap"><span class="tag">Homework trap no. 1</span>
+          <p>An algorithm written “for i ← 1 to length(λ)” becomes in Python <code>for i in range(len(L))</code>, which makes <code>i</code> go from 0 to <code>len(L) - 1</code>. Copying the algorithm’s bounds gives an index error or skips an element.</p>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">video “Recursive lists: implementations”</span></div><h2>Recursive list in an array</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Representation <i>static</i></span>
+          <p>A <b>record</b> that contains the array of elements and an <b>integer: the position of the head</b>. The elements are stored one after another; the head is the last one stored.</p>
+          <p>“Static”: the memory for the whole array is reserved at creation. The number of elements is therefore limited; enlarging is possible but costly (copying into a bigger array).</p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Operation</th><th>What we do (array in base 1)</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>create the empty list</td><td>head index ← 0 (in base 0: −1)</td><td>constant</td></tr>
+            <tr><td>add at the head (cons)</td><td>increment the index, then write the element at that position</td><td>constant</td></tr>
+            <tr><td>read the head</td><td>read the cell at the head position</td><td>constant</td></tr>
+            <tr><td>remove the head</td><td>check that the list is not empty (index ≠ 0), then decrement the index</td><td>constant</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">The video’s example <i>array in base 1</i></span>
+          <p>We add a, b, c, d, e: the head index is 5, the head is e.</p>
+          <div class="mem-i"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+          <div class="mem"><span class="used">a</span><span class="used">b</span><span class="used">c</span><span class="used">d</span><span class="used">e</span><span></span><span></span></div>
+          <p>We remove e: the index becomes 4, the head is d. The value e <b>stays</b> in cell 5.<span class="c">we do not erase it</span></p>
+          <div class="mem"><span class="used">a</span><span class="used">b</span><span class="used">c</span><span class="used">d</span><span class="ghost">e</span><span></span><span></span></div>
+          <p>This does not matter: we never read beyond the head, and the next addition will overwrite cell 5.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Adding: we increment <b>then</b> write. In the other order, we overwrite the current head.</li>
+            <li>Removing from an empty list (index at 0): forbidden, test for it first.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">sheet § 1 · video “Iterative lists”</span></div><h2>Iterative list in an array</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">The type <i>sheet § 1.1</i></span>
+          <p>The i-th cell of the array contains the i-th element of the list. The list is a pair ⟨Array, Integer⟩: the array and the <b>length</b>, which says which cells count.</p>
+        </div>
+        <pre class="algo">constants
+    LMax = ...
+types
+    t_vect_elts = LMax t_element
+    t_list = record
+        t_vect_elts  elts
+        integer      longueur
+    end record t_list</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Abstract type: iterative list</th><th>Implementation: <code>t_list</code></th></tr></thead>
+          <tbody>
+            <tr><td>λ ← emptylist</td><td><code>L.longueur ← 0</code></td></tr>
+            <tr><td>length(λ)</td><td><code>L.longueur</code></td></tr>
+            <tr><td>nth(λ, k)</td><td><code>L.elts[k]</code></td></tr>
+          </tbody>
+          <caption>Sheet § 1.2.1: “simple correspondences”.</caption>
+        </table></div>
+        <div class="box thm"><span class="tag">Costs <i>sheet § 1.2.2</i></span>
+          <ul>
+            <li>Access to the k-th element is <b>immediate</b>.</li>
+            <li>Inserting or deleting forces us to <b>move</b> (with a loop) all the elements from the target position to the end.</li>
+            <li>For a list of length n: at most <b>n − 1 assignments</b>. The worst case is insertion or deletion at the <b>first position</b>.</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Insert c at the 2nd position <i>video, array in base 1</i></span>
+          <div class="mem"><span class="used">a</span><span class="used">e</span><span></span><span></span></div>
+          <p>We shift e one cell to the right, then write c in cell 2, and the length goes from 2 to 3.<span class="c">shift first, from the end</span></p>
+          <div class="mem"><span class="used">a</span><span class="used">c</span><span class="used">e</span><span></span></div>
+          <p>Deleting at the 2nd position does the opposite: we shift the following elements to the left, then the length decreases by 1. Deleting the last position: we only decrease the length.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Shifting to the right starting from the beginning: each cell overwrites the next one. To insert, we shift <b>starting from the end</b>.</li>
+            <li>Inserting into a full array (length = LMax): impossible without enlarging it.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">sheet § 2 · video “Recursive lists”</span></div><h2>Recursive linked list</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Representation <i>dynamic, linked</i></span>
+          <p>Each element is in a <b>record</b> with two fields: the value and a <b>pointer</b> to the next record (null for the last one). The list is a pointer to the first record, or the <b>null</b> pointer if it is empty.</p>
+        </div>
+        <pre class="algo">types
+    t_pList = ↑ t_node
+    t_node = record
+        t_element  val
+        t_pList    suiv
+    end record t_node</pre>
+        <div class="chain"><span class="hd">L →</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>a</b><i>null</i></span></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Abstract type: recursive list</th><th>Implementation: <code>t_pList</code></th></tr></thead>
+          <tbody>
+            <tr><td>emptylist</td><td><code>null</code></td></tr>
+            <tr><td>head(λ)</td><td><code>L</code></td></tr>
+            <tr><td>tail(λ)</td><td><code>L↑.suiv</code></td></tr>
+            <tr><td>first(λ)</td><td><code>L↑.val</code></td></tr>
+            <tr><td>contents(p), next(p)</td><td><code>p↑.val</code>, <code>p↑.suiv</code></td></tr>
+          </tbody>
+          <caption>Sheet § 2.2: a position has the same type as a list; a list is the position of its first element.</caption>
+        </table></div>
+        <div class="box meth"><span class="tag">The cons operation <i>add e at the head of L</i></span>
+          <pre class="algo">allocate(new)
+new↑.val  ← e
+new↑.suiv ← L
+L ← new</pre>
+          <p>The order matters: the new record points to the old head <b>before</b> L changes.</p>
+        </div>
+        <div class="prose">
+          <p><b>Removing the head</b>: we move the head pointer to the next element, then <b>free</b> the memory of the detached record.</p>
+          <p><b>Summary of the video</b>: with the array as with linking, the operations of recursive lists take <b>constant time</b>, which does not depend on the size of the list (except when enlarging the array). Using a recursive list therefore does not change the complexity of an algorithm.</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Writing <code>L ← new</code> before <code>new↑.suiv ← L</code>: new points to itself, the list is lost.</li>
+            <li>Forgetting to free the deleted record.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">sheet, remark · video “Iterative lists”</span></div><h2>Iterative linked list</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>An iterative list can also be implemented by linking. What we gain: no more shifting of values. What we lose: <b>direct access</b>.</p>
+          <ul>
+            <li><b>nth(λ, k)</b>: from the first element, we follow <b>k − 1 links</b>. For the 4th element: 3 links.</li>
+            <li><b>Insert</b> at the k-th position: we create the record, traverse up to the previous one, the new one points to the old k-th, then the previous one points to the new one. At the first position, it is the head pointer that changes.</li>
+            <li><b>Delete</b> the k-th position: the pointer of the <b>previous</b> one takes the address of the next one, then we free the record. We therefore have to keep access to the previous one during the traversal.</li>
+            <li><b>Length</b>: we have to traverse everything, unless we store it.</li>
+          </ul>
+        </div>
+        <div class="box model"><span class="tag">Delete the 2nd position <i>video</i></span>
+          <div class="chain"><span class="hd">L →</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>a</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>null</i></span></div>
+          <p>a is between b and c: the pointer of b receives the address of c, then we free a.<span class="c">the previous one skips the element</span></p>
+          <div class="chain"><span class="hd">L →</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>null</i></span></div>
+        </div>
+        <div class="box why"><span class="tag">Improvements <i>mentioned in the video</i></span>
+          <ul>
+            <li><b>Store the length</b>: the list becomes a record ⟨head pointer, length⟩. We immediately reject an impossible operation, such as deleting the 8th element of a list of 5. The length increases by 1 at each addition and decreases by 1 at each deletion.</li>
+            <li><b>Circular list</b>: the next of the last one is the first one, and the list points to the last one: we have access to both ends.</li>
+            <li><b>Double linking</b>: each element also points to its previous one; the list keeps a head pointer, an end pointer and the length.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Part 6 <span class="ref">summary · Tutorial 1 ex. 1.1, 1.2 and 2.1</span></div><h2>Summary, and Python lists</h2></div>
+      <div class="stack">
+        <div class="tbl"><table>
+          <thead><tr><th>Iterative list of length n</th><th>Array</th><th>Linking</th></tr></thead>
+          <tbody>
+            <tr><td>access to the k-th</td><td>immediate</td><td>k − 1 links to follow</td></tr>
+            <tr><td>insert / delete</td><td>shifts: at most n − 1 assignments</td><td>no shift, but a traversal to find the position</td></tr>
+            <tr><td>length</td><td>stored</td><td>to traverse (or to store)</td></tr>
+            <tr><td>maximum size</td><td>fixed at creation (LMax)</td><td>none (allocation on demand)</td></tr>
+          </tbody>
+          <caption>Conclusion of the video: for iterative lists, neither representation has all its operations in constant time.</caption>
+        </table></div>
+        <div class="prose"><p>The Python <code>list</code> is an array that enlarges itself: <code>L[i]</code> is a direct access, <code>L.append(x)</code> adds at the end without shifting, and inserting at the beginning shifts everything. These are exactly the costs of the “array” column.</p></div>
+        <div class="cols">
+          <div><pre class="py">
+def compte(x, L):
+    cpt = 0
+    for i in range(len(L)):
+        if L[i] == x:
+            cpt += 1
+    return cpt
+</pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 1.1 (1): “for i ← 1 to length(λ)” becomes <code>range(len(L))</code>.</p></div>
+          <div><pre class="py">
+def est_present(x, L):
+    i = 0
+    while i &lt; len(L) and L[i] != x:
+        i += 1
+    return i &lt; len(L)
+</pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 1.1 (2): “return (i &lt;= length(λ))” becomes <code>i &lt; len(L)</code>.</p></div>
+        </div>
+        <pre class="out">
+>>> compte(3, [1, 3, 2, 3, 3])
+3
+>>> est_present(2, [5, 2, 7]), est_present(4, [5, 2, 7]), est_present(1, [])
+(True, False, False)
+</pre>
+        <div class="box model"><span class="tag">Delete in place <i>Tutorial 1, ex. 1.2</i></span>
+          <p>Precondition: 1 ≤ k ≤ length(λ). The axioms say: before k, nothing moves; from k on, the i-th becomes the old (i + 1)-th; the length decreases by 1. This is the deletion with shift from part 3.</p>
+          <pre class="py">
+def supprimer(L, k):          # k: algo position, from 1 to len(L)
+    if not (1 &lt;= k &lt;= len(L)):
+        raise Exception("invalid position")
+    for i in range(k - 1, len(L) - 1):
+        L[i] = L[i + 1]       # shift to the left
+    L.pop()                   # the length decreases by 1
+</pre>
+          <pre class="out">
+>>> L = [10, 20, 30, 40, 50]
+>>> supprimer(L, 2)
+>>> L
+[10, 30, 40, 50]
+</pre>
+        </div>
+        <div class="cols">
+          <div><pre class="py">
+def new_list(n, val):
+    L = []
+    for i in range(n):
+        L.append(val)
+    return L
+</pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 2.1: <code>new_list(5, 42)</code> gives <code>[42, 42, 42, 42, 42]</code>; <code>[val] * n</code> does the same thing.</p></div>
+          <div class="tbl"><table>
+            <thead><tr><th>Code</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td><code>len([3, 8, 1])</code></td><td><code>3</code></td></tr>
+              <tr><td><code>[3, 8, 1][-1]</code></td><td><code>1</code></td></tr>
+              <tr><td><code>list(range(1, 5))</code></td><td><code>[1, 2, 3, 4]</code></td></tr>
+              <tr><td><code>list(range(5, 0, -1))</code></td><td><code>[5, 4, 3, 2, 1]</code></td></tr>
+              <tr><td><code>[0] * 3</code></td><td><code>[0, 0, 0]</code></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="box trap"><span class="tag">Python traps</span>
+          <ul>
+            <li><code>M = L</code> does not copy: both names refer to the same list. After <code>M.append(4)</code>, <code>L</code> has changed too.</li>
+            <li><code>L[len(L)]</code> raises <code>IndexError</code>: the last index is <code>len(L) - 1</code>.</li>
+            <li><code>L.append(x)</code> returns <code>None</code>: <code>L = L.append(x)</code> loses the list.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-1-listes.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 6 of 6</span><button type="button" class="done-btn" data-done="lima:listes:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>The data is stored; now we have to find it again: <a href="cours-2-sequentielles.html">course 2, linear searches</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/lima.js"></script>
+<script src="../data/en/qcm/lima.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/lima.js"></script>
+</body>
+</html>
