@@ -215,7 +215,7 @@
     { id: 'phys-c2-13', topic: 'phys-forces', lvl: 2, type: 'single', q: 'Si la distance entre deux corps double, la force de gravitation entre eux est…',
       o: ['divisée par 4', 'divisée par 2', 'multipliée par 4', 'inchangée'], a: 0,
       x: '`F` = `G m_1` `m_2`/`d`² : la force varie comme 1/`d`². Distance × 2, donc `d`² × 4 et force ÷ 4.', ref: C2 + '#s4' },
-    { id: 'phys-c2-14', topic: 'phys-forces', lvl: 2, type: 'multi', q: 'Que dit le cours de la force de gravitation entre deux corps ?',
+    { id: 'phys-c2-14', topic: 'phys-forces', lvl: 2, type: 'multi', q: 'Que peut-on dire de la force de gravitation entre deux corps ?',
       o: ['elle est toujours attractive', 'sa portée est infinie', 'elle peut être répulsive, comme la force de Coulomb', 'elle ne dépend pas des masses'], a: [0, 1],
       x: 'Toujours attractive, de portée infinie, proportionnelle au produit des masses et à 1/`d`². C’est la force de Coulomb qui peut être attractive ou répulsive, car une charge peut être négative ; une masse est toujours positive.', ref: C2 + '#s4' },
     { id: 'phys-c2-15', topic: 'phys-forces', lvl: 3, type: 'single', q: 'Deux corps de masses `m_1` et `m_2` sont à la distance `d`. {u} est le vecteur unitaire dirigé du corps 1 vers le corps 2. Quelle est la force exercée par le corps 1 sur le corps 2 ?',

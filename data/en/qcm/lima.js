@@ -114,7 +114,7 @@ REV.i18n.qcm({
   'lima-c2-16': { q: 'In the worst case, how many comparisons does a linear search make, sorted or not, on n elements?',
     o: ['n', 'n / 2', 'n − 1', '2n'],
     x: 'Always n in the worst case: linear search is linear, O(n), even on a sorted list.' },
-  'lima-c2-17': { q: 'Sheet, footnote: why is the “second version” of the search on a sorted list better?',
+  'lima-c2-17': { q: 'Searching for x in a sorted list. Version 1: at each loop iteration, we test <code>x >= nth(L, i)</code> then <code>x = nth(L, i)</code>. Version 2: we move on while <code>x > nth(L, i)</code>, then test <code>x = nth(L, i)</code> only once, after the loop. Why is version 2 better?',
     o: ['it makes 1 key comparison per loop iteration instead of 2', 'it stops earlier', 'it works on unsorted lists', 'it returns the position'],
     x: 'The first version tests <code>x >= nth(L, i)</code> then <code>x = nth(L, i)</code> at each iteration; the second one only tests <code>x > nth(L, i)</code> in the loop and a single equality at the end.' },
   'lima-c2-18': { q: 'What does this code return? <code>L = [5, 1, 4]; i = 0</code> then <code>while i &lt; len(L) and L[i] != 4: i += 1</code>, and finally the value of <code>i</code>.',

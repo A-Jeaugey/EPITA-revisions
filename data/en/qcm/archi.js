@@ -259,8 +259,8 @@ REV.i18n.topics({
     /* ---------- 8. setting out operations in the exam ---------- */
     'archi-c2-42': { q: 'In [[10110|2]] × [[101|2]], you skip the row of the 0 digit. By how many places do you shift the row of the leftmost 1 of the multiplier?',
       x: 'This 1 is at position 2: its row is shifted by 2 places (1011000), even though the row of zeros is not written. The exam answer keys skip those rows; the course writes them.' },
-    'archi-c2-43': { q: 'In the exam, what do the instructions of the operations exercise say?',
-      o: ['“Show all calculations.”', '“Write down the result only (do not show any calculation).”', '“Do not write down the result in a fraction form.”', '“Answer in base 10.”'],
+    'archi-c2-43': { q: 'An exam exercise says “Perform the operations below” (additions, subtractions, multiplications, divisions in base 2, 8 or 16). What do you write on your paper?',
+      o: ['the whole worked operation: carries, borrows, partial products, successive remainders', 'the result only', 'the result converted to base 10', 'the result as a fraction'],
       x: '“Perform the operations below. Show all calculations.”: carries, borrows, partial products, successive remainders. For the conversions, on the contrary, only the result is expected.' },
     'archi-c2-44': { q: 'In a binary addition of four numbers, a column can produce a carry of [[10|2]], over two places.',
       x: '1 + 1 + 1 + 1 = 100₂: write 0, and the carry 10 spreads over the next two columns: write “10” above the next one, or 0 then 1 over the next two (Tutorial 1, exercise 3, first question).' },

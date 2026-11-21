@@ -121,7 +121,7 @@
     { id: 'lima-c2-16', topic: 'lima-seq', lvl: 2, type: 'single', q: 'Dans le pire des cas, combien de comparaisons fait une recherche séquentielle, triée ou non, sur n éléments ?',
       o: ['n', 'n / 2', 'n − 1', '2n'], a: 0,
       x: 'Toujours n dans le pire des cas : la recherche séquentielle est linéaire, en O(n), même sur une liste triée.', ref: C2 + '#s5' },
-    { id: 'lima-c2-17', topic: 'lima-seq', lvl: 3, type: 'single', q: 'Fiche, note de bas de page : pourquoi la « deuxième version » de la recherche sur liste triée est-elle meilleure ?',
+    { id: 'lima-c2-17', topic: 'lima-seq', lvl: 2, type: 'single', q: 'Recherche de x dans une liste triée. Version 1 : à chaque tour de boucle, on teste <code>x >= ième(L, i)</code> puis <code>x = ième(L, i)</code>. Version 2 : on avance tant que <code>x > ième(L, i)</code>, puis on teste une seule fois <code>x = ième(L, i)</code> après la boucle. Pourquoi la version 2 est-elle meilleure ?',
       o: ['elle fait 1 comparaison de clés par tour de boucle au lieu de 2', 'elle s’arrête plus tôt', 'elle marche sur les listes non triées', 'elle renvoie la position'], a: 0,
       x: 'La première version teste <code>x >= ième(L, i)</code> puis <code>x = ième(L, i)</code> à chaque tour ; la deuxième ne teste que <code>x > ième(L, i)</code> dans la boucle et une seule égalité à la fin.', ref: C2 + '#s5' },
     { id: 'lima-c2-18', topic: 'lima-python', lvl: 2, type: 'num', a: 2, q: 'Que renvoie ce code ? <code>L = [5, 1, 4]; i = 0</code> puis <code>while i &lt; len(L) and L[i] != 4: i += 1</code>, et enfin la valeur de <code>i</code>.',

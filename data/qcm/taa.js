@@ -299,7 +299,7 @@
     { id: 'taa-c2-07', topic: 'taa-liste-rec', lvl: 1, type: 'single', q: 'Une liste récursive est…',
       o: ['soit vide (<code>listevide</code>), soit un élément suivi d’une liste (<code>cons(e, λ)</code>)', 'un ensemble d’éléments numérotés à partir de 1', 'soit vide, soit réduite à un seul élément', 'une suite de places sans éléments'], a: 0,
       x: 'C’est une définition récursive : une liste non vide contient une liste plus petite, sa fin. Les rangs numérotés, c’est la liste itérative. Un élément seul s’écrit <code>cons(e, listevide)</code> : c’est un cas particulier de la deuxième forme.', ref: C2 + '#s2' },
-    { id: 'taa-c2-08', topic: 'taa-liste-rec', lvl: 1, type: 'single', q: 'Quelles sont les deux façons de décrire une liste dans le cours ?',
+    { id: 'taa-c2-08', topic: 'taa-liste-rec', lvl: 1, type: 'single', q: 'Quelles sont les deux façons de décrire une liste par un type abstrait ?',
       o: ['récursivement et itérativement', 'en pile et en file', 'avec ou sans places', 'triée ou non triée'], a: 0,
       x: 'Une liste se décrit soit récursivement (<code>listevide</code>, <code>cons</code>, <code>fin</code>, <code>premier</code>), soit itérativement, par le rang (<code>ième</code>, <code>longueur</code>, <code>insérer</code>, <code>supprimer</code>). Piles et files sont d’autres types.', ref: C2 + '#s8' },
     { id: 'taa-c2-09', topic: 'taa-liste-rec', lvl: 2, type: 'single', q: 'Comment lit-on le 3e élément d’une liste λ, d’abord avec la liste récursive, puis avec la liste itérative ?',

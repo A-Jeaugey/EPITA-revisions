@@ -178,7 +178,7 @@ REV.i18n.topics({
     'apis-c3-13': { q: r`What is \(K = \displaystyle\int_0^{\ln(\sqrt{3})} \frac{dt}{e^{-t} + e^{t}}\), computed by setting \(x = e^t\) (Tutorial 3 and January 2024 exam)?`,
       o: [r`\(\dfrac{\pi}{12}\)`, r`\(\dfrac{\pi}{3}\)`, r`\(\dfrac{\pi}{4}\)`, r`\(\ln(\sqrt{3})\)`],
       x: r`\(dx = e^t\,dt\), so \(dt = \frac{dx}{x}\); \(\frac{1}{e^{-t} + e^t} = \frac{x}{1 + x^2}\). \(K = \displaystyle\int_1^{\sqrt{3}} \frac{dx}{1 + x^2} = \arctan(\sqrt{3}) - \arctan(1) = \frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}\). \(\frac{\pi}{3}\) forgets the lower bound.` },
-    'apis-c3-14': { q: r`The summary sheet has an erratum reported on the Moodle. The correct statement is: if \(F\) is a primitive of \(f\), then a primitive of \((f \circ \varphi)\times\varphi'\) is:`,
+    'apis-c3-14': { q: r`If \(F\) is a primitive of \(f\), a primitive of \((f \circ \varphi)\times\varphi'\) is:`,
       o: [r`\(F \circ \varphi\)`, r`\(F \circ f\)`, r`\(F \times \varphi\)`, r`\(f \circ \varphi\)`],
       x: r`\((F \circ \varphi)' = (F' \circ \varphi) \times \varphi' = (f \circ \varphi)\times\varphi'\). The sheet wrongly writes \(F \circ f\). It is the form \(u' \times g(u)\) from course 1, seen differently.` },
 

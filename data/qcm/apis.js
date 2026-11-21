@@ -206,7 +206,7 @@
     { id: 'apis-c3-13', topic: 'apis-cdv', lvl: 3, type: 'single', q: r`Que vaut \(K = \displaystyle\int_0^{\ln(\sqrt{3})} \frac{dt}{e^{-t} + e^{t}}\), calculée en posant \(x = e^t\) (TD 3 et examen de janvier 2024) ?`,
       o: [r`\(\dfrac{\pi}{12}\)`, r`\(\dfrac{\pi}{3}\)`, r`\(\dfrac{\pi}{4}\)`, r`\(\ln(\sqrt{3})\)`], a: 0,
       x: r`\(dx = e^t\,dt\), donc \(dt = \frac{dx}{x}\) ; \(\frac{1}{e^{-t} + e^t} = \frac{x}{1 + x^2}\). \(K = \displaystyle\int_1^{\sqrt{3}} \frac{dx}{1 + x^2} = \arctan(\sqrt{3}) - \arctan(1) = \frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}\). \(\frac{\pi}{3}\) oublie la borne du bas.`, ref: C3 + '#s5' },
-    { id: 'apis-c3-14', topic: 'apis-cdv', lvl: 2, type: 'single', q: r`La fiche de synthèse a un erratum signalé sur le Moodle. L’énoncé correct est : si \(F\) est une primitive de \(f\), alors une primitive de \((f \circ \varphi)\times\varphi'\) est :`,
+    { id: 'apis-c3-14', topic: 'apis-cdv', lvl: 2, type: 'single', q: r`Si \(F\) est une primitive de \(f\), une primitive de \((f \circ \varphi)\times\varphi'\) est :`,
       o: [r`\(F \circ \varphi\)`, r`\(F \circ f\)`, r`\(F \times \varphi\)`, r`\(f \circ \varphi\)`], a: 0,
       x: r`\((F \circ \varphi)' = (F' \circ \varphi) \times \varphi' = (f \circ \varphi)\times\varphi'\). La fiche écrit \(F \circ f\) par erreur. C’est la forme \(u' \times g(u)\) du cours 1, vue autrement.`, ref: C3 + '#s5' },
 

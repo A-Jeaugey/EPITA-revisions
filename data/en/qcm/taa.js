@@ -294,7 +294,7 @@ REV.i18n.topics({
     'taa-c2-07': { q: 'A recursive list is…',
       o: ['either empty (<code>emptylist</code>), or an element followed by a list (<code>cons(e, λ)</code>)', 'a set of elements numbered from 1', 'either empty, or reduced to a single element', 'a sequence of boxes without elements'],
       x: 'It is a recursive definition: a non-empty list contains a smaller list, its tail. Numbered ranks are the iterative list. A single element is written <code>cons(e, emptylist)</code>: it is a special case of the second form.' },
-    'taa-c2-08': { q: 'What are the two ways of describing a list in the course?',
+    'taa-c2-08': { q: 'What are the two ways of describing a list as an abstract type?',
       o: ['recursively and iteratively', 'as a stack and as a queue', 'with or without boxes', 'sorted or unsorted'],
       x: 'A list is described either recursively (<code>emptylist</code>, <code>cons</code>, <code>tail</code>, <code>first</code>), or iteratively, by rank (<code>nth</code>, <code>length</code>, <code>insert</code>, <code>delete</code>). Stacks and queues are other types.' },
     'taa-c2-09': { q: 'How do you read the 3rd element of a list λ, first with the recursive list, then with the iterative list?',

@@ -141,7 +141,7 @@ REV.i18n.topics({
     'phys-c2-13': { q: 'If the distance between two bodies doubles, the gravitational force between them is…',
       o: ['divided by 4', 'divided by 2', 'multiplied by 4', 'unchanged'],
       x: '`F` = `G m_1` `m_2`/`d`²: the force varies as 1/`d`². Distance × 2, so `d`² × 4 and force ÷ 4.' },
-    'phys-c2-14': { q: 'What does the course say about the gravitational force between two bodies?',
+    'phys-c2-14': { q: 'What can be said about the gravitational force between two bodies?',
       o: ['it is always attractive', 'its range is infinite', 'it can be repulsive, like the Coulomb force', 'it does not depend on the masses'],
       x: 'Always attractive, infinite range, proportional to the product of the masses and to 1/`d`². It is the Coulomb force that can be attractive or repulsive, because a charge can be negative; a mass is always positive.' },
     'phys-c2-15': { q: 'Two bodies of masses `m_1` and `m_2` are a distance `d` apart. {u} is the unit vector pointing from body 1 to body 2. What is the force exerted by body 1 on body 2?',
