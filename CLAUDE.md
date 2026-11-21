@@ -303,6 +303,9 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
 ## Rédaction
 
 - Contenu du site : français, ton neutre et clair, tutoiement, phrases courtes, pas d’emoji.
+- Une question de QCM se suffit à elle-même : elle donne tout ce qu'il faut pour répondre en ayant compris le cours, jamais
+  « d'après la fiche / la note de bas de page / le support / la consigne de l'examen ». La source (TD, sujet, fiche) va
+  dans `x` ou entre parenthèses après des données complètes (demande de l'élève, novembre 2026).
 - Toute affirmation « ce qui tombe au partiel » doit être vérifiée dans les sujets (dates : partiel nov. 2017 =
   promo 2022, …, oct. 2024 = promo 2029).
 - Décimales à la française (2,5 V), espace avant l’unité, signe moins « − ». L’espace entre un nombre et son unité
