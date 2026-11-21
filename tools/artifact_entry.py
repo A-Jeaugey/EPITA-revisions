@@ -15,6 +15,9 @@ for l in open(os.path.join(REPO, 'index.html'), encoding='utf-8').read().split('
 open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8').write('\n'.join(lines))
 files = sorted(os.path.relpath(os.path.join(d, f), REPO) for root in ['assets', 'data', 'elec', 'qcm', 'annales', 'fiches', 'taa', 'physique', 'caml', 'archi', 'maths', 'piloter', 'boole', 'elec2', 'apis', 'lima', 'phys2']
                for d, _, fs in os.walk(os.path.join(REPO, root)) for f in fs)
+# l'aperçu est limité à 512 fichiers : les pages qui ne font que rediriger (anciens chapitres déplacés au B2) n'y vont pas
+SKIP = {'elec/cours-3-theoremes.html', 'elec/cours-3-theoremes.en.html', 'physique/cours-4-polaires.html', 'physique/cours-4-polaires.en.html'}
+files = [f for f in files if f not in SKIP]
 # la page d'accueil anglaise est une page ordinaire, publiée à son chemin
 files += sorted(f for f in os.listdir(REPO) if f.endswith('.en.html'))
 json.dump([{'path': f} for f in files], open(os.path.join(out_dir, 'files.json'), 'w'))
