@@ -3,7 +3,8 @@
    469 et 487 du Moodle, TD 0 (algo vs prog) et TD 1 (listes). Toute sortie de code est obtenue en exécutant le code
    avec Python 3 (scratchpad lima/work/ref.py).
    Périmètre du DM 1 (20-21 novembre 2026) : implémentation des listes, recherches séquentielles, parcours des listes
-   en Python. Ids « lima-cN-NN » : cours N du site (lima/cours-N-….html), dans l'ordre des parties ; les premières
+   en Python. Cours 3 (dichotomie, interpolation : fiche « Recherches : dichotomie - interpolation », vidéos 490 et
+   491, TD 1 ex. 4.1) : DM 2 (fin de la semaine du 30 novembre), vérifié avec scratchpad lima/work/ref3.py. Ids « lima-cN-NN » : cours N du site (lima/cours-N-….html), dans l'ordre des parties ; les premières
    questions d'une partie servent à sa vérification (<div data-check-ref="…#sK" data-n="3">). Code dans <code>. */
 (function () {
   var B = window.QCM_BANK = window.QCM_BANK || [];
@@ -12,7 +13,8 @@
   T['lima-python'] = 'Listes en Python';
   T['lima-seq'] = 'Recherches séquentielles';
   T['lima-auto'] = 'Recherche auto-adaptative';
-  var C1 = 'lima/cours-1-listes.html', C2 = 'lima/cours-2-sequentielles.html';
+  T['lima-dicho'] = 'Dichotomie, interpolation';
+  var C1 = 'lima/cours-1-listes.html', C2 = 'lima/cours-2-sequentielles.html', C3 = 'lima/cours-3-dichotomie.html';
   var Q = [
     /* ================================================================== cours 1 : implémentations */
     { id: 'lima-c1-01', topic: 'lima-python', lvl: 1, type: 'single', q: 'En algo, la liste est indexée à partir de 1. En Python, le premier élément de <code>L</code> est…',
@@ -135,7 +137,47 @@
       x: 'Un tuple est immuable : on remplace tout le couple, pas l’un de ses éléments.', ref: C2 + '#s6' },
     { id: 'lima-c2-22', topic: 'lima-python', lvl: 1, type: 'single', q: 'TD 1, ex. 3.3 : que doit renvoyer <code>is_sorted([])</code> ?',
       o: ['<code>True</code>', '<code>False</code>', 'une erreur', '<code>None</code>'], a: 0,
-      x: 'Une liste vide (ou à un élément) est triée : aucune paire de voisins n’est dans le mauvais ordre.', ref: C2 + '#s6' }
+      x: 'Une liste vide (ou à un élément) est triée : aucune paire de voisins n’est dans le mauvais ordre.', ref: C2 + '#s6' },
+    /* ================================================================== cours 3 : dichotomie, interpolation (DM 2) */
+    { id: 'lima-c3-01', topic: 'lima-dicho', lvl: 1, type: 'single', q: 'Quelles conditions la recherche dichotomique exige-t-elle ?',
+      o: ['une liste triée, en représentation contiguë (tableau)', 'une liste triée, en représentation chaînée', 'une liste quelconque, en tableau', 'une liste sans doublons'], a: 0,
+      x: 'Il faut pouvoir comparer x au milieu pour savoir de quel côté chercher (liste triée) et accéder directement au milieu (représentation contiguë, statique).', ref: C3 + '#s1' },
+    { id: 'lima-c3-02', topic: 'lima-dicho', lvl: 1, type: 'tf', a: false, q: 'La recherche dichotomique est intéressante sur une liste chaînée triée.',
+      x: 'Faux : atteindre le milieu d’une liste chaînée demande de suivre les liens un par un. Il faut une représentation contiguë.', ref: C3 + '#s1' },
+    { id: 'lima-c3-03', topic: 'lima-dicho', lvl: 1, type: 'num', a: 6, q: 'Dichotomie sur une liste de 11 éléments, positions 1 à 11 : g = 1, d = 11. Quelle place m examine-t-on en premier ?',
+      x: 'm = (g + d) div 2 = 12 div 2 = 6.', ref: C3 + '#s2' },
+    { id: 'lima-c3-04', topic: 'lima-dicho', lvl: 2, type: 'num', a: 3, q: 'Liste (positions 1 à 11) : 1, 3, 5, 8, 12, 16, 21, 27, 35, 46, 51. Combien de milieux la dichotomie examine-t-elle pour trouver 46 ?',
+      x: 'm = 6 (16), 46 > 16 donc g = 7 ; m = 9 (35), 46 > 35 donc g = 10 ; m = 10 (46) : trouvé. Trois milieux : 6, 9, 10.', ref: C3 + '#s2' },
+    { id: 'lima-c3-05', topic: 'lima-dicho', lvl: 2, type: 'num', a: 3, q: 'Que renvoie <code>binary_search([2, 5, 8, 12, 16], 12)</code> (version Python du cours, indices à partir de 0) ?',
+      x: 'g = 0, d = 4, m = 2 (8) : 12 > 8, g = 3 ; m = 3 (12) : trouvé, on renvoie l’indice 3.', ref: C3 + '#s2' },
+    { id: 'lima-c3-06', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Dans la version itérative, on écrit <code>d = m</code> au lieu de <code>d = m - 1</code>. Que peut-il se passer ?',
+      o: ['la boucle peut tourner sans fin', 'rien : le résultat est le même', 'la fonction renvoie toujours −1', 'une erreur d’indice'], a: 0,
+      x: 'Avec g = d = m et x &lt; L[m], on garde d = m : g, d et m ne changent plus, la boucle ne s’arrête jamais (par exemple x = 0 dans [1, 3]).', ref: C3 + '#s2' },
+    { id: 'lima-c3-07', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Quelle est la hauteur de l’arbre de décision de la dichotomie sur 11 éléments ?',
+      o: ['4', '3', '11', '6'], a: 0,
+      x: 'La hauteur est ⌈log₂(n)⌉ : 2³ = 8 &lt; 11 ≤ 16 = 2⁴, donc 4.', ref: C3 + '#s3' },
+    { id: 'lima-c3-08', topic: 'lima-dicho', lvl: 1, type: 'single', q: 'Quelle est la complexité de la recherche dichotomique sur n éléments ?',
+      o: ['logarithmique, en log₂(n)', 'linéaire, en n', 'en n / 2', 'constante'], a: 0,
+      x: 'Chaque comparaison au milieu élimine la moitié de la liste : au plus ⌈log₂(n)⌉ niveaux dans l’arbre de décision, 2 comparaisons par niveau.', ref: C3 + '#s3' },
+    { id: 'lima-c3-09', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Sur une liste triée d’un million d’éléments, combien de milieux la dichotomie examine-t-elle au pire ?',
+      o: ['environ 20', 'environ 1 000', 'environ 500 000', 'environ 4'], a: 0,
+      x: '2²⁰ ≈ 1 000 000 : une vingtaine de milieux. Environ 4, c’est l’ordre de grandeur de l’interpolation sur des clés uniformes.', ref: C3 + '#s3' },
+    { id: 'lima-c3-10', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Avec <code>L = [1, 2, 2, 2, 5, 7]</code>, que renvoient <code>binary_search(L, 2)</code> puis <code>first_occurrence(L, 2)</code> ?',
+      o: ['2 puis 1', '1 puis 1', '2 puis 2', '3 puis 1'], a: 0,
+      x: 'La dichotomie tombe sur le premier milieu, m = (0 + 5) // 2 = 2, qui contient 2. La recherche de la première occurrence continue à gauche et renvoie 1.', ref: C3 + '#s4' },
+    { id: 'lima-c3-11', topic: 'lima-dicho', lvl: 3, type: 'single', q: 'Dans la recherche de la première occurrence, pourquoi écrit-on <code>d = m</code> (et non <code>m - 1</code>) quand <code>x &lt;= L[m]</code> ?',
+      o: ['m peut être la première occurrence : il ne faut pas l’exclure', 'pour aller plus vite', 'parce que la liste est chaînée', 'pour éviter une division par zéro'], a: 0,
+      x: 'Si L[m] = x, la première occurrence est en m ou à sa gauche. La boucle tourne tant que g &lt; d et s’arrête quand g = d ; on vérifie alors que la case contient x.', ref: C3 + '#s4' },
+    { id: 'lima-c3-12', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Dans la recherche par interpolation, quelle place p examine-t-on entre g et d ?',
+      o: ['g + (x − ième(L, g)) × (d − g) div (ième(L, d) − ième(L, g))', '(g + d) div 2', 'g + (d − g) div 2', 'x div (d − g)'], a: 0,
+      x: 'On suppose les valeurs réparties linéairement entre ième(L, g) et ième(L, d) et on vise la place probable de x (fiche § 2).', ref: C3 + '#s5' },
+    { id: 'lima-c3-13', topic: 'lima-dicho', lvl: 2, type: 'num', a: 13, q: 'Liste de 20 clés 10, 20, …, 200 (positions 1 à 20). On cherche 130 par interpolation : quelle place p examine-t-on en premier ?',
+      x: 'p = 1 + (130 − 10) × (20 − 1) div (200 − 10) = 1 + 2280 div 190 = 1 + 12 = 13. La case 13 contient 130 : trouvé du premier coup (la dichotomie examine 10, 15, 12 puis 13).', ref: C3 + '#s5' },
+    { id: 'lima-c3-14', topic: 'lima-dicho', lvl: 2, type: 'single', q: 'Quelle est la complexité de la recherche par interpolation quand les clés sont réparties uniformément ?',
+      o: ['log₂(log₂(n))', 'log₂(n)', 'n / 2', 'n'], a: 0,
+      x: 'Fiche : log₂(log₂(n)) si la distribution est uniforme. Il faut cependant une liste très grande pour que la différence avec log₂(n) compense le calcul de p.', ref: C3 + '#s5' },
+    { id: 'lima-c3-15', topic: 'lima-dicho', lvl: 2, type: 'tf', a: false, q: 'La recherche par interpolation s’applique à n’importe quelles clés comparables, comme la dichotomie.',
+      x: 'Faux : les clés entrent dans le calcul de p, elles doivent être numériques (ou numérisables rapidement). La dichotomie, elle, n’a besoin que de comparer.', ref: C3 + '#s5' }
   ];
   Q.forEach(function (q) { q.s = 'lima'; });
   Array.prototype.push.apply(B, Q);

@@ -264,6 +264,23 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   **À faire quand les MiMos des semaines du 23 et du 30 novembre sortent** : relire les cours 5 à 7 contre les vidéos et les
   exercices types (seule la fiche et un exercice type étaient publiés), ajouter ce qui manque ; date de l'examen final dans
   `OFFICIAL.apis` une fois le contrôle passé.
+- **Algo · LiMa** (Listes et matrices, en Python ; id `lima`, dossier `lima/`, thème `lima.css` : même gabarit à plat que
+  `maths.css`, accent bleu Python `#2B5B84`, contre-accent orange, Sora + Public Sans + JetBrains Mono sans ligatures ;
+  coloration Python `assets/js/lima.js` : `<pre class="py">` numéroté, `data-hl`, `<pre class="out">` pour `>>>`,
+  `<pre class="algo">` pseudo-code, cases mémoire `.mem` / `.mem-i`, maillons `.chain`). Évaluation : DM (tests Moodle notés,
+  un essai, chronométrés) 20 %, examen écrit de fin de B2 80 %. DM 1 : 20-21 novembre 2026 (24 min ; implémentations,
+  recherches séquentielles, parcours Python) ; DM 2 : fin de la semaine du 30 novembre (+ dichotomie et interpolation).
+  Cours `lima/cours-1-listes` (6 parties), `-2-sequentielles` (6), `-3-dichotomie` (5) (`data-done="lima:<chapitre>:sN"`,
+  chapitres listes, sequentielles, dichotomie ; `maths.js` fait les tuiles, le sommaire et les vérifications) ; `dm1` (page du
+  DM 1, sert de fiche) ; `index` (échéances, chapitres, journal du Moodle). QCM `data/qcm/lima.js` (`lima-cN-NN`, notions
+  `lima-implem`, `-python`, `-seq`, `-auto`, `-dicho`). **Tout code Python affiché est exécuté** : chaque ligne `>>>` des pages
+  est rejouée et comparée à la sortie affichée. Pages anglaises : identifiants anglais (`length`, `next`, `count`,
+  `is_present`, `delete`, `search`, `left` / `right` / `mid`), pas de nom de champ français. Sources : fiches de N. Bouquet
+  (listes, séquentielles, dichotomie-interpolation), vidéos du Moodle, TD 0 (algo vs prog) et TD 1 (listes) sans corrigé.
+  Points vérifiés : la vidéo de dichotomie ne montre que 4 cases de sa liste de 11 (la liste du site est complétée de façon
+  cohérente) ; plan de la fiche de cours : listes, recherches, tris, diviser pour régner, matrices, glouton / programmation
+  dynamique / force brute. **À faire** : exercices des TD 0 et 1 (tris par sélection, insertion, bulles, fusion, ex. 4.1 et
+  4.2) dans une page d'entraînement ; tris puis matrices quand les MiMos sortent ; date du DM 2 dans `OFFICIAL.lima`.
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone

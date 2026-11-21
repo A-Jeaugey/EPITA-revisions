@@ -142,13 +142,13 @@ types
     t_vect_elts = LMax t_element
     t_list = record
         t_vect_elts  elts
-        integer      longueur
+        integer      length
     end record t_list</pre>
         <div class="tbl"><table>
           <thead><tr><th>Abstract type: iterative list</th><th>Implementation: <code>t_list</code></th></tr></thead>
           <tbody>
-            <tr><td>λ ← emptylist</td><td><code>L.longueur ← 0</code></td></tr>
-            <tr><td>length(λ)</td><td><code>L.longueur</code></td></tr>
+            <tr><td>λ ← emptylist</td><td><code>L.length ← 0</code></td></tr>
+            <tr><td>length(λ)</td><td><code>L.length</code></td></tr>
             <tr><td>nth(λ, k)</td><td><code>L.elts[k]</code></td></tr>
           </tbody>
           <caption>Sheet § 1.2.1: “simple correspondences”.</caption>
@@ -188,7 +188,7 @@ types
     t_pList = ↑ t_node
     t_node = record
         t_element  val
-        t_pList    suiv
+        t_pList    next
     end record t_node</pre>
         <div class="chain"><span class="hd">L →</span><span class="nd"><b>e</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>d</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>c</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>b</b><i>•</i></span><span class="ar">→</span><span class="nd"><b>a</b><i>null</i></span></div>
         <div class="tbl"><table>
@@ -196,16 +196,16 @@ types
           <tbody>
             <tr><td>emptylist</td><td><code>null</code></td></tr>
             <tr><td>head(λ)</td><td><code>L</code></td></tr>
-            <tr><td>tail(λ)</td><td><code>L↑.suiv</code></td></tr>
+            <tr><td>tail(λ)</td><td><code>L↑.next</code></td></tr>
             <tr><td>first(λ)</td><td><code>L↑.val</code></td></tr>
-            <tr><td>contents(p), next(p)</td><td><code>p↑.val</code>, <code>p↑.suiv</code></td></tr>
+            <tr><td>contents(p), next(p)</td><td><code>p↑.val</code>, <code>p↑.next</code></td></tr>
           </tbody>
           <caption>Sheet § 2.2: a position has the same type as a list; a list is the position of its first element.</caption>
         </table></div>
         <div class="box meth"><span class="tag">The cons operation <i>add e at the head of L</i></span>
           <pre class="algo">allocate(new)
 new↑.val  ← e
-new↑.suiv ← L
+new↑.next ← L
 L ← new</pre>
           <p>The order matters: the new record points to the old head <b>before</b> L changes.</p>
         </div>
@@ -215,7 +215,7 @@ L ← new</pre>
         </div>
         <div class="box trap"><span class="tag">Traps</span>
           <ul>
-            <li>Writing <code>L ← new</code> before <code>new↑.suiv ← L</code>: new points to itself, the list is lost.</li>
+            <li>Writing <code>L ← new</code> before <code>new↑.next ← L</code>: new points to itself, the list is lost.</li>
             <li>Forgetting to free the deleted record.</li>
           </ul>
         </div>
@@ -271,7 +271,7 @@ L ← new</pre>
         <div class="prose"><p>The Python <code>list</code> is an array that enlarges itself: <code>L[i]</code> is a direct access, <code>L.append(x)</code> adds at the end without shifting, and inserting at the beginning shifts everything. These are exactly the costs of the “array” column.</p></div>
         <div class="cols">
           <div><pre class="py">
-def compte(x, L):
+def count(x, L):
     cpt = 0
     for i in range(len(L)):
         if L[i] == x:
@@ -279,7 +279,7 @@ def compte(x, L):
     return cpt
 </pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 1.1 (1): “for i ← 1 to length(λ)” becomes <code>range(len(L))</code>.</p></div>
           <div><pre class="py">
-def est_present(x, L):
+def is_present(x, L):
     i = 0
     while i &lt; len(L) and L[i] != x:
         i += 1
@@ -287,15 +287,15 @@ def est_present(x, L):
 </pre><p class="codecap" style="margin-top:.4rem">Tutorial 1, ex. 1.1 (2): “return (i &lt;= length(λ))” becomes <code>i &lt; len(L)</code>.</p></div>
         </div>
         <pre class="out">
->>> compte(3, [1, 3, 2, 3, 3])
+>>> count(3, [1, 3, 2, 3, 3])
 3
->>> est_present(2, [5, 2, 7]), est_present(4, [5, 2, 7]), est_present(1, [])
+>>> is_present(2, [5, 2, 7]), is_present(4, [5, 2, 7]), is_present(1, [])
 (True, False, False)
 </pre>
         <div class="box model"><span class="tag">Delete in place <i>Tutorial 1, ex. 1.2</i></span>
           <p>Precondition: 1 ≤ k ≤ length(λ). The axioms say: before k, nothing moves; from k on, the i-th becomes the old (i + 1)-th; the length decreases by 1. This is the deletion with shift from part 3.</p>
           <pre class="py">
-def supprimer(L, k):          # k: algo position, from 1 to len(L)
+def delete(L, k):          # k: algo position, from 1 to len(L)
     if not (1 &lt;= k &lt;= len(L)):
         raise Exception("invalid position")
     for i in range(k - 1, len(L) - 1):
@@ -304,7 +304,7 @@ def supprimer(L, k):          # k: algo position, from 1 to len(L)
 </pre>
           <pre class="out">
 >>> L = [10, 20, 30, 40, 50]
->>> supprimer(L, 2)
+>>> delete(L, 2)
 >>> L
 [10, 30, 40, 50]
 </pre>

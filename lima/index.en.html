@@ -63,8 +63,8 @@ a.stop:hover{border-color:var(--accent)}
       <h1>Lists and matrices, <span class="w">in Python.</span></h1>
       <p class="lead">The sequel to TAA: lists stored in memory, then the algorithms that traverse, search and sort them, in Python. The course fills up at the pace of the Moodle MiMos: each week brings a chapter.</p>
       <ul class="feats">
-        <li><span><span class="k">Courses</span> 2 published, in 12 parts</span></li>
-        <li><span><span class="k">QCM</span> <span id="nQ0">42 questions</span></span></li>
+        <li><span><span class="k">Courses</span> 3 published, in 17 parts</span></li>
+        <li><span><span class="k">QCM</span> <span id="nQ0">57 questions</span></span></li>
         <li><span><span class="k">Prerequisites</span> TAA (lists), Caml, PET</span></li>
         <li class="ex"><span><span class="k">Grading</span> homework 20%, exam 80%</span></li>
       </ul>
@@ -74,9 +74,9 @@ a.stop:hover{border-color:var(--accent)}
       <div class="dl-b">
         <h2 id="dl-h">Homework 1: tonight, 9 pm</h2>
         <div class="slot"><span class="h">21 Nov.</span><b>Homework 1 · 24 min</b><p>List implementations, linear searches, list traversals in Python.</p></div>
-        <div class="slot"><span class="h">≈ 5 Dec.</span><b>Homework 2</b><p>The same syllabus, plus binary search and interpolation search.</p></div>
+        <div class="slot"><span class="h">≈ 5 Dec.</span><b>Homework 2</b><p>The same syllabus, plus binary search and interpolation search (course 3).</p></div>
         <div class="slot"><span class="h">End of term 2</span><b>Written exam</b><p>The whole course and all the tutorials.</p></div>
-        <div class="row"><a class="btn primary" href="dm1.html">Prepare for Homework 1</a><a class="btn" href="../qcm/index.html#lima">QCM</a></div>
+        <div class="row"><a class="btn primary" id="dl-btn" href="dm1.html">Prepare for Homework 1</a><a class="btn" href="../qcm/index.html#lima">QCM</a></div>
       </div>
     </aside>
   </div>
@@ -87,10 +87,8 @@ a.stop:hover{border-color:var(--accent)}
     <div class="sec-title"><div><div class="eyebrow">Published courses</div><h2 id="t-c">The chapters</h2></div><p>Each part ends with a few questions. Mark it as understood: your progress is shown here.</p></div>
     <div class="cards" id="path"></div>
     <div class="cards">
-      <a class="stop key" href="dm1.html"><div class="k">Homework 1 · tonight</div><h3>The whole syllabus on one page</h3><p>The essentials of the implementations, linear searches and Python traversals, and six traps.</p></a>
+      <a class="stop key" href="dm1.html"><div class="k">Homework 1 · 21 November</div><h3>The whole syllabus on one page</h3><p>The essentials of the implementations, linear searches and Python traversals, and six traps.</p></a>
       <a class="stop" href="../qcm/index.html#lima"><div class="k">QCM</div><h3>Course and code questions</h3><p id="nQ">Spaced repetition: the questions you miss come back.</p></a>
-      <div class="stop soon"><div class="k">Week of 23 November</div><h3>Binary search</h3><p>Sorted list in an array, cut it in half: log₂(n) comparisons. In Homework 2.</p></div>
-      <div class="stop soon"><div class="k">Week of 30 November</div><h3>Linear interpolation search</h3><p>Estimate the likely position of x: log₂(log₂ n) if the keys are well spread. In Homework 2.</p></div>
       <div class="stop soon"><div class="k">Later</div><h3>Sorts, matrices</h3><p>Insertion, selection, bubble, merge; lists of lists, traversals, maximum path. From the Moodle course sheet.</p></div>
     </div>
   </section>
@@ -102,7 +100,7 @@ a.stop:hover{border-color:var(--accent)}
       <li><span class="d">9–15 November</span><p><b>List implementations</b> (3 videos, summary sheet). → <a href="cours-1-listes.html">course 1</a>.</p></li>
       <li><span class="d">13 November</span><p>Announcement of <b>Homework 1</b>. → <a href="dm1.html">Homework 1 page</a>.</p></li>
       <li><span class="d">16–22 November</span><p><b>Linear searches</b> (3 videos, sheet) and <b>Tutorial 1 lists</b>. → <a href="cours-2-sequentielles.html">course 2</a>.</p></li>
-      <li><span class="d">Already online</span><p>Sheet “Binary and interpolation searches” and videos for the weeks of 23 and 30 November: chapter coming to the site, after Homework 1.</p></li>
+      <li><span class="d">23 Nov. – 6 Dec.</span><p>Sheet “Searches: binary search – interpolation” and videos <b>Binary search</b> and <b>Linear interpolation search</b>, published early. → <a href="cours-3-dichotomie.html">course 3</a>.</p></li>
     </ul>
   </section>
 
@@ -123,14 +121,21 @@ a.stop:hover{border-color:var(--accent)}
 (function () {
   var R = window.REV, s = R.subject('lima');
   var DESC = ['Recursive or iterative list, in an array or linked: representation, operations, costs. Then Python lists.',
-    'Vocabulary, unsorted list, self-adjusting search, sorted list, complexities, Python traversals from Tutorial 1.'];
+    'Vocabulary, unsorted list, self-adjusting search, sorted list, complexities, Python traversals from Tutorial 1.',
+    'Sorted list in an array: cut it in half, log₂(n). Decision tree, first occurrence, interpolation in log₂(log₂ n).'];
+  var DM = ['Homework 1', 'Homework 1', 'Homework 2'];
   function paint() {
     document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
       var done = Math.min(c.sections, R.progress.chapterDone('lima', c.id));
-      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Course ' + (i + 1) + ' · Homework 1</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parts understood</div></a>';
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Course ' + (i + 1) + ' · ' + (DM[i] || 'exam') + '</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parts understood</div></a>';
     }).join('');
     var bank = R.quiz.bank().filter(function (q) { return q.s === 'lima'; }), st = R.qcm.stats('lima', bank);
     if (bank.length) { document.getElementById('nQ').textContent = bank.length + ' questions, ' + st.due + ' to review today.'; document.getElementById('nQ0').textContent = bank.length + ' questions'; }
+  }
+  var dm = document.getElementById('dl-h');
+  if (Date.now() > Date.UTC(2026, 10, 21, 20, 0, 0)) {
+    dm.textContent = 'Next: Homework 2';
+    var b = document.getElementById('dl-btn'); b.textContent = 'Course 3: binary search'; b.setAttribute('href', R.url('lima/cours-3-dichotomie.html'));
   }
   paint(); R.store.on(paint);
 })();

@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binary and interpolation search · Algo LiMa</title>
+<meta name="description" content="Algo LiMa, course 3: binary search (principle, recursive and iterative versions, Python, decision tree, logarithmic complexity, first occurrence) and linear interpolation search (formula for the likely position, log log complexity, limits). In Homework 2.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500..800&family=Public+Sans:ital,wght@0,400..800;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/lima.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Algo LiMa · course 3: binary and interpolation search">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Algo · LiMa</b> — course 3</span><span>Source: sheet “Searches: binary search – interpolation”, Moodle videos 490 and 491, Tutorial 1 ex. 4.1</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Algo LiMa</a> · Course 3 · in Homework 2</div>
+      <h1>Cut the list in half, <span class="w">then in half again.</span></h1>
+      <p class="lead">On a sorted list stored in an array, we can look straight at the middle: if x is not there, we know which side to search, and half of the list disappears with each comparison. That is binary search, in log₂(n). Interpolation does better when the keys are well spread: it aims at the likely position of x, the way you open a dictionary near the start to look up “aardvark”.</p>
+      <ul class="feats">
+        <li><span><span class="k">Time</span> ≈ 35 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Course</span> MiMos of the weeks of 23 and 30 November</span></li>
+        <li class="ex"><span><span class="k">Homework 2</span> in the syllabus (end of the week of 30 November)</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th>n elements</th><th>linear</th><th>binary</th><th>interpolation</th></tr></thead>
+      <tbody>
+        <tr><td>1,000</td><td>1,000</td><td>≈ 10</td><td>≈ 3</td></tr>
+        <tr><td>1,000,000</td><td>1,000,000</td><td>≈ 20</td><td>≈ 4</td></tr>
+        <tr><td>10⁹</td><td>10⁹</td><td>≈ 30</td><td>≈ 5</td></tr>
+      </tbody>
+      <caption>Orders of magnitude of the number of steps in the worst case: n, log₂(n), log₂(log₂(n)). Interpolation assumes numeric keys spread uniformly.</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Course contents">
+    <div class="toc-title">Course 3 · Binary search, interpolation</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>The principle</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>The algorithm, in Python</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Decision tree, complexity</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>The first occurrence</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Linear interpolation</span></a></li>
+    </ol>
+    <p class="toc-note">Algorithm positions run from 1 to n in the examples; in Python, indices run from 0 to n − 1.</p>
+    <div class="toc-nav"><a href="cours-2-sequentielles.html">← Course 2: linear searches</a><a href="index.html">LiMa home</a><a href="../qcm/index.html#lima">LiMa quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Course contents</summary><ol>
+      <li><a href="#s1">The principle</a></li><li><a href="#s2">The algorithm, in Python</a></li><li><a href="#s3">Decision tree, complexity</a></li><li><a href="#s4">The first occurrence</a></li><li><a href="#s5">Linear interpolation</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">sheet § 1 · video “Binary search”</span></div><h2>The principle: divide and conquer</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Two conditions</span>
+          <ul>
+            <li>The list must be <b>sorted</b>.</li>
+            <li>It must use the <b>contiguous</b> representation (static, an array): we can reach any position directly. On a linked list, reaching the middle would require a traversal: binary search is <b>not applicable</b>.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Principle</span>
+          <p>Let mid be the middle position of the list.</p>
+          <ul>
+            <li>If x = nth(L, mid): the search is <b>positive</b>.</li>
+            <li>If x &lt; nth(L, mid): we carry on in the <b>lower half</b> (to the left of mid).</li>
+            <li>If x &gt; nth(L, mid): we carry on in the <b>upper half</b> (to the right of mid).</li>
+          </ul>
+          <p>If we reach an empty sublist, the search is <b>negative</b>.</p>
+        </div>
+        <div data-check-ref="lima/cours-3-dichotomie.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="lima:dichotomie:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">sheet § 1, “The algorithm” · Tutorial 1 ex. 4.1</span></div><h2>The algorithm: recursive, iterative, Python</h2></div>
+      <div class="stack">
+        <div class="prose"><p>We work between two bounds, left and right. Called with 1 and length(L), the function returns the <b>position</b> of x if the search is positive, <b>0</b> otherwise.</p></div>
+        <div class="cols">
+          <pre class="algo"><b>function</b> binary_search(list L, element x,
+                       integer left, right) : integer
+<b>begin</b>
+  <b>if</b> left &gt; right <b>then</b>
+    <b>return</b> 0
+  <b>else</b>
+    mid ← (left + right) div 2
+    <b>if</b> x = nth(L, mid) <b>then</b>
+      <b>return</b> mid
+    <b>else if</b> x &lt; nth(L, mid) <b>then</b>
+      <b>return</b> binary_search(L, x, left, mid-1)
+    <b>else</b>
+      <b>return</b> binary_search(L, x, mid+1, right)
+    <b>end if</b>
+  <b>end if</b>
+<b>end</b></pre>
+          <pre class="algo">/* iterative version */
+left ← 1
+right ← length(L)
+<b>while</b> left &lt;= right <b>do</b>
+  mid ← (left + right) div 2
+  <b>if</b> x = nth(L, mid) <b>then</b>
+    <b>return</b> mid
+  <b>else if</b> x &lt; nth(L, mid) <b>then</b>
+    right ← mid - 1
+  <b>else</b>
+    left ← mid + 1
+  <b>end if</b>
+<b>end while</b>
+<b>return</b> 0</pre>
+        </div>
+        <pre class="py">
+def binary_search(L, x):
+    left, right = 0, len(L) - 1
+    while left &lt;= right:
+        mid = (left + right) // 2
+        if L[mid] == x:
+            return mid
+        elif x &lt; L[mid]:
+            right = mid - 1
+        else:
+            left = mid + 1
+    return -1
+</pre>
+        <p class="codecap">In Python, indices start at 0: “absent” can no longer be 0, so we return −1. <code>//</code> is integer division (div).</p>
+        <div class="box model"><span class="tag">The two examples from the video <i>11 elements, positions 1 to 11</i></span>
+          <div class="mem-i"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span></div>
+          <div class="mem"><span>1</span><span>3</span><span>5</span><span>8</span><span>12</span><span class="used">16</span><span>21</span><span>27</span><span>35</span><span>46</span><span>51</span></div>
+          <p>Search for 46: left = 1, right = 11, mid = 6 (16); 46 &gt; 16, left = 7, mid = 9 (35); 46 &gt; 35, left = 10, mid = 10: found, we return 10.<span class="c">3 middles examined</span></p>
+          <p>Search for 7: mid = 6 (16), 7 &lt; 16, right = 5; mid = 3 (5), 7 &gt; 5, left = 4; mid = 4 (8), 7 &lt; 8, right = 3. The bounds cross (left = 4 &gt; right = 3): we return 0.<span class="c">negative</span></p>
+          <p class="muted" style="font-size:.9rem">The video only shows cells 3, 6, 9 and 10 (5, 16, 35, 46); the other values are chosen to be consistent with its two examples.</p>
+        </div>
+        <div class="box why"><span class="tag">Recursive or iterative?</span>
+          <p>The recursive version is <b>tail-recursive</b>: nothing is left to do when the calls return. Turning it into a loop is immediate: the stopping condition becomes the <i>while</i> condition, and the calls become updates of left or right. The complexity is the same; the iterative version only saves machine time (and many compilers already run a tail recursion as a loop).</p>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Forgetting the <b>−1</b> or the <b>+1</b>: with <code>right = mid</code> instead of <code>right = mid - 1</code>, the loop may never end.</li>
+            <li>The condition is <code>left &lt;= right</code> (a sublist of one element still exists when left = right).</li>
+            <li>The sheet also writes mid ← left + (right − left) div 2: same result, without overflowing the integer range in languages where that can happen.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-3-dichotomie.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="lima:dichotomie:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">sheet, “Decision tree and complexity”</span></div><h2>The decision tree, the complexity</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>The <b>decision tree</b> represents every possible run on a list of n elements. Each internal node holds the interval [left, right] and the middle index; we go left if x is smaller, right if it is larger. The leaves are the cases where the bounds cross: negative search.</p>
+          <p>Read in the in-order of the tree, the middles give every position 1, 2, …, n: no element can escape the search.</p>
+        </div>
+        <div class="box thm"><span class="tag">Complexity <i>sheet</i></span>
+          <ul>
+            <li>Each internal node costs <b>2 comparisons</b> (x = … ? then x &lt; … ?).</li>
+            <li>Negative search: <b>2h + 1</b> comparisons, h being the depth of the node where we stop.</li>
+            <li>Positive search: <b>2(H + 1)</b> comparisons at worst, H being the height of the tree.</li>
+            <li>The tree is balanced: its height is <b>⌈log₂(n)⌉</b>. The complexity is <b>logarithmic</b>, in every case.</li>
+          </ul>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>n</th><th>⌈log₂(n)⌉</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>11</td><td>4</td><td>the video: log₂(16) = 4, 16 being the power of 2 above 11</td></tr>
+            <tr><td>1,000</td><td>10</td><td>about ten middles instead of 1,000 comparisons</td></tr>
+            <tr><td>1,000,000</td><td>20</td><td>doubling n adds only one step</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Remember</span>
+          <p>Linear search: O(n). Binary search: O(log₂(n)). But binary search requires a <b>sorted</b>, <b>contiguous</b> list.</p>
+        </div>
+        <div data-check-ref="lima/cours-3-dichotomie.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="lima:dichotomie:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">sheet, “Variant: searching for the first occurrence”</span></div><h2>Finding the first occurrence</h2></div>
+      <div class="stack">
+        <div class="prose"><p>If x appears several times, binary search stops on one of them, not necessarily the first. For the first one: when x ≤ nth(L, mid), instead of stopping, we <b>carry on to the left while keeping mid</b> (right ← mid). We stop when left = right.</p></div>
+        <div class="cols">
+          <pre class="algo"><b>function</b> binary_search_first(list L,
+          element x, integer left, right) : integer
+/* list not empty at the start */
+mid ← (left + right) div 2
+<b>while</b> left &lt; right <b>do</b>
+  <b>if</b> x &lt;= nth(L, mid) <b>then</b>
+    right ← mid
+  <b>else</b>
+    left ← mid + 1
+  <b>end if</b>
+  mid ← (left + right) div 2
+<b>end while</b>
+<b>if</b> nth(L, left) = x <b>then</b>
+  <b>return</b> mid
+<b>else</b>
+  <b>return</b> 0
+<b>end if</b></pre>
+          <div><pre class="py">
+def first_occurrence(L, x):    # L not empty
+    left, right = 0, len(L) - 1
+    while left &lt; right:
+        mid = (left + right) // 2
+        if x &lt;= L[mid]:
+            right = mid
+        else:
+            left = mid + 1
+    if L[left] == x:
+        return left
+    return -1
+</pre>
+          <pre class="out" style="margin-top:.6rem">
+>>> L = [1, 2, 2, 2, 5, 7]
+>>> binary_search(L, 2), first_occurrence(L, 2)
+(2, 1)
+</pre></div>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The loop is <code>left &lt; right</code> (not ≤) and we write <code>right = mid</code> (not mid − 1): mid may be the first occurrence, it must not be excluded.</li>
+            <li>On exit, left = right = mid: we check that the cell really contains x.</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-3-dichotomie.html#s4" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="lima:dichotomie:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">sheet § 2 · video “Linear interpolation search”</span></div><h2>Linear interpolation search</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Same principle as binary search, same conditions (<b>sorted</b>, <b>contiguous</b> list). Only the choice of the examined position changes: instead of the middle, we estimate the <b>likely position</b> of x, assuming the values are spread linearly between nth(L, left) and nth(L, right) (intercept theorem).</p></div>
+        <div class="box thm"><span class="tag">The formula <i>sheet § 2</i></span>
+          <div class="fm">\[\text{slope} = \frac{\text{right} - \text{left}}{\text{nth}(L, \text{right}) - \text{nth}(L, \text{left})}\]</div>
+          <div class="fm">\[p = \text{left} + \big(x - \text{nth}(L, \text{left})\big) \times \text{slope}\]</div>
+          <p>In the binary search algorithm, we replace <code>mid ← (left + right) div 2</code> with</p>
+          <pre class="algo">p ← left + (x - nth(L, left)) * (right - left)
+        div (nth(L, right) - nth(L, left))</pre>
+          <p>when left &lt; right.</p>
+        </div>
+        <div class="box model"><span class="tag">Example <i>20 regular keys: 10, 20, …, 200 (positions 1 to 20)</i></span>
+          <p>Search for 130: p = 1 + (130 − 10) × (20 − 1) div (200 − 10) = 1 + 120 × 19 div 190 = 1 + 12 = 13. Cell 13 contains 130: found at the first try.<span class="c">binary search examines 10, 15, 12, then 13</span></p>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th></th><th>Binary search</th><th>Interpolation</th></tr></thead>
+          <tbody>
+            <tr><td>examined position</td><td>the middle (left + right) div 2</td><td>the likely position, computed from the keys</td></tr>
+            <tr><td>complexity</td><td>log₂(n)</td><td>log₂(log₂(n)) if the keys are spread uniformly</td></tr>
+            <tr><td>keys</td><td>only comparable</td><td>numeric (or quickly made numeric): they are used in the computation</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box trap"><span class="tag">Limits <i>sheet</i></span>
+          <ul>
+            <li>We need a good interpolation function: ideally, the keys are spread uniformly.</li>
+            <li>Computing p costs more than a middle: a loss of time that is not always negligible.</li>
+            <li>The list has to be <b>very large</b> for log₂(log₂(n)) to be really smaller than log₂(n).</li>
+          </ul>
+        </div>
+        <div data-check-ref="lima/cours-3-dichotomie.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="lima:dichotomie:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>The Moodle course sheet then announces sorting (insertion, selection, bubble, merge) and matrices. Tutorial 1 already starts them (ex. 3.4 to 4.2).</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/lima.js"></script>
+<script src="../data/en/qcm/lima.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/lima.js"></script>
+</body>
+</html>
