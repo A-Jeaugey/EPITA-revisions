@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arrays · Prog C</title>
+<meta name="description" content="Prog · C, course 2: arrays. Declaring and initializing, indices from 0 to n − 1, looping with size_t and sizeof, going out of bounds (undefined behavior), passing an array to a function with its length, classic algorithms (sum, maximum, search, reversal), two-dimensional arrays.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Prog C · course 2: arrays">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — course 2</span><span>Based on lecture 2 “Arrays and Strings” (first half) of the PROG 2031 site</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Prog C</a> · Course 2 · in the graded practical</div>
+      <h1>A row of cells <span class="w">side by side.</span></h1>
+      <p class="lead">An array is a fixed number of cells of the same type, stored one after another in memory, numbered from 0. C never checks that the index is valid, and a function does not know the size of the array you pass it: you have to give it.</p>
+      <ul class="feats">
+        <li><span><span class="k">Duration</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Tools</span> <code>size_t</code>, <code>sizeof</code>, <code>%zu</code></span></li>
+        <li class="ex"><span><span class="k">Graded practical</span> arrays and strings, week of 23 November</span></li>
+      </ul>
+    </div>
+    <div class="box thm" style="align-self:start"><span class="tag">The three rules of the lecture</span>
+      <ul>
+        <li><b>Valid indices</b>: from <code>0</code> to <code>length - 1</code>.</li>
+        <li><b>Array as a parameter</b>: you pass the array <b>and</b> its length.</li>
+        <li><b>String</b>: an array of <code>char</code> ending with <code>'\0'</code> (course 3).</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Course contents">
+    <div class="toc-title">Course 2 · Arrays</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Declaring, indexing</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Looping: size_t, sizeof</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Going out of bounds</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Array as a parameter, algorithms</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Two dimensions</span></a></li>
+    </ol>
+    <p class="toc-note">Every program was compiled with <code>-Wall -Wextra -Werror -std=c99</code> and run.</p>
+    <div class="toc-nav"><a href="cours-1-bases.html">← Course 1: the basics</a><a href="cours-3-chaines.html">Course 3: strings →</a><a href="../qcm/index.html#c">C quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Course contents</summary><ol>
+      <li><a href="#s1">Declaring, indexing</a></li><li><a href="#s2">Looping: size_t, sizeof</a></li><li><a href="#s3">Going out of bounds</a></li><li><a href="#s4">Array as a parameter, algorithms</a></li><li><a href="#s5">Two dimensions</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">Lecture 2: Arrays in One Sentence, Declaration, Indexing</span></div><h2>Declaring, initializing, indexing</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition</span>
+          <p>An array is a row of cells of <b>fixed size</b>, all of the <b>same type</b>, placed one after another in memory (<b>contiguous</b>). You access a cell by its <b>index</b>, which starts at <b>0</b>.</p>
+        </div>
+        <pre class="cc" data-top="decl">
+int a[5];                    // 5 cases, uninitialized
+int b[5] = {3, 1, 4, 1, 5};  // initialized
+int c[] = {3, 1, 4, 1, 5};   // size deduced: 5
+int d[5] = {0};              // every case is 0
+int e[5] = {7, 8};           // 7, 8, then 0, 0, 0
+</pre>
+        <div class="box model"><span class="tag">In memory <i>int b[5] = {3, 1, 4, 1, 5};</i></span>
+          <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span><span>[4]</span></div>
+          <div class="mem"><span>3</span><span>1</span><span class="used">4</span><span>1</span><span>5</span></div>
+          <p><code>b[0]</code> is 3 (the first cell), <code>b[4]</code> is 5 (the fifth and last). For a length n, the valid indices go from <b>0 to n − 1</b>.</p>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-frag="index">
+int b[5] = {3, 1, 4, 1, 5};
+int e[5] = {7, 8};
+
+b[2] = 42;
+printf("%d %d %d\n", b[0], b[2], b[4]);
+printf("%d %d %d\n", e[1], e[2], e[4]);
+</pre>
+          <pre class="term" data-run="index">
+$ ./index
+3 42 5
+8 0 0
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>An <b>uninitialized</b> local array holds indeterminate values. To start from zeros: <code>= {0}</code>.</li>
+            <li>The size does not change: no <code>append</code> as in Python.</li>
+            <li>You do not copy an array with <code>=</code>: you copy it cell by cell in a loop.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="c:tableaux:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">Lecture 2: Looping Through an Array</span></div><h2>Looping through an array: size_t and sizeof</h2></div>
+      <div class="stack">
+        <div class="cols">
+          <pre class="cc" data-prog="loop">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {3, 1, 4, 1, 5};
+    size_t n = sizeof(a) / sizeof(a[0]);
+
+    printf("n = %zu\n", n);
+    for (size_t i = 0; i &lt; n; i++)
+    {
+        printf("a[%zu] = %d\n", i, a[i]);
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="loop">
+$ ./loop
+n = 5
+a[0] = 3
+a[1] = 1
+a[2] = 4
+a[3] = 1
+a[4] = 5
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">The tools</span>
+          <ul>
+            <li><code>sizeof</code> gives a size <b>in bytes</b>. <code>sizeof(a)</code> is 20 (5 cells of 4 bytes) and <code>sizeof(a[0])</code> is 4: their quotient is the number of cells.</li>
+            <li><code>size_t</code> is the type of sizes and indices: an <b>unsigned</b> integer (never negative). It is printed with <code>%zu</code>. It is defined in <code>&lt;stdio.h&gt;</code> (and <code>&lt;stddef.h&gt;</code>).</li>
+            <li>Dividing by <code>sizeof(a[0])</code> only works where the array is declared, not in a function that receives it (part 4).</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Two type errors that do not compile</span>
+          <p><b>An <code>int</code> index compared to a <code>size_t</code></b>: signed against unsigned, rejected by <code>-Wextra -Werror</code>. Use a <code>size_t i</code> when the bound is a <code>size_t</code>.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="signcmp" data-hl="6">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    for (int i = 0; i &lt; sizeof(a) / sizeof(a[0]); i++)
+    {
+        printf("%d\n", a[i]);
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="signcmp">
+$ gcc -Wall -Wextra -Werror -std=c99 loop.c
+loop.c:6:23: error: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Werror=sign-compare]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p><b>A backward loop with <code>size_t</code></b>: <code>i &gt;= 0</code> is always true for an unsigned integer (after 0 comes a very large number).</p>
+          <div class="cols">
+            <pre class="cc" data-bad="revloop" data-hl="6">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    for (size_t i = 2; i &gt;= 0; i--)
+    {
+        printf("%d\n", a[i]);
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="revloop">
+$ gcc -Wall -Wextra -Werror -std=c99 rev.c
+rev.c:6:26: error: comparison of unsigned expression in '&gt;= 0' is always true [-Werror=type-limits]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p>Backward, the right form starts from n and reads cell <code>i - 1</code>:</p>
+          <div class="cols">
+            <pre class="cc" data-frag="backward">
+int a[] = {1, 2, 3};
+size_t n = 3;
+
+for (size_t i = n; i &gt; 0; i--)
+{
+    printf("%d ", a[i - 1]);
+}
+printf("\n");
+</pre>
+            <pre class="term" data-run="backward">
+$ ./backward
+3 2 1
+</pre>
+          </div>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="c:tableaux:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">Lecture 2: Will it work?, Arrays and Memory</span></div><h2>Going out of bounds</h2></div>
+      <div class="stack">
+        <div class="prose"><p>C does <b>not</b> check indices. Reading or writing <code>a[3]</code> in a 3-cell array compiles without a word from gcc, even with <code>-Wall -Wextra -Werror</code>. At run time, it is <b>undefined behavior</b>: the program may seem to work, crash, or silently corrupt other variables stored right next to it.</p></div>
+        <div class="cols">
+          <pre class="cc" data-build="oob" data-hl="7">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[3] = {10, 20, 30};
+
+    for (int i = 0; i &lt;= 3; i++)
+    {
+        printf("a[%d] = %d\n", i, a[i]);
+    }
+    return 0;
+}
+</pre>
+          <div class="box warn"><span class="tag">The classic mistake: &lt;= instead of &lt;</span>
+            <p>The last iteration reads <code>a[3]</code>, the cell <b>after</b> the array. What is printed is unpredictable.</p>
+            <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span></div>
+            <div class="mem"><span>10</span><span>20</span><span>30</span><span class="ghost">?</span></div>
+            <p>Since the cells are contiguous, access by index is very fast; that is also why an overflow directly touches the neighboring memory.</p>
+          </div>
+        </div>
+        <div class="box why"><span class="tag">To debug: AddressSanitizer</span>
+          <p>Compile with <code>-fsanitize=address -g</code>: the program stops at the first access outside the array and gives the faulty line.</p>
+          <pre class="term">
+$ gcc -Wall -Wextra -Werror -std=c99 -fsanitize=address -g oob.c -o oob
+$ ./oob
+==677==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7f7ec310002c
+READ of size 4 at 0x7f7ec310002c thread T0
+    #0 0x5592102b23dc in main oob.c:9
+</pre>
+          <p class="muted" style="font-size:.9rem">Real output of this program, addresses shortened. Remove it before handing in: the practicals' command does not have this option.</p>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="c:tableaux:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">Lecture 2: Arrays as Function Parameters, sum_array</span></div><h2>Passing an array to a function</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">What you need to know</span>
+          <ul>
+            <li>The function receives the array, <b>not its size</b>: you pass it as a second parameter, of type <code>size_t</code>.</li>
+            <li>The array is <b>not copied</b>: if the function changes a cell, the caller sees the change. This is not like an <code>int</code> (course 1, part 6).</li>
+            <li><code>const int a[]</code> announces that the function will not modify the array; writing into it no longer compiles.</li>
+          </ul>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-prog="fill">
+#include &lt;stdio.h&gt;
+
+void fill(int a[], size_t len, int value)
+{
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        a[i] = value;
+    }
+}
+
+int main(void)
+{
+    int x[] = {1, 2, 3, 4};
+
+    fill(x, 4, 10);
+    for (size_t i = 0; i &lt; 4; i++)
+    {
+        printf("x[%zu] = %d\n", i, x[i]);
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="fill">
+$ ./fill
+x[0] = 10
+x[1] = 10
+x[2] = 10
+x[3] = 10
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">sizeof inside the function: rejected</span>
+          <p>Inside the function, <code>a</code> is only an address: <code>sizeof(a)</code> would give the size of an address (8 bytes), not that of the array. gcc rejects it.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="sizeofp" data-hl="5">
+#include &lt;stdio.h&gt;
+
+size_t count(const int a[])
+{
+    return sizeof(a) / sizeof(a[0]);
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    printf("%zu\n", count(a));
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="sizeofp">
+$ gcc -Wall -Wextra -Werror -std=c99 count.c
+count.c:5:18: error: 'sizeof' on array function parameter 'a' will return size of 'const int *' [-Werror=sizeof-array-argument]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+        </div>
+        <div class="prose"><p>The algorithms that come back in every exam. Those that read without modifying take a <code>const int a[]</code>:</p></div>
+        <pre class="cc" data-prog="algos">
+#include &lt;stdio.h&gt;
+
+int sum_array(const int a[], size_t len)
+{
+    int sum = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        sum += a[i];
+    }
+    return sum;
+}
+
+int max_array(const int a[], size_t len)    // len must be at least 1
+{
+    int best = a[0];
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (a[i] &gt; best)
+        {
+            best = a[i];
+        }
+    }
+    return best;
+}
+
+int count_value(const int a[], size_t len, int value)
+{
+    int count = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (a[i] == value)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int index_of(const int a[], size_t len, int value)
+{
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (a[i] == value)
+        {
+            return i;    // first occurrence
+        }
+    }
+    return -1;           // not found
+}
+
+int main(void)
+{
+    int a[] = {3, 1, 4, 1, 5};
+    int neg[] = {-7, -2, -9};
+
+    printf("sum = %d\n", sum_array(a, 5));
+    printf("max = %d\n", max_array(a, 5));
+    printf("max = %d\n", max_array(neg, 3));
+    printf("count of 1 = %d\n", count_value(a, 5, 1));
+    printf("index of 4 = %d\n", index_of(a, 5, 4));
+    printf("index of 8 = %d\n", index_of(a, 5, 8));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="algos">
+$ ./algos
+sum = 14
+max = 5
+max = -2
+count of 1 = 2
+index of 4 = 2
+index of 8 = -1
+</pre>
+        <div class="box meth"><span class="tag">Modifying in place: reversing</span>
+          <p>You swap the first and the last cell, then the second and the second to last… up to the middle. A swap goes through a temporary variable.</p>
+          <div class="cols">
+            <pre class="cc" data-prog="reverse">
+#include &lt;stdio.h&gt;
+
+void reverse_array(int a[], size_t len)
+{
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        int tmp = a[i];
+        a[i] = a[len - 1 - i];
+        a[len - 1 - i] = tmp;
+    }
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3, 4, 5};
+
+    reverse_array(a, 5);
+    for (size_t i = 0; i &lt; 5; i++)
+    {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="reverse">
+$ ./reverse
+5 4 3 2 1
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Maximum: start from <code>a[0]</code>, not from <code>0</code> (with all-negative values, 0 would be wrong). Handle the empty array separately if the statement mentions it.</li>
+            <li>Search: <code>return</code> as soon as you find it, and <code>-1</code> <b>after</b> the loop, not in an <code>else</code> inside it.</li>
+            <li>Reversal: stop at <code>len / 2</code>, otherwise everything is swapped back and the array returns to how it was.</li>
+            <li>Modifying a <code>const int a[]</code> does not compile: <code>error: assignment of read-only location</code>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="c:tableaux:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">Lecture 2: Two-Dimensional Arrays, Traversing a 2D Array</span></div><h2>Two-dimensional arrays</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code>int grid[2][3]</code>: 2 rows of 3 columns. <code>grid[row][column]</code>, each index starting at 0. In memory, the rows are stored one after another.</p></div>
+        <div class="box model"><span class="tag">int grid[2][3] = {{1, 2, 3}, {4, 5, 6}};</span>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>col 0</th><th>col 1</th><th>col 2</th></tr></thead>
+            <tbody>
+              <tr><td>row 0</td><td>1</td><td>2</td><td>3</td></tr>
+              <tr><td>row 1</td><td>4</td><td>5</td><td><b>6</b> = <code>grid[1][2]</code></td></tr>
+            </tbody>
+          </table></div>
+          <p>In memory:</p>
+          <div class="mem"><span>1</span><span>2</span><span>3</span><span class="used">4</span><span class="used">5</span><span class="used">6</span></div>
+        </div>
+        <div class="prose"><p>You traverse it with two nested loops: rows outside, columns inside. To pass a grid to a function, the number of <b>columns</b> must appear in the parameter; only the number of rows can be left out and is passed separately.</p></div>
+        <pre class="cc" data-prog="grid">
+#include &lt;stdio.h&gt;
+
+int count_walls(int map[][4], size_t rows)
+{
+    int walls = 0;
+    for (size_t r = 0; r &lt; rows; r++)
+    {
+        for (size_t c = 0; c &lt; 4; c++)
+        {
+            if (map[r][c] == 1)
+            {
+                walls++;
+            }
+        }
+    }
+    return walls;
+}
+
+int main(void)
+{
+    int map[3][4] = {
+        {1, 1, 1, 1},
+        {1, 0, 0, 1},
+        {1, 1, 0, 1}
+    };
+
+    for (size_t r = 0; r &lt; 3; r++)
+    {
+        for (size_t c = 0; c &lt; 4; c++)
+        {
+            printf("%d ", map[r][c]);
+        }
+        printf("\n");
+    }
+    printf("walls = %d\n", count_walls(map, 3));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="grid">
+$ ./grid
+1 1 1 1
+1 0 0 1
+1 1 0 1
+walls = 9
+</pre>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The order is <code>[row][column]</code>: <code>grid[1][2]</code> is in row 1, column 2.</li>
+            <li>The two loops have their own bounds: rows up to the number of rows, columns up to the number of columns.</li>
+            <li>The end-of-row <code>printf("\n")</code> goes between the two loops, not inside the inner loop.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="c:tableaux:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>A string is an array of <code>char</code> with one more cell for the end: <a href="cours-3-chaines.html">course 3</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../data/en/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/c.js"></script>
+</body>
+</html>

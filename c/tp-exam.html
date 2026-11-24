@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TP en condition d'examen · Prog C</title>
+<meta name="description" content="Prog · C : le TP en condition d'examen sur les tableaux et les chaînes (semaine du 23 novembre 2026, 20 % de la note). Ce qu'on sait, le format des TP (arborescence, prototypes, compilation, git et tags), les pièges, et un TP blanc de 15 fonctions au format de la moulinette, avec corrigés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* TP blanc : une fiche par fonction, au format des sujets de TP (fichier, consigne, prototype, exemple, sortie). */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:56px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:46em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.facts{grid-template-columns:minmax(0,1fr)}}
+.facts .card{display:grid;gap:.35rem;align-content:start}
+.facts .w{font-family:var(--font-display);font-weight:700;font-size:1.5rem;line-height:1.15;color:var(--accent)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.two>*{min-width:0}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:ck}
+.check li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.65rem .9rem}
+.check li::before{counter-increment:ck;content:counter(ck);font-family:var(--font-display);font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:8px;width:28px;height:28px;display:grid;place-items:center}
+.part-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.part-h h3{margin:0;font-size:1.35rem}
+.exs{display:grid;gap:16px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:grid;gap:.7rem;min-width:0;scroll-margin-top:72px}
+.ex.st-ok{border-left:4px solid var(--ok)}
+.ex.st-review{border-left:4px solid var(--red)}
+.ex-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px 14px;flex-wrap:wrap}
+.ex-head h4{margin:0;font-family:var(--font-mono);font-size:1.02rem;font-weight:600;letter-spacing:0}
+.ex-head .lvl{font-family:var(--font-ui);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ex .lbl{margin-bottom:-.35rem}
+.ex details{border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.ex details>summary{cursor:pointer;padding:.55rem .85rem;font-family:var(--font-ui);font-weight:650;font-size:.92rem}
+.ex details>div{padding:0 .85rem .85rem;display:grid;gap:.6rem}
+.ex .acts{display:flex;gap:8px;flex-wrap:wrap}
+.ex .btn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.score{font-family:var(--font-ui);font-size:.92rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Prog C · TP en condition d'examen">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — TP en condition d'examen</span><span>Annonce du Moodle du 18 novembre · format repris des TP 1 et 2 du site PROG 2031</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Prog C</a> · TP noté · semaine du 23 novembre</div>
+      <h1>Tableaux et chaînes, <span class="w">en condition d'examen.</span></h1>
+      <p class="lead">Un TP comme les autres, avec des fonctions à écrire selon un prototype imposé, mais seul et chronométré, pour 20 % de la note. Le contenu : les tableaux et les chaînes de caractères, déjà vus en Python au B1, cette fois en C. Ci-dessous : ce qu'on sait, le format à respecter à la lettre, les pièges, et un TP blanc corrigé.</p>
+      <ul class="feats">
+        <li><span><span class="k">Programme</span> <a href="cours-2-tableaux.html">tableaux</a>, <a href="cours-3-chaines.html">chaînes</a></span></li>
+        <li><span><span class="k">Base</span> <a href="cours-1-bases.html">compiler, fonctions, .h</a></span></li>
+        <li><span><span class="k">TP blanc</span> 15 fonctions corrigées</span></li>
+        <li class="ex"><span><span class="k">Poids</span> 20 % de la note finale</span></li>
+      </ul>
+    </div>
+    <div class="box trap" style="align-self:center"><span class="tag">Les cinq règles qui coûtent tout</span>
+      <ul>
+        <li>Le code <b>doit compiler</b> avec <code>-Wall -Wextra -Werror -std=c99</code>, sinon pas de note.</li>
+        <li>Les prototypes donnés se recopient <b>à l'identique</b>.</li>
+        <li><b>Pas de <code>main</code></b> ni de test personnel dans les fichiers rendus.</li>
+        <li>Seuls les en-têtes <b>autorisés</b> (au TP 1 : <code>&lt;stdio.h&gt;</code>).</li>
+        <li>L'arborescence demandée, <code>.gitignore</code> compris, et un tag pour rendre.</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-k">
+    <div class="sec-title"><div><div class="eyebrow">Annonce du 18 novembre</div><h2 id="t-k">Ce qu'on sait</h2></div><p>D'après l'annonce du Moodle et les modalités d'évaluation de l'ECUE. Le jour et l'heure sont ceux de ton emploi du temps.</p></div>
+    <div class="facts">
+      <div class="card"><div class="k">Quand</div><span class="w">Semaine du 23 nov.</span><p>Pendant un créneau de TP. Annoncé le 18 novembre pour « la semaine prochaine ».</p></div>
+      <div class="card"><div class="k">Quoi</div><span class="w">Tableaux, chaînes</span><p>En C. Les mêmes notions qu'en Python au B1. Le CM de la semaine du 16 novembre (« Arrays and Strings ») est la référence.</p></div>
+      <div class="card"><div class="k">Combien</div><span class="w">20 %</span><p>De la note finale. Le reste : 20 % pour la moyenne des autres TP, 60 % pour l'examen final, avec un rattrapage prévu.</p></div>
+      <div class="card"><div class="k">Ce qui est évalué</div><span class="w">Comprendre, appliquer</span><p>« Pas un examen » : ta compréhension du cours, ta capacité à t'appuyer dessus et à le mettre en pratique dans un programme.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-f">
+    <div class="sec-title"><div><div class="eyebrow">Le format des TP 1 et 2</div><h2 id="t-f">Ce que la moulinette attend</h2></div><p>Le TP noté est probablement le « 102p03 » des modalités d'évaluation : il suit le format des deux premiers TP. Le sujet du jour fera foi s'il diffère.</p></div>
+    <div class="two">
+      <div class="stack">
+        <div class="box meth"><span class="tag">Arborescence <i>sur le modèle du TP 2</i></span>
+          <pre class="term">
+epita-prepa-computer-science-prog-102-p-03-2031-prenom.nom
+├── nom_du_sujet
+│   ├── answers
+│   │   ├── sum_gold.c
+│   │   └── count_vowels.c
+│   └── includes
+│       ├── sum_gold.h
+│       └── count_vowels.h
+├── .gitignore
+└── README
+</pre>
+          <p>Une fonction par fichier : <code>answers/nom.c</code> la définit, <code>includes/nom.h</code> la déclare entre des gardes, et le <code>.c</code> inclut son propre en-tête.</p>
+        </div>
+        <div class="cols">
+          <div><span class="file">includes/sum_gold.h</span>
+          <pre class="cc">
+#ifndef SUM_GOLD_H
+#define SUM_GOLD_H
+
+#include &lt;stdio.h&gt;
+
+int sum_gold(const int purses[], size_t len);
+
+#endif
+</pre></div>
+          <div><span class="file">answers/sum_gold.c</span>
+          <pre class="cc">
+#include "../includes/sum_gold.h"
+
+int sum_gold(const int purses[], size_t len)
+{
+    int total = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        total += purses[i];
+    }
+    return total;
+}
+</pre></div>
+        </div>
+        <p class="codecap" style="margin-top:0">Le chemin de l'<code>#include</code> suit le squelette fourni. <code>&lt;stdio.h&gt;</code> dans l'en-tête donne <code>size_t</code> au prototype.</p>
+      </div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Les règles des sujets</span>
+          <ul>
+            <li>En cas de désaccord entre le sujet et le squelette ou la moulinette, <b>le sujet a raison</b> (signale-le à l'assistant).</li>
+            <li>Le code doit compiler : sinon, <b>aucune note</b>. La commande : <code>gcc -Wall -Wextra -Werror -std=c99</code>.</li>
+            <li>Les prototypes donnés sont à respecter strictement : nom, type de retour, types et ordre des paramètres.</li>
+            <li>Retire tes tests personnels : la moulinette apporte son propre <code>main</code>. Un <code>main</code> dans <code>answers/</code> empêche l'édition de liens.</li>
+            <li>Seul ce qui est autorisé (en-têtes, mots-clés) peut servir. Au TP 1 : <code>&lt;stdio.h&gt;</code> seulement, donc pas de <code>strlen</code> ni de <code>strcmp</code> tout faits.</li>
+            <li>Le <code>.gitignore</code> est obligatoire, <b>avant</b> le premier rendu (exécutables, <code>*.o</code>, <code>*.out</code>, <code>*~</code>…).</li>
+            <li>Une fonction oui / non renvoie exactement <code>0</code> ou <code>1</code>. Une sortie <code>printf</code> se recopie au caractère près, retour à la ligne final compris.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Rendre avec git</span>
+          <pre class="term">
+$ git status
+$ git add .gitignore nom_du_sujet/answers/sum_gold.c nom_du_sujet/includes/sum_gold.h
+$ git commit -m "sum_gold"
+$ git tag -a archi-1 -m "archi-1"
+$ git push --follow-tags
+</pre>
+          <ul>
+            <li>Un tag <code>archi-*</code> demande à la moulinette de vérifier l'arborescence et la compilation (aux TP 1 et 2 : 2 par heure).</li>
+            <li>Un tag <code>submit-*</code> rend le travail (aux TP 1 et 2 : 3 par semaine). Chaque tag a un nom unique : <code>submit-1</code>, <code>submit-2</code>…</li>
+            <li><code>--follow-tags</code> envoie les tags avec le commit ; <code>git status</code> après le push confirme qu'il ne reste rien.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-c">
+    <div class="sec-title"><div><div class="eyebrow">Pendant le TP</div><h2 id="t-c">La routine, fonction par fonction</h2></div><p>Elle évite les zéros bêtes : un fichier mal placé, un test oublié, un avertissement.</p></div>
+    <ol class="check">
+      <li><span>Lis la consigne <b>et les exemples</b> en entier : ils fixent les cas limites (tableau vide, chaîne vide, valeur négative, « au plus » ou « strictement »).</span></li>
+      <li><span>Crée <code>includes/nom.h</code> (gardes et prototype recopié) et <code>answers/nom.c</code> (qui inclut l'en-tête).</span></li>
+      <li><span>Écris les cas limites d'abord, puis la boucle. Tableau : <code>for (size_t i = 0; i &lt; len; i++)</code>. Chaîne : <code>for (size_t i = 0; s[i] != '\0'; i++)</code>.</span></li>
+      <li><span>Teste dans un <code>main.c</code> à toi, hors de <code>answers/</code>, avec les exemples du sujet : <code>gcc -Wall -Wextra -Werror -std=c99 main.c answers/nom.c -o test</code>.</span></li>
+      <li><span>Compare ta sortie à celle du sujet, caractère par caractère.</span></li>
+      <li><span><code>git add</code> des deux fichiers, <code>commit</code>, tag <code>archi-*</code> si tu as un doute sur l'arborescence, puis <code>push --follow-tags</code>. Rends souvent : un rendu partiel vaut mieux que rien.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="t-p">
+    <div class="sec-title"><div><div class="eyebrow">Vérifiés avec gcc</div><h2 id="t-p">Les pièges du jour</h2></div><p>Chacun est montré, avec le vrai message de gcc, dans les cours.</p></div>
+    <div class="two">
+      <div class="box trap"><span class="tag">Ne compile pas avec les options des TP</span>
+        <ul>
+          <li>Variable ou paramètre inutilisé. <a href="cours-1-bases.html#s2">Cours 1</a></li>
+          <li><code>int i</code> comparé à un <code>size_t</code> (<code>len</code>, <code>strlen</code>, <code>sizeof</code>). <a href="cours-2-tableaux.html#s2">Cours 2</a></li>
+          <li><code>size_t i … i &gt;= 0</code> dans une boucle à l'envers. <a href="cours-2-tableaux.html#s2">Cours 2</a></li>
+          <li><code>sizeof</code> sur un tableau reçu en paramètre. <a href="cours-2-tableaux.html#s4">Cours 2</a></li>
+          <li><code>a == b</code> entre deux tableaux de <code>char</code>. <a href="cours-3-chaines.html#s4">Cours 3</a></li>
+          <li>Un <code>char</code> comme indice de tableau. <a href="cours-3-chaines.html#s2">Cours 3</a></li>
+          <li><code>case</code> sans <code>break</code>, <code>=</code> dans un <code>if</code>, fonction non <code>void</code> sans <code>return</code> final, format <code>printf</code> faux. <a href="cours-1-bases.html#s4">Cours 1</a></li>
+        </ul>
+      </div>
+      <div class="box warn"><span class="tag">Compile, mais faux</span>
+        <ul>
+          <li><code>i &lt;= len</code> : une case de trop, comportement indéfini. <a href="cours-2-tableaux.html#s3">Cours 2</a></li>
+          <li>Maximum initialisé à 0 avec des valeurs négatives ; tableau vide oublié.</li>
+          <li><code>-1</code> renvoyé dans un <code>else</code> au premier tour au lieu d'après la boucle.</li>
+          <li>Copie de chaîne sans le <code>'\0'</code> final ; destination trop petite.</li>
+          <li><code>'0'</code> pris pour <code>'\0'</code> ; minuscule convertie sans tester que c'en est une.</li>
+          <li>Modifier une chaîne littérale (<code>char *s = "…"</code>) : plantage.</li>
+          <li>Somme ou compteur non initialisé.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-b">
+    <div class="sec-title"><div><div class="eyebrow">TP blanc · « The Guild Ledger »</div><h2 id="t-b">Quinze fonctions au format de la moulinette</h2></div><p>Des exercices écrits pour le site, au niveau et dans la forme des TP 1 et 2 : consigne, prototype, exemple et sortie exacte. Seul <code>&lt;stdio.h&gt;</code> est autorisé. Chaque corrigé a été compilé avec les options des TP et sa sortie comparée à celle annoncée. <span class="score" id="score"></span></p></div>
+
+    <div class="part-h"><span class="pn" data-n="1"></span><h3>Les tableaux</h3></div>
+    <div class="exs">
+
+      <article class="ex" id="sum_gold"><div class="ex-head"><h4>answers/sum_gold.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie la somme des <code>len</code> bourses du tableau <code>purses</code>. Si <code>len</code> vaut 0, renvoie 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int sum_gold(const int purses[], size_t len);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="sum_gold">
+int purses[] = {12, 5, 30};
+printf("%d\n", sum_gold(purses, 3));
+printf("%d\n", sum_gold(purses, 2));
+printf("%d\n", sum_gold(purses, 0));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="sum_gold">
+47
+17
+0
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="sum_gold">
+int sum_gold(const int purses[], size_t len)
+{
+    int total = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        total += purses[i];
+    }
+    return total;
+}
+</pre><p>Le cas <code>len == 0</code> n'a pas besoin d'être traité à part : la boucle ne tourne pas et <code>total</code> vaut 0. Il faut en revanche l'initialiser.</p></div></details>
+      </article>
+
+      <article class="ex" id="richest_member"><div class="ex-head"><h4>answers/richest_member.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie l'<b>indice</b> du membre le plus riche du tableau <code>gold</code>. En cas d'égalité, le premier. Si <code>len</code> vaut 0, renvoie <code>-1</code>. Les montants peuvent être négatifs (dettes).</p>
+        <div class="lbl">Prototype</div><pre class="cc">int richest_member(const int gold[], size_t len);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="richest_member">
+int gold[] = {40, 95, 12, 95};
+int debts[] = {-3, -1, -7};
+printf("%d\n", richest_member(gold, 4));
+printf("%d\n", richest_member(debts, 3));
+printf("%d\n", richest_member(gold, 0));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="richest_member">
+1
+1
+-1
+</pre>
+        <details><summary>Indice</summary><div><p>Garde l'indice du meilleur, pas sa valeur. Pars de l'indice 0 (jamais d'une valeur 0, à cause des dettes) et ne remplace qu'avec <code>&gt;</code> strict pour garder le premier.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="richest_member">
+int richest_member(const int gold[], size_t len)
+{
+    if (len == 0)
+    {
+        return -1;
+    }
+    size_t best = 0;
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (gold[i] &gt; gold[best])
+        {
+            best = i;
+        }
+    }
+    return best;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="count_above"><div class="ex-head"><h4>answers/count_above.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie le nombre de membres dont le niveau est <b>strictement</b> supérieur à <code>threshold</code>.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_above(const int levels[], size_t len, int threshold);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="count_above">
+int levels[] = {3, 10, 7, 10, 1};
+printf("%d\n", count_above(levels, 5, 6));
+printf("%d\n", count_above(levels, 5, 10));
+printf("%d\n", count_above(levels, 5, 0));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="count_above">
+3
+0
+5
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="count_above">
+int count_above(const int levels[], size_t len, int threshold)
+{
+    int count = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (levels[i] &gt; threshold)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+</pre><p>« Strictement » : <code>&gt;</code>, d'où 0 pour le seuil 10.</p></div></details>
+      </article>
+
+      <article class="ex" id="find_last"><div class="ex-head"><h4>answers/find_last.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie l'indice de la <b>dernière</b> occurrence de <code>badge</code> dans <code>badges</code>, ou <code>-1</code> s'il n'y figure pas.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int find_last(const int badges[], size_t len, int badge);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="find_last">
+int badges[] = {7, 3, 7, 9};
+printf("%d\n", find_last(badges, 4, 7));
+printf("%d\n", find_last(badges, 4, 9));
+printf("%d\n", find_last(badges, 4, 4));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="find_last">
+2
+3
+-1
+</pre>
+        <details><summary>Indice</summary><div><p>Parcours à l'envers pour s'arrêter à la première trouvée, sans le piège du <code>size_t i &gt;= 0</code> (cours 2, partie 2). Autre solution : parcours à l'endroit en retenant le dernier indice vu.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="find_last">
+int find_last(const int badges[], size_t len, int badge)
+{
+    for (size_t i = len; i &gt; 0; i--)
+    {
+        if (badges[i - 1] == badge)
+        {
+            return i - 1;
+        }
+    }
+    return -1;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="is_ranked"><div class="ex-head"><h4>answers/is_ranked.c</h4><span class="lvl">fondamental</span></div>
+        <p>Un classement est valide si les scores sont <b>strictement décroissants</b>. Renvoie <code>1</code> s'il est valide, <code>0</code> sinon. Un tableau de 0 ou 1 score est valide.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int is_ranked(const int scores[], size_t len);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="is_ranked">
+int a[] = {90, 75, 40};
+int b[] = {90, 90, 40};
+printf("%d\n", is_ranked(a, 3));
+printf("%d\n", is_ranked(b, 3));
+printf("%d\n", is_ranked(b, 1));
+printf("%d\n", is_ranked(a, 0));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="is_ranked">
+1
+0
+1
+1
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="is_ranked">
+int is_ranked(const int scores[], size_t len)
+{
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (scores[i] &gt;= scores[i - 1])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+</pre><p>On compare chaque case à la précédente, en partant de l'indice 1 : jamais de case <code>-1</code>, et les tableaux de 0 ou 1 case ne passent pas dans la boucle.</p></div></details>
+      </article>
+
+      <article class="ex" id="pay_tax"><div class="ex-head"><h4>answers/pay_tax.c</h4><span class="lvl">fondamental</span></div>
+        <p>Retire <code>tax</code> pièces à chaque membre, <b>dans le tableau lui-même</b>. Une fortune ne descend jamais sous 0. Une taxe négative est traitée comme 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void pay_tax(int gold[], size_t len, int tax);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="pay_tax">
+int gold[] = {50, 8, 0, 10};
+pay_tax(gold, 4, 10);
+printf("%d %d %d %d\n", gold[0], gold[1], gold[2], gold[3]);
+pay_tax(gold, 4, -5);
+printf("%d %d %d %d\n", gold[0], gold[1], gold[2], gold[3]);
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="pay_tax">
+40 0 0 0
+40 0 0 0
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="pay_tax">
+void pay_tax(int gold[], size_t len, int tax)
+{
+    if (tax &lt; 0)
+    {
+        tax = 0;
+    }
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        gold[i] -= tax;
+        if (gold[i] &lt; 0)
+        {
+            gold[i] = 0;
+        }
+    }
+}
+</pre><p>Pas de <code>const</code> : la fonction modifie le tableau, et l'appelant voit les nouvelles valeurs (le tableau n'est pas copié).</p></div></details>
+      </article>
+
+      <article class="ex" id="rotate_left"><div class="ex-head"><h4>answers/rotate_left.c</h4><span class="lvl">fondamental</span></div>
+        <p>Fait tourner la file d'attente d'un cran vers la gauche : chaque élément avance d'une case et le premier passe à la fin. Ne fait rien si <code>len</code> vaut 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void rotate_left(int queue[], size_t len);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="rotate_left">
+int queue[] = {1, 2, 3, 4};
+rotate_left(queue, 4);
+printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+rotate_left(queue, 4);
+printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="rotate_left">
+2 3 4 1
+3 4 1 2
+</pre>
+        <details><summary>Indice</summary><div><p>Mets le premier de côté, décale les autres vers la gauche, puis pose-le dans la dernière case. Attention à <code>len - 1</code> quand <code>len</code> vaut 0 : avec un <code>size_t</code>, cela donne un nombre immense.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="rotate_left">
+void rotate_left(int queue[], size_t len)
+{
+    if (len == 0)
+    {
+        return;
+    }
+    int first = queue[0];
+    for (size_t i = 0; i + 1 &lt; len; i++)
+    {
+        queue[i] = queue[i + 1];
+    }
+    queue[len - 1] = first;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="best_row"><div class="ex-head"><h4>answers/best_row.c</h4><span class="lvl">approfondi</span></div>
+        <p>Chaque ligne de <code>grid</code> contient les gains d'une équipe sur 3 quêtes. Renvoie l'indice de la ligne dont la somme est la plus grande (la première en cas d'égalité), ou <code>-1</code> si <code>rows</code> vaut 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int best_row(int grid[][3], size_t rows);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="best_row">
+int grid[3][3] = {
+    {1, 2, 3},
+    {9, 0, 0},
+    {4, 4, 4}
+};
+printf("%d\n", best_row(grid, 3));
+printf("%d\n", best_row(grid, 2));
+printf("%d\n", best_row(grid, 0));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="best_row">
+2
+1
+-1
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="best_row">
+int best_row(int grid[][3], size_t rows)
+{
+    if (rows == 0)
+    {
+        return -1;
+    }
+    size_t best = 0;
+    int best_sum = grid[0][0] + grid[0][1] + grid[0][2];
+    for (size_t r = 1; r &lt; rows; r++)
+    {
+        int sum = 0;
+        for (size_t c = 0; c &lt; 3; c++)
+        {
+            sum += grid[r][c];
+        }
+        if (sum &gt; best_sum)
+        {
+            best_sum = sum;
+            best = r;
+        }
+    }
+    return best;
+}
+</pre><p>Sommes des lignes : 6, 9 et 12. Avec <code>rows</code> = 2, seules les deux premières comptent.</p></div></details>
+      </article>
+    </div>
+
+    <div class="part-h"><span class="pn" data-n="2"></span><h3>Les chaînes</h3></div>
+    <div class="exs">
+
+      <article class="ex" id="tag_length"><div class="ex-head"><h4>answers/tag_length.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie le nombre de caractères de <code>tag</code>, sans compter le <code>'\0'</code>. <code>&lt;string.h&gt;</code> n'est pas autorisé.</p>
+        <div class="lbl">Prototype</div><pre class="cc">size_t tag_length(const char *tag);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="tag_length">
+printf("%zu\n", tag_length("guild"));
+printf("%zu\n", tag_length(""));
+printf("%zu\n", tag_length("a b"));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="tag_length">
+5
+0
+3
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="tag_length">
+size_t tag_length(const char *tag)
+{
+    size_t len = 0;
+    while (tag[len] != '\0')
+    {
+        len++;
+    }
+    return len;
+}
+</pre><p>L'espace est un caractère comme un autre. Affichage d'un <code>size_t</code> : <code>%zu</code>.</p></div></details>
+      </article>
+
+      <article class="ex" id="count_vowels"><div class="ex-head"><h4>answers/count_vowels.c</h4><span class="lvl">fondamental</span></div>
+        <p>Renvoie le nombre de voyelles (<code>a e i o u</code>, minuscules ou majuscules) de <code>str</code>.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_vowels(const char *str);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="count_vowels">
+printf("%d\n", count_vowels("Guild Master"));
+printf("%d\n", count_vowels("RHYTHM"));
+printf("%d\n", count_vowels("AEIOU aeiou"));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="count_vowels">
+4
+0
+10
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="count_vowels">
+int count_vowels(const char *str)
+{
+    int count = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        char c = str[i];
+        if (c &gt;= 'A' &amp;&amp; c &lt;= 'Z')
+        {
+            c = c - 'A' + 'a';
+        }
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+        {
+            count++;
+        }
+    }
+    return count;
+}
+</pre><p>On passe le caractère en minuscule dans une <b>copie</b> (<code>c</code>) : la chaîne, en <code>const</code>, n'est pas modifiée.</p></div></details>
+      </article>
+
+      <article class="ex" id="capitalize_words"><div class="ex-head"><h4>answers/capitalize_words.c</h4><span class="lvl">fondamental</span></div>
+        <p>Met en majuscule la première lettre de chaque mot de <code>str</code>, sur place. Un mot commence au début de la chaîne ou juste après une espace. Les autres caractères ne changent pas.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void capitalize_words(char *str);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="capitalize_words">
+char a[] = "the iron guild";
+char b[] = "  two  spaces";
+char c[] = "42 rats";
+capitalize_words(a);
+capitalize_words(b);
+capitalize_words(c);
+printf("[%s]\n[%s]\n[%s]\n", a, b, c);
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="capitalize_words">
+[The Iron Guild]
+[  Two  Spaces]
+[42 Rats]
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="capitalize_words">
+void capitalize_words(char *str)
+{
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        int starts_word = (i == 0 || str[i - 1] == ' ');
+        if (starts_word &amp;&amp; str[i] &gt;= 'a' &amp;&amp; str[i] &lt;= 'z')
+        {
+            str[i] = str[i] - 'a' + 'A';
+        }
+    }
+}
+</pre><p><code>i == 0</code> est testé en premier : grâce au <code>||</code>, <code>str[i - 1]</code> n'est jamais lu quand <code>i</code> vaut 0. Dans « 42 rats », le mot « 42 » commence par un chiffre, qui ne change pas.</p></div></details>
+      </article>
+
+      <article class="ex" id="same_member"><div class="ex-head"><h4>answers/same_member.c</h4><span class="lvl">approfondi</span></div>
+        <p>Renvoie <code>1</code> si <code>a</code> et <code>b</code> sont le même nom <b>sans tenir compte des majuscules</b>, <code>0</code> sinon.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int same_member(const char *a, const char *b);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="same_member">
+printf("%d\n", same_member("Arthur", "aRTHUR"));
+printf("%d\n", same_member("Arthur", "Arthu"));
+printf("%d\n", same_member("Ada", "Ida"));
+printf("%d\n", same_member("", ""));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="same_member">
+1
+0
+0
+1
+</pre>
+        <details><summary>Indice</summary><div><p>Comme <code>my_strcmp</code> (cours 3, partie 4) : avance tant que les deux chaînes continuent et que les caractères, mis en minuscule, sont égaux. À la fin, les deux chaînes doivent se terminer ensemble.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="same_member">
+int same_member(const char *a, const char *b)
+{
+    size_t i = 0;
+    while (a[i] != '\0' &amp;&amp; b[i] != '\0')
+    {
+        char x = a[i];
+        char y = b[i];
+        if (x &gt;= 'A' &amp;&amp; x &lt;= 'Z')
+        {
+            x = x - 'A' + 'a';
+        }
+        if (y &gt;= 'A' &amp;&amp; y &lt;= 'Z')
+        {
+            y = y - 'A' + 'a';
+        }
+        if (x != y)
+        {
+            return 0;
+        }
+        i++;
+    }
+    return a[i] == b[i];
+}
+</pre><p>Le dernier test vaut 1 seulement si les deux chaînes sont finies (<code>'\0'</code> des deux côtés) : « Arthur » contre « Arthu » compare <code>'r'</code> à <code>'\0'</code>.</p></div></details>
+      </article>
+
+      <article class="ex" id="count_words"><div class="ex-head"><h4>answers/count_words.c</h4><span class="lvl">approfondi</span></div>
+        <p>Renvoie le nombre de mots de <code>str</code>. Les mots sont séparés par une ou plusieurs espaces ; il peut y en avoir au début et à la fin.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_words(const char *str);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="count_words">
+printf("%d\n", count_words("join the guild"));
+printf("%d\n", count_words("  many   spaces  here "));
+printf("%d\n", count_words(""));
+printf("%d\n", count_words("solo"));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="count_words">
+3
+3
+0
+1
+</pre>
+        <details><summary>Indice</summary><div><p>Compter les espaces ne marche pas (plusieurs espaces à la suite). Compte plutôt les <b>débuts</b> de mot : un caractère qui n'est pas une espace alors qu'on n'était pas dans un mot.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="count_words">
+int count_words(const char *str)
+{
+    int count = 0;
+    int in_word = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] == ' ')
+        {
+            in_word = 0;
+        }
+        else if (!in_word)
+        {
+            in_word = 1;
+            count++;
+        }
+    }
+    return count;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="is_valid_tag"><div class="ex-head"><h4>answers/is_valid_tag.c</h4><span class="lvl">approfondi</span></div>
+        <p>Un pseudo de guilde est valide s'il fait entre 1 et 12 caractères, commence par une lettre minuscule, et ne contient que des lettres minuscules, des chiffres et <code>'_'</code>. Renvoie <code>1</code> s'il est valide, <code>0</code> sinon.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int is_valid_tag(const char *tag);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="is_valid_tag">
+printf("%d\n", is_valid_tag("arthur_42"));
+printf("%d\n", is_valid_tag("42arthur"));
+printf("%d\n", is_valid_tag(""));
+printf("%d\n", is_valid_tag("Arthur"));
+printf("%d\n", is_valid_tag("twelve_chars"));
+printf("%d\n", is_valid_tag("thirteen_char"));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="is_valid_tag">
+1
+0
+0
+0
+1
+0
+</pre>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="is_valid_tag">
+int is_valid_tag(const char *tag)
+{
+    if (tag[0] &lt; 'a' || tag[0] &gt; 'z')
+    {
+        return 0;
+    }
+    size_t i = 1;
+    while (tag[i] != '\0')
+    {
+        char c = tag[i];
+        int ok = (c &gt;= 'a' &amp;&amp; c &lt;= 'z') || (c &gt;= '0' &amp;&amp; c &lt;= '9') || c == '_';
+        if (!ok || i &gt;= 12)
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+</pre><p>La chaîne vide est rejetée par le premier test (<code>'\0'</code> n'est pas une minuscule). Un 13ᵉ caractère se trouve à l'indice 12 : <code>i &gt;= 12</code> le refuse.</p></div></details>
+      </article>
+
+      <article class="ex" id="parse_gold"><div class="ex-head"><h4>answers/parse_gold.c</h4><span class="lvl">approfondi</span></div>
+        <p>Convertit en entier un montant écrit en chiffres, comme <code>"250"</code>. Renvoie <code>-1</code> si la chaîne est vide ou contient autre chose qu'un chiffre.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int parse_gold(const char *str);</pre>
+        <div class="lbl">Exemple</div><pre class="cc" data-ex="parse_gold">
+printf("%d\n", parse_gold("250"));
+printf("%d\n", parse_gold("007"));
+printf("%d\n", parse_gold("12a"));
+printf("%d\n", parse_gold(""));
+printf("%d\n", parse_gold("-5"));
+</pre>
+        <div class="lbl">Sortie</div><pre class="term" data-out="parse_gold">
+250
+7
+-1
+-1
+-1
+</pre>
+        <details><summary>Indice</summary><div><p>Lis de gauche à droite : <code>value = value * 10 + chiffre</code>, avec <code>chiffre = str[i] - '0'</code>.</p></div></details>
+        <details><summary>Corrigé</summary><div><pre class="cc" data-sol="parse_gold">
+int parse_gold(const char *str)
+{
+    if (str[0] == '\0')
+    {
+        return -1;
+    }
+    int value = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] &lt; '0' || str[i] &gt; '9')
+        {
+            return -1;
+        }
+        value = value * 10 + (str[i] - '0');
+    }
+    return value;
+}
+</pre><p>« 250 » : 0 × 10 + 2 = 2, puis 2 × 10 + 5 = 25, puis 25 × 10 + 0 = 250.</p></div></details>
+      </article>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/js/c.js"></script>
+<script>
+(function () {
+  var R = window.REV;
+  var exs = [].slice.call(document.querySelectorAll('article.ex'));
+  function key(el) { return 'c-tp-' + el.id; }
+  function paint() {
+    var ok = 0, rv = 0;
+    exs.forEach(function (el) {
+      var s = R.exo.get(key(el)), st = s ? s.s : null;
+      el.classList.toggle('st-ok', st === 'ok'); el.classList.toggle('st-review', st === 'review');
+      el.querySelectorAll('[data-act]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-act') === st)); });
+      if (st === 'ok') ok++; else if (st === 'review') rv++;
+    });
+    document.getElementById('score').textContent = ok + ' / ' + exs.length + ' réussies' + (rv ? ', ' + rv + ' à revoir' : '') + '.';
+  }
+  exs.forEach(function (el) {
+    var d = document.createElement('div'); d.className = 'acts';
+    d.innerHTML = '<button type="button" class="btn" data-act="ok">J’ai réussi</button><button type="button" class="btn" data-act="review">À revoir</button>';
+    el.appendChild(d);
+    d.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act]'); if (!b) return;
+      var k = b.getAttribute('data-act'), s = R.exo.get(key(el));
+      R.exo.set(key(el), s && s.s === k ? null : k);
+    });
+  });
+  paint(); R.store.on(paint);
+})();
+</script>
+</body>
+</html>

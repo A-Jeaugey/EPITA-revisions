@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compiler et exécuter, les bases du C · Prog C</title>
+<meta name="description" content="Prog · C, cours 1 : du Python au C, compiler avec gcc et ses options (-Wall -Wextra -Werror -std=c99), lire une erreur, variables, types et printf, conditions et switch, boucles, fonctions, prototypes et fichiers d'en-tête.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Prog C · cours 1 : compiler, les bases">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — cours 1</span><span>D'après le CM 1 « Compiling and Running » et les TP 1 et 2 du site PROG 2031</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="1"></span><a href="index.html">Prog C</a> · Cours 1</div>
+      <h1>Compiler, exécuter : <span class="w">les bases du C.</span></h1>
+      <p class="lead">Python cachait beaucoup de choses. En C, tu écris un fichier, gcc le traduit en code machine, puis la machine l'exécute. Tout est déclaré : le type de chaque variable, chaque fonction avant son appel. Et avec les options des TP, le moindre avertissement empêche la compilation : un code qui ne compile pas n'est pas noté.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 50 min</span></li>
+        <li><span><span class="k">Parties</span> 6</span></li>
+        <li><span><span class="k">Compilation</span> <code>gcc -Wall -Wextra -Werror -std=c99</code></span></li>
+        <li class="ex"><span><span class="k">TP noté</span> la base de tous les exercices</span></li>
+      </ul>
+    </div>
+    <div class="tbl" style="align-self:start"><table>
+      <thead><tr><th>En Python</th><th>En C</th></tr></thead>
+      <tbody>
+        <tr><td><code>print("hi")</code></td><td><code>printf("hi\n");</code></td></tr>
+        <tr><td><code>x = 5</code></td><td><code>int x = 5;</code></td></tr>
+        <tr><td>l'indentation</td><td><code>{</code> et <code>}</code></td></tr>
+        <tr><td>fin de ligne</td><td><code>;</code></td></tr>
+        <tr><td><code>True</code>, <code>False</code></td><td>tout entier non nul, <code>0</code></td></tr>
+        <tr><td><code>and</code>, <code>or</code>, <code>not</code></td><td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td></tr>
+        <tr><td><code>def f(a):</code></td><td><code>int f(int a)</code></td></tr>
+        <tr><td><code># commentaire</code></td><td><code>// commentaire</code></td></tr>
+      </tbody>
+      <caption>Le code des exemples est en anglais, comme celui du cours et des TP.</caption>
+    </table></div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 1 · Les bases</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Du Python au C</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Compiler avec gcc</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Variables, types, printf</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Conditions et switch</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Boucles</span></a></li>
+      <li><a href="#s6"><span class="pn" data-n="6"></span><span>Fonctions et fichiers .h</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque programme de la page a été compilé avec les options des TP et exécuté : les sorties affichées sont les vraies.</p>
+    <div class="toc-nav"><a href="index.html">← Accueil Prog C</a><a href="cours-2-tableaux.html">Cours 2 : tableaux →</a><a href="../qcm/index.html#c">QCM de C</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Du Python au C</a></li><li><a href="#s2">Compiler avec gcc</a></li><li><a href="#s3">Variables, types, printf</a></li><li><a href="#s4">Conditions et switch</a></li><li><a href="#s5">Boucles</a></li><li><a href="#s6">Fonctions et fichiers .h</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">CM 1 : A New Language, Why C?</span></div><h2>Du Python au C</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Interprété ou compilé</span>
+          <ul>
+            <li><b>Langage interprété</b> (Python, JavaScript, PHP) : un interpréteur lit le code source et l'exécute. Aucun code machine n'est produit.</li>
+            <li><b>Langage compilé</b> (C, C++, Go, Rust) : le code source n'est pas exécuté. Le <b>compilateur</b> s'en sert pour produire du <b>code machine</b>, un fichier exécutable que le processeur lance directement.</li>
+          </ul>
+          <p>Le C est bas niveau, rapide, proche du matériel : on s'en sert pour les systèmes d'exploitation, l'embarqué, les compilateurs et interpréteurs (celui de Python est écrit en C), les moteurs de jeu. Il donne le contrôle de la mémoire, mais ne cache rien.</p>
+        </div>
+        <div class="prose"><p>Un programme C est un simple fichier texte, d'extension <code>.c</code>. L'ordinateur ne peut pas l'exécuter tel quel : il faut d'abord le compiler.</p></div>
+        <div><span class="file">hello.c</span>
+        <pre class="cc" data-prog="hello">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("Hello, C!\n");
+    return 0;
+}
+</pre></div>
+        <div class="box meth"><span class="tag">Ligne par ligne</span>
+          <ul>
+            <li><code>#include &lt;stdio.h&gt;</code> : ouvre la « boîte à outils » des entrées-sorties, où se trouve <code>printf</code>.</li>
+            <li><code>int main(void)</code> : la fonction <b>main</b>, point d'entrée obligatoire de tout programme. Elle renvoie un <code>int</code> et ne prend aucun paramètre (<code>void</code>).</li>
+            <li><code>printf("Hello, C!\n");</code> : affiche le texte. <code>\n</code> est le retour à la ligne : <code>printf</code> n'en ajoute pas tout seul. Chaque instruction finit par <code>;</code>.</li>
+            <li><code>return 0;</code> : le programme dit au système qu'il s'est bien terminé.</li>
+            <li>Les accolades <code>{ }</code> délimitent un bloc : elles remplacent l'indentation de Python.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s1" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">CM 1 : Compiling and running · TP 1</span></div><h2>Compiler avec gcc, lire une erreur</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le cycle est toujours le même : <b>écrire</b> le fichier, <b>compiler</b>, <b>exécuter</b>. La commande des TP :</p></div>
+        <pre class="term" data-run="hello">
+$ ls
+hello.c
+$ gcc -Wall -Wextra -Werror -std=c99 -o hello hello.c
+$ ls
+hello  hello.c
+$ ./hello
+Hello, C!
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Option</th><th>Effet</th></tr></thead>
+          <tbody>
+            <tr><td><code>-Wall</code></td><td>active les avertissements courants</td></tr>
+            <tr><td><code>-Wextra</code></td><td>en ajoute d'autres (paramètre inutilisé, comparaison signé / non signé…)</td></tr>
+            <tr><td><code>-Werror</code></td><td>transforme <b>tout avertissement en erreur</b> : la compilation échoue</td></tr>
+            <tr><td><code>-std=c99</code></td><td>suit la norme C99 (permet <code>for (int i = 0; …)</code>)</td></tr>
+            <tr><td><code>-o hello</code></td><td>nomme l'exécutable <code>hello</code> (sinon : <code>a.out</code>)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>Le compilateur ne devine rien. Il manque un <code>;</code> ? La compilation s'arrête, avec un message qui donne le fichier, la ligne et la colonne :</p></div>
+        <div class="cols">
+          <pre class="cc" data-bad="semi" data-hl="5">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("Hello\n")
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="semi">
+$ gcc -Wall -Wextra -Werror -std=c99 -o hello hello.c
+hello.c:5:22: error: expected ';' before 'return'
+</pre>
+        </div>
+        <div class="prose"><p>Avec <code>-Werror</code>, de simples maladresses deviennent des erreurs. Une variable déclarée mais jamais utilisée, un paramètre jamais lu : le programme ne compile plus.</p></div>
+        <div class="cols">
+          <pre class="cc" data-bad="unused" data-hl="5">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int lives = 3;
+    printf("Hello\n");
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="unused">
+$ gcc -Wall -Wextra -Werror -std=c99 -o hello hello.c
+hello.c:5:9: error: unused variable 'lives' [-Werror=unused-variable]
+cc1: all warnings being treated as errors
+</pre>
+          <pre class="cc" data-bad="unparam" data-hl="1">
+int heal(int hp, int amount)
+{
+    return hp + 10;
+}
+
+int main(void)
+{
+    return heal(1, 2) == 11 ? 0 : 1;
+}
+</pre>
+          <pre class="term" data-run="unparam">
+$ gcc -Wall -Wextra -Werror -std=c99 heal.c
+heal.c:1:22: error: unused parameter 'amount' [-Werror=unused-parameter]
+cc1: all warnings being treated as errors
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">Au TP noté</span>
+          <ul>
+            <li>« The code MUST compile! Otherwise you will not receive a grade. » Une variable oubliée après un essai suffit à tout perdre.</li>
+            <li>Compile souvent, avec exactement ces options. Lis la <b>première</b> erreur d'abord : les suivantes en découlent souvent.</li>
+            <li>Les messages d'erreur sont tes alliés : ils disent où regarder.</li>
+          </ul>
+        </div>
+        <div class="box why"><span class="tag">Ce que fait gcc, en trois étapes</span>
+          <ul>
+            <li><b>Préprocesseur</b> : traite les lignes en <code>#</code>. <code>#include</code> recopie le contenu du fichier d'en-tête.</li>
+            <li><b>Compilation</b> : traduit chaque fichier <code>.c</code> en code machine. Les erreurs de syntaxe et de type arrivent ici.</li>
+            <li><b>Édition de liens</b> : assemble les fichiers compilés et la bibliothèque standard en un seul exécutable. Une fonction déclarée mais définie nulle part donne <code>undefined reference to</code> (partie 6).</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">CM 1 : Variables, Basic Types, printf · TP 2 : floats</span></div><h2>Variables, types, printf</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une variable a un <b>type</b>, écrit avant son nom, et ce type ne change jamais. On peut la déclarer et l'initialiser d'un coup, ou en deux temps.</p></div>
+        <div class="cols">
+          <pre class="cc" data-top="decl">
+int a = 5;    // declaration + initialization
+
+int b;        // declaration
+</pre>
+          <div class="tbl"><table>
+            <thead><tr><th>Type</th><th>Pour</th><th>Exemple</th></tr></thead>
+            <tbody>
+              <tr><td><code>int</code></td><td>entier</td><td><code>int hp = 120;</code></td></tr>
+              <tr><td><code>char</code></td><td>un caractère (un petit entier)</td><td><code>char c = 'A';</code></td></tr>
+              <tr><td><code>float</code></td><td>nombre à virgule</td><td><code>float x = 2.5f;</code></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <pre class="cc" data-prog="types">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int level = 7;
+    char grade = 'B';
+    float speed = 2.5f;
+
+    printf("level = %d\n", level);
+    printf("grade = %c, code %d\n", grade, grade);
+    printf("speed = %f\n", speed);
+    printf("speed = %.1f\n", speed);
+    printf("%d%%\n", 50);
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="types">
+$ ./types
+level = 7
+grade = B, code 66
+speed = 2.500000
+speed = 2.5
+50%
+</pre>
+        <div class="tbl"><table>
+          <thead><tr><th>Format</th><th>Type affiché</th><th>Remarque</th></tr></thead>
+          <tbody>
+            <tr><td><code>%d</code></td><td><code>int</code></td><td>aussi pour voir le code d'un <code>char</code></td></tr>
+            <tr><td><code>%c</code></td><td><code>char</code></td><td>le caractère lui-même</td></tr>
+            <tr><td><code>%f</code>, <code>%.2f</code></td><td><code>float</code> (ou <code>double</code>)</td><td>6 décimales par défaut, <code>.2</code> pour deux</td></tr>
+            <tr><td><code>%s</code></td><td>chaîne de caractères</td><td>cours 3</td></tr>
+            <tr><td><code>%zu</code></td><td><code>size_t</code></td><td>tailles et indices, cours 2</td></tr>
+            <tr><td><code>%%</code></td><td></td><td>affiche un <code>%</code></td></tr>
+          </tbody>
+          <caption>Toutes les options : <code>man 3 printf</code> dans un terminal.</caption>
+        </table></div>
+        <div class="box warn"><span class="tag">La division entière</span>
+          <p>Entre deux <code>int</code>, <code>/</code> donne le quotient entier et <code>%</code> le reste. Même rangé dans un <code>float</code>, <code>3 / 4</code> vaut 0 : la division est faite avant. Convertis d'abord un opérande : <code>(float)3 / 4</code>, ou écris des littéraux à virgule avec <code>f</code>.</p>
+          <div class="cols">
+            <pre class="cc" data-frag="div">
+int a = 7;
+int b = 2;
+printf("%d %d\n", a / b, a % b);
+
+float wrong = 3 / 4;
+float right = (float)3 / 4;
+printf("%.2f %.2f\n", wrong, right);
+printf("%.2f\n", 3.0f / 4.0f);
+</pre>
+            <pre class="term" data-run="div">
+$ ./div
+3 1
+0.00 0.75
+0.75
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Le format doit correspondre au type : <code>printf("%d\n", x)</code> avec <code>x</code> un <code>float</code> ne compile pas avec les options des TP (<code>error: format '%d' expects argument of type 'int', but argument 2 has type 'double'</code>).</li>
+            <li><code>'A'</code> (apostrophes) est un caractère, <code>"A"</code> (guillemets) une chaîne : ce n'est pas la même chose.</li>
+            <li>Une variable locale non initialisée contient une valeur <b>indéterminée</b>, et gcc ne le signale pas toujours. Initialise tes compteurs et tes sommes.</li>
+            <li>Ne compare pas deux <code>float</code> calculés avec <code>==</code> : les nombres à virgule sont approchés. Les TP demandent de tester des intervalles.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">CM 1 : Conditions, switch · TP 2 : Control Flow</span></div><h2>Conditions et switch</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Vrai et faux sont des entiers</span>
+          <ul>
+            <li><b>0</b> signifie faux ; <b>toute valeur non nulle</b> signifie vrai.</li>
+            <li>Une comparaison (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) vaut exactement <b>1</b> ou <b>0</b>.</li>
+            <li>ET : <code>&amp;&amp;</code>, OU : <code>||</code>, NON : <code>!</code>. Le deuxième membre d'un <code>&amp;&amp;</code> n'est pas évalué si le premier est faux.</li>
+          </ul>
+          <div class="cols">
+            <pre class="cc" data-frag="truth">
+int a = 5;
+printf("%d %d %d\n", a == 5, a != 5, a &gt; 3);
+printf("%d %d\n", !0, !7);
+</pre>
+            <pre class="term" data-run="truth">
+$ ./truth
+1 0 1
+1 0
+</pre>
+          </div>
+        </div>
+        <div class="prose"><p>Une chaîne <code>if</code> / <code>else if</code> / <code>else</code> exécute la <b>première</b> branche dont la condition est vraie, et elle seule. L'ordre des tests fait donc partie de la règle : on met les cas particuliers ou urgents en premier.</p></div>
+        <pre class="cc" data-prog="ladder">
+#include &lt;stdio.h&gt;
+
+void describe_hp(int hp, int max_hp)
+{
+    if (hp &lt;= 0)
+    {
+        printf("KO\n");
+    }
+    else if (hp * 4 &lt;= max_hp)
+    {
+        printf("critical\n");
+    }
+    else if (hp &lt; max_hp)
+    {
+        printf("wounded\n");
+    }
+    else
+    {
+        printf("full\n");
+    }
+}
+
+int main(void)
+{
+    describe_hp(0, 80);
+    describe_hp(20, 80);
+    describe_hp(50, 80);
+    describe_hp(80, 80);
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="ladder">
+$ ./ladder
+KO
+critical
+wounded
+full
+</pre>
+        <div class="box meth"><span class="tag">Une fonction oui / non renvoie exactement 0 ou 1</span>
+          <p>Une comparaison vaut déjà 0 ou 1 : on peut renvoyer l'expression elle-même.</p>
+          <div class="cols">
+            <pre class="cc" data-prog="yesno">
+#include &lt;stdio.h&gt;
+
+int can_attack(int hp, int stamina)
+{
+    return hp &gt; 0 &amp;&amp; stamina &gt;= 10;
+}
+
+int main(void)
+{
+    printf("%d\n", can_attack(5, 12));
+    printf("%d\n", can_attack(0, 50));
+    printf("%d\n", can_attack(5, 3));
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="yesno">
+$ ./yesno
+1
+0
+0
+</pre>
+          </div>
+        </div>
+        <div class="prose"><p><code>switch</code> choisit selon la valeur d'un entier, quand chaque valeur a un sens (un code d'action, un statut). Chaque <code>case</code> finit par <code>break</code> (ou <code>return</code>) ; <code>default</code> traite toutes les autres valeurs.</p></div>
+        <div class="cols">
+          <pre class="cc" data-prog="switch">
+#include &lt;stdio.h&gt;
+
+void announce(int action)
+{
+    switch (action)
+    {
+    case 0:
+        printf("Wait\n");
+        break;
+    case 1:
+        printf("Attack\n");
+        break;
+    case 2:
+        printf("Defend\n");
+        break;
+    default:
+        printf("Unknown action\n");
+        break;
+    }
+}
+
+int main(void)
+{
+    announce(1);
+    announce(2);
+    announce(7);
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="switch">
+$ ./switch
+Attack
+Defend
+Unknown action
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">Trois pièges que gcc refuse avec les options des TP</span>
+          <p><b>Oublier un <code>break</code></b> : l'exécution continue dans le <code>case</code> suivant (le CM le montre). Avec <code>-Wextra -Werror</code>, ce n'est même pas compilé.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="fallthrough" data-hl="9">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int c = 1;
+    switch (c)
+    {
+    case 1:
+        printf("one\n");
+    case 2:
+        printf("two\n");
+        break;
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="fallthrough">
+$ gcc -Wall -Wextra -Werror -std=c99 sw.c
+sw.c:9:9: error: this statement may fall through [-Werror=implicit-fallthrough=]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p><b><code>=</code> au lieu de <code>==</code></b> : <code>if (hp = 0)</code> affecte 0 à <code>hp</code> (condition toujours fausse).</p>
+          <div class="cols">
+            <pre class="cc" data-bad="assign" data-hl="6">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int hp = 5;
+    if (hp = 0)
+    {
+        printf("dead\n");
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="assign">
+$ gcc -Wall -Wextra -Werror -std=c99 hp.c
+hp.c:6:9: error: suggest parentheses around assignment used as truth value [-Werror=parentheses]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p><b>Un <code>if</code> sans accolades sur deux lignes</b> : seule la première ligne dépend du <code>if</code>. Style du cours : <b>toujours</b> des accolades, chacune sur sa ligne.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="brace" data-hl="8,9">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int hp = 50;
+
+    if (hp &lt;= 0)
+        printf("KO\n");
+        printf("Game over\n");
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="brace">
+$ gcc -Wall -Wextra -Werror -std=c99 ko.c
+ko.c:7:5: error: this 'if' clause does not guard... [-Werror=misleading-indentation]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+        </div>
+        <div class="box why"><span class="tag">Des if indépendants ne sont pas une chaîne</span>
+          <p>Deux <code>if</code> à la suite sont testés tous les deux : plusieurs blocs peuvent s'exécuter. Pour une règle par priorité (« si…, sinon si… »), il faut <code>else if</code>.</p>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">CM 1 : while, for, do…while · TP 2 : while loops</span></div><h2>Les boucles</h2></div>
+      <div class="stack">
+        <div class="cols">
+          <pre class="cc" data-frag="loops">
+int n = 0;
+while (n &lt; 3)
+{
+    printf("while %d\n", n);
+    n++;
+}
+
+for (int i = 0; i &lt; 3; i++)
+{
+    printf("for %d\n", i);
+}
+
+int k = 10;
+do
+{
+    printf("do %d\n", k);
+    k++;
+} while (k &lt; 3);
+</pre>
+          <pre class="term" data-run="loops">
+$ ./loops
+while 0
+while 1
+while 2
+for 0
+for 1
+for 2
+do 10
+</pre>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Boucle</th><th>Quand s'en servir</th></tr></thead>
+          <tbody>
+            <tr><td><code>for (init; condition; pas)</code></td><td>nombre de tours connu : parcourir des indices</td></tr>
+            <tr><td><code>while (condition)</code></td><td>répéter tant qu'une situation dure (des PV au-dessus de 0…)</td></tr>
+            <tr><td><code>do { … } while (condition);</code></td><td>le corps s'exécute <b>au moins une fois</b> : le test vient après (ci-dessus, k = 10 est affiché)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Instruction</th><th>Effet</th></tr></thead>
+          <tbody>
+            <tr><td><code>break;</code></td><td>quitte la boucle (ou le <code>switch</code>) en cours</td></tr>
+            <tr><td><code>return valeur;</code></td><td>quitte la fonction en renvoyant une valeur, même au milieu d'une boucle</td></tr>
+            <tr><td><code>return;</code></td><td>quitte une fonction <code>void</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="box model"><span class="tag">Compter des tours <i>le modèle des TP</i></span>
+          <p>Combien de jours pour économiser <code>goal</code> pièces à <code>per_day</code> pièces par jour ? Les cas limites d'abord : rien à faire, ou impossible (sinon, boucle infinie).</p>
+          <div class="cols">
+            <pre class="cc" data-prog="days">
+#include &lt;stdio.h&gt;
+
+int days_to_save(int goal, int per_day)
+{
+    if (goal &lt;= 0)
+    {
+        return 0;
+    }
+    if (per_day &lt;= 0)
+    {
+        return -1;
+    }
+
+    int days = 0;
+    int saved = 0;
+    while (saved &lt; goal)
+    {
+        saved += per_day;
+        days++;
+    }
+    return days;
+}
+
+int main(void)
+{
+    printf("%d\n", days_to_save(100, 30));
+    printf("%d\n", days_to_save(90, 30));
+    printf("%d\n", days_to_save(0, 5));
+    printf("%d\n", days_to_save(50, 0));
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="days">
+$ ./days
+4
+3
+0
+-1
+</pre>
+          </div>
+          <p>Sans boucle : <code>(goal + per_day - 1) / per_day</code> arrondit la division au-dessus (100 / 30 donne 3,33, donc 4 jours).<span class="c">entiers positifs</span></p>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Une variable déclarée dans un bloc n'existe que dans ce bloc. Le <code>i</code> de <code>for (int i = 0; …)</code> n'existe plus après la boucle.</li>
+            <li>Un pas nul ou dans le mauvais sens fait une boucle infinie : teste ces cas avant la boucle.</li>
+            <li><code>&lt;</code> ou <code>&lt;=</code> ? Vérifie le premier et le dernier tour à la main.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="6"></span>Partie 6 <span class="ref">CM 1 : Functions, Header Files · TP 1 et 2 : includes/, answers/</span></div><h2>Fonctions, prototypes, fichiers d'en-tête</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une fonction a un type de retour, un nom, des paramètres typés et un corps. <code>void</code> : elle ne renvoie rien. Les paramètres sont des <b>copies</b> : modifier un paramètre ne change pas la variable de l'appelant. Pour « changer » une valeur, on renvoie la nouvelle.</p></div>
+        <div class="cols">
+          <pre class="cc" data-prog="copy">
+#include &lt;stdio.h&gt;
+
+void reset(int x)
+{
+    x = 0;
+    printf("in reset: %d\n", x);
+}
+
+int heal(int hp, int amount, int max_hp)
+{
+    hp = hp + amount;
+    if (hp &gt; max_hp)
+    {
+        return max_hp;
+    }
+    return hp;
+}
+
+int main(void)
+{
+    int hp = 30;
+
+    reset(hp);
+    printf("after reset: %d\n", hp);
+    hp = heal(hp, 50, 60);
+    printf("after heal: %d\n", hp);
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="copy">
+$ ./copy
+in reset: 0
+after reset: 30
+after heal: 60
+</pre>
+        </div>
+        <div class="box warn"><span class="tag">Toute fonction non void renvoie quelque chose, dans tous les cas</span>
+          <div class="cols">
+            <pre class="cc" data-bad="noreturn" data-hl="7">
+int sign(int x)
+{
+    if (x &gt; 0)
+        return 1;
+    else if (x &lt; 0)
+        return -1;
+}
+
+int main(void)
+{
+    return sign(3) == 1 ? 0 : 1;
+}
+</pre>
+            <pre class="term" data-run="noreturn">
+$ gcc -Wall -Wextra -Werror -std=c99 sign.c
+sign.c:7:1: error: control reaches end of non-void function [-Werror=return-type]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+        </div>
+        <div class="prose"><p>Une fonction doit être <b>déclarée avant d'être appelée</b>. Sa déclaration, ou <b>prototype</b>, c'est sa première ligne suivie d'un <code>;</code> : <code>int add(int a, int b);</code>. Sans elle :</p></div>
+        <div class="cols">
+          <pre class="cc" data-bad="implicit" data-hl="5">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("%d\n", add(3, 4));
+    return 0;
+}
+
+int add(int a, int b)
+{
+    return a + b;
+}
+</pre>
+          <pre class="term" data-run="implicit">
+$ gcc -Wall -Wextra -Werror -std=c99 main.c
+main.c:5:20: error: implicit declaration of function 'add' [-Werror=implicit-function-declaration]
+cc1: all warnings being treated as errors
+</pre>
+        </div>
+        <div class="prose"><p>Quand le programme grandit, on le range en plusieurs fichiers : les <b>déclarations</b> dans un fichier d'en-tête <code>.h</code> (la boîte à outils), les <b>définitions</b> dans un <code>.c</code>, et chaque fichier qui s'en sert l'inclut.</p></div>
+        <div class="cols">
+          <div><span class="file">tools.h</span>
+          <pre class="cc" data-file="tools.h">
+#ifndef TOOLS_H
+#define TOOLS_H
+
+int clamp(int value, int low, int high);
+
+#endif
+</pre></div>
+          <div><span class="file">tools.c</span>
+          <pre class="cc" data-file="tools.c">
+#include "tools.h"
+
+int clamp(int value, int low, int high)
+{
+    if (value &lt; low)
+    {
+        return low;
+    }
+    if (value &gt; high)
+    {
+        return high;
+    }
+    return value;
+}
+</pre></div>
+        </div>
+        <div class="cols">
+          <div><span class="file">main.c</span>
+          <pre class="cc" data-prog="multi" data-files="tools.h,tools.c">
+#include &lt;stdio.h&gt;
+#include "tools.h"
+
+int main(void)
+{
+    printf("%d\n", clamp(120, 0, 100));
+    printf("%d\n", clamp(-5, 0, 100));
+    printf("%d\n", clamp(42, 0, 100));
+    return 0;
+}
+</pre></div>
+          <pre class="term" data-run="multi">
+$ gcc -Wall -Wextra -Werror -std=c99 main.c tools.c -o clamp
+$ ./clamp
+100
+0
+42
+</pre>
+        </div>
+        <div class="box meth"><span class="tag">À retenir pour les TP</span>
+          <ul>
+            <li><code>#include &lt;stdio.h&gt;</code> : en-tête <b>standard</b> ; <code>#include "tools.h"</code> : en-tête <b>local</b>, à toi.</li>
+            <li>La <b>garde</b> <code>#ifndef</code> / <code>#define</code> / <code>#endif</code> empêche d'inclure deux fois le même en-tête. Elle est exigée dans chaque <code>.h</code>.</li>
+            <li>Au TP 2, chaque fonction a son en-tête <code>includes/nom.h</code> et son fichier <code>answers/nom.c</code>, qui inclut son propre en-tête. Les prototypes donnés se recopient <b>à l'identique</b>.</li>
+            <li>Tous les <code>.c</code> se donnent à gcc : oublier <code>tools.c</code> donne une erreur d'édition de liens, <code>undefined reference to `clamp'</code>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-1-bases.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 6 sur 6</span><button type="button" class="done-btn" data-done="c:bases:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Le cours 2 range plusieurs valeurs dans un <a href="cours-2-tableaux.html">tableau</a> ; le cours 3 fait de même avec des caractères : les chaînes. C'est le programme du TP en condition d'examen.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/c.js"></script>
+</body>
+</html>

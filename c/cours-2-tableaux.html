@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les tableaux · Prog C</title>
+<meta name="description" content="Prog · C, cours 2 : les tableaux. Déclarer et initialiser, indices de 0 à n − 1, parcourir avec size_t et sizeof, sortir des bornes (comportement indéfini), passer un tableau à une fonction avec sa longueur, algorithmes classiques (somme, maximum, recherche, inversion), tableaux à deux dimensions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Prog C · cours 2 : les tableaux">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — cours 2</span><span>D'après le CM 2 « Arrays and Strings » (première moitié) du site PROG 2031</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="2"></span><a href="index.html">Prog C</a> · Cours 2 · au TP noté</div>
+      <h1>Une rangée de cases <span class="w">côte à côte.</span></h1>
+      <p class="lead">Un tableau, c'est un nombre fixe de cases du même type, rangées l'une après l'autre en mémoire, numérotées à partir de 0. Le C ne vérifie jamais que l'indice est valide, et une fonction ne connaît pas la taille du tableau qu'on lui passe : il faut la lui donner.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 40 min</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Outils</span> <code>size_t</code>, <code>sizeof</code>, <code>%zu</code></span></li>
+        <li class="ex"><span><span class="k">TP noté</span> tableaux et chaînes, semaine du 23 novembre</span></li>
+      </ul>
+    </div>
+    <div class="box thm" style="align-self:start"><span class="tag">Les trois règles du CM</span>
+      <ul>
+        <li><b>Indices valides</b> : de <code>0</code> à <code>longueur - 1</code>.</li>
+        <li><b>Tableau en paramètre</b> : on passe le tableau <b>et</b> sa longueur.</li>
+        <li><b>Chaîne</b> : un tableau de <code>char</code> qui finit par <code>'\0'</code> (cours 3).</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 2 · Les tableaux</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Déclarer, indexer</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Parcourir : size_t, sizeof</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Sortir des bornes</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Tableau en paramètre, algorithmes</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Deux dimensions</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque programme a été compilé avec <code>-Wall -Wextra -Werror -std=c99</code> et exécuté.</p>
+    <div class="toc-nav"><a href="cours-1-bases.html">← Cours 1 : les bases</a><a href="cours-3-chaines.html">Cours 3 : chaînes →</a><a href="../qcm/index.html#c">QCM de C</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Déclarer, indexer</a></li><li><a href="#s2">Parcourir : size_t, sizeof</a></li><li><a href="#s3">Sortir des bornes</a></li><li><a href="#s4">Tableau en paramètre, algorithmes</a></li><li><a href="#s5">Deux dimensions</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">CM 2 : Arrays in One Sentence, Declaration, Indexing</span></div><h2>Déclarer, initialiser, indexer</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition</span>
+          <p>Un tableau est une rangée de cases de <b>taille fixe</b>, toutes du <b>même type</b>, placées les unes après les autres en mémoire (<b>contiguës</b>). On accède à une case par son <b>indice</b>, qui commence à <b>0</b>.</p>
+        </div>
+        <pre class="cc" data-top="decl">
+int a[5];                    // 5 cases, uninitialized
+int b[5] = {3, 1, 4, 1, 5};  // initialized
+int c[] = {3, 1, 4, 1, 5};   // size deduced: 5
+int d[5] = {0};              // every case is 0
+int e[5] = {7, 8};           // 7, 8, then 0, 0, 0
+</pre>
+        <div class="box model"><span class="tag">En mémoire <i>int b[5] = {3, 1, 4, 1, 5};</i></span>
+          <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span><span>[4]</span></div>
+          <div class="mem"><span>3</span><span>1</span><span class="used">4</span><span>1</span><span>5</span></div>
+          <p><code>b[0]</code> vaut 3 (la première case), <code>b[4]</code> vaut 5 (la cinquième et dernière). Pour une longueur n, les indices valides vont de <b>0 à n − 1</b>.</p>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-frag="index">
+int b[5] = {3, 1, 4, 1, 5};
+int e[5] = {7, 8};
+
+b[2] = 42;
+printf("%d %d %d\n", b[0], b[2], b[4]);
+printf("%d %d %d\n", e[1], e[2], e[4]);
+</pre>
+          <pre class="term" data-run="index">
+$ ./index
+3 42 5
+8 0 0
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Un tableau local <b>non initialisé</b> contient des valeurs indéterminées. Pour partir de zéros : <code>= {0}</code>.</li>
+            <li>La taille ne change pas : pas d'<code>append</code> comme en Python.</li>
+            <li>On ne copie pas un tableau avec <code>=</code> : on recopie case par case dans une boucle.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="c:tableaux:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">CM 2 : Looping Through an Array</span></div><h2>Parcourir un tableau : size_t et sizeof</h2></div>
+      <div class="stack">
+        <div class="cols">
+          <pre class="cc" data-prog="loop">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {3, 1, 4, 1, 5};
+    size_t n = sizeof(a) / sizeof(a[0]);
+
+    printf("n = %zu\n", n);
+    for (size_t i = 0; i &lt; n; i++)
+    {
+        printf("a[%zu] = %d\n", i, a[i]);
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="loop">
+$ ./loop
+n = 5
+a[0] = 3
+a[1] = 1
+a[2] = 4
+a[3] = 1
+a[4] = 5
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">Les outils</span>
+          <ul>
+            <li><code>sizeof</code> donne une taille <b>en octets</b>. <code>sizeof(a)</code> vaut 20 (5 cases de 4 octets) et <code>sizeof(a[0])</code> vaut 4 : leur quotient est le nombre de cases.</li>
+            <li><code>size_t</code> est le type des tailles et des indices : un entier <b>sans signe</b> (jamais négatif). Il s'affiche avec <code>%zu</code>. Il est défini dans <code>&lt;stdio.h&gt;</code> (et <code>&lt;stddef.h&gt;</code>).</li>
+            <li>La division par <code>sizeof(a[0])</code> ne marche que là où le tableau est déclaré, pas dans une fonction qui le reçoit (partie 4).</li>
+          </ul>
+        </div>
+        <div class="box trap"><span class="tag">Deux erreurs de type qui ne compilent pas</span>
+          <p><b>Un indice <code>int</code> comparé à un <code>size_t</code></b> : signé contre non signé, refusé par <code>-Wextra -Werror</code>. Prends un <code>size_t i</code> quand la borne est un <code>size_t</code>.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="signcmp" data-hl="6">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    for (int i = 0; i &lt; sizeof(a) / sizeof(a[0]); i++)
+    {
+        printf("%d\n", a[i]);
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="signcmp">
+$ gcc -Wall -Wextra -Werror -std=c99 loop.c
+loop.c:6:23: error: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Werror=sign-compare]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p><b>Une boucle à l'envers avec <code>size_t</code></b> : <code>i &gt;= 0</code> est toujours vrai pour un entier sans signe (après 0 vient un très grand nombre).</p>
+          <div class="cols">
+            <pre class="cc" data-bad="revloop" data-hl="6">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    for (size_t i = 2; i &gt;= 0; i--)
+    {
+        printf("%d\n", a[i]);
+    }
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="revloop">
+$ gcc -Wall -Wextra -Werror -std=c99 rev.c
+rev.c:6:26: error: comparison of unsigned expression in '&gt;= 0' is always true [-Werror=type-limits]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+          <p>À l'envers, la bonne forme part de n et lit la case <code>i - 1</code> :</p>
+          <div class="cols">
+            <pre class="cc" data-frag="backward">
+int a[] = {1, 2, 3};
+size_t n = 3;
+
+for (size_t i = n; i &gt; 0; i--)
+{
+    printf("%d ", a[i - 1]);
+}
+printf("\n");
+</pre>
+            <pre class="term" data-run="backward">
+$ ./backward
+3 2 1
+</pre>
+          </div>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="c:tableaux:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">CM 2 : Will it work?, Arrays and Memory</span></div><h2>Sortir des bornes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Le C ne vérifie <b>pas</b> les indices. Lire ou écrire <code>a[3]</code> dans un tableau de 3 cases compile sans un mot de gcc, même avec <code>-Wall -Wextra -Werror</code>. À l'exécution, c'est un <b>comportement indéfini</b> : le programme peut sembler marcher, planter, ou corrompre en silence d'autres variables rangées juste à côté.</p></div>
+        <div class="cols">
+          <pre class="cc" data-build="oob" data-hl="7">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a[3] = {10, 20, 30};
+
+    for (int i = 0; i &lt;= 3; i++)
+    {
+        printf("a[%d] = %d\n", i, a[i]);
+    }
+    return 0;
+}
+</pre>
+          <div class="box warn"><span class="tag">L'erreur classique : &lt;= au lieu de &lt;</span>
+            <p>Le dernier tour lit <code>a[3]</code>, la case <b>après</b> le tableau. Ce qui s'affiche est imprévisible.</p>
+            <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span></div>
+            <div class="mem"><span>10</span><span>20</span><span>30</span><span class="ghost">?</span></div>
+            <p>Les cases étant contiguës, l'accès par indice est très rapide ; c'est aussi pour cela qu'un débordement touche directement la mémoire voisine.</p>
+          </div>
+        </div>
+        <div class="box why"><span class="tag">Pour déboguer : AddressSanitizer</span>
+          <p>Compile avec <code>-fsanitize=address -g</code> : le programme s'arrête au premier accès hors du tableau et donne la ligne fautive.</p>
+          <pre class="term">
+$ gcc -Wall -Wextra -Werror -std=c99 -fsanitize=address -g oob.c -o oob
+$ ./oob
+==677==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7f7ec310002c
+READ of size 4 at 0x7f7ec310002c thread T0
+    #0 0x5592102b23dc in main oob.c:9
+</pre>
+          <p class="muted" style="font-size:.9rem">Sortie réelle de ce programme, adresses abrégées. À retirer avant de rendre : la commande des TP n'a pas cette option.</p>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="c:tableaux:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">CM 2 : Arrays as Function Parameters, sum_array</span></div><h2>Passer un tableau à une fonction</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">Ce qu'il faut savoir</span>
+          <ul>
+            <li>La fonction reçoit le tableau, <b>pas sa taille</b> : on la passe en second paramètre, de type <code>size_t</code>.</li>
+            <li>Le tableau <b>n'est pas copié</b> : si la fonction modifie une case, l'appelant voit la modification. Ce n'est pas comme un <code>int</code> (cours 1, partie 6).</li>
+            <li><code>const int a[]</code> annonce que la fonction ne modifiera pas le tableau ; écrire dedans ne compile plus.</li>
+          </ul>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-prog="fill">
+#include &lt;stdio.h&gt;
+
+void fill(int a[], size_t len, int value)
+{
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        a[i] = value;
+    }
+}
+
+int main(void)
+{
+    int x[] = {1, 2, 3, 4};
+
+    fill(x, 4, 10);
+    for (size_t i = 0; i &lt; 4; i++)
+    {
+        printf("x[%zu] = %d\n", i, x[i]);
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="fill">
+$ ./fill
+x[0] = 10
+x[1] = 10
+x[2] = 10
+x[3] = 10
+</pre>
+        </div>
+        <div class="box trap"><span class="tag">sizeof dans la fonction : refusé</span>
+          <p>Dans la fonction, <code>a</code> n'est plus qu'une adresse : <code>sizeof(a)</code> donnerait la taille d'une adresse (8 octets), pas celle du tableau. gcc le refuse.</p>
+          <div class="cols">
+            <pre class="cc" data-bad="sizeofp" data-hl="5">
+#include &lt;stdio.h&gt;
+
+size_t count(const int a[])
+{
+    return sizeof(a) / sizeof(a[0]);
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    printf("%zu\n", count(a));
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="sizeofp">
+$ gcc -Wall -Wextra -Werror -std=c99 count.c
+count.c:5:18: error: 'sizeof' on array function parameter 'a' will return size of 'const int *' [-Werror=sizeof-array-argument]
+cc1: all warnings being treated as errors
+</pre>
+          </div>
+        </div>
+        <div class="prose"><p>Les algorithmes qui reviennent dans tous les sujets. Ceux qui lisent sans modifier prennent un <code>const int a[]</code> :</p></div>
+        <pre class="cc" data-prog="algos">
+#include &lt;stdio.h&gt;
+
+int sum_array(const int a[], size_t len)
+{
+    int sum = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        sum += a[i];
+    }
+    return sum;
+}
+
+int max_array(const int a[], size_t len)    // len must be at least 1
+{
+    int best = a[0];
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (a[i] &gt; best)
+        {
+            best = a[i];
+        }
+    }
+    return best;
+}
+
+int count_value(const int a[], size_t len, int value)
+{
+    int count = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (a[i] == value)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int index_of(const int a[], size_t len, int value)
+{
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (a[i] == value)
+        {
+            return i;    // first occurrence
+        }
+    }
+    return -1;           // not found
+}
+
+int main(void)
+{
+    int a[] = {3, 1, 4, 1, 5};
+    int neg[] = {-7, -2, -9};
+
+    printf("sum = %d\n", sum_array(a, 5));
+    printf("max = %d\n", max_array(a, 5));
+    printf("max = %d\n", max_array(neg, 3));
+    printf("count of 1 = %d\n", count_value(a, 5, 1));
+    printf("index of 4 = %d\n", index_of(a, 5, 4));
+    printf("index of 8 = %d\n", index_of(a, 5, 8));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="algos">
+$ ./algos
+sum = 14
+max = 5
+max = -2
+count of 1 = 2
+index of 4 = 2
+index of 8 = -1
+</pre>
+        <div class="box meth"><span class="tag">Modifier sur place : inverser</span>
+          <p>On échange la première et la dernière case, puis la deuxième et l'avant-dernière… jusqu'au milieu. Un échange passe par une variable temporaire.</p>
+          <div class="cols">
+            <pre class="cc" data-prog="reverse">
+#include &lt;stdio.h&gt;
+
+void reverse_array(int a[], size_t len)
+{
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        int tmp = a[i];
+        a[i] = a[len - 1 - i];
+        a[len - 1 - i] = tmp;
+    }
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3, 4, 5};
+
+    reverse_array(a, 5);
+    for (size_t i = 0; i &lt; 5; i++)
+    {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}
+</pre>
+            <pre class="term" data-run="reverse">
+$ ./reverse
+5 4 3 2 1
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Maximum : partir de <code>a[0]</code>, pas de <code>0</code> (avec des valeurs toutes négatives, 0 serait faux). Traite à part le tableau vide si l'énoncé le prévoit.</li>
+            <li>Recherche : <code>return</code> dès qu'on trouve, et <code>-1</code> <b>après</b> la boucle, pas dans un <code>else</code> à l'intérieur.</li>
+            <li>Inversion : s'arrêter à <code>len / 2</code>, sinon on ré-échange tout et le tableau revient comme avant.</li>
+            <li>Modifier un <code>const int a[]</code> ne compile pas : <code>error: assignment of read-only location</code>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="c:tableaux:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">CM 2 : Two-Dimensional Arrays, Traversing a 2D Array</span></div><h2>Les tableaux à deux dimensions</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code>int grid[2][3]</code> : 2 lignes de 3 colonnes. <code>grid[ligne][colonne]</code>, chaque indice partant de 0. En mémoire, les lignes sont rangées l'une après l'autre.</p></div>
+        <div class="box model"><span class="tag">int grid[2][3] = {{1, 2, 3}, {4, 5, 6}};</span>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>col 0</th><th>col 1</th><th>col 2</th></tr></thead>
+            <tbody>
+              <tr><td>ligne 0</td><td>1</td><td>2</td><td>3</td></tr>
+              <tr><td>ligne 1</td><td>4</td><td>5</td><td><b>6</b> = <code>grid[1][2]</code></td></tr>
+            </tbody>
+          </table></div>
+          <p>En mémoire :</p>
+          <div class="mem"><span>1</span><span>2</span><span>3</span><span class="used">4</span><span class="used">5</span><span class="used">6</span></div>
+        </div>
+        <div class="prose"><p>On parcourt avec deux boucles imbriquées : les lignes dehors, les colonnes dedans. Pour passer une grille à une fonction, le nombre de <b>colonnes</b> doit figurer dans le paramètre ; seul le nombre de lignes peut manquer et se passe à part.</p></div>
+        <pre class="cc" data-prog="grid">
+#include &lt;stdio.h&gt;
+
+int count_walls(int map[][4], size_t rows)
+{
+    int walls = 0;
+    for (size_t r = 0; r &lt; rows; r++)
+    {
+        for (size_t c = 0; c &lt; 4; c++)
+        {
+            if (map[r][c] == 1)
+            {
+                walls++;
+            }
+        }
+    }
+    return walls;
+}
+
+int main(void)
+{
+    int map[3][4] = {
+        {1, 1, 1, 1},
+        {1, 0, 0, 1},
+        {1, 1, 0, 1}
+    };
+
+    for (size_t r = 0; r &lt; 3; r++)
+    {
+        for (size_t c = 0; c &lt; 4; c++)
+        {
+            printf("%d ", map[r][c]);
+        }
+        printf("\n");
+    }
+    printf("walls = %d\n", count_walls(map, 3));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="grid">
+$ ./grid
+1 1 1 1
+1 0 0 1
+1 1 0 1
+walls = 9
+</pre>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>L'ordre est <code>[ligne][colonne]</code> : <code>grid[1][2]</code> est à la ligne 1, colonne 2.</li>
+            <li>Les deux boucles ont leurs propres bornes : lignes jusqu'au nombre de lignes, colonnes jusqu'au nombre de colonnes.</li>
+            <li>Le <code>printf("\n")</code> de fin de ligne se place entre les deux boucles, pas dans la boucle intérieure.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-2-tableaux.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="c:tableaux:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Une chaîne de caractères est un tableau de <code>char</code> avec une case de plus pour la fin : <a href="cours-3-chaines.html">cours 3</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/c.js"></script>
+</body>
+</html>

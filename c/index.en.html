@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prog · C · Programming in C</title>
+<meta name="description" content="Prog · C (PROG-102), term 2: compiling with gcc, C basics, arrays, strings. Exam-condition practical on arrays and strings in the week of 23 November (20%), average of the practicals 20%, final exam 60%.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Prog C home: the next deadline, the published courses, what comes next, the Moodle log, the grading. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:56px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.dl{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);border-radius:var(--radius);overflow:hidden;display:grid;min-width:0;align-self:center}
+.dl-top{padding:.6rem 1rem;border-bottom:1px solid var(--line);background:var(--red-soft);font-family:var(--font-ui);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:700}
+.dl-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.75rem}
+.dl-b>*{min-width:0}
+.dl h2{font-size:1.7rem}
+.slot{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:4px 12px;padding:.55rem 0;border-top:1px solid var(--line);align-items:baseline}
+.slot .h{font-family:var(--font-display);font-weight:700;color:var(--red)}
+.slot p{grid-column:2;font-size:.95rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+a.stop:hover{border-color:var(--accent)}
+.stop.key{border-top:3px solid var(--red)}
+.stop.soon{border-style:dashed;background:transparent}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stop h3{margin:0;font-size:1.25rem}
+.stop p{font-size:.95rem;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0}
+.mono{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.log{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.log li{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:4px 16px;padding:.7rem 1rem;border-top:1px solid var(--line);align-items:baseline}
+.log li:first-child{border-top:0}
+.log .d{font-family:var(--font-ui);font-size:.82rem;color:var(--accent);font-weight:600}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}}
+.eval{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .w{font-family:var(--font-display);font-weight:700;font-size:2.4rem;line-height:1;color:var(--accent)}
+</style>
+</head>
+<body data-resume="Prog C · home">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — subject home</span><span>UE Produire · PROG-102 · lectures and practicals on the PROG 2031 site</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="2"></span>Prog · term 2 · PROG-102</div>
+      <h1>Programming in C, <span class="w">close to the machine.</span></h1>
+      <p class="lead">The sequel to the Python of term 1, in a compiled language that hides nothing: declared types, fixed-size arrays, strings ended by a zero, then pointers and Git. Practicals are submitted with Git and graded by the moulinette: code that does not compile gets no grade.</p>
+      <ul class="feats">
+        <li><span><span class="k">Courses</span> 3 published, in 16 parts</span></li>
+        <li><span><span class="k">QCM</span> <span id="nQ0">54 questions</span></span></li>
+        <li><span><span class="k">Mock practical</span> 15 functions with solutions</span></li>
+        <li class="ex"><span><span class="k">Grading</span> graded practical 20%, practicals 20%, exam 60%</span></li>
+      </ul>
+    </div>
+    <aside class="dl" aria-labelledby="dl-h">
+      <div class="dl-top">Deadlines</div>
+      <div class="dl-b">
+        <h2 id="dl-h">Graded practical: this week</h2>
+        <div class="slot"><span class="h">Week of 23 Nov.</span><b>Exam-condition practical</b><p>Arrays and strings, in C. 20% of the grade.</p></div>
+        <div class="slot"><span class="h">Every week</span><b>The practicals</b><p>Submitted with Git, graded by the moulinette. Their average: 20%.</p></div>
+        <div class="slot"><span class="h">End of term 2</span><b>Final exam</b><p>60% of the grade, with a retake.</p></div>
+        <div class="row"><a class="btn primary" href="tp-exam.html">Prepare the graded practical</a><a class="btn" href="../qcm/index.html#c">QCM</a></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-c">
+    <div class="sec-title"><div><div class="eyebrow">Published courses</div><h2 id="t-c">The chapters</h2></div><p>Every program in the courses was compiled with the practical flags and run. Each part ends with a few questions: mark it as understood, and your progress shows here.</p></div>
+    <div class="cards" id="path"></div>
+    <div class="cards">
+      <a class="stop key" href="tp-exam.html"><div class="k">Graded practical · week of 23 November</div><h3>The format, the traps, a mock practical</h3><p>Repository layout, prototypes, submitting with Git, the gcc errors that cost everything, and 15 functions in the moulinette format.</p></a>
+      <a class="stop" href="../qcm/index.html#c"><div class="k">QCM</div><h3>Course and code questions</h3><p id="nQ">Spaced repetition: the questions you miss come back.</p></a>
+      <div class="stop soon"><div class="k">Course outline</div><h3>Pointers, debugging, Git</h3><p>Referencing and dereferencing a variable, pointer arithmetic; Git: branches, <code>.gitignore</code>. Coming with the next lectures.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-m">
+    <div class="sec-title"><div><div class="eyebrow">Log</div><h2 id="t-m">What the Moodle has published</h2></div><p>The Moodle points to the “PROG: The Gitlab Page 2031” site, for internal use only: this site rephrases its content, with its own examples and exercises.</p></div>
+    <ul class="log">
+      <li><span class="d">Week of 9 Nov.</span><p><b>Lecture 1</b> “Compiling and Running” and <b>practical 1</b> (an RPG engine: functions, conditions, compiling, <code>printf</code>, several files). → <a href="cours-1-bases.html">course 1</a>.</p></li>
+      <li><span class="d">Week of 16 Nov.</span><p><b>Lecture 2</b> “Arrays and Strings” and <b>practical 2</b> (control flow: conditions, <code>switch</code>, <code>float</code>, <code>while</code> loops, one function per file). → <a href="cours-1-bases.html#s4">course 1</a>, <a href="cours-2-tableaux.html">course 2</a>, <a href="cours-3-chaines.html">course 3</a>.</p></li>
+      <li><span class="d">18 November</span><p>Announcement of the <b>exam-condition practical</b> on arrays and strings, the following week, 20% of the grade. → <a href="tp-exam.html">graded practical page</a>.</p></li>
+      <li><span class="d">Always</span><p>The Git <b>survival guide</b> (clone, add, commit, tag, push, <code>.gitignore</code>). → <a href="tp-exam.html#t-f">submitting with Git</a>.</p></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-e">
+    <div class="sec-title"><div><div class="eyebrow">Grading</div><h2 id="t-e">How the ECUE is graded</h2></div><p>From the Moodle. A retake exam is planned.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">20%</span><h4>The graded practical</h4><p>A practical done in exam conditions, on arrays and strings.</p></div>
+      <div class="card"><span class="w">20%</span><h4>The other practicals</h4><p>Their average. Submitted with Git (<code>submit-*</code> tags), graded by the moulinette.</p></div>
+      <div class="card"><span class="w">60%</span><h4>The final exam</h4><p>At the end of term 2, on the whole course.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../data/en/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('c');
+  var DESC = ['From Python to C, compiling with gcc and reading its errors, types and printf, conditions and switch, loops, functions and .h files.',
+    'Declaring, traversing with size_t and sizeof, going out of bounds, passing an array to a function, classic algorithms, two dimensions.',
+    'The final \\0, traversing, characters are numbers, changing in place, comparing and copying without string.h, fgets.'];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('c', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Course ' + (i + 1) + (i ? ' · graded practical' : '') + '</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parts understood</div></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'c'; }), st = R.qcm.stats('c', bank);
+    if (bank.length) { document.getElementById('nQ').textContent = bank.length + ' questions, ' + st.due + ' to review today.'; document.getElementById('nQ0').textContent = bank.length + ' questions'; }
+  }
+  paint(); R.store.on(paint);
+})();
+</script>
+</body>
+</html>

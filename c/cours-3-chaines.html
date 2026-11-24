@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les chaînes de caractères · Prog C</title>
+<meta name="description" content="Prog · C, cours 3 : les chaînes de caractères. Un tableau de char terminé par '\0', sizeof et strlen, parcourir jusqu'au '\0', les caractères sont des nombres (ASCII), modifier sur place, comparer avec strcmp et pas ==, réécrire strlen, strcmp, strcpy, lire une ligne avec fgets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Prog C · cours 3 : les chaînes">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — cours 3</span><span>D'après le CM 2 « Arrays and Strings » (seconde moitié) du site PROG 2031</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Prog C</a> · Cours 3 · au TP noté</div>
+      <h1>Des caractères, <span class="w">puis un zéro.</span></h1>
+      <p class="lead">Le C n'a pas de type « chaîne ». Une chaîne, c'est un tableau de <code>char</code> dont la fin est marquée par un caractère spécial, <code>'\0'</code>. Toutes les fonctions sur les chaînes avancent case par case jusqu'à ce zéro : s'il manque, elles continuent dans la mémoire d'à côté.</p>
+      <ul class="feats">
+        <li><span><span class="k">Durée</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parties</span> 5</span></li>
+        <li><span><span class="k">Outils</span> <code>'\0'</code>, <code>%s</code>, <code>strlen</code>, <code>strcmp</code>, <code>fgets</code></span></li>
+        <li class="ex"><span><span class="k">TP noté</span> tableaux et chaînes, semaine du 23 novembre</span></li>
+      </ul>
+    </div>
+    <div class="box model" style="align-self:start"><span class="tag">char word[] = "Hello";</span>
+      <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span><span>[4]</span><span>[5]</span></div>
+      <div class="mem"><span>H</span><span>e</span><span>l</span><span>l</span><span>o</span><span class="used">\0</span></div>
+      <p>5 lettres, 6 cases : <code>sizeof(word)</code> vaut 6, <code>strlen(word)</code> vaut 5.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Sommaire du cours">
+    <div class="toc-title">Cours 3 · Les chaînes</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>Un tableau qui finit par '\0'</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Parcourir, les caractères sont des nombres</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Modifier sur place</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Comparer, copier</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Lire une ligne : fgets</span></a></li>
+    </ol>
+    <p class="toc-note">Chaque programme a été compilé avec <code>-Wall -Wextra -Werror -std=c99</code> et exécuté.</p>
+    <div class="toc-nav"><a href="cours-2-tableaux.html">← Cours 2 : tableaux</a><a href="tp-exam.html">Le TP noté →</a><a href="../qcm/index.html#c">QCM de C</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Sommaire du cours</summary><ol>
+      <li><a href="#s1">Un tableau qui finit par '\0'</a></li><li><a href="#s2">Parcourir, les caractères sont des nombres</a></li><li><a href="#s3">Modifier sur place</a></li><li><a href="#s4">Comparer, copier</a></li><li><a href="#s5">Lire une ligne : fgets</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Partie 1 <span class="ref">CM 2 : From Arrays to Strings, The Null Terminator</span></div><h2>Un tableau de char qui finit par '\0'</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Définition</span>
+          <p>Une <b>chaîne de caractères</b> est un tableau de <code>char</code> terminé par le caractère nul <code>'\0'</code> (le code 0), qui veut dire « fin de la chaîne ». Toute chaîne est un tableau de <code>char</code> ; un tableau de <code>char</code> sans <code>'\0'</code> n'est <b>pas</b> une chaîne.</p>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-frag="nul">
+char a[] = {'H', 'i', '\0'};   // a string
+char b[] = "Hello";            // '\0' added for you
+char c[] = {'H', 'i'};         // NOT a string
+
+printf("%s\n", a);
+printf("%s\n", b);
+printf("%zu %zu\n", sizeof(b), strlen(b));
+printf("%c%c\n", c[0], c[1]);  // fine: char by char
+</pre>
+          <pre class="term" data-run="nul">
+$ ./nul
+Hi
+Hello
+6 5
+Hi
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">À retenir</span>
+          <ul>
+            <li>Entre guillemets, <code>"Hello"</code>, le <code>'\0'</code> final est ajouté tout seul.</li>
+            <li><code>printf("%s", s)</code> affiche les caractères <b>jusqu'au</b> <code>'\0'</code>. Sans lui (le tableau <code>c</code>), il continue dans la mémoire d'à côté : comportement indéfini.</li>
+            <li><code>sizeof</code> compte les cases du tableau, <code>'\0'</code> compris ; <code>strlen</code> (de <code>&lt;string.h&gt;</code>) compte les caractères avant le <code>'\0'</code>.</li>
+            <li>Pour ranger n caractères, il faut <b>n + 1</b> cases.</li>
+            <li><code>'a'</code> est un caractère (un <code>char</code>) ; <code>"a"</code> est une chaîne de 2 cases : <code>'a'</code> puis <code>'\0'</code>.</li>
+          </ul>
+        </div>
+        <div class="box why"><span class="tag">Dans un prototype : char s[] ou char *s</span>
+          <p>En paramètre, <code>const char s[]</code> et <code>const char *s</code> veulent dire la même chose : la fonction reçoit l'adresse du début de la chaîne. Les sujets de TP écrivent <code>char *</code> ; dans les deux cas, on lit les caractères avec <code>s[i]</code>. L'étoile sera expliquée avec les pointeurs.</p>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 1 sur 5</span><button type="button" class="done-btn" data-done="c:chaines:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Partie 2 <span class="ref">CM 2 : Computing a String Length</span></div><h2>Parcourir une chaîne, les caractères sont des nombres</h2></div>
+      <div class="stack">
+        <div class="prose"><p>On ne connaît pas la longueur à l'avance : on avance tant que la case courante n'est pas <code>'\0'</code>. C'est exactement ce que fait <code>strlen</code>, qu'il faut savoir réécrire quand seul <code>&lt;stdio.h&gt;</code> est autorisé.</p></div>
+        <pre class="cc" data-prog="strlen">
+#include &lt;stdio.h&gt;
+
+size_t my_strlen(const char *s)
+{
+    size_t i = 0;
+    while (s[i] != '\0')
+    {
+        i++;
+    }
+    return i;
+}
+
+int count_char(const char *s, char c)
+{
+    int count = 0;
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] == c)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void)
+{
+    printf("%zu\n", my_strlen("robot"));
+    printf("%zu\n", my_strlen(""));
+    printf("%d\n", count_char("banana", 'a'));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="strlen">
+$ ./strlen
+5
+0
+3
+</pre>
+        <div class="box thm"><span class="tag">Un char est un petit entier <i>table ASCII</i></span>
+          <div class="tbl"><table>
+            <thead><tr><th>Caractères</th><th>Codes</th><th>Test</th></tr></thead>
+            <tbody>
+              <tr><td><code>'0'</code> … <code>'9'</code></td><td>48 … 57</td><td><code>c &gt;= '0' &amp;&amp; c &lt;= '9'</code></td></tr>
+              <tr><td><code>'A'</code> … <code>'Z'</code></td><td>65 … 90</td><td><code>c &gt;= 'A' &amp;&amp; c &lt;= 'Z'</code></td></tr>
+              <tr><td><code>'a'</code> … <code>'z'</code></td><td>97 … 122</td><td><code>c &gt;= 'a' &amp;&amp; c &lt;= 'z'</code></td></tr>
+              <tr><td><code>' '</code>, <code>'\n'</code>, <code>'\0'</code></td><td>32, 10, 0</td><td></td></tr>
+            </tbody>
+          </table></div>
+          <p>Les lettres et les chiffres se suivent : on calcule avec les caractères eux-mêmes, sans apprendre les codes.</p>
+          <div class="cols">
+            <pre class="cc" data-frag="ascii">
+char c = 'g';
+char d = '7';
+
+printf("%c\n", c - 'a' + 'A');   // to upper case
+printf("%d\n", d - '0');         // digit value
+printf("%d\n", c - 'a');         // rank in alphabet
+printf("%c\n", 'a' + 25);
+</pre>
+            <pre class="term" data-run="ascii">
+$ ./ascii
+G
+7
+6
+z
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>La condition d'arrêt est <code>s[i] != '\0'</code>, pas <code>i &lt; sizeof(s)</code> : dans une fonction, <code>sizeof</code> ne donne pas la taille de la chaîne.</li>
+            <li><code>strlen</code> renvoie un <code>size_t</code> : <code>for (int i = 0; i &lt; strlen(s); i++)</code> ne compile pas (comparaison signé / non signé, comme au cours 2).</li>
+            <li>Un <code>char</code> comme indice de tableau (<code>count[s[i]]</code>) ne compile pas : <code>error: array subscript has type 'char'</code>. Convertis : <code>count[(unsigned char)s[i]]</code>.</li>
+            <li><code>'0'</code> (le caractère, code 48) n'est pas <code>'\0'</code> (la fin, code 0).</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 2 sur 5</span><button type="button" class="done-btn" data-done="c:chaines:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Partie 3 <span class="ref">les parcours classiques des TP</span></div><h2>Modifier une chaîne sur place</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Une chaîne rangée dans un tableau (<code>char s[] = "…"</code>) se modifie case par case, et la fonction qui la reçoit modifie celle de l'appelant (comme un tableau). On ne touche jamais au <code>'\0'</code>.</p></div>
+        <pre class="cc" data-prog="inplace">
+#include &lt;stdio.h&gt;
+
+void to_upper(char *s)
+{
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] &gt;= 'a' &amp;&amp; s[i] &lt;= 'z')
+        {
+            s[i] = s[i] - 'a' + 'A';
+        }
+    }
+}
+
+void reverse_string(char *s)
+{
+    size_t len = 0;
+    while (s[len] != '\0')
+    {
+        len++;
+    }
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        char tmp = s[i];
+        s[i] = s[len - 1 - i];
+        s[len - 1 - i] = tmp;
+    }
+}
+
+void replace_char(char *s, char old, char new_char)
+{
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] == old)
+        {
+            s[i] = new_char;
+        }
+    }
+}
+
+int main(void)
+{
+    char name[] = "Ada Lovelace 1815";
+    char word[] = "stressed";
+    char path[] = "a-b-c";
+
+    to_upper(name);
+    reverse_string(word);
+    replace_char(path, '-', '/');
+    printf("%s\n%s\n%s\n", name, word, path);
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="inplace">
+$ ./inplace
+ADA LOVELACE 1815
+desserts
+a/b/c
+</pre>
+        <div class="box warn"><span class="tag">Une chaîne littérale ne se modifie pas</span>
+          <p><code>char s[] = "hello";</code> crée un tableau à toi, modifiable. <code>char *s = "hello";</code> désigne la chaîne littérale elle-même, en lecture seule : la modifier compile, puis plante.</p>
+          <div class="cols">
+            <pre class="cc" data-build="literal" data-hl="5">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char *s = "hello";
+    s[0] = 'H';
+    printf("%s\n", s);
+    return 0;
+}
+</pre>
+            <pre class="term">
+$ ./literal
+Segmentation fault (core dumped)
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>Majuscule : seulement si c'est une minuscule. Les espaces, chiffres et majuscules restent tels quels.</li>
+            <li>Inverser : calculer la longueur d'abord, échanger jusqu'à <code>len / 2</code>, et ne pas déplacer le <code>'\0'</code> (il reste en <code>s[len]</code>).</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 3 sur 5</span><button type="button" class="done-btn" data-done="c:chaines:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Partie 4 <span class="ref">CM 2 : Comparing Strings, The Three Big Rules</span></div><h2>Comparer, copier</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code>==</code> entre deux chaînes compare leurs <b>adresses</b>, pas leur contenu. Deux tableaux différents qui contiennent "cat" ne sont jamais à la même adresse. gcc refuse d'ailleurs de comparer deux tableaux :</p></div>
+        <div class="cols">
+          <pre class="cc" data-bad="cmp" data-hl="8">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char a[] = "cat";
+    char b[] = "cat";
+
+    if (a == b)
+    {
+        printf("same\n");
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="cmp">
+$ gcc -Wall -Wextra -Werror -std=c99 cmp.c
+cmp.c:8:11: error: comparison between two arrays [-Werror=array-compare]
+cc1: all warnings being treated as errors
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">strcmp (de &lt;string.h&gt;)</span>
+          <p><code>strcmp(a, b)</code> vaut <b>0</b> si les deux chaînes sont égales, un nombre <b>négatif</b> si <code>a</code> vient avant <code>b</code> dans l'ordre des codes, <b>positif</b> sinon. On teste donc <code>strcmp(a, b) == 0</code>, et jamais <code>if (strcmp(a, b))</code> pour « égales ».</p>
+        </div>
+        <div class="prose"><p>Réécrites avec <code>&lt;stdio.h&gt;</code> seulement, la comparaison, la copie et le test de palindrome :</p></div>
+        <pre class="cc" data-prog="cmpcopy">
+#include &lt;stdio.h&gt;
+
+int my_strcmp(const char *a, const char *b)
+{
+    size_t i = 0;
+    while (a[i] != '\0' &amp;&amp; a[i] == b[i])
+    {
+        i++;
+    }
+    return a[i] - b[i];
+}
+
+void my_strcpy(char *dest, const char *src)    // dest must be large enough
+{
+    size_t i = 0;
+    while (src[i] != '\0')
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+int is_palindrome(const char *s)
+{
+    size_t len = 0;
+    while (s[len] != '\0')
+    {
+        len++;
+    }
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        if (s[i] != s[len - 1 - i])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void)
+{
+    char copy[16];
+
+    printf("%d\n", my_strcmp("cat", "cat") == 0);
+    printf("%d\n", my_strcmp("cat", "dog") &lt; 0);
+    printf("%d\n", my_strcmp("cats", "cat") &gt; 0);
+    my_strcpy(copy, "kayak");
+    printf("%s %d\n", copy, is_palindrome(copy));
+    printf("%d %d\n", is_palindrome("robot"), is_palindrome(""));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="cmpcopy">
+$ ./cmpcopy
+1
+1
+1
+kayak 1
+0 1
+</pre>
+        <div class="box trap"><span class="tag">Pièges</span>
+          <ul>
+            <li>La copie doit écrire le <code>'\0'</code> final, après la boucle. Sans lui, <code>copy</code> n'est pas une chaîne.</li>
+            <li>La destination doit avoir au moins <code>longueur + 1</code> cases.</li>
+            <li><code>my_strcmp</code> s'arrête aussi quand <code>a</code> se termine : <code>"cats"</code> contre <code>"cat"</code> compare <code>'s'</code> à <code>'\0'</code>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 4 sur 5</span><button type="button" class="done-btn" data-done="c:chaines:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Partie 5 <span class="ref">CM 2 : Reading a Line Safely, Tiny Challenge</span></div><h2>Lire une ligne : fgets</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">fgets(tableau, taille, stdin)</span>
+          <ul>
+            <li>Lit une ligne tapée au clavier (<code>stdin</code>) dans le tableau, sans jamais dépasser <code>taille - 1</code> caractères (il garde une case pour <code>'\0'</code>). On passe <code>sizeof(line)</code>.</li>
+            <li>Renvoie <code>NULL</code> s'il n'y a plus rien à lire : on le teste.</li>
+            <li>Garde le <code>'\n'</code> final s'il y a la place : il faut l'enlever avant de comparer.</li>
+          </ul>
+        </div>
+        <pre class="cc" data-prog="fgets">
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char line[64];
+
+    printf("Spell: ");
+    if (fgets(line, sizeof(line), stdin) == NULL)
+    {
+        return 1;
+    }
+
+    size_t n = strlen(line);
+    if (n &gt; 0 &amp;&amp; line[n - 1] == '\n')
+    {
+        line[n - 1] = '\0';
+    }
+
+    if (strcmp(line, "fireball") == 0)
+    {
+        printf("Boom! (%zu letters)\n", strlen(line));
+    }
+    else
+    {
+        printf("Nothing happens.\n");
+    }
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="fgets" data-stdin="fireball\n">
+$ echo "fireball" | ./fgets
+Spell: Boom! (8 letters)
+</pre>
+        <div class="box meth"><span class="tag">Les fonctions de &lt;string.h&gt; vues au CM</span>
+          <div class="tbl"><table>
+            <thead><tr><th>Appel</th><th>Renvoie</th></tr></thead>
+            <tbody>
+              <tr><td><code>strlen(s)</code></td><td>le nombre de caractères avant <code>'\0'</code>, en <code>size_t</code></td></tr>
+              <tr><td><code>strcmp(a, b)</code></td><td>0 si égales, négatif ou positif sinon</td></tr>
+              <tr><td><code>fgets(buf, size, stdin)</code></td><td>(de <code>&lt;stdio.h&gt;</code>) <code>buf</code>, ou <code>NULL</code> en fin d'entrée</td></tr>
+            </tbody>
+          </table></div>
+          <p>Au TP 1, seul <code>&lt;stdio.h&gt;</code> était autorisé. Si c'est encore le cas au TP noté, <code>strlen</code> et <code>strcmp</code> se réécrivent en quelques lignes (parties 2 et 4). Utiliser un en-tête interdit peut coûter l'exercice.</p>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Partie 5 sur 5</span><button type="button" class="done-btn" data-done="c:chaines:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Suite</span><p>Tout le programme du TP noté est vu. La page <a href="tp-exam.html">TP en condition d'examen</a> reprend le format des TP et propose un TP blanc corrigé. Le plan du cours annonce ensuite les pointeurs, le débogage et Git.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/c.js"></script>
+</body>
+</html>

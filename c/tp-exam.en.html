@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exam-condition practical · Prog C</title>
+<meta name="description" content="Prog · C: the exam-condition practical on arrays and strings (week of 23 November 2026, 20% of the grade). What we know, the practicals' format (file tree, prototypes, compilation, git and tags), the traps, and a mock practical of 15 functions in the moulinette's format, with solutions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Mock practical: one card per function, in the format of the practical statements (file, instructions, prototype, example, output). */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:56px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:46em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.facts{grid-template-columns:minmax(0,1fr)}}
+.facts .card{display:grid;gap:.35rem;align-content:start}
+.facts .w{font-family:var(--font-display);font-weight:700;font-size:1.5rem;line-height:1.15;color:var(--accent)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.two>*{min-width:0}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:ck}
+.check li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.65rem .9rem}
+.check li::before{counter-increment:ck;content:counter(ck);font-family:var(--font-display);font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:8px;width:28px;height:28px;display:grid;place-items:center}
+.part-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.part-h h3{margin:0;font-size:1.35rem}
+.exs{display:grid;gap:16px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:grid;gap:.7rem;min-width:0;scroll-margin-top:72px}
+.ex.st-ok{border-left:4px solid var(--ok)}
+.ex.st-review{border-left:4px solid var(--red)}
+.ex-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px 14px;flex-wrap:wrap}
+.ex-head h4{margin:0;font-family:var(--font-mono);font-size:1.02rem;font-weight:600;letter-spacing:0}
+.ex-head .lvl{font-family:var(--font-ui);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ex .lbl{margin-bottom:-.35rem}
+.ex details{border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.ex details>summary{cursor:pointer;padding:.55rem .85rem;font-family:var(--font-ui);font-weight:650;font-size:.92rem}
+.ex details>div{padding:0 .85rem .85rem;display:grid;gap:.6rem}
+.ex .acts{display:flex;gap:8px;flex-wrap:wrap}
+.ex .btn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.score{font-family:var(--font-ui);font-size:.92rem;color:var(--muted)}
+</style>
+</head>
+<body data-resume="Prog C · exam-condition practical">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — exam-condition practical</span><span>Moodle announcement of 18 November · format taken from practicals 1 and 2 of the PROG 2031 site</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Prog C</a> · Graded practical · week of 23 November</div>
+      <h1>Arrays and strings, <span class="w">in exam conditions.</span></h1>
+      <p class="lead">A practical like the others, with functions to write following a given prototype, but alone and timed, for 20% of the grade. The content: arrays and strings, already seen in Python in term 1, this time in C. Below: what we know, the format to follow to the letter, the traps, and a mock practical with solutions.</p>
+      <ul class="feats">
+        <li><span><span class="k">Content</span> <a href="cours-2-tableaux.html">arrays</a>, <a href="cours-3-chaines.html">strings</a></span></li>
+        <li><span><span class="k">Basics</span> <a href="cours-1-bases.html">compiling, functions, .h</a></span></li>
+        <li><span><span class="k">Mock practical</span> 15 functions with solutions</span></li>
+        <li class="ex"><span><span class="k">Weight</span> 20% of the final grade</span></li>
+      </ul>
+    </div>
+    <div class="box trap" style="align-self:center"><span class="tag">The five rules that cost everything</span>
+      <ul>
+        <li>The code <b>must compile</b> with <code>-Wall -Wextra -Werror -std=c99</code>, otherwise no grade.</li>
+        <li>The given prototypes are copied <b>exactly</b>.</li>
+        <li><b>No <code>main</code></b> and no personal test in the files you hand in.</li>
+        <li>Only the <b>allowed</b> headers (in practical 1: <code>&lt;stdio.h&gt;</code>).</li>
+        <li>The requested file tree, <code>.gitignore</code> included, and a tag to hand in.</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-k">
+    <div class="sec-title"><div><div class="eyebrow">Announcement of 18 November</div><h2 id="t-k">What we know</h2></div><p>From the Moodle announcement and the ECUE's assessment rules. The day and time are those of your timetable.</p></div>
+    <div class="facts">
+      <div class="card"><div class="k">When</div><span class="w">Week of 23 Nov.</span><p>During a practical slot. Announced on 18 November for “next week”.</p></div>
+      <div class="card"><div class="k">What</div><span class="w">Arrays, strings</span><p>In C. The same notions as in Python in term 1. The lecture of the week of 16 November (“Arrays and Strings”) is the reference.</p></div>
+      <div class="card"><div class="k">How much</div><span class="w">20%</span><p>Of the final grade. The rest: 20% for the average of the other practicals, 60% for the final exam, with a resit planned.</p></div>
+      <div class="card"><div class="k">What is assessed</div><span class="w">Understanding, applying</span><p>“Not an exam”: your understanding of the course, your ability to build on it and to put it into practice in a program.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-f">
+    <div class="sec-title"><div><div class="eyebrow">The format of practicals 1 and 2</div><h2 id="t-f">What the moulinette expects</h2></div><p>The graded practical is probably the “102p03” of the assessment rules: it follows the format of the first two practicals. The statement on the day prevails if it differs. The moulinette is the automatic grader.</p></div>
+    <div class="two">
+      <div class="stack">
+        <div class="box meth"><span class="tag">File tree <i>modeled on practical 2</i></span>
+          <pre class="term">
+epita-prepa-computer-science-prog-102-p-03-2031-prenom.nom
+├── nom_du_sujet
+│   ├── answers
+│   │   ├── sum_gold.c
+│   │   └── count_vowels.c
+│   └── includes
+│       ├── sum_gold.h
+│       └── count_vowels.h
+├── .gitignore
+└── README
+</pre>
+          <p>One function per file: <code>answers/name.c</code> defines it, <code>includes/name.h</code> declares it between header guards, and the <code>.c</code> includes its own header.</p>
+        </div>
+        <div class="cols">
+          <div><span class="file">includes/sum_gold.h</span>
+          <pre class="cc">
+#ifndef SUM_GOLD_H
+#define SUM_GOLD_H
+
+#include &lt;stdio.h&gt;
+
+int sum_gold(const int purses[], size_t len);
+
+#endif
+</pre></div>
+          <div><span class="file">answers/sum_gold.c</span>
+          <pre class="cc">
+#include "../includes/sum_gold.h"
+
+int sum_gold(const int purses[], size_t len)
+{
+    int total = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        total += purses[i];
+    }
+    return total;
+}
+</pre></div>
+        </div>
+        <p class="codecap" style="margin-top:0">The <code>#include</code> path follows the given skeleton. <code>&lt;stdio.h&gt;</code> in the header provides <code>size_t</code> to the prototype.</p>
+      </div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">The rules of the statements</span>
+          <ul>
+            <li>If the statement and the skeleton or the moulinette disagree, <b>the statement is right</b> (tell the assistant).</li>
+            <li>The code must compile: otherwise, <b>no grade</b>. The command: <code>gcc -Wall -Wextra -Werror -std=c99</code>.</li>
+            <li>The given prototypes must be followed strictly: name, return type, types and order of the parameters.</li>
+            <li>Remove your personal tests: the moulinette brings its own <code>main</code>. A <code>main</code> in <code>answers/</code> breaks the linking.</li>
+            <li>Only what is allowed (headers, keywords) can be used. In practical 1: <code>&lt;stdio.h&gt;</code> only, so no ready-made <code>strlen</code> or <code>strcmp</code>.</li>
+            <li>The <code>.gitignore</code> is mandatory, <b>before</b> the first hand-in (executables, <code>*.o</code>, <code>*.out</code>, <code>*~</code>…).</li>
+            <li>A yes / no function returns exactly <code>0</code> or <code>1</code>. A <code>printf</code> output is copied character for character, final newline included.</li>
+          </ul>
+        </div>
+        <div class="box meth"><span class="tag">Handing in with git</span>
+          <pre class="term">
+$ git status
+$ git add .gitignore nom_du_sujet/answers/sum_gold.c nom_du_sujet/includes/sum_gold.h
+$ git commit -m "sum_gold"
+$ git tag -a archi-1 -m "archi-1"
+$ git push --follow-tags
+</pre>
+          <ul>
+            <li>An <code>archi-*</code> tag asks the moulinette to check the file tree and the compilation (in practicals 1 and 2: 2 per hour).</li>
+            <li>A <code>submit-*</code> tag hands in the work (in practicals 1 and 2: 3 per week). Each tag has a unique name: <code>submit-1</code>, <code>submit-2</code>…</li>
+            <li><code>--follow-tags</code> sends the tags with the commit; <code>git status</code> after the push confirms that nothing is left.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-c">
+    <div class="sec-title"><div><div class="eyebrow">During the practical</div><h2 id="t-c">The routine, function by function</h2></div><p>It avoids silly zeros: a misplaced file, a forgotten test, a warning.</p></div>
+    <ol class="check">
+      <li><span>Read the instructions <b>and the examples</b> in full: they fix the edge cases (empty array, empty string, negative value, “at most” or “strictly”).</span></li>
+      <li><span>Create <code>includes/name.h</code> (header guards and copied prototype) and <code>answers/name.c</code> (which includes the header).</span></li>
+      <li><span>Write the edge cases first, then the loop. Array: <code>for (size_t i = 0; i &lt; len; i++)</code>. String: <code>for (size_t i = 0; s[i] != '\0'; i++)</code>.</span></li>
+      <li><span>Test in a <code>main.c</code> of your own, outside <code>answers/</code>, with the statement's examples: <code>gcc -Wall -Wextra -Werror -std=c99 main.c answers/name.c -o test</code>.</span></li>
+      <li><span>Compare your output with the statement's, character by character.</span></li>
+      <li><span><code>git add</code> the two files, <code>commit</code>, an <code>archi-*</code> tag if you doubt the file tree, then <code>push --follow-tags</code>. Hand in often: a partial hand-in is better than nothing.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="t-p">
+    <div class="sec-title"><div><div class="eyebrow">Checked with gcc</div><h2 id="t-p">The traps of the day</h2></div><p>Each one is shown, with the real gcc message, in the courses.</p></div>
+    <div class="two">
+      <div class="box trap"><span class="tag">Does not compile with the practicals' options</span>
+        <ul>
+          <li>Unused variable or parameter. <a href="cours-1-bases.html#s2">Course 1</a></li>
+          <li><code>int i</code> compared to a <code>size_t</code> (<code>len</code>, <code>strlen</code>, <code>sizeof</code>). <a href="cours-2-tableaux.html#s2">Course 2</a></li>
+          <li><code>size_t i … i &gt;= 0</code> in a backward loop. <a href="cours-2-tableaux.html#s2">Course 2</a></li>
+          <li><code>sizeof</code> on an array received as a parameter. <a href="cours-2-tableaux.html#s4">Course 2</a></li>
+          <li><code>a == b</code> between two <code>char</code> arrays. <a href="cours-3-chaines.html#s4">Course 3</a></li>
+          <li>A <code>char</code> as an array index. <a href="cours-3-chaines.html#s2">Course 3</a></li>
+          <li><code>case</code> without <code>break</code>, <code>=</code> in an <code>if</code>, non-<code>void</code> function without a final <code>return</code>, wrong <code>printf</code> format. <a href="cours-1-bases.html#s4">Course 1</a></li>
+        </ul>
+      </div>
+      <div class="box warn"><span class="tag">Compiles, but wrong</span>
+        <ul>
+          <li><code>i &lt;= len</code>: one cell too many, undefined behavior. <a href="cours-2-tableaux.html#s3">Course 2</a></li>
+          <li>Maximum initialized to 0 with negative values; empty array forgotten.</li>
+          <li><code>-1</code> returned in an <code>else</code> on the first iteration instead of after the loop.</li>
+          <li>String copy without the final <code>'\0'</code>; destination too small.</li>
+          <li><code>'0'</code> mistaken for <code>'\0'</code>; lowercase conversion without checking that it is a lowercase letter.</li>
+          <li>Modifying a string literal (<code>char *s = "…"</code>): crash.</li>
+          <li>Uninitialized sum or counter.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-b">
+    <div class="sec-title"><div><div class="eyebrow">Mock practical · “The Guild Ledger”</div><h2 id="t-b">Fifteen functions in the moulinette's format</h2></div><p>Exercises written for the site, at the level and in the form of practicals 1 and 2: instructions, prototype, example and exact output. Only <code>&lt;stdio.h&gt;</code> is allowed. Each solution was compiled with the practicals' options and its output compared with the announced one. <span class="score" id="score"></span></p></div>
+
+    <div class="part-h"><span class="pn" data-n="1"></span><h3>Arrays</h3></div>
+    <div class="exs">
+
+      <article class="ex" id="sum_gold"><div class="ex-head"><h4>answers/sum_gold.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the sum of the <code>len</code> purses of the array <code>purses</code>. If <code>len</code> is 0, returns 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int sum_gold(const int purses[], size_t len);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="sum_gold">
+int purses[] = {12, 5, 30};
+printf("%d\n", sum_gold(purses, 3));
+printf("%d\n", sum_gold(purses, 2));
+printf("%d\n", sum_gold(purses, 0));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="sum_gold">
+47
+17
+0
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="sum_gold">
+int sum_gold(const int purses[], size_t len)
+{
+    int total = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        total += purses[i];
+    }
+    return total;
+}
+</pre><p>The case <code>len == 0</code> does not need separate handling: the loop does not run and <code>total</code> is 0. You do have to initialize it, though.</p></div></details>
+      </article>
+
+      <article class="ex" id="richest_member"><div class="ex-head"><h4>answers/richest_member.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the <b>index</b> of the richest member of the array <code>gold</code>. In case of a tie, the first one. If <code>len</code> is 0, returns <code>-1</code>. Amounts can be negative (debts).</p>
+        <div class="lbl">Prototype</div><pre class="cc">int richest_member(const int gold[], size_t len);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="richest_member">
+int gold[] = {40, 95, 12, 95};
+int debts[] = {-3, -1, -7};
+printf("%d\n", richest_member(gold, 4));
+printf("%d\n", richest_member(debts, 3));
+printf("%d\n", richest_member(gold, 0));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="richest_member">
+1
+1
+-1
+</pre>
+        <details><summary>Hint</summary><div><p>Keep the index of the best one, not its value. Start from index 0 (never from a value 0, because of the debts) and only replace with a strict <code>&gt;</code> to keep the first one.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="richest_member">
+int richest_member(const int gold[], size_t len)
+{
+    if (len == 0)
+    {
+        return -1;
+    }
+    size_t best = 0;
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (gold[i] &gt; gold[best])
+        {
+            best = i;
+        }
+    }
+    return best;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="count_above"><div class="ex-head"><h4>answers/count_above.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the number of members whose level is <b>strictly</b> greater than <code>threshold</code>.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_above(const int levels[], size_t len, int threshold);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="count_above">
+int levels[] = {3, 10, 7, 10, 1};
+printf("%d\n", count_above(levels, 5, 6));
+printf("%d\n", count_above(levels, 5, 10));
+printf("%d\n", count_above(levels, 5, 0));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="count_above">
+3
+0
+5
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="count_above">
+int count_above(const int levels[], size_t len, int threshold)
+{
+    int count = 0;
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        if (levels[i] &gt; threshold)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+</pre><p>“Strictly”: <code>&gt;</code>, hence 0 for the threshold 10.</p></div></details>
+      </article>
+
+      <article class="ex" id="find_last"><div class="ex-head"><h4>answers/find_last.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the index of the <b>last</b> occurrence of <code>badge</code> in <code>badges</code>, or <code>-1</code> if it is not there.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int find_last(const int badges[], size_t len, int badge);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="find_last">
+int badges[] = {7, 3, 7, 9};
+printf("%d\n", find_last(badges, 4, 7));
+printf("%d\n", find_last(badges, 4, 9));
+printf("%d\n", find_last(badges, 4, 4));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="find_last">
+2
+3
+-1
+</pre>
+        <details><summary>Hint</summary><div><p>Loop backward to stop at the first one found, without the <code>size_t i &gt;= 0</code> trap (course 2, part 2). Another solution: loop forward and remember the last index seen.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="find_last">
+int find_last(const int badges[], size_t len, int badge)
+{
+    for (size_t i = len; i &gt; 0; i--)
+    {
+        if (badges[i - 1] == badge)
+        {
+            return i - 1;
+        }
+    }
+    return -1;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="is_ranked"><div class="ex-head"><h4>answers/is_ranked.c</h4><span class="lvl">fundamentals</span></div>
+        <p>A ranking is valid if the scores are <b>strictly decreasing</b>. Returns <code>1</code> if it is valid, <code>0</code> otherwise. An array of 0 or 1 scores is valid.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int is_ranked(const int scores[], size_t len);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="is_ranked">
+int a[] = {90, 75, 40};
+int b[] = {90, 90, 40};
+printf("%d\n", is_ranked(a, 3));
+printf("%d\n", is_ranked(b, 3));
+printf("%d\n", is_ranked(b, 1));
+printf("%d\n", is_ranked(a, 0));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="is_ranked">
+1
+0
+1
+1
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="is_ranked">
+int is_ranked(const int scores[], size_t len)
+{
+    for (size_t i = 1; i &lt; len; i++)
+    {
+        if (scores[i] &gt;= scores[i - 1])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+</pre><p>Each cell is compared with the previous one, starting from index 1: never a cell <code>-1</code>, and arrays of 0 or 1 cells do not enter the loop.</p></div></details>
+      </article>
+
+      <article class="ex" id="pay_tax"><div class="ex-head"><h4>answers/pay_tax.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Removes <code>tax</code> coins from each member, <b>in the array itself</b>. A fortune never goes below 0. A negative tax is treated as 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void pay_tax(int gold[], size_t len, int tax);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="pay_tax">
+int gold[] = {50, 8, 0, 10};
+pay_tax(gold, 4, 10);
+printf("%d %d %d %d\n", gold[0], gold[1], gold[2], gold[3]);
+pay_tax(gold, 4, -5);
+printf("%d %d %d %d\n", gold[0], gold[1], gold[2], gold[3]);
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="pay_tax">
+40 0 0 0
+40 0 0 0
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="pay_tax">
+void pay_tax(int gold[], size_t len, int tax)
+{
+    if (tax &lt; 0)
+    {
+        tax = 0;
+    }
+    for (size_t i = 0; i &lt; len; i++)
+    {
+        gold[i] -= tax;
+        if (gold[i] &lt; 0)
+        {
+            gold[i] = 0;
+        }
+    }
+}
+</pre><p>No <code>const</code>: the function modifies the array, and the caller sees the new values (the array is not copied).</p></div></details>
+      </article>
+
+      <article class="ex" id="rotate_left"><div class="ex-head"><h4>answers/rotate_left.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Rotates the queue one step to the left: each element moves forward one cell and the first one goes to the end. Does nothing if <code>len</code> is 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void rotate_left(int queue[], size_t len);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="rotate_left">
+int queue[] = {1, 2, 3, 4};
+rotate_left(queue, 4);
+printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+rotate_left(queue, 4);
+printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="rotate_left">
+2 3 4 1
+3 4 1 2
+</pre>
+        <details><summary>Hint</summary><div><p>Set the first one aside, shift the others to the left, then put it in the last cell. Watch out for <code>len - 1</code> when <code>len</code> is 0: with a <code>size_t</code>, it gives a huge number.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="rotate_left">
+void rotate_left(int queue[], size_t len)
+{
+    if (len == 0)
+    {
+        return;
+    }
+    int first = queue[0];
+    for (size_t i = 0; i + 1 &lt; len; i++)
+    {
+        queue[i] = queue[i + 1];
+    }
+    queue[len - 1] = first;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="best_row"><div class="ex-head"><h4>answers/best_row.c</h4><span class="lvl">proficiencies</span></div>
+        <p>Each row of <code>grid</code> contains a team's earnings over 3 quests. Returns the index of the row whose sum is the largest (the first one in case of a tie), or <code>-1</code> if <code>rows</code> is 0.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int best_row(int grid[][3], size_t rows);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="best_row">
+int grid[3][3] = {
+    {1, 2, 3},
+    {9, 0, 0},
+    {4, 4, 4}
+};
+printf("%d\n", best_row(grid, 3));
+printf("%d\n", best_row(grid, 2));
+printf("%d\n", best_row(grid, 0));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="best_row">
+2
+1
+-1
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="best_row">
+int best_row(int grid[][3], size_t rows)
+{
+    if (rows == 0)
+    {
+        return -1;
+    }
+    size_t best = 0;
+    int best_sum = grid[0][0] + grid[0][1] + grid[0][2];
+    for (size_t r = 1; r &lt; rows; r++)
+    {
+        int sum = 0;
+        for (size_t c = 0; c &lt; 3; c++)
+        {
+            sum += grid[r][c];
+        }
+        if (sum &gt; best_sum)
+        {
+            best_sum = sum;
+            best = r;
+        }
+    }
+    return best;
+}
+</pre><p>Row sums: 6, 9 and 12. With <code>rows</code> = 2, only the first two count.</p></div></details>
+      </article>
+    </div>
+
+    <div class="part-h"><span class="pn" data-n="2"></span><h3>Strings</h3></div>
+    <div class="exs">
+
+      <article class="ex" id="tag_length"><div class="ex-head"><h4>answers/tag_length.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the number of characters of <code>tag</code>, not counting the <code>'\0'</code>. <code>&lt;string.h&gt;</code> is not allowed.</p>
+        <div class="lbl">Prototype</div><pre class="cc">size_t tag_length(const char *tag);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="tag_length">
+printf("%zu\n", tag_length("guild"));
+printf("%zu\n", tag_length(""));
+printf("%zu\n", tag_length("a b"));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="tag_length">
+5
+0
+3
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="tag_length">
+size_t tag_length(const char *tag)
+{
+    size_t len = 0;
+    while (tag[len] != '\0')
+    {
+        len++;
+    }
+    return len;
+}
+</pre><p>The space is a character like any other. Printing a <code>size_t</code>: <code>%zu</code>.</p></div></details>
+      </article>
+
+      <article class="ex" id="count_vowels"><div class="ex-head"><h4>answers/count_vowels.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Returns the number of vowels (<code>a e i o u</code>, lowercase or uppercase) in <code>str</code>.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_vowels(const char *str);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="count_vowels">
+printf("%d\n", count_vowels("Guild Master"));
+printf("%d\n", count_vowels("RHYTHM"));
+printf("%d\n", count_vowels("AEIOU aeiou"));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="count_vowels">
+4
+0
+10
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="count_vowels">
+int count_vowels(const char *str)
+{
+    int count = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        char c = str[i];
+        if (c &gt;= 'A' &amp;&amp; c &lt;= 'Z')
+        {
+            c = c - 'A' + 'a';
+        }
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+        {
+            count++;
+        }
+    }
+    return count;
+}
+</pre><p>The character is lowercased in a <b>copy</b> (<code>c</code>): the string, being <code>const</code>, is not modified.</p></div></details>
+      </article>
+
+      <article class="ex" id="capitalize_words"><div class="ex-head"><h4>answers/capitalize_words.c</h4><span class="lvl">fundamentals</span></div>
+        <p>Capitalizes the first letter of each word of <code>str</code>, in place. A word starts at the beginning of the string or right after a space. The other characters do not change.</p>
+        <div class="lbl">Prototype</div><pre class="cc">void capitalize_words(char *str);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="capitalize_words">
+char a[] = "the iron guild";
+char b[] = "  two  spaces";
+char c[] = "42 rats";
+capitalize_words(a);
+capitalize_words(b);
+capitalize_words(c);
+printf("[%s]\n[%s]\n[%s]\n", a, b, c);
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="capitalize_words">
+[The Iron Guild]
+[  Two  Spaces]
+[42 Rats]
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="capitalize_words">
+void capitalize_words(char *str)
+{
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        int starts_word = (i == 0 || str[i - 1] == ' ');
+        if (starts_word &amp;&amp; str[i] &gt;= 'a' &amp;&amp; str[i] &lt;= 'z')
+        {
+            str[i] = str[i] - 'a' + 'A';
+        }
+    }
+}
+</pre><p><code>i == 0</code> is tested first: thanks to the <code>||</code>, <code>str[i - 1]</code> is never read when <code>i</code> is 0. In “42 rats”, the word “42” starts with a digit, which does not change.</p></div></details>
+      </article>
+
+      <article class="ex" id="same_member"><div class="ex-head"><h4>answers/same_member.c</h4><span class="lvl">proficiencies</span></div>
+        <p>Returns <code>1</code> if <code>a</code> and <code>b</code> are the same name <b>ignoring case</b>, <code>0</code> otherwise.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int same_member(const char *a, const char *b);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="same_member">
+printf("%d\n", same_member("Arthur", "aRTHUR"));
+printf("%d\n", same_member("Arthur", "Arthu"));
+printf("%d\n", same_member("Ada", "Ida"));
+printf("%d\n", same_member("", ""));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="same_member">
+1
+0
+0
+1
+</pre>
+        <details><summary>Hint</summary><div><p>Like <code>my_strcmp</code> (course 3, part 4): move forward while both strings continue and the characters, lowercased, are equal. At the end, both strings must end together.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="same_member">
+int same_member(const char *a, const char *b)
+{
+    size_t i = 0;
+    while (a[i] != '\0' &amp;&amp; b[i] != '\0')
+    {
+        char x = a[i];
+        char y = b[i];
+        if (x &gt;= 'A' &amp;&amp; x &lt;= 'Z')
+        {
+            x = x - 'A' + 'a';
+        }
+        if (y &gt;= 'A' &amp;&amp; y &lt;= 'Z')
+        {
+            y = y - 'A' + 'a';
+        }
+        if (x != y)
+        {
+            return 0;
+        }
+        i++;
+    }
+    return a[i] == b[i];
+}
+</pre><p>The last test is 1 only if both strings have ended (<code>'\0'</code> on both sides): “Arthur” against “Arthu” compares <code>'r'</code> with <code>'\0'</code>.</p></div></details>
+      </article>
+
+      <article class="ex" id="count_words"><div class="ex-head"><h4>answers/count_words.c</h4><span class="lvl">proficiencies</span></div>
+        <p>Returns the number of words in <code>str</code>. Words are separated by one or more spaces; there may be some at the beginning and at the end.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int count_words(const char *str);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="count_words">
+printf("%d\n", count_words("join the guild"));
+printf("%d\n", count_words("  many   spaces  here "));
+printf("%d\n", count_words(""));
+printf("%d\n", count_words("solo"));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="count_words">
+3
+3
+0
+1
+</pre>
+        <details><summary>Hint</summary><div><p>Counting the spaces does not work (several spaces in a row). Count the <b>starts</b> of words instead: a character that is not a space while you were not inside a word.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="count_words">
+int count_words(const char *str)
+{
+    int count = 0;
+    int in_word = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] == ' ')
+        {
+            in_word = 0;
+        }
+        else if (!in_word)
+        {
+            in_word = 1;
+            count++;
+        }
+    }
+    return count;
+}
+</pre></div></details>
+      </article>
+
+      <article class="ex" id="is_valid_tag"><div class="ex-head"><h4>answers/is_valid_tag.c</h4><span class="lvl">proficiencies</span></div>
+        <p>A guild handle is valid if it is between 1 and 12 characters long, starts with a lowercase letter, and contains only lowercase letters, digits and <code>'_'</code>. Returns <code>1</code> if it is valid, <code>0</code> otherwise.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int is_valid_tag(const char *tag);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="is_valid_tag">
+printf("%d\n", is_valid_tag("arthur_42"));
+printf("%d\n", is_valid_tag("42arthur"));
+printf("%d\n", is_valid_tag(""));
+printf("%d\n", is_valid_tag("Arthur"));
+printf("%d\n", is_valid_tag("twelve_chars"));
+printf("%d\n", is_valid_tag("thirteen_char"));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="is_valid_tag">
+1
+0
+0
+0
+1
+0
+</pre>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="is_valid_tag">
+int is_valid_tag(const char *tag)
+{
+    if (tag[0] &lt; 'a' || tag[0] &gt; 'z')
+    {
+        return 0;
+    }
+    size_t i = 1;
+    while (tag[i] != '\0')
+    {
+        char c = tag[i];
+        int ok = (c &gt;= 'a' &amp;&amp; c &lt;= 'z') || (c &gt;= '0' &amp;&amp; c &lt;= '9') || c == '_';
+        if (!ok || i &gt;= 12)
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+</pre><p>The empty string is rejected by the first test (<code>'\0'</code> is not a lowercase letter). A 13th character is at index 12: <code>i &gt;= 12</code> rejects it.</p></div></details>
+      </article>
+
+      <article class="ex" id="parse_gold"><div class="ex-head"><h4>answers/parse_gold.c</h4><span class="lvl">proficiencies</span></div>
+        <p>Converts an amount written in digits, like <code>"250"</code>, to an integer. Returns <code>-1</code> if the string is empty or contains anything other than a digit.</p>
+        <div class="lbl">Prototype</div><pre class="cc">int parse_gold(const char *str);</pre>
+        <div class="lbl">Example</div><pre class="cc" data-ex="parse_gold">
+printf("%d\n", parse_gold("250"));
+printf("%d\n", parse_gold("007"));
+printf("%d\n", parse_gold("12a"));
+printf("%d\n", parse_gold(""));
+printf("%d\n", parse_gold("-5"));
+</pre>
+        <div class="lbl">Output</div><pre class="term" data-out="parse_gold">
+250
+7
+-1
+-1
+-1
+</pre>
+        <details><summary>Hint</summary><div><p>Read from left to right: <code>value = value * 10 + digit</code>, with <code>digit = str[i] - '0'</code>.</p></div></details>
+        <details><summary>Solution</summary><div><pre class="cc" data-sol="parse_gold">
+int parse_gold(const char *str)
+{
+    if (str[0] == '\0')
+    {
+        return -1;
+    }
+    int value = 0;
+    for (size_t i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] &lt; '0' || str[i] &gt; '9')
+        {
+            return -1;
+        }
+        value = value * 10 + (str[i] - '0');
+    }
+    return value;
+}
+</pre><p>“250”: 0 × 10 + 2 = 2, then 2 × 10 + 5 = 25, then 25 × 10 + 0 = 250.</p></div></details>
+      </article>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/js/c.js"></script>
+<script>
+(function () {
+  var R = window.REV;
+  var exs = [].slice.call(document.querySelectorAll('article.ex'));
+  function key(el) { return 'c-tp-' + el.id; }
+  function paint() {
+    var ok = 0, rv = 0;
+    exs.forEach(function (el) {
+      var s = R.exo.get(key(el)), st = s ? s.s : null;
+      el.classList.toggle('st-ok', st === 'ok'); el.classList.toggle('st-review', st === 'review');
+      el.querySelectorAll('[data-act]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-act') === st)); });
+      if (st === 'ok') ok++; else if (st === 'review') rv++;
+    });
+    document.getElementById('score').textContent = ok + ' / ' + exs.length + ' solved' + (rv ? ', ' + rv + ' to review' : '') + '.';
+  }
+  exs.forEach(function (el) {
+    var d = document.createElement('div'); d.className = 'acts';
+    d.innerHTML = '<button type="button" class="btn" data-act="ok">I solved it</button><button type="button" class="btn" data-act="review">To review</button>';
+    el.appendChild(d);
+    d.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act]'); if (!b) return;
+      var k = b.getAttribute('data-act'), s = R.exo.get(key(el));
+      R.exo.set(key(el), s && s.s === k ? null : k);
+    });
+  });
+  paint(); R.store.on(paint);
+})();
+</script>
+</body>
+</html>

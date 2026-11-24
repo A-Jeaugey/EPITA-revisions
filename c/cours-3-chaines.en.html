@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Strings · Prog C</title>
+<meta name="description" content="Prog · C, course 3: strings. A char array ending with '\0', sizeof and strlen, looping up to the '\0', characters are numbers (ASCII), modifying in place, comparing with strcmp and not ==, rewriting strlen, strcmp, strcpy, reading a line with fgets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Prog C · course 3: strings">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — course 3</span><span>Based on lecture 2 “Arrays and Strings” (second half) of the PROG 2031 site</span></div>
+  <div class="hero-in">
+    <div style="align-self:start">
+      <div class="eyebrow"><span class="pn" data-n="3"></span><a href="index.html">Prog C</a> · Course 3 · in the graded practical</div>
+      <h1>Characters, <span class="w">then a zero.</span></h1>
+      <p class="lead">C has no “string” type. A string is an array of <code>char</code> whose end is marked by a special character, <code>'\0'</code>. All the functions on strings move forward cell by cell until this zero: if it is missing, they carry on into the neighboring memory.</p>
+      <ul class="feats">
+        <li><span><span class="k">Duration</span> ≈ 45 min</span></li>
+        <li><span><span class="k">Parts</span> 5</span></li>
+        <li><span><span class="k">Tools</span> <code>'\0'</code>, <code>%s</code>, <code>strlen</code>, <code>strcmp</code>, <code>fgets</code></span></li>
+        <li class="ex"><span><span class="k">Graded practical</span> arrays and strings, week of 23 November</span></li>
+      </ul>
+    </div>
+    <div class="box model" style="align-self:start"><span class="tag">char word[] = "Hello";</span>
+      <div class="mem-i"><span>[0]</span><span>[1]</span><span>[2]</span><span>[3]</span><span>[4]</span><span>[5]</span></div>
+      <div class="mem"><span>H</span><span>e</span><span>l</span><span>l</span><span>o</span><span class="used">\0</span></div>
+      <p>5 letters, 6 cells: <code>sizeof(word)</code> is 6, <code>strlen(word)</code> is 5.</p>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Course contents">
+    <div class="toc-title">Course 3 · Strings</div>
+    <ol>
+      <li><a href="#s1"><span class="pn" data-n="1"></span><span>An array that ends with '\0'</span></a></li>
+      <li><a href="#s2"><span class="pn" data-n="2"></span><span>Looping, characters are numbers</span></a></li>
+      <li><a href="#s3"><span class="pn" data-n="3"></span><span>Modifying in place</span></a></li>
+      <li><a href="#s4"><span class="pn" data-n="4"></span><span>Comparing, copying</span></a></li>
+      <li><a href="#s5"><span class="pn" data-n="5"></span><span>Reading a line: fgets</span></a></li>
+    </ol>
+    <p class="toc-note">Every program was compiled with <code>-Wall -Wextra -Werror -std=c99</code> and run.</p>
+    <div class="toc-nav"><a href="cours-2-tableaux.html">← Course 2: arrays</a><a href="tp-exam.html">The graded practical →</a><a href="../qcm/index.html#c">C quiz</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc"><summary>Course contents</summary><ol>
+      <li><a href="#s1">An array that ends with '\0'</a></li><li><a href="#s2">Looping, characters are numbers</a></li><li><a href="#s3">Modifying in place</a></li><li><a href="#s4">Comparing, copying</a></li><li><a href="#s5">Reading a line: fgets</a></li>
+    </ol></details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="1"></span>Part 1 <span class="ref">Lecture 2: From Arrays to Strings, The Null Terminator</span></div><h2>A char array that ends with '\0'</h2></div>
+      <div class="stack">
+        <div class="box def"><span class="tag">Definition</span>
+          <p>A <b>string</b> is an array of <code>char</code> ended by the null character <code>'\0'</code> (code 0), which means “end of the string”. Every string is an array of <code>char</code>; an array of <code>char</code> without <code>'\0'</code> is <b>not</b> a string.</p>
+        </div>
+        <div class="cols">
+          <pre class="cc" data-frag="nul">
+char a[] = {'H', 'i', '\0'};   // a string
+char b[] = "Hello";            // '\0' added for you
+char c[] = {'H', 'i'};         // NOT a string
+
+printf("%s\n", a);
+printf("%s\n", b);
+printf("%zu %zu\n", sizeof(b), strlen(b));
+printf("%c%c\n", c[0], c[1]);  // fine: char by char
+</pre>
+          <pre class="term" data-run="nul">
+$ ./nul
+Hi
+Hello
+6 5
+Hi
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">To remember</span>
+          <ul>
+            <li>In double quotes, <code>"Hello"</code>, the final <code>'\0'</code> is added automatically.</li>
+            <li><code>printf("%s", s)</code> prints the characters <b>up to</b> the <code>'\0'</code>. Without it (the array <code>c</code>), it carries on into the neighboring memory: undefined behavior.</li>
+            <li><code>sizeof</code> counts the cells of the array, <code>'\0'</code> included; <code>strlen</code> (from <code>&lt;string.h&gt;</code>) counts the characters before the <code>'\0'</code>.</li>
+            <li>To store n characters, you need <b>n + 1</b> cells.</li>
+            <li><code>'a'</code> is a character (a <code>char</code>); <code>"a"</code> is a string of 2 cells: <code>'a'</code> then <code>'\0'</code>.</li>
+          </ul>
+        </div>
+        <div class="box why"><span class="tag">In a prototype: char s[] or char *s</span>
+          <p>As a parameter, <code>const char s[]</code> and <code>const char *s</code> mean the same thing: the function receives the address of the start of the string. The practical statements write <code>char *</code>; in both cases, you read the characters with <code>s[i]</code>. The star will be explained with pointers.</p>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 1 of 5</span><button type="button" class="done-btn" data-done="c:chaines:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="2"></span>Part 2 <span class="ref">Lecture 2: Computing a String Length</span></div><h2>Looping through a string, characters are numbers</h2></div>
+      <div class="stack">
+        <div class="prose"><p>You do not know the length in advance: you move forward as long as the current cell is not <code>'\0'</code>. That is exactly what <code>strlen</code> does, and you must know how to rewrite it when only <code>&lt;stdio.h&gt;</code> is allowed.</p></div>
+        <pre class="cc" data-prog="strlen">
+#include &lt;stdio.h&gt;
+
+size_t my_strlen(const char *s)
+{
+    size_t i = 0;
+    while (s[i] != '\0')
+    {
+        i++;
+    }
+    return i;
+}
+
+int count_char(const char *s, char c)
+{
+    int count = 0;
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] == c)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void)
+{
+    printf("%zu\n", my_strlen("robot"));
+    printf("%zu\n", my_strlen(""));
+    printf("%d\n", count_char("banana", 'a'));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="strlen">
+$ ./strlen
+5
+0
+3
+</pre>
+        <div class="box thm"><span class="tag">A char is a small integer <i>ASCII table</i></span>
+          <div class="tbl"><table>
+            <thead><tr><th>Characters</th><th>Codes</th><th>Test</th></tr></thead>
+            <tbody>
+              <tr><td><code>'0'</code> … <code>'9'</code></td><td>48 … 57</td><td><code>c &gt;= '0' &amp;&amp; c &lt;= '9'</code></td></tr>
+              <tr><td><code>'A'</code> … <code>'Z'</code></td><td>65 … 90</td><td><code>c &gt;= 'A' &amp;&amp; c &lt;= 'Z'</code></td></tr>
+              <tr><td><code>'a'</code> … <code>'z'</code></td><td>97 … 122</td><td><code>c &gt;= 'a' &amp;&amp; c &lt;= 'z'</code></td></tr>
+              <tr><td><code>' '</code>, <code>'\n'</code>, <code>'\0'</code></td><td>32, 10, 0</td><td></td></tr>
+            </tbody>
+          </table></div>
+          <p>Letters and digits follow one another: you compute with the characters themselves, without learning the codes.</p>
+          <div class="cols">
+            <pre class="cc" data-frag="ascii">
+char c = 'g';
+char d = '7';
+
+printf("%c\n", c - 'a' + 'A');   // to upper case
+printf("%d\n", d - '0');         // digit value
+printf("%d\n", c - 'a');         // rank in alphabet
+printf("%c\n", 'a' + 25);
+</pre>
+            <pre class="term" data-run="ascii">
+$ ./ascii
+G
+7
+6
+z
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The stopping condition is <code>s[i] != '\0'</code>, not <code>i &lt; sizeof(s)</code>: in a function, <code>sizeof</code> does not give the size of the string.</li>
+            <li><code>strlen</code> returns a <code>size_t</code>: <code>for (int i = 0; i &lt; strlen(s); i++)</code> does not compile (signed / unsigned comparison, as in course 2).</li>
+            <li>A <code>char</code> as an array index (<code>count[s[i]]</code>) does not compile: <code>error: array subscript has type 'char'</code>. Cast it: <code>count[(unsigned char)s[i]]</code>.</li>
+            <li><code>'0'</code> (the character, code 48) is not <code>'\0'</code> (the end, code 0).</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 2 of 5</span><button type="button" class="done-btn" data-done="c:chaines:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="3"></span>Part 3 <span class="ref">the classic loops of the practicals</span></div><h2>Modifying a string in place</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A string stored in an array (<code>char s[] = "…"</code>) is modified cell by cell, and the function that receives it modifies the caller's (like an array). You never touch the <code>'\0'</code>.</p></div>
+        <pre class="cc" data-prog="inplace">
+#include &lt;stdio.h&gt;
+
+void to_upper(char *s)
+{
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] &gt;= 'a' &amp;&amp; s[i] &lt;= 'z')
+        {
+            s[i] = s[i] - 'a' + 'A';
+        }
+    }
+}
+
+void reverse_string(char *s)
+{
+    size_t len = 0;
+    while (s[len] != '\0')
+    {
+        len++;
+    }
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        char tmp = s[i];
+        s[i] = s[len - 1 - i];
+        s[len - 1 - i] = tmp;
+    }
+}
+
+void replace_char(char *s, char old, char new_char)
+{
+    for (size_t i = 0; s[i] != '\0'; i++)
+    {
+        if (s[i] == old)
+        {
+            s[i] = new_char;
+        }
+    }
+}
+
+int main(void)
+{
+    char name[] = "Ada Lovelace 1815";
+    char word[] = "stressed";
+    char path[] = "a-b-c";
+
+    to_upper(name);
+    reverse_string(word);
+    replace_char(path, '-', '/');
+    printf("%s\n%s\n%s\n", name, word, path);
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="inplace">
+$ ./inplace
+ADA LOVELACE 1815
+desserts
+a/b/c
+</pre>
+        <div class="box warn"><span class="tag">A string literal cannot be modified</span>
+          <p><code>char s[] = "hello";</code> creates an array of your own, which can be modified. <code>char *s = "hello";</code> designates the string literal itself, which is read-only: modifying it compiles, then crashes.</p>
+          <div class="cols">
+            <pre class="cc" data-build="literal" data-hl="5">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char *s = "hello";
+    s[0] = 'H';
+    printf("%s\n", s);
+    return 0;
+}
+</pre>
+            <pre class="term">
+$ ./literal
+Segmentation fault (core dumped)
+</pre>
+          </div>
+        </div>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>Uppercase: only if it is a lowercase letter. Spaces, digits and capitals stay as they are.</li>
+            <li>Reversing: compute the length first, swap up to <code>len / 2</code>, and do not move the <code>'\0'</code> (it stays at <code>s[len]</code>).</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s3" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 3 of 5</span><button type="button" class="done-btn" data-done="c:chaines:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="4"></span>Part 4 <span class="ref">Lecture 2: Comparing Strings, The Three Big Rules</span></div><h2>Comparing, copying</h2></div>
+      <div class="stack">
+        <div class="prose"><p><code>==</code> between two strings compares their <b>addresses</b>, not their contents. Two different arrays that contain "cat" are never at the same address. gcc even refuses to compare two arrays:</p></div>
+        <div class="cols">
+          <pre class="cc" data-bad="cmp" data-hl="8">
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char a[] = "cat";
+    char b[] = "cat";
+
+    if (a == b)
+    {
+        printf("same\n");
+    }
+    return 0;
+}
+</pre>
+          <pre class="term" data-run="cmp">
+$ gcc -Wall -Wextra -Werror -std=c99 cmp.c
+cmp.c:8:11: error: comparison between two arrays [-Werror=array-compare]
+cc1: all warnings being treated as errors
+</pre>
+        </div>
+        <div class="box thm"><span class="tag">strcmp (from &lt;string.h&gt;)</span>
+          <p><code>strcmp(a, b)</code> is <b>0</b> if the two strings are equal, a <b>negative</b> number if <code>a</code> comes before <code>b</code> in code order, <b>positive</b> otherwise. So you test <code>strcmp(a, b) == 0</code>, and never <code>if (strcmp(a, b))</code> for “equal”.</p>
+        </div>
+        <div class="prose"><p>Rewritten with <code>&lt;stdio.h&gt;</code> only, the comparison, the copy and the palindrome test:</p></div>
+        <pre class="cc" data-prog="cmpcopy">
+#include &lt;stdio.h&gt;
+
+int my_strcmp(const char *a, const char *b)
+{
+    size_t i = 0;
+    while (a[i] != '\0' &amp;&amp; a[i] == b[i])
+    {
+        i++;
+    }
+    return a[i] - b[i];
+}
+
+void my_strcpy(char *dest, const char *src)    // dest must be large enough
+{
+    size_t i = 0;
+    while (src[i] != '\0')
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+int is_palindrome(const char *s)
+{
+    size_t len = 0;
+    while (s[len] != '\0')
+    {
+        len++;
+    }
+    for (size_t i = 0; i &lt; len / 2; i++)
+    {
+        if (s[i] != s[len - 1 - i])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void)
+{
+    char copy[16];
+
+    printf("%d\n", my_strcmp("cat", "cat") == 0);
+    printf("%d\n", my_strcmp("cat", "dog") &lt; 0);
+    printf("%d\n", my_strcmp("cats", "cat") &gt; 0);
+    my_strcpy(copy, "kayak");
+    printf("%s %d\n", copy, is_palindrome(copy));
+    printf("%d %d\n", is_palindrome("robot"), is_palindrome(""));
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="cmpcopy">
+$ ./cmpcopy
+1
+1
+1
+kayak 1
+0 1
+</pre>
+        <div class="box trap"><span class="tag">Traps</span>
+          <ul>
+            <li>The copy must write the final <code>'\0'</code>, after the loop. Without it, <code>copy</code> is not a string.</li>
+            <li>The destination must have at least <code>length + 1</code> cells.</li>
+            <li><code>my_strcmp</code> also stops when <code>a</code> ends: <code>"cats"</code> against <code>"cat"</code> compares <code>'s'</code> with <code>'\0'</code>.</li>
+          </ul>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 4 of 5</span><button type="button" class="done-btn" data-done="c:chaines:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="pn" data-n="5"></span>Part 5 <span class="ref">Lecture 2: Reading a Line Safely, Tiny Challenge</span></div><h2>Reading a line: fgets</h2></div>
+      <div class="stack">
+        <div class="box thm"><span class="tag">fgets(array, size, stdin)</span>
+          <ul>
+            <li>Reads a line typed on the keyboard (<code>stdin</code>) into the array, never exceeding <code>size - 1</code> characters (it keeps one cell for <code>'\0'</code>). You pass <code>sizeof(line)</code>.</li>
+            <li>Returns <code>NULL</code> if there is nothing left to read: you test for it.</li>
+            <li>Keeps the final <code>'\n'</code> if there is room: you must remove it before comparing.</li>
+          </ul>
+        </div>
+        <pre class="cc" data-prog="fgets">
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char line[64];
+
+    printf("Spell: ");
+    if (fgets(line, sizeof(line), stdin) == NULL)
+    {
+        return 1;
+    }
+
+    size_t n = strlen(line);
+    if (n &gt; 0 &amp;&amp; line[n - 1] == '\n')
+    {
+        line[n - 1] = '\0';
+    }
+
+    if (strcmp(line, "fireball") == 0)
+    {
+        printf("Boom! (%zu letters)\n", strlen(line));
+    }
+    else
+    {
+        printf("Nothing happens.\n");
+    }
+    return 0;
+}
+</pre>
+        <pre class="term" data-run="fgets" data-stdin="fireball\n">
+$ echo "fireball" | ./fgets
+Spell: Boom! (8 letters)
+</pre>
+        <div class="box meth"><span class="tag">The &lt;string.h&gt; functions seen in the lecture</span>
+          <div class="tbl"><table>
+            <thead><tr><th>Call</th><th>Returns</th></tr></thead>
+            <tbody>
+              <tr><td><code>strlen(s)</code></td><td>the number of characters before <code>'\0'</code>, as a <code>size_t</code></td></tr>
+              <tr><td><code>strcmp(a, b)</code></td><td>0 if equal, negative or positive otherwise</td></tr>
+              <tr><td><code>fgets(buf, size, stdin)</code></td><td>(from <code>&lt;stdio.h&gt;</code>) <code>buf</code>, or <code>NULL</code> at the end of the input</td></tr>
+            </tbody>
+          </table></div>
+          <p>In practical 1, only <code>&lt;stdio.h&gt;</code> was allowed. If that is still the case in the graded practical, <code>strlen</code> and <code>strcmp</code> can be rewritten in a few lines (parts 2 and 4). Using a forbidden header can cost you the exercise.</p>
+        </div>
+        <div data-check-ref="c/cours-3-chaines.html#s5" data-n="2"></div>
+      </div>
+      <div class="sec-end"><span class="muted">Part 5 of 5</span><button type="button" class="done-btn" data-done="c:chaines:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p>The whole content of the graded practical has been covered. The <a href="tp-exam.html">exam-condition practical</a> page reuses the practicals' format and offers a mock practical with solutions. The course outline then announces pointers, debugging and Git.</p></div>
+  </main>
+</div>
+
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="../assets/vendor/katex/contrib/auto-render.min.js"></script>
+<script src="../assets/js/mathrender.js"></script>
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../data/en/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script src="../assets/js/c.js"></script>
+</body>
+</html>

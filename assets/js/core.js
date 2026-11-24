@@ -196,6 +196,17 @@
       ]
     },
     {
+      id: 'c', period: 'b2', name: 'Prog · C', short: 'C', code: 'S1 · PROG-102',
+      course: 'Programmer en C : compiler, tableaux, chaînes', path: 'c/index.html', dir: 'c/', status: 'ready',
+      train: 'c/tp-exam.html', fiche: 'c/tp-exam.html', open: 'Ouvrir le C',
+      exam: 'TP en condition d’examen (tableaux, chaînes) semaine du 23 novembre · 20 % · moyenne des autres TP 20 % · examen final 60 %',
+      chapters: [
+        { id: 'bases', title: 'Compiler, les bases du C', path: 'c/cours-1-bases.html', sections: 6 },
+        { id: 'tableaux', title: 'Les tableaux', path: 'c/cours-2-tableaux.html', sections: 5 },
+        { id: 'chaines', title: 'Les chaînes de caractères', path: 'c/cours-3-chaines.html', sections: 5 }
+      ]
+    },
+    {
       id: 'apis', period: 'b2', name: 'Maths · APIS', short: 'Maths', code: 'S1 · ECUE APIS',
       course: 'Analyse : primitives, intégrales et suites numériques', path: 'apis/index.html', dir: 'apis/', status: 'ready',
       train: 'apis/entrainement.html', fiche: 'apis/fiche.html', open: 'Ouvrir l’APIS',
@@ -261,6 +272,9 @@
     lima: { name: 'Algo · LiMa', short: 'LiMa', course: 'Lists and matrices, in Python', open: 'Open LiMa',
       exam: 'Homework 1 until Saturday 21 November, 9 pm (24 min) · Homework 2 end of the week of 30 November · written exam end of term 2 · homework 20%, exam 80%',
       chapters: ['List implementations', 'Sequential search', 'Binary and interpolation search'] },
+    c: { name: 'Prog · C', short: 'C', course: 'Programming in C: compiling, arrays, strings', open: 'Open C',
+      exam: 'Exam-condition practical (arrays, strings) week of 23 November · 20% · other practicals 20% · final exam 60%',
+      chapters: ['Compiling, C basics', 'Arrays', 'Strings'] },
     apis: { name: 'Maths · APIS', short: 'Maths', course: 'Analysis: primitive functions, integrals and numerical sequences', open: 'Open APIS',
       exam: 'Course test on Monday 23 November (1 hr) · final exam in December · homework 20%, course test 20%, exam 60%',
       chapters: ['Primitive functions', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples', 'Convergence theorems', 'Recursive sequences', 'Landau comparisons'] },

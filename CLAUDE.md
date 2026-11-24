@@ -281,6 +281,32 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   cohérente) ; plan de la fiche de cours : listes, recherches, tris, diviser pour régner, matrices, glouton / programmation
   dynamique / force brute. **À faire** : exercices des TD 0 et 1 (tris par sélection, insertion, bulles, fusion, ex. 4.1 et
   4.2) dans une page d'entraînement ; tris puis matrices quand les MiMos sortent ; date du DM 2 dans `OFFICIAL.lima`.
+- **Prog · C** (PROG-102 ; id `c`, dossier `c/`, thème `c.css` : terminal, vert de console `#3F6212` et rouge des erreurs,
+  Space Grotesk + Figtree + Source Code Pro sans ligatures ; `assets/js/c.js` colore `<pre class="cc">` (C, lignes numérotées,
+  `data-hl`) et `<pre class="term">` (`$ commande`, messages `error:` en rouge, lignes repliées)). Sources : CM et TP du site
+  « PROG: The Gitlab Page 2031 » (lien du Moodle), **à usage interne EPITA, strictement personnels** : le site public n'en
+  recopie rien (ni énoncé, ni corrigé de TP) ; il reformule le cours avec ses propres exemples et propose ses propres
+  exercices, au format exact des TP (fichier `answers/nom.c`, consigne, prototype, exemple, sortie, indice, corrigé). Demande de
+  l'élève : « ne copie pas mot pour mot, mais colle au plus près, surtout pour les TP ». Évaluation : TP en condition d'examen
+  (« 102p03 », tableaux et chaînes, semaine du 23 novembre 2026) 20 %, moyenne des autres TP 20 %, examen final 60 %,
+  rattrapage. Format des TP 1 et 2 : dépôt `epita-prepa-computer-science-prog-102-p-0N-2031-prenom.nom`, `answers/` +
+  `includes/` (un `.h` gardé par fonction), prototypes à l'identique, `gcc -Wall -Wextra -Werror -std=c99`, « le code doit
+  compiler, sinon pas de note », pas de test personnel (la moulinette a son `main`), `.gitignore` obligatoire, tags `archi-*`
+  (vérifie arborescence et compilation, 2 par heure) et `submit-*` (3 par semaine), en-têtes autorisés (TP 1 : `stdio.h` seul).
+  Pages : `cours-1-bases` (6 parties : CM 1 et TP 1-2), `-2-tableaux` (5), `-3-chaines` (5) (`data-done="c:<chapitre>:sN"`,
+  chapitres bases, tableaux, chaines ; `maths.js` fait les tuiles et les vérifications), `tp-exam` (ce qu'on sait, format,
+  routine, pièges, TP blanc « The Guild Ledger » : 15 fonctions, progression `c-tp-<nom>`), `index`. QCM `data/qcm/c.js`
+  (`c-cN-NN`, notions `c-compil`, `-bases`, `-cond`, `-fonctions`, `-tableaux`, `-chaines`), **généré** par
+  `python3 tools/gen_qcm_c.py data/qcm/c.js` (corriger le script, puis regénérer). **Tout le C affiché est compilé avec
+  les options des TP et exécuté** : `python3 tools/check_c.py c/*.html` (attributs `data-prog` / `data-run`, `data-frag`, `data-top`,
+  `data-build` (compile seulement), `data-bad` (ne doit pas compiler ; chaque `error:` affiché doit sortir de gcc, avec
+  `LC_ALL=C`), `data-sol` / `data-ex` / `data-out` pour les exercices, `data-files` / `data-file` pour plusieurs fichiers,
+  `data-stdin`). Points vérifiés (gcc 13) : avec ces options ne compilent pas une variable ou un paramètre inutilisé, `int i`
+  comparé à un `size_t` (sign-compare), `size_t i >= 0` (type-limits), `sizeof` sur un tableau en paramètre, `a == b` entre
+  tableaux (array-compare), un `char` comme indice, un `case` sans `break` (implicit-fallthrough : l'exemple du CM 1 ne
+  compilerait pas), `if (x = 0)`, un `if` sans accolades mal indenté, une fonction non void sans `return` final ; compilent
+  sans un mot : la sortie des bornes et une variable non initialisée. **À faire** : fiche d'une page (absente de
+  `fiches/index.html`), pointeurs, débogage et Git quand les CM sortent ; date du TP noté inconnue (pas d'`OFFICIAL.c`).
 - **Dates des examens** : `OFFICIAL` dans `core.js` (semaine du 26 octobre 2026 : date, début et fin de chaque épreuve, planning « Examens du B1 SUP ») ;
   `REV.exams.get(id)` rend la date saisie par l'élève, sinon la date officielle.
 - **Annales toutes matières** : `data/annales.js`, généré par `tools/gen_annales.py` depuis un clone
@@ -332,4 +358,7 @@ Site public : https://epita.arthurjeaugey.com, servi par GitHub Pages depuis la 
 
 Aperçu privé du site : https://claude.ai/artifact/4ERsrJDktPHYY92et9KQmH. Pour le mettre à jour,
 `python3 tools/artifact_entry.py <dossier>` produit la page d’entrée et `files.json`, puis publier cette page avec
-ces fichiers en passant l’URL ci-dessus (`url`) pour garder le même lien.
+ces fichiers en passant l’URL ci-dessus (`url`) pour garder le même lien. L'aperçu est limité à 512 fichiers : depuis le
+C (novembre 2026), il garde le bimestre en cours, les pages partagées et toutes les données, sans les pages des matières du
+B1 ni les polices KaTeX inutilisées (`artifact_entry.py`, `B1_DIRS`, `KATEX_UNUSED`) ; le site public, lui, a tout. Un
+fichier retiré de la liste se supprime de l'aperçu en le publiant à `null`.

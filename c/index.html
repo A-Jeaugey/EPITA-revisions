@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prog · C · Programmer en C</title>
+<meta name="description" content="Prog · C (PROG-102), bimestre 2 : compiler avec gcc, les bases du C, les tableaux, les chaînes de caractères. TP en condition d'examen sur les tableaux et les chaînes la semaine du 23 novembre (20 %), moyenne des TP 20 %, examen final 60 %.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500..700&family=Figtree:ital,wght@0,400..800;1,400..700&family=Source+Code+Pro:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/c.css">
+<script src="../assets/js/core.js"></script>
+<style>
+/* Accueil Prog C : l'échéance la plus proche, les cours publiés, ce qui arrive, le journal du Moodle, l'évaluation. */
+.wrapx{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.home{display:grid;gap:56px;padding-block:44px 96px}
+.home>section{display:grid;gap:18px;min-width:0;scroll-margin-top:72px}
+.sec-title{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.sec-title>*{min-width:0}
+.sec-title p{max-width:44em;color:var(--muted)}
+.sec-title h2{margin-top:.35rem}
+.dl{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);border-radius:var(--radius);overflow:hidden;display:grid;min-width:0;align-self:center}
+.dl-top{padding:.6rem 1rem;border-bottom:1px solid var(--line);background:var(--red-soft);font-family:var(--font-ui);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:700}
+.dl-b{padding:1rem 1.1rem 1.1rem;display:grid;gap:.75rem}
+.dl-b>*{min-width:0}
+.dl h2{font-size:1.7rem}
+.slot{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:4px 12px;padding:.55rem 0;border-top:1px solid var(--line);align-items:baseline}
+.slot .h{font-family:var(--font-display);font-weight:700;color:var(--red)}
+.slot p{grid-column:2;font-size:.95rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
+.stop{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:grid;gap:.5rem;text-decoration:none;color:inherit;align-content:start;min-width:0}
+a.stop:hover{border-color:var(--accent)}
+.stop.key{border-top:3px solid var(--red)}
+.stop.soon{border-style:dashed;background:transparent}
+.stop .k{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stop h3{margin:0;font-size:1.25rem}
+.stop p{font-size:.95rem;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0}
+.mono{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.log{list-style:none;margin:0;padding:0;display:grid;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.log li{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:4px 16px;padding:.7rem 1rem;border-top:1px solid var(--line);align-items:baseline}
+.log li:first-child{border-top:0}
+.log .d{font-family:var(--font-ui);font-size:.82rem;color:var(--accent);font-weight:600}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}}
+.eval{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.eval{grid-template-columns:minmax(0,1fr)}}
+.eval .w{font-family:var(--font-display);font-weight:700;font-size:2.4rem;line-height:1;color:var(--accent)}
+</style>
+</head>
+<body data-resume="Prog C · accueil">
+<div id="shell"></div>
+
+<header class="hero">
+  <div class="doc-strip"><span><b>Prog · C</b> — accueil de la matière</span><span>UE Produire · PROG-102 · CM et TP sur le site PROG 2031</span></div>
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><span class="pn" data-n="2"></span>Prog · bimestre 2 · PROG-102</div>
+      <h1>Programmer en C, <span class="w">au plus près de la machine.</span></h1>
+      <p class="lead">La suite du Python du B1, dans un langage compilé qui ne cache rien : types déclarés, tableaux de taille fixe, chaînes terminées par un zéro, puis pointeurs et Git. Les TP se rendent par Git et sont corrigés par une moulinette : un code qui ne compile pas n'est pas noté.</p>
+      <ul class="feats">
+        <li><span><span class="k">Cours</span> 3 publiés, en 16 parties</span></li>
+        <li><span><span class="k">QCM</span> <span id="nQ0">54 questions</span></span></li>
+        <li><span><span class="k">TP blanc</span> 15 fonctions corrigées</span></li>
+        <li class="ex"><span><span class="k">Notation</span> TP noté 20 %, TP 20 %, examen 60 %</span></li>
+      </ul>
+    </div>
+    <aside class="dl" aria-labelledby="dl-h">
+      <div class="dl-top">Les échéances</div>
+      <div class="dl-b">
+        <h2 id="dl-h">TP noté : cette semaine</h2>
+        <div class="slot"><span class="h">Sem. du 23 nov.</span><b>TP en condition d'examen</b><p>Tableaux et chaînes de caractères, en C. 20 % de la note.</p></div>
+        <div class="slot"><span class="h">Chaque semaine</span><b>Les TP</b><p>Rendus par Git, corrigés par la moulinette. Leur moyenne : 20 %.</p></div>
+        <div class="slot"><span class="h">Fin B2</span><b>Examen final</b><p>60 % de la note, avec un rattrapage.</p></div>
+        <div class="row"><a class="btn primary" href="tp-exam.html">Préparer le TP noté</a><a class="btn" href="../qcm/index.html#c">QCM</a></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="wrapx home">
+  <section aria-labelledby="t-c">
+    <div class="sec-title"><div><div class="eyebrow">Cours publiés</div><h2 id="t-c">Les chapitres</h2></div><p>Chaque programme des cours a été compilé avec les options des TP et exécuté. Chaque partie finit par quelques questions : marque-la comme comprise, ta progression s'affiche ici.</p></div>
+    <div class="cards" id="path"></div>
+    <div class="cards">
+      <a class="stop key" href="tp-exam.html"><div class="k">TP noté · semaine du 23 novembre</div><h3>Le format, les pièges, un TP blanc</h3><p>Arborescence, prototypes, rendu par Git, les erreurs de gcc qui coûtent tout, et 15 fonctions au format de la moulinette.</p></a>
+      <a class="stop" href="../qcm/index.html#c"><div class="k">QCM</div><h3>Questions de cours et de code</h3><p id="nQ">Répétition espacée : les questions ratées reviennent.</p></a>
+      <div class="stop soon"><div class="k">Plan du cours</div><h3>Pointeurs, débogage, Git</h3><p>Référencer et déréférencer une variable, arithmétique des pointeurs ; Git : branches, <code>.gitignore</code>. À venir au fil des CM.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-m">
+    <div class="sec-title"><div><div class="eyebrow">Journal</div><h2 id="t-m">Ce que le Moodle a publié</h2></div><p>Le Moodle renvoie au site « PROG: The Gitlab Page 2031 », à usage interne : ce site en reformule le contenu, avec ses propres exemples et exercices.</p></div>
+    <ul class="log">
+      <li><span class="d">Semaine du 9 nov.</span><p><b>CM 1</b> « Compiling and Running » et <b>TP 1</b> (un moteur de jeu de rôle : fonctions, conditions, compilation, <code>printf</code>, plusieurs fichiers). → <a href="cours-1-bases.html">cours 1</a>.</p></li>
+      <li><span class="d">Semaine du 16 nov.</span><p><b>CM 2</b> « Arrays and Strings » et <b>TP 2</b> (contrôle du flot : conditions, <code>switch</code>, <code>float</code>, boucles <code>while</code>, une fonction par fichier). → <a href="cours-1-bases.html#s4">cours 1</a>, <a href="cours-2-tableaux.html">cours 2</a>, <a href="cours-3-chaines.html">cours 3</a>.</p></li>
+      <li><span class="d">18 novembre</span><p>Annonce du <b>TP en condition d'examen</b> sur les tableaux et les chaînes, la semaine suivante, 20 % de la note. → <a href="tp-exam.html">page du TP noté</a>.</p></li>
+      <li><span class="d">Toujours</span><p>Le <b>guide de survie</b> Git (clone, add, commit, tag, push, <code>.gitignore</code>). → <a href="tp-exam.html#t-f">rendre avec Git</a>.</p></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-e">
+    <div class="sec-title"><div><div class="eyebrow">Évaluation</div><h2 id="t-e">Comment l'ECUE est notée</h2></div><p>Modalités du Moodle. Un examen de rattrapage est prévu.</p></div>
+    <div class="eval">
+      <div class="card"><span class="w">20 %</span><h4>Le TP noté</h4><p>Un TP réalisé en condition d'examen, sur les tableaux et les chaînes.</p></div>
+      <div class="card"><span class="w">20 %</span><h4>Les autres TP</h4><p>Leur moyenne. Rendus par Git (tags <code>submit-*</code>), corrigés par la moulinette.</p></div>
+      <div class="card"><span class="w">60 %</span><h4>L'examen final</h4><p>En fin de bimestre 2, sur tout le cours.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/c.js"></script>
+<script src="../assets/js/maths.js"></script>
+<script>
+(function () {
+  var R = window.REV, s = R.subject('c');
+  var DESC = ['Du Python au C, compiler avec gcc et lire ses erreurs, types et printf, conditions et switch, boucles, fonctions et fichiers .h.',
+    'Déclarer, parcourir avec size_t et sizeof, sortir des bornes, passer un tableau à une fonction, algorithmes classiques, deux dimensions.',
+    'Le \\0 final, parcourir, les caractères sont des nombres, modifier sur place, comparer et copier sans string.h, fgets.'];
+  function paint() {
+    document.getElementById('path').innerHTML = s.chapters.map(function (c, i) {
+      var done = Math.min(c.sections, R.progress.chapterDone('c', c.id));
+      return '<a class="stop" href="' + R.url(c.path) + '"><div class="k"><span class="pn" data-n="' + (i + 1) + '"></span>Cours ' + (i + 1) + (i ? ' · TP noté' : '') + '</div><h3>' + c.title + '</h3><p>' + (DESC[i] || '') + '</p><div class="bar" aria-hidden="true"><i style="width:' + Math.round(100 * done / c.sections) + '%"></i></div><div class="mono">' + done + ' / ' + c.sections + ' parties comprises</div></a>';
+    }).join('');
+    var bank = R.quiz.bank().filter(function (q) { return q.s === 'c'; }), st = R.qcm.stats('c', bank);
+    if (bank.length) { document.getElementById('nQ').textContent = bank.length + ' questions, dont ' + st.due + ' à revoir aujourd’hui.'; document.getElementById('nQ0').textContent = bank.length + ' questions'; }
+  }
+  paint(); R.store.on(paint);
+})();
+</script>
+</body>
+</html>
