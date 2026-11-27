@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Waves and signal · Physics B2</title>
+<meta name="description" content="Physics B2, chapter 5: periodic signal, travelling wave, plane progressive monochromatic wave, phase shift and interference, standing waves and normal modes of a string and a pipe (TD 8).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapter 5: string as a solid line, envelope and markers dashed, squared grid */
+.mk .mk-curve.k-ink{stroke:currentColor}
+.mk .mk-curve.k-frc{stroke:currentColor}
+.mk .mk-env{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+.mk .mk-ghost{fill:none;stroke:var(--pos);stroke-width:1.4;opacity:.35}
+.mk .mk-grid{fill:none;stroke:var(--line);stroke-width:1}
+.mk .mk-t{fill:var(--muted);font-size:12px}
+.mk .mk-node{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+.mk .mk-ant{fill:var(--accent)}
+.fig .ctrls .sliders{align-items:end}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{font:inherit;font-size:.85rem;padding:.3rem .8rem;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics B2 · chapter 5: waves and signal">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics B2</a> · Chapter 5 of 5</div>
+      <h1>An oscillation that travels: <span class="w">the wave</span>.</h1>
+      <p class="lead">A shaken rope, sound, light: a disturbance propagates without carrying matter along. It is described by a function of time and space, two signals are compared through their phase shift, and a rope fixed at both ends vibrates only at certain frequencies. This is part 3 of the course (“Waves and signal”, pages 20 to 24) and TD 8.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">5 parts</span><span class="chip">course p. 20 to 24 · TD 8</span><span class="chip ex">midterm 2 syllabus</span></div>
+      <div class="note keep"><span class="tag">What you need first</span><p>The cosine function, its period 2π, and the quantities of an oscillation from <a href="cours-3-oscillateur.html#s4">chapter 3</a>: amplitude, period, angular frequency <var>ω</var> = 2π<var>f</var>. A sinusoidal wave is an oscillator at every point, shifted in time from one point to the next.</p></div>
+    </div>
+    <figure class="fig" style="margin:0"><div class="mk-host" id="figHero"></div><figcaption>A sinusoidal wave photographed at one instant: the shape repeats every <var>λ</var> (wavelength) and moves forward at the wave speed <var>c</var>.</figcaption></figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 5 · Waves and signal</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>The periodic signal</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>The travelling wave</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>The sinusoidal wave</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>The phase shift</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Standing waves</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Physics B2 home</a><a href="cours-4-pendule.html">← Chapter 4: pendulum and damping</a><a href="../qcm/index.html#phys2">Physics B2 MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Chapter contents</summary>
+      <ol>
+        <li><a href="#s1">The periodic signal</a></li><li><a href="#s2">The travelling wave</a></li><li><a href="#s3">The sinusoidal wave</a></li>
+        <li><a href="#s4">The phase shift</a></li><li><a href="#s5">Standing waves</a></li>
+      </ol>
+    </details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The periodic signal and its quantities</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A <b>signal</b> is a physical quantity that depends on time: a voltage, a pressure, the position of a point on a rope. The course is limited to <b>periodic</b> signals, which repeat identically. Five quantities describe them.</p></div>
+        <figure class="fig"><div class="mk-host" id="figSignal"></div><figcaption>A periodic signal: its amplitude <var>A</var> and its period <var>T</var>, the duration of one pattern.</figcaption></figure>
+        <div class="tbl"><table>
+          <thead><tr><th>Quantity</th><th>Symbol and unit</th><th>Relation</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Amplitude</th><td class="f"><var>A</var>, unit of the signal</td><td>maximum deviation from the mean value</td></tr>
+            <tr><th scope="row">Period</th><td class="f"><var>T</var>, s</td><td>duration of one pattern</td></tr>
+            <tr><th scope="row">Frequency</th><td class="f"><var>f</var>, Hz</td><td class="f"><var>f</var> = 1/<var>T</var></td></tr>
+            <tr><th scope="row">Wave speed (celerity)</th><td class="f"><var>c</var>, m·s⁻¹</td><td>propagation speed of the wave</td></tr>
+            <tr><th scope="row">Wavelength</th><td class="f"><var>λ</var>, m</td><td class="f"><var>λ</var> = <var>c</var>/<var>f</var> = <var>c</var><var>T</var></td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>The wavelength is the distance travelled by the wave during one period. The three families of signals in the course:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Signal</th><th>Physical quantity</th><th>Frequencies</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Electrical</th><td>current, voltage</td><td>depends on the circuit (50 Hz for the mains)</td></tr>
+            <tr><th scope="row">Acoustic</th><td>pressure, air velocity</td><td>audible: 20 Hz to 20 kHz; infrasound &lt; 20 Hz; ultrasound &gt; 20 kHz</td></tr>
+            <tr><th scope="row">Electromagnetic</th><td>electric field, magnetic field</td><td>10¹⁴ to 10¹⁵ Hz for light; microwaves, from 3·10⁸ to 3·10¹¹ Hz, are also electromagnetic</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><div><p><b>The microwave oven (TD 8, Ex 2)</b>: <var>f</var> = 2.45 GHz = 2.45·10⁹ Hz and <var>c</var> = 3·10⁸ m·s⁻¹, so <var>λ</var> = 3·10⁸ / 2.45·10⁹ ≈ 0.12 m = 12 cm. This is not a micrometre length (10⁻⁶ m) but a centimetre one: despite their name, these are electromagnetic waves in the microwave range, between infrared and radio waves.</p></div></li>
+          <li><div><p><b>An A</b> at 440 Hz in air (<var>c</var> = 340 m·s⁻¹): <var>λ</var> = 340/440 ≈ 0.77 m.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing <var>λ</var> = <var>c</var> × <var>f</var>: check with the units, (m·s⁻¹)/(s⁻¹) = m.</li>
+          <li>Prefixes: k = 10³, M = 10⁶, G = 10⁹; μ = 10⁻⁶, n = 10⁻⁹.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-5-ondes.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 5</span><button type="button" class="done-btn" data-done="phys2:ondes:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>The travelling wave</h2></div>
+      <div class="stack">
+        <div class="note why"><span class="tag">Definition from the course</span><p>A <b>wave</b> is a phenomenon in which a local disturbance moves through space <b>without any displacement of matter</b>. Its speed of travel is the <b>wave speed</b> (celerity) <var>c</var>.</p></div>
+        <div class="prose"><p>Each point of the medium repeats the motion of the source, with a <b>delay</b> equal to the travel time <var>x</var>/<var>c</var>. If the source, at <var>x</var> = 0, has the motion <var>f</var>(<var>t</var>), the point with coordinate <var>x</var> has the motion <var>f</var>(<var>t</var> − <var>x</var>/<var>c</var>):</p></div>
+        <div class="eq"><span class="nw"><var>s</var>(<var>x</var>, <var>t</var>) = <var>f</var>(<var>t</var> − <span class="frac"><span><var>x</var></span><span><var>c</var></span></span>) &nbsp; towards increasing <var>x</var></span><span class="nw"><var>s</var>(<var>x</var>, <var>t</var>) = <var>f</var>(<var>t</var> + <span class="frac"><span><var>x</var></span><span><var>c</var></span></span>) &nbsp; towards decreasing <var>x</var></span></div>
+        <div class="prose"><p>The wave speed depends on the <b>medium</b> (the tension and mass of the rope, the temperature of the air), not on the source. The source only decides the shape of the disturbance.</p></div>
+        <figure class="fig">
+          <div class="mk-host" id="figRope"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="rt">Time <var>t</var></label><output id="rtv" for="rt"></output><input id="rt" type="range" min="0" max="5" step="0.5" value="3"></div></div>
+            <div class="readout" id="rread" aria-live="polite"></div>
+          </div>
+          <figcaption>TD 8, Ex 1: the hand at O rises by 10 cm (one square) in 1 s then goes back down in 1 s. On top, a rope where <var>c</var> = 1 square per second; below, a rope where <var>c</var> = 2 squares per second.</figcaption>
+        </figure>
+        <h3>The answers to TD 8, exercise 1</h3>
+        <ol class="steps">
+          <li><div><p><b>Reaching the red point sooner?</b> No: in 2 s, the wave travels 2<var>c</var>, whatever the hand does. Moving the hand faster makes the bump narrower, not faster. Only a change of rope (or of tension) changes <var>c</var>.</p></div></li>
+          <li><div><p><b>At <var>t</var> = 1 s</b> (<var>c</var> = 1 square per second): the hand is at the top and the wavefront is 1 square from O. The rope rises from the point 1 square away up to the hand, at 10 cm: half a bump.</p></div></li>
+          <li><div><p><b>Two ropes at <var>t</var> = 3 s</b>: the bump has the same height (10 cm) on both, because the hand made the same gesture. On the rope that is twice as fast, it is twice as wide (4 squares instead of 2) and twice as far (peak 4 squares from O instead of 2).</p></div></li>
+          <li><div><p><b>Two waves crossing</b>: the displacements add up (superposition). A bump and a trough of the same shape that overlap give, at that instant, a flat rope. Afterwards, each one carries on as if the other did not exist.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Believing that matter moves along with the wave: each point of the rope moves up and down on the spot.</li>
+          <li>Believing that a more energetic gesture speeds up the wave: it changes the amplitude or the width, not the wave speed.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-5-ondes.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 5</span><button type="button" class="done-btn" data-done="phys2:ondes:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>The plane progressive monochromatic wave (PPMW)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Two assumptions simplify the model: the wave propagates in a single direction (<b>plane</b> wave) and it is perfectly sinusoidal (<b>monochromatic</b> wave). This is the PPMW of the course. Along the O<var>x</var> axis, towards increasing <var>x</var>:</p></div>
+        <div class="eq"><span class="nw"><var>s</var>(<var>x</var>, <var>t</var>) = <var>A</var> cos(<var>ω</var><var>t</var> − <var>k</var><var>x</var> + <var>φ</var>)</span></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Quantity</th><th>Name</th><th>Relation</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><var>A</var></th><td>maximum amplitude</td><td>unit of the signal</td></tr>
+            <tr><th scope="row"><var>ω</var></th><td>temporal angular frequency, rad·s⁻¹</td><td class="f"><var>ω</var> = 2π<var>f</var> = 2π/<var>T</var></td></tr>
+            <tr><th scope="row"><var>k</var></th><td>spatial angular frequency (wavenumber), rad·m⁻¹</td><td class="f"><var>k</var> = <var>ω</var>/<var>c</var> = 2π/<var>λ</var></td></tr>
+            <tr><th scope="row"><var>φ</var></th><td>initial phase, rad</td><td>value of the phase at <var>x</var> = 0, <var>t</var> = 0</td></tr>
+          </tbody>
+        </table></div>
+        <div class="prose"><p>It is indeed a travelling wave: <var>ω</var><var>t</var> − <var>k</var><var>x</var> = <var>ω</var>(<var>t</var> − <var>x</var>/<var>c</var>). And it has a <b>double periodicity</b>: at a fixed point, the signal repeats every <var>T</var>; at a fixed instant (a photo of the rope), the shape repeats every <var>λ</var>.</p></div>
+        <figure class="fig">
+          <div class="mk-host" id="figOPPM"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="wt">Time <var>t</var>/<var>T</var></label><output id="wtv" for="wt"></output><input id="wt" type="range" min="0" max="1" step="0.125" value="0"></div></div>
+          </div>
+          <figcaption>The photo of the wave at time <var>t</var> (faded: at <var>t</var> = 0). The crest moves forward by <var>λ</var> during one period. Point P only moves up and down.</figcaption>
+        </figure>
+        <ol class="steps">
+          <li><div><p><b>Writing a PPMW</b>: <var>A</var> = 2 mm, <var>f</var> = 50 Hz, <var>c</var> = 10 m·s⁻¹, towards increasing <var>x</var>, <var>φ</var> = 0. <var>ω</var> = 100π rad·s⁻¹, <var>λ</var> = 10/50 = 0.2 m, <var>k</var> = 2π/0.2 = 10π rad·m⁻¹: <span class="f"><var>s</var> = 2 cos(100π<var>t</var> − 10π<var>x</var>)</span> in mm.</p></div></li>
+          <li><div><p><b>Reading a PPMW</b>: <span class="f"><var>s</var> = 3 cos(200π<var>t</var> + 4π<var>x</var>)</span> propagates towards decreasing <var>x</var> (+ sign), <var>f</var> = 100 Hz, <var>λ</var> = 2π/(4π) = 0.5 m, <var>c</var> = <var>ω</var>/<var>k</var> = 50 m·s⁻¹.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>This <var>k</var> is not the spring constant of a spring: it is a wavenumber, in rad·m⁻¹.</li>
+          <li>Confusing <var>k</var> = 2π/<var>λ</var> with 1/<var>λ</var>, or <var>ω</var> = 2π<var>f</var> with <var>f</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-5-ondes.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 5</span><button type="button" class="done-btn" data-done="phys2:ondes:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>The phase shift between two signals</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Two signals of the same frequency, <var>s</var><sub>1</sub> = <var>A</var> cos(<var>ω</var><var>t</var> + <var>φ</var><sub>1</sub>) and <var>s</var><sub>2</sub> = <var>A</var> cos(<var>ω</var><var>t</var> + <var>φ</var><sub>2</sub>), are compared through their <b>phase shift</b>. If <var>s</var><sub>2</sub> reproduces <var>s</var><sub>1</sub> with a delay Δ<var>t</var>:</p></div>
+        <div class="eq"><span class="nw">Δ<var>φ</var> = <var>φ</var><sub>2</sub> − <var>φ</var><sub>1</sub> = −<var>ω</var> Δ<var>t</var></span></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Lead or lag</span><p>Δ<var>φ</var> &gt; 0: <var>s</var><sub>2</sub> leads <var>s</var><sub>1</sub> in phase. Δ<var>φ</var> &lt; 0: it lags.</p></div>
+          <div class="card"><span class="k">Three special cases</span><p>Δ<var>φ</var> = 0 (modulo 2π): <b>in phase</b>. Δ<var>φ</var> = π: <b>in phase opposition</b> (antiphase). Δ<var>φ</var> = π/2: <b>in quadrature</b>.</p></div>
+        </div>
+        <figure class="fig">
+          <div class="mk-host" id="figPhase"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="ph">Phase shift Δ<var>φ</var></label><output id="phv" for="ph"></output><input id="ph" type="range" min="-4" max="4" step="1" value="2"></div></div>
+            <div class="readout" id="phread" aria-live="polite"></div>
+          </div>
+          <figcaption><var>s</var><sub>1</sub> in blue, <var>s</var><sub>2</sub> in purple, their sum in black. In phase, the sum has amplitude 2<var>A</var>; in antiphase, it is zero.</figcaption>
+        </figure>
+        <div class="prose"><p>Two points of the same PPMW a distance <var>d</var> apart are out of phase by <var>k</var><var>d</var> = 2π<var>d</var>/<var>λ</var>: they vibrate in phase if <var>d</var> is a multiple of <var>λ</var>, in antiphase if <var>d</var> = <var>λ</var>/2, 3<var>λ</var>/2…</p></div>
+        <h3>Interference in the living room (TD 8, exercise 3)</h3>
+        <div class="prose"><p>The ear receives the direct wave from the loudspeaker and the wave reflected by the wall at distance <var>D</var> behind it. The two waves add up; their sum depends on their phase shift.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Time offset</b>: the reflected wave makes one extra round trip between the ear and the wall, that is 2<var>D</var>: Δ<var>τ</var> = 2<var>D</var>/<var>c</var>.</p></div></li>
+          <li><div><p><b>Phase shift</b>: Δ<var>φ</var> = 2π<var>f</var> Δ<var>τ</var> = 4π<var>f</var><var>D</var>/<var>c</var> (in absolute value; reflection adds no phase shift for the pressure).</p></div></li>
+          <li><div><p><b>Weakened amplitude</b> when the two waves are in antiphase: Δ<var>φ</var> = (2<var>n</var> + 1)π, that is</p><div class="eq"><span class="nw"><var>f</var><sub><var>n</var></sub> = (2<var>n</var> + 1) <span class="frac"><span><var>c</var></span><span>4<var>D</var></span></span>, &nbsp; <var>n</var> ∈ ℕ</span></div><p>For <var>D</var> = 1 m: 86 Hz, 257 Hz, 429 Hz… right in the bass and mid-range.</p></div></li>
+          <li><div><p><b>No audible frequency?</b> It would need <var>c</var>/(4<var>D</var>) &gt; 20 kHz, that is <var>D</var> &lt; 343/80,000 ≈ 4.3 mm: impossible, the head does not fit against the wall.</p></div></li>
+          <li><div><p><b>The solution</b>: far from the wall, the reflected wave has travelled a longer path and arrives weakened, so the cancellation is only partial. An absorbing coating has the same effect: it weakens the reflected wave.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>The sign: with the convention of the course, a delay gives a <b>negative</b> phase shift.</li>
+          <li>Forgetting the round trip: the path difference is 2<var>D</var>, not <var>D</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-5-ondes.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 5</span><button type="button" class="done-btn" data-done="phys2:ondes:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>Standing waves and normal modes</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A guitar string is fixed at both ends. A wave travelling along it is reflected at each end: two waves of the same amplitude and the same angular frequency propagate in opposite directions and superpose. At the fixed point, the reflected wave is inverted (the displacement stays zero there):</p></div>
+        <div class="eq"><span class="nw"><var>s</var><sub>1</sub> = <var>A</var> cos(<var>ω</var><var>t</var> − <var>k</var><var>x</var>)</span><span class="nw"><var>s</var><sub>2</sub> = −<var>A</var> cos(<var>ω</var><var>t</var> + <var>k</var><var>x</var>)</span><span class="nw"><var>s</var> = <var>s</var><sub>1</sub> + <var>s</var><sub>2</sub> = 2<var>A</var> sin(<var>ω</var><var>t</var>) sin(<var>k</var><var>x</var>)</span></div>
+        <div class="prose"><p>Time and space are <b>decoupled</b>: each point oscillates on the spot, as sin(<var>ω</var><var>t</var>), with an amplitude 2<var>A</var>|sin(<var>k</var><var>x</var>)| that depends on its position. Nothing propagates: this is a <b>standing wave</b>. The <b>nodes</b> (zero amplitude) are every <var>λ</var>/2; the <b>antinodes</b> (maximum amplitude 2<var>A</var>) are halfway between two nodes.</p></div>
+        <div class="note trap"><span class="tag">Typo in the course</span><p>The course writes <var>s</var><sub>2</sub> = +<var>A</var> cos(<var>ω</var><var>t</var> + <var>k</var><var>x</var>) then finds 2<var>A</var> sin(<var>ω</var><var>t</var>) sin(<var>k</var><var>x</var>). With the + sign, the sum is 2<var>A</var> cos(<var>ω</var><var>t</var>) cos(<var>k</var><var>x</var>); the sin × sin form, zero at <var>x</var> = 0, requires the inverted reflected wave, as here. The conclusions (nodes, antinodes, modes) do not change.</p></div>
+        <h3>The normal modes of a string of length <var>L</var></h3>
+        <div class="prose"><p>The string is also fixed at <var>x</var> = <var>L</var>: <var>s</var>(<var>L</var>, <var>t</var>) = 0 at all times, so sin(<var>k</var><var>L</var>) = 0, that is <var>k</var><sub><var>n</var></sub><var>L</var> = <var>n</var>π. Only certain waves can exist, the <b>normal modes</b>:</p></div>
+        <div class="eq"><span class="nw"><var>λ</var><sub><var>n</var></sub> = <span class="frac"><span>2<var>L</var></span><span><var>n</var></span></span>, &nbsp;&nbsp; <var>f</var><sub><var>n</var></sub> = <span class="frac"><span><var>c</var></span><span><var>λ</var><sub><var>n</var></sub></span></span> = <var>n</var> <span class="frac"><span><var>c</var></span><span>2<var>L</var></span></span> = <var>n</var> <var>f</var><sub>1</sub></span><span class="nw"><var>n</var> ∈ ℕ*</span></div>
+        <figure class="fig">
+          <div class="mk-host" id="figModes"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="mn">Mode <var>n</var></label><output id="mnv" for="mn"></output><input id="mn" type="range" min="1" max="5" step="1" value="2"></div></div>
+            <div class="readout" id="mread" aria-live="polite"></div>
+          </div>
+          <figcaption>The string in mode <var>n</var>, at several instants, and its envelope dashed. White circles: the nodes; orange dots: the antinodes. Mode <var>n</var> has <var>n</var> loops.</figcaption>
+        </figure>
+        <div class="prose"><p>Mode <var>n</var> = 1 is the <b>fundamental</b>, the following ones are the <b>harmonics</b>, with frequencies that are multiples of <var>f</var><sub>1</sub>. In a mode, all points vibrate at the same frequency, in phase or in antiphase. A 65 cm guitar string where <var>c</var> = 286 m·s⁻¹ has fundamental <var>f</var><sub>1</sub> = 286/1.3 = 220 Hz.</p></div>
+        <h3>A pipe closed at one end (TD 8, exercise 4)</h3>
+        <div class="prose"><p>In a wind instrument, the air vibrates: the closed end imposes a vibration node, the open end an antinode. The length is then a quarter of a wavelength plus a whole number of half-wavelengths, as the statement gives it:</p></div>
+        <div class="eq"><span class="nw"><var>L</var> = <span class="frac"><span><var>λ</var><sub><var>n</var></sub></span><span>4</span></span> + <var>n</var> <span class="frac"><span><var>λ</var><sub><var>n</var></sub></span><span>2</span></span></span><span class="nw">⇒ &nbsp; <var>λ</var><sub><var>n</var></sub> = <span class="frac"><span>4<var>L</var></span><span>2<var>n</var> + 1</span></span></span><span class="nw"><var>f</var><sub><var>n</var></sub> = (2<var>n</var> + 1) <span class="frac"><span><var>c</var></span><span>4<var>L</var></span></span>, &nbsp; <var>n</var> ∈ ℕ</span></div>
+        <ol class="steps">
+          <li><div><p><b>The fundamental at 440 Hz</b> (<var>n</var> = 0): <var>L</var> = <var>c</var>/(4 × 440) = 340/1,760 ≈ 0.193 m.</p></div></li>
+          <li><div><p><b>The next frequency</b> (<var>n</var> = 1): 3 × 440 = 1,320 Hz. A pipe closed at one end only produces odd harmonics.</p></div></li>
+          <li><div><p><b>Eliminating 1,320 Hz</b>: a hole opens the pipe and imposes a vibration antinode. Placed where this mode has a vibration node, at 2<var>L</var>/3 from the closed end (≈ 12.9 cm), it makes this mode impossible. No published answer key: this is the answer of the model, which ignores the effect of the hole on the fundamental.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">The microwave oven (TD 8, Ex 2, question 4)</span><p>Yes, standing waves form: the metal walls reflect the waves. At the nodes, spaced by <var>λ</var>/2 ≈ 6 cm, the food heats little. That is why the turntable rotates.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Two consecutive nodes are separated by <var>λ</var>/2, not <var>λ</var>.</li>
+          <li>For a string fixed at both ends, <var>n</var> starts at 1; for the closed-open pipe, at 0.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-5-ondes.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 5</span><button type="button" class="done-btn" data-done="phys2:ondes:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">End of the course</span><p>This is the last part of the published course. Exercises: <a href="entrainement.html#td8-ex1">TD 8</a> on the practice page; all the formulas in <a href="fiche.html">the summary sheet</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../data/qcm/physique-annales.js"></script>
+<script src="../data/en/qcm/physique-annales.js"></script>
+<script src="../data/qcm/phys2.js"></script>
+<script src="../data/en/qcm/phys2.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  var PI = Math.PI;
+  /* texts of the page */
+  var L = {
+    hero: 'Photo of a sinusoidal wave: wavelength λ between two crests, wave speed c',
+    signal: 'Periodic signal with its amplitude A and its period T',
+    rope: function (t) { return 'Two ropes at t = ' + t + ' s: wave speed 1 and 2 squares per second'; },
+    rread: function (t, a, b) { return '<p><var>t</var> = ' + t + ' s · rope 1: front at <b>' + a + '</b> square(s) from O · rope 2: front at <b>' + b + '</b> square(s)</p>'; },
+    c1: 'c = 1 square/s', c2: 'c = 2 squares/s',
+    oppm: function (t) { return 'Sinusoidal wave at t = ' + t + ' T, with its position at t = 0 faded'; },
+    phase: function (d) { return 'Two signals with a phase shift of ' + d + ', and their sum'; },
+    phRead: function (d, name, amp) { return '<p>Δ<var>φ</var> = <b>' + d + '</b>' + (name ? ': <b>' + name + '</b>' : '') + ' · amplitude of the sum: 2<var>A</var>|cos(Δ<var>φ</var>/2)| = <b>' + amp + ' <var>A</var></b></p>'; },
+    inPhase: 'in phase', opp: 'in phase opposition (antiphase)', quad: 'in quadrature', adv: 's₂ leads', late: 's₂ lags',
+    modes: function (n) { return 'String fixed at both ends in mode ' + n; },
+    mread: function (n) { return '<p>Mode <b>' + n + '</b>: <var>λ</var><sub>' + n + '</sub> = 2<var>L</var>/' + n + (n === 1 ? ' = 2<var>L</var>' : '') + ' · <var>f</var><sub>' + n + '</sub> = ' + n + ' <var>f</var><sub>1</sub> · ' + (n + 1) + ' nodes (ends included), ' + n + ' antinode' + (n > 1 ? 's' : '') + (n === 1 ? ' · the fundamental' : ' · harmonic of order ' + n) + '</p>'; },
+    t: { v: 't' }, x: { v: 'x' }, s: { v: 's' }
+  };
+  function fracPi(k) {
+    /* k in quarters of π */
+    var map = { '-4': '−π', '-3': '−3π/4', '-2': '−π/2', '-1': '−π/4', '0': '0', '1': 'π/4', '2': 'π/2', '3': '3π/4', '4': 'π' };
+    return map[String(k)];
+  }
+
+  /* ---------- hero: photo of a wave ---------- */
+  M.mount(document.getElementById('figHero'), function (w) {
+    var p = M.plot({ x: [0, 2.6], y: [-1.5, 1.6], w: Math.min(w, 420), h: 190, pad: [10, 12, 12, 12] });
+    p.line([0, 0], [2.55, 0], { cls: 'mk-axis' });
+    p.curve(function (x) { return Math.cos(2 * PI * (x - 0.25)); }, { from: 0, to: 2.5, cls: 'mk-curve k-pos', n: 300 });
+    p.line([0.25, 1.25], [1.25, 1.25], { cls: 'mk-dash' });
+    p.line([0.25, 1.05], [0.25, 1.38], { cls: 'mk-dash' }); p.line([1.25, 1.05], [1.25, 1.38], { cls: 'mk-dash' });
+    p.label([0.75, 1.25], 'λ', { arrow: false, dy: -6 });
+    p.vec([1.55, 1.05], [0.4, 0], { kind: 'vel', label: 'c', arrow: false, lab: [4, 4] });
+    return p.svg({ label: L.hero });
+  });
+
+  /* ---------- periodic signal ---------- */
+  M.mount(document.getElementById('figSignal'), function (w) {
+    var p = M.plot({ x: [0, 3.3], y: [-1.4, 1.5], w: Math.min(w, 520), h: 190, pad: [12, 12, 20, 30] });
+    p.axes({ x: L.t, y: L.s });
+    function sig(t) { var u = t - Math.floor(t); return u < 0.5 ? Math.sin(2 * PI * u) : 0.6 * Math.sin(2 * PI * u); }
+    p.curve(sig, { from: 0, to: 3.1, cls: 'mk-curve k-pos', n: 500 });
+    p.line([1, -1.2], [1, 1.2], { cls: 'mk-dash' }); p.line([2, -1.2], [2, 1.2], { cls: 'mk-dash' });
+    p.line([1, -1.2], [2, -1.2], { cls: 'mk-dash' }); p.label([1.5, -1.2], 'T', { arrow: false, dy: -5 });
+    p.line([0.25, 0], [0.25, 1], { cls: 'mk-dash' }); p.label([0.25, 0.5], 'A', { arrow: false, dx: 6 });
+    return p.svg({ label: L.signal });
+  });
+
+  /* ---------- two ropes (TD 8, Ex 1) ---------- */
+  /* calc:start — hand raised by 10 cm in 1 s then lowered in 1 s; a point at x squares repeats the gesture with a delay of x/c s */
+  function hand(u) { return u <= 0 || u >= 2 ? 0 : Math.pow(Math.sin(PI * u / 2), 2); }
+  function rope(x, t, c) { return hand(t - x / c); }
+  /* calc:end */
+  (function () {
+    var host = document.getElementById('figRope'); if (!host) return;
+    var inp = document.getElementById('rt'), view;
+    function draw(w) {
+      var t = +inp.value, W = Math.min(w, 560);
+      var p = M.plot({ x: [-0.6, 10.6], y: [-0.7, 3.6], w: W, equal: true, pad: [6, 8, 6, 8] });
+      var g = '';
+      for (var row = 0; row < 2; row++) {
+        var y0 = row === 0 ? 2.2 : 0;
+        for (var i = 0; i <= 10; i++) g += '<path class="mk-grid" d="M' + p.X(i) + ' ' + p.Y(y0 - 0.2) + 'V' + p.Y(y0 + 1.2) + '"/>';
+        for (var j = 0; j <= 1; j++) g += '<path class="mk-grid" d="M' + p.X(0) + ' ' + p.Y(y0 + j) + 'H' + p.X(10) + '"/>';
+      }
+      p.add(g);
+      [[2.2, 1, L.c1], [0, 2, L.c2]].forEach(function (r) {
+        var y0 = r[0], c = r[1];
+        p.curve(function (x) { return y0 + rope(x, t, c); }, { from: 0, to: 10, cls: 'mk-curve k-pos', n: 400 });
+        p.point([0, y0 + rope(0, t, c)], { label: 'O', dx: -14, dy: 4 });
+        p.point([10, y0], { label: 'I', dx: 8, dy: 4 });
+        p.text([10, y0 + 1.2], r[2], { anchor: 'end', dy: -4 });
+      });
+      return p.svg({ label: L.rope(nf(t, 1)) });
+    }
+    function update() {
+      var t = +inp.value;
+      document.getElementById('rtv').textContent = nf(t, 1) + ' s';
+      document.getElementById('rread').innerHTML = L.rread(nf(t, 1), nf(Math.min(t, 10), 1), nf(Math.min(2 * t, 10), 1));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', update);
+    update();
+  })();
+
+  /* ---------- PPMW: photo at time t ---------- */
+  (function () {
+    var host = document.getElementById('figOPPM'); if (!host) return;
+    var inp = document.getElementById('wt'), view;
+    function draw(w) {
+      var u = +inp.value, xp = 0.75;
+      var p = M.plot({ x: [0, 2.6], y: [-1.5, 1.6], w: Math.min(w, 560), h: 210, pad: [12, 12, 20, 30] });
+      p.axes({ x: L.x, y: L.s });
+      p.curve(function (x) { return Math.cos(-2 * PI * x); }, { from: 0, to: 2.5, cls: 'mk-ghost', n: 300 });
+      p.curve(function (x) { return Math.cos(2 * PI * (u - x)); }, { from: 0, to: 2.5, cls: 'mk-curve k-pos', n: 300 });
+      var crest = u; /* the crest that left x = 0 is at x = u λ */
+      p.line([crest, 0], [crest, 1], { cls: 'mk-dash' });
+      p.line([0, 1.32], [1, 1.32], { cls: 'mk-dash' }); p.label([0.5, 1.32], 'λ', { arrow: false, dy: -5 });
+      p.line([xp, -1.2], [xp, 1.2], { cls: 'mk-env' });
+      p.point([xp, Math.cos(2 * PI * (u - xp))], { label: 'P', dx: 8, dy: -6 });
+      return p.svg({ label: L.oppm(nf(u, 3)) });
+    }
+    function update() {
+      document.getElementById('wtv').textContent = nf(+inp.value, 3);
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', update);
+    update();
+  })();
+
+  /* ---------- phase shift ---------- */
+  (function () {
+    var host = document.getElementById('figPhase'); if (!host) return;
+    var inp = document.getElementById('ph'), view;
+    function draw(w) {
+      var k = +inp.value, d = k * PI / 4;
+      var p = M.plot({ x: [0, 2.3], y: [-2.2, 2.3], w: Math.min(w, 560), h: 230, pad: [12, 12, 20, 30] });
+      p.axes({ x: L.t, y: L.s });
+      p.curve(function (t) { return Math.cos(2 * PI * t); }, { from: 0, to: 2.1, cls: 'mk-curve k-pos', n: 300 });
+      p.curve(function (t) { return Math.cos(2 * PI * t + d); }, { from: 0, to: 2.1, cls: 'mk-curve k-frc', n: 300 });
+      p.curve(function (t) { return Math.cos(2 * PI * t) + Math.cos(2 * PI * t + d); }, { from: 0, to: 2.1, cls: 'mk-curve k-ink', n: 300 });
+      return p.svg({ label: L.phase(fracPi(k)) });
+    }
+    function update() {
+      var k = +inp.value, d = k * PI / 4, name = '';
+      if (k === 0) name = L.inPhase; else if (Math.abs(k) === 4) name = L.opp; else if (Math.abs(k) === 2) name = L.quad + (k > 0 ? ', ' + L.adv : ', ' + L.late); else name = k > 0 ? L.adv : L.late;
+      document.getElementById('phv').textContent = fracPi(k);
+      document.getElementById('phread').innerHTML = L.phRead(fracPi(k), name, nf(2 * Math.abs(Math.cos(d / 2)), 2));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', update);
+    update();
+  })();
+
+  /* ---------- normal modes ---------- */
+  (function () {
+    var host = document.getElementById('figModes'); if (!host) return;
+    var inp = document.getElementById('mn'), view;
+    function draw(w) {
+      var n = +inp.value;
+      var p = M.plot({ x: [-0.08, 1.08], y: [-1.35, 1.35], w: Math.min(w, 560), h: 200, pad: [10, 12, 10, 12] });
+      p.line([0, 0], [1, 0], { cls: 'mk-dash' });
+      p.curve(function (x) { return Math.sin(n * PI * x); }, { from: 0, to: 1, cls: 'mk-env', n: 300 });
+      p.curve(function (x) { return -Math.sin(n * PI * x); }, { from: 0, to: 1, cls: 'mk-env', n: 300 });
+      [0.5, -0.5, 1, -1].forEach(function (a, i) {
+        p.curve(function (x) { return a * Math.sin(n * PI * x); }, { from: 0, to: 1, cls: i < 2 ? 'mk-ghost' : 'mk-curve k-pos', n: 300 });
+      });
+      var s = '';
+      for (var i = 0; i <= n; i++) s += '<circle class="mk-node" cx="' + p.X(i / n) + '" cy="' + p.Y(0) + '" r="4.5"/>';
+      for (var j = 0; j < n; j++) s += '<circle class="mk-ant" cx="' + p.X((j + 0.5) / n) + '" cy="' + p.Y(j % 2 ? -1 : 1) + '" r="4"/>';
+      p.add(s);
+      return p.svg({ label: L.modes(n) });
+    }
+    function update() {
+      var n = +inp.value;
+      document.getElementById('mnv').textContent = n;
+      document.getElementById('mread').innerHTML = L.mread(n);
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', update);
+    update();
+  })();
+})();
+</script>
+</body>
+</html>

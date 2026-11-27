@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simple pendulum and damped oscillations · Physics B2</title>
+<meta name="description" content="Physics B2, chapter 4: the simple pendulum with the second law in the polar basis, small oscillations, the energy approach (TD 7), then fluid friction and the three regimes of a damped oscillator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapter 4: string and support as thick lines, polar basis in ink, envelope dashed */
+.mk .mk-sup{fill:none;stroke:var(--ink);stroke-width:2.2}
+.mk .mk-hatch{fill:none;stroke:var(--muted);stroke-width:1}
+.mk .mk-bob{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.mk .mk-arc{fill:none;stroke:var(--muted);stroke-width:1.2}
+.mk .mk-curve.k-ink{stroke:currentColor}
+.mk .mk-env{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+.mk .mk-t{fill:var(--muted);font-size:12px}
+.fig .ctrls .sliders{align-items:end}
+.regime{font-weight:600;color:var(--accent)}
+var.d1,var.d2{position:relative;display:inline-block;line-height:1}
+var.d1::after,var.d2::after{content:"";position:absolute;left:56%;bottom:.82em;width:.13em;height:.13em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+var.d2::after{transform:translateX(-105%);box-shadow:.24em 0 0 currentColor}
+var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics B2 · chapter 4: simple pendulum and damped oscillations">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics B2</a> · Chapter 4 of 5</div>
+      <h1>The pendulum swings, <span class="w">friction stops it</span>.</h1>
+      <p class="lead">For small angles, a simple pendulum obeys the same equation as a mass on a spring. You get it from the second law in the polar basis or from energy: that is TD 7. Then we add fluid friction: the oscillations die out, or disappear altogether. This is the end of part 2 of the course (pages 18 and 19).</p>
+      <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">5 parts</span><span class="chip">course p. 18-19 · TD 7</span><span class="chip ex">midterm 2 syllabus</span></div>
+      <div class="note keep"><span class="tag">What you need first</span><p>The harmonic oscillator of <a href="cours-3-oscillateur.html">chapter 3</a>, the acceleration in polar coordinates from <a href="cours-1-polaires.html#s5">chapter 1</a>: <span class="f"><var class="vec ka">a</var> = (<var class="d2">r</var> − <var>r</var><var class="d1 hi">θ</var>²) <var class="vec">u</var><sub><var>r</var></sub> + (2<var class="d1">r</var><var class="d1 hi">θ</var> + <var>r</var><var class="d2 hi">θ</var>) <var class="vec">u</var><sub><var>θ</var></sub></span>, and the projection of a weight on a circle from <a href="cours-2-circulaire.html#s1">chapter 2</a>.</p></div>
+      <div class="vlegend" aria-label="Vector colours, the same across the whole site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>velocity</span><span><i class="la"></i>acceleration</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <figure class="fig" style="margin:0"><div class="mk-host" id="figHero"></div><figcaption>The pendulum of TD 7: the string of length <var>l</var> makes an angle <var>θ</var> with the vertical. On the mass: its weight <var class="vec kf">P</var> and the tension of the string <var class="vec kf">T</var>.</figcaption></figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 4 · Pendulum and damping</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>The simple pendulum</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>Small oscillations</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>The energy approach</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Fluid friction</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>The three regimes</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Physics B2 home</a><a href="cours-3-oscillateur.html">← Chapter 3: harmonic oscillator</a><a href="cours-5-ondes.html">Chapter 5: waves and signal →</a><a href="../qcm/index.html#phys2">Physics B2 MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Chapter contents</summary>
+      <ol>
+        <li><a href="#s1">The simple pendulum</a></li><li><a href="#s2">Small oscillations</a></li><li><a href="#s3">The energy approach</a></li>
+        <li><a href="#s4">Fluid friction</a></li><li><a href="#s5">The three regimes</a></li>
+      </ol>
+    </details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The simple pendulum: the second law in the polar basis</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A mass <var>m</var>, treated as the point M, hangs at O from an inextensible string of length <var>l</var>. The string makes an angle <var>θ</var> with the downward vertical. M stays on a circle of centre O and radius <var>l</var>: the polar basis centred at O is made for this motion, with <var class="vec">u</var><sub><var>r</var></sub> from O to M (along the string) and <var class="vec">u</var><sub><var>θ</var></sub> in the direction of increasing <var>θ</var>.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Forces</b>: the weight <var class="vec kf">P</var> = <var>m</var><var class="vec">g</var>, vertical downwards, and the tension of the string <var class="vec kf">T</var> = −<var>T</var> <var class="vec">u</var><sub><var>r</var></sub>, directed from M to O. Friction is neglected.</p></div></li>
+          <li><div><p><b>Projecting the weight</b>: the angle between <var class="vec kf">P</var> and <var class="vec">u</var><sub><var>r</var></sub> is <var>θ</var>. <span class="f"><var class="vec kf">P</var> = <var>m</var><var>g</var> cos <var>θ</var> <var class="vec">u</var><sub><var>r</var></sub> − <var>m</var><var>g</var> sin <var>θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span>: the tangential component always brings the mass back towards <var>θ</var> = 0.</p></div></li>
+          <li><div><p><b>The acceleration</b>: <var>r</var> = <var>l</var> is constant, so <var class="d1">r</var> = <var class="d2">r</var> = 0 and <span class="f"><var class="vec ka">a</var> = −<var>l</var><var class="d1 hi">θ</var>² <var class="vec">u</var><sub><var>r</var></sub> + <var>l</var><var class="d2 hi">θ</var> <var class="vec">u</var><sub><var>θ</var></sub></span>.</p></div></li>
+          <li><div><p><b>Second law projected</b> on the two vectors of the basis:</p>
+            <div class="eq"><span class="nw">on <var class="vec">u</var><sub><var>r</var></sub>: <var>m</var><var>g</var> cos <var>θ</var> − <var>T</var> = −<var>m</var><var>l</var><var class="d1 hi">θ</var>²</span><span class="nw">on <var class="vec">u</var><sub><var>θ</var></sub>: −<var>m</var><var>g</var> sin <var>θ</var> = <var>m</var><var>l</var><var class="d2 hi">θ</var></span></div></div></li>
+        </ol>
+        <div class="grid2">
+          <div class="card"><span class="k">On <var class="vec">u</var><sub><var>θ</var></sub>: the motion</span><p>The tension does not appear there. Dividing by <var>m</var><var>l</var>:</p><div class="eq"><span class="nw"><var class="d2 hi">θ</var> + <span class="frac"><span><var>g</var></span><span><var>l</var></span></span> sin <var>θ</var> = 0</span></div><p>The mass has cancelled out: the motion of a pendulum does not depend on its mass.</p></div>
+          <div class="card"><span class="k">On <var class="vec">u</var><sub><var>r</var></sub>: the tension</span><div class="eq"><span class="nw"><var>T</var> = <var>m</var><var>g</var> cos <var>θ</var> + <var>m</var><var>l</var><var class="d1 hi">θ</var>²</span></div><p>At the lowest point, <var>T</var> = <var>m</var><var>g</var> + <var>m</var><var>v</var>²/<var>l</var>: more than the weight, like the reaction at the bottom of a bowl (<a href="cours-2-circulaire.html#s2">chapter 2</a>).</p></div>
+        </div>
+        <div class="note exam"><span class="tag">TD 7, Ex 1</span><p>Questions 1 to 4: add the forces on the diagram, write the second law, project it “on the proposed axes” (<var class="vec">u</var><sub><var>r</var></sub>, <var class="vec">u</var><sub><var>θ</var></sub>) and write the equation in standard form. The statement reminds you of the formula for the acceleration in polar coordinates. The statement calls the mass <var>M</var>: it is the same thing.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Forgetting the minus sign of the tangential component of the weight: it is what makes the pendulum come back. Check: for <var>θ</var> &gt; 0, the weight pushes towards decreasing <var>θ</var>.</li>
+          <li>Writing <var>T</var> = <var>m</var><var>g</var> cos <var>θ</var>: this is true only when the mass is at rest (at the extremes). In motion, you must add <var>m</var><var>l</var><var class="d1 hi">θ</var>².</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-4-pendule.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 5</span><button type="button" class="done-btn" data-done="phys2:pendule:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>Small oscillations: a harmonic oscillator again</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The equation <span class="f"><var class="d2 hi">θ</var> + (<var>g</var>/<var>l</var>) sin <var>θ</var> = 0</span> is not the one from chapter 3, because of the sine. But for a small angle expressed in <b>radians</b>, sin <var>θ</var> ≈ <var>θ</var>, and the equation becomes</p></div>
+        <div class="eq"><span class="nw"><var class="d2 hi">θ</var> + <var>ω</var><sub>0</sub>² <var>θ</var> = 0, &nbsp; <var>ω</var><sub>0</sub> = <span class="sqrt">√<span><span class="frac"><span><var>g</var></span><span><var>l</var></span></span></span></span>, &nbsp; <var>T</var><sub>0</sub> = 2π <span class="sqrt">√<span><span class="frac"><span><var>l</var></span><span><var>g</var></span></span></span></span></span></div>
+        <div class="prose"><p>This is the harmonic oscillator, with the angle in place of the position. The solution is the one from <a href="cours-3-oscillateur.html#s3">chapter 3</a>: released from rest at <var>θ</var><sub>0</sub> (TD 7, Ex 1, question 5), <span class="f"><var>θ</var>(<var>t</var>) = <var>θ</var><sub>0</sub> cos(<var>ω</var><sub>0</sub><var>t</var>)</span>.</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Angle</th><th>In radians</th><th>sin <var>θ</var></th><th>Difference</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">10°</th><td class="f">0.1745</td><td class="f">0.1736</td><td>0.5 %</td></tr>
+            <tr><th scope="row">30°</th><td class="f">0.5236</td><td class="f">0.5</td><td>4.7 %</td></tr>
+            <tr><th scope="row">60°</th><td class="f">1.0472</td><td class="f">0.8660</td><td>21 %</td></tr>
+          </tbody>
+        </table></div>
+        <figure class="fig">
+          <div class="mk-host" id="figPend"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="pt">Starting angle <var>θ</var><sub>0</sub></label><output id="ptv" for="pt"></output><input id="pt" type="range" min="5" max="80" step="5" value="15"></div>
+              <div class="slider"><label for="pl">Length <var>l</var></label><output id="plv" for="pl"></output><input id="pl" type="range" min="0.25" max="2" step="0.25" value="1"></div>
+            </div>
+            <div class="readout" id="pread" aria-live="polite"></div>
+          </div>
+          <figcaption><var>θ</var>(<var>t</var>) over 6 s, with <var>g</var> = 9.81 m·s⁻². In blue, the actual motion (equation with sin <var>θ</var>, solved numerically); dashed, the small-angle solution <var>θ</var><sub>0</sub> cos(<var>ω</var><sub>0</sub><var>t</var>). Beyond 30°, the true period gets longer.</figcaption>
+        </figure>
+        <ol class="steps">
+          <li><div><p><b>Without a calculator</b>: <var>l</var> = 1 m and <var>g</var> ≈ π² ≈ 9.87 m·s⁻². <var>T</var><sub>0</sub> = 2π√(1/π²) = 2 s: a 1 m pendulum “beats seconds” (one second per swing).</p></div></li>
+          <li><div><p><b>Isochronism</b>: for small angles, the period depends neither on the amplitude nor on the mass, only on <var>l</var> and <var>g</var>. To double the period, you must quadruple the length.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>sin <var>θ</var> ≈ <var>θ</var> requires <var>θ</var> in radians: sin 10° ≈ 0.17, not 10.</li>
+          <li>Writing <var>ω</var><sub>0</sub> = √(<var>l</var>/<var>g</var>): check with the units, √(m·s⁻²/m) = s⁻¹.</li>
+          <li>Writing <var>ω</var><sub>0</sub> = √(<var>k</var>/<var>m</var>) for a pendulum: there is no spring.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-4-pendule.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 5</span><button type="button" class="done-btn" data-done="phys2:pendule:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>The energy approach to the pendulum (TD 7, exercise 2)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The same pendulum, without friction, but through energy. We take the potential energy to be zero at the lowest point.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Gravitational potential energy</b>: M is at height <var>l</var> − <var>l</var> cos <var>θ</var> above the lowest point, so</p><div class="eq"><span class="nw"><var>E</var><sub>p</sub> = <var>m</var><var>g</var><var>l</var>(1 − cos <var>θ</var>)</span></div><p>Minimal (zero) at <var>θ</var> = 0, maximal at the extremes <var>θ</var> = ±<var>θ</var><sub>0</sub>.</p></div></li>
+          <li><div><p><b>Kinetic energy</b>: on a circle of radius <var>l</var>, <var>v</var> = <var>l</var><var class="d1 hi">θ</var> (<a href="cours-1-polaires.html#s7">chapter 1</a>), so</p><div class="eq"><span class="nw"><var>E</var><sub>c</sub> = ½ <var>m</var> <var>l</var>² <var class="d1 hi">θ</var>²</span></div><p>Maximal at <var>θ</var> = 0, zero at the extremes, where the mass turns round.</p></div></li>
+          <li><div><p><b>Mechanical energy</b>: <span class="f"><var>E</var><sub>M</sub> = ½ <var>m</var><var>l</var>²<var class="d1 hi">θ</var>² + <var>m</var><var>g</var><var>l</var>(1 − cos <var>θ</var>)</span>. It is conserved: no friction, and the tension, perpendicular to the velocity, does no work.</p></div></li>
+          <li><div><p><b>Recovering the equation</b>: <var>E</var><sub>M</sub> is constant, so d<var>E</var><sub>M</sub>/d<var>t</var> = 0:</p><div class="eq"><span class="nw"><var>m</var><var>l</var>²<var class="d1 hi">θ</var><var class="d2 hi">θ</var> + <var>m</var><var>g</var><var>l</var> sin <var>θ</var> <var class="d1 hi">θ</var> = 0</span><span class="nw">⇒ &nbsp; <var class="d2 hi">θ</var> + <span class="frac"><span><var>g</var></span><span><var>l</var></span></span> sin <var>θ</var> = 0</span></div><p>(we divide by <var>m</var><var>l</var>²<var class="d1 hi">θ</var>, which is non-zero during the motion). For small angles, we recover the harmonic oscillator of part 2.</p></div></li>
+          <li><div><p><b>Time evolution</b> (question 5): released from rest at <var>θ</var><sub>0</sub>, <span class="f"><var>θ</var>(<var>t</var>) = <var>θ</var><sub>0</sub> cos(<span class="sqrt">√<span><var>g</var>/<var>l</var></span></span> <var>t</var>)</span>.</p></div></li>
+        </ol>
+        <figure class="fig"><div class="mk-host" id="figPE"></div><figcaption>Question 6: <var>θ</var>(<var>t</var>) on top; below, <var>E</var><sub>p</sub>, <var>E</var><sub>c</sub> and <var>E</var><sub>M</sub> over two periods (small angles, as a fraction of <var>E</var><sub>M</sub>). The interval in the statement, “[2π; 2π]”, is a typo: two periods are enough.</figcaption></figure>
+        <div class="grid2">
+          <div class="card"><span class="k">Small angles: the analogy with the spring</span><p>1 − cos <var>θ</var> ≈ <var>θ</var>²/2, so <span class="f"><var>E</var><sub>p</sub> ≈ ½ <var>m</var><var>g</var><var>l</var> <var>θ</var>²</span>, like ½<var>k</var><var>x</var>²: <var>m</var><var>g</var><var>l</var> plays the role of <var>k</var>, <var>m</var><var>l</var>² that of <var>m</var>. And <var>E</var><sub>M</sub> = ½ <var>m</var><var>g</var><var>l</var> <var>θ</var><sub>0</sub>².</p></div>
+          <div class="card"><span class="k">The speed at the lowest point</span><p>All the initial potential energy has become kinetic: ½<var>m</var><var>v</var><sub>max</sub>² = <var>m</var><var>g</var><var>l</var>(1 − cos <var>θ</var><sub>0</sub>), so <span class="f"><var>v</var><sub>max</sub> = <span class="sqrt">√<span>2<var>g</var><var>l</var>(1 − cos <var>θ</var><sub>0</sub>)</span></span></span>, valid even for a large angle.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing <var>E</var><sub>p</sub> = <var>m</var><var>g</var><var>l</var> cos <var>θ</var>: with the origin at the lowest point, the height is <var>l</var>(1 − cos <var>θ</var>). Check: zero at <var>θ</var> = 0.</li>
+          <li>Writing <var>E</var><sub>c</sub> = ½<var>m</var><var class="d1 hi">θ</var>²: <var class="d1 hi">θ</var> is an angular velocity, the speed is <var>l</var><var class="d1 hi">θ</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-4-pendule.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 5</span><button type="button" class="done-btn" data-done="phys2:pendule:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>Fluid friction: the damped oscillator equation</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course goes back to the mass on a horizontal spring (chapter 3) and adds a fluid friction force, that of air for example, proportional to the velocity and opposite to it:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">f</var> = −<var>α</var> <var class="vec kv">v</var> &nbsp;&nbsp; (<var>α</var> in kg·s⁻¹, that is N·s·m⁻¹)</span></div>
+        <ol class="steps">
+          <li><div><p><b>Second law</b>: <span class="f"><var class="vec kf">P</var> + <var class="vec kf">R</var> + <var class="vec kf">F</var> + <var class="vec kf">f</var> = <var>m</var> <var class="vec ka">a</var></span>.</p></div></li>
+          <li><div><p><b>Projection on <var>x</var></b>: <span class="f">0 + 0 − <var>k</var><var>x</var> − <var>α</var><var class="d1">x</var> = <var>m</var><var class="d2">x</var></span>.</p></div></li>
+          <li><div><p><b>Standard form</b>: divide by <var>m</var>.</p><div class="eq"><span class="nw"><var class="d2">x</var> + <span class="frac"><span><var>α</var></span><span><var>m</var></span></span> <var class="d1">x</var> + <span class="frac"><span><var>k</var></span><span><var>m</var></span></span> <var>x</var> = 0</span><span class="nw">⇔ &nbsp; <var class="d2">x</var> + <span class="frac"><span>1</span><span><var>τ</var></span></span> <var class="d1">x</var> + <var>ω</var><sub>0</sub>² <var>x</var> = 0, &nbsp; <var>τ</var> = <span class="frac"><span><var>m</var></span><span><var>α</var></span></span></span></div></div></li>
+        </ol>
+        <div class="prose"><p><var>τ</var> is a <b>characteristic time</b> (in seconds): the stronger the friction, the shorter <var>τ</var>. The term in <var class="d1">x</var> is the signature of friction. The mechanical energy is no longer conserved: it decreases, because the power of the friction, <span class="f"><var class="vec kf">f</var> · <var class="vec kv">v</var> = −<var>α</var><var>v</var>²</span>, is always negative.</p></div>
+        <div class="grid2">
+          <div class="card"><span class="k">What the course asks for</span><p>“Solving this equation is beyond the scope of this course”: you must know how to <b>derive</b> it with the second law, recognise <var>τ</var> and <var>ω</var><sub>0</sub>, and know the <b>form of the solutions</b> for each regime (part 5).</p></div>
+          <div class="card"><span class="k">The same friction without a spring</span><p>October 2025 midterm, Ex 1: a drop falls with <var class="vec kf">f</var> = −<var>k</var><var class="vec kv">v</var>. Without a spring, the equation is about the velocity and has only one derivative: <span class="f">d<var>v</var>/d<var>t</var> + <var>v</var>/<var>τ</var> = −<var>g</var></span>, with <var>τ</var> = <var>m</var>/<var>k</var>. Solution: <var>v</var><sub><var>y</var></sub> = <var>g</var><var>τ</var>(e<sup>−<var>t</var>/<var>τ</var></sup> − 1), terminal velocity <var>g</var><var>τ</var>.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Forgetting that <var class="vec kf">f</var> depends on the velocity: its projection is −<var>α</var><var class="d1">x</var>, not −<var>α</var><var>x</var>.</li>
+          <li>The title in the course speaks of a “pendulum with fluid friction” but the calculation is done for the mass and spring: the equation has the same form for a pendulum, with <var>θ</var> in place of <var>x</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-4-pendule.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 5</span><button type="button" class="done-btn" data-done="phys2:pendule:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>The three regimes of a damped oscillator</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course compares a parameter <var>λ</var> with <var>ω</var><sub>0</sub> without defining it. It is half of 1/<var>τ</var>: looking for solutions of the form e<sup><var>r</var><var>t</var></sup>, you arrive at <span class="f"><var>r</var>² + <var>r</var>/<var>τ</var> + <var>ω</var><sub>0</sub>² = 0</span>, whose roots are</p></div>
+        <div class="eq"><span class="nw"><var>r</var> = −<var>λ</var> ± <span class="sqrt">√<span><var>λ</var>² − <var>ω</var><sub>0</sub>²</span></span>, &nbsp;&nbsp; <var>λ</var> = <span class="frac"><span>1</span><span>2<var>τ</var></span></span> = <span class="frac"><span><var>α</var></span><span>2<var>m</var></span></span></span></div>
+        <div class="prose"><p>Depending on the sign of <var>λ</var>² − <var>ω</var><sub>0</sub>², there are three families of solutions:</p></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Regime</th><th>Condition</th><th>Solution</th><th>Shape</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Under-damped (pseudo-periodic)</th><td class="f"><var>λ</var> &lt; <var>ω</var><sub>0</sub></td><td class="f">e<sup>−<var>λ</var><var>t</var></sup>(<var>A</var> cos <var>ω</var><var>t</var> + <var>B</var> sin <var>ω</var><var>t</var>)</td><td>Oscillations whose amplitude decays as e<sup>−<var>λ</var><var>t</var></sup>. Pseudo-angular frequency <var>ω</var> = √(<var>ω</var><sub>0</sub>² − <var>λ</var>²), slightly smaller than <var>ω</var><sub>0</sub>.</td></tr>
+            <tr><th scope="row">Critically damped</th><td class="f"><var>λ</var> = <var>ω</var><sub>0</sub></td><td class="f">(<var>A</var> + <var>B</var><var>t</var>) e<sup>−<var>ω</var><sub>0</sub><var>t</var></sup></td><td>No oscillation; the fastest return to equilibrium.</td></tr>
+            <tr><th scope="row">Over-damped (aperiodic)</th><td class="f"><var>λ</var> &gt; <var>ω</var><sub>0</sub></td><td class="f"><var>A</var> e<sup><var>r</var><sub>1</sub><var>t</var></sup> + <var>B</var> e<sup><var>r</var><sub>2</sub><var>t</var></sup></td><td>No oscillation; <var>r</var><sub>1</sub> and <var>r</var><sub>2</sub> are negative, the return is slow.</td></tr>
+          </tbody>
+        </table></div>
+        <figure class="fig">
+          <div class="mk-host" id="figDamp"></div>
+          <div class="ctrls">
+            <div class="sliders"><div class="slider"><label for="dl">Friction <var>λ</var>/<var>ω</var><sub>0</sub></label><output id="dlv" for="dl"></output><input id="dl" type="range" min="0" max="2" step="0.05" value="0.15"></div></div>
+            <div class="readout" id="dread" aria-live="polite"></div>
+          </div>
+          <figcaption><var>x</var>(<var>t</var>) for a mass released from rest at <var>x</var><sub>0</sub>, with <var>T</var><sub>0</sub> = 1 s. Dashed, the envelope ±<var>x</var><sub>0</sub>e<sup>−<var>λ</var><var>t</var></sup> of the under-damped regime. Vary <var>λ</var>/<var>ω</var><sub>0</sub> from 0 to 2.</figcaption>
+        </figure>
+        <ol class="steps">
+          <li><div><p><b>Which regime?</b> Compute <var>λ</var> = <var>α</var>/(2<var>m</var>) and <var>ω</var><sub>0</sub> = √(<var>k</var>/<var>m</var>), then compare. Example: <var>m</var> = 0.5 kg, <var>k</var> = 50 N·m⁻¹, <var>α</var> = 2 kg·s⁻¹: <var>λ</var> = 2 s⁻¹ &lt; <var>ω</var><sub>0</sub> = 10 rad·s⁻¹, under-damped regime.</p></div></li>
+          <li><div><p><b>Without friction</b> (<var>λ</var> = 0), we recover the harmonic oscillator: e<sup>0</sup> = 1 and <var>ω</var> = <var>ω</var><sub>0</sub>.</p></div></li>
+        </ol>
+        <div class="note trap"><span class="tag">Typo in the course</span><p>The course writes the solution of the critical regime as (<var>A</var> + <var>B</var><var>t</var>) e<sup><var>ω</var><sub>0</sub><var>t</var></sup>, without a minus sign: the exponent must be −<var>ω</var><sub>0</sub><var>t</var>, otherwise <var>x</var> would grow without limit instead of returning to equilibrium.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Comparing <var>τ</var> and <var>ω</var><sub>0</sub>: they do not have the same unit. You compare <var>λ</var> = 1/(2<var>τ</var>) with <var>ω</var><sub>0</sub>, two quantities in s⁻¹.</li>
+          <li>Confusing the pseudo-angular frequency <var>ω</var> with the natural angular frequency <var>ω</var><sub>0</sub>: <var>ω</var> &lt; <var>ω</var><sub>0</sub>, so the pseudo-period is slightly longer than <var>T</var><sub>0</sub>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-4-pendule.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 5</span><button type="button" class="done-btn" data-done="phys2:pendule:s5"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p><a href="cours-5-ondes.html">Chapter 5</a> moves from oscillations to waves: an oscillation that propagates. Exercises: <a href="entrainement.html#td7-ex1">TD 7</a> on the practice page; formulas in <a href="fiche.html">the summary sheet</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../data/qcm/physique-annales.js"></script>
+<script src="../data/en/qcm/physique-annales.js"></script>
+<script src="../data/qcm/phys2.js"></script>
+<script src="../data/en/qcm/phys2.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  var G = 9.81;
+  /* texts of the page */
+  var L = {
+    hero: 'Simple pendulum: string of length l attached at O, angle θ with the vertical, weight and tension, polar basis at M',
+    pend: function (t0, l) { return 'θ(t) over 6 seconds for θ0 = ' + t0 + '° and l = ' + l + ' m: actual motion and small-angle approximation'; },
+    pread: function (T0, T, e) { return '<p>Small angles: <var>T</var><sub>0</sub> = 2π√(<var>l</var>/<var>g</var>) = <b>' + T0 + ' s</b> · actual period: <b>' + T + ' s</b> (<b>+' + e + ' %</b>)</p>'; },
+    pe: 'θ(t), then potential, kinetic and mechanical energy of the pendulum over two periods',
+    damp: function (r) { return 'x(t) of a damped oscillator: ' + r; },
+    reg: { pseudo: 'under-damped (pseudo-periodic)', crit: 'critically damped', aper: 'over-damped (aperiodic)', none: 'no friction (harmonic)' },
+    dread: function (r, extra) { return '<p>Regime: <span class="regime">' + r + '</span>' + extra + '</p>'; },
+    pseudoT: function (T) { return ' · pseudo-period <var>T</var> = 2π/<var>ω</var> = <b>' + T + ' s</b> (<var>T</var><sub>0</sub> = 1 s)'; },
+    tT: 't / T₀', t: { v: 't', u: 's' }, th: { v: 'θ', u: '°' }, E: 'E', x: 'x / x₀'
+  };
+
+  /* ---------- pendulum (hero) ---------- */
+  M.mount(document.getElementById('figHero'), function (w) {
+    var th = 32 * Math.PI / 180, l = 1.6, Mp = [l * Math.sin(th), -l * Math.cos(th)];
+    var p = M.plot({ x: [-0.8, 1.6], y: [-2.35, 0.3], w: Math.min(w, 340), equal: true, pad: [8, 8, 8, 8] });
+    var s = '<path class="mk-sup" d="M' + p.X(-0.45) + ' ' + p.Y(0) + 'H' + p.X(0.45) + '"/>';
+    for (var x = -0.42; x <= 0.45; x += 0.12) s += '<path class="mk-hatch" d="M' + p.X(x) + ' ' + p.Y(0) + 'l7 -7"/>';
+    p.add(s);
+    p.line([0, 0], [0, -l - 0.25], { cls: 'mk-dash' });
+    p.line([0, 0], Mp, { cls: 'mk-sup' });
+    p.add('<path class="mk-arc" d="M' + p.X(0) + ' ' + p.Y(-0.55) + 'A' + (0.55 * p.sx) + ' ' + (0.55 * p.sx) + ' 0 0 0 ' + p.X(0.55 * Math.sin(th)) + ' ' + p.Y(-0.55 * Math.cos(th)) + '"/>');
+    p.label([0.2, -0.72], 'θ', { arrow: false });
+    p.label([Mp[0] / 2, Mp[1] / 2], 'l', { arrow: false, dx: 8, dy: -2 });
+    p.point([0, 0], { label: 'O', dx: -16, dy: -6 });
+    var ur = [Math.sin(th), -Math.cos(th)], ut = [Math.cos(th), Math.sin(th)];
+    p.vec(Mp, [ur[0] * 0.38, ur[1] * 0.38], { kind: 'ink', label: 'u', sub: 'r', w: 1.4, head: 7 });
+    p.vec(Mp, [ut[0] * 0.38, ut[1] * 0.38], { kind: 'ink', label: 'u', sub: 'θ', w: 1.4, head: 7 });
+    p.vec(Mp, [0, -0.6], { kind: 'frc', label: 'P', lab: [8, 4] });
+    p.vec(Mp, [-ur[0] * 0.55, -ur[1] * 0.55], { kind: 'frc', label: 'T', lab: [-18, 6] });
+    p.add('<circle class="mk-bob" cx="' + p.X(Mp[0]) + '" cy="' + p.Y(Mp[1]) + '" r="9"/>');
+    p.text(Mp, 'M', { dx: -14, dy: 18, anchor: 'end' });
+    return p.svg({ label: L.hero });
+  });
+
+  /* ---------- θ(t): actual (RK4) and small angles ---------- */
+  /* calc:start */
+  function pendulum(th0, l, T, dt) {
+    var g = G / l, th = th0, om = 0, out = [[0, th0]], t = 0;
+    function f(a) { return -g * Math.sin(a); }
+    while (t < T - 1e-12) {
+      var k1t = om, k1o = f(th), k2t = om + dt / 2 * k1o, k2o = f(th + dt / 2 * k1t), k3t = om + dt / 2 * k2o, k3o = f(th + dt / 2 * k2t), k4t = om + dt * k3o, k4o = f(th + dt * k3t);
+      th += dt / 6 * (k1t + 2 * k2t + 2 * k3t + k4t); om += dt / 6 * (k1o + 2 * k2o + 2 * k3o + k4o); t += dt;
+      out.push([t, th]);
+    }
+    return out;
+  }
+  /* actual period: first return to θ0 (two crossings of 0, going down then up) */
+  function realPeriod(pts) {
+    var cross = [];
+    for (var i = 1; i < pts.length && cross.length < 2; i++) if (pts[i - 1][1] > 0 && pts[i][1] <= 0) {
+      var a = pts[i - 1], b = pts[i]; cross.push(a[0] + (b[0] - a[0]) * a[1] / (a[1] - b[1]));
+    }
+    return cross.length === 2 ? cross[1] - cross[0] : NaN;
+  }
+  /* calc:end */
+  (function () {
+    var host = document.getElementById('figPend'); if (!host) return;
+    var it = document.getElementById('pt'), il = document.getElementById('pl'), view;
+    function draw(w) {
+      var t0 = +it.value, l = +il.value, th0 = t0 * Math.PI / 180, w0 = Math.sqrt(G / l), pts = pendulum(th0, l, 6, 0.002);
+      var top = Math.max(20, Math.ceil(t0 / 20) * 20);
+      var p = M.plot({ x: [0, 6.5], y: [-top - 5, top + 5], w: Math.min(w, 560), h: 230, pad: [14, 12, 24, 40] });
+      p.axes({ x: L.t, y: L.th, tx: 0.5, lx: 1, ty: 10, ly: 20 });
+      p.curve(function (t) { return t0 * Math.cos(w0 * t); }, { from: 0, to: 6, cls: 'mk-traj', n: 500 });
+      p.param(function (u) { var q = pts[Math.min(pts.length - 1, Math.round(u))]; return [q[0], q[1] * 180 / Math.PI]; }, 0, pts.length - 1, { cls: 'mk-curve k-pos', n: 600 });
+      return p.svg({ label: L.pend(t0, nf(l, 2)) });
+    }
+    function update() {
+      var t0 = +it.value, l = +il.value, T0 = 2 * Math.PI * Math.sqrt(l / G), T = realPeriod(pendulum(t0 * Math.PI / 180, l, 3 * T0, 0.001));
+      document.getElementById('ptv').textContent = t0 + '°'; document.getElementById('plv').textContent = nf(l, 2) + ' m';
+      document.getElementById('pread').innerHTML = L.pread(nf(T0, 2), nf(T, 2), nf(100 * (T / T0 - 1), 1));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    it.addEventListener('input', update); il.addEventListener('input', update);
+    update();
+  })();
+
+  /* ---------- θ(t) and energies (small angles) ---------- */
+  M.mount(document.getElementById('figPE'), function (w) {
+    var W = Math.min(w, 560);
+    var p = M.plot({ x: [0, 2.25], y: [-1.25, 1.25], w: W, h: 150, pad: [14, 12, 10, 40] });
+    p.axes({ x: L.tT, y: 'θ / θ₀', tx: 0.25, lx: 0.5, ty: 0.5, ly: 1 });
+    p.curve(function (t) { return Math.cos(2 * Math.PI * t); }, { from: 0, to: 2, cls: 'mk-curve k-pos', n: 300 });
+    var q = M.plot({ x: [0, 2.25], y: [0, 1.25], w: W, h: 150, pad: [14, 12, 24, 40] });
+    q.axes({ x: L.tT, y: L.E, tx: 0.25, lx: 0.5, ty: 0.25, ly: 0.5, dec: 1 });
+    q.curve(function () { return 1; }, { from: 0, to: 2, cls: 'mk-curve k-ink' });
+    q.curve(function (t) { return Math.pow(Math.cos(2 * Math.PI * t), 2); }, { from: 0, to: 2, cls: 'mk-curve k-pos', n: 300 });
+    q.curve(function (t) { return Math.pow(Math.sin(2 * Math.PI * t), 2); }, { from: 0, to: 2, cls: 'mk-curve k-vel', n: 300 });
+    q.label([2.0, 1.0], 'E', { sub: 'M', arrow: false, dx: 6, dy: 4 });
+    q.label([0, 1.0], 'E', { sub: 'p', kind: 'pos', arrow: false, dx: 16, dy: -8 });
+    q.label([0.25, 1.0], 'E', { sub: 'c', kind: 'vel', arrow: false, dx: 0, dy: -8 });
+    return '<div role="img" aria-label="' + U.esc(L.pe) + '">' + p.svg({ label: L.pe }) + q.svg({ label: L.pe }) + '</div>';
+  });
+
+  /* ---------- three regimes ---------- */
+  /* calc:start */
+  function damped(r, w0) {
+    var lam = r * w0;
+    if (lam < 1e-9) return function (t) { return Math.cos(w0 * t); };
+    if (Math.abs(lam - w0) < 1e-9) return function (t) { return (1 + w0 * t) * Math.exp(-w0 * t); };
+    if (lam < w0) { var om = Math.sqrt(w0 * w0 - lam * lam); return function (t) { return Math.exp(-lam * t) * (Math.cos(om * t) + lam / om * Math.sin(om * t)); }; }
+    var d = Math.sqrt(lam * lam - w0 * w0), r1 = -lam + d, r2 = -lam - d;
+    return function (t) { return (r2 * Math.exp(r1 * t) - r1 * Math.exp(r2 * t)) / (r2 - r1); };
+  }
+  /* calc:end */
+  (function () {
+    var host = document.getElementById('figDamp'); if (!host) return;
+    var inp = document.getElementById('dl'), view, w0 = 2 * Math.PI;
+    function regime(r) { return r < 1e-9 ? L.reg.none : Math.abs(r - 1) < 1e-9 ? L.reg.crit : r < 1 ? L.reg.pseudo : L.reg.aper; }
+    function draw(w) {
+      var r = +inp.value, f = damped(r, w0), lam = r * w0;
+      var p = M.plot({ x: [0, 4.3], y: [-1.15, 1.15], w: Math.min(w, 560), h: 230, pad: [14, 12, 24, 40] });
+      p.axes({ x: L.t, y: L.x, tx: 0.25, lx: 1, ty: 0.25, ly: 0.5, dec: 1 });
+      if (r > 1e-9 && r < 1) {
+        p.curve(function (t) { return Math.exp(-lam * t); }, { from: 0, to: 4, cls: 'mk-env' });
+        p.curve(function (t) { return -Math.exp(-lam * t); }, { from: 0, to: 4, cls: 'mk-env' });
+      }
+      p.curve(f, { from: 0, to: 4, cls: 'mk-curve k-pos', n: 500 });
+      return p.svg({ label: L.damp(regime(r)) });
+    }
+    function update() {
+      var r = +inp.value, extra = '';
+      document.getElementById('dlv').textContent = nf(r, 2);
+      if (r > 1e-9 && r < 1) extra = L.pseudoT(nf(1 / Math.sqrt(1 - r * r), 2));
+      document.getElementById('dread').innerHTML = L.dread(regime(r), extra);
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    inp.addEventListener('input', update);
+    update();
+  })();
+})();
+</script>
+</body>
+</html>

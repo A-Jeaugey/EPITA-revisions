@@ -51,8 +51,8 @@ main.ann>section{display:grid;gap:16px;min-width:0}
     <div>
       <div class="eyebrow"><a href="index.html">Physics B2</a> · Past exams</div>
       <h1>The end-of-semester exams, <span class="w">exercise by exercise</span>.</h1>
-      <p class="lead">The 7 physics S1 end-of-semester exams found, from January 2016 to December 2022. What is in the course (polar coordinates, circular motion, the second law and energy) links to a solved exercise; statics, not in the course yet, is greyed out.</p>
-      <div class="chips"><span class="chip">7 papers</span><span class="chip">answers recomputed</span><span class="chip ex">statics in 6 papers out of 7</span></div>
+      <p class="lead">The 7 physics S1 end-of-semester exams found, from January 2016 to December 2022. What is in the course (polar coordinates, circular motion, the second law and energy) links to a solved exercise; statics, absent from this year’s course, is greyed out. Oscillators and waves, new this year, are in none of these papers: their models are further down.</p>
+      <div class="chips"><span class="chip">7 papers</span><span class="chip">answers recomputed</span><span class="chip ex">statics in 6 papers out of 7, off the syllabus</span></div>
     </div>
   </div>
 </header>
@@ -62,8 +62,15 @@ main.ann>section{display:grid;gap:16px;min-width:0}
     <div><div class="eyebrow">Overview</div><h2 id="t-mx">Which topics, which paper</h2></div>
     <p class="muted" style="max-width:66ch">● main topic of an exercise, with its points; ○ topic used along the way. Under each paper: the share of the marks on the current syllabus (estimate).</p>
     <div class="tbl"><table class="matrix" id="matrix"></table></div>
-    <div class="note trap"><span class="tag">Not in the course yet</span><p>Statics (moment of a force, rotational and translational equilibrium of a beam, a ladder, a sign) comes up in 6 papers out of 7, often for 5 to 7 points. It will be added when the B2 course publishes it.</p></div>
+    <div class="note trap"><span class="tag">Absent from this year’s course</span><p>Statics (moment of a force, rotational and translational equilibrium of a beam, a ladder, a sign) comes up in 6 papers out of 7, often for 5 to 7 points. The complete course published in November 2026 does not mention moments: these papers followed another version of the ECUE.</p></div>
     <div class="note keep"><span class="tag">Frenet basis</span><p>The papers ask their circular-motion questions “in the Frenet basis”. On a circle, this is the polar basis of the course: the translation is in <a href="cours-2-circulaire.html#s6">chapter 2, part 6</a>.</p></div>
+  </section>
+  <section aria-labelledby="t-new">
+    <div><div class="eyebrow">New this year</div><h2 id="t-new">Oscillators and waves: the available models</h2></div>
+    <div class="grid2">
+      <div class="note exam"><span class="tag">October 2025 midterm (Moodle)</span><p>Last year’s paper, published by the teacher with its answer key. Exercise 1 (12 points): a falling drop, first in free fall, then with fluid friction and its differential equation (<a href="entrainement.html#p2025-ex1">solved exercise</a>). Exercise 2 (8 points): the ISS in polar coordinates (<a href="entrainement.html#p2025-ex2">solved exercise</a>).</p></div>
+      <div class="note keep"><span class="tag">TD 6 to 8</span><p>With no old paper, the TDs are the best models: <a href="entrainement.html#td6-ex2">vertical spring</a>, <a href="entrainement.html#td6-ex3">HCl molecule</a>, <a href="entrainement.html#td7-ex1">simple pendulum</a>, <a href="entrainement.html#td7-ex2">its energy approach</a>, <a href="entrainement.html#td8-ex3">interference</a>, <a href="entrainement.html#td8-ex4">modes of a pipe</a>.</p></div>
+    </div>
   </section>
   <section aria-labelledby="t-ex">
     <div><div class="eyebrow">Papers</div><h2 id="t-ex">Each paper, most recent first</h2></div>
@@ -88,6 +95,8 @@ main.ann>section{display:grid;gap:16px;min-width:0}
 <script src="../data/en/phys2/exams.js"></script>
 <script src="../data/phys2/ex-finals.js"></script>
 <script src="../data/en/phys2/ex-finals.js"></script>
+<script src="../data/phys2/ex-td.js"></script>
+<script src="../data/en/phys2/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, nf = U.nf;
@@ -96,7 +105,8 @@ main.ann>section{display:grid;gap:16px;min-width:0}
   (window.PHYS_EX || []).forEach(function (e) { EX[e.id] = e; });
   (window.PHYS2_EX || []).forEach(function (e) { EX[e.id] = e; });
   /* a B2 sheet (or one moved from B1) opens here, a B1 sheet in the B1 practice page */
-  function href(id) { var e = EX[id]; return (e.kind === 'final' || MOVED.indexOf(id) >= 0 ? '' : '../physique/') + 'entrainement.html#' + id; }
+  var OWN = {}; (window.PHYS2_EX || []).forEach(function (e) { OWN[e.id] = 1; });
+  function href(id) { return (OWN[id] || MOVED.indexOf(id) >= 0 ? '' : '../physique/') + 'entrainement.html#' + id; }
   function short(e) { return e.date.replace('January ', 'Jan. ').replace('December ', 'Dec. ').replace('June ', 'June '); }
 
   /* topics × papers matrix */
@@ -125,7 +135,7 @@ main.ann>section{display:grid;gap:16px;min-width:0}
       if ((p.topics || [])[0] === 'qcm') links = nq ? '<a href="../qcm/index.html#phys2-' + e.key + '">Its ' + nq + ' questions on the syllabus in the MCQ →</a>' : '<span class="muted">Statics questions, or Frenet questions on an arbitrary curve: not reused in the MCQ.</span>';
       else links = (p.cards || []).filter(function (id) { return EX[id]; }).map(function (id) { return '<a href="' + href(id) + '">' + EX[id].title + (EX[id].kind === 'final' ? '' : ' (' + U.esc(EX[id].src) + ')') + ' · solution →</a>'; }).join('');
       var tags = (p.topics || []).filter(function (t) { return t !== 'qcm'; }).map(function (t) { return TOP[t]; }).filter(Boolean).join(' · ');
-      return '<li' + (off ? ' class="off"' : '') + '><span class="n">' + (typeof p.ex === 'number' ? 'Ex ' + p.ex : p.ex) + '</span><div class="pt"><span>' + p.t + (off ? '<span class="hp">not in the course yet</span>' : '') + '</span>' +
+      return '<li' + (off ? ' class="off"' : '') + '><span class="n">' + (typeof p.ex === 'number' ? 'Ex ' + p.ex : p.ex) + '</span><div class="pt"><span>' + p.t + (off ? '<span class="hp">outside the current course</span>' : '') + '</span>' +
         (tags ? '<span class="muted" style="font-size:.84rem">' + U.esc(tags) + '</span>' : '') + links + '</div><span class="p">' + nf(p.pts, 1) + ' pts</span></li>';
     }).join('');
     var files = e.files.map(function (f) { return '<a class="btn" href="' + f.u + '" target="_blank" rel="noopener">' + f.k + (f.l ? ' (' + f.l.toUpperCase() + ')' : '') + ' ↗</a>'; }).join('');

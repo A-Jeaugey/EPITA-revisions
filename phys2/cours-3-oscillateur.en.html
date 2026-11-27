@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The harmonic oscillator · Physics B2</title>
+<meta name="description" content="Physics B2, chapter 3: the restoring force of a spring, the harmonic oscillator equation, solving it with the initial conditions, the natural period, energy and the vertical spring (TD 6).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<link rel="stylesheet" href="../assets/css/shell.css">
+<link rel="stylesheet" href="../assets/css/physique.css">
+<link rel="stylesheet" href="../assets/css/qcm.css">
+<style>
+/* chapter 3: spring as a thin line, solid as a block, x(t) and energy curves */
+.mk .mk-spring{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.mk .mk-block{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.mk .mk-wall{fill:none;stroke:var(--ink);stroke-width:2.2}
+.mk .mk-hatch{fill:none;stroke:var(--muted);stroke-width:1}
+.mk .mk-t{fill:var(--muted);font-size:12px}
+.mk .mk-curve.k-ink{stroke:currentColor}
+.mk .k-amb{color:var(--accent)}
+.mk .mk-curve.k-amb{stroke:currentColor}
+.mk text.k-amb{fill:currentColor}
+.fig .ctrls .sliders{align-items:end}
+var.d1,var.d2{position:relative;display:inline-block;line-height:1}
+var.d1::after,var.d2::after{content:"";position:absolute;left:56%;bottom:.82em;width:.13em;height:.13em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+var.d2::after{transform:translateX(-105%);box-shadow:.24em 0 0 currentColor}
+var.d1.hi::after,var.d2.hi::after{bottom:1.05em;left:60%}
+</style>
+<script src="../assets/js/core.js"></script>
+</head>
+<body data-resume="Physics B2 · chapter 3: the harmonic oscillator">
+<div id="shell"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow"><a href="index.html">Physics B2</a> · Chapter 3 of 5</div>
+      <h1>A spring pulls, the mass oscillates: <span class="w">the harmonic oscillator</span>.</h1>
+      <p class="lead">A mass hanging from a spring, with no friction, goes back and forth for ever around its equilibrium position. The second law gives a differential equation, <span class="f"><var class="d2">x</var> + <var>ω</var><sub>0</sub>² <var>x</var> = 0</span>, whose solutions are sinusoids. This is part 2 of the course (“Oscillating systems”, pages 13 to 18) and TD 6.</p>
+      <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">6 parts</span><span class="chip">course p. 13 to 18 · TD 6</span><span class="chip ex">midterm 2 syllabus</span></div>
+      <div class="note keep"><span class="tag">What you need first</span><p><a href="../physique/cours-2-dynamique.html">Newton’s second law</a> and <a href="../physique/cours-3-energie.html">mechanical energy</a> from B1. Differentiating <span class="f">cos(<var>ω</var><var>t</var>)</span> and <span class="f">sin(<var>ω</var><var>t</var>)</span>: <span class="f">(cos <var>ω</var><var>t</var>)′ = −<var>ω</var> sin <var>ω</var><var>t</var></span> and <span class="f">(sin <var>ω</var><var>t</var>)′ = <var>ω</var> cos <var>ω</var><var>t</var></span>.</p></div>
+      <div class="vlegend" aria-label="Vector colours, the same across the whole site">
+        <span><i class="lp"></i>position</span><span><i class="lv"></i>velocity</span><span><i class="la"></i>acceleration</span><span><i class="lf"></i>force</span>
+      </div>
+    </div>
+    <figure class="fig" style="margin:0"><div class="mk-host" id="figHero"></div><figcaption>The spring is stretched by <var>x</var>: its restoring force <var class="vec kf">F</var> pulls the mass back towards O, its rest position.</figcaption></figure>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Chapter contents">
+    <div class="toc-title">Chapter 3 · Harmonic oscillator</div>
+    <ol>
+      <li><a href="#s1"><span class="frames" data-n="1"></span><span>The restoring force</span></a></li>
+      <li><a href="#s2"><span class="frames" data-n="2"></span><span>Setting up the equation</span></a></li>
+      <li><a href="#s3"><span class="frames" data-n="3"></span><span>Solving the equation</span></a></li>
+      <li><a href="#s4"><span class="frames" data-n="4"></span><span>Period and shape</span></a></li>
+      <li><a href="#s5"><span class="frames" data-n="5"></span><span>Energy</span></a></li>
+      <li><a href="#s6"><span class="frames" data-n="6"></span><span>The vertical spring</span></a></li>
+    </ol>
+    <div class="toc-nav"><a href="index.html">← Physics B2 home</a><a href="cours-2-circulaire.html">← Chapter 2: circular dynamics</a><a href="cours-4-pendule.html">Chapter 4: pendulum and damping →</a><a href="../qcm/index.html#phys2">Physics B2 MCQ</a></div>
+  </nav>
+
+  <main>
+    <details class="mobile-toc">
+      <summary>Chapter contents</summary>
+      <ol>
+        <li><a href="#s1">The restoring force</a></li><li><a href="#s2">Setting up the equation</a></li><li><a href="#s3">Solving the equation</a></li>
+        <li><a href="#s4">Period and shape</a></li><li><a href="#s5">Energy</a></li><li><a href="#s6">The vertical spring</a></li>
+      </ol>
+    </details>
+
+    <!-- ============================================================ 1 -->
+    <section class="sec" id="s1">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="1"></span>Part 1</div><h2>The spring and its restoring force</h2></div>
+      <div class="stack">
+        <div class="prose">
+          <p>A spring is described by two numbers: its <b>natural length</b> <var>ℓ</var><sub>0</sub>, its length when nothing pulls or pushes it, and its <b>spring constant</b> (stiffness) <var>k</var>, in N·m⁻¹. When its length <var>ℓ</var> differs from <var>ℓ</var><sub>0</sub>, it exerts on the solid attached to its end a force that tends to bring it back to the natural length: the <b>restoring force</b>. It is proportional to the extension Δ<var>ℓ</var> = <var>ℓ</var> − <var>ℓ</var><sub>0</sub>.</p>
+        </div>
+        <div class="eq"><span class="nw"><var class="vec kf">F</var> = −<var>k</var> (<var>ℓ</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var></span><small><var class="vec">u</var>: unit vector along the spring, from its attachment point towards the mass</small></div>
+        <div class="prose"><p>In the course, the spring is horizontal and the origin O of the axis is placed at the rest position of the mass, where the extension is zero. Then Δ<var>ℓ</var> = <var>x</var>, and the force is simply:</p></div>
+        <div class="eq"><span class="nw"><var class="vec kf">F</var><sub>spring</sub> = −<var>k</var> <var>x</var> <var class="vec">u</var><sub><var>x</var></sub></span></div>
+        <figure class="fig"><div class="mk-host" id="figSpring"></div><figcaption>At rest, the force is zero. Stretched spring (<var>x</var> &gt; 0): the force points towards negative <var>x</var>. Compressed spring (<var>x</var> &lt; 0): it points towards positive <var>x</var>. In both cases, it brings the mass back towards O.</figcaption></figure>
+        <h3>Writing the force when the origin is not at the rest position</h3>
+        <div class="prose"><p>This is exercise 1 of TD 6: the spring is fixed at H, the mass is at M, and positions are measured from an arbitrary point O. The method has three steps.</p></div>
+        <ol class="steps">
+          <li><div><p><b>The length</b> <var>ℓ</var>, always positive, from the positions: the larger minus the smaller. M to the right of H: <var>ℓ</var> = <var>x</var> − <var>x</var><sub>H</sub>. M to the left of H: <var>ℓ</var> = <var>x</var><sub>H</sub> − <var>x</var>.</p></div></li>
+          <li><div><p><b>The vector</b> <var class="vec">u</var>, from H to M: <var class="vec">u</var><sub><var>x</var></sub> if M is to the right of H, −<var class="vec">u</var><sub><var>x</var></sub> if it is to the left.</p></div></li>
+          <li><div><p><b>The force</b>: <var class="vec kf">F</var> = −<var>k</var>(<var>ℓ</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var>. Check: if the spring is stretched, the force must point from M towards H.</p></div></li>
+        </ol>
+        <div class="tbl"><table>
+          <thead><tr><th>Situation (TD 6, Ex 1)</th><th>Length</th><th>Force on M</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">H = O, M to the right</th><td class="f"><var>x</var></td><td class="f">−<var>k</var>(<var>x</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub></td></tr>
+            <tr><th scope="row">M to the left of H</th><td class="f"><var>x</var><sub>H</sub> − <var>x</var></td><td class="f"><var>k</var>(<var>x</var><sub>H</sub> − <var>x</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub></td></tr>
+            <tr><th scope="row">M to the right of H</th><td class="f"><var>x</var> − <var>x</var><sub>H</sub></td><td class="f">−<var>k</var>(<var>x</var> − <var>x</var><sub>H</sub> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub></td></tr>
+            <tr><th scope="row">Hanging from the ceiling H = O, <var>z</var> axis pointing up, M below</th><td class="f">−<var>z</var></td><td class="f"><var>k</var>(−<var>z</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>z</var></sub></td></tr>
+            <tr><th scope="row">Standing on the floor H = O, M above</th><td class="f"><var>z</var></td><td class="f">−<var>k</var>(<var>z</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>z</var></sub></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note exam"><span class="tag">Two springs (TD 6, Ex 1, case 6)</span><p>One spring (<var>k</var>, <var>ℓ</var><sub>0</sub>) links the wall to M<sub>1</sub>, a second one (<var>k</var>′, <var>ℓ</var>′<sub>0</sub>) links M<sub>1</sub> to M<sub>2</sub>. Both forces act on M<sub>1</sub>: −<var>k</var>(<var>x</var><sub>1</sub> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub> and <var>k</var>′(<var>x</var><sub>2</sub> − <var>x</var><sub>1</sub> − <var>ℓ</var>′<sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub>. On M<sub>2</sub>: −<var>k</var>′(<var>x</var><sub>2</sub> − <var>x</var><sub>1</sub> − <var>ℓ</var>′<sub>0</sub>) <var class="vec">u</var><sub><var>x</var></sub>, the opposite (third law). The official answer key writes <var>k</var> instead of <var>k</var>′ in this last force: it is a typo.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing −<var>k</var><var>x</var> when the origin is not at the rest position: it is −<var>k</var>(<var>ℓ</var> − <var>ℓ</var><sub>0</sub>), with the actual length.</li>
+          <li>The minus sign does not mean “always towards the left”: it says that the force is opposite to the extension.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s1" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 1 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s1"></button></div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="sec" id="s2">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="2"></span>Part 2</div><h2>Setting up the equation: Newton’s second law</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The system in the course: a mass <var>m</var>, treated as the point M, slides without friction on a horizontal support, attached to a horizontal spring. The Earth frame is assumed to be Galilean. We apply the B1 method, with no change.</p></div>
+        <ol class="steps">
+          <li><div><p><b>List of forces</b>: the weight <var class="vec kf">P</var> (vertical, downwards), the reaction of the support <var class="vec kf">R</var> (vertical, upwards, no friction) and the restoring force <var class="vec kf">F</var> = −<var>k</var><var>x</var> <var class="vec">u</var><sub><var>x</var></sub>.</p></div></li>
+          <li><div><p><b>Second law</b>: <span class="f"><var class="vec kf">P</var> + <var class="vec kf">R</var> + <var class="vec kf">F</var> = <var>m</var> <var class="vec ka">a</var></span>, with <var class="vec ka">a</var> = <var class="d2">x</var> <var class="vec">u</var><sub><var>x</var></sub> (the motion is rectilinear along <var>x</var>).</p></div></li>
+          <li><div><p><b>Projection on the <var>x</var> axis</b>: the weight and the reaction are vertical, they do not count. What is left is <span class="f">0 + 0 − <var>k</var><var>x</var> = <var>m</var><var class="d2">x</var></span>. On the vertical axis: <var>R</var> = <var>m</var><var>g</var>.</p></div></li>
+          <li><div><p><b>Standard form</b>: everything on the same side, coefficient 1 in front of <var class="d2">x</var>.</p></div></li>
+        </ol>
+        <div class="eq"><span class="nw"><var class="d2">x</var> + <span class="frac"><span><var>k</var></span><span><var>m</var></span></span> <var>x</var> = 0</span><span class="nw">⇔ &nbsp; <var class="d2">x</var> + <var>ω</var><sub>0</sub>² <var>x</var> = 0, &nbsp; with &nbsp; <var>ω</var><sub>0</sub> = <span class="sqrt">√<span><span class="frac"><span><var>k</var></span><span><var>m</var></span></span></span></span></span></div>
+        <div class="prose"><p>This is a <b>second-order differential equation</b>: it relates the unknown function <var>x</var>(<var>t</var>) to its second derivative. <var>ω</var><sub>0</sub> is the <b>natural angular frequency</b> of the system, in rad·s⁻¹. It depends only on <var>k</var> and <var>m</var>.</p></div>
+        <div class="grid2">
+          <div class="card"><span class="k">Recognising a harmonic oscillator</span><p>An equation of the form (quantity)″ + (positive constant) × (quantity) = 0. The constant is <var>ω</var><sub>0</sub>². The quantity can be a position <var>x</var>, a height <var>z</var>, an angle <var>θ</var> (pendulum, chapter 4) or an electric voltage.</p></div>
+          <div class="card"><span class="k">Checking homogeneity</span><p><var>k</var>/<var>m</var> is in N·m⁻¹·kg⁻¹ = (kg·m·s⁻²)·m⁻¹·kg⁻¹ = s⁻². So <var>ω</var><sub>0</sub> is in s⁻¹ (rad·s⁻¹), and <var>ω</var><sub>0</sub>²<var>x</var> has the unit of an acceleration, like <var class="d2">x</var>.</p></div>
+        </div>
+        <div class="note exam"><span class="tag">In the TDs</span><p>TD 6, Ex 2: “Project this expression on the relevant axis of the problem and write the resulting differential equation in its standard form”. TD 7, Ex 1: the same thing for an angle. The question always has three steps: vector second law, projection, standard form.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Finding <span class="f"><var class="d2">x</var> − <var>ω</var><sub>0</sub>² <var>x</var> = 0</span>: with a minus sign, there is no oscillation. Re-read the direction of the restoring force.</li>
+          <li>Keeping <var>m</var> in front of <var class="d2">x</var>: the standard form needs a coefficient 1, so you divide by <var>m</var>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s2" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 2 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s2"></button></div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="sec" id="s3">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="3"></span>Part 3</div><h2>Solving the equation with the initial conditions</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The course states the form of the solutions without proof: any function</p></div>
+        <div class="eq"><span class="nw"><var>x</var>(<var>t</var>) = <var>A</var> cos(<var>ω</var><sub>0</sub><var>t</var>) + <var>B</var> sin(<var>ω</var><sub>0</sub><var>t</var>)</span></div>
+        <div class="prose"><p>satisfies <span class="f"><var class="d2">x</var> + <var>ω</var><sub>0</sub>² <var>x</var> = 0</span>, whatever the constants <var>A</var> and <var>B</var>. There are two constants, so you need two pieces of information to find them: the <b>initial conditions</b>, the position <var>x</var><sub>0</sub> = <var>x</var>(0) in metres and the velocity <var>v</var><sub>0</sub> = <var class="d1">x</var>(0) in m·s⁻¹.</p></div>
+        <ol class="steps">
+          <li><div><p><b>Position at <var>t</var> = 0</b>: <var>x</var>(0) = <var>A</var> cos 0 + <var>B</var> sin 0 = <var>A</var>, so <span class="f"><var>A</var> = <var>x</var><sub>0</sub></span>.</p></div></li>
+          <li><div><p><b>Differentiate</b>: <span class="f"><var class="d1">x</var>(<var>t</var>) = −<var>A</var><var>ω</var><sub>0</sub> sin(<var>ω</var><sub>0</sub><var>t</var>) + <var>B</var><var>ω</var><sub>0</sub> cos(<var>ω</var><sub>0</sub><var>t</var>)</span>.</p></div></li>
+          <li><div><p><b>Velocity at <var>t</var> = 0</b>: <var class="d1">x</var>(0) = <var>B</var><var>ω</var><sub>0</sub>, so <span class="f"><var>B</var> = <var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub></span>.</p></div></li>
+          <li><div><p><b>Conclude</b>, then check at <var>t</var> = 0:</p><div class="eq"><span class="nw"><var>x</var>(<var>t</var>) = <var>x</var><sub>0</sub> cos(<var>ω</var><sub>0</sub><var>t</var>) + <span class="frac"><span><var>v</var><sub>0</sub></span><span><var>ω</var><sub>0</sub></span></span> sin(<var>ω</var><sub>0</sub><var>t</var>)</span></div></div></li>
+        </ol>
+        <div class="grid2">
+          <div class="card"><span class="k">Case 1: released from rest</span><p>The mass is released from <var>x</var><sub>0</sub> with <var>v</var><sub>0</sub> = 0: <var>B</var> = 0 and</p><div class="eq"><span class="nw"><var>x</var>(<var>t</var>) = <var>x</var><sub>0</sub> cos(<var>ω</var><sub>0</sub><var>t</var>)</span></div><p>It oscillates between −<var>x</var><sub>0</sub> and <var>x</var><sub>0</sub>.</p></div>
+          <div class="card"><span class="k">Case 2: launched from O</span><p>The mass starts from <var>x</var><sub>0</sub> = 0 with velocity <var>v</var><sub>0</sub>: <var>A</var> = 0 and</p><div class="eq"><span class="nw"><var>x</var>(<var>t</var>) = <span class="frac"><span><var>v</var><sub>0</sub></span><span><var>ω</var><sub>0</sub></span></span> sin(<var>ω</var><sub>0</sub><var>t</var>)</span></div><p>It oscillates between −<var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub> and <var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub>.</p></div>
+        </div>
+        <h3>The other form: amplitude and phase</h3>
+        <div class="prose"><p>The same solution can also be written with a single cosine:</p></div>
+        <div class="eq"><span class="nw"><var>x</var>(<var>t</var>) = <var>X</var><sub>m</sub> cos(<var>ω</var><sub>0</sub><var>t</var> + <var>φ</var>)</span><small><var>X</var><sub>m</sub>: amplitude (m), <var>φ</var>: initial phase (rad)</small></div>
+        <div class="prose"><p>The course also calls this amplitude <var>A</var>; here it is called <var>X</var><sub>m</sub> so that it is not confused with the <var>A</var> of the first form. Expanding the cosine, <var>x</var><sub>0</sub> = <var>X</var><sub>m</sub> cos <var>φ</var> and <var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub> = −<var>X</var><sub>m</sub> sin <var>φ</var>, so</p></div>
+        <div class="eq"><span class="nw"><var>X</var><sub>m</sub> = <span class="sqrt">√<span><var>x</var><sub>0</sub>² + (<var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub>)²</span></span></span></div>
+        <ol class="steps">
+          <li><div><p><b>Without a calculator</b>: <var>m</var> = 0.5 kg, <var>k</var> = 50 N·m⁻¹, so <var>ω</var><sub>0</sub> = √100 = 10 rad·s⁻¹. The mass is released at <var>x</var><sub>0</sub> = 4 cm with <var>v</var><sub>0</sub> = 0.3 m·s⁻¹: <var>B</var> = 0.3/10 = 0.03 m, and <var>x</var>(<var>t</var>) = 0.04 cos(10<var>t</var>) + 0.03 sin(10<var>t</var>). The amplitude is √(0.04² + 0.03²) = 0.05 m: 5 cm, more than the 4 cm at the start, because of the initial push.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">In the TDs</span><p>TD 6, Ex 2, question 6: “Use the initial conditions to find their expressions”; TD 7, Ex 1, question 5: the same thing for the angle of a pendulum. Each time, the course checks that the solution found satisfies the equation: do it too, by differentiating twice.</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Differentiating cos into +sin: (cos <var>ω</var><sub>0</sub><var>t</var>)′ = −<var>ω</var><sub>0</sub> sin <var>ω</var><sub>0</sub><var>t</var>. The factor <var>ω</var><sub>0</sub> comes out at each differentiation.</li>
+          <li>Writing <var>B</var> = <var>v</var><sub>0</sub>: the condition gives <var>B</var><var>ω</var><sub>0</sub> = <var>v</var><sub>0</sub>, so <var>B</var> = <var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub>, which is indeed a length.</li>
+          <li>Taking the amplitude equal to <var>x</var><sub>0</sub> when <var>v</var><sub>0</sub> ≠ 0.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s3" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 3 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s3"></button></div>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="sec" id="s4">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="4"></span>Part 4</div><h2>Natural period and shape of the motion</h2></div>
+      <div class="stack">
+        <div class="prose"><p>The cosine repeats when <var>ω</var><sub>0</sub><var>t</var> increases by 2π. The oscillations are therefore sinusoidal, with <b>natural period</b></p></div>
+        <div class="eq"><span class="nw"><var>T</var><sub>0</sub> = <span class="frac"><span>2π</span><span><var>ω</var><sub>0</sub></span></span> = 2π <span class="sqrt">√<span><span class="frac"><span><var>m</var></span><span><var>k</var></span></span></span></span> &nbsp;&nbsp; and &nbsp;&nbsp; <var>f</var><sub>0</sub> = <span class="frac"><span>1</span><span><var>T</var><sub>0</sub></span></span></span></div>
+        <div class="prose"><p>The oscillator is called <b>harmonic</b>: its amplitude is constant (no friction) and its period depends only on the mass-spring system, not on the amplitude or on how it was started. The heavier the mass, the slower it oscillates; the stiffer the spring, the faster it oscillates.</p></div>
+        <figure class="fig">
+          <div class="mk-host" id="figOsc"></div>
+          <div class="ctrls">
+            <div class="sliders">
+              <div class="slider"><label for="om">Mass <var>m</var></label><output id="omv" for="om"></output><input id="om" type="range" min="0.1" max="2" step="0.1" value="0.5"></div>
+              <div class="slider"><label for="ok">Spring constant <var>k</var></label><output id="okv" for="ok"></output><input id="ok" type="range" min="10" max="200" step="10" value="50"></div>
+              <div class="slider"><label for="ox">Initial position <var>x</var><sub>0</sub></label><output id="oxv" for="ox"></output><input id="ox" type="range" min="-8" max="8" step="1" value="4"></div>
+              <div class="slider"><label for="ov">Initial velocity <var>v</var><sub>0</sub></label><output id="ovv" for="ov"></output><input id="ov" type="range" min="-0.8" max="0.8" step="0.1" value="0"></div>
+            </div>
+            <div class="readout" id="oread" aria-live="polite"></div>
+          </div>
+          <figcaption><var>x</var>(<var>t</var>) over 2 s. Change <var>x</var><sub>0</sub> or <var>v</var><sub>0</sub>: the amplitude changes, the period does not. Change <var>m</var> or <var>k</var>: the period changes.</figcaption>
+        </figure>
+        <div class="grid2">
+          <div class="card"><span class="k">Reading the curve</span><p>At the extremes (<var>x</var> = ±<var>X</var><sub>m</sub>), the tangent is horizontal: the velocity is zero, the mass turns round. At O, the slope is steepest: the velocity is maximal, <var>v</var><sub>max</sub> = <var>ω</var><sub>0</sub><var>X</var><sub>m</sub>.</p></div>
+          <div class="card"><span class="k">The acceleration</span><p>The equation says <span class="f"><var class="d2">x</var> = −<var>ω</var><sub>0</sub>² <var>x</var></span>: the acceleration always points towards O, and is maximal at the extremes, where the velocity is zero.</p></div>
+        </div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>Writing <var>T</var><sub>0</sub> = 2π√(<var>k</var>/<var>m</var>). Check with the units: √(kg/(N·m⁻¹)) = √(s²) = s. And with common sense: a heavier mass must oscillate more slowly.</li>
+          <li>Confusing <var>ω</var><sub>0</sub> (rad·s⁻¹) and <var>f</var><sub>0</sub> (Hz): <var>ω</var><sub>0</sub> = 2π<var>f</var><sub>0</sub>.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s4" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 4 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s4"></button></div>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="sec" id="s5">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="5"></span>Part 5</div><h2>The energy of the oscillator</h2></div>
+      <div class="stack">
+        <div class="prose"><p>Besides kinetic energy, there is energy stored in the spring, the <b>elastic potential energy</b>, where <var>x</var> is the extension of the spring:</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>c</sub> = ½ <var>m</var> <var>v</var>² &nbsp;&nbsp;&nbsp; <var>E</var><sub>pe</sub> = ½ <var>k</var> <var>x</var>²</span></div>
+        <div class="prose"><p>With <var>x</var> = <var>X</var><sub>m</sub> cos(<var>ω</var><sub>0</sub><var>t</var> + <var>φ</var>), <var>v</var> = −<var>X</var><sub>m</sub><var>ω</var><sub>0</sub> sin(<var>ω</var><sub>0</sub><var>t</var> + <var>φ</var>) and <var>m</var><var>ω</var><sub>0</sub>² = <var>k</var>:</p></div>
+        <div class="eq"><span class="nw"><var>E</var><sub>c</sub> = ½ <var>k</var><var>X</var><sub>m</sub>² sin²(<var>ω</var><sub>0</sub><var>t</var> + <var>φ</var>)</span><span class="nw"><var>E</var><sub>pe</sub> = ½ <var>k</var><var>X</var><sub>m</sub>² cos²(<var>ω</var><sub>0</sub><var>t</var> + <var>φ</var>)</span><span class="nw"><var>E</var><sub>M</sub> = <var>E</var><sub>c</sub> + <var>E</var><sub>pe</sub> = ½ <var>k</var><var>X</var><sub>m</sub>² &nbsp; (constant)</span></div>
+        <div class="prose"><p>The mechanical energy is conserved: there is no friction, the weight and the reaction do no work (they are perpendicular to the motion) and the restoring force is conservative. It is proportional to the <b>square of the amplitude</b>. During an oscillation, energy goes from the spring to the mass and back.</p></div>
+        <figure class="fig"><div class="mk-host" id="figEnergy"></div><figcaption>Energies as a fraction of <var>E</var><sub>M</sub>, mass released from rest: <var>E</var><sub>pe</sub> is maximal at the extremes, <var>E</var><sub>c</sub> when passing through O, and their sum stays constant. Both energies oscillate twice as fast as <var>x</var>: their period is <var>T</var><sub>0</sub>/2.</figcaption></figure>
+        <h3>What energy lets you do quickly</h3>
+        <ol class="steps">
+          <li><div><p><b>The velocity at a given position</b>: ½<var>m</var><var>v</var>² + ½<var>k</var><var>x</var>² = ½<var>k</var><var>X</var><sub>m</sub>², so <span class="f"><var>v</var> = <var>ω</var><sub>0</sub> <span class="sqrt">√<span><var>X</var><sub>m</sub>² − <var>x</var>²</span></span></span>, maximal at O: <var>v</var><sub>max</sub> = <var>ω</var><sub>0</sub><var>X</var><sub>m</sub>.</p></div></li>
+          <li><div><p><b>Recovering the equation</b>: <var>E</var><sub>M</sub> is constant, so its derivative is zero: <span class="f"><var>m</var><var class="d1">x</var><var class="d2">x</var> + <var>k</var><var>x</var><var class="d1">x</var> = <var class="d1">x</var>(<var>m</var><var class="d2">x</var> + <var>k</var><var>x</var>) = 0</span>, hence <span class="f"><var class="d2">x</var> + <var>ω</var><sub>0</sub>² <var>x</var> = 0</span>. This is the method of TD 7, Ex 2, for the pendulum.</p></div></li>
+        </ol>
+        <div class="note exam"><span class="tag">TD 6, Ex 3: the HCl molecule</span><p>The hydrogen atom vibrates, linked to the chlorine atom (36 times heavier, assumed fixed) by a “spring”. With <var>f</var> = 8.5·10¹³ Hz and <var>m</var><sub>H</sub> = <var>M</var><sub>H</sub>/<var>N</var><sub>A</sub>: <var>k</var> = 4π²<var>f</var>²<var>m</var><sub>H</sub> ≈ 4.7·10² N·m⁻¹. The total energy <var>h</var><var>f</var>/2 is entirely kinetic when passing through equilibrium: <var>v</var><sub>max</sub> = √(<var>h</var><var>f</var>/<var>m</var><sub>H</sub>) ≈ 5.8·10³ m·s⁻¹. It is entirely elastic at the extremes: <var>X</var><sub>m</sub> = √(<var>h</var><var>f</var>/<var>k</var>) ≈ 1.1·10⁻¹¹ m = 11 pm, about 9 % of the bond length (127 pm).</p></div>
+        <div class="note trap"><span class="tag">Traps</span><ul>
+          <li>In ½<var>k</var><var>x</var>², <var>x</var> is the extension <var>ℓ</var> − <var>ℓ</var><sub>0</sub>, not a position measured from an arbitrary point.</li>
+          <li>Doubling the amplitude multiplies the energy by 4, not by 2.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s5" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 5 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s5"></button></div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="sec" id="s6">
+      <div class="sec-head"><div class="kicker"><span class="frames" data-n="6"></span>Part 6</div><h2>The vertical spring (TD 6, exercise 2)</h2></div>
+      <div class="stack">
+        <div class="prose"><p>A ball of mass <var>m</var> hangs from a vertical spring (<var>k</var>, <var>ℓ</var><sub>0</sub>). The <var>z</var> axis is vertical, pointing up, with the origin O at the attachment point: the ball is below, its height <var>z</var> is negative and the length of the spring is −<var>z</var>. This time, the weight does work and is not cancelled: it shifts the equilibrium position.</p></div>
+        <figure class="fig"><div class="mk-host" id="figVert"></div><figcaption>Unloaded, the spring measures <var>ℓ</var><sub>0</sub>. With the ball at equilibrium, it measures <var>ℓ</var><sub>0</sub> + <var>m</var><var>g</var>/<var>k</var>. At release, it has been pulled down to 3<var>ℓ</var><sub>0</sub>/2: the restoring force exceeds the weight, and the ball goes back up.</figcaption></figure>
+        <ol class="steps">
+          <li><div><p><b>Forces</b>: the weight −<var>m</var><var>g</var> <var class="vec">u</var><sub><var>z</var></sub> and the restoring force <var>k</var>(−<var>z</var> − <var>ℓ</var><sub>0</sub>) <var class="vec">u</var><sub><var>z</var></sub> (part 1), upwards when the spring is stretched.</p></div></li>
+          <li><div><p><b>Equilibrium</b> (<var class="vec ka">a</var> = <var class="vec">0</var>): <var>k</var>(−<var>z</var><sub>e</sub> − <var>ℓ</var><sub>0</sub>) − <var>m</var><var>g</var> = 0, so</p><div class="eq"><span class="nw"><var>z</var><sub>e</sub> = −(<var>ℓ</var><sub>0</sub> + <span class="frac"><span><var>m</var><var>g</var></span><span><var>k</var></span></span>)</span></div></div></li>
+          <li><div><p><b>Second law projected on <var>z</var></b>: <var>m</var><var class="d2">z</var> = −<var>k</var><var>z</var> − <var>k</var><var>ℓ</var><sub>0</sub> − <var>m</var><var>g</var>, that is, in the requested form <var class="d2">z</var> + <var>a</var><var class="d1">z</var> + <var>b</var><var>z</var> = <var>c</var>:</p><div class="eq"><span class="nw"><var class="d2">z</var> + <span class="frac"><span><var>k</var></span><span><var>m</var></span></span> <var>z</var> = −(<var>g</var> + <span class="frac"><span><var>k</var><var>ℓ</var><sub>0</sub></span><span><var>m</var></span></span>)</span><span class="nw"><var>a</var> = 0, &nbsp;<var>b</var> = <span class="frac"><span><var>k</var></span><span><var>m</var></span></span>, &nbsp;<var>c</var> = <span class="frac"><span><var>k</var></span><span><var>m</var></span></span> <var>z</var><sub>e</sub></span></div></div></li>
+          <li><div><p><b>Change of variable</b>: with <var>Z</var> = <var>z</var> − <var>z</var><sub>e</sub>, the offset from equilibrium, the right-hand side disappears:</p><div class="eq"><span class="nw"><var class="d2">Z</var> + <var>ω</var><sub>0</sub>² <var>Z</var> = 0, &nbsp; <var>ω</var><sub>0</sub> = <span class="sqrt">√<span><span class="frac"><span><var>k</var></span><span><var>m</var></span></span></span></span></span></div><p>The weight does not change the angular frequency: it only moves the centre of the oscillations.</p></div></li>
+          <li><div><p><b>Initial conditions</b>: <var>z</var>(0) = −3<var>ℓ</var><sub>0</sub>/2 and <var class="d1">z</var>(0) = 0, so <var>Z</var>(0) = −3<var>ℓ</var><sub>0</sub>/2 − <var>z</var><sub>e</sub> and <var>B</var> = 0:</p><div class="eq"><span class="nw"><var>z</var>(<var>t</var>) = <var>z</var><sub>e</sub> − (<span class="frac"><span>3<var>ℓ</var><sub>0</sub></span><span>2</span></span> + <var>z</var><sub>e</sub>) cos(<var>ω</var><sub>0</sub><var>t</var>)</span></div><p>Check: at <var>t</var> = 0, <var>z</var> = <var>z</var><sub>e</sub> − 3<var>ℓ</var><sub>0</sub>/2 − <var>z</var><sub>e</sub> = −3<var>ℓ</var><sub>0</sub>/2.</p></div></li>
+        </ol>
+        <div class="note why"><span class="tag">The rule to remember</span><p>For a vertical spring, measure the position from the <b>equilibrium</b>: the weight disappears from the equation, and you recover exactly the horizontal oscillator. The amplitude is the gap between the starting position and the equilibrium, not the length of the spring.</p></div>
+        <div class="note trap"><span class="tag">The official TD 6 answer key</span><ul>
+          <li>It concludes “angular frequency <var>ω</var><sub>0</sub> = √(<var>g</var>/<var>l</var>)”: this is a typo, the angular frequency of a spring is √(<var>k</var>/<var>m</var>) (√(<var>g</var>/<var>l</var>) is that of the pendulum, chapter 4).</li>
+          <li>It takes the initial position equal to 3<var>ℓ</var><sub>0</sub>/2 although its variable is the offset from equilibrium: the amplitude is |<var>Z</var>(0)| = |<var>m</var><var>g</var>/<var>k</var> − <var>ℓ</var><sub>0</sub>/2|, not 3<var>ℓ</var><sub>0</sub>/2.</li>
+        </ul></div>
+        <div data-check-ref="phys2/cours-3-oscillateur.html#s6" data-n="3"></div>
+      </div>
+      <div class="sec-end"><span class="muted" style="font-size:.9rem">Part 6 of 6</span><button type="button" class="done-btn" data-done="phys2:oscillateur:s6"></button></div>
+    </section>
+
+    <div class="note keep" style="margin-top:48px"><span class="tag">Next</span><p><a href="cours-4-pendule.html">Chapter 4</a> applies the same equation to a pendulum, then adds friction: the oscillations die out. Exercises: <a href="entrainement.html#td6-ex1">TD 6</a> on the practice page; formulas in <a href="fiche.html">the summary sheet</a>.</p></div>
+  </main>
+</div>
+
+<script src="../assets/js/qcm-engine.js"></script>
+<script src="../data/qcm/physique.js"></script>
+<script src="../data/en/qcm/physique.js"></script>
+<script src="../data/qcm/physique-annales.js"></script>
+<script src="../data/en/qcm/physique-annales.js"></script>
+<script src="../data/qcm/phys2.js"></script>
+<script src="../data/en/qcm/phys2.js"></script>
+<script src="../assets/js/meca.js"></script>
+<script>
+(function () {
+  var R = window.REV, M = R.meca, U = R.util;
+  function nf(x, d) { return U.nf(Math.abs(x) < 5e-10 ? 0 : x, d); }
+  /* texts of the page */
+  var L = {
+    hero: 'Mass attached to a horizontal spring, stretched by x: the restoring force pulls the mass back towards O',
+    spring: 'Three states of the spring: at rest, stretched, compressed, with the restoring force',
+    rest: 'at rest: F = 0', stretched: 'stretched: x > 0', compressed: 'compressed: x < 0',
+    osc: function (T, A) { return 'Graph of x(t) over 2 seconds, period ' + T + ' s, amplitude ' + A + ' cm'; },
+    read: function (w, T, A, ph, vm) {
+      return '<p><var>ω</var><sub>0</sub> = √(<var>k</var>/<var>m</var>) = <b>' + w + ' rad·s⁻¹</b> · <var>T</var><sub>0</sub> = 2π/<var>ω</var><sub>0</sub> = <b>' + T + ' s</b></p>' +
+        '<p><var>X</var><sub>m</sub> = √(<var>x</var><sub>0</sub>² + (<var>v</var><sub>0</sub>/<var>ω</var><sub>0</sub>)²) = <b>' + A + ' cm</b> · <var>φ</var> = <b>' + ph + ' rad</b> · <var>v</var><sub>max</sub> = <var>ω</var><sub>0</sub><var>X</var><sub>m</sub> = <b>' + vm + ' m·s⁻¹</b></p>';
+    },
+    energy: 'Kinetic, elastic potential and mechanical energy over two periods, mass released from rest',
+    vert: 'Vertical spring: unloaded, at equilibrium with the ball, and stretched at release',
+    vide: 'unloaded', equi: 'equilibrium', lacher: 'release',
+    tT: 't / T₀', E: 'E'
+  };
+
+  /* ---------- drawing: spring, block, wall ---------- */
+  function zigzag(x0, y0, x1, y1, n, h) {
+    var dx = x1 - x0, dy = y1 - y0, len = Math.sqrt(dx * dx + dy * dy), ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
+    var lead = Math.min(10, len * 0.12), d = 'M' + x0.toFixed(1) + ' ' + y0.toFixed(1), a = lead, step = (len - 2 * lead) / (2 * n);
+    d += 'L' + (x0 + ux * a).toFixed(1) + ' ' + (y0 + uy * a).toFixed(1);
+    for (var i = 1; i <= 2 * n; i++) {
+      var s = a + step * (i - 0.5), sg = i % 2 ? 1 : -1;
+      d += 'L' + (x0 + ux * s + nx * h * sg).toFixed(1) + ' ' + (y0 + uy * s + ny * h * sg).toFixed(1);
+    }
+    d += 'L' + (x1 - ux * lead).toFixed(1) + ' ' + (y1 - uy * lead).toFixed(1) + 'L' + x1.toFixed(1) + ' ' + y1.toFixed(1);
+    return '<path class="mk-spring" d="' + d + '"/>';
+  }
+  function wallV(p, x, y, hh) {
+    var X = p.X(x), Y0 = p.Y(y) - hh, Y1 = p.Y(y) + hh, s = '<path class="mk-wall" d="M' + X + ' ' + Y0 + 'V' + Y1 + '"/>';
+    for (var yy = Y0 + 4; yy <= Y1; yy += 7) s += '<path class="mk-hatch" d="M' + X + ' ' + yy + 'l-7 6"/>';
+    return p.add(s);
+  }
+  function wallH(p, x, y, hw) {
+    var Y = p.Y(y), X0 = p.X(x) - hw, X1 = p.X(x) + hw, s = '<path class="mk-wall" d="M' + X0 + ' ' + Y + 'H' + X1 + '"/>';
+    for (var xx = X0 + 3; xx <= X1; xx += 7) s += '<path class="mk-hatch" d="M' + xx + ' ' + Y + 'l6 -7"/>';
+    return p.add(s);
+  }
+  function block(p, x, y, w, h) { return p.add('<rect class="mk-block" x="' + (p.X(x) - w / 2).toFixed(1) + '" y="' + (p.Y(y) - h / 2).toFixed(1) + '" width="' + w + '" height="' + h + '" rx="3"/>'); }
+  /* one row: wall at x = 0, rest position at x = 2, mass at xm */
+  function row(p, y, xm, txt, lab) {
+    wallV(p, 0, y, 18);
+    p.add(zigzag(p.X(0), p.Y(y), p.X(xm) - 17, p.Y(y), 7, 7));
+    block(p, xm, y, 34, 30);
+    p.text([xm, y], 'm', { dx: -4, dy: 5, anchor: 'middle' });
+    if (Math.abs(xm - 2) > 0.01) p.vec([xm, y + 0.32], [-(xm - 2) * 1.6, 0], { kind: 'frc', label: 'F', lab: [0, -4] });
+    if (txt) p.text([3.75, y], txt, { anchor: 'end', dy: 4 });
+  }
+  M.mount(document.getElementById('figHero'), function (w) {
+    var p = M.plot({ x: [-0.25, 3.6], y: [-0.55, 0.85], w: Math.min(w, 440), equal: true, pad: [6, 8, 6, 8] });
+    p.line([0, -0.38], [3.5, -0.38], { cls: 'mk-axis' });
+    p.line([2, -0.5], [2, 0.6], { cls: 'mk-dash' });
+    p.text([2, -0.38], 'O', { dx: -4, dy: 16, anchor: 'end' });
+    p.text([3.5, -0.38], 'x', { dx: -2, dy: -6, anchor: 'end' });
+    row(p, 0, 2.7);
+    p.line([2, -0.2], [2.7, -0.2], { cls: 'mk-dash' });
+    p.text([2.35, -0.2], 'x', { dy: 14, anchor: 'middle' });
+    return p.svg({ label: L.hero });
+  });
+  M.mount(document.getElementById('figSpring'), function (w) {
+    var p = M.plot({ x: [-0.25, 3.85], y: [-0.55, 2.75], w: Math.min(w, 520), equal: true, pad: [6, 8, 6, 8] });
+    p.line([2, -0.5], [2, 2.6], { cls: 'mk-dash' });
+    p.text([2, -0.5], 'O', { dx: -4, dy: 2, anchor: 'end' });
+    row(p, 2.2, 2, L.rest); row(p, 1.2, 2.6, L.stretched); row(p, 0.2, 1.5, L.compressed);
+    return p.svg({ label: L.spring });
+  });
+
+  /* ---------- interactive x(t) ---------- */
+  (function () {
+    var host = document.getElementById('figOsc'); if (!host) return;
+    var ids = ['om', 'ok', 'ox', 'ov'], inp = {}, out = {}, view;
+    ids.forEach(function (id) { inp[id] = document.getElementById(id); out[id] = document.getElementById(id + 'v'); });
+    function vals() { return { m: +inp.om.value, k: +inp.ok.value, x0: +inp.ox.value / 100, v0: +inp.ov.value }; }
+    function draw(w) {
+      var v = vals(), w0 = Math.sqrt(v.k / v.m), A = Math.sqrt(v.x0 * v.x0 + Math.pow(v.v0 / w0, 2)), T = 2 * Math.PI / w0;
+      var top = Math.max(5, Math.ceil(A * 100 / 5) * 5);
+      var p = M.plot({ x: [0, 2.3], y: [-top, top], w: Math.min(w, 560), h: 240, pad: [14, 12, 24, 40] });
+      p.axes({ x: { v: 't', u: 's' }, y: { v: 'x', u: 'cm' }, tx: 0.1, lx: 0.5, ty: top / 5, ly: top / 5 * (top >= 10 ? 2 : 1), dec: 0 });
+      if (A > 1e-6) { p.line([0, A * 100], [2.05, A * 100], { cls: 'mk-dash' }); p.line([0, -A * 100], [2.05, -A * 100], { cls: 'mk-dash' }); }
+      if (T <= 2.05) { p.line([T, -top], [T, top], { cls: 'mk-dash' }); p.text([T, top], 'T₀', { dx: 4, dy: 12 }); }
+      p.curve(function (t) { return 100 * (v.x0 * Math.cos(w0 * t) + v.v0 / w0 * Math.sin(w0 * t)); }, { from: 0, to: 2.05, cls: 'mk-curve k-pos', n: 400 });
+      p.point([0, v.x0 * 100], {});
+      return p.svg({ label: L.osc(nf(T, 2), nf(A * 100, 1)) });
+    }
+    function update() {
+      var v = vals(), w0 = Math.sqrt(v.k / v.m), A = Math.sqrt(v.x0 * v.x0 + Math.pow(v.v0 / w0, 2)), ph = A > 1e-9 ? Math.atan2(-v.v0 / w0, v.x0) : 0;
+      out.om.textContent = nf(v.m, 1) + ' kg'; out.ok.textContent = v.k + ' N/m'; out.ox.textContent = nf(v.x0 * 100, 0) + ' cm'; out.ov.textContent = nf(v.v0, 1) + ' m/s';
+      document.getElementById('oread').innerHTML = L.read(nf(w0, 2), nf(2 * Math.PI / w0, 2), nf(A * 100, 1), nf(ph, 2), nf(w0 * A, 2));
+      if (view) view.redraw(); else view = M.mount(host, draw);
+    }
+    ids.forEach(function (id) { inp[id].addEventListener('input', update); });
+    update();
+  })();
+
+  /* ---------- energies ---------- */
+  M.mount(document.getElementById('figEnergy'), function (w) {
+    var p = M.plot({ x: [0, 2.25], y: [0, 1.25], w: Math.min(w, 560), h: 220, pad: [14, 12, 24, 40] });
+    p.axes({ x: L.tT, y: L.E, tx: 0.25, lx: 0.5, ty: 0.25, ly: 0.5, dec: 1 });
+    p.curve(function () { return 1; }, { from: 0, to: 2, cls: 'mk-curve k-ink' });
+    p.curve(function (t) { return Math.pow(Math.cos(2 * Math.PI * t), 2); }, { from: 0, to: 2, cls: 'mk-curve k-pos', n: 300 });
+    p.curve(function (t) { return Math.pow(Math.sin(2 * Math.PI * t), 2); }, { from: 0, to: 2, cls: 'mk-curve k-vel', n: 300 });
+    p.label([2.0, 1.0], 'E', { sub: 'M', arrow: false, dx: 6, dy: 4 });
+    p.label([0, 1.0], 'E', { sub: 'pe', kind: 'pos', arrow: false, dx: 8, dy: -8 });
+    p.label([0.25, 1.0], 'E', { sub: 'c', kind: 'vel', arrow: false, dx: -8, dy: -8 });
+    return p.svg({ label: L.energy });
+  });
+
+  /* ---------- vertical spring ---------- */
+  M.mount(document.getElementById('figVert'), function (w) {
+    var l0 = 1, s = 0.3, ze = -(l0 + s), z0 = -1.5;
+    var p = M.plot({ x: [-0.9, 3.5], y: [-2.3, 0.45], w: Math.min(w, 440), equal: true, pad: [6, 8, 6, 8] });
+    p.line([-0.55, -1.85], [-0.55, 0.35], { cls: 'mk-axis' });
+    p.add('<path class="mk-axhead" d="M' + p.X(-0.55) + ' ' + (p.Y(0.35) - 2) + 'l-3.6 8h7.2z"/>');
+    p.text([-0.55, 0.35], 'z', { dx: 8, dy: 6 });
+    p.text([-0.55, 0], 'O', { dx: -6, dy: 4, anchor: 'end' });
+    [[0.4, -l0, L.vide, false], [1.6, ze, L.equi, true], [2.8, z0, L.lacher, true]].forEach(function (c) {
+      wallH(p, c[0], 0, 26);
+      p.add(zigzag(p.X(c[0]), p.Y(0), p.X(c[0]), p.Y(c[1]) - (c[3] ? 11 : 0), 7, 7));
+      if (c[3]) p.add('<circle class="mk-block" cx="' + p.X(c[0]) + '" cy="' + p.Y(c[1]) + '" r="11"/>');
+      p.text([c[0], -2.3], c[2], { anchor: 'middle', dy: -2 });
+    });
+    p.line([-0.55, -l0], [0.75, -l0], { cls: 'mk-dash' }); p.text([-0.55, -l0], '−ℓ₀', { dx: -6, dy: 4, anchor: 'end' });
+    p.line([-0.55, ze], [1.95, ze], { cls: 'mk-dash' }); p.text([-0.55, ze], 'zₑ', { dx: -6, dy: 4, anchor: 'end' });
+    p.line([-0.55, z0], [3.15, z0], { cls: 'mk-dash' }); p.text([-0.55, z0], '−3ℓ₀/2', { dx: -6, dy: 8, anchor: 'end' });
+    p.vec([2.8, z0], [0, -0.4], { kind: 'frc', label: 'P', lab: [8, 4] });
+    p.vec([3.02, z0], [0, 0.67], { kind: 'frc', label: 'F', lab: [6, 10] });
+    return p.svg({ label: L.vert });
+  });
+})();
+</script>
+</body>
+</html>
