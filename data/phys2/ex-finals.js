@@ -73,6 +73,8 @@
   function fig(svg, cap) { return '<figure class="fig" style="margin:0"><div class="mk-host">' + svg + '</div>' + (cap ? '<figcaption class="cap">' + X(cap) + '</figcaption>' : '') + '</figure>'; }
   /* QCM d’une question de cours : options a, b, c, d */
   function opts(list) { return '<ol type="a" style="margin:.3rem 0 0;padding-left:1.4rem;display:grid;gap:.15rem">' + list.map(function (x) { return '<li>' + X(x) + '</li>'; }).join('') + '</ol>'; }
+  /* outils partagés avec data/phys2/ex-td.js (TD 6 à 8, partiel 2025) */
+  window.PHYS2_FMT = { M: M, X: X, E: E, ul: ul, P: P, fig: fig, opts: opts };
 
   /* ---------- figures : repère en unités du monde, échelle identique sur les deux axes ---------- */
   function r1(v) { return Math.round(v * 10) / 10; }

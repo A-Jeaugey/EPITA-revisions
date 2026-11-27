@@ -5,13 +5,18 @@
    2), et ce qui reste du B1 (2e loi, énergie, cinématique cartésienne). Pas encore au cours : la statique (moments
    d’une force, équilibre d’un solide), à 6 sujets sur 7 : parties prog: false, notion « statique ». Les questions en
    base de Frenet se lisent avec le chapitre 2, partie 6 (notion « frenet »).
+   Le cours complet (Moodle, novembre 2026 : « Cours_cinématique_V4 », 24 pages) ne contient aucun moment de force : la statique
+   des anciens sujets relève de l’ancienne ECUE. Les oscillateurs et les ondes (chapitres 3 à 5), au cours cette année, ne sont
+   dans aucun de ces sujets ; leurs exercices (TD 6 à 8, partiel d’octobre 2025) sont dans data/phys2/ex-td.js.
    cards : fiches corrigées (window.PHYS2_EX, ou une fiche du B1 dans window.PHYS_EX). Réponses recalculées (sympy). */
 (function () {
   var EP = 'https://past-exams.epidocs.eu/S1/Finals/Phys/';
   function f(promo, list) { return list.map(function (x) { return { k: x[0], l: x[1], u: EP + encodeURIComponent(promo) + '/final-' + encodeURIComponent(promo) + '-s1-phys-' + x[2] + '.pdf' }; }); }
   window.PHYS2_TOPICS = {
     polaire: 'Coordonnées polaires', circulaire: 'Mouvement circulaire', dyncirc: '2e loi sur un cercle', energie: 'Énergie et frottements',
-    newton: '2e loi de Newton', cinematique: 'Cinématique cartésienne', trajectoire: 'Trajectoire', frenet: 'Base de Frenet', statique: 'Statique (pas encore au cours)', qcm: 'Questions de cours'
+    newton: '2e loi de Newton', cinematique: 'Cinématique cartésienne', trajectoire: 'Trajectoire', frenet: 'Base de Frenet', statique: 'Statique (moments)', qcm: 'Questions de cours',
+    ressort: 'Force de rappel d’un ressort', oscillateur: 'Oscillateur harmonique', pendule: 'Pendule simple', amorti: 'Frottement fluide, amortissement',
+    ondes: 'Ondes progressives', dephasage: 'Déphasage, interférences', stationnaire: 'Ondes stationnaires, modes propres'
   };
   /* fiches du B1 qui appartiennent maintenant au B2 (polaires, TD 5) ; elles gardent leur progression « physique-<id> » */
   window.PHYS2_FROM_B1 = ['p2021-ex2', 'p2021-ex4', 'p2017-ex2', 'p2022-ex3', 'td5-ex1', 'td5-ex2', 'td5-ex3'];

@@ -222,13 +222,16 @@
       ]
     },
     {
-      id: 'phys2', period: 'b2', name: 'Physique · Mouvement circulaire', short: 'Physique', code: 'Physique S1 · fin de semestre',
-      course: 'Mécanique du point : coordonnées polaires, mouvement circulaire', path: 'phys2/index.html', dir: 'phys2/', status: 'ready',
+      id: 'phys2', period: 'b2', name: 'Physique · Oscillateurs et ondes', short: 'Physique', code: 'Physique S1 · partiel 2',
+      course: 'Mécanique du point : polaires, mouvement circulaire, oscillateurs, ondes', path: 'phys2/index.html', dir: 'phys2/', status: 'ready',
       train: 'phys2/entrainement.html', fiche: 'phys2/fiche.html', open: 'Ouvrir la physique B2',
-      exam: 'Examen de fin de semestre (date à venir) · écrit, sans calculatrice ni document',
+      exam: 'QCM 2 le lundi 30 novembre (15 min, jusqu’au TD 5) · partiel 2 (date à venir), écrit, sans calculatrice ni document · 2 partiels 90 %, 2 QCM 10 %',
       chapters: [
         { id: 'polaires', title: 'Coordonnées polaires', path: 'phys2/cours-1-polaires.html', sections: 8 },
-        { id: 'circulaire', title: 'Dynamique du mouvement circulaire', path: 'phys2/cours-2-circulaire.html', sections: 6 }
+        { id: 'circulaire', title: 'Dynamique du mouvement circulaire', path: 'phys2/cours-2-circulaire.html', sections: 6 },
+        { id: 'oscillateur', title: 'L’oscillateur harmonique', path: 'phys2/cours-3-oscillateur.html', sections: 6 },
+        { id: 'pendule', title: 'Pendule simple et oscillations amorties', path: 'phys2/cours-4-pendule.html', sections: 5 },
+        { id: 'ondes', title: 'Ondes et signal', path: 'phys2/cours-5-ondes.html', sections: 5 }
       ]
     },
     {
@@ -278,8 +281,9 @@
     apis: { name: 'Maths · APIS', short: 'Maths', course: 'Analysis: primitive functions, integrals and numerical sequences', open: 'Open APIS',
       exam: 'Course test on Monday 23 November (1 hr) · final exam in December · homework 20%, course test 20%, exam 60%',
       chapters: ['Primitive functions', 'Integrals', 'Integration by parts, change of variable', 'Sequences: definitions, limits, remarkable examples', 'Convergence theorems', 'Recursive sequences', 'Landau comparisons'] },
-    phys2: { name: 'Physics · Circular motion', short: 'Physics', course: 'Point mechanics: polar coordinates, circular motion', open: 'Open Physics B2',
-      exam: 'End-of-semester exam (date to come) · written, no calculator, no documents', chapters: ['Polar coordinates', 'Dynamics of circular motion'] },
+    phys2: { name: 'Physics · Oscillators and waves', short: 'Physics', course: 'Point mechanics: polar coordinates, circular motion, oscillators, waves', open: 'Open Physics B2',
+      exam: 'MCQ 2 on Monday 30 November (15 min, up to TD 5) · midterm 2 (date to come), written, no calculator, no documents · 2 midterms 90%, 2 MCQs 10%',
+      chapters: ['Polar coordinates', 'Dynamics of circular motion', 'The harmonic oscillator', 'Simple pendulum and damped oscillations', 'Waves and signals'] },
     boole: { name: 'Architecture · Boolean algebra', short: 'Archi', course: 'Computer architecture · Boolean algebra', open: 'Open Boolean algebra',
       exam: 'End-of-term exam (date to come) · 1 hr 30 min, answers on the paper · online quizzes 10%, exam 90%',
       chapters: ['Logic gates', 'Boolean algebra', 'Canonical forms', 'Karnaugh maps', 'Problems and circuits'] }
@@ -428,7 +432,8 @@
     piloter: { date: '2026-10-29', start: '14:15', end: '16:15' },
     /* bimestre 2 : contrôle de cours de l’ECUE APIS (annonce du 16 novembre 2026), durée 1 h, horaire non communiqué */
     lima: { date: '2026-11-21', end: '21:00', what: 'DM 1', whatEn: 'Homework 1' },
-    apis: { date: '2026-11-23', what: 'contrôle de cours', whatEn: 'course test' }
+    apis: { date: '2026-11-23', what: 'contrôle de cours', whatEn: 'course test' },
+    phys2: { date: '2026-11-30', end: '23:59', what: 'QCM 2', whatEn: 'MCQ 2' }
   };
   var exams = {
     /* date saisie par l’élève, sinon la date officielle de l’examen (OFFICIAL) */

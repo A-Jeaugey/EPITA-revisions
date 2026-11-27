@@ -6,6 +6,8 @@
    3. Questions des QCM des examens de fin de semestre (Epidocs S1/Finals/Phys) au programme : ids phys-fAAAA-qN
       (f2018j = juin 2018, S1# ; f2022d = décembre 2022). Les questions de statique (moments) attendent le cours ;
       celles qui portent sur la base de Frenet ont la notion phys-frenet (lecture des sujets, chapitre 2 partie 6).
+   4. Chapitres 3 à 5 (oscillateur harmonique, pendule et amortissement, ondes ; Moodle de novembre 2026) : ids phys-c6-NN,
+      phys-c7-NN, phys-c8-NN, dans l’ordre des parties.
    Notation : la même que physique.js ({v} vecteur, `x` grandeur, indice après « _ »). Réponses vérifiées par calcul. */
 (function () {
   var B = window.QCM_BANK = window.QCM_BANK || [];
@@ -16,10 +18,18 @@
   T['phys-circulaire'] = 'Mouvement circulaire';
   T['phys-dyncirc'] = 'Dynamique du mouvement circulaire';
   T['phys-frenet'] = 'Base de Frenet (lecture des sujets)';
+  T['phys-ressort'] = 'Force de rappel d’un ressort';
+  T['phys-oscillateur'] = 'Oscillateur harmonique';
+  T['phys-pendule'] = 'Pendule simple';
+  T['phys-amorti'] = 'Frottement fluide, amortissement';
+  T['phys-ondes'] = 'Ondes progressives, OPPM';
+  T['phys-dephasage'] = 'Déphasage, interférences';
+  T['phys-stationnaire'] = 'Ondes stationnaires, modes propres';
   if (window.QCM_OFF) window.QCM_OFF = window.QCM_OFF.filter(function (t) { return MOVED.indexOf(t) < 0; });
 
   var OLD = 'physique/cours-4-polaires.html', C4 = 'phys2/cours-1-polaires.html', C5 = 'phys2/cours-2-circulaire.html',
     C2 = 'physique/cours-2-dynamique.html', C3 = 'physique/cours-3-energie.html';
+  var C6 = 'phys2/cours-3-oscillateur.html', C7 = 'phys2/cours-4-pendule.html', C8 = 'phys2/cours-5-ondes.html';
   B.forEach(function (q) {
     if (q.ref && q.ref.indexOf(OLD) === 0) { q.s = 'phys2'; q.ref = C4 + q.ref.slice(OLD.length); }
   });
@@ -160,7 +170,151 @@
     { id: 'phys-f2018j-q8', topic: 'phys-travail', lvl: 2, type: 'single', keep: true, src: 'Examen juin 2018 · QCM · Q8',
       q: 'Une masse `m` glisse sur une piste AB en arc de cercle de centre O (OA = OB = `R`), d’angle θ. Le travail de la force de frottement {f}, de norme constante, sur le trajet AB est :',
       o: ['`W`({f}) = −`f R` cos θ', '`W`({f}) = `f`(1 − cos θ)', '`W`({f}) = −`f R` θ'], a: 2,
-      x: 'Réponse vérifiée. Le frottement est opposé au déplacement, le long d’un arc de longueur `R` θ (θ en radians) : `W` = −`f R` θ. La b n’est même pas homogène à un travail.', ref: C5 + '#s6' }
+      x: 'Réponse vérifiée. Le frottement est opposé au déplacement, le long d’un arc de longueur `R` θ (θ en radians) : `W` = −`f R` θ. La b n’est même pas homogène à un travail.', ref: C5 + '#s6' }    ,
+    /* ---------- chapitre 3 : oscillateur harmonique (phys2/cours-3-oscillateur.html) ---------- */
+    { id: 'phys-c6-01', topic: 'phys-ressort', lvl: 1, type: 'num', unit: 'N', a: 1, q: 'Un ressort de raideur `k` = 20 N·m⁻¹ et de longueur à vide 10 cm est étiré jusqu’à 15 cm. Quelle est la norme de sa force de rappel ?',
+      x: '‖{F}‖ = `k` |`ℓ` − `ℓ_0`| = 20 × 0,05 = 1 N. L’allongement se met en mètres : 5 cm = 0,05 m.', ref: C6 + '#s1' },
+    { id: 'phys-c6-02', topic: 'phys-ressort', lvl: 1, type: 'single', q: 'Une masse est accrochée à un ressort horizontal ; l’origine de l’axe `x` est sa position de repos. La masse est en `x` = −3 cm (ressort comprimé). La force de rappel {F} = −`k x` {u_x} est dirigée…',
+      o: ['vers les `x` positifs', 'vers les `x` négatifs', 'nulle part : elle est nulle', 'perpendiculairement à l’axe'], a: 0,
+      x: 'Avec `x` = −0,03 m, −`k x` est positif : la force pointe vers les `x` positifs. Ressort comprimé, il repousse la masse vers sa position de repos.', ref: C6 + '#s1' },
+    { id: 'phys-c6-03', topic: 'phys-ressort', lvl: 2, type: 'single', q: 'Un ressort (raideur `k`, longueur à vide `ℓ_0`) est fixé à un bâti en H, d’abscisse `x_H`. La masse M est à droite de H, à l’abscisse `x` &gt; `x_H`. Quelle est la force du ressort sur M ?',
+      o: ['−`k`(`x` − `x_H` − `ℓ_0`) {u_x}', '−`k`(`x` − `ℓ_0`) {u_x}', '`k`(`x` − `x_H` − `ℓ_0`) {u_x}', '−`k x` {u_x}'], a: 0,
+      x: 'La longueur du ressort est `x` − `x_H` et le vecteur unitaire de H vers M est {u_x} : {F} = −`k`(`ℓ` − `ℓ_0`) {u_x}. Contrôle : ressort étiré, la force pointe vers H, vers les `x` négatifs (TD 6, Ex 1, cas 3).', ref: C6 + '#s1' },
+    { id: 'phys-c6-04', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'Une masse `m` glisse sans frottement sur un support horizontal, attachée à un ressort de raideur `k` ; `x` est l’écart à la position de repos. Quelle équation obtient-on avec la 2e loi ?',
+      o: ['`ẍ` + (`k`/`m`) `x` = 0', '`ẍ` − (`k`/`m`) `x` = 0', '`ẍ` + (`m`/`k`) `x` = 0', '`ẍ` + `k x` = 0'], a: 0,
+      x: 'Sur l’axe `x`, poids et réaction ne comptent pas : −`k x` = `m ẍ`. On divise par `m` : `ẍ` + (`k`/`m`) `x` = 0, avec `ω_0`² = `k`/`m`. La dernière oublie de diviser `k` par `m`.', ref: C6 + '#s2' },
+    { id: 'phys-c6-05', topic: 'phys-oscillateur', lvl: 1, type: 'tf', a: true, q: 'Pour une masse attachée à un ressort horizontal, le poids et la réaction du support disparaissent quand on projette la 2e loi sur l’axe horizontal.',
+      x: 'Vrai. Ces deux forces sont verticales : leur projection sur l’axe `x` est nulle. Il ne reste que la force de rappel (et un éventuel frottement).', ref: C6 + '#s2' },
+    { id: 'phys-c6-06', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'Dans quelle unité s’exprime la pulsation propre `ω_0` = √(`k`/`m`) d’un oscillateur masse-ressort ?',
+      o: ['rad·s⁻¹ (s⁻¹)', 's', 'N·m⁻¹', 'Hz·m'], a: 0,
+      x: '`k`/`m` est en N·m⁻¹·kg⁻¹ = kg·s⁻²·kg⁻¹ = s⁻². Sa racine est en s⁻¹, qu’on écrit rad·s⁻¹ pour une pulsation.', ref: C6 + '#s2' },
+    { id: 'phys-c6-07', topic: 'phys-oscillateur', lvl: 2, type: 'single', q: 'La solution de `ẍ` + `ω_0`² `x` = 0 s’écrit `x`(`t`) = `A` cos(`ω_0 t`) + `B` sin(`ω_0 t`), avec `x`(0) = `x_0` et `ẋ`(0) = `v_0`. Que valent `A` et `B` ?',
+      o: ['`A` = `x_0` et `B` = `v_0`/`ω_0`', '`A` = `x_0` et `B` = `v_0`', '`A` = `v_0`/`ω_0` et `B` = `x_0`', '`A` = `x_0` et `B` = 0'], a: 0,
+      x: '`x`(0) = `A` donne `A` = `x_0`. En dérivant, `ẋ`(0) = `B ω_0` = `v_0`, donc `B` = `v_0`/`ω_0`, qui est bien une longueur. `B` = 0 seulement si la masse est lâchée sans vitesse.', ref: C6 + '#s3' },
+    { id: 'phys-c6-08', topic: 'phys-oscillateur', lvl: 2, type: 'num', unit: 'cm', a: 5, q: 'Une masse de 0,5 kg est attachée à un ressort de raideur 50 N·m⁻¹. On la lâche à `x_0` = 4 cm de sa position d’équilibre avec une vitesse `v_0` = 0,3 m·s⁻¹. Quelle est l’amplitude de ses oscillations, en cm ?',
+      x: '`ω_0` = √(50/0,5) = 10 rad·s⁻¹ et `v_0`/`ω_0` = 0,03 m. Amplitude : √(0,04² + 0,03²) = 0,05 m = 5 cm. L’élan la fait aller plus loin que 4 cm.', ref: C6 + '#s3' },
+    { id: 'phys-c6-09', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'Une masse au bout d’un ressort est lâchée sans vitesse à 3 cm de sa position d’équilibre. Que vaut `x`(`t`), en cm ?',
+      o: ['3 cos(`ω_0 t`)', '3 sin(`ω_0 t`)', '3 cos(`ω_0 t`) + 3 sin(`ω_0 t`)', '(3/`ω_0`) sin(`ω_0 t`)'], a: 0,
+      x: 'Sans vitesse initiale, `B` = 0 et `A` = `x_0` = 3 cm : `x` = 3 cos(`ω_0 t`). Contrôle : `x`(0) = 3 et `ẋ`(0) = 0. Le sinus correspond à une masse lancée depuis la position d’équilibre.', ref: C6 + '#s3' },
+    { id: 'phys-c6-10', topic: 'phys-oscillateur', lvl: 1, type: 'num', unit: 's', a: 0.628, q: 'Une masse de 0,4 kg oscille au bout d’un ressort de raideur 40 N·m⁻¹, sans frottement. Quelle est sa période propre, en secondes (au centième) ?',
+      x: '`ω_0` = √(40/0,4) = 10 rad·s⁻¹ ; `T_0` = 2π/`ω_0` = 2π/10 ≈ 0,63 s. Ou directement `T_0` = 2π√(`m`/`k`).', ref: C6 + '#s4' },
+    { id: 'phys-c6-11', topic: 'phys-oscillateur', lvl: 2, type: 'single', q: 'Avec le même ressort, on remplace la masse par une masse quatre fois plus lourde. La période propre est…',
+      o: ['multipliée par 2', 'multipliée par 4', 'divisée par 2', 'inchangée'], a: 0,
+      x: '`T_0` = 2π√(`m`/`k`) : multiplier `m` par 4 multiplie la racine par √4 = 2. Plus lourd, il oscille plus lentement.', ref: C6 + '#s4' },
+    { id: 'phys-c6-12', topic: 'phys-oscillateur', lvl: 1, type: 'tf', a: false, q: 'La période d’un oscillateur harmonique augmente quand on l’écarte davantage de sa position d’équilibre avant de le lâcher.',
+      x: 'Faux. `T_0` = 2π√(`m`/`k`) ne dépend que de la masse et du ressort, pas de l’amplitude : c’est ce qui rend l’oscillateur « harmonique ».', ref: C6 + '#s4' },
+    { id: 'phys-c6-13', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'Un oscillateur masse-ressort sans frottement (raideur `k`, masse `m`) oscille avec l’amplitude `X_m`. Que vaut son énergie mécanique ?',
+      o: ['½ `k X_m`²', '½ `m X_m`²', '`k X_m`', '½ `k X_m`'], a: 0,
+      x: 'Aux extrémités, la vitesse est nulle : toute l’énergie est élastique, ½ `k X_m`². Elle se conserve ensuite (pas de frottement).', ref: C6 + '#s5' },
+    { id: 'phys-c6-14', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'Où la vitesse d’une masse qui oscille au bout d’un ressort, sans frottement, est-elle maximale ?',
+      o: ['au passage par la position d’équilibre', 'aux deux extrémités', 'à mi-chemin entre l’équilibre et une extrémité', 'partout : elle est constante'], a: 0,
+      x: 'À l’équilibre, le ressort n’est ni étiré ni comprimé : l’énergie élastique est nulle, toute l’énergie est cinétique. Aux extrémités, la vitesse est nulle.', ref: C6 + '#s5' },
+    { id: 'phys-c6-15', topic: 'phys-oscillateur', lvl: 1, type: 'single', q: 'On double l’amplitude des oscillations d’un oscillateur masse-ressort sans frottement. Son énergie mécanique est…',
+      o: ['multipliée par 4', 'multipliée par 2', 'inchangée', 'multipliée par √2'], a: 0,
+      x: '`E_M` = ½ `k X_m`² est proportionnelle au carré de l’amplitude : 2² = 4.', ref: C6 + '#s5' },
+    { id: 'phys-c6-16', topic: 'phys-oscillateur', lvl: 1, type: 'num', unit: 'J', a: 0.5, q: 'Un ressort de raideur 100 N·m⁻¹ fait osciller une masse sans frottement avec une amplitude de 10 cm. Quelle est l’énergie mécanique de l’oscillateur ?',
+      x: '`E_M` = ½ `k X_m`² = ½ × 100 × 0,1² = 0,5 J.', ref: C6 + '#s5' },
+    { id: 'phys-c6-17', topic: 'phys-oscillateur', lvl: 2, type: 'single', q: 'Une masse `m` pend au bout d’un ressort vertical (raideur `k`, longueur à vide `ℓ_0`), accroché en O ; l’axe `z` est vertical vers le haut, d’origine O. Quelle est la cote `z_e` de la position d’équilibre ?',
+      o: ['−(`ℓ_0` + `m g`/`k`)', '−`ℓ_0`', '−(`ℓ_0` − `m g`/`k`)', '`m g`/`k`'], a: 0,
+      x: 'À l’équilibre, la force de rappel `k`(−`z_e` − `ℓ_0`) compense le poids `m g` : −`z_e` − `ℓ_0` = `m g`/`k`. Le ressort est plus long que `ℓ_0` de `m g`/`k`, et la masse est sous O (cote négative).', ref: C6 + '#s6' },
+    { id: 'phys-c6-18', topic: 'phys-oscillateur', lvl: 2, type: 'tf', a: false, q: 'Pour une masse suspendue à un ressort vertical, le poids change la pulsation propre des oscillations.',
+      x: 'Faux. Avec `Z` = `z` − `z_e`, l’équation devient `Z̈` + (`k`/`m`) `Z` = 0 : la pulsation reste √(`k`/`m`). Le poids déplace seulement la position d’équilibre.', ref: C6 + '#s6' },
+    { id: 'phys-c6-19', topic: 'phys-oscillateur', lvl: 1, type: 'num', unit: 'cm', a: 10, q: 'Une masse de 0,1 kg est suspendue à un ressort vertical de raideur 10 N·m⁻¹ (`g` = 10 m·s⁻²). De combien le ressort est-il allongé à l’équilibre, en cm ?',
+      x: 'À l’équilibre, `k` Δ`ℓ` = `m g` : Δ`ℓ` = 0,1 × 10 / 10 = 0,1 m = 10 cm.', ref: C6 + '#s6' },
+
+    /* ---------- chapitre 4 : pendule et amortissement (phys2/cours-4-pendule.html) ---------- */
+    { id: 'phys-c7-01', topic: 'phys-pendule', lvl: 2, type: 'single', q: 'Un pendule simple (masse `m`, fil de longueur `l`) fait l’angle θ avec la verticale descendante ; {u_r} va de O vers la masse, {u_θ} dans le sens des θ croissants. Quelles sont les composantes du poids sur ({u_r}, {u_θ}) ?',
+      o: ['(`m g` cos θ ; −`m g` sin θ)', '(−`m g` cos θ ; `m g` sin θ)', '(`m g` sin θ ; `m g` cos θ)', '(`m g` ; 0)'], a: 0,
+      x: 'L’angle entre le poids et {u_r} est θ : `m g` cos θ sur {u_r}. La composante tangente, −`m g` sin θ, ramène la masse vers θ = 0. Contrôle en θ = 0 : tout le poids est le long du fil.', ref: C7 + '#s1' },
+    { id: 'phys-c7-02', topic: 'phys-pendule', lvl: 2, type: 'single', q: 'Pour un pendule simple de longueur `l`, sans frottement, la 2e loi projetée sur {u_θ} donne…',
+      o: ['θ̈ + (`g`/`l`) sin θ = 0', 'θ̈ − (`g`/`l`) sin θ = 0', 'θ̈ + (`g`/`l`) cos θ = 0', 'θ̈ + (`l`/`g`) sin θ = 0'], a: 0,
+      x: 'Sur {u_θ} : −`m g` sin θ = `m l` θ̈ (l’accélération orthoradiale vaut `l` θ̈ car `r` = `l` est constant). On divise par `m l`.', ref: C7 + '#s1' },
+    { id: 'phys-c7-03', topic: 'phys-pendule', lvl: 1, type: 'tf', a: false, q: 'La tension du fil d’un pendule simple intervient dans l’équation du mouvement obtenue en projetant la 2e loi sur {u_θ}.',
+      x: 'Faux. La tension est portée par le fil, donc par {u_r} : elle n’apparaît que dans l’équation sur {u_r}, qui sert à la calculer.', ref: C7 + '#s1' },
+    { id: 'phys-c7-04', topic: 'phys-pendule', lvl: 1, type: 'single', q: 'Quelle est la période des petites oscillations d’un pendule simple de longueur `l` ?',
+      o: ['2π√(`l`/`g`)', '2π√(`g`/`l`)', '2π√(`m`/`k`)', '2π `l`/`g`'], a: 0,
+      x: 'Pour de petits angles, θ̈ + (`g`/`l`) θ = 0 : `ω_0` = √(`g`/`l`) et `T_0` = 2π/`ω_0` = 2π√(`l`/`g`). Contrôle : √(m/(m·s⁻²)) = s.', ref: C7 + '#s2' },
+    { id: 'phys-c7-05', topic: 'phys-pendule', lvl: 1, type: 'tf', a: false, q: 'Pour de petites oscillations, un pendule simple deux fois plus lourd oscille plus lentement.',
+      x: 'Faux. La masse se simplifie dans l’équation : `T_0` = 2π√(`l`/`g`) ne dépend que de la longueur et de `g`.', ref: C7 + '#s2' },
+    { id: 'phys-c7-06', topic: 'phys-pendule', lvl: 1, type: 'num', unit: 's', a: 2, q: 'Un pendule simple de 1 m de long oscille avec de petits angles. On prend `g` ≈ π² m·s⁻². Quelle est sa période ?',
+      x: '`T_0` = 2π√(1/π²) = 2π/π = 2 s : le pendule « qui bat la seconde » (une seconde par aller).', ref: C7 + '#s2' },
+    { id: 'phys-c7-07', topic: 'phys-pendule', lvl: 2, type: 'single', q: 'Pour doubler la période des petites oscillations d’un pendule simple, il faut multiplier sa longueur par…',
+      o: ['4', '2', '√2', '8'], a: 0,
+      x: '`T_0` est proportionnelle à √`l` : pour doubler √`l`, il faut multiplier `l` par 4.', ref: C7 + '#s2' },
+    { id: 'phys-c7-08', topic: 'phys-pendule', lvl: 1, type: 'single', q: 'Un pendule simple (masse `m`, longueur `l`) fait l’angle θ avec la verticale. On prend l’énergie potentielle nulle au point le plus bas. Que vaut son énergie potentielle de pesanteur ?',
+      o: ['`m g l`(1 − cos θ)', '`m g l` cos θ', '`m g l` sin θ', '`m g l`(1 − sin θ)'], a: 0,
+      x: 'La masse est à la hauteur `l` − `l` cos θ au-dessus du point le plus bas. Contrôle : nulle en θ = 0, maximale aux extrémités.', ref: C7 + '#s3' },
+    { id: 'phys-c7-09', topic: 'phys-pendule', lvl: 1, type: 'single', q: 'Que vaut l’énergie cinétique d’un pendule simple de longueur `l` et de masse `m`, en fonction de sa vitesse angulaire θ̇ ?',
+      o: ['½ `m l`² θ̇²', '½ `m` θ̇²', '½ `m l` θ̇²', '`m g l` θ̇'], a: 0,
+      x: 'La masse décrit un cercle de rayon `l` : sa vitesse vaut `v` = `l` θ̇, donc `E_c` = ½ `m`(`l` θ̇)².', ref: C7 + '#s3' },
+    { id: 'phys-c7-10', topic: 'phys-pendule', lvl: 2, type: 'num', unit: 'm·s⁻¹', a: 2.83, q: 'Un pendule simple de 0,8 m est lâché sans vitesse depuis θ₀ = 60° (cos 60° = 0,5), sans frottement, avec `g` = 10 m·s⁻². Quelle est sa vitesse au point le plus bas ?',
+      x: 'Conservation de l’énergie : ½ `m v`² = `m g l`(1 − cos θ₀), donc `v` = √(2 × 10 × 0,8 × 0,5) = √8 ≈ 2,83 m·s⁻¹. Valable même pour un grand angle.', ref: C7 + '#s3' },
+    { id: 'phys-c7-11', topic: 'phys-amorti', lvl: 2, type: 'single', q: 'Une masse `m` attachée à un ressort horizontal (raideur `k`) subit en plus un frottement fluide {f} = −α {v}. Quelle équation obtient-on ?',
+      o: ['`ẍ` + (α/`m`) `ẋ` + (`k`/`m`) `x` = 0', '`ẍ` + (α/`m`) `x` + (`k`/`m`) `ẋ` = 0', '`ẍ` + α `ẋ` + (`k`/`m`) `x` = 0', '`ẍ` + (`k`/`m`) `x` = −α'], a: 0,
+      x: 'Sur `x` : −`k x` − α `ẋ` = `m ẍ`, puis on divise tout par `m`. Le frottement dépend de la vitesse : il donne un terme en `ẋ`.', ref: C7 + '#s4' },
+    { id: 'phys-c7-12', topic: 'phys-amorti', lvl: 1, type: 'single', q: 'L’équation d’un oscillateur amorti s’écrit `ẍ` + (1/τ) `ẋ` + `ω_0`² `x` = 0, avec un frottement fluide {f} = −α {v}. Que vaut τ, et dans quelle unité ?',
+      o: ['`m`/α, en secondes', 'α/`m`, en secondes', '`m`/α, en s⁻¹', '√(`m`/`k`), en secondes'], a: 0,
+      x: 'En divisant par `m`, le coefficient de `ẋ` est α/`m` = 1/τ, donc τ = `m`/α. α est en kg·s⁻¹ : τ est en secondes, c’est un temps caractéristique.', ref: C7 + '#s4' },
+    { id: 'phys-c7-13', topic: 'phys-amorti', lvl: 1, type: 'tf', a: true, q: 'Avec un frottement fluide, l’énergie mécanique d’un oscillateur diminue au cours du temps.',
+      x: 'Vrai. La puissance du frottement, {f}·{v} = −α`v`², est négative : il prend de l’énergie au système à chaque instant.', ref: C7 + '#s4' },
+    { id: 'phys-c7-14', topic: 'phys-amorti', lvl: 1, type: 'single', q: 'Un oscillateur amorti a `λ` = 1/(2τ) plus petit que sa pulsation propre `ω_0`. Dans quel régime est-il ?',
+      o: ['pseudo-périodique', 'apériodique', 'critique', 'harmonique'], a: 0,
+      x: 'Frottement faible (`λ` &lt; `ω_0`) : il oscille encore, avec une amplitude qui décroît en e<sup>−`λ t`</sup>. Harmonique, c’est sans frottement du tout.', ref: C7 + '#s5' },
+    { id: 'phys-c7-15', topic: 'phys-amorti', lvl: 2, type: 'single', q: 'Une masse de 1 kg, un ressort de raideur 100 N·m⁻¹ et un frottement fluide de coefficient α = 30 kg·s⁻¹. Quel est le régime ? (On compare `λ` = α/(2`m`) à `ω_0`.)',
+      o: ['apériodique', 'pseudo-périodique', 'critique'], a: 0,
+      x: '`λ` = 30/2 = 15 s⁻¹ et `ω_0` = √100 = 10 rad·s⁻¹ : `λ` &gt; `ω_0`, frottement fort, pas d’oscillation. Le critique serait α = 20 kg·s⁻¹.', ref: C7 + '#s5' },
+    { id: 'phys-c7-16', topic: 'phys-amorti', lvl: 2, type: 'tf', a: false, q: 'En régime pseudo-périodique, la pseudo-période est un peu plus courte que la période propre `T_0` de l’oscillateur sans frottement.',
+      x: 'Faux. La pseudo-pulsation `ω` = √(`ω_0`² − `λ`²) est plus petite que `ω_0` : la pseudo-période 2π/`ω` est un peu plus longue que `T_0`.', ref: C7 + '#s5' },
+    { id: 'phys-c7-17', topic: 'phys-amorti', lvl: 2, type: 'single', q: 'Quelle est la forme de la solution d’un oscillateur amorti en régime critique (`λ` = `ω_0`) ?',
+      o: ['(`A` + `B t`) e<sup>−`ω_0 t`</sup>', '(`A` + `B t`) e<sup>`ω_0 t`</sup>', 'e<sup>−`λ t`</sup>(`A` cos `ω t` + `B` sin `ω t`)', '`A` cos(`ω_0 t`) + `B` sin(`ω_0 t`)'], a: 0,
+      x: 'L’exposant est négatif : la masse revient à l’équilibre, le plus vite possible sans osciller. Le cours imprime e<sup>`ω_0 t`</sup> sans le signe moins : c’est une coquille.', ref: C7 + '#s5' },
+
+    /* ---------- chapitre 5 : ondes et signal (phys2/cours-5-ondes.html) ---------- */
+    { id: 'phys-c8-01', topic: 'phys-ondes', lvl: 1, type: 'num', unit: 'cm', a: 12.24, q: 'Un four à micro-ondes émet des ondes électromagnétiques de fréquence 2,45 GHz, qui se propagent à 3·10⁸ m·s⁻¹. Quelle est leur longueur d’onde, en cm ?',
+      x: '`λ` = `c`/`f` = 3·10⁸ / 2,45·10⁹ ≈ 0,122 m ≈ 12 cm : centimétrique, malgré le nom « micro-ondes » (TD 8, Ex 2).', ref: C8 + '#s1' },
+    { id: 'phys-c8-02', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'Une onde de fréquence `f` se propage à la célérité `c`. Que vaut sa longueur d’onde ?',
+      o: ['`c`/`f`', '`c` × `f`', '`f`/`c`', '1/`f`'], a: 0,
+      x: 'La longueur d’onde est la distance parcourue pendant une période : `λ` = `c T` = `c`/`f`. Contrôle des unités : (m·s⁻¹)/(s⁻¹) = m.', ref: C8 + '#s1' },
+    { id: 'phys-c8-03', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'Un son de fréquence 30 kHz est…',
+      o: ['un ultrason', 'un infrason', 'un son audible', 'une onde électromagnétique'], a: 0,
+      x: 'L’oreille humaine entend de 20 Hz à 20 kHz. Au-dessus, ce sont des ultrasons ; en dessous de 20 Hz, des infrasons.', ref: C8 + '#s1' },
+    { id: 'phys-c8-04', topic: 'phys-ondes', lvl: 1, type: 'tf', a: false, q: 'Une onde qui se propage le long d’une corde transporte de la matière de la main vers l’autre extrémité.',
+      x: 'Faux. Une onde est une perturbation qui se déplace sans déplacement de matière : chaque point de la corde monte et descend sur place.', ref: C8 + '#s2' },
+    { id: 'phys-c8-05', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'Une onde s’écrit `s`(`x`, `t`) = `f`(`t` − `x`/`c`), avec `c` &gt; 0. Dans quel sens se propage-t-elle ?',
+      o: ['vers les `x` croissants', 'vers les `x` décroissants', 'elle ne se propage pas', 'dans les deux sens'], a: 0,
+      x: 'Le point d’abscisse `x` reproduit avec le retard `x`/`c` ce qui se passe en `x` = 0 : plus il est loin vers les `x` positifs, plus il est en retard. `f`(`t` + `x`/`c`) va dans l’autre sens.', ref: C8 + '#s2' },
+    { id: 'phys-c8-06', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'On secoue plus vite l’extrémité d’une corde tendue. La célérité de l’onde sur la corde…',
+      o: ['ne change pas', 'augmente', 'diminue', 'double'], a: 0,
+      x: 'La célérité dépend du milieu (la tension et la masse de la corde), pas de la source. Un geste plus rapide rend la bosse plus étroite, pas plus rapide (TD 8, Ex 1).', ref: C8 + '#s2' },
+    { id: 'phys-c8-07', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'Dans une onde sinusoïdale `s` = `A` cos(`ω t` − `k x`), que vaut la pulsation spatiale `k` ?',
+      o: ['2π/`λ`', '2π/`T`', '`λ`/(2π)', '2π`λ`'], a: 0,
+      x: '`k` = `ω`/`c` = 2π`f`/`c` = 2π/`λ`, en rad·m⁻¹. 2π/`T`, c’est la pulsation temporelle `ω`.', ref: C8 + '#s3' },
+    { id: 'phys-c8-08', topic: 'phys-ondes', lvl: 2, type: 'num', unit: 'm·s⁻¹', a: 50, q: 'Une onde s’écrit `s`(`x`, `t`) = 3 cos(200π`t` − 4π`x`), avec `t` en secondes et `x` en mètres. Quelle est sa célérité ?',
+      x: '`ω` = 200π rad·s⁻¹ et `k` = 4π rad·m⁻¹ : `c` = `ω`/`k` = 50 m·s⁻¹. Ou bien `f` = 100 Hz et `λ` = 2π/(4π) = 0,5 m, donc `c` = `λ f` = 50 m·s⁻¹.', ref: C8 + '#s3' },
+    { id: 'phys-c8-09', topic: 'phys-ondes', lvl: 1, type: 'single', q: 'Dans quel sens se propage l’onde `s` = `A` cos(`ω t` + `k x`), avec `ω` et `k` positifs ?',
+      o: ['vers les `x` décroissants', 'vers les `x` croissants', 'elle est stationnaire', 'on ne peut pas savoir'], a: 0,
+      x: '`ω t` + `k x` = `ω`(`t` + `x`/`c`) : c’est la forme `f`(`t` + `x`/`c`), vers les `x` décroissants.', ref: C8 + '#s3' },
+    { id: 'phys-c8-10', topic: 'phys-dephasage', lvl: 1, type: 'single', q: 'Deux signaux de même fréquence sont déphasés de Δφ = π. Ils sont…',
+      o: ['en opposition de phase', 'en phase', 'en quadrature de phase', 'décalés d’une période entière'], a: 0,
+      x: 'Δφ = 0 (à 2π près) : en phase ; Δφ = π : en opposition ; Δφ = π/2 : en quadrature. En opposition, quand l’un est au maximum, l’autre est au minimum.', ref: C8 + '#s4' },
+    { id: 'phys-c8-11', topic: 'phys-dephasage', lvl: 2, type: 'single', q: 'Le signal `s_2` reproduit le signal `s_1` (pulsation `ω`) avec un retard Δ`t`. Que vaut le déphasage Δφ = φ₂ − φ₁ ?',
+      o: ['−`ω` Δ`t`', '`ω` Δ`t`', '−Δ`t`/`T`', '2π Δ`t`'], a: 0,
+      x: '`s_2`(`t`) = `s_1`(`t` − Δ`t`) = `A` cos(`ω t` − `ω` Δ`t` + φ₁) : φ₂ = φ₁ − `ω` Δ`t`. Un retard donne un déphasage négatif.', ref: C8 + '#s4' },
+    { id: 'phys-c8-12', topic: 'phys-dephasage', lvl: 2, type: 'single', q: 'Deux signaux sinusoïdaux de 50 Hz : le second est en retard de 5 ms sur le premier. Ils sont…',
+      o: ['en quadrature de phase, le second en retard', 'en opposition de phase', 'en phase', 'en quadrature de phase, le second en avance'], a: 0,
+      x: 'Δφ = −2π`f` Δ`t` = −2π × 50 × 0,005 = −π/2 : quadrature, et le signe moins dit que le second est en retard. 5 ms, c’est un quart de la période de 20 ms.', ref: C8 + '#s4' },
+    { id: 'phys-c8-13', topic: 'phys-dephasage', lvl: 2, type: 'num', unit: 'Hz', a: 85, q: 'Un auditeur est assis à 1 m devant un mur ; le son de l’enceinte lui arrive directement et après réflexion sur le mur (sans déphasage à la réflexion), avec `c` = 340 m·s⁻¹. Quelle est la plus basse fréquence affaiblie par interférence ?',
+      x: 'Différence de chemin 2`D` : opposition de phase quand 2π`f` × 2`D`/`c` = π, soit `f` = `c`/(4`D`) = 340/4 = 85 Hz (puis 255 Hz, 425 Hz…). TD 8, Ex 3.', ref: C8 + '#s4' },
+    { id: 'phys-c8-14', topic: 'phys-stationnaire', lvl: 1, type: 'single', q: 'Dans une onde stationnaire de longueur d’onde `λ`, quelle distance sépare deux nœuds consécutifs ?',
+      o: ['`λ`/2', '`λ`', '`λ`/4', '2`λ`'], a: 0,
+      x: 'L’amplitude vaut 2`A`|sin(`k x`)| : elle s’annule quand `k x` = `n`π, soit `x` = `n λ`/2. Un nœud et le ventre voisin sont séparés de `λ`/4.', ref: C8 + '#s5' },
+    { id: 'phys-c8-15', topic: 'phys-stationnaire', lvl: 2, type: 'num', unit: 'Hz', a: 660, q: 'Une corde de guitare de 65 cm, fixée à ses deux bouts, porte des ondes qui se propagent à 286 m·s⁻¹. Quelle est la fréquence de son mode `n` = 3 ?',
+      x: '`f_n` = `n c`/(2`L`) : le fondamental vaut 286/1,3 = 220 Hz, et le mode 3 vaut 3 × 220 = 660 Hz.', ref: C8 + '#s5' },
+    { id: 'phys-c8-16', topic: 'phys-stationnaire', lvl: 2, type: 'single', q: 'Un tuyau de longueur `L`, fermé à un bout et ouvert à l’autre, vérifie `L` = `λ_n`/4 + `n λ_n`/2. Quelles sont ses fréquences propres (célérité `c`) ?',
+      o: ['(2`n` + 1) `c`/(4`L`)', '`n c`/(2`L`)', '`n c`/(4`L`)', '(2`n` + 1) `c`/(2`L`)'], a: 0,
+      x: '`L` = (2`n` + 1) `λ_n`/4, donc `λ_n` = 4`L`/(2`n` + 1) et `f_n` = `c`/`λ_n`. Seuls les multiples impairs du fondamental existent (TD 8, Ex 4). `n c`/(2`L`), c’est la corde fixée aux deux bouts.', ref: C8 + '#s5' },
+    { id: 'phys-c8-17', topic: 'phys-stationnaire', lvl: 1, type: 'tf', a: false, q: 'Dans une onde stationnaire sur une corde, tous les points de la corde vibrent avec la même amplitude.',
+      x: 'Faux. L’amplitude dépend de la position : nulle aux nœuds, maximale aux ventres. En revanche, tous les points vibrent à la même fréquence.', ref: C8 + '#s5' }
   ];
 
   /* même notation que data/qcm/physique.js */

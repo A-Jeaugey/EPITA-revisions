@@ -51,8 +51,8 @@ main.ann>section{display:grid;gap:16px;min-width:0}
     <div>
       <div class="eyebrow"><a href="index.html">Physique B2</a> · Annales</div>
       <h1>Les examens de fin de semestre, <span class="w">exercice par exercice</span>.</h1>
-      <p class="lead">Les 7 examens de fin de semestre de physique S1 retrouvés, de janvier 2016 à décembre 2022. Ce qui est au cours (polaires, mouvement circulaire, 2e loi et énergie) renvoie à une fiche corrigée ; la statique, pas encore au cours, est grisée.</p>
-      <div class="chips"><span class="chip">7 sujets</span><span class="chip">réponses recalculées</span><span class="chip ex">statique à 6 sujets sur 7</span></div>
+      <p class="lead">Les 7 examens de fin de semestre de physique S1 retrouvés, de janvier 2016 à décembre 2022. Ce qui est au cours (polaires, mouvement circulaire, 2e loi et énergie) renvoie à une fiche corrigée ; la statique, absente du cours de cette année, est grisée. Les oscillateurs et les ondes, nouveaux cette année, ne sont dans aucun de ces sujets : leurs modèles sont plus bas.</p>
+      <div class="chips"><span class="chip">7 sujets</span><span class="chip">réponses recalculées</span><span class="chip ex">statique à 6 sujets sur 7, hors cours</span></div>
     </div>
   </div>
 </header>
@@ -62,8 +62,15 @@ main.ann>section{display:grid;gap:16px;min-width:0}
     <div><div class="eyebrow">Vue d’ensemble</div><h2 id="t-mx">Quelles notions, quel sujet</h2></div>
     <p class="muted" style="max-width:66ch">● notion principale d’un exercice, avec ses points ; ○ notion utilisée en chemin. Sous chaque sujet : la part du barème au programme actuel (estimation).</p>
     <div class="tbl"><table class="matrix" id="matrix"></table></div>
-    <div class="note trap"><span class="tag">Pas encore au cours</span><p>La statique (moment d’une force, équilibre de rotation et de translation d’une poutre, d’une échelle, d’une enseigne) tombe à 6 sujets sur 7, souvent pour 5 à 7 points. Elle sera ajoutée quand le cours du B2 la publiera.</p></div>
+    <div class="note trap"><span class="tag">Absente du cours de cette année</span><p>La statique (moment d’une force, équilibre de rotation et de translation d’une poutre, d’une échelle, d’une enseigne) tombe à 6 sujets sur 7, souvent pour 5 à 7 points. Le cours complet publié en novembre 2026 ne parle pas de moment : ces sujets suivaient une autre version de l’ECUE.</p></div>
     <div class="note keep"><span class="tag">Base de Frenet</span><p>Les sujets posent leurs questions de mouvement circulaire « en base de Frenet ». Sur un cercle, c’est la base polaire du cours : la traduction est au <a href="cours-2-circulaire.html#s6">chapitre 2, partie 6</a>.</p></div>
+  </section>
+  <section aria-labelledby="t-new">
+    <div><div class="eyebrow">Nouveau cette année</div><h2 id="t-new">Oscillateurs et ondes : les modèles disponibles</h2></div>
+    <div class="grid2">
+      <div class="note exam"><span class="tag">Partiel d’octobre 2025 (Moodle)</span><p>Le sujet de l’an dernier, publié par le professeur avec son corrigé. Exercice 1 (12 points) : une goutte qui tombe, d’abord en chute libre, puis avec un frottement fluide et son équation différentielle (<a href="entrainement.html#p2025-ex1">fiche corrigée</a>). Exercice 2 (8 points) : l’ISS en coordonnées polaires (<a href="entrainement.html#p2025-ex2">fiche corrigée</a>).</p></div>
+      <div class="note keep"><span class="tag">Les TD 6 à 8</span><p>Sans ancien sujet, les TD sont les meilleurs modèles : <a href="entrainement.html#td6-ex2">ressort vertical</a>, <a href="entrainement.html#td6-ex3">molécule HCl</a>, <a href="entrainement.html#td7-ex1">pendule simple</a>, <a href="entrainement.html#td7-ex2">son étude énergétique</a>, <a href="entrainement.html#td8-ex3">interférences</a>, <a href="entrainement.html#td8-ex4">modes d’un tuyau</a>.</p></div>
+    </div>
   </section>
   <section aria-labelledby="t-ex">
     <div><div class="eyebrow">Sujets</div><h2 id="t-ex">Chaque sujet, du plus récent au plus ancien</h2></div>
@@ -80,6 +87,7 @@ main.ann>section{display:grid;gap:16px;min-width:0}
 <script src="../data/physique/ex-td.js"></script>
 <script src="../data/phys2/exams.js"></script>
 <script src="../data/phys2/ex-finals.js"></script>
+<script src="../data/phys2/ex-td.js"></script>
 <script>
 (function () {
   var R = window.REV, U = R.util, $ = U.$, nf = U.nf;
@@ -88,7 +96,8 @@ main.ann>section{display:grid;gap:16px;min-width:0}
   (window.PHYS_EX || []).forEach(function (e) { EX[e.id] = e; });
   (window.PHYS2_EX || []).forEach(function (e) { EX[e.id] = e; });
   /* une fiche du B2 (ou déplacée du B1) s’ouvre ici, une fiche du B1 dans l’entraînement du B1 */
-  function href(id) { var e = EX[id]; return (e.kind === 'final' || MOVED.indexOf(id) >= 0 ? '' : '../physique/') + 'entrainement.html#' + id; }
+  var OWN = {}; (window.PHYS2_EX || []).forEach(function (e) { OWN[e.id] = 1; });
+  function href(id) { return (OWN[id] || MOVED.indexOf(id) >= 0 ? '' : '../physique/') + 'entrainement.html#' + id; }
   function short(e) { return e.date.replace('Janvier ', 'janv. ').replace('Décembre ', 'déc. ').replace('Juin ', 'juin '); }
 
   /* matrice notions × sujets */
@@ -117,7 +126,7 @@ main.ann>section{display:grid;gap:16px;min-width:0}
       if ((p.topics || [])[0] === 'qcm') links = nq ? '<a href="../qcm/index.html#phys2-' + e.key + '">Ses ' + nq + ' questions au programme dans le QCM →</a>' : '<span class="muted">Questions de statique ou de Frenet sur une courbe quelconque : pas de reprise au QCM.</span>';
       else links = (p.cards || []).filter(function (id) { return EX[id]; }).map(function (id) { return '<a href="' + href(id) + '">' + EX[id].title + (EX[id].kind === 'final' ? '' : ' (' + U.esc(EX[id].src) + ')') + ' · corrigé →</a>'; }).join('');
       var tags = (p.topics || []).filter(function (t) { return t !== 'qcm'; }).map(function (t) { return TOP[t]; }).filter(Boolean).join(' · ');
-      return '<li' + (off ? ' class="off"' : '') + '><span class="n">' + (typeof p.ex === 'number' ? 'Ex ' + p.ex : p.ex) + '</span><div class="pt"><span>' + p.t + (off ? '<span class="hp">pas encore au cours</span>' : '') + '</span>' +
+      return '<li' + (off ? ' class="off"' : '') + '><span class="n">' + (typeof p.ex === 'number' ? 'Ex ' + p.ex : p.ex) + '</span><div class="pt"><span>' + p.t + (off ? '<span class="hp">hors du cours actuel</span>' : '') + '</span>' +
         (tags ? '<span class="muted" style="font-size:.84rem">' + U.esc(tags) + '</span>' : '') + links + '</div><span class="p">' + nf(p.pts, 1) + ' pts</span></li>';
     }).join('');
     var files = e.files.map(function (f) { return '<a class="btn" href="' + f.u + '" target="_blank" rel="noopener">' + f.k + (f.l ? ' (' + f.l.toUpperCase() + ')' : '') + ' ↗</a>'; }).join('');

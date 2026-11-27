@@ -4,7 +4,9 @@
   R.i18n.patch(window.PHYS2_TOPICS, {
     polaire: 'Polar coordinates', circulaire: 'Circular motion', dyncirc: 'Second law on a circle', energie: 'Energy and friction',
     newton: 'Newton’s second law', cinematique: 'Kinematics in Cartesian coordinates', trajectoire: 'Trajectory', frenet: 'The Frenet basis',
-    statique: 'Statics (not in the course yet)', qcm: 'Lecture questions'
+    statique: 'Statics (moments)', qcm: 'Lecture questions',
+    ressort: 'Spring restoring force', oscillateur: 'Harmonic oscillator', pendule: 'Simple pendulum', amorti: 'Fluid friction, damping',
+    ondes: 'Travelling waves', dephasage: 'Phase difference, interference', stationnaire: 'Standing waves, normal modes'
   });
   R.i18n.patch(window.PHYS2_EXAMS, {
     f2022d: { label: 'End-of-semester exam Dec. 2022', date: 'December 2022',
