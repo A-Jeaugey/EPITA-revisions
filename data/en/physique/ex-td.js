@@ -579,7 +579,7 @@
           eq('$r = ' + sq('$x² + $y²') + ' = $r_0   and   $θ = $ω$t', '@OM($t) = $r_0 @u_r') + '<p>(@u_r turns with M: it depends on $t through $θ = $ω$t.)</p>' },
         { t: 'Question 4 · velocity vector', html: '<p>$r = $r_0 is constant: ' + rd + ' = 0. $θ = $ω$t: ' + thd + ' = $ω. With @v = ' + rd + ' @u_r + $r' + thd + ' @u_θ:</p>' + eq('@v = $r_0 $ω @u_θ') },
         { t: 'Question 5 · norm and dimensions', html: eq('‖@v‖ = $r_0 $ω') + '<p>Dimensions: [$r_0 $ω] = m × rad·s⁻¹ = m·s⁻¹ (the radian is dimensionless): it is indeed a speed.</p>' },
-        { t: 'Question 6 · in Cartesian coordinates', html: '<p class="sol-note">The expression in the statement contains an error: the factor $ω is missing. As written, $r_0 sin($ω$t) is in meters, not in m·s⁻¹: it is not dimensionally a velocity. Reading used here: we show the corrected expression.</p><p>Differentiate the coordinates:</p>' +
+        { t: 'Question 6 · in Cartesian coordinates', html: '<p>Differentiate the coordinates:</p>' +
           eq('$v_x = ' + fr('d$x', 'd$t') + ' = −$r_0 $ω sin($ω$t)', '$v_y = ' + fr('d$y', 'd$t') + ' = $r_0 $ω cos($ω$t)') +
           eq('@v = −$r_0 $ω sin($ω$t) @u_x', '+ $r_0 $ω cos($ω$t) @u_y') + '<p>Norm:</p>' +
           eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)'), '= $r_0 $ω') +
@@ -590,18 +590,18 @@
           eq('@a = ($r̈ − $r' + thd + '²) @u_r + (2' + rd + thd + ' + $r' + thdd + ') @u_θ', '@a = −$r_0 $ω² @u_r', '‖@a‖ = $r_0 $ω²') +
           fig(F.manege({ en: true, kin: true }), 'Uniform circular motion: @v tangent to the circle, @a pointing towards the centre O.') +
           '<p>@a points along −@u_r, from M towards the centre O: the acceleration is <b>centripetal</b>. It is not zero even though the motion is uniform: the direction of @v keeps changing. (You can also write @a = −$ω² @OM.)</p>' }],
-      answer: '<ul><li>1. $r_0 in m, $ω in rad·s⁻¹.</li><li>3. @OM = $r_0 @u_r ($r = $r_0, $θ = $ω$t).</li><li>4-5. @v = $r_0$ω @u_θ, ‖@v‖ = $r_0$ω (m·s⁻¹).</li><li>6. @v = −$r_0$ω sin($ω$t) @u_x + $r_0$ω cos($ω$t) @u_y (factor $ω missing in the statement); ' + thd + ' = $ω.</li><li>7. Uniform circular motion.</li><li>8. @a = −$r_0$ω² @u_r, ‖@a‖ = $r_0$ω², centripetal.</li></ul>',
+      answer: '<ul><li>1. $r_0 in m, $ω in rad·s⁻¹.</li><li>3. @OM = $r_0 @u_r ($r = $r_0, $θ = $ω$t).</li><li>4-5. @v = $r_0$ω @u_θ, ‖@v‖ = $r_0$ω (m·s⁻¹).</li><li>6. @v = −$r_0$ω sin($ω$t) @u_x + $r_0$ω cos($ω$t) @u_y; ' + thd + ' = $ω.</li><li>7. Uniform circular motion.</li><li>8. @a = −$r_0$ω² @u_r, ‖@a‖ = $r_0$ω², centripetal.</li></ul>',
       traps: [
         '“Uniform” does not mean “zero acceleration”: in uniform circular motion, @a = −$r_0$ω² @u_r ≠ @0.',
-        'Copying the expression of question 6 without checking its dimensions: the factor $ω is missing.',
+        'Forgetting the factor $ω when differentiating cos($ω$t): without it, the expression is not dimensionally a velocity.',
         'Giving $ω in rad (or in degrees): it is an angular velocity, in rad·s⁻¹.',
         'Writing @OM = $r_0 @u_r + $ω$t @u_θ: there is no component along @u_θ.'],
-      note: 'No official answer key: solution written and checked. Question 6 of the statement forgets the factor ω in v⃗: this sheet shows the corrected expression.'
+      note: 'Statement of version 3 of TD 5 (20 November 2026), which fixed question 6 (the factor ω was missing). Answers match the official answer key published with it.'
     },
 
     'td5-ex3': {
       title: 'Motion of a satellite',
-      intro: '<p>A satellite of mass m = 300 kg moves on a circular orbit around the Earth at a height h = 6400 km above the ground. The radius of the Earth is R<sub>T</sub> = 6400 km. At time t, it is located at point M with polar coordinates (r, θ), as shown in the figure. The origin of the axes O is at the centre of the Earth.</p>',
+      intro: '<p>A satellite of mass m = 300 kg moves on a circular orbit around the Earth at a height h = 400 km above the ground. The radius of the Earth is R<sub>T</sub> = 6400 km. At time t, it is located at point M with polar coordinates (r, θ), as shown in the figure. The origin of the axes O is at the centre of the Earth.</p>',
       figs: [{ svg: F.sat(EN), cap: 'Figure from the tutorial sheet: circular orbit of radius $r = R<sub>T</sub> + $h around the centre O of the Earth.' }],
       questions: [
         '<b>1.</b> Give the expression of the position vector @OM in polar coordinates.',
@@ -619,7 +619,7 @@
         'Project Newton’s second law on @u_θ (the force has no component along it), then on @u_r. Period: the time to go once round the orbit, 2π$r, at speed $v.'],
       solution: [
         { t: 'Question 1 · position vector', html: '<p>Framework: geocentric reference frame, assumed Galilean; system: the satellite (point M of mass $m); polar coordinates centred on O, the centre of the Earth.</p>' +
-          eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km', '= 1.28 × 10⁷ m') },
+          eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 6 800 km', '= 6.8 × 10⁶ m') },
         { t: 'Question 2 · velocity vector', html: '<p>$r is constant: ' + rd + ' = 0, so</p>' + eq('@v = $r' + thd + ' @u_θ', '‖@v‖ = $r |' + thd + '|') },
         { t: 'Question 3 · acceleration vector', html: '<p>With ' + rd + ' = ' + rdd + ' = 0:</p>' + eq('@a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ') },
         { t: 'Question 4 · gravitational force', html: '<p>Gravity is attractive: the Earth pulls the satellite towards its centre O, along −@u_r.</p>' + eq('@F = −' + fr('$G $M_T $m', '$r²') + ' @u_r') +
@@ -628,16 +628,16 @@
         { t: 'Question 6 · constant angular velocity', html: '<p>Match the two expressions of @a (questions 3 and 5), component by component.</p><p>Along @u_θ: $r' + thdd + ' = 0, so ' + thdd + ' = 0: the angular velocity ' + thd + ' is constant; call it $ω. Then:</p>' + eq('‖@v‖ = $v = $r$ω') + '<p>(With $ω &gt; 0, anti-clockwise rotation.)</p>' },
         { t: 'Question 7 · norm of the acceleration', html: '<p>Along @u_r: the acceleration component is −$r$ω², so ‖@a‖ = $r$ω². With $ω = $v/$r:</p>' + eq('$a = $r ' + fr('$v²', '$r²') + ' = ' + fr('$v²', '$r')) },
         { t: 'Question 8 · speed', html: '<p>Along @u_r, Newton’s second law also gives $a = $G$M_T/$r². Equate:</p>' + eq(fr('$v²', '$r') + ' = ' + fr('$G $M_T', '$r²') + ' ⇒ $v = ' + sq(fr('$G $M_T', '$r'))) +
-          eq('$v = ' + sq(fr('6.67 × 10⁻¹¹ × 6 × 10²⁴', '1.28 × 10⁷')), '$v ≈ 5.6 × 10³ m·s⁻¹') + '<p>About 5.6 km/s. The mass of the satellite plays no part.</p>' },
+          eq('$v = ' + sq(fr('6.67 × 10⁻¹¹ × 6 × 10²⁴', '6.8 × 10⁶')), '$v ≈ 7.7 × 10³ m·s⁻¹') + '<p>About 7.7 km/s. The mass of the satellite plays no part.</p>' },
         { t: 'Question 9 · period', html: '<p>In one period $T, the satellite covers the circumference 2π$r at speed $v:</p>' + eq('$T = ' + fr('2π$r', '$v') + ' = 2π ' + sq(fr('$r³', '$G $M_T'))) +
-          eq('$T = ' + fr('2π × 1.28 × 10⁷', '5.59 × 10³'), '$T ≈ 1.44 × 10⁴ s ≈ 4.0 h') }],
-      answer: '<ul><li>@OM = $r @u_r ($r = 1.28 × 10⁷ m); @v = $r' + thd + ' @u_θ; @a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ.</li><li>@F = −($G$M_T$m/$r²) @u_r; @a = −($G$M_T/$r²) @u_r.</li><li>' + thd + ' = $ω constant, $v = $r$ω, $a = $v²/$r.</li><li>$v = ' + sq('$G$M_T/$r') + ' ≈ 5.6 × 10³ m·s⁻¹; $T = 2π$r/$v ≈ 1.44 × 10⁴ s ≈ 4.0 h.</li></ul>',
+          eq('$T = ' + fr('2π × 6.8 × 10⁶', '7.67 × 10³'), '$T ≈ 5.57 × 10³ s ≈ 1.55 h') }],
+      answer: '<ul><li>@OM = $r @u_r ($r = 6.8 × 10⁶ m); @v = $r' + thd + ' @u_θ; @a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ.</li><li>@F = −($G$M_T$m/$r²) @u_r; @a = −($G$M_T/$r²) @u_r.</li><li>' + thd + ' = $ω constant, $v = $r$ω, $a = $v²/$r.</li><li>$v = ' + sq('$G$M_T/$r') + ' ≈ 7.7 × 10³ m·s⁻¹; $T = 2π$r/$v ≈ 5.57 × 10³ s ≈ 1.55 h.</li></ul>',
       traps: [
-        'Taking $r = $h = 6400 km: the radius of the orbit is measured from the centre of the Earth, $r = R<sub>T</sub> + $h.',
+        'Taking $r = $h = 400 km: the radius of the orbit is measured from the centre of the Earth, $r = R<sub>T</sub> + $h.',
         'Forgetting the minus sign of gravity: the force is attractive, pointing towards O.',
         'Forgetting to convert km to m before the numerical application.',
         'Saying the acceleration is zero because the speed is constant: it is centripetal and equals $v²/$r.'],
-      note: NOTE
+      note: 'Statement of version 3 of TD 5 (20 November 2026: altitude 400 km instead of 6400 km in the previous version). Matches the official answer key (1.54 h; its computation in question 8 first writes $R_T$ instead of $R_T + h$, then corrects it).'
     }
   }));
 })();

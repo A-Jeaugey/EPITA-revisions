@@ -216,20 +216,33 @@ Site statique de révision des partiels EPITA S1 (promo 2031). Vanilla HTML/CSS/
   9/9, Millman (bonus 2016, 2017, 2019, noté 2018), superposition 2018 S1#, 2020, 2021 ; 2022-2023 : un grand exercice
   d'équivalences (12 à 14 pts). Janvier 2024 (promo 2028) = autre ECUE, ELEC-2-ERS (régime sinusoïdal) : `prog:false`,
   hors programme ; si ce cours apparaît au Moodle, l'ajouter à `elec2` (nouveaux chapitres). Sujets sans durée indiquée.
-- **Physique B2** (id `phys2`, dossier `phys2/`, thème `physique.css`) : `phys2/cours-1-polaires` (l'ancien chapitre 4 du B1,
-  8 parties, `data-done="phys2:polaires:sN"`) et `-2-circulaire` (6 parties : 2e loi en base polaire, réaction d'un support,
-  énergie puis réaction, décollage cos θ = 2/3, looping h ≥ 5R/2, frottement sur un arc et lecture de la base de Frenet) ;
-  `methodes` (la méthode polaires du B1 y est passée), `entrainement`, `annales`, `fiche`. QCM `data/qcm/phys2.js` (chargé
-  après `physique.js` et `physique-annales.js`) : passe en `s:'phys2'` les questions dont `ref` vise l'ancien chapitre 4,
-  retire leurs notions de `QCM_OFF`, ajoute `phys-c5-NN` et les questions d'examens `phys-fAAAA-qN`. Sujets `PHYS2_EXAMS`
-  / notions `PHYS2_TOPICS` / `PHYS2_FROM_B1` (fiches du B1 reprises, progression `physique-<id>`) dans `data/phys2/exams.js` ;
-  fiches `window.PHYS2_EX` (`data/phys2/ex-finals.js`, 10 fiches `kind:'final'`, progression `phys2-<id>`, figures
-  `PHYS2_FIGS`). Examens Epidocs `S1/Finals/Phys/<promo>` : janvier AAAA = promo − 4 (f2016, f2017, f2018, f2020, f2022),
-  `f2018j` = juin 2018 (dossier 2023#), `f2022d` = décembre 2022 (promo 2027, copie d'élève corrigée). Points vérifiés
-  (sympy) : corrigés justes (janv. 2018 Ex 3 : π ≈ 3, f = 1,33·10⁻² N au lieu de 0,04/π) ; statique (moments) à 6 sujets
-  sur 7, **pas encore au cours** (parties `prog: false`, notion `statique`) ; base de Frenet à 6 sur 7 (traduite en polaires,
-  chapitre 2 partie 6) ; 2e loi + énergie sur un arc (sphère, gouttière, looping) à 4 sur 7. Quand le cours du B2 arrive
-  (statique, Frenet…), ajouter les chapitres et corriger les exercices de statique.
+- **Physique B2** (id `phys2`, dossier `phys2/`, thème `physique.css`, nom « Physique · Oscillateurs et ondes ») : le Moodle a publié
+  le cours complet en novembre 2026 (« Cours_mécanique_2026 », 24 pages : partie 1 mécanique, partie 2 systèmes oscillants, partie 3
+  ondes et signal ; TD 1 à 8, corrigés des TD 1 à 6, partiel d'octobre 2025 et son corrigé, versions anglaises du cours et des TD 1 à 6).
+  Cinq chapitres : `phys2/cours-1-polaires` (l'ancien chapitre 4 du B1, 8 parties, cours p. 11-12, TD 5), `-2-circulaire` (6 parties :
+  2e loi en base polaire, réaction, énergie puis réaction, décollage cos θ = 2/3, looping h ≥ 5R/2, frottement sur un arc et base de
+  Frenet), `-3-oscillateur` (6 : force de rappel, équation, conditions initiales, période, énergie, ressort vertical ; p. 13-18, TD 6),
+  `-4-pendule` (5 : pendule par la 2e loi en polaires, petits angles, énergie, frottement fluide, trois régimes ; p. 18-19, TD 7),
+  `-5-ondes` (5 : signal, onde progressive, OPPM, déphasage, ondes stationnaires et modes ; p. 20-24, TD 8)
+  (`data-done="phys2:<chapitre>:sN"`, chapitres polaires, circulaire, oscillateur, pendule, ondes) ; `methodes` (10 méthodes), `entrainement`,
+  `annales`, `fiche` (recto : polaires et cercle ; verso : oscillateurs et ondes). QCM `data/qcm/phys2.js` (chargé après `physique.js` et
+  `physique-annales.js`) : passe en `s:'phys2'` les questions dont `ref` vise l'ancien chapitre 4, ajoute `phys-c5-NN` (chapitre 2),
+  `phys-c6-NN`, `-c7-`, `-c8-` (chapitres 3 à 5) et les questions d'examens `phys-fAAAA-qN`. Sujets `PHYS2_EXAMS` / notions
+  `PHYS2_TOPICS` / `PHYS2_FROM_B1` (fiches du B1 reprises, progression `physique-<id>`) dans `data/phys2/exams.js` ; fiches
+  `window.PHYS2_EX` (progression `phys2-<id>`) : `data/phys2/ex-finals.js` (10 fiches `kind:'final'`, figures `PHYS2_FIGS`, outils de
+  notation exportés dans `window.PHYS2_FMT`) et `data/phys2/ex-td.js` (TD 6 à 8 `td6-ex1`…`td8-ex4`, partiel d'octobre 2025 `p2025-ex1`,
+  `-ex2`, `kind:'partiel'`, figures `PHYS2_TDFIGS`). Évaluation : 2 QCM 10 %, 2 partiels 90 % ; **QCM 2 le lundi 30 novembre 2026**
+  (0 h à 23 h 59, 15 min, une tentative, cours jusqu'au TD 5 ex. 2 inclus, sans les oscillateurs ; `OFFICIAL.phys2`) ; date du partiel 2
+  à venir. Examens Epidocs `S1/Finals/Phys/<promo>` : janvier AAAA = promo − 4 (f2016, f2017, f2018, f2020, f2022), `f2018j` = juin 2018
+  (dossier 2023#), `f2022d` = décembre 2022 (promo 2027, copie d'élève corrigée). Points vérifiés (sympy) : corrigés des examens justes
+  (janv. 2018 Ex 3 : π ≈ 3) ; la statique (moments) des anciens sujets (6 sur 7) n'est **pas dans le cours de cette année** (parties
+  `prog: false`, notion `statique`) ; oscillateurs et ondes dans aucun ancien sujet (modèles : TD 6 à 8, partiel 2025). Coquilles du
+  cours signalées dans les pages : régime critique e^{ω0 t} sans signe moins, λ non défini (λ = 1/(2τ)), onde stationnaire
+  « 2A sin(ωt) sin(kx) » avec une onde réfléchie écrite sans inversion. Corrigé du TD 6 : Ex 2 « ω0 = √(g/l) » et amplitude 3ℓ0/2
+  (faux : √(k/m), amplitude |mg/k − ℓ0/2|), Ex 1 cas 6 « k » pour k′. TD 7 et 8 sans corrigé (rédigés ici) ; TD 7 Ex 2 « [2π ; 2π] »
+  coquille. Partiel 2025 : le corrigé change les données (1 000 m, k = 2,4·10⁻⁵), se trompe sur le volume, lit v(τ) = 3,2 m/s et écrit
+  T = 1,4 h pour 6 280 s (avec les données : T ≈ 5,7·10³ s ≈ 1,6 h). TD 5 version 3 (20 novembre) : satellite à 400 km (6 400 km avant) et
+  question 6 du manège corrigée (facteur ω) ; fiches `td5-ex2`, `td5-ex3` (B1, `data/physique/ex-td.js`) mises à jour, conformes au corrigé.
 - **Maths · APIS** (id `apis`, dossier `apis/`, thème `maths.css` ; ECUE d'analyse du B2 : primitives, intégrales, suites ;
   DM 20 %, contrôle de cours 20 %, examen 60 %, coefficient 4). **Deux périmètres toujours séparés** : le contrôle de cours
   du lundi 23 novembre 2026 (annonce du 16 novembre : cours 3 du Moodle en entier ; cours 4 : introduction, limites, exemples

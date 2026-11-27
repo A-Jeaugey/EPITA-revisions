@@ -925,7 +925,7 @@
       '<b>3.</b> Définir le vecteur position @OM($t) dans la base polaire puis l’exprimer en fonction des données de l’exercice.',
       '<b>4.</b> Pour un instant t quelconque, déterminer l’expression du vecteur vitesse @v dans la base polaire.',
       '<b>5.</b> En déduire sa norme ‖@v‖ et vérifier l’homogénéité du résultat obtenu.',
-      '<b>6.</b> Montrer qu’en coordonnées cartésiennes le vecteur vitesse s’écrit : @v = −$r_0 sin($ω$t) @u_x + $r_0 cos($ω$t) @u_y. Calculer sa norme et en déduire le lien entre $ω et la vitesse angulaire ' + thd + '.',
+      '<b>6.</b> Montrer qu’en coordonnées cartésiennes le vecteur vitesse s’écrit : @v = −$r_0$ω sin($ω$t) @u_x + $r_0$ω cos($ω$t) @u_y. Calculer sa norme et en déduire le lien entre $ω et la vitesse angulaire ' + thd + '.',
       '<b>7.</b> En déduire la nature du mouvement du point matériel.',
       '<b>8.</b> Déterminer les composantes du vecteur accélération @a dans la base polaire, calculer sa norme et préciser l’orientation de ce vecteur.'],
     hints: [
@@ -940,7 +940,7 @@
         eq('$r = ' + sq('$x² + $y²') + ' = $r_0   et   $θ = $ω$t', '@OM($t) = $r_0 @u_r') + '<p>(@u_r tourne avec M : il dépend de $t par $θ = $ω$t.)</p>' },
       { t: 'Question 4 · vecteur vitesse', html: '<p>$r = $r_0 constant : ' + rd + ' = 0. $θ = $ω$t : ' + thd + ' = $ω. Avec @v = ' + rd + ' @u_r + $r' + thd + ' @u_θ :</p>' + eq('@v = $r_0 $ω @u_θ') },
       { t: 'Question 5 · norme et homogénéité', html: eq('‖@v‖ = $r_0 $ω') + '<p>Homogénéité : [$r_0 $ω] = m × rad·s⁻¹ = m·s⁻¹ (le radian est sans dimension) : c’est bien une vitesse.</p>' },
-      { t: 'Question 6 · en cartésien', html: '<p class="sol-note">L’expression de l’énoncé contient une erreur : il manque le facteur $ω. Telle qu’elle est écrite, $r_0 sin($ω$t) est en mètres, pas en m·s⁻¹ : elle n’est pas homogène à une vitesse. Lecture retenue : on montre l’expression corrigée.</p><p>On dérive les coordonnées :</p>' +
+      { t: 'Question 6 · en cartésien', html: '<p>On dérive les coordonnées :</p>' +
         eq('$v_x = ' + fr('d$x', 'd$t') + ' = −$r_0 $ω sin($ω$t)', '$v_y = ' + fr('d$y', 'd$t') + ' = $r_0 $ω cos($ω$t)') +
         eq('@v = −$r_0 $ω sin($ω$t) @u_x', '+ $r_0 $ω cos($ω$t) @u_y') + '<p>Norme :</p>' +
         eq('‖@v‖ = $r_0 $ω ' + sq('sin²($ω$t) + cos²($ω$t)'), '= $r_0 $ω') +
@@ -951,19 +951,19 @@
         eq('@a = ($r̈ − $r' + thd + '²) @u_r + (2' + rd + thd + ' + $r' + thdd + ') @u_θ', '@a = −$r_0 $ω² @u_r', '‖@a‖ = $r_0 $ω²') +
         fig(figManege({ kin: true }), 'Mouvement circulaire uniforme : @v tangent au cercle, @a dirigé vers le centre O.') +
         '<p>@a est dirigée selon −@u_r, de M vers le centre O : l’accélération est <b>centripète</b>. Elle n’est pas nulle bien que le mouvement soit uniforme : la direction de @v change sans cesse. (On peut aussi écrire @a = −$ω² @OM.)</p>' }],
-    answer: '<ul><li>1. $r_0 en m, $ω en rad·s⁻¹.</li><li>3. @OM = $r_0 @u_r ($r = $r_0, $θ = $ω$t).</li><li>4-5. @v = $r_0$ω @u_θ, ‖@v‖ = $r_0$ω (m·s⁻¹).</li><li>6. @v = −$r_0$ω sin($ω$t) @u_x + $r_0$ω cos($ω$t) @u_y (facteur $ω oublié par l’énoncé) ; ' + thd + ' = $ω.</li><li>7. Mouvement circulaire uniforme.</li><li>8. @a = −$r_0$ω² @u_r, ‖@a‖ = $r_0$ω², centripète.</li></ul>',
+    answer: '<ul><li>1. $r_0 en m, $ω en rad·s⁻¹.</li><li>3. @OM = $r_0 @u_r ($r = $r_0, $θ = $ω$t).</li><li>4-5. @v = $r_0$ω @u_θ, ‖@v‖ = $r_0$ω (m·s⁻¹).</li><li>6. @v = −$r_0$ω sin($ω$t) @u_x + $r_0$ω cos($ω$t) @u_y ; ' + thd + ' = $ω.</li><li>7. Mouvement circulaire uniforme.</li><li>8. @a = −$r_0$ω² @u_r, ‖@a‖ = $r_0$ω², centripète.</li></ul>',
     traps: [
       '« Uniforme » ne veut pas dire « accélération nulle » : en mouvement circulaire uniforme, @a = −$r_0$ω² @u_r ≠ @0.',
-      'Recopier l’expression de l’énoncé à la question 6 sans vérifier l’homogénéité : il manque le facteur $ω.',
+      'Oublier le facteur $ω en dérivant cos($ω$t) : sans lui, l’expression n’est pas homogène à une vitesse.',
       'Donner $ω en rad (ou en degrés) : c’est une vitesse angulaire, en rad·s⁻¹.',
       'Écrire @OM = $r_0 @u_r + $ω$t @u_θ : pas de composante sur @u_θ.'],
-    official: false, note: 'Pas de corrigé officiel : correction rédigée et vérifiée. L’énoncé de la question 6 oublie le facteur ω dans v⃗ : la fiche montre l’expression corrigée.'
+    official: true, note: 'Énoncé de la version 3 du TD 5 (20 novembre 2026), qui a corrigé la question 6 (le facteur ω manquait). Réponses conformes au corrigé officiel publié avec elle.'
   });
 
   add({
     id: 'td5-ex3', b2: true, exam: null, kind: 'td', order: 53, src: 'TD 5 · Ex 3', title: 'Mouvement d’un satellite',
     topics: ['polaire', 'circulaire', 'newton'], lvl: 3, time: 30,
-    intro: '<p>Un satellite de masse m = 300 kg se déplace sur une orbite circulaire autour de la Terre à une hauteur h = 6400 km du sol terrestre. Le rayon terrestre vaut R<sub>T</sub> = 6400 km. Au temps t, il est localisé au point M de coordonnées polaires (r, θ) comme le montre la figure. L’origine des axes O se situe au centre de la Terre.</p>',
+    intro: '<p>Un satellite de masse m = 300 kg se déplace sur une orbite circulaire autour de la Terre à une hauteur h = 400 km du sol terrestre. Le rayon terrestre vaut R<sub>T</sub> = 6400 km. Au temps t, il est localisé au point M de coordonnées polaires (r, θ) comme le montre la figure. L’origine des axes O se situe au centre de la Terre.</p>',
     figs: [{ svg: figSat(), cap: 'Figure de l’énoncé : orbite circulaire de rayon $r = R<sub>T</sub> + $h autour du centre O de la Terre.' }],
     questions: [
       '<b>1.</b> Donner l’expression du vecteur position @OM en coordonnées polaires.',
@@ -981,7 +981,7 @@
       'Projette la 2e loi de Newton sur @u_θ (la force n’a pas de composante orthoradiale), puis sur @u_r. Période : temps pour faire un tour, 2π$r, à la vitesse $v.'],
     solution: [
       { t: 'Question 1 · vecteur position', html: '<p>Cadre : référentiel géocentrique, supposé galiléen ; système : le satellite (point M de masse $m) ; coordonnées polaires de centre O, le centre de la Terre.</p>' +
-        eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 12 800 km', '= 1,28 × 10⁷ m') },
+        eq('@OM = $r @u_r', '$r = R<sub>T</sub> + $h = 6 800 km', '= 6,8 × 10⁶ m') },
       { t: 'Question 2 · vecteur vitesse', html: '<p>$r constant : ' + rd + ' = 0, donc</p>' + eq('@v = $r' + thd + ' @u_θ', '‖@v‖ = $r |' + thd + '|') },
       { t: 'Question 3 · vecteur accélération', html: '<p>Avec ' + rd + ' = ' + rdd + ' = 0 :</p>' + eq('@a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ') },
       { t: 'Question 4 · force gravitationnelle', html: '<p>La gravitation est attractive : la Terre attire le satellite vers son centre O, selon −@u_r.</p>' + eq('@F = −' + fr('$G $M_T $m', '$r²') + ' @u_r') +
@@ -990,15 +990,15 @@
       { t: 'Question 6 · vitesse angulaire constante', html: '<p>On identifie les deux expressions de @a (questions 3 et 5), composante par composante.</p><p>Sur @u_θ : $r' + thdd + ' = 0, donc ' + thdd + ' = 0 : la vitesse angulaire ' + thd + ' est constante ; on la note $ω. Alors :</p>' + eq('‖@v‖ = $v = $r$ω') + '<p>(Avec $ω &gt; 0, rotation dans le sens direct.)</p>' },
       { t: 'Question 7 · norme de l’accélération', html: '<p>Sur @u_r : la composante de l’accélération vaut −$r$ω², donc ‖@a‖ = $r$ω². Avec $ω = $v/$r :</p>' + eq('$a = $r ' + fr('$v²', '$r²') + ' = ' + fr('$v²', '$r')) },
       { t: 'Question 8 · vitesse', html: '<p>Sur @u_r, la 2e loi de Newton donne aussi $a = $G$M_T/$r². On égale :</p>' + eq(fr('$v²', '$r') + ' = ' + fr('$G $M_T', '$r²') + ' ⇒ $v = ' + sq(fr('$G $M_T', '$r'))) +
-        eq('$v = ' + sq(fr('6,67 × 10⁻¹¹ × 6 × 10²⁴', '1,28 × 10⁷')), '$v ≈ 5,6 × 10³ m·s⁻¹') + '<p>Environ 5,6 km/s. La masse du satellite n’intervient pas.</p>' },
+        eq('$v = ' + sq(fr('6,67 × 10⁻¹¹ × 6 × 10²⁴', '6,8 × 10⁶')), '$v ≈ 7,7 × 10³ m·s⁻¹') + '<p>Environ 7,7 km/s. La masse du satellite n’intervient pas.</p>' },
       { t: 'Question 9 · période', html: '<p>En une période $T, le satellite parcourt la circonférence 2π$r à la vitesse $v :</p>' + eq('$T = ' + fr('2π$r', '$v') + ' = 2π ' + sq(fr('$r³', '$G $M_T'))) +
-        eq('$T = ' + fr('2π × 1,28 × 10⁷', '5,59 × 10³'), '$T ≈ 1,44 × 10⁴ s ≈ 4,0 h') }],
-    answer: '<ul><li>@OM = $r @u_r ($r = 1,28 × 10⁷ m) ; @v = $r' + thd + ' @u_θ ; @a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ.</li><li>@F = −($G$M_T$m/$r²) @u_r ; @a = −($G$M_T/$r²) @u_r.</li><li>' + thd + ' = $ω constante, $v = $r$ω, $a = $v²/$r.</li><li>$v = ' + sq('$G$M_T/$r') + ' ≈ 5,6 × 10³ m·s⁻¹ ; $T = 2π$r/$v ≈ 1,44 × 10⁴ s ≈ 4,0 h.</li></ul>',
+        eq('$T = ' + fr('2π × 6,8 × 10⁶', '7,67 × 10³'), '$T ≈ 5,57 × 10³ s ≈ 1,55 h') }],
+    answer: '<ul><li>@OM = $r @u_r ($r = 6,8 × 10⁶ m) ; @v = $r' + thd + ' @u_θ ; @a = −$r' + thd + '² @u_r + $r' + thdd + ' @u_θ.</li><li>@F = −($G$M_T$m/$r²) @u_r ; @a = −($G$M_T/$r²) @u_r.</li><li>' + thd + ' = $ω constante, $v = $r$ω, $a = $v²/$r.</li><li>$v = ' + sq('$G$M_T/$r') + ' ≈ 7,7 × 10³ m·s⁻¹ ; $T = 2π$r/$v ≈ 5,57 × 10³ s ≈ 1,55 h.</li></ul>',
     traps: [
-      'Prendre $r = $h = 6400 km : le rayon de l’orbite se mesure depuis le centre de la Terre, $r = R<sub>T</sub> + $h.',
+      'Prendre $r = $h = 400 km : le rayon de l’orbite se mesure depuis le centre de la Terre, $r = R<sub>T</sub> + $h.',
       'Oublier le signe « − » de la gravitation : la force est attractive, dirigée vers O.',
       'Oublier de convertir les km en m avant l’application numérique.',
       'Dire que l’accélération est nulle parce que la vitesse est constante en norme : elle est centripète et vaut $v²/$r.'],
-    official: false, note: NOTE
+    official: true, note: 'Énoncé de la version 3 du TD 5 (20 novembre 2026 : altitude 400 km au lieu de 6 400 km dans la version précédente). Conforme au corrigé officiel (1,54 h ; son calcul de la question 8 écrit d’abord $R_T$ au lieu de $R_T + h$ avant de se corriger).'
   });
 })();
